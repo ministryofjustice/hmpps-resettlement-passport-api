@@ -1,24 +1,5 @@
 version: "3"
 services:
-  hmpps-resettlement-passport-api:
-    build:
-      context: .
-    networks:
-      - hmpps
-    container_name: hmpps-resettlement-passport-prototype-api
-    ports:
-      - "8080:8080"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/health/ping" ]
-    environment:
-      - SERVER_PORT=8080
-      - SPRING_PROFILES_ACTIVE=dev
-      - API_BASE_URL_OAUTH=https://sign-in-dev.hmpps.service.justice.gov.uk/auth
-      #http://hmpps-auth:8080/auth
-      - API_BASE_URL_PRISON=https://prison-register-dev.hmpps.service.justice.gov.uk
-      #http://prison-api-resettlement-passport-prototype-api:8080
-      - API_BASE_URL_OFFENDER_SEARCH=http://prisoner-search:8080
-
   localstack:
     image: localstack/localstack:0.14.0
     networks:
@@ -40,6 +21,7 @@ services:
     volumes:
       - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
+
 
 networks:
   hmpps:

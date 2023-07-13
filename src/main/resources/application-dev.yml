@@ -1,0 +1,54 @@
+server:
+  shutdown: immediate
+
+api:
+  base:
+    url:
+      oauth: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
+      #oauth: http://localhost:9090/auth
+      prison: https://prison-register-dev.hmpps.service.justice.gov.uk
+      #prison: http://localhost:8082
+      offender-search: https://prisoner-offender-search-dev.prison.service.justice.gov.uk
+      #offender-search: http://localhost:8083
+
+management.endpoint:
+  health.cache.time-to-live: 0
+  info.cache.time-to-live: 0
+spring:
+  devtools:
+    add-properties: true
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+
+  datasource:
+    url: 'jdbc:postgresql://localhost:5432/resettlementpassport?sslmode=prefer'
+    username: resettlementpassport
+    password: resettlementpassport
+    hikari:
+      pool-name: Hmpps-Resettlement-Passport
+      connectionTimeout: 1000
+      validationTimeout: 500
+
+  flyway:
+    enabled: true
+    url: jdbc:postgresql://localhost:5432/resettlementpassport?sslmode=prefer
+    user: resettlementpassport
+    password: resettlementpassport
+
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/resettlementpassport?sslmode=prefer
+    username: resettlementpassport
+    password: resettlementpassport
+    properties:
+      sslMode: DISABLE
+      sslRootCert:
+
+  feature-toggles:
+    afine: true

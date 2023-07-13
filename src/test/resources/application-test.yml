@@ -1,6 +1,44 @@
 server:
   shutdown: immediate
 
+aws:
+  provider: localstack
+
 management.endpoint:
   health.cache.time-to-live: 0
   info.cache.time-to-live: 0
+
+api:
+  base:
+    url:
+      oauth: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
+      #oauth: http://localhost:9090/auth
+      prison: https://prison-register-dev.hmpps.service.justice.gov.uk
+      #prison: http://localhost:8082
+      offender-search: http://localhost:8083
+
+
+spring:
+  devtools:
+    add-properties: true
+
+  flyway:
+    url: jdbc:postgresql://localhost:5432/resettlementpassport?sslmode=prefer
+    user: resettlementpassport
+    password: resettlementpassport
+
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/resettlementpassport?sslmode=prefer
+    username: resettlementpassport
+    password: resettlementpassport
+    properties:
+      sslMode: DISABLE
+      sslRootCert:
+
+logging:
+  level:
+    io.r2dbc.postgresql.QUERY: DEBUG # for queries
+    io.r2dbc.postgresql.PARAM: INFO # for parameters
+
+feature:
+  incentives-reference-data-source-of-truth: true

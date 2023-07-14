@@ -1,10 +1,10 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.1.4"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.2.0"
   id("org.springdoc.openapi-gradle-plugin") version "1.6.0"
   id("jacoco")
   id("org.sonarqube") version "4.0.0.2929"
-  kotlin("plugin.spring") version "1.8.21"
-  kotlin("plugin.jpa") version "1.8.21"
+  kotlin("plugin.spring") version "1.8.22"
+  kotlin("plugin.jpa") version "1.8.22"
 }
 
 dependencyCheck {
@@ -56,7 +56,7 @@ dependencies {
   testImplementation("org.awaitility:awaitility-kotlin")
   testImplementation("io.jsonwebtoken:jjwt-impl:0.11.5")
   testImplementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
-  testImplementation("org.mockito:mockito-inline")
+  testImplementation("org.mockito:mockito-inline:4.6.1")
   testImplementation("io.swagger.parser.v3:swagger-parser:2.1.14")
   testImplementation("org.springframework.security:spring-security-test")
   testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:2.35.0")

@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppsresettlementpassportprototypeapi.resource
+package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource
 
 import io.swagger.v3.oas.annotations.Parameter
 import org.springframework.http.MediaType

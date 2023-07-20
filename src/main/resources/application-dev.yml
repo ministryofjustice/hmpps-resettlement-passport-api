@@ -28,9 +28,9 @@ spring:
       ddl-auto: none
 
   datasource:
-    url: 'jdbc:postgresql://localhost:5432/resettlementpassport?sslmode=prefer'
-    username: resettlementpassport
-    password: resettlementpassport
+    url: 'jdbc:postgresql://localhost:5432/resettlement-passport?sslmode=prefer'
+    username: resettlement-passport
+    password: resettlement-passport
     hikari:
       pool-name: Hmpps-Resettlement-Passport
       connectionTimeout: 1000
@@ -38,14 +38,14 @@ spring:
 
   flyway:
     enabled: true
-    url: jdbc:postgresql://localhost:5432/resettlementpassport?sslmode=prefer
-    user: resettlementpassport
-    password: resettlementpassport
+    url: jdbc:postgresql://localhost:5432/resettlement-passport?sslmode=prefer
+    user: resettlement-passport
+    password: resettlement-passport
 
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/resettlementpassport?sslmode=prefer
-    username: resettlementpassport
-    password: resettlementpassport
+    url: r2dbc:postgresql://localhost:5432/resettlement-passport?sslmode=prefer
+    username: resettlement-passport
+    password: resettlement-passport
     properties:
       sslMode: DISABLE
       sslRootCert:

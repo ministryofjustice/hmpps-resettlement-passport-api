@@ -17,6 +17,7 @@ jobs:
       name: hmpps/java
       tag: "19.0"
     steps:
+      - setup_remote_docker
       - checkout
       - restore_cache:
           keys:

@@ -17,6 +17,20 @@ services:
       - API_BASE_URL_PRISON=https://prison-register-dev.hmpps.service.justice.gov.uk
       - API_BASE_URL_OFFENDER_SEARCH=http://prisoner-search:8080
 
+  resettlement-passport-db:
+    image: postgres
+    networks:
+      - hmpps
+    # network_mode: "host"
+    container_name: resettlement-passport-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=resettlement-passport
+      - POSTGRES_USER=resettlement-passport
+      - POSTGRES_DB=resettlement-passport
+
   localstack:
     image: localstack/localstack:0.14.0
     networks:

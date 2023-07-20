@@ -1,4 +1,5 @@
-insert into pathway (id, name, active ) values (1, 'Accomodation', true);
+Alter table pathway alter column name TYPE varchar(100);
+insert into pathway (id, name, active ) values (1, 'Accommodation', true);
 insert into pathway (id, name, active ) values (2, 'Attitudes, thinking and behaviour', true);
 insert into pathway (id, name, active ) values (3, 'Children, families and communities', true);
 insert into pathway (id, name, active ) values (4, 'Drugs and alcohol', true);

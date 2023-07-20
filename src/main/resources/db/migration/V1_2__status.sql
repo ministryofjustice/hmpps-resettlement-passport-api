@@ -1,6 +1,6 @@
 create table status
 (
-    id              numeric  PRIMARY KEY
+    id              numeric
                     constraint status_pkey primary key,
     name            varchar(30)           not null,
     active          bool                  not null default true,

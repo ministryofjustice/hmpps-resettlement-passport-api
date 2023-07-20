@@ -1,6 +1,6 @@
 create table pathway_status
 (
-    id              numeric  PRIMARY KEY
+    id              numeric
         constraint pathway_status_pkey primary key,
     pathway_id        numeric               not null,
     status_id         numeric               not null,

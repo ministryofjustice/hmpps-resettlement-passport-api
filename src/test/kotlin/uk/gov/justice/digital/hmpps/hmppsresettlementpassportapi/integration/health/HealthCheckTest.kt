@@ -1,4 +1,3 @@
-/*
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.health
 
 import org.assertj.core.api.Assertions.assertThat
@@ -66,4 +65,3 @@ class HealthCheckTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo("UP")
   }
 }
-*/

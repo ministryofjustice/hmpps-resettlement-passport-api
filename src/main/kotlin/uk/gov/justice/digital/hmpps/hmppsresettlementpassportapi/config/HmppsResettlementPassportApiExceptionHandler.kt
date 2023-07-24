@@ -6,11 +6,41 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.AuthorizationServiceException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
 class HmppsResettlementPassportApiExceptionHandler {
+
+  @ExceptionHandler(AccessDeniedException::class)
+  fun handleAccessDeniedException(e: AccessDeniedException): ResponseEntity<ErrorResponse> {
+    log.info("Access denied exception: {}", e.message)
+    return ResponseEntity
+      .status(HttpStatus.FORBIDDEN)
+      .body(
+        ErrorResponse(
+          status = HttpStatus.FORBIDDEN.value(),
+          userMessage = "Authentication problem. Check token and roles - ${e.message}",
+          developerMessage = e.message,
+        ),
+      )
+  }
+
+  @ExceptionHandler(AuthorizationServiceException::class)
+  fun handleAuthorizationServiceException(e: AccessDeniedException): ResponseEntity<ErrorResponse> {
+    log.info("Auth service exception: {}", e.message)
+    return ResponseEntity
+      .status(HttpStatus.UNAUTHORIZED)
+      .body(
+        ErrorResponse(
+          status = HttpStatus.UNAUTHORIZED.value(),
+          userMessage = "Authentication problem. Check token and roles - ${e.message}",
+          developerMessage = e.message,
+        ),
+      )
+  }
+
   @ExceptionHandler(ValidationException::class)
   fun handleValidationException(e: Exception): ResponseEntity<ErrorResponse> {
     log.info("Validation exception: {}", e.message)
@@ -20,6 +50,20 @@ class HmppsResettlementPassportApiExceptionHandler {
         ErrorResponse(
           status = BAD_REQUEST,
           userMessage = "Validation failure: ${e.message}",
+          developerMessage = e.message,
+        ),
+      )
+  }
+
+  @ExceptionHandler(ResourceNotFoundException::class)
+  fun handleResourceNotFoundException(e: ResourceNotFoundException): ResponseEntity<ErrorResponse> {
+    log.info("Resource not found exception: {}", e.message)
+    return ResponseEntity
+      .status(HttpStatus.NOT_FOUND)
+      .body(
+        ErrorResponse(
+          status = HttpStatus.NOT_FOUND.value(),
+          userMessage = "Resource not found. Check request parameters - ${e.message}",
           developerMessage = e.message,
         ),
       )
@@ -80,8 +124,6 @@ enum class ErrorCode(val errorCode: Int) {
   PrisonIncentiveLevelDefaultRequired(204),
 }
 
-class NoDataFoundException(id: String) :
-  Exception("No Data found for ID $id")
+open class ResourceNotFoundException(message: String) : RuntimeException(message)
 
-class NoDataWithCodeFoundException(dataType: String, code: String) :
-  Exception("No $dataType found for code `$code`")
+class NoDataWithCodeFoundException(dataType: String, code: String) : ResourceNotFoundException("No $dataType found for code `$code`")

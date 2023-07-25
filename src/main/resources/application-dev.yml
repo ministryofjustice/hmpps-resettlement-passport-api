@@ -10,6 +10,7 @@ api:
       #prison: http://localhost:8082
       offender-search: https://prisoner-offender-search-dev.prison.service.justice.gov.uk
       #offender-search: http://localhost:8083
+      cvl: https://create-and-vary-a-licence-api-dev.hmpps.service.justice.gov.uk
 
 management.endpoint:
   health.cache.time-to-live: 0

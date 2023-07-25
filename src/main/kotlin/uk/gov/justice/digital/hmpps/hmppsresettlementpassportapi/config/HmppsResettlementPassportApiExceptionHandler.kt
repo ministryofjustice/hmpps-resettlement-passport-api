@@ -79,3 +79,9 @@ enum class ErrorCode(val errorCode: Int) {
   PrisonIncentiveLevelNotGloballyActive(203),
   PrisonIncentiveLevelDefaultRequired(204),
 }
+
+class NoDataFoundException(id: String) :
+  Exception("No Data found for ID $id")
+
+class NoDataWithCodeFoundException(dataType: String, code: String) :
+  Exception("No $dataType found for code `$code`")

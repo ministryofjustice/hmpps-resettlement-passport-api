@@ -49,12 +49,10 @@ class LicenceConditionsResourceController(
     @Parameter(required = true)
     offenderId: String,
   ): LicenceConditions? {
-
-    val licence = licenceConditionService.getLicenceByNomisId(offenderId)?:throw NoDataWithCodeFoundException("Offender ", offenderId)
+    val licence = licenceConditionService.getLicenceByNomisId(offenderId) ?: throw NoDataWithCodeFoundException("Offender ", offenderId)
     if (licence != null) {
       return licenceConditionService.getLicenceConditionsByLicenceId(licence.licenceId)
-    };
-    return null;
-
+    }
+    return null
   }
 }

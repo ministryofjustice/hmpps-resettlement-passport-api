@@ -100,7 +100,6 @@ class WebClientConfiguration(
 
   @Bean
   fun cvlWebClient(): WebClient {
-
     val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
     return WebClient.builder()
       .baseUrl(cvlRootUri)

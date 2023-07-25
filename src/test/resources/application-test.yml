@@ -16,6 +16,7 @@ api:
       prison: https://prison-register-dev.hmpps.service.justice.gov.uk
       #prison: http://localhost:8082
       offender-search: http://localhost:8083
+      cvl: https://create-and-vary-a-licence-api-dev.hmpps.service.justice.gov.uk
 
 
 spring:

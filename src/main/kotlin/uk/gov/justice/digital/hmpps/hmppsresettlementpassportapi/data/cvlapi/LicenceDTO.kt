@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.cvlapi
 
-
 data class Licence(
   val id: Long,
   val typeCode: String,
@@ -83,7 +82,7 @@ data class AdditionalCondition(
   val sequence: Int? = null,
   val text: String? = null,
   val expandedText: String? = null,
-  //val data: List<AdditionalConditionData> = emptyList(),
+  // val data: List<AdditionalConditionData> = emptyList(),
   val uploadSummary: List<AdditionalConditionUploadSummary> = emptyList(),
 )
 

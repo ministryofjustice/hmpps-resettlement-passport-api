@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.cvlapi
 
-
 data class LicenceSummary(
   val licenceId: Long,
   val licenceType: String,
@@ -25,7 +24,7 @@ data class LicenceSummary(
   val bookingId: String,
   val dateCreated: String,
   val approvedByName: String? = null,
-  val approvedDate: String? =null,
+  val approvedDate: String? = null,
 )
 
 data class LicenceRequest(

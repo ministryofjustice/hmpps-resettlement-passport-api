@@ -22,5 +22,18 @@ services:
       - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
 
+  resettlement-passport-db:
+    image: postgres
+    networks:
+      - hmpps
+    container_name: resettlement-passport-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=resettlement-passport
+      - POSTGRES_USER=resettlement-passport
+      - POSTGRES_DB=resettlement-passport
+
 networks:
   hmpps:

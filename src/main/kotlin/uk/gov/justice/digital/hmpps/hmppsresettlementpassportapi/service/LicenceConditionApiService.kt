@@ -1,11 +1,14 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 import org.springframework.web.reactive.function.client.bodyToFlow
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.cvlapi.Conditions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.cvlapi.Licence
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.cvlapi.LicenceConditions
@@ -114,5 +117,17 @@ class LicenceConditionApiService(
     licenceConditions.otherLicenseConditions = otherConditionList
 
     return licenceConditions
+  }
+
+  fun getImageFromLicenceIdAndConditionId(licenceId: String, conditionId: String): Flow<ByteArray> = flow {
+    val image = cvlWebClient
+      .get()
+      .uri(
+        "/exclusion-zone/id/$licenceId/condition/id/$conditionId/full-size-image",
+      )
+      .retrieve()
+      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Image not found") })
+      .awaitBody<ByteArray>()
+    emit(image)
   }
 }

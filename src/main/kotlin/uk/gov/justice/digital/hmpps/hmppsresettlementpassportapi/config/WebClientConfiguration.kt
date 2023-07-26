@@ -99,17 +99,7 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun cvlWebClient(): WebClient {
-    val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
-    return WebClient.builder()
-      .baseUrl(cvlRootUri)
-      .clientConnector(ReactorClientHttpConnector(httpClient))
-      .filter(AuthTokenFilterFunction())
-      .build()
-  }
-
-  @Bean
-  fun cvlWebClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+  fun cvlWebClientClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
     val oauth2Client = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
     oauth2Client.setDefaultClientRegistrationId(SYSTEM_USERNAME)
 

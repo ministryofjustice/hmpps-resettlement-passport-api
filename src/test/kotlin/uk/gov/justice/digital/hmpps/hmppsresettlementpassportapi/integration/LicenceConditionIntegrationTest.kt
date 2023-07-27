@@ -143,5 +143,5 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(500)
   }
 
-  //TODO: NotFound NomisID Test to be included.
+  // TODO: NotFound NomisID Test to be included.
 }

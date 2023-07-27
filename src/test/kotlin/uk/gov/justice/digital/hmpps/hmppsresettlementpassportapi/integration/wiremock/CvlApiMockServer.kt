@@ -2,7 +2,10 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wi
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import com.github.tomakehurst.wiremock.client.WireMock.equalToJson
 import com.github.tomakehurst.wiremock.client.WireMock.get
+import com.github.tomakehurst.wiremock.client.WireMock.post
+import java.io.File
 import java.util.Base64
 
 class CvlApiMockServer : WireMockServer(WIREMOCK_PORT) {
@@ -20,6 +23,52 @@ class CvlApiMockServer : WireMockServer(WIREMOCK_PORT) {
             .withBody(
               Base64.getDecoder()
                 .decode(TEST_IMAGE_BASE64),
+            )
+            .withStatus(200)
+        } else {
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody("{\"Error\" : \"$status\"}")
+            .withStatus(status)
+        },
+      ),
+    )
+  }
+  fun stubFindLicencesByNomisId(nomisId: String, status: Int) {
+    val licenceSummaryJSON = File("src/test/resources/testdata/licence-summary.json").inputStream().readBytes().toString(Charsets.UTF_8)
+    val requestJson = "{ \"nomsId\" :  [\"$nomisId\"] }"
+    stubFor(
+      post("/licence/match").withRequestBody(
+        equalToJson(requestJson, true, true),
+      )
+        .willReturn(
+          if (status == 200) {
+            aResponse()
+              .withHeader("Content-Type", "application/json")
+              .withBody(
+                licenceSummaryJSON,
+              )
+              .withStatus(200)
+          } else {
+            aResponse()
+              .withHeader("Content-Type", "application/json")
+              .withBody("{\"Error\" : \"$status\"}")
+              .withStatus(status)
+          },
+        ),
+    )
+  }
+
+  fun stubFetchLicenceConditionsByLicenceId(licenceId: Int, status: Int) {
+    val licenceJSON = File("src/test/resources/testdata/licence.json").inputStream().readBytes().toString(Charsets.UTF_8)
+    licenceJSON.replace("Active", "InActive")
+    stubFor(
+      get("/licence/id/$licenceId").willReturn(
+        if (status == 200) {
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody(
+              licenceJSON,
             )
             .withStatus(200)
         } else {

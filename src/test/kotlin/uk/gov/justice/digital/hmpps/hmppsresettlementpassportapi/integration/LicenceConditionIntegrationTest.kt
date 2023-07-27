@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CvlApiMockServer.Companion.TEST_IMAGE_BASE64
+import java.io.File
 import java.util.Base64
 
 class LicenceConditionIntegrationTest : IntegrationTestBase() {
@@ -79,5 +80,66 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
       .uri("/resettlement-passport/$offenderId/licence-condition/id/$licenceId/condition/$conditionId/image")
       .exchange()
       .expectStatus().isEqualTo(401)
+  }
+
+  @Test
+  fun `Get licence condition from cvl happy path`() {
+    val offenderId = "abc"
+    val expectedOutput = File("src/test/resources/testdata/licence-condition.json").inputStream().readBytes().toString(Charsets.UTF_8)
+    val licenceId = 101
+    cvlApiMockServer.stubFindLicencesByNomisId(offenderId, 200)
+    cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 200)
+    webTestClient.get()
+      .uri("/resettlement-passport/$offenderId/licence-condition")
+      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput)
+  }
+
+  @Test
+  fun `Get licence condition from cvl happy path with no active but dateCreated latest`() {
+    val offenderId = "abc"
+    val expectedOutput = File("src/test/resources/testdata/licence-condition.json").inputStream().readBytes().toString(Charsets.UTF_8)
+    expectedOutput.replace("Active", "InActive", true)
+    val licenceId = 101
+    cvlApiMockServer.stubFindLicencesByNomisId(offenderId, 200)
+    cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 200)
+    webTestClient.get()
+      .uri("/resettlement-passport/$offenderId/licence-condition")
+      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput)
+  }
+
+  @Test
+  fun `Get licence condition from cvl unauthorized`() {
+    val offenderId = "abc"
+
+    // Failing to set a valid Authorization header should result in 401 response
+    webTestClient.get()
+      .uri("/resettlement-passport/$offenderId/licence-condition")
+      .exchange()
+      .expectStatus().isEqualTo(401)
+  }
+
+  @Test
+  fun `Get licence condition from cvl Internal Error`() {
+    val offenderId = "abc"
+    val licenceId = 101
+
+    cvlApiMockServer.stubFindLicencesByNomisId(offenderId, 500)
+    cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 500)
+    webTestClient.get()
+      .uri("/resettlement-passport/$offenderId/licence-condition")
+      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .exchange()
+      .expectStatus().isEqualTo(500)
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(500)
   }
 }

@@ -1,0 +1,59 @@
+{
+  "licenceId": 101,
+  "status": "ACTIVE",
+  "standardLicenceConditions": [
+    {
+      "id": 1001,
+      "image": false,
+      "text": "Be of good behaviour and not behave in a way which undermines the purpose of the licence period."
+    },
+    {
+      "id": 1002,
+      "image": false,
+      "text": "Not commit any offence."
+    },
+    {
+      "id": 1003,
+      "image": false,
+      "text": "Keep in touch with the supervising officer in accordance with instructions given by the supervising officer."
+    }
+  ],
+  "otherLicenseConditions": [
+    {
+      "id": 1007,
+      "image": false,
+      "text": "You must reside overnight within London probation region while of no fixed abode, unless otherwise approved by your supervising officer."
+    },
+    {
+      "id": 1008,
+      "image": true,
+      "text": "Not to enter the area of dsdsds, as defined by the attached map, without the prior approval of your supervising officer."
+    },
+    {
+      "id": 1009,
+      "image": false,
+      "text": "Report to staff at Sasasa at 01:01 am and 01:01 am Daily, unless otherwise authorised by your supervising officer. This condition will be reviewed by your supervising officer on a monthly basis and may be amended or removed if it is felt that the level of risk you present has reduced appropriately."
+    },
+    {
+      "id": 1010,
+      "image": false,
+      "text": "Attend a location, as required by your supervising officer, to give a sample of oral fluid / urine in order to test whether you have any specified Class A and specified Class B drugs in your body, for the purpose of ensuring that you are complying with the condition of your licence requiring you to be of good behaviour. Do not take any action that could hamper or frustrate the drug testing process."
+    },
+    {
+      "id": 1011,
+      "image": false,
+      "text": "Allow person(s) as designated by your supervising officer to install an electronic monitoring tag on you and access to install any associated equipment in your property, and for the purpose of ensuring that equipment is functioning correctly. You must not damage or tamper with these devices and ensure that the tag is charged, and report to your supervising officer and the EM provider immediately if the tag or the associated equipment are not working correctly. This will be for the purpose of monitoring your [INSERT TYPES OF CONDITIONS TO BE ELECTRONICALLY MONITORED HERE] licence condition(s) unless otherwise authorised by your supervising officer."
+    },
+    {
+      "id": 1012,
+      "image": false,
+      "text": "You will be subject to trail monitoring. Your whereabouts will be electronically monitored by GPS Satellite Tagging, ending on [INSERT END DATE], and you must cooperate with the monitoring as directed by your supervising officer unless otherwise authorised by your supervising officer."
+    },
+    {
+      "id": 1013,
+      "image": false,
+      "text": "You must let the police search you if they ask. You must also let them search a vehicle you are with, like a car or a motorbike."
+    }
+
+  ]
+}

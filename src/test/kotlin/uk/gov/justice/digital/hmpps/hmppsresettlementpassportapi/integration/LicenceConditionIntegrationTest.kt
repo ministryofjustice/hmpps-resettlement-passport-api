@@ -85,7 +85,7 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get licence condition from cvl happy path`() {
     val offenderId = "abc"
-    val expectedOutput = File("src/test/resources/testdata/licence-condition.json").inputStream().readBytes().toString(Charsets.UTF_8)
+    val expectedOutput = File("src/test/resources/testdata/licence-condition/licence-condition.json").inputStream().readBytes().toString(Charsets.UTF_8)
     val licenceId = 101
     cvlApiMockServer.stubFindLicencesByNomisId(offenderId, 200)
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 200)

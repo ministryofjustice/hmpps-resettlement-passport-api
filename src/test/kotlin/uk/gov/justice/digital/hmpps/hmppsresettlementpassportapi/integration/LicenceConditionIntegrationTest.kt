@@ -101,7 +101,7 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get licence condition from cvl happy path with no active but dateCreated latest`() {
     val prisonerId = "abc"
-    val expectedOutput = File("src/test/resources/testdata/licence-condition.json").inputStream().readBytes().toString(Charsets.UTF_8)
+    val expectedOutput = File("src/test/resources/testdata/licence-condition/licence-condition.json").inputStream().readBytes().toString(Charsets.UTF_8)
     expectedOutput.replace("Active", "InActive", true)
     val licenceId = 101
     cvlApiMockServer.stubFindLicencesByNomisId(prisonerId, 200)
@@ -142,4 +142,6 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .jsonPath("status").isEqualTo(500)
   }
+
+  //TODO: NotFound NomisID Test to be included.
 }

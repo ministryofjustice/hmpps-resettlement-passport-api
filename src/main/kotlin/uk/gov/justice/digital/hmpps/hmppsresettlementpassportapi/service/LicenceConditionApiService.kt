@@ -91,21 +91,9 @@ class LicenceConditionApiService(
       }
     }
 
-    val standardPssConditions = licence.standardPssConditions
-    if (standardPssConditions != null) {
-      for (item in standardPssConditions) {
-        standardConditionList.add(Conditions(item.id, false, item.text))
-      }
-    }
-
     val additionalLicenceConditions = licence.additionalLicenceConditions
     for (item in additionalLicenceConditions) {
-      otherConditionList.add(Conditions(item.id, item.uploadSummary.isNotEmpty(), item.text))
-    }
-
-    val additionalPssConditions = licence.additionalPssConditions
-    for (item in additionalPssConditions) {
-      otherConditionList.add(Conditions(item.id, item.uploadSummary.isNotEmpty(), item.text))
+      otherConditionList.add(Conditions(item.id, item.uploadSummary.isNotEmpty(), item.expandedText))
     }
 
     val beSpokeConditions = licence.bespokeConditions

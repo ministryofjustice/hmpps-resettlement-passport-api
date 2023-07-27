@@ -20,12 +20,12 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.Licence
 
 @RestController
 @Validated
-@RequestMapping("/resettlement-passport", produces = [MediaType.APPLICATION_JSON_VALUE, MediaType.IMAGE_JPEG_VALUE])
+@RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE, MediaType.IMAGE_JPEG_VALUE])
 class LicenceConditionResourceController(
   private val licenceConditionApiService: LicenceConditionApiService,
 ) {
 
-  @GetMapping("/{offenderId}/licence-condition", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @GetMapping("/{prisonerId}/licence-condition", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
     summary = "Get all Licence conditions available",
     description = "All Licence Conditions Details for the given Prisoner Id.",
@@ -54,19 +54,19 @@ class LicenceConditionResourceController(
     ],
   )
   suspend fun getLicenceConditionByNomisId(
-    @PathVariable("offenderId")
+    @PathVariable("prisonerId")
     @Parameter(required = true)
-    offenderId: String,
+    prisonerId: String,
   ): LicenceConditions? {
-    val licence = licenceConditionApiService.getLicenceByNomisId(offenderId) ?: throw NoDataWithCodeFoundException(
-      "Offender",
-      offenderId,
+    val licence = licenceConditionApiService.getLicenceByNomisId(prisonerId) ?: throw NoDataWithCodeFoundException(
+      "Prisoner",
+      prisonerId,
     )
     return licenceConditionApiService.getLicenceConditionsByLicenceId(licence.licenceId)
   }
 
   @GetMapping(
-    "/{offenderId}/licence-condition/id/{licenceId}/condition/{conditionId}/image",
+    "/{prisonerId}/licence-condition/id/{licenceId}/condition/{conditionId}/image",
     produces = [MediaType.IMAGE_JPEG_VALUE, MediaType.APPLICATION_JSON_VALUE],
   )
   @Operation(
@@ -105,9 +105,9 @@ class LicenceConditionResourceController(
     ],
   )
   suspend fun getLicenceConditionImage(
-    @PathVariable("offenderId")
+    @PathVariable("prisonerId")
     @Parameter(required = true)
-    offenderId: String,
+    prisonerId: String,
     @PathVariable("licenceId")
     @Parameter(required = true)
     licenceId: String,

@@ -10,14 +10,14 @@ import java.util.Base64
 class LicenceConditionIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get image from licence condition happy path`() {
-    val offenderId = "abc"
+    val prisonerId = "abc"
     val licenceId = "123"
     val conditionId = "456"
     val expectedOutput = Base64.getDecoder().decode(TEST_IMAGE_BASE64)
 
     cvlApiMockServer.stubGetImageFromLicenceIdAndConditionId(licenceId, conditionId, 200)
     webTestClient.get()
-      .uri("/resettlement-passport/$offenderId/licence-condition/id/$licenceId/condition/$conditionId/image")
+      .uri("/resettlement-passport/prisoner/$prisonerId/licence-condition/id/$licenceId/condition/$conditionId/image")
       .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
       .exchange()
       .expectStatus().isOk
@@ -29,13 +29,13 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Get image from licence condition not found`() {
-    val offenderId = "abc"
+    val prisonerId = "abc"
     val licenceId = "123"
     val conditionId = "456"
 
     cvlApiMockServer.stubGetImageFromLicenceIdAndConditionId(licenceId, conditionId, 404)
     webTestClient.get()
-      .uri("/resettlement-passport/$offenderId/licence-condition/id/$licenceId/condition/$conditionId/image")
+      .uri("/resettlement-passport/prisoner/$prisonerId/licence-condition/id/$licenceId/condition/$conditionId/image")
       .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
       .exchange()
       .expectStatus().isNotFound
@@ -50,13 +50,13 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Get image from licence condition internal error`() {
-    val offenderId = "abc"
+    val prisonerId = "abc"
     val licenceId = "123"
     val conditionId = "456"
 
     cvlApiMockServer.stubGetImageFromLicenceIdAndConditionId(licenceId, conditionId, 500)
     webTestClient.get()
-      .uri("/resettlement-passport/$offenderId/licence-condition/id/$licenceId/condition/$conditionId/image")
+      .uri("/resettlement-passport/prisoner/$prisonerId/licence-condition/id/$licenceId/condition/$conditionId/image")
       .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
       .exchange()
       .expectStatus().isEqualTo(500)
@@ -71,26 +71,26 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Get image from licence unauthorized`() {
-    val offenderId = "abc"
+    val prisonerId = "abc"
     val licenceId = "123"
     val conditionId = "456"
 
     // Failing to set a valid Authorization header should result in 401 response
     webTestClient.get()
-      .uri("/resettlement-passport/$offenderId/licence-condition/id/$licenceId/condition/$conditionId/image")
+      .uri("/resettlement-passport/prisoner/$prisonerId/licence-condition/id/$licenceId/condition/$conditionId/image")
       .exchange()
       .expectStatus().isEqualTo(401)
   }
 
   @Test
   fun `Get licence condition from cvl happy path`() {
-    val offenderId = "abc"
+    val prisonerId = "abc"
     val expectedOutput = File("src/test/resources/testdata/licence-condition/licence-condition.json").inputStream().readBytes().toString(Charsets.UTF_8)
     val licenceId = 101
-    cvlApiMockServer.stubFindLicencesByNomisId(offenderId, 200)
+    cvlApiMockServer.stubFindLicencesByNomisId(prisonerId, 200)
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 200)
     webTestClient.get()
-      .uri("/resettlement-passport/$offenderId/licence-condition")
+      .uri("/resettlement-passport/prisoner/$prisonerId/licence-condition")
       .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
       .exchange()
       .expectStatus().isOk
@@ -100,14 +100,14 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Get licence condition from cvl happy path with no active but dateCreated latest`() {
-    val offenderId = "abc"
+    val prisonerId = "abc"
     val expectedOutput = File("src/test/resources/testdata/licence-condition.json").inputStream().readBytes().toString(Charsets.UTF_8)
     expectedOutput.replace("Active", "InActive", true)
     val licenceId = 101
-    cvlApiMockServer.stubFindLicencesByNomisId(offenderId, 200)
+    cvlApiMockServer.stubFindLicencesByNomisId(prisonerId, 200)
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 200)
     webTestClient.get()
-      .uri("/resettlement-passport/$offenderId/licence-condition")
+      .uri("/resettlement-passport/prisoner/$prisonerId/licence-condition")
       .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
       .exchange()
       .expectStatus().isOk
@@ -117,24 +117,24 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Get licence condition from cvl unauthorized`() {
-    val offenderId = "abc"
+    val prisonerId = "abc"
 
     // Failing to set a valid Authorization header should result in 401 response
     webTestClient.get()
-      .uri("/resettlement-passport/$offenderId/licence-condition")
+      .uri("/resettlement-passport/prisoner/$prisonerId/licence-condition")
       .exchange()
       .expectStatus().isEqualTo(401)
   }
 
   @Test
   fun `Get licence condition from cvl Internal Error`() {
-    val offenderId = "abc"
+    val prisonerId = "abc"
     val licenceId = 101
 
-    cvlApiMockServer.stubFindLicencesByNomisId(offenderId, 500)
+    cvlApiMockServer.stubFindLicencesByNomisId(prisonerId, 500)
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 500)
     webTestClient.get()
-      .uri("/resettlement-passport/$offenderId/licence-condition")
+      .uri("/resettlement-passport/prisoner/$prisonerId/licence-condition")
       .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
       .exchange()
       .expectStatus().isEqualTo(500)

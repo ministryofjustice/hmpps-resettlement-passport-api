@@ -19,11 +19,11 @@ import java.time.format.DateTimeFormatter
 
 @Service
 class LicenceConditionApiService(
-  private val cvlWebClient: WebClient,
+  private val cvlWebClientClientCredentials: WebClient,
 ) {
 
   suspend fun findLicencesByNomisId(nomisId: List<String>): Flow<LicenceSummary> =
-    cvlWebClient.post()
+    cvlWebClientClientCredentials.post()
       .uri("/licence/match")
       .bodyValue(
         LicenceRequest(
@@ -67,7 +67,7 @@ class LicenceConditionApiService(
   }
 
   suspend fun fetchLicenceConditionsByLicenceId(licenceId: Long): Licence =
-    cvlWebClient.get()
+    cvlWebClientClientCredentials.get()
       .uri(
         "/licence/id/{licenceId}",
         mapOf(
@@ -120,7 +120,7 @@ class LicenceConditionApiService(
   }
 
   fun getImageFromLicenceIdAndConditionId(licenceId: String, conditionId: String): Flow<ByteArray> = flow {
-    val image = cvlWebClient
+    val image = cvlWebClientClientCredentials
       .get()
       .uri(
         "/exclusion-zone/id/$licenceId/condition/id/$conditionId/full-size-image",

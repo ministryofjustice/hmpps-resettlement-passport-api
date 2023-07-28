@@ -143,5 +143,19 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(500)
   }
 
-  // TODO: NotFound NomisID Test to be included.
+  @Test
+  fun `Get licence condition from cvl when prisonerId not found`() {
+    val prisonerId = "abc"
+    val licenceId = 101
+
+    cvlApiMockServer.stubFindLicencesByNomisId(prisonerId, 404)
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$prisonerId/licence-condition")
+      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .exchange()
+      .expectStatus().isEqualTo(404)
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(404)
+  }
 }

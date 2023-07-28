@@ -35,14 +35,17 @@ class CvlApiMockServer : WireMockServer(WIREMOCK_PORT) {
     )
   }
   fun stubFindLicencesByNomisId(nomisId: String, status: Int) {
-    val licenceSummaryJSON = File("src/test/resources/testdata/licence-condition/licence-summary.json").inputStream().readBytes().toString(Charsets.UTF_8)
+    var licenceSummaryJSON = File("src/test/resources/testdata/licence-condition/licence-summary.json").inputStream().readBytes().toString(Charsets.UTF_8)
+    if (status == 404) {
+      licenceSummaryJSON = " [] "
+    }
     val requestJson = "{ \"nomsId\" :  [\"$nomisId\"] }"
     stubFor(
       post("/licence/match").withRequestBody(
         equalToJson(requestJson, true, true),
       )
         .willReturn(
-          if (status == 200) {
+          if (status == 200 || status == 404) {
             aResponse()
               .withHeader("Content-Type", "application/json")
               .withBody(

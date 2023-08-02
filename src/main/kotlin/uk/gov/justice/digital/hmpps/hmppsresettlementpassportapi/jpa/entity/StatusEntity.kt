@@ -1,0 +1,31 @@
+package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity
+
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+import jakarta.persistence.Table
+import java.time.LocalDateTime
+
+@Entity
+@Table(name = "status")
+data class StatusEntity(
+  @Id
+  val id: Long,
+
+  @Column
+  val name: String,
+
+  @Column
+  val active: Boolean,
+
+  @Column(name = "creation_date")
+  val creationDate: LocalDateTime,
+)
+
+enum class Status(val id: Long) {
+  NOT_STARTED(1),
+  SUPPORT_DECLINED(2),
+  IN_PROGRESS(3),
+  INCOMPLETE(4),
+  COMPLETE(5),
+}

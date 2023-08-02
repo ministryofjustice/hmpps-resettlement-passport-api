@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import org.springframework.security.config.web.server.ServerHttpSecurity
@@ -11,7 +11,7 @@ import org.springframework.security.web.server.SecurityWebFilterChain
 @Configuration
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity(useAuthorizationManager = false)
-@EnableR2dbcRepositories
+@EnableJpaRepositories("uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository")
 class ResourceServerConfiguration {
 
   @Bean

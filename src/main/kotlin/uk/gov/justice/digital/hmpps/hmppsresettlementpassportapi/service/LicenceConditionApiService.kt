@@ -9,9 +9,9 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 import org.springframework.web.reactive.function.client.bodyToFlow
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.cvlapi.Conditions
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Conditions
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceConditions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.cvlapi.Licence
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.cvlapi.LicenceConditions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.cvlapi.LicenceRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.cvlapi.LicenceSummary
 import java.time.LocalDateTime

@@ -43,13 +43,5 @@ spring:
     user: resettlement-passport
     password: resettlement-passport
 
-  r2dbc:
-    url: r2dbc:postgresql://localhost:5432/resettlement-passport?sslmode=prefer
-    username: resettlement-passport
-    password: resettlement-passport
-    properties:
-      sslMode: DISABLE
-      sslRootCert:
-
   feature-toggles:
     afine: true

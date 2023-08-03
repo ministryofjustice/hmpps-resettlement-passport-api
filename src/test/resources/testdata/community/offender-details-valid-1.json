@@ -1,0 +1,120 @@
+{
+  "offenderId": 0,
+  "title": "Mr",
+  "firstName": "John",
+  "middleNames": [
+    "string"
+  ],
+  "surname": "Smith",
+  "previousSurname": "Davis",
+  "Preferred name or commonly known as": "Bob",
+  "dateOfBirth": "1982-10-24",
+  "gender": "Male",
+  "otherIds": {
+    "crn": "DEF5678",
+    "pncNumber": "2004/0712343H",
+    "croNumber": "123456/04A",
+    "niNumber": "AA112233B",
+    "nomsNumber": "ABC1234",
+    "immigrationNumber": "A1234567",
+    "mostRecentPrisonerNumber": "G12345"
+  },
+  "contactDetails": {
+    "phoneNumbers": [
+      {
+        "type": "TELEPHONE",
+        "number": "string"
+      }
+    ],
+    "emailAddresses": [
+      "string"
+    ],
+    "allowSMS": true
+  },
+  "offenderProfile": {
+    "ethnicity": "string",
+    "nationality": "string",
+    "secondaryNationality": "string",
+    "notes": "string",
+    "immigrationStatus": "string",
+    "offenderLanguages": {
+      "primaryLanguage": "string",
+      "otherLanguages": [
+        "string"
+      ],
+      "languageConcerns": "string",
+      "requiresInterpreter": true
+    },
+    "religion": "string",
+    "sexualOrientation": "string",
+    "offenderDetails": "string",
+    "remandStatus": "string",
+    "previousConviction": {
+      "convictionDate": "2023-08-03",
+      "detail": {
+        "additionalProp1": "string",
+        "additionalProp2": "string",
+        "additionalProp3": "string"
+      }
+    },
+    "riskColour": "string",
+    "disabilities": [
+      {
+        "disabilityId": 0,
+        "disabilityType": {
+          "Code": "ABC123",
+          "Description": "Some description"
+        },
+        "disabilityCondition": {
+          "Code": "ABC123",
+          "Description": "Some description"
+        },
+        "startDate": "2023-08-03",
+        "endDate": "2023-08-03",
+        "notes": "string",
+        "provisions": [
+          {
+            "provisionId": 0,
+            "notes": "string",
+            "startDate": "2023-08-03",
+            "finishDate": "2023-08-03",
+            "provisionType": {
+              "Code": "ABC123",
+              "Description": "Some description"
+            },
+            "category": {
+              "Code": "ABC123",
+              "Description": "Some description"
+            }
+          }
+        ],
+        "Date time when disability was last updated": "2020-09-20T11:00:00",
+        "isActive": true
+      }
+    ],
+    "provisions": [
+      {
+        "provisionId": 0,
+        "notes": "string",
+        "startDate": "2023-08-03",
+        "finishDate": "2023-08-03",
+        "provisionType": {
+          "Code": "ABC123",
+          "Description": "Some description"
+        },
+        "category": {
+          "Code": "ABC123",
+          "Description": "Some description"
+        }
+      }
+    ],
+    "Gender identity": "Prefer to self-describe",
+    "Self described gender identity": "Jedi"
+  },
+  "softDeleted": true,
+  "currentDisposal": "1",
+  "partitionArea": "National Data",
+  "currentRestriction": true,
+  "currentExclusion": true,
+  "activeProbationManagedSentence": true
+}

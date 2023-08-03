@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.cvlapi
+package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 data class LicenceConditions(
   var licenceId: Long?,
   var status: String?,

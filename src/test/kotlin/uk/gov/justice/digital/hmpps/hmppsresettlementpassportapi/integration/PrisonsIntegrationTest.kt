@@ -40,4 +40,42 @@ class PrisonsIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .jsonPath("status").isEqualTo(500)
   }
+
+  @Test
+  fun `Get All Prisons happy path`() {
+    val expectedJson = """
+      [{"id": "AKI", "name": "Acklington (HMP)", "active": true }, {"id": "SWI", "name": "Swansea (HMP & YOI)", "active": false }]
+    """.trimIndent()
+    prisonApiMockServer.stubPrisonList(200)
+    webTestClient.get()
+      .uri("/resettlement-passport/prisons/all")
+      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedJson, true)
+  }
+
+  @Test
+  fun `Get All Prisons unauthorized`() {
+    // Failing to set a valid Authorization header should result in 401 response
+    webTestClient.get()
+      .uri("/resettlement-passport/prisons/all")
+      .exchange()
+      .expectStatus().isEqualTo(401)
+  }
+
+  @Test
+  fun `Get All Prisons  Internal Error`() {
+    prisonApiMockServer.stubPrisonList(500)
+    webTestClient.get()
+      .uri("/resettlement-passport/prisons/all")
+      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .exchange()
+      .expectStatus().isEqualTo(500)
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(500)
+  }
 }

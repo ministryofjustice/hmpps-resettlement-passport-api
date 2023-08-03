@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prison
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PrisonApiService
 
 @RestController
@@ -35,7 +36,7 @@ class PrisonResourceController(
       ),
     ],
   )
-  suspend fun getPrisons(): MutableList<uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prison> = prisonService.getPrisonsList()
+  suspend fun getPrisons(): MutableList<Prison> = prisonService.getPrisonsList()
 
   @GetMapping("/active")
   @Operation(summary = "Get all active prisons", description = "All active prisons")
@@ -52,5 +53,5 @@ class PrisonResourceController(
       ),
     ],
   )
-  suspend fun getPrisonsActive(): MutableList<uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prison> = prisonService.getActivePrisonsList()
+  suspend fun getPrisonsActive(): MutableList<Prison> = prisonService.getActivePrisonsList()
 }

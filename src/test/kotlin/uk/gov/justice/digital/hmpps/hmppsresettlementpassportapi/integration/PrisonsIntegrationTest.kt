@@ -1,21 +1,13 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
 import org.junit.jupiter.api.Test
-import org.springframework.test.web.reactive.server.expectBody
 
 class PrisonsIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get All Active Prisons happy path`() {
     val expectedJson = """
-      [
-                  {
-                    "id": "AKI",
-                    "name": "Acklington (HMP)",
-                    "active": true
-                  }
-                ]
-    """
-
+      [{"id": "AKI", "name": "Acklington (HMP)", "active": true }]
+    """.trimIndent()
     prisonApiMockServer.stubPrisonList(200)
     webTestClient.get()
       .uri("/resettlement-passport/prisons/active")

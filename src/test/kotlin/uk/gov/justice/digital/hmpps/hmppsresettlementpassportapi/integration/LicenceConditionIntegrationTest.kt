@@ -146,7 +146,6 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get licence condition from cvl when prisonerId not found`() {
     val prisonerId = "abc"
-    val licenceId = 101
 
     cvlApiMockServer.stubFindLicencesByNomisId(prisonerId, 404)
     webTestClient.get()

@@ -33,6 +33,8 @@ generic-service:
       RESETTLEMENT_PASSPORT_API_CLIENT_ID: "SYSTEM_CLIENT_ID"
       RESETTLEMENT_PASSPORT_API_CLIENT_SECRET: "SYSTEM_CLIENT_SECRET"
     rds-postgresql-instance-output:
+      DATABASE_USERNAME: "database_username"
+      DATABASE_PASSWORD: "database_password"
       SPRING_FLYWAY_USER: "database_username"
       SPRING_FLYWAY_PASSWORD: "database_password"
       DATABASE_NAME: "database_name"

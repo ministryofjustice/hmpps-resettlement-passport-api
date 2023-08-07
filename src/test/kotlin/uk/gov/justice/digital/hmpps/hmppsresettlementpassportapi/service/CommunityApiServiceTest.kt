@@ -1,0 +1,80 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
+package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
+
+import com.google.common.io.Resources
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
+import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientResponseException
+
+class CommunityApiServiceTest {
+
+  private val mockWebServer: MockWebServer = MockWebServer()
+  private lateinit var communityApiService: CommunityApiService
+
+  @BeforeEach
+  fun beforeAll() {
+    mockWebServer.start()
+    val webClient = WebClient.create(mockWebServer.url("/").toUrl().toString())
+    communityApiService = CommunityApiService(webClient)
+  }
+
+  @AfterEach
+  fun afterAll() {
+    mockWebServer.shutdown()
+  }
+
+  @Test
+  fun `test get CRN happy path full json`() = runTest {
+    val nomsId = "ABC1234"
+    val expectedCrn = "DEF5678"
+
+    val mockedJsonResponse = Resources.getResource("testdata/community/offender-details-valid-1.json").readText()
+    mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
+
+    Assertions.assertEquals(expectedCrn, communityApiService.findCrn(nomsId))
+  }
+
+  @Test
+  fun `test get CRN happy path min json`() = runTest {
+    val nomsId = "ABC1234"
+    val expectedCrn = "DEF5678"
+
+    val mockedJsonResponse = Resources.getResource("testdata/community/offender-details-valid-2.json").readText()
+    mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
+
+    Assertions.assertEquals(expectedCrn, communityApiService.findCrn(nomsId))
+  }
+
+  @Test
+  fun `test get CRN no data`() = runTest {
+    val nomsId = "ABC1234"
+
+    mockWebServer.enqueue(MockResponse().setBody("{}").addHeader("Content-Type", "application/json"))
+    Assertions.assertNull(communityApiService.findCrn(nomsId))
+  }
+
+  @Test
+  fun `test get CRN 404 error upstream`() = runTest {
+    val nomsId = "ABC1234"
+
+    mockWebServer.enqueue(MockResponse().setBody("{}").addHeader("Content-Type", "application/json").setResponseCode(404))
+    assertThrows<WebClientResponseException> { communityApiService.findCrn(nomsId) }
+  }
+
+  @Test
+  fun `test get CRN 500 error upstream`() = runTest {
+    val nomsId = "ABC1234"
+
+    mockWebServer.enqueue(MockResponse().setBody("{}").addHeader("Content-Type", "application/json").setResponseCode(500))
+    assertThrows<WebClientResponseException> { communityApiService.findCrn(nomsId) }
+  }
+}

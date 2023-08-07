@@ -15,6 +15,7 @@ api:
       prison: http://localhost:8093
       offender-search: http://localhost:8094
       cvl: http://localhost:8095
+      community: http://localhost:8096
 
 spring:
   devtools:

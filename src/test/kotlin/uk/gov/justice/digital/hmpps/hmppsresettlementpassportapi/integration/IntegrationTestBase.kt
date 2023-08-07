@@ -10,6 +10,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBase
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CommunityApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CvlApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonApiMockServer
@@ -34,6 +35,9 @@ abstract class IntegrationTestBase : TestBase() {
     @JvmField
     val cvlApiMockServer = CvlApiMockServer()
 
+    @JvmField
+    val communityApiMockServer = CommunityApiMockServer()
+
     @BeforeAll
     @JvmStatic
     fun startMocks() {
@@ -41,6 +45,7 @@ abstract class IntegrationTestBase : TestBase() {
       hmppsAuthMockServer.stubGrantToken()
       prisonApiMockServer.start()
       cvlApiMockServer.start()
+      communityApiMockServer.start()
     }
 
     @AfterAll

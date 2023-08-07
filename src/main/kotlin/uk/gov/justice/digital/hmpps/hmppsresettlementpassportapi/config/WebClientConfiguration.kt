@@ -61,27 +61,6 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun offenderSearchWebClient(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
-    val oauth2Client = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
-    oauth2Client.setDefaultClientRegistrationId(SYSTEM_USERNAME)
-
-    val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
-    return WebClient.builder()
-      .baseUrl(offenderSearchUri)
-      .clientConnector(ReactorClientHttpConnector(httpClient))
-      .filter(oauth2Client)
-      .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }
-      .build()
-  }
-
-  @Bean
-  fun offenderSearchHealthWebClient(): WebClient {
-    return WebClient.builder()
-      .baseUrl(offenderSearchUri)
-      .build()
-  }
-
-  @Bean
   fun authorizedClientManager(
     clientRegistrationRepository: ReactiveClientRegistrationRepository,
     oAuth2AuthorizedClientService: ReactiveOAuth2AuthorizedClientService,
@@ -106,6 +85,20 @@ class WebClientConfiguration(
     val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
     return WebClient.builder()
       .baseUrl(cvlRootUri)
+      .clientConnector(ReactorClientHttpConnector(httpClient))
+      .filter(oauth2Client)
+      .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }
+      .build()
+  }
+
+  @Bean
+  fun offendersSearchWebClientClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+    val oauth2Client = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
+    oauth2Client.setDefaultClientRegistrationId(SYSTEM_USERNAME)
+
+    val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
+    return WebClient.builder()
+      .baseUrl(offenderSearchUri)
       .clientConnector(ReactorClientHttpConnector(httpClient))
       .filter(oauth2Client)
       .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }

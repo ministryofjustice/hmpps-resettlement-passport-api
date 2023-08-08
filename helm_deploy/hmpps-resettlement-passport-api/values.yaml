@@ -52,3 +52,8 @@ generic-service:
 
 generic-prometheus-alerts:
   targetApplication: hmpps-resettlement-passport-api
+
+# List of stubs to deploy (for testing only). Add wiremock mappings/__files into files/stubs/<stub-name>/
+# Override in values-dev.yaml
+# Also update the environment variables to point the application to the mocked services (on port 80) e.g. http://cvl-stub-api
+deploy_stubs: []

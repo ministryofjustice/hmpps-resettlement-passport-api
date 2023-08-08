@@ -35,5 +35,25 @@ services:
       - POSTGRES_USER=resettlement-passport
       - POSTGRES_DB=resettlement-passport
 
+  cvl-stub:
+    image: wiremock/wiremock
+    networks:
+      - hmpps
+    container_name: cvl-api-stub
+    ports:
+      - "8081:8080"
+    volumes:
+      - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/cvl-api:/home/wiremock:ro"
+
+  community-api-stub:
+    image: wiremock/wiremock
+    networks:
+      - hmpps
+    container_name: community-api-stub
+    ports:
+      - "8082:8080"
+    volumes:
+      - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/community-api:/home/wiremock:ro"
+
 networks:
   hmpps:

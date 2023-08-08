@@ -10,12 +10,12 @@ data class Prisoners(
   val releaseDate: LocalDate? = null,
   val releaseType: String? = null,
   val lastUpdatedDate: LocalDate? = null,
-  val status : List<PathwayStatus>?= ArrayList(),
+  var status: List<PathwayStatus>? = ArrayList(),
 )
 
-data class PathwayStatus (
-  val pathway: String?=null,
-  val status: String?=null,
+data class PathwayStatus(
+  val pathway: String? = null,
+  val status: String? = null,
 )
 data class PrisonerRequest(
   val earliestReleaseDate: String,

@@ -12,10 +12,14 @@ generic-service:
     API_BASE_URL_OAUTH: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
     API_BASE_URL_PRISON: https://prison-register-dev.hmpps.service.justice.gov.uk
     API_BASE_URL_OFFENDER-SEARCH: https://prisoner-offender-search-dev.prison.service.justice.gov.uk
-    API_BASE_URL_CVL: https://create-and-vary-a-licence-api-dev.hmpps.service.justice.gov.uk
-    API_BASE_URL_COMMUNITY: https://community-api.test.probation.service.justice.gov.uk
+    API_BASE_URL_CVL: http://cvl-api-stub
+    API_BASE_URL_COMMUNITY: http://community-api-stub
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts
 generic-prometheus-alerts:
   alertSeverity: digital-prison-service-dev
+
+deploy_stubs:
+  - cvl-api
+  - community-api

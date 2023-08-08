@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/secure/offenders/nomsNumber/G4274GN"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "getOffenderByNomsNumber-200-tc1-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

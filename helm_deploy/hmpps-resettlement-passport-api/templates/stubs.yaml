@@ -1,0 +1,57 @@
+{{- range $stub := .Values.deploy_stubs }}
+{{- $filesGlob := printf "files/stubs/%s/__files/*" $stub }}
+{{- $mappingsGlob := printf "files/stubs/%s/mappings/*" $stub }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $stub }}-stub-data-files
+data:
+{{ ($.Files.Glob $filesGlob).AsConfig | indent 2 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $stub }}-stub-data-mappings
+data:
+{{ ($.Files.Glob $mappingsGlob).AsConfig | indent 2 }}
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ $stub }}-stub
+  labels:
+    app.kubernetes.io/name: {{ $stub }}-stub
+spec:
+  securityContext:
+    runAsUser: 1000
+  containers:
+    - name: {{ $stub }}-stub
+      image: wiremock/wiremock
+      ports:
+        - containerPort: 8080
+      volumeMounts:
+        - name: files-volume
+          mountPath: /home/wiremock/__files
+        - name: mappings-volume
+          mountPath: /home/wiremock/mappings
+  volumes:
+    - name: files-volume
+      configMap:
+        name: {{ $stub }}-stub-data-files
+    - name: mappings-volume
+      configMap:
+        name: {{ $stub }}-stub-data-mappings
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $stub }}-stub
+spec:
+  selector:
+    app.kubernetes.io/name: {{ $stub }}-stub
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+{{- end }}

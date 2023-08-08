@@ -6,31 +6,25 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
-import kotlinx.coroutines.flow.Flow
-import org.springdoc.core.annotations.ParameterObject
-import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Sort
-import org.springframework.data.web.PageableDefault
 import org.springframework.http.MediaType
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonapi.OffendersList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.OffenderSearchApiService
 
 @RestController
 @Validated
-@RequestMapping("/hmpps", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/resettlement-passport", produces = [MediaType.APPLICATION_JSON_VALUE])
 class OffenderSearchResourceController(
   private val offenderSearchService: OffenderSearchApiService,
 ) {
 
   @GetMapping("/prison/{prisonId}/prisoners", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Get all prisoners by search term", description = "All prisoners data based on search term")
+  @Operation(summary = "Get all prisoners by prison Id", description = "All prisoners data based on prison Id")
   @ApiResponses(
     value = [
       ApiResponse(
@@ -49,15 +43,58 @@ class OffenderSearchResourceController(
       ),
     ],
   )
-  suspend fun getPrisonerbyTerm(
+  suspend fun getPrisonersbyPrisonId(
+    @Schema(description = "Prison id", example = "MDI", required = true, minLength = 3, maxLength = 6)
     @PathVariable("prisonId")
     @Parameter(required = true)
     prisonId: String,
-    @RequestParam(value = "term", required = false, defaultValue = "")
-    @Parameter(description = "The primary search term. Whe absent all prisoners will be returned at the prison", example = "john smith")
-    term: String,
-    @ParameterObject
-    @PageableDefault(sort = ["lastName", "firstName", "prisonerNumber"], direction = Sort.Direction.ASC)
-    pageable: Pageable,
-  ): Flow<OffendersList> = offenderSearchService.getOffendersBySearchTerm(prisonId, term, pageable)
+    @Schema(description = "Zero-based page index (0..N)", example = "0", required = true)
+    @Parameter(required = true)
+    page: Int,
+    @Schema(description = "The size of the page to be returned", example = "10", required = true)
+    @Parameter(required = true)
+    size: Int,
+    @Schema(example = "releaseDate,ASC | releaseDate,DESC")
+    @Parameter(required = true, description = "Sorting criteria in the format: property,(asc|desc) property supported are firstName, lastName, releaseDate and prisonerNumber")
+    sort: String,
+  ): PrisonersSearchList = offenderSearchService.getPrisonersByPrisonId(false, prisonId, 0, page, size, sort)
+
+  @GetMapping("/prison/{prisonId}/offenders", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(summary = "Get all prisoners by prison Id", description = "All prisoners data based on prison Id")
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "400",
+        description = "Incorrect information provided to perform prisoner match",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  suspend fun getOffendersbyPrisonId(
+    @Schema(description = "Prison id", example = "MDI", required = true, minLength = 3, maxLength = 6)
+    @PathVariable("prisonId")
+    @Parameter(required = true)
+    prisonId: String,
+    @Schema(description = "Number of days from today's date", example = "90", required = true)
+    @Parameter(required = true)
+    days: Int,
+    @Schema(description = "Zero-based page index (0..N)", example = "0", required = true)
+    @Parameter(required = true)
+    page: Int,
+    @Schema(description = "The size of the page to be returned", example = "10", required = true)
+    @Parameter(required = true)
+    size: Int,
+    @Schema(example = "releaseDate,ASC | releaseDate,DESC")
+    @Parameter(required = true, description = "Sorting criteria in the format: property,(asc|desc) property supported are firstName, lastName, releaseDate and prisonerNumber")
+    sort: String,
+  ): PrisonersSearchList = offenderSearchService.getPrisonersByPrisonId(true, prisonId, days.toLong(), page, size, sort)
 }

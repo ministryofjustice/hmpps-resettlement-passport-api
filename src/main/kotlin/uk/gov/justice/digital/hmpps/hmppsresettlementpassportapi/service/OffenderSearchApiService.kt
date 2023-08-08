@@ -2,50 +2,113 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonapi.OffendersList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonerRequest
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Service
 class OffenderSearchApiService(
-  private val offenderSearchWebClient: WebClient,
+  private val offendersSearchWebClientClientCredentials: WebClient,
 ) {
 
-  fun findOffendersBySearchTerm(prisonId: String, term: String = "", pageable: Pageable): Flow<OffendersList> = flow {
-    // var page = 0
-    // do {
-    val pageOfData = offenderSearchWebClient.get()
-      .uri(
-        "/prison/{prisonId}/prisoners?term={term}&size={size}&page={page}&sort={sort}",
-        mapOf(
-          "prisonId" to prisonId,
-          "term" to term,
-          "size" to pageable.pageSize, // NB: API allows up 3,000 results per page
-          "page" to pageable.pageNumber,
-          "sort" to "prisonerNumber,ASC",
-        ),
-      )
-      .retrieve()
-      .awaitBody<OffendersList>()
-    emit(pageOfData)
-    //  page += 1
-    //  } while (!pageOfData.last)
+  fun findPrisonersBySearchTerm(prisonId: String): Flow<List<PrisonersSearch>> = flow {
+    var page = 0
+    do {
+      val pageOfData = offendersSearchWebClientClientCredentials.get()
+        .uri(
+          "/prison/{prisonId}/prisoners?size={size}&page={page}&sort={sort}",
+          mapOf(
+            "prisonId" to prisonId,
+            "size" to 500, // NB: API allows up 3,000 results per page
+            "page" to page,
+            "sort" to "prisonerNumber,ASC",
+          ),
+        )
+        .retrieve()
+        .awaitBody<PrisonersSearchList>()
+      emit(pageOfData.content!!)
+      page += 1
+    } while (!pageOfData.last)
+  }
+
+  fun findPrisonersByReleaseDate(prisonId: String, earliestReleaseDate: String, latestReleaseDate: String, prisonIds: List<String>): Flow<List<PrisonersSearch>> = flow {
+    var page = 0
+    do {
+      val pageOfData = offendersSearchWebClientClientCredentials.post()
+        .uri(
+          "/prisoner-search/release-date-by-prison?size={size}&page={page}&sort={sort}",
+          mapOf(
+            "prisonId" to prisonId,
+            "size" to 50, // NB: API allows up 3,000 results per page
+            "page" to page,
+            "sort" to "releaseDate,ASC",
+          ),
+        ).bodyValue(
+          PrisonerRequest(
+            earliestReleaseDate = earliestReleaseDate,
+            latestReleaseDate = latestReleaseDate,
+            prisonIds = prisonIds,
+          ),
+        )
+        .retrieve()
+        .awaitBody<PrisonersSearchList>()
+      emit(pageOfData.content!!)
+      page += 1
+    } while (!pageOfData.last)
   }
 
   /**
-   * Searches for offenders in a prison using term firstName or LastName  (e.g. ARC)
+   * Searches for offenders in a prison using prison ID  (e.g. MDI)
    * returning a complete list.
    * Requires role PRISONER_IN_PRISON_SEARCH or PRISONER_SEARCH
    */
-  suspend fun getOffendersBySearchTerm(prisonId: String, term: String = "", pageable: Pageable): Flow<OffendersList> {
-    /*val offenders = mutableListOf<Offenders>()
-    findOffendersBySearchTerm(prisonId, term, pageable).collect {
-      offenders.addAll(it)
+  suspend fun getPrisonersByPrisonId(dateRangeAPI: Boolean, prisonId: String, days: Long, pageNumber: Int, pageSize: Int, sort: String): PrisonersSearchList {
+    val offenders = mutableListOf<PrisonersSearch>()
+    if (dateRangeAPI) {
+      val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+      val earliestReleaseDate = LocalDate.now().minusDays(days).format(pattern)
+      val latestReleaseDate = LocalDate.now().plusDays(days).format(pattern)
+      val prisonIds = ArrayList<String>()
+      prisonIds.add(prisonId)
+      findPrisonersByReleaseDate(
+        prisonId,
+        earliestReleaseDate.toString(),
+        latestReleaseDate.toString(),
+        prisonIds,
+      ).collect {
+        offenders.addAll(it)
+      }
+    } else {
+      findPrisonersBySearchTerm(prisonId).collect {
+        offenders.addAll(it)
+      }
     }
-    return offenders
-    */
-    return findOffendersBySearchTerm(prisonId, term, pageable)
+
+    when (sort) {
+      "releaseDate,ASC" -> offenders.sortBy { it.releaseDate }
+      "firstName,ASC" -> offenders.sortBy { it.firstName }
+      "lastName,ASC" -> offenders.sortBy { it.lastName }
+      "prisonerNumber,ASC" -> offenders.sortBy { it.prisonerNumber }
+      "releaseDate,DESC" -> offenders.sortByDescending { it.releaseDate }
+      "firstName,DESC" -> offenders.sortByDescending { it.firstName }
+      "lastName,DESC" -> offenders.sortByDescending { it.lastName }
+      "prisonerNumber,DESC" -> offenders.sortByDescending { it.prisonerNumber }
+    }
+
+    val startIndex = (pageNumber * pageSize)
+    val endIndex = (pageNumber * pageSize) + (pageSize)
+    if (startIndex < endIndex && endIndex <= offenders.size) {
+      val searchList = offenders.subList(startIndex, endIndex)
+      return PrisonersSearchList(searchList, searchList.toList().size, pageNumber, sort, offenders.size, (endIndex == offenders.size))
+    } else if (startIndex < endIndex) {
+      val searchList = offenders.subList(startIndex, offenders.size)
+      return PrisonersSearchList(searchList, searchList.toList().size, pageNumber, sort, offenders.size, true)
+    }
+    return PrisonersSearchList(null, null, null, null, 0, false)
   }
 }

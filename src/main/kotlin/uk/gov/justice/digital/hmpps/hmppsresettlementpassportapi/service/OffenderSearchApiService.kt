@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.flow
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
@@ -75,6 +76,11 @@ class OffenderSearchApiService(
   suspend fun getPrisonersByPrisonId(dateRangeAPI: Boolean, prisonId: String, days: Long, pageNumber: Int, pageSize: Int, sort: String): PrisonersList {
     val offenders = mutableListOf<PrisonersSearch>()
     // val prisoners = mutableListOf<Prisoners>()
+    if (pageNumber <0 || pageSize<0 )
+      throw NoDataWithCodeFoundException(
+        "Data",
+        "Page $pageNumber and Size $pageSize",
+      )
     if (dateRangeAPI) {
       val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd")
       val earliestReleaseDate = LocalDate.now().minusDays(days).format(pattern)

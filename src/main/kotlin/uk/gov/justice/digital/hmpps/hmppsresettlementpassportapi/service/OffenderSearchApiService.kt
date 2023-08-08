@@ -5,16 +5,17 @@ import kotlinx.coroutines.flow.flow
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonerRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.stream.Collectors
 
 @Service
 class OffenderSearchApiService(
@@ -75,11 +76,7 @@ class OffenderSearchApiService(
    */
   suspend fun getPrisonersByPrisonId(dateRangeAPI: Boolean, prisonId: String, days: Long, pageNumber: Int, pageSize: Int, sort: String): PrisonersList {
     val offenders = mutableListOf<PrisonersSearch>()
-    if (pageNumber <0 || pageSize<0 )
-      throw NoDataWithCodeFoundException(
-        "Data",
-        "Page $pageNumber and Size $pageSize",
-      )
+    val prisoners = mutableListOf<Prisoners>()
     if (dateRangeAPI) {
       val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd")
       val earliestReleaseDate = LocalDate.now().minusDays(days).format(pattern)
@@ -121,41 +118,28 @@ class OffenderSearchApiService(
 
 
     val endIndex = (pageNumber * pageSize) + (pageSize)
+    val prisonerList = ArrayList<Prisoners>()
     if (startIndex < endIndex && endIndex <= offenders.size) {
       val searchList = offenders.subList(startIndex, endIndex)
-      val pList: List<Prisoners> = objectMapper(searchList)
-      return PrisonersList(pList, pList.toList().size, pageNumber, sort, offenders.size, (endIndex == pList.size))
+      searchList.forEach {
+        val prisoner = Prisoners(it.prisonerNumber,it.firstName, it.middleNames, it.lastName, it.releaseDate, it.nonDtoReleaseDateType )
+        //PathwayStatus to be Included.
+        prisonerList.add(prisoner);
+      }
+      return PrisonersList(prisonerList, prisonerList.toList().size, pageNumber, sort, prisonerList.size, (endIndex == prisonerList.size))
     } else if (startIndex < endIndex) {
       val searchList = offenders.subList(startIndex, offenders.size)
-      val pList: List<Prisoners> = objectMapper(searchList)
-      return PrisonersList(pList, pList.toList().size, pageNumber, sort, offenders.size, true)
+      //val pathwayList = Pathway.values();
+      //val pathwayStatusList = List<PathwayStatus>
+
+      searchList.forEach {
+        val prisoner = Prisoners(it.prisonerNumber,it.firstName, it.middleNames, it.lastName, it.releaseDate, it.nonDtoReleaseDateType )
+        //PathwayStatus to be Included.
+       //prisoner.status =
+        prisonerList.add(prisoner);
+      }
+      return PrisonersList(prisonerList, prisonerList.toList().size, pageNumber, sort, prisonerList.size, true)
     }
     return PrisonersList(null, null, null, null, 0, false)
-  }
-
-  private fun objectMapper(searchList: List<PrisonersSearch>): List<Prisoners> {
-    val prisonersList = mutableListOf<Prisoners>()
-    val pathwayRepoData = pathwayRepository.findAll()
-    searchList.forEach {
-      val prisoner = Prisoners(
-        it.prisonerNumber,
-        it.firstName,
-        it.middleNames,
-        it.lastName,
-        it.releaseDate,
-        it.nonDtoReleaseDateType,
-      )
-      val argStatus = ArrayList<PathwayStatus>()
-
-      pathwayRepoData.forEach {
-        if (it.active) {
-          val pathwayStatus = PathwayStatus(it.name, "Not Started")
-          argStatus.add(pathwayStatus)
-        }
-      }
-      prisoner.status = argStatus
-      prisonersList.add(prisoner)
-    }
-    return prisonersList
   }
 }

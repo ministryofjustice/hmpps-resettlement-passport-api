@@ -75,6 +75,7 @@ class OffenderSearchApiService(
    */
   suspend fun getPrisonersByPrisonId(dateRangeAPI: Boolean, prisonId: String, days: Long, pageNumber: Int, pageSize: Int, sort: String): PrisonersList {
     val offenders = mutableListOf<PrisonersSearch>()
+    // val prisoners = mutableListOf<Prisoners>()
     if (pageNumber <0 || pageSize<0 )
       throw NoDataWithCodeFoundException(
         "Data",

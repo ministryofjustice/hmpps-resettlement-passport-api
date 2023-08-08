@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.OffenderSearchApiService
 
@@ -57,7 +58,7 @@ class OffenderSearchResourceController(
     @Schema(example = "releaseDate,ASC | releaseDate,DESC")
     @Parameter(required = true, description = "Sorting criteria in the format: property,(asc|desc) property supported are firstName, lastName, releaseDate and prisonerNumber")
     sort: String,
-  ): PrisonersSearchList = offenderSearchService.getPrisonersByPrisonId(false, prisonId, 0, page, size, sort)
+  ): PrisonersList = offenderSearchService.getPrisonersByPrisonId(false, prisonId, 0, page, size, sort)
 
   @GetMapping("/prison/{prisonId}/offenders", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get all prisoners by prison Id", description = "All prisoners data based on prison Id")
@@ -96,5 +97,5 @@ class OffenderSearchResourceController(
     @Schema(example = "releaseDate,ASC | releaseDate,DESC")
     @Parameter(required = true, description = "Sorting criteria in the format: property,(asc|desc) property supported are firstName, lastName, releaseDate and prisonerNumber")
     sort: String,
-  ): PrisonersSearchList = offenderSearchService.getPrisonersByPrisonId(true, prisonId, days.toLong(), page, size, sort)
+  ): PrisonersList = offenderSearchService.getPrisonersByPrisonId(true, prisonId, days.toLong(), page, size, sort)
 }

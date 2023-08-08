@@ -5,11 +5,17 @@ import kotlinx.coroutines.flow.flow
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonerRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.stream.Collectors
 
 @Service
 class OffenderSearchApiService(
@@ -67,8 +73,9 @@ class OffenderSearchApiService(
    * returning a complete list.
    * Requires role PRISONER_IN_PRISON_SEARCH or PRISONER_SEARCH
    */
-  suspend fun getPrisonersByPrisonId(dateRangeAPI: Boolean, prisonId: String, days: Long, pageNumber: Int, pageSize: Int, sort: String): PrisonersSearchList {
+  suspend fun getPrisonersByPrisonId(dateRangeAPI: Boolean, prisonId: String, days: Long, pageNumber: Int, pageSize: Int, sort: String): PrisonersList {
     val offenders = mutableListOf<PrisonersSearch>()
+    val prisoners = mutableListOf<Prisoners>()
     if (dateRangeAPI) {
       val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd")
       val earliestReleaseDate = LocalDate.now().minusDays(days).format(pattern)
@@ -102,13 +109,28 @@ class OffenderSearchApiService(
 
     val startIndex = (pageNumber * pageSize)
     val endIndex = (pageNumber * pageSize) + (pageSize)
+    val prisonerList = ArrayList<Prisoners>()
     if (startIndex < endIndex && endIndex <= offenders.size) {
       val searchList = offenders.subList(startIndex, endIndex)
-      return PrisonersSearchList(searchList, searchList.toList().size, pageNumber, sort, offenders.size, (endIndex == offenders.size))
+      searchList.forEach {
+        val prisoner = Prisoners(it.prisonerNumber,it.firstName, it.middleNames, it.lastName, it.releaseDate, it.nonDtoReleaseDateType )
+        //PathwayStatus to be Included.
+        prisonerList.add(prisoner);
+      }
+      return PrisonersList(prisonerList, prisonerList.toList().size, pageNumber, sort, prisonerList.size, (endIndex == prisonerList.size))
     } else if (startIndex < endIndex) {
       val searchList = offenders.subList(startIndex, offenders.size)
-      return PrisonersSearchList(searchList, searchList.toList().size, pageNumber, sort, offenders.size, true)
+      //val pathwayList = Pathway.values();
+      //val pathwayStatusList = List<PathwayStatus>
+
+      searchList.forEach {
+        val prisoner = Prisoners(it.prisonerNumber,it.firstName, it.middleNames, it.lastName, it.releaseDate, it.nonDtoReleaseDateType )
+        //PathwayStatus to be Included.
+       //prisoner.status =
+        prisonerList.add(prisoner);
+      }
+      return PrisonersList(prisonerList, prisonerList.toList().size, pageNumber, sort, prisonerList.size, true)
     }
-    return PrisonersSearchList(null, null, null, null, 0, false)
+    return PrisonersList(null, null, null, null, 0, false)
   }
 }

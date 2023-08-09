@@ -32,7 +32,7 @@ class OffenderSearchApiService(
             "prisonId" to prisonId,
             "size" to 500, // NB: API allows up 3,000 results per page
             "page" to page,
-            "sort" to "prisonerNumber,ASC",
+            "sort" to "prisonerNumber",
           ),
         )
         .retrieve()
@@ -75,13 +75,13 @@ class OffenderSearchApiService(
    */
   suspend fun getPrisonersByPrisonId(dateRangeAPI: Boolean, prisonId: String, days: Long, pageNumber: Int, pageSize: Int, sort: String): PrisonersList {
     val offenders = mutableListOf<PrisonersSearch>()
-    // val prisoners = mutableListOf<Prisoners>()
-    if (pageNumber < 0 || pageSize < 0) {
+    if (pageNumber < 0 || pageSize <= 0) {
       throw NoDataWithCodeFoundException(
         "Data",
         "Page $pageNumber and Size $pageSize",
       )
     }
+
     if (dateRangeAPI) {
       val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd")
       val earliestReleaseDate = LocalDate.now().minusDays(days).format(pattern)
@@ -111,7 +111,7 @@ class OffenderSearchApiService(
     }
 
     when (sort) {
-      "releaseDate,ASC" -> offenders.sortBy { it.releaseDate }
+      "releaseDate,ASC"  -> offenders.sortBy { it.releaseDate }
       "firstName,ASC" -> offenders.sortBy { it.firstName }
       "lastName,ASC" -> offenders.sortBy { it.lastName }
       "prisonerNumber,ASC" -> offenders.sortBy { it.prisonerNumber }
@@ -119,6 +119,10 @@ class OffenderSearchApiService(
       "firstName,DESC" -> offenders.sortByDescending { it.firstName }
       "lastName,DESC" -> offenders.sortByDescending { it.lastName }
       "prisonerNumber,DESC" -> offenders.sortByDescending { it.prisonerNumber }
+      else -> throw NoDataWithCodeFoundException(
+        "Data",
+        "Sort value Invalid",
+        )
     }
 
     val endIndex = (pageNumber * pageSize) + (pageSize)

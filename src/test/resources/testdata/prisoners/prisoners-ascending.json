@@ -1,0 +1,399 @@
+{
+  "content": [
+    {
+      "prisonerNumber": "A8314DY",
+      "firstName": "CHAIM",
+      "middleNames": null,
+      "lastName": "WITTKOPP",
+      "releaseDate": "2023-07-01",
+      "releaseType": "CRD",
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "Accommodation",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Attitudes, thinking and behaviour",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Children, families and communities",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Drugs and alcohol",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Education, skills and work",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Finance and ID",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Health",
+          "status": "Not Started"
+        }
+      ]
+    },
+    {
+      "prisonerNumber": "A8229DY",
+      "firstName": "STEPHEN",
+      "middleNames": null,
+      "lastName": "MCVEIGH",
+      "releaseDate": "2023-07-01",
+      "releaseType": "CRD",
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "Accommodation",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Attitudes, thinking and behaviour",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Children, families and communities",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Drugs and alcohol",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Education, skills and work",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Finance and ID",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Health",
+          "status": "Not Started"
+        }
+      ]
+    },
+    {
+      "prisonerNumber": "A8257DY",
+      "firstName": "GLENN",
+      "middleNames": null,
+      "lastName": "MCGRATH",
+      "releaseDate": "2023-08-28",
+      "releaseType": "CRD",
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "Accommodation",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Attitudes, thinking and behaviour",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Children, families and communities",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Drugs and alcohol",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Education, skills and work",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Finance and ID",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Health",
+          "status": "Not Started"
+        }
+      ]
+    },
+    {
+      "prisonerNumber": "A8258DY",
+      "firstName": "COBBIE",
+      "middleNames": null,
+      "lastName": "FEDDER",
+      "releaseDate": "2023-09-15",
+      "releaseType": "CRD",
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "Accommodation",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Attitudes, thinking and behaviour",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Children, families and communities",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Drugs and alcohol",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Education, skills and work",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Finance and ID",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Health",
+          "status": "Not Started"
+        }
+      ]
+    },
+    {
+      "prisonerNumber": "A8132DY",
+      "firstName": "GEORGE",
+      "middleNames": null,
+      "lastName": "HAMILTON",
+      "releaseDate": "2023-10-23",
+      "releaseType": "CRD",
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "Accommodation",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Attitudes, thinking and behaviour",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Children, families and communities",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Drugs and alcohol",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Education, skills and work",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Finance and ID",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Health",
+          "status": "Not Started"
+        }
+      ]
+    },
+    {
+      "prisonerNumber": "A8339DY",
+      "firstName": "MR",
+      "middleNames": "BRIDGILLA",
+      "lastName": "CRD-LR-TEST",
+      "releaseDate": "2023-11-11",
+      "releaseType": "PRRD",
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "Accommodation",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Attitudes, thinking and behaviour",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Children, families and communities",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Drugs and alcohol",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Education, skills and work",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Finance and ID",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Health",
+          "status": "Not Started"
+        }
+      ]
+    },
+    {
+      "prisonerNumber": "G1458GV",
+      "firstName": "FINN",
+      "middleNames": "CHANDLEVIEVE",
+      "lastName": "CRAWFIS",
+      "releaseDate": "2023-12-12",
+      "releaseType": "CRD",
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "Accommodation",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Attitudes, thinking and behaviour",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Children, families and communities",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Drugs and alcohol",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Education, skills and work",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Finance and ID",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Health",
+          "status": "Not Started"
+        }
+      ]
+    },
+    {
+      "prisonerNumber": "G6335VX",
+      "firstName": "GARRETT",
+      "middleNames": "SYLVANNA",
+      "lastName": "COUTCHER",
+      "releaseDate": "2024-05-11",
+      "releaseType": "PRRD",
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "Accommodation",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Attitudes, thinking and behaviour",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Children, families and communities",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Drugs and alcohol",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Education, skills and work",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Finance and ID",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Health",
+          "status": "Not Started"
+        }
+      ]
+    },
+    {
+      "prisonerNumber": "G6628UE",
+      "firstName": "ALLIE",
+      "middleNames": "MARCISHA",
+      "lastName": "COSNER",
+      "releaseDate": "2024-07-31",
+      "releaseType": "CRD",
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "Accommodation",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Attitudes, thinking and behaviour",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Children, families and communities",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Drugs and alcohol",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Education, skills and work",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Finance and ID",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Health",
+          "status": "Not Started"
+        }
+      ]
+    },
+    {
+      "prisonerNumber": "G6933GF",
+      "firstName": "BUSTER",
+      "middleNames": "CHRISTABERT HECTUR",
+      "lastName": "CORALLO",
+      "releaseDate": "2024-08-02",
+      "releaseType": "CRD",
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "Accommodation",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Attitudes, thinking and behaviour",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Children, families and communities",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Drugs and alcohol",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Education, skills and work",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Finance and ID",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Health",
+          "status": "Not Started"
+        }
+      ]
+    }
+  ],
+  "pageSize": 10,
+  "page": 0,
+  "sortName": "releaseDate,ASC",
+  "totalElements": 10,
+  "last": true
+}

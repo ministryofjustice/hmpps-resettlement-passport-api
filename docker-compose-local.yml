@@ -55,5 +55,15 @@ services:
     volumes:
       - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/community-api:/home/wiremock:ro"
 
+  prison-register-api-stub:
+    image: wiremock/wiremock
+    networks:
+      - hmpps
+    container_name: prison-register-api-stub
+    ports:
+      - "8083:8080"
+    volumes:
+      - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/prison-register-api:/home/wiremock:ro"
+
 networks:
   hmpps:

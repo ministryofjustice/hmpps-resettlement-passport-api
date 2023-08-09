@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.flow
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
@@ -31,7 +32,7 @@ class OffenderSearchApiService(
             "prisonId" to prisonId,
             "size" to 500, // NB: API allows up 3,000 results per page
             "page" to page,
-            "sort" to "prisonerNumber,ASC",
+            "sort" to "prisonerNumber",
           ),
         )
         .retrieve()
@@ -74,7 +75,12 @@ class OffenderSearchApiService(
    */
   suspend fun getPrisonersByPrisonId(dateRangeAPI: Boolean, prisonId: String, days: Long, pageNumber: Int, pageSize: Int, sort: String): PrisonersList {
     val offenders = mutableListOf<PrisonersSearch>()
-    // val prisoners = mutableListOf<Prisoners>()
+    if (pageNumber < 0 || pageSize <= 0) {
+      throw NoDataWithCodeFoundException(
+        "Data",
+        "Page $pageNumber and Size $pageSize",
+      )
+    }
     if (dateRangeAPI) {
       val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd")
       val earliestReleaseDate = LocalDate.now().minusDays(days).format(pattern)
@@ -95,6 +101,14 @@ class OffenderSearchApiService(
       }
     }
 
+    val startIndex = (pageNumber * pageSize)
+    if (startIndex > offenders.size) {
+      throw NoDataWithCodeFoundException(
+        "Data",
+        "Page $pageNumber",
+      )
+    }
+
     when (sort) {
       "releaseDate,ASC" -> offenders.sortBy { it.releaseDate }
       "firstName,ASC" -> offenders.sortBy { it.firstName }
@@ -104,9 +118,12 @@ class OffenderSearchApiService(
       "firstName,DESC" -> offenders.sortByDescending { it.firstName }
       "lastName,DESC" -> offenders.sortByDescending { it.lastName }
       "prisonerNumber,DESC" -> offenders.sortByDescending { it.prisonerNumber }
+      else -> throw NoDataWithCodeFoundException(
+        "Data",
+        "Sort value Invalid",
+      )
     }
 
-    val startIndex = (pageNumber * pageSize)
     val endIndex = (pageNumber * pageSize) + (pageSize)
     if (startIndex < endIndex && endIndex <= offenders.size) {
       val searchList = offenders.subList(startIndex, endIndex)

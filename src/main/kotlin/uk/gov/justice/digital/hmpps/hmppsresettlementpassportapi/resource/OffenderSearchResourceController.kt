@@ -44,15 +44,15 @@ class OffenderSearchResourceController(
     ],
   )
   suspend fun getPrisonersbyPrisonId(
-    @Schema(description = "Prison id", example = "MDI", required = true, minLength = 3, maxLength = 6)
+    @Schema(example = "MDI", required = true, minLength = 3, maxLength = 6)
     @PathVariable("prisonId")
     @Parameter(required = true)
     prisonId: String,
-    @Schema(description = "Zero-based page index (0..N)", example = "0", required = true)
-    @Parameter(required = true)
+    @Schema(example = "0", required = true)
+    @Parameter(required = true, description = "Zero-based page index (0..N)")
     page: Int,
-    @Schema(description = "The size of the page to be returned", example = "10", required = true)
-    @Parameter(required = true)
+    @Schema(example = "10", required = true)
+    @Parameter(required = true, description = "The size of the page to be returned")
     size: Int,
     @Schema(example = "releaseDate,ASC | releaseDate,DESC")
     @Parameter(required = true, description = "Sorting criteria in the format: property,(asc|desc) property supported are firstName, lastName, releaseDate and prisonerNumber")
@@ -80,18 +80,18 @@ class OffenderSearchResourceController(
     ],
   )
   suspend fun getOffendersbyPrisonId(
-    @Schema(description = "Prison id", example = "MDI", required = true, minLength = 3, maxLength = 6)
+    @Schema(example = "MDI", required = true, minLength = 3, maxLength = 6)
     @PathVariable("prisonId")
     @Parameter(required = true)
     prisonId: String,
-    @Schema(description = "Number of days from today's date", example = "90", required = true)
-    @Parameter(required = true)
+    @Schema(example = "90", required = true)
+    @Parameter(description = "Number of days from today's date", required = true)
     days: Int,
-    @Schema(description = "Zero-based page index (0..N)", example = "0", required = true)
-    @Parameter(required = true)
+    @Schema(example = "0", required = true)
+    @Parameter(required = true, description = "Zero-based page index (0..N)")
     page: Int,
-    @Schema(description = "The size of the page to be returned", example = "10", required = true)
-    @Parameter(required = true)
+    @Schema(example = "10", required = true)
+    @Parameter(required = true, description = "The size of the page to be returned")
     size: Int,
     @Schema(example = "releaseDate,ASC | releaseDate,DESC")
     @Parameter(required = true, description = "Sorting criteria in the format: property,(asc|desc) property supported are firstName, lastName, releaseDate and prisonerNumber")

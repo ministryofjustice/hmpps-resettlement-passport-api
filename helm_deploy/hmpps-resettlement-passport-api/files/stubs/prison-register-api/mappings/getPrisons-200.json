@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/prisons"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "getPrisons-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

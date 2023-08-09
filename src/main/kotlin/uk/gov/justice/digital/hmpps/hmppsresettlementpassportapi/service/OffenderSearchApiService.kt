@@ -110,7 +110,7 @@ class OffenderSearchApiService(
     }
 
     when (sort) {
-      "releaseDate,ASC"  -> offenders.sortBy { it.releaseDate }
+      "releaseDate,ASC" -> offenders.sortBy { it.releaseDate }
       "firstName,ASC" -> offenders.sortBy { it.firstName }
       "lastName,ASC" -> offenders.sortBy { it.lastName }
       "prisonerNumber,ASC" -> offenders.sortBy { it.prisonerNumber }
@@ -121,7 +121,7 @@ class OffenderSearchApiService(
       else -> throw NoDataWithCodeFoundException(
         "Data",
         "Sort value Invalid",
-        )
+      )
     }
 
     val endIndex = (pageNumber * pageSize) + (pageSize)

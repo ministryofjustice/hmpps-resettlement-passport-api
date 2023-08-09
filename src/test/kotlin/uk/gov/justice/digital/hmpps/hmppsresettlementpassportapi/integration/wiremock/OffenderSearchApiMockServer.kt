@@ -10,7 +10,7 @@ class OffenderSearchApiMockServer : WireMockServer(WIREMOCK_PORT) {
     private const val WIREMOCK_PORT = 8094
   }
 
-  fun stubGetPrisonersList(prisonId: String, size:Int, page: Int, status: Int) {
+  fun stubGetPrisonersList(prisonId: String, size: Int, page: Int, status: Int) {
     val prisonersListJSON = File("src/test/resources/testdata/prisoners/prisoner-offender-search.json").inputStream().readBytes().toString(Charsets.UTF_8)
     stubFor(
       get("/prison/$prisonId/prisoners?size=$size&page=$page&sort=prisonerNumber").willReturn(

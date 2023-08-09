@@ -10,7 +10,11 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBase
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.*
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CommunityApiMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CvlApiMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.HmppsAuthMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.OffenderSearchApiMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonApiMockServer
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")

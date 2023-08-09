@@ -81,7 +81,6 @@ class OffenderSearchApiService(
         "Page $pageNumber and Size $pageSize",
       )
     }
-
     if (dateRangeAPI) {
       val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd")
       val earliestReleaseDate = LocalDate.now().minusDays(days).format(pattern)

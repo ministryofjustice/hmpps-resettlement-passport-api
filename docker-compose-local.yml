@@ -79,5 +79,16 @@ services:
     volumes:
       - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/arn-api:/home/wiremock:ro"
 
+  prisoner-offender-search-api-stub:
+    image: wiremock/wiremock
+    command: "--global-response-templating --verbose"
+    networks:
+      - hmpps
+    container_name: prisoner-offender-search-api-stub
+    ports:
+      - "8085:8080"
+    volumes:
+      - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/prisoner-offender-search-api:/home/wiremock:ro"
+
 networks:
   hmpps:

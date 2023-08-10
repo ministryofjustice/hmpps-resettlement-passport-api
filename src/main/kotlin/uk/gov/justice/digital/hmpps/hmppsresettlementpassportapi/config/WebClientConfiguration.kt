@@ -22,6 +22,7 @@ class WebClientConfiguration(
   @Value("\${api.base.url.offender-search}") private val offenderSearchUri: String,
   @Value("\${api.base.url.cvl}") private val cvlRootUri: String,
   @Value("\${api.base.url.community}") private val communityRootUri: String,
+  @Value("\${api.base.url.arn}") private val arnRootUri: String,
 ) {
 
   @Bean
@@ -114,6 +115,20 @@ class WebClientConfiguration(
     val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
     return WebClient.builder()
       .baseUrl(offenderSearchUri)
+      .clientConnector(ReactorClientHttpConnector(httpClient))
+      .filter(oauth2Client)
+      .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }
+      .build()
+  }
+
+  @Bean
+  fun arnWebClientClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+    val oauth2Client = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
+    oauth2Client.setDefaultClientRegistrationId(SYSTEM_USERNAME)
+
+    val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
+    return WebClient.builder()
+      .baseUrl(arnRootUri)
       .clientConnector(ReactorClientHttpConnector(httpClient))
       .filter(oauth2Client)
       .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }

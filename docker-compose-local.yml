@@ -37,6 +37,7 @@ services:
 
   cvl-stub:
     image: wiremock/wiremock
+    command: "--global-response-templating --verbose"
     networks:
       - hmpps
     container_name: cvl-api-stub
@@ -47,6 +48,7 @@ services:
 
   community-api-stub:
     image: wiremock/wiremock
+    command: "--global-response-templating --verbose"
     networks:
       - hmpps
     container_name: community-api-stub
@@ -57,6 +59,7 @@ services:
 
   prison-register-api-stub:
     image: wiremock/wiremock
+    command: "--global-response-templating --verbose"
     networks:
       - hmpps
     container_name: prison-register-api-stub
@@ -64,6 +67,17 @@ services:
       - "8083:8080"
     volumes:
       - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/prison-register-api:/home/wiremock:ro"
+
+  arn-api-stub:
+    image: wiremock/wiremock
+    command: "--global-response-templating --verbose"
+    networks:
+      - hmpps
+    container_name: arn-api-stub
+    ports:
+      - "8084:8080"
+    volumes:
+      - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/arn-api:/home/wiremock:ro"
 
 networks:
   hmpps:

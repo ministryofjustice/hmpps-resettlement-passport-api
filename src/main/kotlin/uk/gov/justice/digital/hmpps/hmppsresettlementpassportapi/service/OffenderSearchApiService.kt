@@ -102,7 +102,7 @@ class OffenderSearchApiService(
     }
 
     val startIndex = (pageNumber * pageSize)
-    if (startIndex > offenders.size) {
+    if (startIndex >= offenders.size) {
       throw NoDataWithCodeFoundException(
         "Data",
         "Page $pageNumber",
@@ -128,7 +128,7 @@ class OffenderSearchApiService(
     if (startIndex < endIndex && endIndex <= offenders.size) {
       val searchList = offenders.subList(startIndex, endIndex)
       val pList: List<Prisoners> = objectMapper(searchList)
-      return PrisonersList(pList, pList.toList().size, pageNumber, sort, offenders.size, (endIndex == pList.size))
+      return PrisonersList(pList, pList.toList().size, pageNumber, sort, offenders.size, (endIndex == offenders.size))
     } else if (startIndex < endIndex) {
       val searchList = offenders.subList(startIndex, offenders.size)
       val pList: List<Prisoners> = objectMapper(searchList)

@@ -9,8 +9,8 @@ api:
       #oauth: http://localhost:9090/auth
       prison: http://localhost:8083
       #prison: https://prison-register-dev.hmpps.service.justice.gov.uk
-      offender-search: https://prisoner-offender-search-dev.prison.service.justice.gov.uk
-      #offender-search: http://localhost:8083
+      #offender-search: https://prisoner-offender-search-dev.prison.service.justice.gov.uk
+      offender-search: http://localhost:8085
       cvl: http://localhost:8081
       #cvl: https://create-and-vary-a-licence-api-dev.hmpps.service.justice.gov.uk
       community: http://localhost:8082

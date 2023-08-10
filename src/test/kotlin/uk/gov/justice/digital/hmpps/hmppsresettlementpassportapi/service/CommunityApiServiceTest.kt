@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 
 class CommunityApiServiceTest {
 
@@ -21,14 +22,14 @@ class CommunityApiServiceTest {
   private lateinit var communityApiService: CommunityApiService
 
   @BeforeEach
-  fun beforeAll() {
+  fun beforeEach() {
     mockWebServer.start()
     val webClient = WebClient.create(mockWebServer.url("/").toUrl().toString())
     communityApiService = CommunityApiService(webClient)
   }
 
   @AfterEach
-  fun afterAll() {
+  fun afterEach() {
     mockWebServer.shutdown()
   }
 
@@ -67,7 +68,7 @@ class CommunityApiServiceTest {
     val nomsId = "ABC1234"
 
     mockWebServer.enqueue(MockResponse().setBody("{}").addHeader("Content-Type", "application/json").setResponseCode(404))
-    assertThrows<WebClientResponseException> { communityApiService.findCrn(nomsId) }
+    assertThrows<ResourceNotFoundException> { communityApiService.findCrn(nomsId) }
   }
 
   @Test

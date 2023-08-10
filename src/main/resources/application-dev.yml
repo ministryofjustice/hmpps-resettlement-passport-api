@@ -1,6 +1,7 @@
 server:
   shutdown: immediate
 
+# Base URLs of downstream APIs. Switch the comments to use the real dev services instead of the test stubs
 api:
   base:
     url:
@@ -14,6 +15,8 @@ api:
       #cvl: https://create-and-vary-a-licence-api-dev.hmpps.service.justice.gov.uk
       community: http://localhost:8082
       #community: https://community-api.test.probation.service.justice.gov.uk
+      arn: http://localhost:8084
+      #arn: https://assess-risks-and-needs-dev.hmpps.service.justice.gov.uk
 
 management.endpoint:
   health.cache.time-to-live: 0

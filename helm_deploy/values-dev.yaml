@@ -14,6 +14,7 @@ generic-service:
     API_BASE_URL_OFFENDER-SEARCH: https://prisoner-offender-search-dev.prison.service.justice.gov.uk
     API_BASE_URL_CVL: http://cvl-api-stub
     API_BASE_URL_COMMUNITY: http://community-api-stub
+    API_BASE_URL_ARN: http://arn-api-stub
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts
@@ -24,3 +25,4 @@ deploy_stubs:
   - cvl-api
   - community-api
   - prison-register-api
+  - arn-api

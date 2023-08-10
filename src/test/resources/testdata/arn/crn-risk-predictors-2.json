@@ -1,0 +1,116 @@
+[
+  {
+    "completedDate": "2022-08-09T12:12:12",
+    "assessmentStatus": "string1",
+    "groupReconvictionScore": {
+      "oneYear": 5,
+      "twoYears": 10,
+      "scoreLevel": "HIGH"
+    },
+    "violencePredictorScore": {
+      "ovpStaticWeightedScore": 30,
+      "ovpDynamicWeightedScore": 40,
+      "ovpTotalWeightedScore": 50,
+      "oneYear": 60,
+      "twoYears": 70,
+      "ovpRisk": "MEDIUM"
+    },
+    "generalPredictorScore": {
+      "ogpStaticWeightedScore": 12,
+      "ogpDynamicWeightedScore": 56,
+      "ogpTotalWeightedScore": 14,
+      "ogp1Year": 1,
+      "ogp2Year": 34,
+      "ogpRisk": "HIGH"
+    },
+    "riskOfSeriousRecidivismScore": {
+      "percentageScore": 99,
+      "staticOrDynamic": "DYNAMIC",
+      "source": "ASSESSMENTS_API",
+      "algorithmVersion": "string",
+      "scoreLevel": "LOW"
+    },
+    "sexualPredictorScore": {
+      "ospIndecentPercentageScore": 34,
+      "ospContactPercentageScore": 87,
+      "ospIndecentScoreLevel": "HIGH",
+      "ospContactScoreLevel": "LOW"
+    }
+  },
+  {
+    "completedDate": "2023-07-29T03:07:38",
+    "assessmentStatus": "string",
+    "groupReconvictionScore": {
+      "oneYear": 0,
+      "twoYears": 0,
+      "scoreLevel": "LOW"
+    },
+    "violencePredictorScore": {
+      "ovpStaticWeightedScore": 0,
+      "ovpDynamicWeightedScore": 0,
+      "ovpTotalWeightedScore": 0,
+      "oneYear": 0,
+      "twoYears": 0,
+      "ovpRisk": "LOW"
+    },
+    "generalPredictorScore": {
+      "ogpStaticWeightedScore": 0,
+      "ogpDynamicWeightedScore": 0,
+      "ogpTotalWeightedScore": 0,
+      "ogp1Year": 0,
+      "ogp2Year": 0,
+      "ogpRisk": "LOW"
+    },
+    "riskOfSeriousRecidivismScore": {
+      "percentageScore": 0,
+      "staticOrDynamic": "STATIC",
+      "source": "ASSESSMENTS_API",
+      "algorithmVersion": "string",
+      "scoreLevel": "LOW"
+    },
+    "sexualPredictorScore": {
+      "ospIndecentPercentageScore": 0,
+      "ospContactPercentageScore": 0,
+      "ospIndecentScoreLevel": "LOW",
+      "ospContactScoreLevel": "LOW"
+    }
+  },
+  {
+    "completedDate": "2009-07-05T23:09:45",
+    "assessmentStatus": "string2",
+    "groupReconvictionScore": {
+      "oneYear": 10,
+      "twoYears": 5,
+      "scoreLevel": "HIGH"
+    },
+    "violencePredictorScore": {
+      "ovpStaticWeightedScore": 3,
+      "ovpDynamicWeightedScore": 5,
+      "ovpTotalWeightedScore": 4,
+      "oneYear": 6,
+      "twoYears": 7,
+      "ovpRisk": "LOW"
+    },
+    "generalPredictorScore": {
+      "ogpStaticWeightedScore": 54,
+      "ogpDynamicWeightedScore": 6,
+      "ogpTotalWeightedScore": 140,
+      "ogp1Year": 178,
+      "ogp2Year": 5000,
+      "ogpRisk": "MEDIUM"
+    },
+    "riskOfSeriousRecidivismScore": {
+      "percentageScore": 97,
+      "staticOrDynamic": "STATIC",
+      "source": "ASSESSMENTS_API",
+      "algorithmVersion": "string234",
+      "scoreLevel": "MEDIUM"
+    },
+    "sexualPredictorScore": {
+      "ospIndecentPercentageScore": 43,
+      "ospContactPercentageScore": 78,
+      "ospIndecentScoreLevel": "MEDIUM",
+      "ospContactScoreLevel": "MEDIUM"
+    }
+  }
+]

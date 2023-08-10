@@ -28,6 +28,7 @@ spec:
   containers:
     - name: {{ $stub }}-stub
       image: wiremock/wiremock
+      command: ["--global-response-templating --verbose"]
       ports:
         - containerPort: 8080
       volumeMounts:

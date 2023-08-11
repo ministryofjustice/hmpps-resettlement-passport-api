@@ -1,0 +1,12 @@
+[
+  {
+    "prisonId": "AKI",
+    "prisonName": "Acklington (HMP)",
+    "active": "false"
+  },
+  {
+    "prisonId": "SWI",
+    "prisonName": "Swansea (HMP & YOI)",
+    "active": "true"
+  }
+]

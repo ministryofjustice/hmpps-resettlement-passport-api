@@ -22,7 +22,7 @@ class OffenderSearchApiService(
   private val offendersSearchWebClientClientCredentials: WebClient,
 ) {
 
-  fun findPrisonersBySearchTerm(prisonId: String): Flow<List<PrisonersSearch>> = flow {
+  private fun findPrisonersBySearchTerm(prisonId: String): Flow<List<PrisonersSearch>> = flow {
     var page = 0
     do {
       val pageOfData = offendersSearchWebClientClientCredentials.get()
@@ -42,7 +42,7 @@ class OffenderSearchApiService(
     } while (!pageOfData.last)
   }
 
-  fun findPrisonersByReleaseDate(prisonId: String, earliestReleaseDate: String, latestReleaseDate: String, prisonIds: List<String>): Flow<List<PrisonersSearch>> = flow {
+  private fun findPrisonersByReleaseDate(prisonId: String, earliestReleaseDate: String, latestReleaseDate: String, prisonIds: List<String>): Flow<List<PrisonersSearch>> = flow {
     var page = 0
     do {
       val pageOfData = offendersSearchWebClientClientCredentials.post()

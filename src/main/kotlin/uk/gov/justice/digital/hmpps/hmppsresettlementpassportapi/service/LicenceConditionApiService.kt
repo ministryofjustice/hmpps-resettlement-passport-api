@@ -22,7 +22,7 @@ class LicenceConditionApiService(
   private val cvlWebClientClientCredentials: WebClient,
 ) {
 
-  suspend fun findLicencesByNomisId(nomisId: List<String>): Flow<LicenceSummary> =
+  private suspend fun findLicencesByNomisId(nomisId: List<String>): Flow<LicenceSummary> =
     cvlWebClientClientCredentials.post()
       .uri("/licence/match")
       .bodyValue(
@@ -66,7 +66,7 @@ class LicenceConditionApiService(
     }
   }
 
-  suspend fun fetchLicenceConditionsByLicenceId(licenceId: Long): Licence =
+  private suspend fun fetchLicenceConditionsByLicenceId(licenceId: Long): Licence =
     cvlWebClientClientCredentials.get()
       .uri(
         "/licence/id/{licenceId}",

@@ -7,11 +7,10 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prison
 
 @Service
 class PrisonApiService(
-  private val prisonWebClient: WebClient,
   private val prisonWebClientClientCredentials: WebClient,
 ) {
 
-  suspend fun getPrisons(): List<uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonapi.Prison> {
+  private suspend fun getPrisons(): List<uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonapi.Prison> {
     return prisonWebClientClientCredentials
       .get()
       .uri("/prisons")

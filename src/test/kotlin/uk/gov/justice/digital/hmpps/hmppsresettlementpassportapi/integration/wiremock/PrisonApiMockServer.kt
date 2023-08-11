@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wi
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
+import java.io.File
 
 class PrisonApiMockServer : WireMockServer(WIREMOCK_PORT) {
   companion object {
@@ -10,27 +11,14 @@ class PrisonApiMockServer : WireMockServer(WIREMOCK_PORT) {
   }
 
   fun stubPrisonList(status: Int) {
+    val prisonListJSON = File("src/test/resources/testdata/prison/prison.json").inputStream().readBytes().toString(Charsets.UTF_8)
     stubFor(
       get("/prisons").willReturn(
         if (status == 200) {
           aResponse()
             .withHeader("Content-Type", "application/json")
             .withBody(
-              // language=json
-              """
-              [
-                {
-                  "prisonId": "AKI",
-                  "prisonName": "Acklington (HMP)",
-                  "active": "true"
-                },
-                {
-                  "prisonId": "SWI",
-                  "prisonName": "Swansea (HMP & YOI)",
-                  "active": "false"
-                }
-              ]
-              """,
+              prisonListJSON,
             )
             .withStatus(status)
         } else {

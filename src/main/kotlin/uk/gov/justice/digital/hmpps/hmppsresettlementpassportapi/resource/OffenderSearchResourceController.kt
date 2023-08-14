@@ -43,11 +43,14 @@ class OffenderSearchResourceController(
       ),
     ],
   )
-  suspend fun getPrisonersbyPrisonId(
+  suspend fun getPrisonersPrisonId(
     @Schema(example = "MDI", required = true, minLength = 3, maxLength = 6)
     @PathVariable("prisonId")
     @Parameter(required = true)
     prisonId: String,
+    @Schema(example = "James South ", required = false)
+    @Parameter(description = "The primary search term. Whe absent all prisoners will be returned at the prison")
+    term: String,
     @Schema(example = "0", required = true)
     @Parameter(required = true, description = "Zero-based page index (0..N)")
     page: Int,
@@ -57,7 +60,7 @@ class OffenderSearchResourceController(
     @Schema(example = "releaseDate,ASC | releaseDate,DESC")
     @Parameter(required = true, description = "Sorting criteria in the format: property,(asc|desc) property supported are firstName, lastName, releaseDate and prisonerNumber")
     sort: String,
-  ): PrisonersList = offenderSearchService.getPrisonersByPrisonId(false, prisonId, 0, page, size, sort)
+  ): PrisonersList = offenderSearchService.getPrisonersByPrisonId(false, term, prisonId, 0, page, size, sort)
 
   @GetMapping("/prison/{prisonId}/offenders", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get all prisoners by prison Id", description = "All prisoners data based on prison Id")
@@ -96,5 +99,5 @@ class OffenderSearchResourceController(
     @Schema(example = "releaseDate,ASC | releaseDate,DESC")
     @Parameter(required = true, description = "Sorting criteria in the format: property,(asc|desc) property supported are firstName, lastName, releaseDate and prisonerNumber")
     sort: String,
-  ): PrisonersList = offenderSearchService.getPrisonersByPrisonId(true, prisonId, days.toLong(), page, size, sort)
+  ): PrisonersList = offenderSearchService.getPrisonersByPrisonId(true, "", prisonId, days.toLong(), page, size, sort)
 }

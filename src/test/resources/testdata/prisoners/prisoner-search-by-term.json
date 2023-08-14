@@ -1,0 +1,126 @@
+{
+  "content": [
+    {
+      "prisonerNumber": "A8257DY",
+      "firstName": "GLENN",
+      "middleNames": null,
+      "lastName": "MCGRATH",
+      "releaseDate": "2023-08-28",
+      "releaseType": "CRD",
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "Accommodation",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Attitudes, thinking and behaviour",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Children, families and communities",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Drugs and alcohol",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Education, skills and work",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Finance and ID",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Health",
+          "status": "Not Started"
+        }
+      ]
+    },
+    {
+      "prisonerNumber": "A8132DY",
+      "firstName": "GEORGE",
+      "middleNames": null,
+      "lastName": "HAMILTON",
+      "releaseDate": "2023-10-23",
+      "releaseType": "CRD",
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "Accommodation",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Attitudes, thinking and behaviour",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Children, families and communities",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Drugs and alcohol",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Education, skills and work",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Finance and ID",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Health",
+          "status": "Not Started"
+        }
+      ]
+    },
+    {
+      "prisonerNumber": "G6335VX",
+      "firstName": "GARRETT",
+      "middleNames": "SYLVANNA",
+      "lastName": "COUTCHER",
+      "releaseDate": "2024-05-11",
+      "releaseType": "CRD",
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "Accommodation",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Attitudes, thinking and behaviour",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Children, families and communities",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Drugs and alcohol",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Education, skills and work",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Finance and ID",
+          "status": "Not Started"
+        },
+        {
+          "pathway": "Health",
+          "status": "Not Started"
+        }
+      ]
+    }
+  ],
+  "pageSize": 3,
+  "page": 0,
+  "sortName": "releaseDate,DESC",
+  "totalElements": 3,
+  "last": true
+},

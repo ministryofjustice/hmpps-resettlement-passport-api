@@ -22,14 +22,15 @@ class OffenderSearchApiService(
   private val offendersSearchWebClientClientCredentials: WebClient,
 ) {
 
-  private fun findPrisonersBySearchTerm(prisonId: String): Flow<List<PrisonersSearch>> = flow {
+  private fun findPrisonersBySearchTerm(prisonId: String, searchTerm: String): Flow<List<PrisonersSearch>> = flow {
     var page = 0
     do {
       val pageOfData = offendersSearchWebClientClientCredentials.get()
         .uri(
-          "/prison/{prisonId}/prisoners?size={size}&page={page}&sort={sort}",
+          "/prison/{prisonId}/prisoners?term={term}&size={size}&page={page}&sort={sort}",
           mapOf(
             "prisonId" to prisonId,
+            "term" to searchTerm,
             "size" to 500, // NB: API allows up 3,000 results per page
             "page" to page,
             "sort" to "prisonerNumber",
@@ -73,7 +74,7 @@ class OffenderSearchApiService(
    * returning a complete list.
    * Requires role PRISONER_IN_PRISON_SEARCH or PRISONER_SEARCH
    */
-  suspend fun getPrisonersByPrisonId(dateRangeAPI: Boolean, prisonId: String, days: Long, pageNumber: Int, pageSize: Int, sort: String): PrisonersList {
+  suspend fun getPrisonersByPrisonId(dateRangeAPI: Boolean, searchTerm: String, prisonId: String, days: Long, pageNumber: Int, pageSize: Int, sort: String): PrisonersList {
     val offenders = mutableListOf<PrisonersSearch>()
     if (pageNumber < 0 || pageSize <= 0) {
       throw NoDataWithCodeFoundException(
@@ -96,7 +97,7 @@ class OffenderSearchApiService(
         offenders.addAll(it)
       }
     } else {
-      findPrisonersBySearchTerm(prisonId).collect {
+      findPrisonersBySearchTerm(prisonId, searchTerm).collect {
         offenders.addAll(it)
       }
     }

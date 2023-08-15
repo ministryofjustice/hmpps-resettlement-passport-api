@@ -128,18 +128,4 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(404)
       .jsonPath("developerMessage").toString().contains("No Data found")
   }
-
- /* @Test
-  fun `Get All Prisoners happy path search by term=G`() {
-    val expectedOutput = File("src/test/resources/testdata/prisoners/prisoner-search-by-term.json").inputStream().readBytes().toString(Charsets.UTF_8)
-    val prisonId = "MDI"
-    offenderSearchApiMockServer.stubGetPrisonersListBySearchTerm(prisonId,"G",500, 0, 200)
-    webTestClient.get()
-      .uri("/resettlement-passport/prison/$prisonId/prisoners?term=G&page=0&size=10&sort=releaseDate,DESC")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
-      .exchange()
-      .expectStatus().isOk
-      .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput)
-  }*/
 }

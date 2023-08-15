@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -9,15 +10,25 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.OgpScore
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.OgrScore
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.OspScore
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.OvpScore
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.RiskLevel
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.RiskScore
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.RoshData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.RsrScore
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ScoreLevel
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.arnapi.AllRoshRiskDataDto
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.arnapi.RiskScoresDto
+import kotlin.reflect.KClass
 
 @Service
 class RiskApiService(
   private val communityApiService: CommunityApiService,
   private val arnWebClientClientCredentials: WebClient,
 ) {
+
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+  }
+
   suspend fun getRiskScoresByNomsId(prisonerId: String): RiskScore? {
     // Convert from NomsId to CRN - for now call the community API each time. In the future we may have this stored in the database.
     val crn = communityApiService.findCrn(prisonerId)
@@ -42,7 +53,7 @@ class RiskApiService(
       OgrScore(
         mostRecentRiskScoreDto.groupReconvictionScore?.oneYear,
         mostRecentRiskScoreDto.groupReconvictionScore?.twoYears,
-        mostRecentRiskScoreDto.groupReconvictionScore?.scoreLevel?.name,
+        convertStringToEnum(ScoreLevel::class, mostRecentRiskScoreDto.groupReconvictionScore?.scoreLevel),
       ),
       OvpScore(
         mostRecentRiskScoreDto.violencePredictorScore?.ovpStaticWeightedScore,
@@ -50,7 +61,7 @@ class RiskApiService(
         mostRecentRiskScoreDto.violencePredictorScore?.ovpTotalWeightedScore,
         mostRecentRiskScoreDto.violencePredictorScore?.oneYear,
         mostRecentRiskScoreDto.violencePredictorScore?.twoYears,
-        mostRecentRiskScoreDto.violencePredictorScore?.ovpRisk?.name,
+        convertStringToEnum(ScoreLevel::class, mostRecentRiskScoreDto.violencePredictorScore?.ovpRisk),
       ),
       OgpScore(
         mostRecentRiskScoreDto.generalPredictorScore?.ogpStaticWeightedScore,
@@ -58,21 +69,59 @@ class RiskApiService(
         mostRecentRiskScoreDto.generalPredictorScore?.ogpTotalWeightedScore,
         mostRecentRiskScoreDto.generalPredictorScore?.ogp1Year,
         mostRecentRiskScoreDto.generalPredictorScore?.ogp2Year,
-        mostRecentRiskScoreDto.generalPredictorScore?.ogpRisk?.name,
+        convertStringToEnum(ScoreLevel::class, mostRecentRiskScoreDto.generalPredictorScore?.ogpRisk),
       ),
       RsrScore(
         mostRecentRiskScoreDto.riskOfSeriousRecidivismScore?.percentageScore,
-        mostRecentRiskScoreDto.riskOfSeriousRecidivismScore?.staticOrDynamic?.name,
-        mostRecentRiskScoreDto.riskOfSeriousRecidivismScore?.scoreLevel?.name,
+        mostRecentRiskScoreDto.riskOfSeriousRecidivismScore?.staticOrDynamic,
+        convertStringToEnum(ScoreLevel::class, mostRecentRiskScoreDto.riskOfSeriousRecidivismScore?.scoreLevel),
       ),
       OspScore(
         mostRecentRiskScoreDto.sexualPredictorScore?.ospIndecentPercentageScore,
         mostRecentRiskScoreDto.sexualPredictorScore?.ospContactPercentageScore,
-        mostRecentRiskScoreDto.sexualPredictorScore?.ospIndecentScoreLevel?.name,
-        mostRecentRiskScoreDto.sexualPredictorScore?.ospContactScoreLevel?.name,
+        convertStringToEnum(ScoreLevel::class, mostRecentRiskScoreDto.sexualPredictorScore?.ospIndecentScoreLevel),
+        convertStringToEnum(ScoreLevel::class, mostRecentRiskScoreDto.sexualPredictorScore?.ospContactScoreLevel),
       ),
     )
   }
 
   fun List<RiskScoresDto>.getMostRecentRiskScore() = this.sortedBy { it.completedDate }.last()
+
+  suspend fun getRoshDataByNomsId(prisonerId: String): RoshData? {
+    // Convert from NomsId to CRN - for now call the community API each time. In the future we may have this stored in the database.
+    val crn = communityApiService.findCrn(prisonerId)
+      ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $prisonerId in Community API")
+
+    // Use CRN to get risk scores from ARN
+    val allRoshRiskData = arnWebClientClientCredentials.get()
+      .uri("/risks/crn/$crn")
+      .retrieve()
+      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("ARN service could not find CRN $crn/NomsId $prisonerId") })
+      .awaitBody<AllRoshRiskDataDto>()
+
+    val overallRiskLevel = convertStringToEnum(RiskLevel::class, allRoshRiskData.summary.overallRiskLevel)
+
+    val categoryToRiskLevelMap = convertToCategoryToRiskLevelMap(allRoshRiskData.summary.riskInCommunity)
+
+    return RoshData(
+      categoryToRiskLevelMap,
+      overallRiskLevel,
+      allRoshRiskData.assessedOn,
+    )
+  }
+
+  protected fun convertToCategoryToRiskLevelMap(riskInCommunitySummary:  Map<String?, List<String>>): Map<String, RiskLevel> {
+
+    val categoryToRiskLevelMap = mutableMapOf<String, RiskLevel>()
+    riskInCommunitySummary.entries.forEach {
+      it.value.forEach { cat ->
+        val riskLevel = convertStringToEnum(RiskLevel::class, it.key!!)
+        if (riskLevel != null) {
+          categoryToRiskLevelMap[cat] = riskLevel
+        }
+      }
+    }
+
+    return categoryToRiskLevelMap
+  }
 }

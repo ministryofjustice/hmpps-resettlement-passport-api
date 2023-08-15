@@ -30,25 +30,4 @@ class OffenderSearchApiMockServer : WireMockServer(WIREMOCK_PORT) {
       ),
     )
   }
-
-  /*fun stubGetPrisonersListBySearchTerm(prisonId: String, term: String, size: Int, page: Int, status: Int) {
-    val prisonersListJSON = File("src/test/resources/testdata/prisoners/prisoner-offender-search-by-term.json").inputStream().readBytes().toString(Charsets.UTF_8)
-    stubFor(
-      get("/prison/$prisonId/prisoners?term=$term&size=$size&page=$page&sort=prisonerNumber").willReturn(
-        if (status == 200) {
-          aResponse()
-            .withHeader("Content-Type", "application/json")
-            .withBody(
-              prisonersListJSON,
-            )
-            .withStatus(status)
-        } else {
-          aResponse()
-            .withHeader("Content-Type", "application/json")
-            .withBody("{\"Error\" : \"$status\"}")
-            .withStatus(status)
-        },
-      ),
-    )
-  }*/
 }

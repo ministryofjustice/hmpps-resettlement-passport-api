@@ -1,0 +1,29 @@
+[
+  {
+    "imageId": 181738,
+    "active": true,
+    "captureDate": "2010-09-25",
+    "captureDateTime": "2010-09-25T12:01:54",
+    "imageView": "FACE",
+    "imageOrientation": "FRONT",
+    "imageType": "OFF_BKG"
+  },
+  {
+    "imageId": 1313058,
+    "active": true,
+    "captureDate": "2016-10-03",
+    "captureDateTime": "2016-10-03T20:40:13",
+    "imageView": "FACE",
+    "imageOrientation": "FRONT",
+    "imageType": "OFF_BKG"
+  },
+  {
+    "imageId": 310039,
+    "active": true,
+    "captureDate": "2011-05-12",
+    "captureDateTime": "2011-05-12T15:56:25",
+    "imageView": "FACE",
+    "imageOrientation": "FRONT",
+    "imageType": "OFF_BKG"
+  }
+]

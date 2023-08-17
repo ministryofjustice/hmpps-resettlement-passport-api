@@ -14,8 +14,6 @@ services:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=dev
       - API_BASE_URL_OAUTH=https://sign-in-dev.hmpps.service.justice.gov.uk/auth
-      - API_BASE_URL_PRISON=https://prison-register-dev.hmpps.service.justice.gov.uk
-      - API_BASE_URL_OFFENDER_SEARCH=http://prisoner-search:8080
 
   resettlement-passport-db:
     image: postgres

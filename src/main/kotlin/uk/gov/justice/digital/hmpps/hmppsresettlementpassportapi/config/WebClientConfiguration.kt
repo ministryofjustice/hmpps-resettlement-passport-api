@@ -18,12 +18,12 @@ import java.time.Duration
 @Configuration
 class WebClientConfiguration(
   @Value("\${api.base.url.oauth}") val authBaseUri: String,
-  @Value("\${api.base.url.prison}") private val prisonRootUri: String,
+  @Value("\${api.base.url.prison-register}") private val prisonRootUri: String,
   @Value("\${api.base.url.offender-search}") private val offenderSearchUri: String,
   @Value("\${api.base.url.cvl}") private val cvlRootUri: String,
   @Value("\${api.base.url.community}") private val communityRootUri: String,
   @Value("\${api.base.url.arn}") private val arnRootUri: String,
-  @Value("\${api.base.url.offender-image}") private val offenderImageUri: String,
+  @Value("\${api.base.url.prison}") private val prisonerImageUri: String,
 ) {
 
   @Bean
@@ -143,7 +143,7 @@ class WebClientConfiguration(
 
     val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
     return WebClient.builder()
-      .baseUrl(offenderImageUri)
+      .baseUrl(prisonerImageUri)
       .clientConnector(ReactorClientHttpConnector(httpClient))
       .filter(oauth2Client)
       .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }

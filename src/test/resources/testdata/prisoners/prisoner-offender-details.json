@@ -1,0 +1,126 @@
+{
+  "prisonerNumber": "G4274GN",
+  "pncNumber": "92/338596N",
+  "pncNumberCanonicalShort": "92/338596N",
+  "pncNumberCanonicalLong": "1992/338596N",
+  "croNumber": "126118/92J",
+  "bookingId": "1138305",
+  "bookNumber": "W75142",
+  "firstName": "John",
+  "middleNames": "Michael",
+  "lastName": "Smith",
+  "dateOfBirth": "1982-10-24",
+  "gender": "Male",
+  "ethnicity": "Black/Black British: Caribbean",
+  "youthOffender": false,
+  "maritalStatus": "Single-not married/in civil partnership",
+  "religion": "Church of England (Anglican)",
+  "nationality": "British",
+  "status": "ACTIVE IN",
+  "lastMovementTypeCode": "CRT",
+  "lastMovementReasonCode": "CRT",
+  "inOutStatus": "IN",
+  "prisonId": "BMI",
+  "prisonName": "Birmingham (HMP)",
+  "cellLocation": "K-3-011",
+  "aliases": [
+    {
+      "firstName": "UDFSANAYE",
+      "lastName": "AYLISTA",
+      "dateOfBirth": "1974-10-30",
+      "gender": "Male"
+    },
+    {
+      "firstName": "UDFSANAYE",
+      "lastName": "DESHICUS",
+      "dateOfBirth": "1974-11-17",
+      "gender": "Male"
+    },
+    {
+      "firstName": "ADIOTHTON",
+      "lastName": "FRANCENT",
+      "dateOfBirth": "1975-11-08",
+      "gender": "Male"
+    },
+    {
+      "firstName": "AYBNEPHER",
+      "lastName": "LAURANY",
+      "dateOfBirth": "1974-10-29",
+      "gender": "Male"
+    },
+    {
+      "firstName": "IMDAUEMEKA",
+      "lastName": "CHRISTEL",
+      "dateOfBirth": "1975-10-25",
+      "gender": "Male"
+    }
+  ],
+  "alerts": [
+    {
+      "alertType": "P",
+      "alertCode": "PC2",
+      "active": true,
+      "expired": false
+    },
+    {
+      "alertType": "R",
+      "alertCode": "ROM",
+      "active": true,
+      "expired": false
+    },
+    {
+      "alertType": "X",
+      "alertCode": "XVL",
+      "active": true,
+      "expired": false
+    },
+    {
+      "alertType": "X",
+      "alertCode": "XEL",
+      "active": true,
+      "expired": false
+    }
+  ],
+  "csra": "Standard",
+  "category": "B",
+  "legalStatus": "SENTENCED",
+  "imprisonmentStatus": "SENT03",
+  "imprisonmentStatusDescription": "Adult Imprisonment Without Option CJA03",
+  "mostSeriousOffence": "Section 18 - grievous bodily harm with intent",
+  "recall": false,
+  "indeterminateSentence": false,
+  "sentenceStartDate": "2016-11-25",
+  "releaseDate": "2017-03-31",
+  "confirmedReleaseDate": "2023-08-20",
+  "sentenceExpiryDate": "2030-05-01",
+  "licenceExpiryDate": "2030-05-15",
+  "topupSupervisionStartDate": "2030-05-16",
+  "topupSupervisionExpiryDate": "2030-05-16",
+  "nonDtoReleaseDate": "2023-08-21",
+  "nonDtoReleaseDateType": "CRD",
+  "receptionDate": "2016-10-03",
+  "paroleEligibilityDate": "2023-04-14",
+  "conditionalReleaseDate": "2023-08-21",
+  "locationDescription": "Birmingham (HMP)",
+  "restrictedPatient": false,
+  "currentIncentive": {
+    "level": {
+      "code": "ENH",
+      "description": "Enhanced"
+    },
+    "dateTime": "2017-03-27T09:37:35",
+    "nextReviewDate": "2018-03-27"
+  },
+  "hairColour": "Black",
+  "rightEyeColour": "Brown",
+  "leftEyeColour": "Brown",
+  "facialHair": "Clean Shaven",
+  "shapeOfFace": "Oval",
+  "build": "Thin",
+  "scars": [
+    {
+      "bodyPart": "Face",
+      "comment": "jnVjn"
+    }
+  ]
+}

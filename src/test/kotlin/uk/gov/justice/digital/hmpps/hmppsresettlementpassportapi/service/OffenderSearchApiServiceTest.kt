@@ -23,7 +23,7 @@ class OffenderSearchApiServiceTest {
     mockWebServer.start()
     val webClient = WebClient.create(mockWebServer.url("/").toUrl().toString())
     val pathwayRepository: PathwayRepository = mock()
-    offenderSearchApiService = OffenderSearchApiService(pathwayRepository, webClient)
+    offenderSearchApiService = OffenderSearchApiService(pathwayRepository, webClient, webClient)
   }
 
   @AfterEach

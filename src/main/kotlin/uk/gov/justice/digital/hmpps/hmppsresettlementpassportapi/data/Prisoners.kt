@@ -13,9 +13,23 @@ data class Prisoners(
   var status: List<PathwayStatus>? = ArrayList(),
 )
 
+data class PrisonerPersonal(
+  val prisonerNumber: String,
+  val firstName: String,
+  val middleNames: String? = null,
+  val lastName: String,
+  val releaseDate: LocalDate? = null,
+  val releaseType: String? = null,
+  var dateOfBirth: LocalDate? = null,
+  var age: Int?,
+  var location: String? = null,
+  var facialImageId: String? = null,
+)
+
 data class PathwayStatus(
   val pathway: String? = null,
   val status: String? = null,
+  val lastDateChange: String? = null,
 )
 data class PrisonerRequest(
   val earliestReleaseDate: String,
@@ -29,4 +43,10 @@ data class PrisonersList(
   val sortName: String?,
   val totalElements: Int?,
   val last: Boolean,
+)
+
+data class Prisoner(
+  val personalDetails: PrisonerPersonal?,
+  var pathways: List<PathwayStatus>? = ArrayList(),
+
 )

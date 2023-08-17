@@ -1,0 +1,51 @@
+{
+  "personalDetails": {
+    "prisonerNumber": "G4274GN",
+    "firstName": "John",
+    "middleNames": "Michael",
+    "lastName": "Smith",
+    "releaseDate": "2017-03-31",
+    "releaseType": "CRD",
+    "dateOfBirth": "1982-10-24",
+    "age": 40,
+    "location": "Birmingham (HMP)(BMI)",
+    "facialImageId": "1313058"
+  },
+  "pathways": [
+    {
+      "pathway": "Accommodation",
+      "status": "Not Started",
+      "lastDateChange": null
+    },
+    {
+      "pathway": "Attitudes, thinking and behaviour",
+      "status": "Not Started",
+      "lastDateChange": null
+    },
+    {
+      "pathway": "Children, families and communities",
+      "status": "Not Started",
+      "lastDateChange": null
+    },
+    {
+      "pathway": "Drugs and alcohol",
+      "status": "Not Started",
+      "lastDateChange": null
+    },
+    {
+      "pathway": "Education, skills and work",
+      "status": "Not Started",
+      "lastDateChange": null
+    },
+    {
+      "pathway": "Finance and ID",
+      "status": "Not Started",
+      "lastDateChange": null
+    },
+    {
+      "pathway": "Health",
+      "status": "Not Started",
+      "lastDateChange": null
+    }
+  ]
+}

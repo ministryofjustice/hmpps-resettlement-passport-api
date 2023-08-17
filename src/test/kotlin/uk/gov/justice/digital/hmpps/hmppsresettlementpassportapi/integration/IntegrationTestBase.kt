@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wir
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CvlApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.OffenderSearchApiMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonRegisterApiMockServer
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -50,6 +51,9 @@ abstract class IntegrationTestBase : TestBase() {
     @JvmField
     val offenderSearchApiMockServer = OffenderSearchApiMockServer()
 
+    @JvmField
+    val prisonApiMockServer = PrisonApiMockServer()
+
     @BeforeAll
     @JvmStatic
     fun startMocks() {
@@ -60,6 +64,7 @@ abstract class IntegrationTestBase : TestBase() {
       communityApiMockServer.start()
       arnApiMockServer.start()
       offenderSearchApiMockServer.start()
+      prisonApiMockServer.start()
     }
 
     @AfterAll
@@ -70,6 +75,7 @@ abstract class IntegrationTestBase : TestBase() {
       cvlApiMockServer.stop()
       communityApiMockServer.stop()
       arnApiMockServer.stop()
+      prisonApiMockServer.stop()
     }
   }
 

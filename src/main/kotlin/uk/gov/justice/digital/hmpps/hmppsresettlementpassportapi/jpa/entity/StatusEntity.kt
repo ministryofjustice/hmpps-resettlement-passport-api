@@ -24,8 +24,8 @@ data class StatusEntity(
 
 enum class Status(val id: Long) {
   NOT_STARTED(1),
-  SUPPORT_DECLINED(2),
-  IN_PROGRESS(3),
-  INCOMPLETE(4),
-  COMPLETE(5),
+  IN_PROGRESS(2),
+  SUPPORT_NOT_REQUIRED(3),
+  SUPPORT_DECLINED(4),
+  DONE(5),
 }

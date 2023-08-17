@@ -28,3 +28,5 @@ data class PrisonersSearchList(
   val totalElements: Int?,
   val last: Boolean,
 )
+
+

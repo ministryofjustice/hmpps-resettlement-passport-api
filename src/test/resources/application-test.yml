@@ -17,6 +17,7 @@ api:
       cvl: http://localhost:8095
       community: http://localhost:8096
       arn: http://localhost:8097
+      offender-image: http://localhost:8098
 
 spring:
   devtools:

@@ -2,24 +2,27 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.*
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonerImage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonerRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import java.time.LocalDate
+import java.time.Period
 import java.time.format.DateTimeFormatter
 
 @Service
 class OffenderSearchApiService(
   private val pathwayRepository: PathwayRepository,
   private val offendersSearchWebClientClientCredentials: WebClient,
+  private val offendersImageWebClientCredentials: WebClient,
 ) {
 
   private fun findPrisonersBySearchTerm(prisonId: String, searchTerm: String): Flow<List<PrisonersSearch>> = flow {
@@ -163,4 +166,72 @@ class OffenderSearchApiService(
     }
     return prisonersList
   }
+
+
+    private suspend fun findPrisonerPersonalDetails(nomisId: String): PrisonersSearch {
+    return offendersSearchWebClientClientCredentials
+      .get()
+      .uri(
+        "/prisoner/{nomisId}",
+        mapOf(
+          "nomisId" to nomisId,
+        ),
+      )
+      .retrieve()
+      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomisId not found") })
+      .awaitBody<PrisonersSearch>()
+  }
+
+  private suspend fun findPrisonerImageDetails(nomisId: String): List<PrisonerImage> {
+    return offendersImageWebClientCredentials
+      .get()
+      .uri(
+        "/api/images/offenders/{nomisId}",
+        mapOf(
+          "nomisId" to nomisId,
+        ),
+      )
+      .retrieve()
+      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomisId not found") })
+      .awaitBody<List<PrisonerImage>>()
+  }
+  suspend fun getPrisonerDetailsByNomisId(nomisId: String) : Prisoner  {
+    val prisonerSearch = findPrisonerPersonalDetails(nomisId)
+
+    val prisonerImageDetailsList = findPrisonerImageDetails(nomisId)
+    var prisonerImage: PrisonerImage? = null
+    prisonerImageDetailsList.forEach {
+      if (prisonerImage ==null || (prisonerImage!!.captureDateTime?.isBefore(it.captureDateTime) == true))
+        prisonerImage = it;
+    }
+    var age = 0
+    if (prisonerSearch.dateOfBirth != null)
+       age = Period.between(prisonerSearch.dateOfBirth, LocalDate.now()).years
+
+    val prisonerPersonal = PrisonerPersonal(
+      prisonerSearch.prisonerNumber,
+      prisonerSearch.firstName,
+      prisonerSearch.middleNames,
+      prisonerSearch.lastName,
+      prisonerSearch.releaseDate,
+      prisonerSearch.nonDtoReleaseDateType,
+      prisonerSearch.dateOfBirth,
+      age,
+      prisonerSearch.prisonName + "(" + prisonerSearch.prisonId + ")",
+      prisonerImage?.imageId
+    )
+
+    val argStatus = ArrayList<PathwayStatus>()
+    val pathwayRepoData = pathwayRepository.findAll()
+    pathwayRepoData.forEach {
+      if (it.active) {
+        val pathwayStatus = PathwayStatus(it.name, "Not Started")
+        argStatus.add(pathwayStatus)
+      }
+    }
+    return Prisoner(prisonerPersonal, argStatus)
+
+  }
+
+
 }

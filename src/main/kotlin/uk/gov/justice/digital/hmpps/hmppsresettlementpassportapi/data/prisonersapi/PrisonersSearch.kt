@@ -9,6 +9,10 @@ data class PrisonersSearch(
   val lastName: String,
   val releaseDate: LocalDate? = null,
   val nonDtoReleaseDateType: String? = null,
+  val dateOfBirth: LocalDate?=null,
+  val age: Int? =0,
+  val prisonId: String,
+  val prisonName: String,
 )
 
 data class PrisonerRequest(
@@ -24,3 +28,5 @@ data class PrisonersSearchList(
   val totalElements: Int?,
   val last: Boolean,
 )
+
+

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoner
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.OffenderSearchApiService
 
@@ -100,4 +102,33 @@ class OffenderSearchResourceController(
     @Parameter(required = true, description = "Sorting criteria in the format: property,(asc|desc) property supported are firstName, lastName, releaseDate and prisonerNumber")
     sort: String,
   ): PrisonersList = offenderSearchService.getPrisonersByPrisonId(true, "", prisonId, days.toLong(), page, size, sort)
+
+  @GetMapping("/prisoner/{nomisId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(summary = "Get prisoner by nomis Id", description = "Prisoner Details based on nomis Id")
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "400",
+        description = "Incorrect information provided to perform prisoner match",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  suspend fun getPrisonerDetails(
+    @Schema(example = "AXXXS", required = true)
+    @PathVariable("nomisId")
+    @Parameter(required = true)
+    nomisId: String
+  ): Prisoner = offenderSearchService.getPrisonerDetailsByNomisId(nomisId)
+
+
 }

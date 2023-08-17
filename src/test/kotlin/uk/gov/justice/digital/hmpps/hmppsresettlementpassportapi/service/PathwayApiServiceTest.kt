@@ -34,10 +34,13 @@ class PathwayApiServiceTest {
 
   @Mock
   private lateinit var pathwayStatusRepository: PathwayStatusRepository
+
   @Mock
   private lateinit var prisonerRepository: PrisonerRepository
+
   @Mock
   private lateinit var pathwayRepository: PathwayRepository
+
   @Mock
   private lateinit var statusRepository: StatusRepository
 
@@ -51,7 +54,6 @@ class PathwayApiServiceTest {
 
   @Test
   fun `test update pathway status`() {
-
     // Mock calls to LocalDateTime.now() so we can test the creationDate is being updated
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow

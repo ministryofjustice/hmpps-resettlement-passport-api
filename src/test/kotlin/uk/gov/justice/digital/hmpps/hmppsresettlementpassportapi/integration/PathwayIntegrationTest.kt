@@ -28,7 +28,6 @@ class PathwayIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses.sql")
   fun `Patch pathway status happy path`() {
-
     // Mock calls to LocalDateTime.now() so we can test the creationDate is being updated
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
@@ -81,7 +80,6 @@ class PathwayIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses.sql")
   fun `Patch pathway status happy path - 404 on prisoner`() {
-
     val prisonerId = "abc"
 
     webTestClient.patch()
@@ -107,7 +105,6 @@ class PathwayIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses.sql")
   fun `Patch pathway status happy path - 404 on pathway status`() {
-
     val prisonerId = "789"
 
     webTestClient.patch()
@@ -132,7 +129,6 @@ class PathwayIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Patch pathway status happy path - 401`() {
-
     val prisonerId = "123"
 
     webTestClient.patch()
@@ -149,7 +145,6 @@ class PathwayIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Patch pathway status happy path - 400`() {
-
     val prisonerId = "123"
 
     webTestClient.patch()
@@ -161,7 +156,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
             "pathway": "FAKE_PATHWAY",
             "status": "IN_PROGRESS"
           }
-        """.trimIndent()
+        """.trimIndent(),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
       .exchange()

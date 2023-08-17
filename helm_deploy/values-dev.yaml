@@ -10,12 +10,14 @@ generic-service:
   env:
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
     API_BASE_URL_OAUTH: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
-    API_BASE_URL_PRISON: http://prison-register-api-stub
+    API_BASE_URL_PRISON-REGISTER: http://prison-register-api-stub
     #API_BASE_URL_OFFENDER-SEARCH: https://prisoner-offender-search-dev.prison.service.justice.gov.uk
     API_BASE_URL_OFFENDER-SEARCH: http://prisoner-offender-search-api-stub
     API_BASE_URL_CVL: http://cvl-api-stub
     API_BASE_URL_COMMUNITY: http://community-api-stub
     API_BASE_URL_ARN: http://arn-api-stub
+    #API_BASE_URL_PRISON: http://prison-api-stub
+    API_BASE_URL_PRISON: https://api-dev.prison.service.justice.gov.uk
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts
@@ -28,3 +30,4 @@ deploy_stubs:
   - prison-register-api
   - arn-api
   - prisoner-offender-search-api
+  - prison-api

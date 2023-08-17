@@ -19,6 +19,7 @@ api:
       arn: http://localhost:8097
       offender-image: http://localhost:8098
 
+
 spring:
   devtools:
     add-properties: true

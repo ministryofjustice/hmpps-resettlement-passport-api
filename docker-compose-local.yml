@@ -99,7 +99,7 @@ services:
     ports:
       - "8086:8080"
     volumes:
-      - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/prison-register-api:/home/wiremock:ro"
+      - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/prison-api:/home/wiremock:ro"
 
 networks:
   hmpps:

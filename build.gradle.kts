@@ -67,6 +67,7 @@ dependencies {
   testImplementation("io.opentelemetry:opentelemetry-sdk-testing:1.28.0")
   testImplementation("com.squareup.okhttp3:okhttp:4.11.0")
   testImplementation("com.squareup.okhttp3:mockwebserver:4.11.0")
+  testImplementation("io.mockk:mockk:1.13.7")
 
   if (project.hasProperty("docs")) {
     implementation("com.h2database:h2")

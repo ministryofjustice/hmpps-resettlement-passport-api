@@ -28,8 +28,8 @@ data class PathwayStatusEntity(
 
   @ManyToOne
   @JoinColumn(name = "status_id", referencedColumnName = "id")
-  val status: StatusEntity,
+  var status: StatusEntity,
 
   @Column(name = "creation_date")
-  val creationDate: LocalDateTime,
+  var creationDate: LocalDateTime,
 )

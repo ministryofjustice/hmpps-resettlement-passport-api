@@ -8,7 +8,11 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.*
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoner
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerPersonal
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonerImage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonerRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
@@ -167,8 +171,7 @@ class OffenderSearchApiService(
     return prisonersList
   }
 
-
-    private suspend fun findPrisonerPersonalDetails(nomisId: String): PrisonersSearch {
+  private suspend fun findPrisonerPersonalDetails(nomisId: String): PrisonersSearch {
     return offendersSearchWebClientClientCredentials
       .get()
       .uri(
@@ -195,18 +198,20 @@ class OffenderSearchApiService(
       .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomisId not found") })
       .awaitBody<List<PrisonerImage>>()
   }
-  suspend fun getPrisonerDetailsByNomisId(nomisId: String) : Prisoner  {
+  suspend fun getPrisonerDetailsByNomisId(nomisId: String): Prisoner {
     val prisonerSearch = findPrisonerPersonalDetails(nomisId)
 
     val prisonerImageDetailsList = findPrisonerImageDetails(nomisId)
     var prisonerImage: PrisonerImage? = null
     prisonerImageDetailsList.forEach {
-      if (prisonerImage ==null || (prisonerImage!!.captureDateTime?.isBefore(it.captureDateTime) == true))
-        prisonerImage = it;
+      if (prisonerImage == null || (prisonerImage!!.captureDateTime?.isBefore(it.captureDateTime) == true)) {
+        prisonerImage = it
+      }
     }
     var age = 0
-    if (prisonerSearch.dateOfBirth != null)
-       age = Period.between(prisonerSearch.dateOfBirth, LocalDate.now()).years
+    if (prisonerSearch.dateOfBirth != null) {
+      age = Period.between(prisonerSearch.dateOfBirth, LocalDate.now()).years
+    }
 
     val prisonerPersonal = PrisonerPersonal(
       prisonerSearch.prisonerNumber,
@@ -218,7 +223,7 @@ class OffenderSearchApiService(
       prisonerSearch.dateOfBirth,
       age,
       prisonerSearch.prisonName + "(" + prisonerSearch.prisonId + ")",
-      prisonerImage?.imageId
+      prisonerImage?.imageId,
     )
 
     val argStatus = ArrayList<PathwayStatus>()
@@ -230,8 +235,5 @@ class OffenderSearchApiService(
       }
     }
     return Prisoner(prisonerPersonal, argStatus)
-
   }
-
-
 }

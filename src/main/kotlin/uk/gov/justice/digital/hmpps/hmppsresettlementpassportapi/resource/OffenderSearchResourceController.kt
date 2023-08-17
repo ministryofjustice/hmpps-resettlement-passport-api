@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoner
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.OffenderSearchApiService
@@ -127,8 +126,6 @@ class OffenderSearchResourceController(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomisId")
     @Parameter(required = true)
-    nomisId: String
+    nomisId: String,
   ): Prisoner = offenderSearchService.getPrisonerDetailsByNomisId(nomisId)
-
-
 }

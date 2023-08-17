@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 
 import java.time.LocalDate
 
-
 data class Prisoners(
   val prisonerNumber: String,
   val firstName: String,
@@ -21,16 +20,16 @@ data class PrisonerPersonal(
   val lastName: String,
   val releaseDate: LocalDate? = null,
   val releaseType: String? = null,
-  var dateOfBirth: LocalDate? =null,
+  var dateOfBirth: LocalDate? = null,
   var age: Int?,
-  var location: String? =null,
-  var facialImageId: String? =null,
+  var location: String? = null,
+  var facialImageId: String? = null,
 )
 
 data class PathwayStatus(
   val pathway: String? = null,
   val status: String? = null,
-  val lastDateChange: String? =null,
+  val lastDateChange: String? = null,
 )
 data class PrisonerRequest(
   val earliestReleaseDate: String,

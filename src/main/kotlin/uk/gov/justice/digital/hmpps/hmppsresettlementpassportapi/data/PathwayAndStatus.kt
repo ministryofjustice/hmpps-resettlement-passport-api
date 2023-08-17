@@ -5,8 +5,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Path
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 
 data class PathwayAndStatus (
-  @field:Valid
   val pathway: Pathway,
-  @field:Valid
   val status: Status,
 )

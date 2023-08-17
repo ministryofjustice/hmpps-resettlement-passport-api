@@ -5,7 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import java.io.File
 
-class PrisonApiMockServer : WireMockServer(WIREMOCK_PORT) {
+class PrisonRegisterApiMockServer : WireMockServer(WIREMOCK_PORT) {
   companion object {
     private const val WIREMOCK_PORT = 8093
   }

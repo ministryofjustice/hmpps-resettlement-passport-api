@@ -8,7 +8,7 @@ class PrisonsIntegrationTest : IntegrationTestBase() {
     val expectedJson = """
       [{"id": "SWI", "name": "Swansea (HMP & YOI)", "active": true }]
     """.trimIndent()
-    prisonApiMockServer.stubPrisonList(200)
+    prisonRegisterApiMockServer.stubPrisonList(200)
     webTestClient.get()
       .uri("/resettlement-passport/prisons/active")
       .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
@@ -30,7 +30,7 @@ class PrisonsIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Get All Active Prisons  Internal Error`() {
-    prisonApiMockServer.stubPrisonList(500)
+    prisonRegisterApiMockServer.stubPrisonList(500)
     webTestClient.get()
       .uri("/resettlement-passport/prisons/active")
       .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
@@ -46,7 +46,7 @@ class PrisonsIntegrationTest : IntegrationTestBase() {
     val expectedJson = """
       [{"id": "AKI", "name": "Acklington (HMP)", "active": false }, {"id": "SWI", "name": "Swansea (HMP & YOI)", "active": true }]
     """.trimIndent()
-    prisonApiMockServer.stubPrisonList(200)
+    prisonRegisterApiMockServer.stubPrisonList(200)
     webTestClient.get()
       .uri("/resettlement-passport/prisons/all")
       .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
@@ -68,7 +68,7 @@ class PrisonsIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Get All Prisons  Internal Error`() {
-    prisonApiMockServer.stubPrisonList(500)
+    prisonRegisterApiMockServer.stubPrisonList(500)
     webTestClient.get()
       .uri("/resettlement-passport/prisons/all")
       .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))

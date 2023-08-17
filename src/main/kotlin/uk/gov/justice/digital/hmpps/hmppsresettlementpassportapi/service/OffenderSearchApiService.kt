@@ -195,7 +195,7 @@ class OffenderSearchApiService(
         ),
       )
       .retrieve()
-      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomisId not found") })
+      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomisId Image not found") })
       .awaitBody<List<PrisonerImage>>()
   }
   suspend fun getPrisonerDetailsByNomisId(nomisId: String): Prisoner {

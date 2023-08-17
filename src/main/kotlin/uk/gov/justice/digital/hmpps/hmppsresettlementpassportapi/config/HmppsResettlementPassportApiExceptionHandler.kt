@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.AuthorizationServiceException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.server.ServerWebInputException
 
 @RestControllerAdvice
 class HmppsResettlementPassportApiExceptionHandler {
@@ -51,6 +52,20 @@ class HmppsResettlementPassportApiExceptionHandler {
           status = BAD_REQUEST,
           userMessage = "Validation failure: ${e.message}",
           developerMessage = e.message,
+        ),
+      )
+  }
+
+  @ExceptionHandler(ServerWebInputException::class)
+  fun handleServerWebInputException(e: Exception): ResponseEntity<ErrorResponse> {
+    log.info("Validation exception: {}", e.cause?.message)
+    return ResponseEntity
+      .status(BAD_REQUEST)
+      .body(
+        ErrorResponse(
+          status = BAD_REQUEST,
+          userMessage = "Validation failure - please check request parameters and try again",
+          developerMessage = e.cause?.message,
         ),
       )
   }

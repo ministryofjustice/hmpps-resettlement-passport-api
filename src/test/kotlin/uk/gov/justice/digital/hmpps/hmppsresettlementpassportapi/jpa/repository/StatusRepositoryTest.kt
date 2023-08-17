@@ -21,10 +21,10 @@ class StatusRepositoryTest : TestBase() {
   fun `test get all statuses from database`() {
     val expectedStatuses = listOf(
       StatusEntity(Status.NOT_STARTED.id, "Not Started", true, LocalDateTime.now()),
-      StatusEntity(Status.SUPPORT_DECLINED.id, "Support Declined", true, LocalDateTime.now()),
       StatusEntity(Status.IN_PROGRESS.id, "In Progress", true, LocalDateTime.now()),
-      StatusEntity(Status.INCOMPLETE.id, "Incomplete", true, LocalDateTime.now()),
-      StatusEntity(Status.COMPLETE.id, "Complete", true, LocalDateTime.now()),
+      StatusEntity(Status.SUPPORT_NOT_REQUIRED.id, "Support Not Required", true, LocalDateTime.now()),
+      StatusEntity(Status.SUPPORT_DECLINED.id, "Support Declined", true, LocalDateTime.now()),
+      StatusEntity(Status.DONE.id, "Done", true, LocalDateTime.now()),
     )
 
     val statusesFromDatabase = statusRepository.findAll()

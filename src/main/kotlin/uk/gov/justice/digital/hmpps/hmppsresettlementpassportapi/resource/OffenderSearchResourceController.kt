@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import kotlinx.coroutines.flow.Flow
 import org.springframework.http.MediaType
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
@@ -19,7 +20,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.Offende
 
 @RestController
 @Validated
-@RequestMapping("/resettlement-passport", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/resettlement-passport", produces = [MediaType.APPLICATION_JSON_VALUE, MediaType.IMAGE_JPEG_VALUE])
 class OffenderSearchResourceController(
   private val offenderSearchService: OffenderSearchApiService,
 ) {
@@ -128,4 +129,37 @@ class OffenderSearchResourceController(
     @Parameter(required = true)
     nomisId: String,
   ): Prisoner = offenderSearchService.getPrisonerDetailsByNomisId(nomisId)
+
+  @GetMapping("/prisoner/{nomisId}/image/{id}", produces = [MediaType.IMAGE_JPEG_VALUE, MediaType.APPLICATION_JSON_VALUE])
+  @Operation(summary = "Get an image related to a prisoner nomis Id", description = "Gets a jpeg image related to a  prisoner nomis id, usually the latest image captured")
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+        content = [
+          Content(mediaType = MediaType.IMAGE_JPEG_VALUE),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "400",
+        description = "Incorrect information provided to perform prisoner match",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  suspend fun getPrisonerImage(
+    @Schema(example = "AXXXS", required = true)
+    @PathVariable("nomisId")
+    @Parameter(required = true)
+    nomisId: String,
+    @PathVariable("id")
+    @Parameter(required = true)
+    id: Int,
+  ): Flow<ByteArray> = offenderSearchService.getPrisonerImageData(nomisId, id)
 }

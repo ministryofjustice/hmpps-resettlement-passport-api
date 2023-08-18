@@ -13,38 +13,38 @@
   },
   "pathways": [
     {
-      "pathway": "Accommodation",
-      "status": "Not Started",
+      "pathway": "ACCOMMODATION",
+      "status": "NOT_STARTED",
       "lastDateChange": null
     },
     {
-      "pathway": "Attitudes, thinking and behaviour",
-      "status": "Not Started",
+      "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+      "status": "NOT_STARTED",
       "lastDateChange": null
     },
     {
-      "pathway": "Children, families and communities",
-      "status": "Not Started",
+      "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+      "status": "NOT_STARTED",
       "lastDateChange": null
     },
     {
-      "pathway": "Drugs and alcohol",
-      "status": "Not Started",
+      "pathway": "DRUGS_AND_ALCOHOL",
+      "status": "NOT_STARTED",
       "lastDateChange": null
     },
     {
-      "pathway": "Education, skills and work",
-      "status": "Not Started",
+      "pathway": "EDUCATION_SKILLS_AND_WORK",
+      "status": "NOT_STARTED",
       "lastDateChange": null
     },
     {
-      "pathway": "Finance and ID",
-      "status": "Not Started",
+      "pathway": "FINANCE_AND_ID",
+      "status": "NOT_STARTED",
       "lastDateChange": null
     },
     {
-      "pathway": "Health",
-      "status": "Not Started",
+      "pathway": "HEALTH",
+      "status": "NOT_STARTED",
       "lastDateChange": null
     }
   ]

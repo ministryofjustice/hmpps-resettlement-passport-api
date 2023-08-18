@@ -23,6 +23,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.ArrayList
 
 @Service
 class OffenderSearchApiService(
@@ -197,7 +199,7 @@ class OffenderSearchApiService(
         ),
       )
       .retrieve()
-      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomisId Image not found") })
+      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomisId not found") })
       .awaitBody<List<PrisonerImage>>()
   }
   suspend fun getPrisonerDetailsByNomisId(nomisId: String): Prisoner {
@@ -237,5 +239,27 @@ class OffenderSearchApiService(
       }
     }
     return Prisoner(prisonerPersonal, argStatus)
+  }
+
+  fun getPrisonerImageData(nomisId: String, imageId: Int): Flow<ByteArray> = flow {
+    val prisonerImageDetailsList = findPrisonerImageDetails(nomisId)
+    var imageIdExists = false
+    prisonerImageDetailsList.forEach {
+      if (it.imageId.toInt() == imageId) {
+        imageIdExists = true
+        val image = offendersImageWebClientCredentials
+          .get()
+          .uri(
+            "/api/images/$imageId/data",
+          )
+          .retrieve()
+          .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Image not found") })
+          .awaitBody<ByteArray>()
+        emit(image)
+      }
+    }
+    if (!imageIdExists) {
+      throw ResourceNotFoundException("Image not found")
+    }
   }
 }

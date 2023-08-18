@@ -17,6 +17,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonerRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import java.time.LocalDate
 import java.time.Period
@@ -148,20 +150,20 @@ class OffenderSearchApiService(
   private fun objectMapper(searchList: List<PrisonersSearch>): List<Prisoners> {
     val prisonersList = mutableListOf<Prisoners>()
     val pathwayRepoData = pathwayRepository.findAll()
-    searchList.forEach {
+    searchList.forEach { prisonersSearch ->
       val prisoner = Prisoners(
-        it.prisonerNumber,
-        it.firstName,
-        it.middleNames,
-        it.lastName,
-        it.releaseDate,
-        it.nonDtoReleaseDateType,
+        prisonersSearch.prisonerNumber,
+        prisonersSearch.firstName,
+        prisonersSearch.middleNames,
+        prisonersSearch.lastName,
+        prisonersSearch.releaseDate,
+        prisonersSearch.nonDtoReleaseDateType,
       )
       val argStatus = ArrayList<PathwayStatus>()
 
       pathwayRepoData.forEach {
         if (it.active) {
-          val pathwayStatus = PathwayStatus(it.name, "Not Started")
+          val pathwayStatus = PathwayStatus(Pathway.values().get(it.id.toInt() - 1), Status.NOT_STARTED.toString())
           argStatus.add(pathwayStatus)
         }
       }
@@ -230,7 +232,7 @@ class OffenderSearchApiService(
     val pathwayRepoData = pathwayRepository.findAll()
     pathwayRepoData.forEach {
       if (it.active) {
-        val pathwayStatus = PathwayStatus(it.name, "Not Started")
+        val pathwayStatus = PathwayStatus(Pathway.values().get(it.id.toInt() - 1), Status.NOT_STARTED.toString())
         argStatus.add(pathwayStatus)
       }
     }

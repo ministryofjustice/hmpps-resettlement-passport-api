@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import java.time.LocalDate
 import java.time.Period
@@ -162,7 +163,7 @@ class OffenderSearchApiService(
 
       pathwayRepoData.forEach {
         if (it.active) {
-          val pathwayStatus = PathwayStatus(Pathway.values().get(it.id.toInt() - 1), "Not Started")
+          val pathwayStatus = PathwayStatus(Pathway.values().get(it.id.toInt() - 1), Status.NOT_STARTED.toString())
           argStatus.add(pathwayStatus)
         }
       }
@@ -231,7 +232,7 @@ class OffenderSearchApiService(
     val pathwayRepoData = pathwayRepository.findAll()
     pathwayRepoData.forEach {
       if (it.active) {
-        val pathwayStatus = PathwayStatus(Pathway.values().get(it.id.toInt() - 1), "Not Started")
+        val pathwayStatus = PathwayStatus(Pathway.values().get(it.id.toInt() - 1), Status.NOT_STARTED.toString())
         argStatus.add(pathwayStatus)
       }
     }

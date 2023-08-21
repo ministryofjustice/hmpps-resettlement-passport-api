@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
+import org.springframework.web.reactive.function.client.awaitBodyOrNull
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
@@ -36,7 +37,7 @@ class OffenderSearchApiService(
   private fun findPrisonersBySearchTerm(prisonId: String, searchTerm: String): Flow<List<PrisonersSearch>> = flow {
     var page = 0
     do {
-      val pageOfData = offendersSearchWebClientClientCredentials.get()
+      val data = offendersSearchWebClientClientCredentials.get()
         .uri(
           "/prison/{prisonId}/prisoners?term={term}&size={size}&page={page}&sort={sort}",
           mapOf(
@@ -47,11 +48,14 @@ class OffenderSearchApiService(
             "sort" to "prisonerNumber",
           ),
         )
-        .retrieve()
-        .awaitBody<PrisonersSearchList>()
-      emit(pageOfData.content!!)
+        .retrieve().onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("PrisonId $prisonId not found") })
+
+      val pageOfData = data.awaitBodyOrNull<PrisonersSearchList>()
+      if (pageOfData != null) {
+        emit(pageOfData.content!!)
+      }
       page += 1
-    } while (!pageOfData.last)
+    } while (!pageOfData?.last!!)
   }
 
   private fun findPrisonersByReleaseDate(prisonId: String, earliestReleaseDate: String, latestReleaseDate: String, prisonIds: List<String>): Flow<List<PrisonersSearch>> = flow {
@@ -87,6 +91,10 @@ class OffenderSearchApiService(
    */
   suspend fun getPrisonersByPrisonId(dateRangeAPI: Boolean, searchTerm: String, prisonId: String, days: Long, pageNumber: Int, pageSize: Int, sort: String): PrisonersList {
     val offenders = mutableListOf<PrisonersSearch>()
+    if (prisonId.isBlank() || prisonId.isEmpty()) {
+      throw NoDataWithCodeFoundException("Prisoners", prisonId)
+    }
+
     if (pageNumber < 0 || pageSize <= 0) {
       throw NoDataWithCodeFoundException(
         "Data",
@@ -112,7 +120,9 @@ class OffenderSearchApiService(
         offenders.addAll(it)
       }
     }
-
+    if (offenders.isEmpty()) {
+      throw NoDataWithCodeFoundException("Prisoners", prisonId)
+    }
     val startIndex = (pageNumber * pageSize)
     if (startIndex >= offenders.size) {
       throw NoDataWithCodeFoundException(

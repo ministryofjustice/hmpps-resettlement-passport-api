@@ -128,4 +128,19 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(404)
       .jsonPath("developerMessage").toString().contains("No Data found")
   }
+
+  @Test
+  fun `Get Prisoners when prisonerId not found`() {
+    val prisonId = "abc"
+
+    offenderSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 404)
+    webTestClient.get()
+      .uri("/resettlement-passport/prison/$prisonId/prisoners?page=0&size=10&sort=xxxxx")
+      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .exchange()
+      .expectStatus().isEqualTo(404)
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(404)
+  }
 }

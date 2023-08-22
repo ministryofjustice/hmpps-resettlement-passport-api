@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import jakarta.transaction.Transactional
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.springframework.http.HttpStatus
@@ -19,12 +20,17 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.StatusRepository
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.Period
 import java.time.format.DateTimeFormatter
-import java.util.*
 import kotlin.collections.ArrayList
 
 @Service
@@ -32,6 +38,10 @@ class OffenderSearchApiService(
   private val pathwayRepository: PathwayRepository,
   private val offendersSearchWebClientClientCredentials: WebClient,
   private val offendersImageWebClientCredentials: WebClient,
+  private val prisonerRepository: PrisonerRepository,
+  private val communityApiService: CommunityApiService,
+  private val pathwayStatusRepository: PathwayStatusRepository,
+  private val statusRepository: StatusRepository,
 ) {
 
   private fun findPrisonersBySearchTerm(prisonId: String, searchTerm: String): Flow<List<PrisonersSearch>> = flow {
@@ -216,6 +226,7 @@ class OffenderSearchApiService(
     val prisonerSearch = findPrisonerPersonalDetails(nomisId)
 
     val prisonerImageDetailsList = findPrisonerImageDetails(nomisId)
+
     var prisonerImage: PrisonerImage? = null
     prisonerImageDetailsList.forEach {
       if (prisonerImage == null || (prisonerImage!!.captureDateTime?.isBefore(it.captureDateTime) == true)) {
@@ -241,14 +252,45 @@ class OffenderSearchApiService(
     )
 
     val argStatus = ArrayList<PathwayStatus>()
+    val prisonerRepoData = prisonerRepository.findByNomsId(prisonerSearch.prisonerNumber)
     val pathwayRepoData = pathwayRepository.findAll()
+
     pathwayRepoData.forEach {
       if (it.active) {
-        val pathwayStatus = PathwayStatus(Pathway.values().get(it.id.toInt() - 1), Status.NOT_STARTED.toString())
+        // val pathwayStatus = PathwayStatus(Pathway.values().get(it.id.toInt() - 1), Status.NOT_STARTED.toString())
+        val pathwayStatusRepoData =
+          prisonerRepoData?.let { it1 -> pathwayStatusRepository.findByPathwayAndPrisoner(it, it1) }
+        var pathwayStatus = PathwayStatus(Pathway.values().get(it.id.toInt() - 1), Status.NOT_STARTED.toString())
+        if (pathwayStatusRepoData != null) {
+          pathwayStatus = PathwayStatus(
+            Pathway.values().get(it.id.toInt() - 1),
+            getStatusEnum(pathwayStatusRepoData),
+            pathwayStatusRepoData.updatedDate.toString(),
+          )
+        }
         argStatus.add(pathwayStatus)
       }
     }
+    // check the Prisoner Seed Completed
+    addPrisonerAndInitialPathwayStatus(nomisId)
+
     return Prisoner(prisonerPersonal, argStatus)
+  }
+
+  private fun getStatusEnum(pathwayStatusRepoData: PathwayStatusEntity): String {
+    return if (pathwayStatusRepoData.id == Status.NOT_STARTED.id) {
+      Status.NOT_STARTED.toString()
+    } else if (pathwayStatusRepoData.id == Status.IN_PROGRESS.id) {
+      Status.IN_PROGRESS.toString()
+    } else if (pathwayStatusRepoData.id == Status.SUPPORT_DECLINED.id) {
+      Status.SUPPORT_DECLINED.toString()
+    } else if (pathwayStatusRepoData.id == Status.SUPPORT_NOT_REQUIRED.id) {
+      Status.SUPPORT_NOT_REQUIRED.toString()
+    } else if (pathwayStatusRepoData.id == Status.DONE.id) {
+      Status.DONE.toString()
+    } else {
+      Status.NOT_STARTED.toString()
+    }
   }
 
   fun getPrisonerImageData(nomisId: String, imageId: Int): Flow<ByteArray> = flow {
@@ -270,6 +312,46 @@ class OffenderSearchApiService(
     }
     if (!imageIdExists) {
       throw ResourceNotFoundException("Image not found")
+    }
+  }
+
+  @Transactional
+  suspend fun addPrisonerAndInitialPathwayStatus(nomisId: String) {
+    // Seed the Prisoner data into the DB
+    var prisonerEntity = prisonerRepository.findByNomsId(nomisId)
+    @Suppress("SENSELESS_COMPARISON")
+    if (prisonerEntity == null) {
+      val crn = communityApiService.getCrn(nomisId)
+      prisonerEntity = PrisonerEntity(null, nomisId, LocalDateTime.now(), crn.toString())
+      prisonerEntity = prisonerRepository.save(prisonerEntity)
+      val statusRepoData = statusRepository.findById(Status.NOT_STARTED.id)
+      val pathwayRepoData = pathwayRepository.findAll()
+      pathwayRepoData.forEach {
+        if (it.active) {
+          val pathwayStatusEntity =
+            PathwayStatusEntity(null, prisonerEntity, it, statusRepoData.get(), LocalDateTime.now())
+          pathwayStatusRepository.save(pathwayStatusEntity)
+        }
+      }
+    } else if (prisonerEntity.crn == null) {
+      val crn = communityApiService.getCrn(nomisId)
+      if (crn != null) {
+        prisonerEntity.crn = crn.toString()
+        prisonerRepository.save(prisonerEntity)
+      } else {
+        val pathwayStatusRepoData = pathwayStatusRepository.findByPrisoner(prisonerEntity)
+        if (pathwayStatusRepoData == null) {
+          val statusRepoData = statusRepository.findById(Status.NOT_STARTED.id)
+          val pathwayRepoData = pathwayRepository.findAll()
+          pathwayRepoData.forEach {
+            if (it.active) {
+              val pathwayStatusEntity =
+                PathwayStatusEntity(null, prisonerEntity, it, statusRepoData.get(), LocalDateTime.now())
+              pathwayStatusRepository.save(pathwayStatusEntity)
+            }
+          }
+        }
+      }
     }
   }
 }

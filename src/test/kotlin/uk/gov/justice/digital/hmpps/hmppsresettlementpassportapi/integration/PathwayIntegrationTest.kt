@@ -53,6 +53,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
           1,
           "123",
           LocalDateTime.parse("2023-08-16T12:21:38.709"),
+          "abc",
         ),
         PathwayEntity(
           1,
@@ -72,7 +73,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
 
     assertThat(expectedPathwayStatus).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java)
       .isEqualTo(actualPathwayStatus)
-    Assertions.assertEquals(fakeNow, actualPathwayStatus.creationDate)
+    Assertions.assertEquals(fakeNow, actualPathwayStatus.updatedDate)
 
     unmockkStatic(LocalDateTime::class)
   }

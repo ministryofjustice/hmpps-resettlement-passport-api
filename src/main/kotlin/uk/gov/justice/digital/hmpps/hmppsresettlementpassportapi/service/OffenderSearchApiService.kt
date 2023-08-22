@@ -234,7 +234,6 @@ class OffenderSearchApiService(
   }
 
   suspend fun getPrisonerDetailsByNomsId(nomsId: String): Prisoner {
-
     val prisonerSearch = findPrisonerPersonalDetails(nomsId)
 
     // Add initial pathway statuses if required

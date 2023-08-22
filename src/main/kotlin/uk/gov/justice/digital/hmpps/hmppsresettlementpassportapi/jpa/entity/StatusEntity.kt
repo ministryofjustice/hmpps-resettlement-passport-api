@@ -28,4 +28,9 @@ enum class Status(val id: Long) {
   SUPPORT_NOT_REQUIRED(3),
   SUPPORT_DECLINED(4),
   DONE(5),
+  ;
+
+  companion object {
+    fun getById(id: Long) = values().first { it.id == id }
+  }
 }

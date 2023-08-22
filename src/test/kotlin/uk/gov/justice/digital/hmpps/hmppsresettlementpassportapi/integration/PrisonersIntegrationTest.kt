@@ -1,12 +1,15 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
 import org.junit.jupiter.api.Test
+import org.springframework.test.context.jdbc.Sql
+import wiremock.com.google.common.io.Resources
 import java.io.File
 
 class PrisonersIntegrationTest : IntegrationTestBase() {
   @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
   fun `Get All Prisoners happy path`() {
-    val expectedOutput = File("src/test/resources/testdata/prisoners/prisoners.json").inputStream().readBytes().toString(Charsets.UTF_8)
+    val expectedOutput = Resources.getResource("testdata/prisoners/prisoners.json").readText()
     val prisonId = "MDI"
     offenderSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 200)
     webTestClient.get()
@@ -19,6 +22,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
   fun `Get All Prisoners sort by releaseDate ascending happy path`() {
     val expectedOutput = File("src/test/resources/testdata/prisoners/prisoners-ascending.json").inputStream().readBytes().toString(Charsets.UTF_8)
     val prisonId = "MDI"

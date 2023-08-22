@@ -44,17 +44,20 @@ class PathwayApiServiceTest {
   @Mock
   private lateinit var statusRepository: StatusRepository
 
+  @Mock
+  private lateinit var communityApiService: CommunityApiService
+
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
   @BeforeEach
   fun beforeEach() {
-    pathwayApiService = PathwayApiService(pathwayStatusRepository, prisonerRepository, pathwayRepository, statusRepository)
+    pathwayApiService = PathwayApiService(pathwayStatusRepository, prisonerRepository, pathwayRepository, statusRepository, communityApiService)
   }
 
   @Test
   fun `test update pathway status`() {
-    // Mock calls to LocalDateTime.now() so we can test the creationDate is being updated
+    // Mock calls to LocalDateTime.now() so we can test the updatedDate is being updated
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
 

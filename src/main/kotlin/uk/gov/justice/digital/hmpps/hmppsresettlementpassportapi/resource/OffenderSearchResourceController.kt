@@ -128,7 +128,7 @@ class OffenderSearchResourceController(
     @PathVariable("nomisId")
     @Parameter(required = true)
     nomisId: String,
-  ): Prisoner = offenderSearchService.getPrisonerDetailsByNomisId(nomisId)
+  ): Prisoner = offenderSearchService.getPrisonerDetailsByNomsId(nomisId)
 
   @GetMapping("/prisoner/{nomisId}/image/{id}", produces = [MediaType.IMAGE_JPEG_VALUE, MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get an image related to a prisoner nomis Id", description = "Gets a jpeg image related to a  prisoner nomis id, usually the latest image captured")

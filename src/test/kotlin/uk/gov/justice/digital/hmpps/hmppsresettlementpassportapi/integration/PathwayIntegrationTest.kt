@@ -26,7 +26,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
   @Test
-  @Sql("classpath:testdata/sql/seed-pathway-statuses.sql")
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
   fun `Patch pathway status happy path`() {
     // Mock calls to LocalDateTime.now() so we can test the creationDate is being updated
     mockkStatic(LocalDateTime::class)
@@ -79,7 +79,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  @Sql("classpath:testdata/sql/seed-pathway-statuses.sql")
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
   fun `Patch pathway status happy path - 404 on prisoner`() {
     val prisonerId = "abc"
 
@@ -104,7 +104,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  @Sql("classpath:testdata/sql/seed-pathway-statuses.sql")
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
   fun `Patch pathway status happy path - 404 on pathway status`() {
     val prisonerId = "789"
 

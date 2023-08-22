@@ -36,6 +36,8 @@ import kotlin.collections.ArrayList
 @Service
 class OffenderSearchApiService(
   private val pathwayRepository: PathwayRepository,
+  private val prisonerRepository: PrisonerRepository,
+  private val pathwayStatusRepository: PathwayStatusRepository,
   private val offendersSearchWebClientClientCredentials: WebClient,
   private val offendersImageWebClientCredentials: WebClient,
   private val prisonerRepository: PrisonerRepository,
@@ -68,7 +70,12 @@ class OffenderSearchApiService(
     } while (!pageOfData?.last!!)
   }
 
-  private fun findPrisonersByReleaseDate(prisonId: String, earliestReleaseDate: String, latestReleaseDate: String, prisonIds: List<String>): Flow<List<PrisonersSearch>> = flow {
+  private fun findPrisonersByReleaseDate(
+    prisonId: String,
+    earliestReleaseDate: String,
+    latestReleaseDate: String,
+    prisonIds: List<String>,
+  ): Flow<List<PrisonersSearch>> = flow {
     var page = 0
     do {
       val pageOfData = offendersSearchWebClientClientCredentials.post()
@@ -99,7 +106,15 @@ class OffenderSearchApiService(
    * returning a complete list.
    * Requires role PRISONER_IN_PRISON_SEARCH or PRISONER_SEARCH
    */
-  suspend fun getPrisonersByPrisonId(dateRangeAPI: Boolean, searchTerm: String, prisonId: String, days: Long, pageNumber: Int, pageSize: Int, sort: String): PrisonersList {
+  suspend fun getPrisonersByPrisonId(
+    dateRangeAPI: Boolean,
+    searchTerm: String,
+    prisonId: String,
+    days: Long,
+    pageNumber: Int,
+    pageSize: Int,
+    sort: String,
+  ): PrisonersList {
     val offenders = mutableListOf<PrisonersSearch>()
     if (prisonId.isBlank() || prisonId.isEmpty()) {
       throw NoDataWithCodeFoundException("Prisoners", prisonId)
@@ -171,7 +186,6 @@ class OffenderSearchApiService(
 
   private fun objectMapper(searchList: List<PrisonersSearch>): List<Prisoners> {
     val prisonersList = mutableListOf<Prisoners>()
-    val pathwayRepoData = pathwayRepository.findAll()
     searchList.forEach { prisonersSearch ->
       val prisoner = Prisoners(
         prisonersSearch.prisonerNumber,
@@ -181,52 +195,53 @@ class OffenderSearchApiService(
         prisonersSearch.releaseDate,
         prisonersSearch.nonDtoReleaseDateType,
       )
-      val argStatus = ArrayList<PathwayStatus>()
 
-      pathwayRepoData.forEach {
-        if (it.active) {
-          val pathwayStatus = PathwayStatus(Pathway.values().get(it.id.toInt() - 1), Status.NOT_STARTED.toString())
-          argStatus.add(pathwayStatus)
-        }
-      }
-      prisoner.status = argStatus
+      val prisonerEntity = prisonerRepository.findByNomsId(prisonersSearch.prisonerNumber)
+        ?: throw ResourceNotFoundException("Unable to find prisoner ${prisonersSearch.prisonerNumber} in database.")
+
+      val pathwayStatuses = getPathwayStatuses(prisonerEntity, prisonersSearch.prisonerNumber)
+
+      prisoner.status = pathwayStatuses
       prisonersList.add(prisoner)
     }
     return prisonersList
   }
 
-  private suspend fun findPrisonerPersonalDetails(nomisId: String): PrisonersSearch {
+  private suspend fun findPrisonerPersonalDetails(nomsId: String): PrisonersSearch {
     return offendersSearchWebClientClientCredentials
       .get()
       .uri(
-        "/prisoner/{nomisId}",
+        "/prisoner/{nomsId}",
         mapOf(
-          "nomisId" to nomisId,
+          "nomsId" to nomsId,
         ),
       )
       .retrieve()
-      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomisId not found") })
+      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found") })
       .awaitBody<PrisonersSearch>()
   }
 
-  private suspend fun findPrisonerImageDetails(nomisId: String): List<PrisonerImage> {
+  private suspend fun findPrisonerImageDetails(nomsId: String): List<PrisonerImage> {
     return offendersImageWebClientCredentials
       .get()
       .uri(
-        "/api/images/offenders/{nomisId}",
+        "/api/images/offenders/{nomsId}",
         mapOf(
-          "nomisId" to nomisId,
+          "nomsId" to nomsId,
         ),
       )
       .retrieve()
-      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomisId not found") })
+      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found") })
       .awaitBody<List<PrisonerImage>>()
   }
-  suspend fun getPrisonerDetailsByNomisId(nomisId: String): Prisoner {
-    val prisonerSearch = findPrisonerPersonalDetails(nomisId)
 
-    val prisonerImageDetailsList = findPrisonerImageDetails(nomisId)
+  suspend fun getPrisonerDetailsByNomsId(nomsId: String): Prisoner {
+    val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Unable to find prisoner $nomsId in database.")
 
+    val prisonerSearch = findPrisonerPersonalDetails(nomsId)
+
+    val prisonerImageDetailsList = findPrisonerImageDetails(nomsId)
     var prisonerImage: PrisonerImage? = null
     prisonerImageDetailsList.forEach {
       if (prisonerImage == null || (prisonerImage!!.captureDateTime?.isBefore(it.captureDateTime) == true)) {
@@ -251,50 +266,41 @@ class OffenderSearchApiService(
       prisonerImage?.imageId,
     )
 
-    val argStatus = ArrayList<PathwayStatus>()
-    val prisonerRepoData = prisonerRepository.findByNomsId(prisonerSearch.prisonerNumber)
-    val pathwayRepoData = pathwayRepository.findAll()
+    val pathwayStatuses = getPathwayStatuses(prisonerEntity, nomsId)
 
-    pathwayRepoData.forEach {
-      if (it.active) {
-        // val pathwayStatus = PathwayStatus(Pathway.values().get(it.id.toInt() - 1), Status.NOT_STARTED.toString())
-        val pathwayStatusRepoData =
-          prisonerRepoData?.let { it1 -> pathwayStatusRepository.findByPathwayAndPrisoner(it, it1) }
-        var pathwayStatus = PathwayStatus(Pathway.values().get(it.id.toInt() - 1), Status.NOT_STARTED.toString())
-        if (pathwayStatusRepoData != null) {
-          pathwayStatus = PathwayStatus(
-            Pathway.values().get(it.id.toInt() - 1),
-            getStatusEnum(pathwayStatusRepoData),
-            pathwayStatusRepoData.updatedDate.toString(),
-          )
-        }
-        argStatus.add(pathwayStatus)
-      }
-    }
     // check the Prisoner Seed Completed
     addPrisonerAndInitialPathwayStatus(nomisId)
 
-    return Prisoner(prisonerPersonal, argStatus)
+    return Prisoner(prisonerPersonal, pathwayStatuses)
   }
 
-  private fun getStatusEnum(pathwayStatusRepoData: PathwayStatusEntity): String {
-    return if (pathwayStatusRepoData.id == Status.NOT_STARTED.id) {
-      Status.NOT_STARTED.toString()
-    } else if (pathwayStatusRepoData.id == Status.IN_PROGRESS.id) {
-      Status.IN_PROGRESS.toString()
-    } else if (pathwayStatusRepoData.id == Status.SUPPORT_DECLINED.id) {
-      Status.SUPPORT_DECLINED.toString()
-    } else if (pathwayStatusRepoData.id == Status.SUPPORT_NOT_REQUIRED.id) {
-      Status.SUPPORT_NOT_REQUIRED.toString()
-    } else if (pathwayStatusRepoData.id == Status.DONE.id) {
-      Status.DONE.toString()
-    } else {
-      Status.NOT_STARTED.toString()
+  protected fun getPathwayStatuses(
+    prisonerEntity: PrisonerEntity,
+    nomsId: String,
+  ): ArrayList<PathwayStatus> {
+    val pathwayStatuses = ArrayList<PathwayStatus>()
+    val pathwayRepoData = pathwayRepository.findAll()
+    pathwayRepoData.forEach { pathwayEntity ->
+      if (pathwayEntity.active) {
+        // Find the status in the database of each pathway for this prisoner - if any data is missing then throw an exception (should never happen)
+        val pathwayStatusEntity = pathwayStatusRepository.findByPathwayAndPrisoner(pathwayEntity, prisonerEntity)
+          ?: throw ResourceNotFoundException("Missing pathway_status entry in database for prisoner $nomsId and pathway ${pathwayEntity.name}")
+        val pathwayStatus = PathwayStatus(
+          Pathway.getById(pathwayEntity.id),
+          Status.getById(pathwayStatusEntity.status.id),
+          pathwayStatusEntity.creationDate.toLocalDate(),
+        )
+        pathwayStatuses.add(pathwayStatus)
+
+
+      }
     }
+    return pathwayStatuses
   }
 
-  fun getPrisonerImageData(nomisId: String, imageId: Int): Flow<ByteArray> = flow {
-    val prisonerImageDetailsList = findPrisonerImageDetails(nomisId)
+
+  fun getPrisonerImageData(nomsId: String, imageId: Int): Flow<ByteArray> = flow {
+    val prisonerImageDetailsList = findPrisonerImageDetails(nomsId)
     var imageIdExists = false
     prisonerImageDetailsList.forEach {
       if (it.imageId.toInt() == imageId) {

@@ -9,29 +9,44 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.mock
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.Mock
+import org.mockito.Mockito.`when`
+import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
 import org.springframework.web.reactive.function.client.WebClient
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import java.time.LocalDateTime
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.StatusRepository
 
+@ExtendWith(MockitoExtension::class)
 class OffenderSearchApiServiceTest {
 
   private val mockWebServer: MockWebServer = MockWebServer()
   private lateinit var offenderSearchApiService: OffenderSearchApiService
   private lateinit var communityApiService: CommunityApiService
 
+  @Mock
+  private lateinit var pathwayRepository: PathwayRepository
+
+  @Mock
+  private lateinit var prisonerRepository: PrisonerRepository
+
+  @Mock
+  private lateinit var pathwayStatusRepository: PathwayStatusRepository
+
   @BeforeEach
   fun beforeEach() {
     mockWebServer.start()
     val webClient = WebClient.create(mockWebServer.url("/").toUrl().toString())
-    val pathwayRepository: PathwayRepository = mock()
-    val prisonerRepository: PrisonerRepository = mock()
-    val pathwayStatusRepository: PathwayStatusRepository = mock()
-    val statusRepository: StatusRepository = mock()
-    communityApiService = CommunityApiService(webClient, prisonerRepository)
-    offenderSearchApiService = OffenderSearchApiService(pathwayRepository, webClient, webClient, prisonerRepository, communityApiService, pathwayStatusRepository, statusRepository)
+    offenderSearchApiService = OffenderSearchApiService(pathwayRepository, prisonerRepository, pathwayStatusRepository, webClient, webClient)
+    mockDatabaseCalls()
   }
 
   @AfterEach
@@ -102,5 +117,21 @@ class OffenderSearchApiServiceTest {
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisonersList = offenderSearchApiService.getPrisonersByPrisonId(true, "", prisonId, 1095, 0, 10, "releaseDate,DESC")
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
+  }
+
+  fun mockDatabaseCalls() {
+    val mockPrisonerEntity = PrisonerEntity(1, "TEST", LocalDateTime.now())
+    val mockPathwayEntity1 = PathwayEntity(1, "Accommodation", true, LocalDateTime.now())
+    val mockPathwayEntity2 = PathwayEntity(2, "Attitudes, thinking and behaviour", true, LocalDateTime.now())
+    val mockPathwayEntity3 = PathwayEntity(3, "Children, families and communities", false, LocalDateTime.now())
+
+    val mockStatusEntity = StatusEntity(1, "Not Started", true, LocalDateTime.now())
+
+    `when`(prisonerRepository.findByNomsId(any())).thenReturn(mockPrisonerEntity)
+    `when`(pathwayRepository.findAll()).thenReturn(listOf(mockPathwayEntity1, mockPathwayEntity2, mockPathwayEntity3))
+
+    `when`(pathwayStatusRepository.findByPathwayAndPrisoner(any(), any())).thenReturn(
+      PathwayStatusEntity(1, mockPrisonerEntity, mockPathwayEntity1, mockStatusEntity, LocalDateTime.now()),
+    )
   }
 }

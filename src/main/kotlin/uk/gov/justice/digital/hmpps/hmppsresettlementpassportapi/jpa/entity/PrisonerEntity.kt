@@ -20,4 +20,7 @@ data class PrisonerEntity(
 
   @Column(name = "creation_date")
   val creationDate: LocalDateTime,
+
+  @Column(name = "crn")
+  var crn: String,
 )

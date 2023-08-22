@@ -59,9 +59,10 @@ class PathwayApiServiceTest {
     every { LocalDateTime.now() } returns fakeNow
 
     val nomsId = "abc"
+    val crn = "crn1"
     val pathwayEntity = PathwayEntity(1, "Accommodation", true, testDate)
     val newStatusEntity = StatusEntity(2, "In Progress", true, testDate)
-    val prisonerEntity = PrisonerEntity(1, nomsId, testDate)
+    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, crn)
     val oldStatusEntity = StatusEntity(1, "Not Started", true, testDate)
     val pathwayStatusEntity = PathwayStatusEntity(1, prisonerEntity, pathwayEntity, oldStatusEntity, testDate)
 
@@ -91,9 +92,10 @@ class PathwayApiServiceTest {
   @Test
   fun `test update pathway status - pathway status not found`() {
     val nomsId = "abc"
+    val crn = "crn1"
     val pathwayEntity = PathwayEntity(1, "Accommodation", true, testDate)
     val newStatusEntity = StatusEntity(2, "In Progress", true, testDate)
-    val prisonerEntity = PrisonerEntity(1, nomsId, testDate)
+    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, crn)
 
     Mockito.`when`(pathwayRepository.findById(Pathway.ACCOMMODATION.id)).thenReturn(Optional.of(pathwayEntity))
     Mockito.`when`(statusRepository.findById(Status.IN_PROGRESS.id)).thenReturn(Optional.of(newStatusEntity))

@@ -12,9 +12,11 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.mockito.kotlin.mock
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 
 class CommunityApiServiceTest {
 
@@ -25,7 +27,8 @@ class CommunityApiServiceTest {
   fun beforeEach() {
     mockWebServer.start()
     val webClient = WebClient.create(mockWebServer.url("/").toUrl().toString())
-    communityApiService = CommunityApiService(webClient)
+    val prisonerRepository: PrisonerRepository = mock()
+    communityApiService = CommunityApiService(webClient, prisonerRepository)
   }
 
   @AfterEach
@@ -41,7 +44,7 @@ class CommunityApiServiceTest {
     val mockedJsonResponse = Resources.getResource("testdata/community/offender-details-valid-1.json").readText()
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
 
-    Assertions.assertEquals(expectedCrn, communityApiService.findCrn(nomsId))
+    Assertions.assertEquals(expectedCrn, communityApiService.getCrn(nomsId))
   }
 
   @Test
@@ -52,7 +55,7 @@ class CommunityApiServiceTest {
     val mockedJsonResponse = Resources.getResource("testdata/community/offender-details-valid-2.json").readText()
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
 
-    Assertions.assertEquals(expectedCrn, communityApiService.findCrn(nomsId))
+    Assertions.assertEquals(expectedCrn, communityApiService.getCrn(nomsId))
   }
 
   @Test
@@ -60,7 +63,7 @@ class CommunityApiServiceTest {
     val nomsId = "ABC1234"
 
     mockWebServer.enqueue(MockResponse().setBody("{}").addHeader("Content-Type", "application/json"))
-    Assertions.assertNull(communityApiService.findCrn(nomsId))
+    Assertions.assertNull(communityApiService.getCrn(nomsId))
   }
 
   @Test
@@ -68,7 +71,7 @@ class CommunityApiServiceTest {
     val nomsId = "ABC1234"
 
     mockWebServer.enqueue(MockResponse().setBody("{}").addHeader("Content-Type", "application/json").setResponseCode(404))
-    assertThrows<ResourceNotFoundException> { communityApiService.findCrn(nomsId) }
+    assertThrows<ResourceNotFoundException> { communityApiService.getCrn(nomsId) }
   }
 
   @Test
@@ -76,6 +79,6 @@ class CommunityApiServiceTest {
     val nomsId = "ABC1234"
 
     mockWebServer.enqueue(MockResponse().setBody("{}").addHeader("Content-Type", "application/json").setResponseCode(500))
-    assertThrows<WebClientResponseException> { communityApiService.findCrn(nomsId) }
+    assertThrows<WebClientResponseException> { communityApiService.getCrn(nomsId) }
   }
 }

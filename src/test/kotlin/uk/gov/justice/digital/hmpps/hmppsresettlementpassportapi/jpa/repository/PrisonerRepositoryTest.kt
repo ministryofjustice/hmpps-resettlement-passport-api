@@ -23,7 +23,7 @@ class PrisonerRepositoryTest : TestBase() {
 
   @Test
   fun `test persist new prisoner`() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now())
+    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1")
     prisonerRepository.save(prisoner)
 
     val prisonerFromDatabase = prisonerRepository.findAll()[0]

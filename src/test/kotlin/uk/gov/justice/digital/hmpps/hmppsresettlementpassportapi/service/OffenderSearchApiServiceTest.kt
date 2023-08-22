@@ -12,18 +12,26 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.StatusRepository
 
 class OffenderSearchApiServiceTest {
 
   private val mockWebServer: MockWebServer = MockWebServer()
   private lateinit var offenderSearchApiService: OffenderSearchApiService
+  private lateinit var communityApiService: CommunityApiService
 
   @BeforeEach
   fun beforeEach() {
     mockWebServer.start()
     val webClient = WebClient.create(mockWebServer.url("/").toUrl().toString())
     val pathwayRepository: PathwayRepository = mock()
-    offenderSearchApiService = OffenderSearchApiService(pathwayRepository, webClient, webClient)
+    val prisonerRepository: PrisonerRepository = mock()
+    val pathwayStatusRepository: PathwayStatusRepository = mock()
+    val statusRepository: StatusRepository = mock()
+    communityApiService = CommunityApiService(webClient, prisonerRepository)
+    offenderSearchApiService = OffenderSearchApiService(pathwayRepository, webClient, webClient, prisonerRepository, communityApiService, pathwayStatusRepository, statusRepository)
   }
 
   @AfterEach

@@ -45,7 +45,7 @@ class PathwayApiService(
     ?: throw ResourceNotFoundException("Prisoner with id ${prisoner.nomsId} has no pathway_status entry for ${pathway.name} in database")
   fun updatePathwayStatusWithNewStatus(pathwayStatus: PathwayStatusEntity, newStatus: StatusEntity) {
     pathwayStatus.status = newStatus
-    pathwayStatus.creationDate = LocalDateTime.now()
+    pathwayStatus.updatedDate = LocalDateTime.now()
     pathwayStatusRepository.save(pathwayStatus)
   }
 }

@@ -97,7 +97,7 @@
       "category": "Residence at a specific place",
       "sequence": 0,
       "text": "You must reside overnight within [REGION] probation region while of no fixed abode, unless otherwise approved by your supervising officer.",
-      "expandedText": "You must reside overnight within London probation region while of no fixed abode, unless otherwise approved by your supervising officer.",
+      "expandedText": "You must reside overnight within Greater Manchester probation region while of no fixed abode, unless otherwise approved by your supervising officer.",
       "data": [
         {
           "id": 3072,
@@ -115,7 +115,7 @@
       "category": "Freedom of movement",
       "sequence": 7,
       "text": "Not to enter the area of [CLEARLY SPECIFIED AREA], as defined by the attached map, without the prior approval of your supervising officer.",
-      "expandedText": "Not to enter the area of dsdsds, as defined by the attached map, without the prior approval of your supervising officer.",
+      "expandedText": "Not to enter the area of Leeds City Centre, as defined by the attached map, without the prior approval of your supervising officer.",
       "data": [
         {
           "id": 3079,
@@ -150,7 +150,7 @@
       "category": "Supervision in the community",
       "sequence": 8,
       "text": "Report to staff at [NAME OF APPROVED PREMISES] at [TIME / DAILY], unless otherwise authorised by your supervising officer. This condition will be reviewed by your supervising officer on a [WEEKLY / MONTHLY / ETC] basis and may be amended or removed if it is felt that the level of risk you present has reduced appropriately.",
-      "expandedText": "Report to staff at Sasasa at 01:01 am and 01:01 am Daily, unless otherwise authorised by your supervising officer. This condition will be reviewed by your supervising officer on a monthly basis and may be amended or removed if it is felt that the level of risk you present has reduced appropriately.",
+      "expandedText": "Report to staff at Victoria Park Probation Centre at 10:30am daily, unless otherwise authorised by your supervising officer. This condition will be reviewed by your supervising officer on a monthly basis and may be amended or removed if it is felt that the level of risk you present has reduced appropriately.",
       "data": [
         {
           "id": 3081,
@@ -236,12 +236,12 @@
     {
       "id": 1011,
       "sequence": 13,
-      "text": "Allow person(s) as designated by your supervising officer to install an electronic monitoring tag on you and access to install any associated equipment in your property, and for the purpose of ensuring that equipment is functioning correctly. You must not damage or tamper with these devices and ensure that the tag is charged, and report to your supervising officer and the EM provider immediately if the tag or the associated equipment are not working correctly. This will be for the purpose of monitoring your [INSERT TYPES OF CONDITIONS TO BE ELECTRONICALLY MONITORED HERE] licence condition(s) unless otherwise authorised by your supervising officer."
+      "text" : "Allow person(s) as designated by your supervising officer to install an electronic monitoring tag on you and access to install any associated equipment in your property, and for the purpose of ensuring that equipment is functioning correctly. You must not damage or tamper with these devices and ensure that the tag is charged, and report to your supervising officer and the EM provider immediately if the tag or the associated equipment are not working correctly. This will be for the purpose of monitoring your freedom of movement licence condition(s) unless otherwise authorised by your supervising officer."
     },
     {
       "id": 1012,
       "sequence": 14,
-      "text": "You will be subject to trail monitoring. Your whereabouts will be electronically monitored by GPS Satellite Tagging, ending on [INSERT END DATE], and you must cooperate with the monitoring as directed by your supervising officer unless otherwise authorised by your supervising officer."
+      "text" : "You will be subject to trail monitoring. Your whereabouts will be electronically monitored by GPS Satellite Tagging, ending on 22nd March 2024, and you must cooperate with the monitoring as directed by your supervising officer unless otherwise authorised by your supervising officer."
     },
     {
       "id": 1013,

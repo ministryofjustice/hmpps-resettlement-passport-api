@@ -24,7 +24,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Stat
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.StatusRepository
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
@@ -201,7 +200,6 @@ class OffenderSearchApiService(
         prisoner.status = pathwayStatuses
       }
 
-
       prisonersList.add(prisoner)
     }
     return prisonersList
@@ -236,7 +234,6 @@ class OffenderSearchApiService(
   }
 
   suspend fun getPrisonerDetailsByNomsId(nomsId: String): Prisoner {
-
     // Add initial pathway statuses if required
     pathwayApiService.addPrisonerAndInitialPathwayStatus(nomsId)
 
@@ -292,7 +289,6 @@ class OffenderSearchApiService(
           pathwayStatusEntity.updatedDate.toLocalDate(),
         )
         pathwayStatuses.add(pathwayStatus)
-
       }
     }
     return pathwayStatuses
@@ -309,7 +305,6 @@ class OffenderSearchApiService(
           null,
         )
         pathwayStatuses.add(pathwayStatus)
-
       }
     }
     return pathwayStatuses

@@ -9,5 +9,4 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 @Repository
 interface PathwayStatusRepository : JpaRepository<PathwayStatusEntity, Long> {
   fun findByPathwayAndPrisoner(pathway: PathwayEntity, prisoner: PrisonerEntity): PathwayStatusEntity?
-
 }

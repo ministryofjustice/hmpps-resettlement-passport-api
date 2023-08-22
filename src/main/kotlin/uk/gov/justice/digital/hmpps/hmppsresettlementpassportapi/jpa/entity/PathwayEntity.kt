@@ -30,4 +30,9 @@ enum class Pathway(val id: Long) {
   EDUCATION_SKILLS_AND_WORK(5),
   FINANCE_AND_ID(6),
   HEALTH(7),
+  ;
+
+  companion object {
+    fun getById(id: Long) = values().first { it.id == id }
+  }
 }

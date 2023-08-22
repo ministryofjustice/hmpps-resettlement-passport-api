@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import java.time.LocalDate
 
 data class Prisoners(
@@ -29,8 +30,8 @@ data class PrisonerPersonal(
 
 data class PathwayStatus(
   val pathway: Pathway? = null,
-  val status: String? = null,
-  val lastDateChange: String? = null,
+  val status: Status? = null,
+  val lastDateChange: LocalDate? = null,
 )
 data class PrisonerRequest(
   val earliestReleaseDate: String,

@@ -23,6 +23,7 @@ class PathwayApiService(
   private val prisonerRepository: PrisonerRepository,
   private val pathwayRepository: PathwayRepository,
   private val statusRepository: StatusRepository,
+  private val communityApiService: CommunityApiService,
 ) {
 
   @Transactional
@@ -47,5 +48,25 @@ class PathwayApiService(
     pathwayStatus.status = newStatus
     pathwayStatus.updatedDate = LocalDateTime.now()
     pathwayStatusRepository.save(pathwayStatus)
+  }
+
+  @Transactional
+  suspend fun addPrisonerAndInitialPathwayStatus(nomsId: String) {
+    // Seed the Prisoner data into the DB
+    var prisonerEntity = prisonerRepository.findByNomsId(nomsId)
+    if (prisonerEntity == null) {
+      val crn = communityApiService.getCrn(nomsId)
+      prisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), crn.toString())
+      prisonerEntity = prisonerRepository.save(prisonerEntity)
+      val statusRepoData = statusRepository.findById(Status.NOT_STARTED.id)
+      val pathwayRepoData = pathwayRepository.findAll()
+      pathwayRepoData.forEach {
+        if (it.active) {
+          val pathwayStatusEntity =
+            PathwayStatusEntity(null, prisonerEntity, it, statusRepoData.get(), LocalDateTime.now())
+          pathwayStatusRepository.save(pathwayStatusEntity)
+        }
+      }
+    }
   }
 }

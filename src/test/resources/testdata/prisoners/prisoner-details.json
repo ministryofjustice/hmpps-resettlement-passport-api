@@ -7,7 +7,7 @@
     "releaseDate": "2017-03-31",
     "releaseType": "CRD",
     "dateOfBirth": "1982-10-24",
-    "age": 40,
+    "age": REPLACE_WITH_AGE,
     "location": "Birmingham (HMP)(BMI)",
     "facialImageId": "1313058"
   },
@@ -15,37 +15,37 @@
     {
       "pathway": "ACCOMMODATION",
       "status": "NOT_STARTED",
-      "lastDateChange": null
+      "lastDateChange": "2023-08-16"
     },
     {
       "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-      "status": "NOT_STARTED",
-      "lastDateChange": null
+      "status": "IN_PROGRESS",
+      "lastDateChange": "2023-08-17"
     },
     {
       "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
-      "status": "NOT_STARTED",
-      "lastDateChange": null
+      "status": "SUPPORT_NOT_REQUIRED",
+      "lastDateChange": "2023-08-17"
     },
     {
       "pathway": "DRUGS_AND_ALCOHOL",
-      "status": "NOT_STARTED",
-      "lastDateChange": null
+      "status": "SUPPORT_DECLINED",
+      "lastDateChange": "2023-08-17"
     },
     {
       "pathway": "EDUCATION_SKILLS_AND_WORK",
-      "status": "NOT_STARTED",
-      "lastDateChange": null
+      "status": "DONE",
+      "lastDateChange": "2023-08-17"
     },
     {
       "pathway": "FINANCE_AND_ID",
-      "status": "NOT_STARTED",
-      "lastDateChange": null
+      "status": "IN_PROGRESS",
+      "lastDateChange": "2023-08-17"
     },
     {
       "pathway": "HEALTH",
-      "status": "NOT_STARTED",
-      "lastDateChange": null
+      "status": "SUPPORT_NOT_REQUIRED",
+      "lastDateChange": "2023-08-17"
     }
   ]
 }

@@ -18,6 +18,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     val age = Period.between(dob, LocalDate.now()).years
     expectedOutput.replace("40,", "$age,")
     val nomisId = "G4274GN"
+    communityApiMockServer.stubGetCrnFromNomsId(nomisId, "abc")
     offenderSearchApiMockServer.stubGetPrisonerDetails(nomisId, 200)
     prisonApiMockServer.stubGetPrisonerImages(nomisId, 200)
 
@@ -78,8 +79,6 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
   fun `Get Prisoner image not found`() {
     val nomisId = "abc"
     val imageId = "1313058"
-    val expectedOutput = Base64.getDecoder().decode(CvlApiMockServer.TEST_IMAGE_BASE64)
-
     prisonApiMockServer.stubGetPrisonerImages(nomisId, 200)
     prisonApiMockServer.stubGetPrisonerFacialImage(imageId, 404)
     webTestClient.get()

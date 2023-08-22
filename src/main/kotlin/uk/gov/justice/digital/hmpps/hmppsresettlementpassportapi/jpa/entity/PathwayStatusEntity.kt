@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import java.time.LocalDateTime
+import java.util.*
 
 @Entity
 @Table(name = "pathway_status")
@@ -18,7 +19,7 @@ data class PathwayStatusEntity(
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   val id: Long?,
 
-  @ManyToOne(cascade = [CascadeType.ALL])
+  @ManyToOne(cascade = [CascadeType.MERGE])
   @JoinColumn(name = "prisoner_id", referencedColumnName = "id")
   val prisoner: PrisonerEntity,
 

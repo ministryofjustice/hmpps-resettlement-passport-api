@@ -6,12 +6,18 @@ import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.communityapi.OffenderDetailSummaryDTO
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 
 @Service
 class CommunityApiService(
   private val communityWebClientClientCredentials: WebClient,
+  private val prisonerRepository: PrisonerRepository,
 ) {
+
   suspend fun findCrn(nomsId: String): String? {
+    return prisonerRepository.findByNomsId(nomsId)?.crn
+  }
+  suspend fun getCrn(nomsId: String): String? {
     val offenderDetails = communityWebClientClientCredentials.get()
       .uri("/secure/offenders/nomsNumber/$nomsId")
       .retrieve()

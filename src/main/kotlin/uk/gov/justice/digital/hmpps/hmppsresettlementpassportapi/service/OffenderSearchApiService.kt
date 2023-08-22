@@ -265,7 +265,7 @@ class OffenderSearchApiService(
           pathwayStatus = PathwayStatus(
             Pathway.values().get(it.id.toInt() - 1),
             getStatusEnum(pathwayStatusRepoData),
-            pathwayStatusRepoData.creationDate.toString(),
+            pathwayStatusRepoData.updatedDate.toString(),
           )
         }
         argStatus.add(pathwayStatus)

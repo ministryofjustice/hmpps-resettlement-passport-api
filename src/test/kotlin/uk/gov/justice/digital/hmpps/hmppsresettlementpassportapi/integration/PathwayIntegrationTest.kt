@@ -73,7 +73,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
 
     assertThat(expectedPathwayStatus).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java)
       .isEqualTo(actualPathwayStatus)
-    Assertions.assertEquals(fakeNow, actualPathwayStatus.creationDate)
+    Assertions.assertEquals(fakeNow, actualPathwayStatus.updatedDate)
 
     unmockkStatic(LocalDateTime::class)
   }

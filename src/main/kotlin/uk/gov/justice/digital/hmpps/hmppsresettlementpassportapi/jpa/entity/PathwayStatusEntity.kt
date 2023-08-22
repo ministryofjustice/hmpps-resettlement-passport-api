@@ -31,6 +31,6 @@ data class PathwayStatusEntity(
   @JoinColumn(name = "status_id", referencedColumnName = "id")
   var status: StatusEntity,
 
-  @Column(name = "creation_date")
-  var creationDate: LocalDateTime,
+  @Column(name = "updated_date")
+  var updatedDate: LocalDateTime,
 )

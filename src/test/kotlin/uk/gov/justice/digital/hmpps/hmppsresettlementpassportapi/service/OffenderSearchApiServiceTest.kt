@@ -29,8 +29,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 class OffenderSearchApiServiceTest {
 
   private val mockWebServer: MockWebServer = MockWebServer()
-  private lateinit var offenderSearchApiService: OffenderSearchApiService
-  private lateinit var communityApiService: CommunityApiService
 
   @Mock
   private lateinit var pathwayRepository: PathwayRepository
@@ -41,11 +39,17 @@ class OffenderSearchApiServiceTest {
   @Mock
   private lateinit var pathwayStatusRepository: PathwayStatusRepository
 
+  @Mock
+  private lateinit var offenderSearchApiService: OffenderSearchApiService
+
+  @Mock
+  private lateinit var pathwayApiService: PathwayApiService
+
   @BeforeEach
   fun beforeEach() {
     mockWebServer.start()
     val webClient = WebClient.create(mockWebServer.url("/").toUrl().toString())
-    offenderSearchApiService = OffenderSearchApiService(pathwayRepository, prisonerRepository, pathwayStatusRepository, webClient, webClient)
+    offenderSearchApiService = OffenderSearchApiService(pathwayRepository, prisonerRepository, pathwayStatusRepository, webClient, webClient, pathwayApiService)
     mockDatabaseCalls()
   }
 
@@ -119,8 +123,8 @@ class OffenderSearchApiServiceTest {
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
 
-  fun mockDatabaseCalls() {
-    val mockPrisonerEntity = PrisonerEntity(1, "TEST", LocalDateTime.now())
+  private fun mockDatabaseCalls() {
+    val mockPrisonerEntity = PrisonerEntity(1, "TEST", LocalDateTime.now(), "test")
     val mockPathwayEntity1 = PathwayEntity(1, "Accommodation", true, LocalDateTime.now())
     val mockPathwayEntity2 = PathwayEntity(2, "Attitudes, thinking and behaviour", true, LocalDateTime.now())
     val mockPathwayEntity3 = PathwayEntity(3, "Children, families and communities", false, LocalDateTime.now())

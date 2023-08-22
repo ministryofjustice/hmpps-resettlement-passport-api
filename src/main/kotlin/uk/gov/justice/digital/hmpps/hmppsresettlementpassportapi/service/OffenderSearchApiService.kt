@@ -234,13 +234,13 @@ class OffenderSearchApiService(
   }
 
   suspend fun getPrisonerDetailsByNomsId(nomsId: String): Prisoner {
+    val prisonerSearch = findPrisonerPersonalDetails(nomsId)
+
     // Add initial pathway statuses if required
     pathwayApiService.addPrisonerAndInitialPathwayStatus(nomsId)
 
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Unable to find prisoner $nomsId in database.")
-
-    val prisonerSearch = findPrisonerPersonalDetails(nomsId)
 
     val prisonerImageDetailsList = findPrisonerImageDetails(nomsId)
     var prisonerImage: PrisonerImage? = null

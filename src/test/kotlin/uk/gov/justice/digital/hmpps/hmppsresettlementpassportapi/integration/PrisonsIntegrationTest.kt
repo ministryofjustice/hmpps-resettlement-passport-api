@@ -6,7 +6,7 @@ class PrisonsIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get All Active Prisons happy path`() {
     val expectedJson = """
-      [{"id": "SWI", "name": "Swansea (HMP & YOI)", "active": true }]
+      [{"id": "SWI", "name": "Swansea", "active": true }]
     """.trimIndent()
     prisonRegisterApiMockServer.stubPrisonList(200)
     webTestClient.get()
@@ -44,7 +44,7 @@ class PrisonsIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get All Prisons happy path`() {
     val expectedJson = """
-      [{"id": "AKI", "name": "Acklington (HMP)", "active": false }, {"id": "SWI", "name": "Swansea (HMP & YOI)", "active": true }]
+      [{"id": "AKI", "name": "Acklington", "active": false }, {"id": "SWI", "name": "Swansea", "active": true }]
     """.trimIndent()
     prisonRegisterApiMockServer.stubPrisonList(200)
     webTestClient.get()

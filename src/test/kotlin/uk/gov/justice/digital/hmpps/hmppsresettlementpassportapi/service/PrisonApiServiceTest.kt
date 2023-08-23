@@ -38,7 +38,7 @@ class PrisonApiServiceTest {
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisonList = prisonApiService.getActivePrisonsList()
     Assertions.assertEquals(expectedPrisonId, prisonList[0].id)
-    Assertions.assertEquals(expectedPrisonName, prisonList[0].name )
+    Assertions.assertEquals(expectedPrisonName, prisonList[0].name)
   }
 
   @OptIn(ExperimentalCoroutinesApi::class)
@@ -51,6 +51,6 @@ class PrisonApiServiceTest {
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisonList = prisonApiService.getPrisonsList()
     Assertions.assertEquals(expectedPrisonId, prisonList[0].id)
-    Assertions.assertEquals(expectedPrisonName, prisonList[0].name )
+    Assertions.assertEquals(expectedPrisonName, prisonList[0].name)
   }
 }

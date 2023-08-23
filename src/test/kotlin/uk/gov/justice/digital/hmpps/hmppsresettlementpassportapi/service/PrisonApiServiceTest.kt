@@ -32,21 +32,25 @@ class PrisonApiServiceTest {
   @Test
   fun `test get active Prisons happy path full json`() = runTest {
     val expectedPrisonId = "SWI"
+    val expectedPrisonName = "Swansea"
     val mockedJsonResponse =
       Resources.getResource("testdata/prison/prison.json").readText()
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisonList = prisonApiService.getActivePrisonsList()
     Assertions.assertEquals(expectedPrisonId, prisonList[0].id)
+    Assertions.assertEquals(expectedPrisonName, prisonList[0].name )
   }
 
   @OptIn(ExperimentalCoroutinesApi::class)
   @Test
   fun `test get all Prisons happy path full json`() = runTest {
     val expectedPrisonId = "AKI"
+    val expectedPrisonName = "Acklington"
     val mockedJsonResponse =
       Resources.getResource("testdata/prison/prison.json").readText()
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisonList = prisonApiService.getPrisonsList()
     Assertions.assertEquals(expectedPrisonId, prisonList[0].id)
+    Assertions.assertEquals(expectedPrisonName, prisonList[0].name )
   }
 }

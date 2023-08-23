@@ -2116,8 +2116,8 @@
     ]
   },
   {
-    "prisonId": "BMI",
-    "prisonName": "Birmingham (HMP)",
+    "prisonId": "MDI",
+    "prisonName": "Moorland (HMP & YOI)",
     "active": true,
     "male": true,
     "female": false,

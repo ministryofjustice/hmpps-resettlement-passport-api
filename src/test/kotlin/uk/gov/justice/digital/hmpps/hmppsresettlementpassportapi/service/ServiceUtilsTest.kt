@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -46,7 +45,6 @@ class ServiceUtilsTest {
     Arguments.of("na", TestEnum.NA),
     Arguments.of("n/a", TestEnum.NA),
   )
-
 }
 
 enum class TestEnum {

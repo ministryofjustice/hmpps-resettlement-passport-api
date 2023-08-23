@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 
 import java.math.BigDecimal
 import java.time.LocalDateTime
-import kotlin.reflect.KClass
 
 data class RiskScore(
   val completedDate: LocalDateTime?,

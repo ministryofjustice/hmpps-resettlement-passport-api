@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.arnapi
 
 import java.time.LocalDateTime
 
-data class AllRoshRiskDataDto (
+data class AllRoshRiskDataDto(
   val riskToSelf: RoshRiskToSelfDto,
   val otherRisks: OtherRoshRisksDto,
   val summary: RiskRoshSummaryDto,

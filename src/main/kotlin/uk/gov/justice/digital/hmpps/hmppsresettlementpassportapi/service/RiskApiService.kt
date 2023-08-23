@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Category
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.OgpScore
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.OgrScore
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.OspScore
@@ -17,7 +18,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.RsrScore
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ScoreLevel
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.arnapi.AllRoshRiskDataDto
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.arnapi.RiskScoresDto
-import kotlin.reflect.KClass
 
 @Service
 class RiskApiService(
@@ -30,9 +30,8 @@ class RiskApiService(
   }
 
   suspend fun getRiskScoresByNomsId(prisonerId: String): RiskScore? {
-    // Convert from NomsId to CRN - for now call the community API each time. In the future we may have this stored in the database.
     val crn = communityApiService.findCrn(prisonerId)
-      ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $prisonerId in Community API")
+      ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $prisonerId in database")
 
     // Use CRN to get risk scores from ARN
     val riskScoresDtoList = arnWebClientClientCredentials.get()
@@ -88,9 +87,8 @@ class RiskApiService(
   fun List<RiskScoresDto>.getMostRecentRiskScore() = this.sortedBy { it.completedDate }.last()
 
   suspend fun getRoshDataByNomsId(prisonerId: String): RoshData? {
-    // Convert from NomsId to CRN - for now call the community API each time. In the future we may have this stored in the database.
     val crn = communityApiService.findCrn(prisonerId)
-      ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $prisonerId in Community API")
+      ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $prisonerId in database")
 
     // Use CRN to get risk scores from ARN
     val allRoshRiskData = arnWebClientClientCredentials.get()
@@ -110,14 +108,14 @@ class RiskApiService(
     )
   }
 
-  protected fun convertToCategoryToRiskLevelMap(riskInCommunitySummary:  Map<String?, List<String>>): Map<String, RiskLevel> {
-
-    val categoryToRiskLevelMap = mutableMapOf<String, RiskLevel>()
+  fun convertToCategoryToRiskLevelMap(riskInCommunitySummary: Map<String?, List<String>>): Map<Category, RiskLevel> {
+    val categoryToRiskLevelMap = mutableMapOf<Category, RiskLevel>()
     riskInCommunitySummary.entries.forEach {
       it.value.forEach { cat ->
         val riskLevel = convertStringToEnum(RiskLevel::class, it.key!!)
-        if (riskLevel != null) {
-          categoryToRiskLevelMap[cat] = riskLevel
+        val category = convertStringToEnum(Category::class, cat)
+        if (riskLevel != null && category != null) {
+          categoryToRiskLevelMap[category] = riskLevel
         }
       }
     }

@@ -20,8 +20,8 @@
   "lastMovementTypeCode": "CRT",
   "lastMovementReasonCode": "CRT",
   "inOutStatus": "IN",
-  "prisonId": "BMI",
-  "prisonName": "Birmingham (HMP)",
+  "prisonId": "MDI",
+  "prisonName": "Moorland (HMP & YOI)",
   "cellLocation": "K-3-011",
   "aliases": [
     {
@@ -101,7 +101,7 @@
   "receptionDate": "2016-10-03",
   "paroleEligibilityDate": "2023-04-14",
   "conditionalReleaseDate": "2023-08-21",
-  "locationDescription": "Birmingham (HMP)",
+  "locationDescription": "Moorland (HMP & YOI)",
   "restrictedPatient": false,
   "currentIncentive": {
     "level": {

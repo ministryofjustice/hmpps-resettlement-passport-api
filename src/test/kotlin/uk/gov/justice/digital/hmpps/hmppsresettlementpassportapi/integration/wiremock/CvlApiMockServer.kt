@@ -5,6 +5,8 @@ import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.equalToJson
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.post
+import com.google.common.io.Resources
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import java.io.File
 import java.util.Base64
 
@@ -35,7 +37,7 @@ class CvlApiMockServer : WireMockServer(WIREMOCK_PORT) {
     )
   }
   fun stubFindLicencesByNomisId(nomisId: String, status: Int) {
-    var licenceSummaryJSON = File("src/test/resources/testdata/licence-condition/licence-summary.json").inputStream().readBytes().toString(Charsets.UTF_8)
+    var licenceSummaryJSON = readFile("testdata/cvl-api/licence-summary.json")
     if (status == 404) {
       licenceSummaryJSON = " [] "
     }
@@ -63,7 +65,7 @@ class CvlApiMockServer : WireMockServer(WIREMOCK_PORT) {
   }
 
   fun stubFetchLicenceConditionsByLicenceId(licenceId: Int, status: Int) {
-    val licenceJSON = File("src/test/resources/testdata/licence-condition/licence.json").inputStream().readBytes().toString(Charsets.UTF_8)
+    val licenceJSON = readFile("testdata/cvl-api/licence.json")
     licenceJSON.replace("Active", "InActive")
     stubFor(
       get("/licence/id/$licenceId").willReturn(

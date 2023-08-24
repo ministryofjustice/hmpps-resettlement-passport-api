@@ -16,6 +16,7 @@ import org.mockito.kotlin.mock
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 
 class CommunityApiServiceTest {
@@ -41,7 +42,7 @@ class CommunityApiServiceTest {
     val nomsId = "ABC1234"
     val expectedCrn = "DEF5678"
 
-    val mockedJsonResponse = Resources.getResource("testdata/community/offender-details-valid-1.json").readText()
+    val mockedJsonResponse = readFile("testdata/community-api/offender-details-valid-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
 
     Assertions.assertEquals(expectedCrn, communityApiService.getCrn(nomsId))
@@ -52,7 +53,7 @@ class CommunityApiServiceTest {
     val nomsId = "ABC1234"
     val expectedCrn = "DEF5678"
 
-    val mockedJsonResponse = Resources.getResource("testdata/community/offender-details-valid-2.json").readText()
+    val mockedJsonResponse = readFile("testdata/community-api/offender-details-valid-2.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
 
     Assertions.assertEquals(expectedCrn, communityApiService.getCrn(nomsId))

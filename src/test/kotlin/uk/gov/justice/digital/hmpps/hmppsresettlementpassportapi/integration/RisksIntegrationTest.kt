@@ -11,10 +11,9 @@ class RisksIntegrationTest : IntegrationTestBase() {
   fun `Get risk scores happy path 1`() {
     val prisonerId = "123"
     val crn = "abc"
-    val expectedOutput = Resources.getResource("testdata/arn/risk-scores.json").readText()
+    val expectedOutput = readFile("testdata/expectation/risk-scores.json")
 
-    communityApiMockServer.stubGetCrnFromNomsId(prisonerId, crn)
-    arnApiMockServer.stubGetToCrn("/risks/crn/$crn/predictors/all", 200, "testdata/arn/crn-risk-predictors-1.json")
+    arnApiMockServer.stubGetToCrn("/risks/crn/$crn/predictors/all", 200, "testdata/arn-api/crn-risk-predictors-1.json")
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/scores")
@@ -31,10 +30,9 @@ class RisksIntegrationTest : IntegrationTestBase() {
   fun `Get risk scores happy path 2 - multiple sets of risk predictors`() {
     val prisonerId = "123"
     val crn = "abc"
-    val expectedOutput = Resources.getResource("testdata/arn/risk-scores.json").readText()
+    val expectedOutput = readFile("testdata/expectation/risk-scores.json")
 
-    communityApiMockServer.stubGetCrnFromNomsId(prisonerId, crn)
-    arnApiMockServer.stubGetToCrn("/risks/crn/$crn/predictors/all", 200, "testdata/arn/crn-risk-predictors-2.json")
+    arnApiMockServer.stubGetToCrn("/risks/crn/$crn/predictors/all", 200, "testdata/arn-api/crn-risk-predictors-2.json")
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/scores")
@@ -49,8 +47,6 @@ class RisksIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get risk scores - no ARN found in database`() {
     val prisonerId = "abc"
-
-    communityApiMockServer.stubGetCrnFromNomsIdNotFound(prisonerId)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/scores")
@@ -72,7 +68,6 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val prisonerId = "123"
     val crn = "abc"
 
-    communityApiMockServer.stubGetCrnFromNomsId(prisonerId, crn)
     arnApiMockServer.stubGetToCrn("/risks/crn/$crn/predictors/all", 404, null)
 
     webTestClient.get()
@@ -95,7 +90,6 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val prisonerId = "123"
     val crn = "abc"
 
-    communityApiMockServer.stubGetCrnFromNomsId(prisonerId, crn)
     arnApiMockServer.stubGetToCrn("/risks/crn/$crn/predictors/all", 500, null)
 
     webTestClient.get()
@@ -127,10 +121,9 @@ class RisksIntegrationTest : IntegrationTestBase() {
   fun `Get RoSH happy path`() {
     val prisonerId = "123"
     val crn = "abc"
-    val expectedOutput = Resources.getResource("testdata/arn/risk-rosh.json").readText()
+    val expectedOutput = readFile("testdata/expectation/risk-rosh.json")
 
-    communityApiMockServer.stubGetCrnFromNomsId(prisonerId, crn)
-    arnApiMockServer.stubGetToCrn("/risks/crn/$crn", 200, "testdata/arn/crn-risks.json")
+    arnApiMockServer.stubGetToCrn("/risks/crn/$crn", 200, "testdata/arn-api/crn-risks.json")
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/rosh")
@@ -145,8 +138,6 @@ class RisksIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get RoSH - no ARN found in database`() {
     val prisonerId = "abc"
-
-    communityApiMockServer.stubGetCrnFromNomsIdNotFound(prisonerId)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/rosh")
@@ -168,7 +159,6 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val prisonerId = "123"
     val crn = "abc"
 
-    communityApiMockServer.stubGetCrnFromNomsId(prisonerId, crn)
     arnApiMockServer.stubGetToCrn("/risks/crn/$crn", 404, null)
 
     webTestClient.get()
@@ -191,7 +181,6 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val prisonerId = "123"
     val crn = "abc"
 
-    communityApiMockServer.stubGetCrnFromNomsId(prisonerId, crn)
     arnApiMockServer.stubGetToCrn("/risks/crn/$crn", 500, null)
 
     webTestClient.get()
@@ -214,6 +203,97 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/rosh")
+      .exchange()
+      .expectStatus().isUnauthorized
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
+  fun `Get MAPPA happy path`() {
+    val prisonerId = "123"
+    val crn = "abc"
+    val expectedOutput = readFile("testdata/expectation/risk-mappa.json")
+
+    communityApiMockServer.stubGetToCrn("/secure/offenders/crn/$crn/risk/mappa", 200, "testdata/community-api/community-risk-mappa.json")
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$prisonerId/risk/mappa")
+      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
+  }
+
+  @Test
+  fun `Get MAPPA - no ARN found in database`() {
+    val prisonerId = "abc"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$prisonerId/risk/mappa")
+      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .exchange()
+      .expectStatus().isNotFound
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(404)
+      .jsonPath("errorCode").isEmpty
+      .jsonPath("userMessage").isEqualTo("Resource not found. Check request parameters - Cannot find CRN for NomsId abc in database")
+      .jsonPath("developerMessage").isEqualTo("Cannot find CRN for NomsId abc in database")
+      .jsonPath("moreInfo").isEmpty
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
+  fun `Get MAPPA - no data found in Community API`() {
+    val prisonerId = "123"
+    val crn = "abc"
+
+    communityApiMockServer.stubGetToCrn("/secure/offenders/crn/$crn/risk/mappa", 404, null)
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$prisonerId/risk/mappa")
+      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .exchange()
+      .expectStatus().isNotFound
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(404)
+      .jsonPath("errorCode").isEmpty
+      .jsonPath("userMessage").isEqualTo("Resource not found. Check request parameters - Cannot find MAPPA Data for NomsId 123 / CRN abc in Community API")
+      .jsonPath("developerMessage").isEqualTo("Cannot find MAPPA Data for NomsId 123 / CRN abc in Community API")
+      .jsonPath("moreInfo").isEmpty
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
+  fun `Get MAPPA scores - internal server error`() {
+    val prisonerId = "123"
+    val crn = "abc"
+
+    communityApiMockServer.stubGetToCrn("/secure/offenders/crn/$crn/risk/mappa", 500, null)
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$prisonerId/risk/mappa")
+      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .exchange()
+      .expectStatus().isEqualTo(500)
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(500)
+      .jsonPath("errorCode").isEmpty
+      .jsonPath("userMessage").isEqualTo("Unexpected error: 500 Internal Server Error from GET http://localhost:8096/secure/offenders/crn/abc/risk/mappa")
+      .jsonPath("developerMessage").isEqualTo("500 Internal Server Error from GET http://localhost:8096/secure/offenders/crn/abc/risk/mappa")
+      .jsonPath("moreInfo").isEmpty
+  }
+
+  @Test
+  fun `Get MAPPA - unauthorized`() {
+    val prisonerId = "abc"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$prisonerId/risk/mappa")
       .exchange()
       .expectStatus().isUnauthorized
   }

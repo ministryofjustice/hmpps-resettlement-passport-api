@@ -3,6 +3,8 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wi
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
+import com.google.common.io.Resources
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import java.io.File
 
 class OffenderSearchApiMockServer : WireMockServer(WIREMOCK_PORT) {
@@ -11,7 +13,7 @@ class OffenderSearchApiMockServer : WireMockServer(WIREMOCK_PORT) {
   }
 
   fun stubGetPrisonersList(prisonId: String, term: String, size: Int, page: Int, status: Int) {
-    val prisonersListJSON = File("src/test/resources/testdata/prisoners/prisoner-offender-search.json").inputStream().readBytes().toString(Charsets.UTF_8)
+    val prisonersListJSON = readFile("testdata/offender-search-api/prisoner-offender-search.json")
     stubFor(
       get("/prison/$prisonId/prisoners?term=$term&size=$size&page=$page&sort=prisonerNumber").willReturn(
         if (status == 200) {
@@ -32,7 +34,7 @@ class OffenderSearchApiMockServer : WireMockServer(WIREMOCK_PORT) {
   }
 
   fun stubGetPrisonerDetails(nomisId: String, status: Int) {
-    val prisonerDataJSON = File("src/test/resources/testdata/prisoners/prisoner-offender-details.json").inputStream().readBytes().toString(Charsets.UTF_8)
+    val prisonerDataJSON = readFile("testdata/offender-search-api/prisoner-offender-details.json")
     stubFor(
       get("/prisoner/$nomisId").willReturn(
         if (status == 200) {

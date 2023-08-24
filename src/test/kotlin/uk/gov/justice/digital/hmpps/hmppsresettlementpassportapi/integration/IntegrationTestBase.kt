@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
+import com.google.common.io.Resources
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.beans.factory.annotation.Autowired
@@ -88,7 +89,6 @@ abstract class IntegrationTestBase : TestBase() {
     roles: List<String> = listOf(),
     scopes: List<String> = listOf(),
   ): (HttpHeaders) -> Unit = jwtAuthHelper.setAuthorisation(user, roles, scopes)
-
-  @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-  fun readFile(file: String): String = this.javaClass.getResource(file).readText()
 }
+
+fun readFile(file: String): String = Resources.getResource(file).readText()

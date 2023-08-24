@@ -7,6 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Category
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.MappaData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.OgpScore
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.OgrScore
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.OspScore
@@ -122,4 +123,6 @@ class RiskApiService(
 
     return categoryToRiskLevelMap
   }
+
+  suspend fun getMappaDataByNomsId(prisonerId: String): MappaData? = communityApiService.getMappaDataByNomsId(prisonerId)
 }

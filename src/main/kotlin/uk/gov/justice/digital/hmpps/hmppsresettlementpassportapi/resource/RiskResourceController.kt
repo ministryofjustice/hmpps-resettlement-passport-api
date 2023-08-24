@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.MappaData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.RiskScore
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.RoshData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.RiskApiService
@@ -81,4 +82,33 @@ class RiskResourceController(
     @Parameter(required = true)
     prisonerId: String,
   ): RoshData? = riskApiService.getRoshDataByNomsId(prisonerId)
+
+  @GetMapping("{prisonerId}/risk/mappa", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(
+    summary = "Get MAPPA data for a prisoner",
+    description = "MAPPA data for the given Prisoner Id.",
+  )
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "404",
+        description = "No data found for MAPPA",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  suspend fun getMappaDataByNomsId(
+    @PathVariable("prisonerId")
+    @Parameter(required = true)
+    prisonerId: String,
+  ): MappaData? = riskApiService.getMappaDataByNomsId(prisonerId)
 }

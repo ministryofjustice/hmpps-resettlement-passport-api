@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wi
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
-import com.google.common.io.Resources
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 
 class ArnApiMockServer : WireMockServer(WIREMOCK_PORT) {
   companion object {
@@ -15,7 +15,7 @@ class ArnApiMockServer : WireMockServer(WIREMOCK_PORT) {
       get(path).willReturn(
         if (status == 200) {
           val riskScoresJson: String = if (jsonResponseFile != null) {
-            Resources.getResource(jsonResponseFile).readText()
+            readFile(jsonResponseFile)
           } else {
             "{}"
           }

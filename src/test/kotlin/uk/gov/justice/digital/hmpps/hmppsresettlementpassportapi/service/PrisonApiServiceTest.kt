@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import com.google.common.io.Resources
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import okhttp3.mockwebserver.MockResponse
@@ -10,6 +9,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.web.reactive.function.client.WebClient
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 
 class PrisonApiServiceTest {
 
@@ -34,7 +34,7 @@ class PrisonApiServiceTest {
     val expectedPrisonId = "SWI"
     val expectedPrisonName = "Swansea"
     val mockedJsonResponse =
-      Resources.getResource("testdata/prison/prison.json").readText()
+      readFile("testdata/prison-register-api/prison.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisonList = prisonApiService.getActivePrisonsList()
     Assertions.assertEquals(expectedPrisonId, prisonList[0].id)
@@ -47,7 +47,7 @@ class PrisonApiServiceTest {
     val expectedPrisonId = "AKI"
     val expectedPrisonName = "Acklington"
     val mockedJsonResponse =
-      Resources.getResource("testdata/prison/prison.json").readText()
+      readFile("testdata/prison-register-api/prison.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisonList = prisonApiService.getPrisonsList()
     Assertions.assertEquals(expectedPrisonId, prisonList[0].id)

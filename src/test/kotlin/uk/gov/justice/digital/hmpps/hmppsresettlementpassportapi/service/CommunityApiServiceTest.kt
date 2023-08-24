@@ -2,7 +2,6 @@
 
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import com.google.common.io.Resources
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import okhttp3.mockwebserver.MockResponse

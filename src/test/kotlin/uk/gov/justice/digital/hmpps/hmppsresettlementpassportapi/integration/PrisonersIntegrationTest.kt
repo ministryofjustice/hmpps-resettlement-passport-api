@@ -2,8 +2,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
-import wiremock.com.google.common.io.Resources
-import java.io.File
 
 class PrisonersIntegrationTest : IntegrationTestBase() {
   @Test

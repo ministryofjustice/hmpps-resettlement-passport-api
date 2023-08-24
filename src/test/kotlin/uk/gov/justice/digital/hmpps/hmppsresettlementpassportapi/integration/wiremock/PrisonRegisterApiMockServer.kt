@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wi
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
-import com.google.common.io.Resources
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 
 class PrisonRegisterApiMockServer : WireMockServer(WIREMOCK_PORT) {

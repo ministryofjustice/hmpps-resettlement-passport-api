@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
-import com.google.common.io.Resources
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
 

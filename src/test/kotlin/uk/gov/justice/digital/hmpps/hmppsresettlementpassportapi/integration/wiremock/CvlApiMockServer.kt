@@ -5,9 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.equalToJson
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.post
-import com.google.common.io.Resources
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
-import java.io.File
 import java.util.Base64
 
 class CvlApiMockServer : WireMockServer(WIREMOCK_PORT) {

@@ -8,7 +8,11 @@
     "releaseType": "CRD",
     "dateOfBirth": "1982-10-24",
     "age": REPLACE_WITH_AGE,
+<<<<<<< Updated upstream
     "location": "Moorland (HMP & YOI) (MDI)",
+=======
+    "location": "K-3-011",
+>>>>>>> Stashed changes
     "facialImageId": "1313058"
   },
   "pathways": [

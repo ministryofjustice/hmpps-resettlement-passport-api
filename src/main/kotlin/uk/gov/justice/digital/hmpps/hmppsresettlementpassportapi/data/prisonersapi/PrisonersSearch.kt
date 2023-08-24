@@ -13,6 +13,7 @@ data class PrisonersSearch(
   val age: Int? = 0,
   val prisonId: String,
   val prisonName: String,
+  val cellLocation: String,
 )
 
 data class PrisonerRequest(

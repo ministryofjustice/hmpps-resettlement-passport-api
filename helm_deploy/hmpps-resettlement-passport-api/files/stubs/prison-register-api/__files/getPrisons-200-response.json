@@ -2116,8 +2116,8 @@
     ]
   },
   {
-    "prisonId": "MDI",
-    "prisonName": "Moorland (HMP & YOI)",
+    "prisonId": "TST",
+    "prisonName": "Test Prison (HMP & YOI)",
     "active": true,
     "male": true,
     "female": false,

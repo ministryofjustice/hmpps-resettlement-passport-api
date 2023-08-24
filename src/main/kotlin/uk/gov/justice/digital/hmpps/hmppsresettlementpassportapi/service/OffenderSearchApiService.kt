@@ -263,7 +263,7 @@ class OffenderSearchApiService(
       prisonerSearch.nonDtoReleaseDateType,
       prisonerSearch.dateOfBirth,
       age,
-      prisonerSearch.prisonName + " (" + prisonerSearch.prisonId + ")",
+      prisonerSearch.cellLocation,
       prisonerImage?.imageId,
     )
 

@@ -16,7 +16,7 @@ data class RiskScore(
 data class OgrScore(
   val oneYear: BigDecimal?,
   val twoYears: BigDecimal?,
-  val scoreLevel: String?,
+  val scoreLevel: ScoreLevel?,
 )
 
 data class OvpScore(
@@ -25,7 +25,7 @@ data class OvpScore(
   val ovpTotalWeightedScore: BigDecimal?,
   val oneYear: BigDecimal?,
   val twoYears: BigDecimal?,
-  val ovpRisk: String?,
+  val ovpRisk: ScoreLevel?,
 )
 
 data class OgpScore(
@@ -34,18 +34,22 @@ data class OgpScore(
   val ogpTotalWeightedScore: BigDecimal?,
   val ogp1Year: BigDecimal?,
   val ogp2Year: BigDecimal?,
-  val ogpRisk: String?,
+  val ogpRisk: ScoreLevel?,
 )
 
 data class RsrScore(
   val percentageScore: BigDecimal?,
   val staticOrDynamic: String?,
-  val scoreLevel: String?,
+  val scoreLevel: ScoreLevel?,
 )
 
 class OspScore(
   val ospIndecentPercentageScore: BigDecimal?,
   val ospContactPercentageScore: BigDecimal?,
-  val ospIndecentScoreLevel: String?,
-  val ospContactScoreLevel: String?,
+  val ospIndecentScoreLevel: ScoreLevel?,
+  val ospContactScoreLevel: ScoreLevel?,
 )
+
+enum class ScoreLevel {
+  LOW, MEDIUM, HIGH, VERY_HIGH, NOT_APPLICABLE;
+}

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.RiskScore
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.RoshData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.RiskApiService
 
 @RestController
@@ -51,4 +52,33 @@ class RiskResourceController(
     @Parameter(required = true)
     prisonerId: String,
   ): RiskScore? = riskApiService.getRiskScoresByNomsId(prisonerId)
+
+  @GetMapping("{prisonerId}/risk/rosh", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(
+    summary = "Get RoSH data for a prisoner",
+    description = "RoSH data for the given Prisoner Id.",
+  )
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "404",
+        description = "No data found for RoSH",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  suspend fun getRoshDataByNomsId(
+    @PathVariable("prisonerId")
+    @Parameter(required = true)
+    prisonerId: String,
+  ): RoshData? = riskApiService.getRoshDataByNomsId(prisonerId)
 }

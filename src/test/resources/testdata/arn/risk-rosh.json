@@ -1,0 +1,11 @@
+{
+  "riskInCommunity": {
+    "CHILDREN": "HIGH",
+    "PUBLIC": "HIGH",
+    "KNOWN_ADULT": "HIGH",
+    "STAFF": "MEDIUM",
+    "PRISONERS": "LOW"
+  },
+  "overallRiskLevel": "HIGH",
+  "assessedOn": "2023-07-29T03:07:38"
+}

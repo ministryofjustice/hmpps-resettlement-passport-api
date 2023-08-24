@@ -16,7 +16,7 @@ data class RiskScoresDto(
 data class OgrScoreDto(
   val oneYear: BigDecimal?,
   val twoYears: BigDecimal?,
-  val scoreLevel: ScoreLevel?,
+  val scoreLevel: String?,
 )
 
 data class OvpScoreDto(
@@ -25,7 +25,7 @@ data class OvpScoreDto(
   val ovpTotalWeightedScore: BigDecimal?,
   val oneYear: BigDecimal?,
   val twoYears: BigDecimal?,
-  val ovpRisk: ScoreLevel?,
+  val ovpRisk: String?,
 )
 
 data class OgpScoreDto(
@@ -34,32 +34,20 @@ data class OgpScoreDto(
   val ogpTotalWeightedScore: BigDecimal?,
   val ogp1Year: BigDecimal?,
   val ogp2Year: BigDecimal?,
-  val ogpRisk: ScoreLevel?,
+  val ogpRisk: String?,
 )
 
 data class RsrScoreDto(
   val percentageScore: BigDecimal?,
-  val staticOrDynamic: ScoreType?,
-  val source: RsrScoreSource,
+  val staticOrDynamic: String?,
+  val source: String,
   val algorithmVersion: String?,
-  val scoreLevel: ScoreLevel?,
+  val scoreLevel: String?,
 )
 
 class OspScoreDto(
   val ospIndecentPercentageScore: BigDecimal?,
   val ospContactPercentageScore: BigDecimal?,
-  val ospIndecentScoreLevel: ScoreLevel?,
-  val ospContactScoreLevel: ScoreLevel?,
+  val ospIndecentScoreLevel: String?,
+  val ospContactScoreLevel: String?,
 )
-
-enum class ScoreLevel {
-  LOW, MEDIUM, HIGH, VERY_HIGH, NOT_APPLICABLE
-}
-
-enum class ScoreType {
-  STATIC, DYNAMIC
-}
-
-enum class RsrScoreSource {
-  ASSESSMENTS_API, OASYS, DELIUS;
-}

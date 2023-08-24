@@ -10,9 +10,9 @@ class ArnApiMockServer : WireMockServer(WIREMOCK_PORT) {
     private const val WIREMOCK_PORT = 8097
   }
 
-  fun stubGetRisksPredictorsFromCrn(crn: String, status: Int, jsonResponseFile: String?) {
+  fun stubGetToCrn(path: String, status: Int, jsonResponseFile: String?) {
     stubFor(
-      get("/risks/crn/$crn/predictors/all").willReturn(
+      get(path).willReturn(
         if (status == 200) {
           val riskScoresJson: String = if (jsonResponseFile != null) {
             Resources.getResource(jsonResponseFile).readText()

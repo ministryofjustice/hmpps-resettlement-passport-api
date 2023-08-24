@@ -263,11 +263,7 @@ class OffenderSearchApiService(
       prisonerSearch.nonDtoReleaseDateType,
       prisonerSearch.dateOfBirth,
       age,
-<<<<<<< Updated upstream
-      prisonerSearch.prisonName + " (" + prisonerSearch.prisonId + ")",
-=======
       prisonerSearch.cellLocation,
->>>>>>> Stashed changes
       prisonerImage?.imageId,
     )
 

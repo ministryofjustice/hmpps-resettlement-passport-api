@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import com.google.common.io.Resources
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import okhttp3.mockwebserver.MockResponse
@@ -15,6 +14,7 @@ import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.springframework.web.reactive.function.client.WebClient
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
@@ -63,7 +63,7 @@ class OffenderSearchApiServiceTest {
     val prisonId = "MDI"
     val expectedPrisonerId = "G6933GF"
 
-    val mockedJsonResponse = Resources.getResource("testdata/prisoners/prisoner-offender-search.json").readText()
+    val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisonersList = offenderSearchApiService.getPrisonersByPrisonId(false, "", prisonId, 0, 0, 10, "releaseDate,DESC")
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
@@ -75,7 +75,7 @@ class OffenderSearchApiServiceTest {
     val prisonId = "MDI"
     val expectedPrisonerId = "G6933GF"
 
-    val mockedJsonResponse = Resources.getResource("testdata/prisoners/prisoner-offender-search.json").readText()
+    val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisonersList = offenderSearchApiService.getPrisonersByPrisonId(false, "", prisonId, 0, 0, 10, "releaseDate,ASC")
     Assertions.assertEquals(
@@ -91,7 +91,7 @@ class OffenderSearchApiServiceTest {
     val prisonId = "MDI"
     val expectedPrisonerId = "G6628UE"
 
-    val mockedJsonResponse = Resources.getResource("testdata/prisoners/prisoner-offender-search.json").readText()
+    val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisonersList = offenderSearchApiService.getPrisonersByPrisonId(false, "", prisonId, 0, 0, 10, "firstName,ASC")
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
@@ -103,7 +103,7 @@ class OffenderSearchApiServiceTest {
     val prisonId = "MDI"
     val expectedPageSize = 5
 
-    val mockedJsonResponse = Resources.getResource("testdata/prisoners/prisoner-offender-search.json").readText()
+    val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisonersList = offenderSearchApiService.getPrisonersByPrisonId(false, "", prisonId, 0, 0, 5, "firstName,ASC")
     Assertions.assertEquals(expectedPageSize, prisonersList.pageSize)
@@ -116,7 +116,7 @@ class OffenderSearchApiServiceTest {
     val prisonId = "MDI"
     val expectedPrisonerId = "G6933GF"
 
-    val mockedJsonResponse = Resources.getResource("testdata/prisoners/prisoner-offender-search.json").readText()
+    val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisonersList = offenderSearchApiService.getPrisonersByPrisonId(true, "", prisonId, 1095, 0, 10, "releaseDate,DESC")
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)

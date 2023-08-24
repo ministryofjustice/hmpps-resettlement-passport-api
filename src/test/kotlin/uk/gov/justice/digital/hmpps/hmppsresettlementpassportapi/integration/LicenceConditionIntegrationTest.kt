@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CvlApiMockServer.Companion.TEST_IMAGE_BASE64
-import java.io.File
 import java.util.Base64
 
 class LicenceConditionIntegrationTest : IntegrationTestBase() {
@@ -85,7 +84,7 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get licence condition from cvl happy path`() {
     val prisonerId = "abc"
-    val expectedOutput = File("src/test/resources/testdata/licence-condition/licence-condition.json").inputStream().readBytes().toString(Charsets.UTF_8)
+    val expectedOutput = readFile("testdata/expectation/licence-condition.json")
     val licenceId = 101
     cvlApiMockServer.stubFindLicencesByNomisId(prisonerId, 200)
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 200)
@@ -101,7 +100,7 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get licence condition from cvl happy path with no active but dateCreated latest`() {
     val prisonerId = "abc"
-    val expectedOutput = File("src/test/resources/testdata/licence-condition/licence-condition.json").inputStream().readBytes().toString(Charsets.UTF_8)
+    val expectedOutput = readFile("testdata/expectation/licence-condition.json")
     expectedOutput.replace("Active", "InActive", true)
     val licenceId = 101
     cvlApiMockServer.stubFindLicencesByNomisId(prisonerId, 200)

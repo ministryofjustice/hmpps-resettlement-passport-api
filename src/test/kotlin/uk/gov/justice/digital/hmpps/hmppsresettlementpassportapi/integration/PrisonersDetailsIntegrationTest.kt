@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
-import com.google.common.io.Resources
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
@@ -14,7 +13,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
   fun `Get Prisoner Details happy path`() {
-    var expectedOutput = Resources.getResource("testdata/prisoners/prisoner-details.json").readText()
+    var expectedOutput = readFile("testdata/expectation/prisoner-details.json")
     val dob = LocalDate.of(1982, 10, 24)
     val age = Period.between(dob, LocalDate.now()).years
     expectedOutput = expectedOutput.replace("REPLACE_WITH_AGE", "$age")

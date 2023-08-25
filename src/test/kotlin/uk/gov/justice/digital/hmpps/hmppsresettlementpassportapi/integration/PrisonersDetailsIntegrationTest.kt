@@ -44,7 +44,6 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get Prisoner Details forbidden`() {
     val nomsId = "G4274GN"
-    // Failing to set a valid Authorization header should result in 401 response
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId")
       .headers(setAuthorisation())

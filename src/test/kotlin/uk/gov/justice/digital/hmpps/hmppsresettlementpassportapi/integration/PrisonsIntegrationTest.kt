@@ -30,7 +30,6 @@ class PrisonsIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Get All Active Prisons forbidden`() {
-    // Failing to set a valid Authorization header should result in 401 response
     webTestClient.get()
       .uri("/resettlement-passport/prisons/active")
       .headers(setAuthorisation())

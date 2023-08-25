@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.http.MediaType
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
@@ -18,6 +19,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.Pathway
 
 @RestController
 @RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE])
+@PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_READ_WRITE')")
 class PathwayResourceController(private val pathwayApiService: PathwayApiService) {
 
   @PatchMapping("/{prisonerId}/pathway")
@@ -37,6 +39,16 @@ class PathwayResourceController(private val pathwayApiService: PathwayApiService
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
       ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [
+          Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
         responseCode = "400",
         description = "Incorrect information in request body. Check schema and try again.",
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
@@ -48,7 +60,7 @@ class PathwayResourceController(private val pathwayApiService: PathwayApiService
       ),
     ],
   )
-  fun patchPathwayStatus(
+  suspend fun patchPathwayStatus(
     @PathVariable("prisonerId")
     @Parameter(required = true)
     prisonerId: String,

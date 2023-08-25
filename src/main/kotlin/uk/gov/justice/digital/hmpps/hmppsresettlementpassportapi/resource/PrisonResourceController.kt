@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.http.MediaType
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -17,6 +18,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PrisonA
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/prisons", produces = [MediaType.APPLICATION_JSON_VALUE])
+@PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_READ_WRITE')")
 class PrisonResourceController(
   private val prisonService: PrisonApiService,
 ) {
@@ -34,6 +36,16 @@ class PrisonResourceController(
         description = "Unauthorized to access this endpoint",
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [
+          Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
     ],
   )
   suspend fun getPrisons(): MutableList<Prison> = prisonService.getPrisonsList()
@@ -50,6 +62,16 @@ class PrisonResourceController(
         responseCode = "401",
         description = "Unauthorized to access this endpoint",
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [
+          Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
       ),
     ],
   )

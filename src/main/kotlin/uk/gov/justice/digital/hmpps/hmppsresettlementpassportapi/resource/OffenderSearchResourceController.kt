@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import kotlinx.coroutines.flow.Flow
 import org.springframework.http.MediaType
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -21,6 +22,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.Offende
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport", produces = [MediaType.APPLICATION_JSON_VALUE, MediaType.IMAGE_JPEG_VALUE])
+@PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_READ_WRITE')")
 class OffenderSearchResourceController(
   private val offenderSearchService: OffenderSearchApiService,
 ) {
@@ -37,6 +39,16 @@ class OffenderSearchResourceController(
         responseCode = "401",
         description = "Unauthorized to access this endpoint",
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
       ),
       ApiResponse(
         responseCode = "400",
@@ -60,7 +72,10 @@ class OffenderSearchResourceController(
     @Parameter(required = true, description = "The size of the page to be returned")
     size: Int,
     @Schema(example = "releaseDate,ASC | releaseDate,DESC")
-    @Parameter(required = true, description = "Sorting criteria in the format: property,(asc|desc) property supported are firstName, lastName, releaseDate and prisonerNumber")
+    @Parameter(
+      required = true,
+      description = "Sorting criteria in the format: property,(asc|desc) property supported are firstName, lastName, releaseDate and prisonerNumber",
+    )
     sort: String,
   ): PrisonersList = offenderSearchService.getPrisonersByPrisonId(false, term, prisonId, 0, page, size, sort)
 
@@ -76,6 +91,16 @@ class OffenderSearchResourceController(
         responseCode = "401",
         description = "Unauthorized to access this endpoint",
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [
+          Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
       ),
       ApiResponse(
         responseCode = "400",
@@ -99,7 +124,10 @@ class OffenderSearchResourceController(
     @Parameter(required = true, description = "The size of the page to be returned")
     size: Int,
     @Schema(example = "releaseDate,ASC | releaseDate,DESC")
-    @Parameter(required = true, description = "Sorting criteria in the format: property,(asc|desc) property supported are firstName, lastName, releaseDate and prisonerNumber")
+    @Parameter(
+      required = true,
+      description = "Sorting criteria in the format: property,(asc|desc) property supported are firstName, lastName, releaseDate and prisonerNumber",
+    )
     sort: String,
   ): PrisonersList = offenderSearchService.getPrisonersByPrisonId(true, "", prisonId, days.toLong(), page, size, sort)
 
@@ -117,6 +145,16 @@ class OffenderSearchResourceController(
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
       ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [
+          Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
         responseCode = "400",
         description = "Incorrect information provided to perform prisoner match",
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
@@ -130,8 +168,14 @@ class OffenderSearchResourceController(
     nomisId: String,
   ): Prisoner = offenderSearchService.getPrisonerDetailsByNomsId(nomisId)
 
-  @GetMapping("/prisoner/{nomisId}/image/{id}", produces = [MediaType.IMAGE_JPEG_VALUE, MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Get an image related to a prisoner nomis Id", description = "Gets a jpeg image related to a  prisoner nomis id, usually the latest image captured")
+  @GetMapping(
+    "/prisoner/{nomisId}/image/{id}",
+    produces = [MediaType.IMAGE_JPEG_VALUE, MediaType.APPLICATION_JSON_VALUE],
+  )
+  @Operation(
+    summary = "Get an image related to a prisoner nomis Id",
+    description = "Gets a jpeg image related to a  prisoner nomis id, usually the latest image captured",
+  )
   @ApiResponses(
     value = [
       ApiResponse(
@@ -145,6 +189,16 @@ class OffenderSearchResourceController(
         responseCode = "401",
         description = "Unauthorized to access this endpoint",
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [
+          Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
       ),
       ApiResponse(
         responseCode = "400",

@@ -24,7 +24,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_READ_WRITE")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
@@ -42,13 +42,24 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `Get Prisoner Details forbidden`() {
+    val nomsId = "G4274GN"
+    // Failing to set a valid Authorization header should result in 401 response
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId")
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
+  }
+
+  @Test
   fun `Get Prisoner Details when nomisId not found`() {
     val nomsId = "abc"
 
     offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 404)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_READ_WRITE")))
       .exchange()
       .expectStatus().isEqualTo(404)
       .expectHeader().contentType("application/json")
@@ -66,7 +77,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     prisonApiMockServer.stubGetPrisonerFacialImage(imageId, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/image/$imageId")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_READ_WRITE")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("image/jpeg")
@@ -83,7 +94,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     prisonApiMockServer.stubGetPrisonerFacialImage(imageId, 404)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/image/$imageId")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_READ_WRITE")))
       .exchange()
       .expectStatus().isNotFound
       .expectHeader().contentType("application/json")
@@ -93,5 +104,26 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
       .jsonPath("userMessage").isEqualTo("Resource not found. Check request parameters - Image not found")
       .jsonPath("developerMessage").isEqualTo("Image not found")
       .jsonPath("moreInfo").isEmpty
+  }
+
+  @Test
+  fun `Get Prisoner image unauthorized`() {
+    val nomsId = "abc"
+    val imageId = "1313058"
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/image/$imageId")
+      .exchange()
+      .expectStatus().isUnauthorized
+  }
+
+  @Test
+  fun `Get Prisoner image forbidden`() {
+    val nomsId = "abc"
+    val imageId = "1313058"
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/image/$imageId")
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
   }
 }

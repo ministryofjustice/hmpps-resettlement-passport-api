@@ -17,7 +17,7 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
     cvlApiMockServer.stubGetImageFromLicenceIdAndConditionId(licenceId, conditionId, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/licence-condition/id/$licenceId/condition/$conditionId/image")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_READ_WRITE")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("image/jpeg")
@@ -35,7 +35,7 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
     cvlApiMockServer.stubGetImageFromLicenceIdAndConditionId(licenceId, conditionId, 404)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/licence-condition/id/$licenceId/condition/$conditionId/image")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_READ_WRITE")))
       .exchange()
       .expectStatus().isNotFound
       .expectHeader().contentType("application/json")
@@ -56,7 +56,7 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
     cvlApiMockServer.stubGetImageFromLicenceIdAndConditionId(licenceId, conditionId, 500)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/licence-condition/id/$licenceId/condition/$conditionId/image")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_READ_WRITE")))
       .exchange()
       .expectStatus().isEqualTo(500)
       .expectHeader().contentType("application/json")
@@ -82,6 +82,19 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `Get image from licence forbidden`() {
+    val prisonerId = "abc"
+    val licenceId = "123"
+    val conditionId = "456"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$prisonerId/licence-condition/id/$licenceId/condition/$conditionId/image")
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
+  }
+
+  @Test
   fun `Get licence condition from cvl happy path`() {
     val prisonerId = "abc"
     val expectedOutput = readFile("testdata/expectation/licence-condition.json")
@@ -90,7 +103,7 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/licence-condition")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_READ_WRITE")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
@@ -107,7 +120,7 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/licence-condition")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_READ_WRITE")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
@@ -126,6 +139,17 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `Get licence condition from cvl forbidden`() {
+    val prisonerId = "abc"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$prisonerId/licence-condition")
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
+  }
+
+  @Test
   fun `Get licence condition from cvl Internal Error`() {
     val prisonerId = "abc"
     val licenceId = 101
@@ -134,7 +158,7 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 500)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/licence-condition")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_READ_WRITE")))
       .exchange()
       .expectStatus().isEqualTo(500)
       .expectHeader().contentType("application/json")
@@ -149,7 +173,7 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
     cvlApiMockServer.stubFindLicencesByNomisId(prisonerId, 404)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/licence-condition")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_READ_WRITE")))
       .exchange()
       .expectStatus().isEqualTo(404)
       .expectHeader().contentType("application/json")

@@ -27,7 +27,7 @@ class PathwayApiService(
 ) {
 
   @Transactional
-  fun updatePathwayStatus(prisonerId: String, pathwayAndStatus: PathwayAndStatus): ResponseEntity<Void> {
+  suspend fun updatePathwayStatus(prisonerId: String, pathwayAndStatus: PathwayAndStatus): ResponseEntity<Void> {
     val prisoner = getPrisonerEntityFromNomsId(prisonerId)
     val pathway = getPathwayEntity(pathwayAndStatus.pathway)
     val newStatus = getStatusEntity(pathwayAndStatus.status)

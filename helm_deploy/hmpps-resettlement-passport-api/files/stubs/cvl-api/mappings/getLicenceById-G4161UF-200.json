@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/api/images/offenders/G4274GN"
+    "urlPath": "/licence/id/909"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "getPrisonerImages-200-response.json",
+    "bodyFileName": "getLicenceById-G4161UF-200-response.json",
     "headers": {
       "Content-Type": "application/json;charset=UTF-8",
       "Server": "wiremock"

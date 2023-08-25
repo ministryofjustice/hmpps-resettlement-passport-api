@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/risks/crn/U328968"
+    "urlPath": "/risks/crn/U416100/predictors/all"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "getRisksByCrn-200-tc1-response.json",
+    "bodyFileName": "getRiskPredictorsByCrn-G4161UF-200-response.json",
     "headers": {
       "Content-Type": "application/json;charset=UTF-8",
       "Server": "wiremock"

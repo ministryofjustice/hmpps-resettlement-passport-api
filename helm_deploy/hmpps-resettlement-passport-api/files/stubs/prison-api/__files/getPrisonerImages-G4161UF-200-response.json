@@ -1,0 +1,38 @@
+[
+  {
+    "imageId": 3587199,
+    "active": true,
+    "captureDate": "2008-08-27",
+    "captureDateTime": "2008-08-27T00:00:00",
+    "imageView": "FACE",
+    "imageOrientation": "FRONT",
+    "imageType": "OFF_BKG"
+  },
+  {
+    "imageId": 2386505,
+    "active": true,
+    "captureDate": "2008-08-27",
+    "captureDateTime": "2008-08-27T00:00:00",
+    "imageView": "FACE",
+    "imageOrientation": "FRONT",
+    "imageType": "OFF_BKG"
+  },
+  {
+    "imageId": 1033074,
+    "active": false,
+    "captureDate": "2015-04-11",
+    "captureDateTime": "2015-04-11T11:52:31",
+    "imageView": "FACE",
+    "imageOrientation": "FRONT",
+    "imageType": "OFF_BKG"
+  },
+  {
+    "imageId": 1064585,
+    "active": true,
+    "captureDate": "2015-06-11",
+    "captureDateTime": "2015-06-11T09:52:34",
+    "imageView": "FACE",
+    "imageOrientation": "FRONT",
+    "imageType": "OFF_BKG"
+  }
+]

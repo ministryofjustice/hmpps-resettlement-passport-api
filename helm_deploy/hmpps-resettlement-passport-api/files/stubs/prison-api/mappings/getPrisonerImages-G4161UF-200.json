@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/images/offenders/G4161UF"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "getPrisonerImages-G4161UF-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

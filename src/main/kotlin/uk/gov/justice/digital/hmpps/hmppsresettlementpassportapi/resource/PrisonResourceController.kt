@@ -18,7 +18,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PrisonA
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/prisons", produces = [MediaType.APPLICATION_JSON_VALUE])
-@PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_READ_WRITE')")
+@PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class PrisonResourceController(
   private val prisonService: PrisonApiService,
 ) {

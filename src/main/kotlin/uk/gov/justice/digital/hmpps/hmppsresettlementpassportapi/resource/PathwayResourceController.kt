@@ -19,7 +19,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.Pathway
 
 @RestController
 @RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE])
-@PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_READ_WRITE')")
+@PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class PathwayResourceController(private val pathwayApiService: PathwayApiService) {
 
   @PatchMapping("/{prisonerId}/pathway")

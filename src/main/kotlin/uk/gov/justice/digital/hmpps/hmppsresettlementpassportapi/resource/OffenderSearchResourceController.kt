@@ -22,7 +22,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.Offende
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport", produces = [MediaType.APPLICATION_JSON_VALUE, MediaType.IMAGE_JPEG_VALUE])
-@PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_READ_WRITE')")
+@PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class OffenderSearchResourceController(
   private val offenderSearchService: OffenderSearchApiService,
 ) {

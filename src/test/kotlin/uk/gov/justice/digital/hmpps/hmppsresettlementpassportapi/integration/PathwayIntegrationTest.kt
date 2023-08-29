@@ -42,7 +42,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
           status = Status.IN_PROGRESS,
         ),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_READ_WRITE")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
 
@@ -91,7 +91,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
           status = Status.IN_PROGRESS,
         ),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_READ_WRITE")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
       .expectHeader().contentType("application/json")
@@ -116,7 +116,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
           status = Status.IN_PROGRESS,
         ),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_READ_WRITE")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
       .expectHeader().contentType("application/json")
@@ -176,7 +176,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
           }
         """.trimIndent(),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_READ_WRITE")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isBadRequest
       .expectHeader().contentType("application/json")

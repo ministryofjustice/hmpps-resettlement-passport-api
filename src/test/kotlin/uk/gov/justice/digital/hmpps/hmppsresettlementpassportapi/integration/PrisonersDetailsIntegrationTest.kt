@@ -24,7 +24,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_READ_WRITE")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
@@ -58,7 +58,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 404)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_READ_WRITE")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(404)
       .expectHeader().contentType("application/json")
@@ -76,7 +76,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     prisonApiMockServer.stubGetPrisonerFacialImage(imageId, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/image/$imageId")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_READ_WRITE")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("image/jpeg")
@@ -93,7 +93,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     prisonApiMockServer.stubGetPrisonerFacialImage(imageId, 404)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/image/$imageId")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_READ_WRITE")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
       .expectHeader().contentType("application/json")

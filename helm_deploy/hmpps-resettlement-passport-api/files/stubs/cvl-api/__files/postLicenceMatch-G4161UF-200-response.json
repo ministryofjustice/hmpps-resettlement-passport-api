@@ -1,0 +1,29 @@
+[
+  {
+    "licenceId": 909,
+    "licenceType": "AP_PSS",
+    "licenceStatus": "ACTIVE",
+    "nomisId": "G4161UF",
+    "surname": "Clemence",
+    "forename": "Chrisy",
+    "prisonCode": "MDI",
+    "prisonDescription": "Moorland (HMP & YOI)",
+    "probationAreaCode": "N03",
+    "probationAreaDescription": "Midlands",
+    "probationPduCode": "N55PDU",
+    "probationPduDescription": "Nottingham",
+    "probationLauCode": "N55LAU",
+    "probationLauDescription": "Nottingham South",
+    "probationTeamCode": "cvl",
+    "probationTeamDescription": "Licence Team",
+    "conditionalReleaseDate": "01/08/2023",
+    "actualReleaseDate": "01/08/2023",
+    "crn": "U416100",
+    "dateOfBirth": "30/05/1974",
+    "comUsername": "CVL_COM",
+    "bookingId": 7894521,
+    "dateCreated": "24/08/2023 08:56",
+    "approvedByName": "Tim Harrison",
+    "approvedDate": "24/08/2023 17:34:00"
+  }
+]

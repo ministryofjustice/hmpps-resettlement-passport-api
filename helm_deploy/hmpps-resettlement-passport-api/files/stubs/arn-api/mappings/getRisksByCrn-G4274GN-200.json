@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/licence/id/101"
+    "urlPath": "/risks/crn/U328968"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "getLicenceById-200-tc1-response.json",
+    "bodyFileName": "getRisksByCrn-G4274GN-200-response.json",
     "headers": {
       "Content-Type": "application/json;charset=UTF-8",
       "Server": "wiremock"

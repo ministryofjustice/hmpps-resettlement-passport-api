@@ -1,0 +1,100 @@
+{
+  "prisonerNumber": "G4161UF",
+  "pncNumber": "91/105966P",
+  "pncNumberCanonicalShort": "91/105966P",
+  "pncNumberCanonicalLong": "1991/105966P",
+  "croNumber": "105966/91Y",
+  "bookingId": "973708",
+  "bookNumber": "P97635",
+  "firstName": "CHRISY",
+  "lastName": "CLEMENCE",
+  "dateOfBirth": "1974-05-30",
+  "gender": "Male",
+  "ethnicity": "White: Eng./Welsh/Scot./N.Irish/British",
+  "youthOffender": false,
+  "religion": "No Religion",
+  "nationality": "British",
+  "status": "ACTIVE IN",
+  "lastMovementTypeCode": "ADM",
+  "lastMovementReasonCode": "INT",
+  "inOutStatus": "IN",
+  "prisonId": "MDI",
+  "prisonName": "Moorland (HMP & YOI)",
+  "cellLocation": "3-3-022",
+  "aliases": [
+    {
+      "firstName": "OGONANTHOMASIN",
+      "middleNames": "CHELSELIA",
+      "lastName": "EMERICIA",
+      "dateOfBirth": "1974-06-10",
+      "gender": "Male"
+    }
+  ],
+  "alerts": [
+    {
+      "alertType": "C",
+      "alertCode": "C4",
+      "active": true,
+      "expired": false
+    },
+    {
+      "alertType": "S",
+      "alertCode": "SR",
+      "active": true,
+      "expired": false
+    },
+    {
+      "alertType": "P",
+      "alertCode": "P1",
+      "active": true,
+      "expired": false
+    },
+    {
+      "alertType": "R",
+      "alertCode": "RCS",
+      "active": true,
+      "expired": false
+    },
+    {
+      "alertType": "R",
+      "alertCode": "RVR",
+      "active": true,
+      "expired": false
+    }
+  ],
+  "csra": "Standard",
+  "category": "D",
+  "legalStatus": "SENTENCED",
+  "imprisonmentStatus": "SENT03",
+  "imprisonmentStatusDescription": "Adult Imprisonment Without Option CJA03",
+  "mostSeriousOffence": "Indecent assault on a girl under the age of 14 years",
+  "recall": false,
+  "indeterminateSentence": false,
+  "sentenceStartDate": "2015-04-30",
+  "releaseDate": "2023-08-01",
+  "confirmedReleaseDate": "2023-08-01",
+  "sentenceExpiryDate": "2022-05-09",
+  "licenceExpiryDate": "2022-05-05",
+  "nonDtoReleaseDate": "2018-10-17",
+  "nonDtoReleaseDateType": "CRD",
+  "receptionDate": "2015-04-01",
+  "conditionalReleaseDate": "2018-10-17",
+  "locationDescription": "Moorland (HMP & YOI)",
+  "restrictedPatient": false,
+  "currentIncentive": {
+    "level": {
+      "code": "STD",
+      "description": "Standard"
+    },
+    "dateTime": "2016-09-09T16:22:33",
+    "nextReviewDate": "2017-09-09"
+  },
+  "heightCentimetres": 188,
+  "weightKilograms": 47,
+  "hairColour": "Grey",
+  "rightEyeColour": "Blue",
+  "leftEyeColour": "Blue",
+  "facialHair": "Clean Shaven",
+  "shapeOfFace": "Oval",
+  "build": "Stocky"
+}

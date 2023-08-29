@@ -1,0 +1,40 @@
+[
+  {
+    "completedDate": "2023-01-23T15:14:03",
+    "assessmentStatus": "Complete",
+    "groupReconvictionScore": {
+      "oneYear": 10,
+      "twoYears": 20,
+      "scoreLevel": "HIGH"
+    },
+    "violencePredictorScore": {
+      "ovpStaticWeightedScore": 2,
+      "ovpDynamicWeightedScore": 3,
+      "ovpTotalWeightedScore": 4,
+      "oneYear": 12,
+      "twoYears": 13,
+      "ovpRisk": "MEDIUM"
+    },
+    "generalPredictorScore": {
+      "ogpStaticWeightedScore": 40,
+      "ogpDynamicWeightedScore": 50,
+      "ogpTotalWeightedScore": 60,
+      "ogp1Year": 20,
+      "ogp2Year": 30,
+      "ogpRisk": "LOW"
+    },
+    "riskOfSeriousRecidivismScore": {
+      "percentageScore": 4,
+      "staticOrDynamic": "STATIC",
+      "source": "ASSESSMENTS_API",
+      "algorithmVersion": "string",
+      "scoreLevel": "HIGH"
+    },
+    "sexualPredictorScore": {
+      "ospIndecentPercentageScore": 50,
+      "ospContactPercentageScore": 78,
+      "ospIndecentScoreLevel": "LOW",
+      "ospContactScoreLevel": "HIGH"
+    }
+  }
+]

@@ -1,0 +1,222 @@
+{
+  "id": 909,
+  "typeCode": "AP_PSS",
+  "version": "2.1",
+  "statusCode": "ACTIVE",
+  "nomsId": "G4161UF",
+  "bookingNo": "W75142",
+  "bookingId": 7894521,
+  "crn": "U416100",
+  "pnc": "2788/75035",
+  "cro": "2/26630",
+  "prisonCode": "MDI",
+  "prisonDescription": "Moorland (HMP & YOI)",
+  "prisonTelephone": "933 555 38416",
+  "forename": "Chrisy",
+  "middleNames": "",
+  "surname": "Clemence",
+  "dateOfBirth": "30/05/1974",
+  "conditionalReleaseDate": "01/08/2023",
+  "actualReleaseDate": "01/08/2023",
+  "sentenceStartDate": "25/11/2016",
+  "sentenceEndDate": "01/05/2030",
+  "licenceStartDate": "09/01/2023",
+  "licenceExpiryDate": "01/08/2023",
+  "topupSupervisionStartDate": "13/07/2023",
+  "topupSupervisionExpiryDate": "16/07/2023",
+  "comUsername": "CVL_COM",
+  "comStaffId": 3000,
+  "comEmail": "cvl_com@probation.gov.uk",
+  "probationAreaCode": "N03",
+  "probationAreaDescription": "Midlands",
+  "probationPduCode": "N55PDU",
+  "probationPduDescription": "Nottingham",
+  "probationLauCode": "N55LAU",
+  "probationLauDescription": "Nottingham South",
+  "probationTeamCode": "cvl",
+  "probationTeamDescription": "Licence Team",
+  "appointmentPerson": "dsadsadsa",
+  "appointmentTime": "18/08/2023 01:01",
+  "appointmentAddress": "dsds, dsd, dsds, dsds, SN17AH",
+  "appointmentContact": "01632 960901",
+  "spoDiscussion": null,
+  "vloDiscussion": null,
+  "approvedDate": null,
+  "approvedByUsername": null,
+  "approvedByName": null,
+  "supersededDate": "13/07/2023 14:00:38",
+  "dateCreated": "13/07/2023 10:06:31",
+  "createdByUsername": "CVL_COM",
+  "dateLastUpdated": "13/07/2023 14:00:38",
+  "updatedByUsername": "CVL_COM",
+  "standardLicenceConditions": [
+    {
+      "id": 1001,
+      "code": "9ce9d594-e346-4785-9642-c87e764bee37",
+      "sequence": 0,
+      "text": "Be of good behaviour and not behave in a way which undermines the purpose of the licence period."
+    },
+    {
+      "id": 1002,
+      "code": "3b19fdb0-4ca3-4615-9fdd-61fabc1587af",
+      "sequence": 1,
+      "text": "Not commit any offence."
+    },
+    {
+      "id": 1003,
+      "code": "3361683a-504a-4357-ae22-6aa01b370b4a",
+      "sequence": 2,
+      "text": "Keep in touch with the supervising officer in accordance with instructions given by the supervising officer."
+    }
+  ],
+  "standardPssConditions": [
+    {
+      "id": 1004,
+      "code": "b3cd4a30-11fd-4715-9ebb-ed89f5386e1f",
+      "sequence": 0,
+      "text": "Be of good behaviour and not behave in a way that undermines the rehabilitative purpose of the supervision period."
+    },
+    {
+      "id": 1005,
+      "code": "b950407d-2270-45b8-9666-3ad58a17d0be",
+      "sequence": 1,
+      "text": "Not commit any offence."
+    },
+    {
+      "id": 1006,
+      "code": "93413832-9954-4907-a64d-eb8a56e34afb",
+      "sequence": 2,
+      "text": "Keep in touch with your supervisor in accordance with instructions given by your supervisor."
+    }
+  ],
+  "additionalLicenceConditions": [
+    {
+      "id": 1007,
+      "code": "5db26ab3-9b6f-4bee-b2aa-53aa3f3be7dd",
+      "version": "2.1",
+      "category": "Residence at a specific place",
+      "sequence": 0,
+      "text": "You must reside overnight within [REGION] probation region while of no fixed abode, unless otherwise approved by your supervising officer.",
+      "expandedText": "You must reside overnight within Birmingham probation region while of no fixed abode, unless otherwise approved by your supervising officer.",
+      "data": [
+        {
+          "id": 3072,
+          "field": "probationRegion",
+          "value": "Birmingham",
+          "sequence": 0
+        }
+      ],
+      "uploadSummary": []
+    },
+    {
+      "id": 1009,
+      "code": "4673ebe4-9fc0-4e48-87c9-eb17d5280867",
+      "version": "2.1",
+      "category": "Supervision in the community",
+      "sequence": 8,
+      "text": "Report to staff at [NAME OF APPROVED PREMISES] at [TIME / DAILY], unless otherwise authorised by your supervising officer. This condition will be reviewed by your supervising officer on a [WEEKLY / MONTHLY / ETC] basis and may be amended or removed if it is felt that the level of risk you present has reduced appropriately.",
+      "expandedText": "Report to staff at Birmingham Probation Centre at 11:00am daily, unless otherwise authorised by your supervising officer. This condition will be reviewed by your supervising officer on a monthly basis and may be amended or removed if it is felt that the level of risk you present has reduced appropriately.",
+      "data": [
+        {
+          "id": 3081,
+          "field": "approvedPremises",
+          "value": "sasasa",
+          "sequence": 0
+        },
+        {
+          "id": 3082,
+          "field": "reportingFrequency",
+          "value": "Daily",
+          "sequence": 1
+        },
+        {
+          "id": 3083,
+          "field": "numberOfReportingTimes",
+          "value": "Twice a day",
+          "sequence": 2
+        },
+        {
+          "id": 3084,
+          "field": "reportingTime1",
+          "value": "01:01 am",
+          "sequence": 3
+        },
+        {
+          "id": 3085,
+          "field": "reportingTime2",
+          "value": "01:01 am",
+          "sequence": 4
+        },
+        {
+          "id": 3086,
+          "field": "reviewPeriod",
+          "value": "Monthly",
+          "sequence": 5
+        }
+      ],
+      "uploadSummary": []
+    }
+  ],
+  "additionalPssConditions": [
+    {
+      "id": 2793,
+      "code": "7a9ca3bb-922a-433a-9601-1e475c6c0095",
+      "version": "2.1",
+      "category": "Restriction of conduct or acts",
+      "sequence": 9,
+      "text": "Not to participate directly or indirectly in organising and/or contributing to any demonstration, meeting, gathering or website without the prior approval of your supervising officer. This condition will be reviewed on a monthly basis and may be amended or removed if your risk is assessed as having changed.",
+      "expandedText": "Not to participate directly or indirectly in organising and/or contributing to any demonstration, meeting, gathering or website without the prior approval of your supervising officer. This condition will be reviewed on a monthly basis and may be amended or removed if your risk is assessed as having changed.",
+      "data": [],
+      "uploadSummary": []
+    },
+    {
+      "id": 2794,
+      "code": "86f8b3d6-be31-48b2-a29e-5cf662c95ad1",
+      "version": "2.1",
+      "category": "Extremism",
+      "sequence": 10,
+      "text": "Not to contact directly or indirectly any person whom you know or believe to have been charged or convicted of any extremist related offence, without the prior approval of your supervising officer.",
+      "expandedText": "Not to contact directly or indirectly any person whom you know or believe to have been charged or convicted of any extremist related offence, without the prior approval of your supervising officer.",
+      "data": [],
+      "uploadSummary": []
+    },
+    {
+      "id": 2795,
+      "code": "1dc7ee29-df47-48a8-90b6-69e286692d8a",
+      "version": "2.1",
+      "category": "Polygraph",
+      "sequence": 11,
+      "text": "To comply with any instruction given by your supervising officer requiring you to attend polygraph testing. To participate in polygraph sessions and examinations as instructed by or under the authority of your supervising officer and to comply with any instruction given to you during a polygraph session by the person conducting the polygraph.",
+      "expandedText": "To comply with any instruction given by your supervising officer requiring you to attend polygraph testing. To participate in polygraph sessions and examinations as instructed by or under the authority of your supervising officer and to comply with any instruction given to you during a polygraph session by the person conducting the polygraph.",
+      "data": [],
+      "uploadSummary": []
+    }
+  ],
+  "bespokeConditions": [
+    {
+      "id": 1010,
+      "sequence": 12,
+      "text": "Attend a location, as required by your supervising officer, to give a sample of oral fluid / urine in order to test whether you have any specified Class A and specified Class B drugs in your body, for the purpose of ensuring that you are complying with the condition of your licence requiring you to be of good behaviour. Do not take any action that could hamper or frustrate the drug testing process."
+    },
+    {
+      "id": 1011,
+      "sequence": 13,
+      "text" : "Allow person(s) as designated by your supervising officer to install an electronic monitoring tag on you and access to install any associated equipment in your property, and for the purpose of ensuring that equipment is functioning correctly. You must not damage or tamper with these devices and ensure that the tag is charged, and report to your supervising officer and the EM provider immediately if the tag or the associated equipment are not working correctly. This will be for the purpose of monitoring your freedom of movement licence condition(s) unless otherwise authorised by your supervising officer."
+    },
+    {
+      "id": 1012,
+      "sequence": 14,
+      "text" : "You will be subject to trail monitoring. Your whereabouts will be electronically monitored by GPS Satellite Tagging, ending on 22nd March 2024, and you must cooperate with the monitoring as directed by your supervising officer unless otherwise authorised by your supervising officer."
+    },
+    {
+      "id": 1013,
+      "sequence": 15,
+      "text": "You must let the police search you if they ask. You must also let them search a vehicle you are with, like a car or a motorbike."
+    }
+  ],
+  "isVariation": false,
+  "variationOf": null,
+  "createdByFullName": "CVL COM",
+  "isInPssPeriod": false,
+  "isActivatedInPssPeriod": false
+}

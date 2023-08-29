@@ -4,13 +4,13 @@
     "urlPath": "/licence/match",
     "bodyPatterns": [
       {
-        "equalToJson": "{\"nomsId\":[\"G4274GN\"]}"
+        "equalToJson": "{\"nomsId\":[\"G4161UF\"]}"
       }
      ]
   },
   "response": {
     "status": 200,
-    "bodyFileName": "postLicenceMatch-200-tc1-response.json",
+    "bodyFileName": "postLicenceMatch-G4161UF-200-response.json",
     "headers": {
       "Content-Type": "application/json;charset=UTF-8",
       "Server": "wiremock"

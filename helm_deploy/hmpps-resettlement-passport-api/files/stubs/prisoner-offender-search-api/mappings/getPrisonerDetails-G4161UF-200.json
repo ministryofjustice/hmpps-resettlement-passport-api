@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/secure/offenders/crn/U328968/risk/mappa"
+    "urlPath": "/prisoner/G4161UF"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "getMappaByCrn-200-tc1-response.json",
+    "bodyFileName": "getPrisonerDetails-G4161UF-200-response.json",
     "headers": {
       "Content-Type": "application/json;charset=UTF-8",
       "Server": "wiremock"

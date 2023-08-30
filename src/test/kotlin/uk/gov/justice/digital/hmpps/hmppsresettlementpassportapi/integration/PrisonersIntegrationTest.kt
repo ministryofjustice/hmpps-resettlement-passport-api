@@ -12,7 +12,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
     offenderSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?term=&page=0&size=10&sort=releaseDate,DESC")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
@@ -27,7 +27,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
     offenderSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?term=&page=0&size=10&sort=releaseDate,ASC")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
@@ -45,12 +45,22 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `Get All Prisoners forbidden`() {
+    val prisonId = "MDI"
+    webTestClient.get()
+      .uri("/resettlement-passport/prison/$prisonId/prisoners?term=&page=0&size=10&sort=releaseDate,ASC")
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
+  }
+
+  @Test
   fun `Get All Prisoners  Internal Error`() {
     val prisonId = "MDI"
     offenderSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 500)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(500)
       .expectHeader().contentType("application/json")
@@ -64,7 +74,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
     offenderSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 404)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?page=-1&size=10&sort=releaseDate,ASC")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(404)
       .expectHeader().contentType("application/json")
@@ -79,7 +89,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
     offenderSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 404)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?page=1&size=-1&sort=releaseDate,ASC")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(404)
       .expectHeader().contentType("application/json")
@@ -94,7 +104,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
     offenderSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 500)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?sort=releaseDate,ASC")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(500)
       .expectHeader().contentType("application/json")
@@ -108,7 +118,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
     offenderSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 500)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?page=1&sie=10")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(500)
       .expectHeader().contentType("application/json")
@@ -122,7 +132,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
     offenderSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?page=0&size=10&sort=xxxxx")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(404)
       .expectHeader().contentType("application/json")
@@ -138,7 +148,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
     offenderSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 404)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?page=0&size=10&sort=xxxxx")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(404)
       .expectHeader().contentType("application/json")

@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import kotlinx.coroutines.flow.Flow
 import org.springframework.http.MediaType
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -20,7 +21,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.Licence
 
 @RestController
 @Validated
-@RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE, MediaType.IMAGE_JPEG_VALUE])
+@RequestMapping(
+  "/resettlement-passport/prisoner",
+  produces = [MediaType.APPLICATION_JSON_VALUE, MediaType.IMAGE_JPEG_VALUE],
+)
+@PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class LicenceConditionResourceController(
   private val licenceConditionApiService: LicenceConditionApiService,
 ) {
@@ -39,6 +44,11 @@ class LicenceConditionResourceController(
       ApiResponse(
         responseCode = "401",
         description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
       ApiResponse(
@@ -85,6 +95,16 @@ class LicenceConditionResourceController(
       ApiResponse(
         responseCode = "401",
         description = "Unauthorized to access this endpoint",
+        content = [
+          Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
         content = [
           Content(
             mediaType = MediaType.APPLICATION_JSON_VALUE,

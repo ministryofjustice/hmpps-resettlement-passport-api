@@ -11,7 +11,7 @@ class PrisonsIntegrationTest : IntegrationTestBase() {
     prisonRegisterApiMockServer.stubPrisonList(200)
     webTestClient.get()
       .uri("/resettlement-passport/prisons/active")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
@@ -29,11 +29,20 @@ class PrisonsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `Get All Active Prisons forbidden`() {
+    webTestClient.get()
+      .uri("/resettlement-passport/prisons/active")
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
+  }
+
+  @Test
   fun `Get All Active Prisons  Internal Error`() {
     prisonRegisterApiMockServer.stubPrisonList(500)
     webTestClient.get()
       .uri("/resettlement-passport/prisons/active")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(500)
       .expectHeader().contentType("application/json")
@@ -49,7 +58,7 @@ class PrisonsIntegrationTest : IntegrationTestBase() {
     prisonRegisterApiMockServer.stubPrisonList(200)
     webTestClient.get()
       .uri("/resettlement-passport/prisons/all")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
@@ -67,11 +76,20 @@ class PrisonsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `Get All Prisons forbidden`() {
+    webTestClient.get()
+      .uri("/resettlement-passport/prisons/all")
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
+  }
+
+  @Test
   fun `Get All Prisons  Internal Error`() {
     prisonRegisterApiMockServer.stubPrisonList(500)
     webTestClient.get()
       .uri("/resettlement-passport/prisons/all")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(500)
       .expectHeader().contentType("application/json")

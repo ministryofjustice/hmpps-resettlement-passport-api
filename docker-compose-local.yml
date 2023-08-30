@@ -37,7 +37,7 @@ services:
 
   cvl-stub:
     image: wiremock/wiremock
-    command: "--global-response-templating --verbose"
+    command: "--no-request-journal --global-response-templating --verbose"
     networks:
       - hmpps
     container_name: cvl-api-stub
@@ -48,7 +48,7 @@ services:
 
   community-api-stub:
     image: wiremock/wiremock
-    command: "--global-response-templating --verbose"
+    command: "--no-request-journal --global-response-templating --verbose"
     networks:
       - hmpps
     container_name: community-api-stub
@@ -59,7 +59,7 @@ services:
 
   prison-register-api-stub:
     image: wiremock/wiremock
-    command: "--global-response-templating --verbose"
+    command: "--no-request-journal --global-response-templating --verbose"
     networks:
       - hmpps
     container_name: prison-register-api-stub
@@ -70,7 +70,7 @@ services:
 
   arn-api-stub:
     image: wiremock/wiremock
-    command: "--global-response-templating --verbose"
+    command: "--no-request-journal --global-response-templating --verbose"
     networks:
       - hmpps
     container_name: arn-api-stub
@@ -81,7 +81,7 @@ services:
 
   prisoner-offender-search-api-stub:
     image: wiremock/wiremock
-    command: "--global-response-templating --verbose"
+    command: "--no-request-journal --global-response-templating --verbose"
     networks:
       - hmpps
     container_name: prisoner-offender-search-api-stub
@@ -92,7 +92,7 @@ services:
 
   prison-api-stub:
     image: wiremock/wiremock
-    command: "--global-response-templating --verbose"
+    command: "--no-request-journal --global-response-templating --verbose"
     networks:
       - hmpps
     container_name: prison-api-stub

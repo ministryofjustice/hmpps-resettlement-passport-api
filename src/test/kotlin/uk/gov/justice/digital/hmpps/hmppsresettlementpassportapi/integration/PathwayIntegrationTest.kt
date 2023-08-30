@@ -42,7 +42,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
           status = Status.IN_PROGRESS,
         ),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
 
@@ -91,7 +91,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
           status = Status.IN_PROGRESS,
         ),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
       .expectHeader().contentType("application/json")
@@ -116,7 +116,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
           status = Status.IN_PROGRESS,
         ),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
       .expectHeader().contentType("application/json")
@@ -145,6 +145,23 @@ class PathwayIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `Patch pathway status happy path - forbidden`() {
+    val prisonerId = "123"
+
+    webTestClient.patch()
+      .uri("/resettlement-passport/prisoner/$prisonerId/pathway")
+      .headers(setAuthorisation())
+      .bodyValue(
+        PathwayAndStatus(
+          pathway = Pathway.ACCOMMODATION,
+          status = Status.IN_PROGRESS,
+        ),
+      )
+      .exchange()
+      .expectStatus().isForbidden
+  }
+
+  @Test
   fun `Patch pathway status happy path - 400`() {
     val prisonerId = "123"
 
@@ -159,7 +176,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
           }
         """.trimIndent(),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isBadRequest
       .expectHeader().contentType("application/json")

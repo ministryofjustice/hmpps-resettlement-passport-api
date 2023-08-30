@@ -16,7 +16,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/scores")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
@@ -35,7 +35,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/scores")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
@@ -49,7 +49,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/scores")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
       .expectHeader().contentType("application/json")
@@ -71,7 +71,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/scores")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
       .expectHeader().contentType("application/json")
@@ -93,7 +93,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/scores")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(500)
       .expectHeader().contentType("application/json")
@@ -116,6 +116,17 @@ class RisksIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `Get risk scores - forbidden`() {
+    val prisonerId = "abc"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$prisonerId/risk/scores")
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
+  }
+
+  @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
   fun `Get RoSH happy path`() {
     val prisonerId = "123"
@@ -126,7 +137,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/rosh")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
@@ -140,7 +151,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/rosh")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
       .expectHeader().contentType("application/json")
@@ -162,7 +173,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/rosh")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
       .expectHeader().contentType("application/json")
@@ -184,7 +195,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/rosh")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(500)
       .expectHeader().contentType("application/json")
@@ -207,6 +218,17 @@ class RisksIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `Get RoSH - forbidden`() {
+    val prisonerId = "abc"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$prisonerId/risk/rosh")
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
+  }
+
+  @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
   fun `Get MAPPA happy path`() {
     val prisonerId = "123"
@@ -217,7 +239,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/mappa")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
@@ -231,7 +253,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/mappa")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
       .expectHeader().contentType("application/json")
@@ -253,7 +275,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/mappa")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
       .expectHeader().contentType("application/json")
@@ -275,7 +297,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/mappa")
-      .headers(setAuthorisation(roles = listOf("ROLE_ADMIN")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(500)
       .expectHeader().contentType("application/json")
@@ -295,5 +317,16 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/mappa")
       .exchange()
       .expectStatus().isUnauthorized
+  }
+
+  @Test
+  fun `Get MAPPA - forbidden`() {
+    val prisonerId = "abc"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$prisonerId/risk/mappa")
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
   }
 }

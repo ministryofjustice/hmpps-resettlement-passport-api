@@ -18,6 +18,7 @@ api:
       community: http://localhost:8096
       arn: http://localhost:8097
       prison: http://localhost:8098
+      offender-case-notes: http://localhost:8099
 
 
 spring:

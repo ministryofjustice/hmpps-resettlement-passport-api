@@ -40,7 +40,7 @@ class CaseNotesResourceController(
       ),
     ],
   )
-  suspend fun getPrisonersPrisonId(
+  suspend fun getCaseNotesForPrisoner(
     @PathVariable("prisonerId")
     @Parameter(required = true)
     prisonerId: String,

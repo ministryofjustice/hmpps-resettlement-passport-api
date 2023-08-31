@@ -24,6 +24,7 @@ class WebClientConfiguration(
   @Value("\${api.base.url.community}") private val communityRootUri: String,
   @Value("\${api.base.url.arn}") private val arnRootUri: String,
   @Value("\${api.base.url.prison}") private val prisonerImageUri: String,
+  @Value("\${api.base.url.offender-case-notes}") private val offenderCaseNotesUri: String,
 ) {
 
   @Bean
@@ -144,6 +145,20 @@ class WebClientConfiguration(
     val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
     return WebClient.builder()
       .baseUrl(prisonerImageUri)
+      .clientConnector(ReactorClientHttpConnector(httpClient))
+      .filter(oauth2Client)
+      .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }
+      .build()
+  }
+
+  @Bean
+  fun offenderCaseNotesWebClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+    val oauth2Client = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
+    oauth2Client.setDefaultClientRegistrationId(SYSTEM_USERNAME)
+
+    val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
+    return WebClient.builder()
+      .baseUrl(offenderCaseNotesUri)
       .clientConnector(ReactorClientHttpConnector(httpClient))
       .filter(oauth2Client)
       .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }

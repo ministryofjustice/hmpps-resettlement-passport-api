@@ -14,6 +14,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBase
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ArnApiMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CaseNotesApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CommunityApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CvlApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.HmppsAuthMockServer
@@ -55,6 +56,9 @@ abstract class IntegrationTestBase : TestBase() {
     @JvmField
     val prisonApiMockServer = PrisonApiMockServer()
 
+    @JvmField
+    val caseNotesApiMockServer = CaseNotesApiMockServer()
+
     @BeforeAll
     @JvmStatic
     fun startMocks() {
@@ -66,6 +70,7 @@ abstract class IntegrationTestBase : TestBase() {
       arnApiMockServer.start()
       offenderSearchApiMockServer.start()
       prisonApiMockServer.start()
+      caseNotesApiMockServer.start()
     }
 
     @AfterAll
@@ -76,7 +81,9 @@ abstract class IntegrationTestBase : TestBase() {
       cvlApiMockServer.stop()
       communityApiMockServer.stop()
       arnApiMockServer.stop()
+      offenderSearchApiMockServer.stop()
       prisonApiMockServer.stop()
+      caseNotesApiMockServer.stop()
     }
   }
 

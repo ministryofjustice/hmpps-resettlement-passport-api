@@ -10,7 +10,6 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import java.time.LocalDateTime
-import java.util.*
 
 @Entity
 @Table(name = "pathway_status")
@@ -32,5 +31,5 @@ data class PathwayStatusEntity(
   var status: StatusEntity,
 
   @Column(name = "updated_date")
-  var updatedDate: LocalDateTime,
+  var updatedDate: LocalDateTime?,
 )

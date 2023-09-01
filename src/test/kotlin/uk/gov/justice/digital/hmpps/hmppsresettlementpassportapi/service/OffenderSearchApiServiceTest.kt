@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.gson.Gson
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import okhttp3.mockwebserver.MockResponse
@@ -29,7 +27,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Stat
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
-import wiremock.org.eclipse.jetty.util.ajax.JSON
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -301,6 +298,10 @@ class OffenderSearchApiServiceTest {
         ),
       ),
     ),
-    pageSize = 7, page = 0, sortName = "releaseDate,DESC", totalElements = 7, last = true,
+    pageSize = 7,
+    page = 0,
+    sortName = "releaseDate,DESC",
+    totalElements = 7,
+    last = true,
   )
 }

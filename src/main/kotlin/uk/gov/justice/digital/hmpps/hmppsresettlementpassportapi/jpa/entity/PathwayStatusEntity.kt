@@ -14,22 +14,22 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "pathway_status")
 data class PathwayStatusEntity(
-    @Id
+  @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long?,
+  val id: Long?,
 
-    @ManyToOne(cascade = [CascadeType.MERGE])
+  @ManyToOne(cascade = [CascadeType.MERGE])
   @JoinColumn(name = "prisoner_id", referencedColumnName = "id")
-    val prisoner: PrisonerEntity,
+  val prisoner: PrisonerEntity,
 
-    @ManyToOne
+  @ManyToOne
   @JoinColumn(name = "pathway_id", referencedColumnName = "id")
-    val pathway: PathwayEntity,
+  val pathway: PathwayEntity,
 
-    @ManyToOne
+  @ManyToOne
   @JoinColumn(name = "status_id", referencedColumnName = "id")
-    var status: StatusEntity,
+  var status: StatusEntity,
 
-    @Column(name = "updated_date")
-    var updatedDate: LocalDateTime?,
+  @Column(name = "updated_date")
+  var updatedDate: LocalDateTime?,
 )

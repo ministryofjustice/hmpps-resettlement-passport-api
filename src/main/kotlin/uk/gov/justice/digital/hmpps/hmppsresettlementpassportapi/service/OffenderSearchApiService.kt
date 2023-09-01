@@ -15,7 +15,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerPe
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonerImage
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonerRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
@@ -26,7 +25,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import java.time.LocalDate
 import java.time.Period
-import java.time.format.DateTimeFormatter
 import kotlin.collections.ArrayList
 
 @Service
@@ -87,8 +85,8 @@ class OffenderSearchApiService(
         "Page $pageNumber and Size $pageSize",
       )
     }
-      findPrisonersBySearchTerm(prisonId, searchTerm).collect {
-        offenders.addAll(it)
+    findPrisonersBySearchTerm(prisonId, searchTerm).collect {
+      offenders.addAll(it)
     }
     if (offenders.isEmpty()) {
       throw NoDataWithCodeFoundException("Prisoners", prisonId)

@@ -1,6 +1,14 @@
 {
   "content": [
     {
+      "caseNoteId": "46670810",
+      "pathway": "GENERAL",
+      "creationDateTime": "2017-03-27T09:39:01.604862",
+      "occurenceDateTime": "2017-03-27T09:37:00",
+      "createdBy": "Venor, Odflicy",
+      "text": "PDpAzxjIjEuhBEdKwBaIejrrhSKCyLUTjcJwJKtRtWJMXbGarfXVoIHwWACyJEbTgEeKPWbqYjVBLxRZyiXPDpAzxjIjEuhBEdKwBaIejrrhSKCyLUTjcJwJKtRtWJMXbGarfXVoIHwWACyJEbTgEeKPWbqYjVBLxRZyi"
+    },
+    {
       "caseNoteId": "45738660",
       "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
       "creationDateTime": "2017-02-08T09:15:06.579931",
@@ -10,7 +18,7 @@
     },
     {
       "caseNoteId": "45685779",
-      "pathway": "ACCOMODATION",
+      "pathway": "ACCOMMODATION",
       "creationDateTime": "2017-02-05T14:19:15.026799",
       "occurenceDateTime": "2017-02-05T14:18:00",
       "createdBy": "Sophie, Ciyruluel",
@@ -18,7 +26,7 @@
     },
     {
       "caseNoteId": "45530962",
-      "pathway": "ACCOMODATION",
+      "pathway": "FINANCE_AND_ID",
       "creationDateTime": "2017-01-28T09:15:20.446048",
       "occurenceDateTime": "2017-01-28T09:14:00",
       "createdBy": "Rickovan, Ubucheche",
@@ -26,7 +34,7 @@
     },
     {
       "caseNoteId": "45157604",
-      "pathway": "ACCOMODATION",
+      "pathway": "ACCOMMODATION",
       "creationDateTime": "2017-01-10T11:29:28.137308",
       "occurenceDateTime": "2017-01-10T11:27:00",
       "createdBy": "Keishores, Ciruiusroberta",
@@ -34,7 +42,7 @@
     },
     {
       "caseNoteId": "45007981",
-      "pathway": "ACCOMODATION",
+      "pathway": "ACCOMMODATION",
       "creationDateTime": "2017-01-02T11:04:51.924469",
       "occurenceDateTime": "2017-01-02T11:04:00",
       "createdBy": "Sophie, Ciyruluel",
@@ -50,23 +58,15 @@
     },
     {
       "caseNoteId": "43366337",
-      "pathway": "ACCOMODATION",
+      "pathway": "ACCOMMODATION",
       "creationDateTime": "2016-10-06T08:18:37.523651",
       "occurenceDateTime": "2016-10-06T08:18:00",
       "createdBy": "Bronseria, Asdauzo",
       "text": "tcEZaYXcnXhvdxGpMayskASJTVLttcEZaYXcnXhvdxGpMayskASJTVLt"
     },
     {
-      "caseNoteId": "43348012",
-      "pathway": "ACCOMODATION",
-      "creationDateTime": "2016-10-05T10:52:59.542031",
-      "occurenceDateTime": "2016-10-05T10:52:00",
-      "createdBy": "Royca, Infsa",
-      "text": "pvKfXOepkuCvdxPgmmGSpvKfXOepkuCvdxPgmmGS"
-    },
-    {
       "caseNoteId": "43340753",
-      "pathway": "ACCOMODATION",
+      "pathway": "GENERAL",
       "creationDateTime": "2016-10-04T19:43:19.419091",
       "occurenceDateTime": "2016-10-04T19:40:00",
       "createdBy": "Roycington, Dopiskas",
@@ -74,7 +74,7 @@
     },
     {
       "caseNoteId": "43335291",
-      "pathway": "ACCOMODATION",
+      "pathway": "GENERAL",
       "creationDateTime": "2016-10-04T15:49:22.258572",
       "occurenceDateTime": "2016-10-04T15:48:00",
       "createdBy": "Priscid, Ijagorena",
@@ -84,6 +84,6 @@
   "pageSize": 10,
   "page": 0,
   "sortName": null,
-  "totalElements": 10,
-  "last": true
+  "totalElements": 11,
+  "last": false
 }

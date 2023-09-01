@@ -29,7 +29,7 @@ data class CaseNoteAmendment(
   val additionalNoteText: String,
 )
 data class CaseNotes(
-  val content: List<CaseNote> = listOf(),
+  val content: List<CaseNote>? = listOf(),
   val last: Boolean,
   val totalElements: Int?,
   val totalPages: Int?,
@@ -48,6 +48,10 @@ enum class PathwayMap(val id: String) {
   ED_SKL_WRK("EDUCATION_SKILLS_AND_WORK"),
   FINANCE_ID("FINANCE_AND_ID"),
   HEALTH("HEALTH"),
+  RESET("GENERAL"),
+
+  // TODO: Below lines to be removed
   HIS("ACCOMODATION"),
   OSE("ATTITUDES_THINKING_AND_BEHAVIOUR"),
+  REP_IEP("GENERAL"),
 }

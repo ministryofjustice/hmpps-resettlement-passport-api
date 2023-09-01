@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -8,6 +10,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWi
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNotes
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.PathwayMap
 
@@ -32,36 +35,85 @@ class CaseNotesApiService(
         "Page $pageNumber and Size $pageSize",
       )
     }
-
-    val caseNotes = fetchCaseNotesByNomisId(nomisId, pageNumber, pageSize, sort)
-    val content = mutableListOf<PathwayCaseNote>()
-    caseNotes?.content?.forEach {
-      // var pathwayType = it.subType
-      val pathwayCaseNote = PathwayCaseNote(it.caseNoteId, PathwayMap.valueOf(it.subType).id, it.creationDateTime, it.occurrenceDateTime, it.authorName, it.text)
-      content.add(pathwayCaseNote)
+    val offendersCaseNotes = mutableListOf<CaseNote>()
+    // TODO "REPORTS" Need to be replace with "GEN" and searchSubTerm to be "RESET"
+    val caseNotesGEN = fetchCaseNotesByNomisId("REPORTS", "REP_IEP", nomisId)
+    // TODO "GEN" Need to be replace with "RESET"
+    val caseNotesRESET = fetchCaseNotesByNomisId("GEN", null, nomisId)
+    caseNotesGEN.collect {
+      offendersCaseNotes.addAll(it)
+    }
+    caseNotesRESET.collect {
+      offendersCaseNotes.addAll(it)
+    }
+    if (offendersCaseNotes.isEmpty()) {
+      throw NoDataWithCodeFoundException("Prisoner", nomisId)
     }
 
-    if (caseNotes != null) {
-      return CaseNotesList(content, caseNotes.size, caseNotes.number, sort, caseNotes.totalElements, caseNotes.last)
-    } else {
-      return CaseNotesList(null, pageSize, pageNumber, sort, 0, true)
+    val startIndex = (pageNumber * pageSize)
+    if (startIndex >= offendersCaseNotes.size) {
+      throw NoDataWithCodeFoundException(
+        "Data",
+        "Page $pageNumber",
+      )
     }
+
+    val endIndex = (pageNumber * pageSize) + (pageSize)
+    if (startIndex < endIndex && endIndex <= offendersCaseNotes.size) {
+      val caseNotesPageList = offendersCaseNotes.subList(startIndex, endIndex)
+      val cnList: List<PathwayCaseNote> = objectMapper(caseNotesPageList)
+      return CaseNotesList(cnList, cnList.toList().size, pageNumber, sort, offendersCaseNotes.size, endIndex == offendersCaseNotes.size)
+    } else if (startIndex < endIndex) {
+      val caseNotesPageList = offendersCaseNotes.subList(startIndex, offendersCaseNotes.size)
+      val cnList: List<PathwayCaseNote> = objectMapper(caseNotesPageList)
+      return CaseNotesList(cnList, cnList.toList().size, pageNumber, sort, offendersCaseNotes.size, true)
+    }
+
+    return CaseNotesList(null, null, null, null, 0, false)
   }
 
-  private suspend fun fetchCaseNotesByNomisId(nomisId: String, pageNumber: Int, pageSize: Int, sortBy: String): CaseNotes? {
-    val data = offenderCaseNotesWebClientCredentials.get()
-      .uri(
-        "/case-notes/{nomisId}?page={page}&size={size}&sort={sort}&type={type}",
-        mapOf(
-          "nomisId" to nomisId,
-          "size" to pageSize, // NB: API allows up 3,000 results per page
-          "page" to pageNumber,
-          "sort" to sortBy,
-          "type" to "GEN",
-        ),
-      )
-      .retrieve().onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("PrisonerId $nomisId not found") })
+  private suspend fun fetchCaseNotesByNomisId(searchTerm: String, searchSubTerm: String?, nomisId: String): Flow<List<CaseNote>> = flow {
+    var page = 0
+    var uriValue = "/case-notes/{nomisId}?page={page}&size={size}&type={type}"
+    if (searchSubTerm != null) {
+      uriValue = "/case-notes/{nomisId}?page={page}&size={size}&type={type}&subType={subType}"
+    }
 
-    return data.awaitBodyOrNull<CaseNotes>()
+    do {
+      val data = offenderCaseNotesWebClientCredentials.get()
+        .uri(
+          uriValue,
+          mapOf(
+            "nomisId" to nomisId,
+            "size" to 500, // NB: API allows up 3,000 results per page
+            "page" to page,
+            "type" to searchTerm,
+            "subType" to searchSubTerm,
+          ),
+        )
+        .retrieve().onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("PrisonerId $nomisId not found") })
+      val pageOfData = data.awaitBodyOrNull<CaseNotes>()
+      if (pageOfData != null) {
+        emit(pageOfData.content!!)
+      }
+      page += 1
+    } while (!pageOfData?.last!!)
+  }
+
+  private fun objectMapper(searchList: List<CaseNote>): List<PathwayCaseNote> {
+    val caseNotesList = mutableListOf<PathwayCaseNote>()
+    searchList.forEach { caseNote ->
+      val prisoner = PathwayCaseNote(
+        caseNote.caseNoteId,
+        PathwayMap.valueOf(caseNote.subType).id,
+        caseNote.creationDateTime,
+        caseNote.occurrenceDateTime,
+        caseNote.authorName,
+        caseNote.text,
+      )
+
+      caseNotesList.add(prisoner)
+    }
+    return caseNotesList
   }
 }

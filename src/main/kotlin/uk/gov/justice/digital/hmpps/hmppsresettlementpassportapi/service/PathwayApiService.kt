@@ -63,7 +63,7 @@ class PathwayApiService(
       pathwayRepoData.forEach {
         if (it.active) {
           val pathwayStatusEntity =
-            PathwayStatusEntity(null, prisonerEntity, it, statusRepoData.get(), LocalDateTime.now())
+            PathwayStatusEntity(null, prisonerEntity, it, statusRepoData.get(), null)
           pathwayStatusRepository.save(pathwayStatusEntity)
         }
       }

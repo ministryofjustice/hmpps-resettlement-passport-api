@@ -14,16 +14,23 @@ import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.springframework.web.reactive.function.client.WebClient
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import java.time.LocalDate
 import java.time.LocalDateTime
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(MockitoExtension::class)
 class OffenderSearchApiServiceTest {
 
@@ -48,7 +55,14 @@ class OffenderSearchApiServiceTest {
   fun beforeEach() {
     mockWebServer.start()
     val webClient = WebClient.create(mockWebServer.url("/").toUrl().toString())
-    offenderSearchApiService = OffenderSearchApiService(pathwayRepository, prisonerRepository, pathwayStatusRepository, webClient, webClient, pathwayApiService)
+    offenderSearchApiService = OffenderSearchApiService(
+      pathwayRepository,
+      prisonerRepository,
+      pathwayStatusRepository,
+      webClient,
+      webClient,
+      pathwayApiService,
+    )
     mockDatabaseCalls()
   }
 
@@ -57,27 +71,36 @@ class OffenderSearchApiServiceTest {
     mockWebServer.shutdown()
   }
 
-  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
   fun `test get PrisonersList happy path full json with sort releaseDate Descending`() = runTest {
     val prisonId = "MDI"
     val expectedPrisonerId = "G6933GF"
 
-    val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search.json")
+    val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisonersList = offenderSearchApiService.getPrisonersByPrisonId(false, "", prisonId, 0, 0, 10, "releaseDate,DESC")
+    val prisonersList = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, 0, 10, "releaseDate,DESC")
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
 
-  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun `test get PrisonersList happy path full json with sort releaseDate Descending with youth offenders`() = runTest {
+    val prisonId = "MDI"
+
+    val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-2.json")
+    mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
+    val prisoners = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, 0, 10, "releaseDate,DESC")
+
+    Assertions.assertEquals(getExpectedPrisonersListReleaseDateDescWithYO(), prisoners)
+  }
+
   @Test
   fun `test get PrisonersList happy path full json with sort releaseDate Ascending`() = runTest {
     val prisonId = "MDI"
     val expectedPrisonerId = "G6933GF"
 
-    val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search.json")
+    val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisonersList = offenderSearchApiService.getPrisonersByPrisonId(false, "", prisonId, 0, 0, 10, "releaseDate,ASC")
+    val prisonersList = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, 0, 10, "releaseDate,ASC")
     Assertions.assertEquals(
       expectedPrisonerId,
       prisonersList.content?.get((prisonersList.content!!.toList().size - 1))?.prisonerNumber
@@ -85,41 +108,27 @@ class OffenderSearchApiServiceTest {
     )
   }
 
-  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
   fun `test get PrisonersList happy path full json with sort firstName Ascending`() = runTest {
     val prisonId = "MDI"
     val expectedPrisonerId = "G6628UE"
 
-    val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search.json")
+    val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisonersList = offenderSearchApiService.getPrisonersByPrisonId(false, "", prisonId, 0, 0, 10, "firstName,ASC")
+    val prisonersList = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, 0, 10, "firstName,ASC")
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
 
-  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
   fun `test get PrisonersList happy path full json for page size`() = runTest {
     val prisonId = "MDI"
     val expectedPageSize = 5
 
-    val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search.json")
+    val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisonersList = offenderSearchApiService.getPrisonersByPrisonId(false, "", prisonId, 0, 0, 5, "firstName,ASC")
+    val prisonersList = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, 0, 5, "firstName,ASC")
     Assertions.assertEquals(expectedPageSize, prisonersList.pageSize)
     prisonersList.content?.toList()?.let { Assertions.assertEquals(expectedPageSize, it.size) }
-  }
-
-  @OptIn(ExperimentalCoroutinesApi::class)
-  @Test
-  fun `test get PrisonersList happy path full json with date Range data and sort by release date desc`() = runTest {
-    val prisonId = "MDI"
-    val expectedPrisonerId = "G6933GF"
-
-    val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search.json")
-    mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisonersList = offenderSearchApiService.getPrisonersByPrisonId(true, "", prisonId, 1095, 0, 10, "releaseDate,DESC")
-    Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
 
   private fun mockDatabaseCalls() {
@@ -137,4 +146,162 @@ class OffenderSearchApiServiceTest {
       PathwayStatusEntity(1, mockPrisonerEntity, mockPathwayEntity1, mockStatusEntity, LocalDateTime.now()),
     )
   }
+
+  private fun getExpectedPrisonersListReleaseDateDescWithYO() = PrisonersList(
+    content =
+    listOf(
+      Prisoners(
+        prisonerNumber = "G6933GF",
+        firstName = "BUSTER",
+        middleNames = "CHRISTABERT HECTUR",
+        lastName = "CORALLO",
+        releaseDate = LocalDate.parse("2024-08-02"),
+        releaseType = "CRD",
+        lastUpdatedDate = null,
+        status = listOf(
+          PathwayStatus(
+            pathway = Pathway.ACCOMMODATION,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.parse("2023-09-01"),
+          ),
+          PathwayStatus(
+            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.parse("2023-09-01"),
+          ),
+        ),
+      ),
+      Prisoners(
+        prisonerNumber = "G6335VX",
+        firstName = "GARRETT",
+        middleNames = "SYLVANNA",
+        lastName = "COUTCHER",
+        releaseDate = LocalDate.parse("2024-05-11"),
+        releaseType = "PRRD",
+        lastUpdatedDate = null,
+        status = listOf(
+          PathwayStatus(
+            pathway = Pathway.ACCOMMODATION,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.parse("2023-09-01"),
+          ),
+          PathwayStatus(
+            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.parse("2023-09-01"),
+          ),
+        ),
+      ),
+      Prisoners(
+        prisonerNumber = "G1458GV",
+        firstName = "FINN",
+        middleNames = "CHANDLEVIEVE",
+        lastName = "CRAWFIS",
+        releaseDate = LocalDate.parse("2023-12-12"),
+        releaseType = "CRD",
+        lastUpdatedDate = null,
+        status = listOf(
+          PathwayStatus(
+            pathway = Pathway.ACCOMMODATION,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.parse("2023-09-01"),
+          ),
+          PathwayStatus(
+            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.parse("2023-09-01"),
+          ),
+        ),
+      ),
+      Prisoners(
+        prisonerNumber = "A8258DY",
+        firstName = "COBBIE",
+        middleNames = null,
+        lastName = "FEDDER",
+        releaseDate = LocalDate.parse("2023-09-15"),
+        releaseType = "CRD",
+        lastUpdatedDate = null,
+        status = listOf(
+          PathwayStatus(
+            pathway = Pathway.ACCOMMODATION,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.parse("2023-09-01"),
+          ),
+          PathwayStatus(
+            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.parse("2023-09-01"),
+          ),
+        ),
+      ),
+      Prisoners(
+        prisonerNumber = "A8257DY",
+        firstName = "GLENN",
+        middleNames = null,
+        lastName = "MCGRATH",
+        releaseDate = LocalDate.parse("2023-08-28"),
+        releaseType = "CRD",
+        lastUpdatedDate = null,
+        status = listOf(
+          PathwayStatus(
+            pathway = Pathway.ACCOMMODATION,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.parse("2023-09-01"),
+          ),
+          PathwayStatus(
+            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.parse("2023-09-01"),
+          ),
+        ),
+      ),
+      Prisoners(
+        prisonerNumber = "A8314DY",
+        firstName = "CHAIM",
+        middleNames = null,
+        lastName = "WITTKOPP",
+        releaseDate = LocalDate.parse("2023-07-01"),
+        releaseType = "CRD",
+        lastUpdatedDate = null,
+        status = listOf(
+          PathwayStatus(
+            pathway = Pathway.ACCOMMODATION,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.parse("2023-09-01"),
+          ),
+          PathwayStatus(
+            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.parse("2023-09-01"),
+          ),
+        ),
+      ),
+      Prisoners(
+        prisonerNumber = "A8229DY",
+        firstName = "STEPHEN",
+        middleNames = null,
+        lastName = "MCVEIGH",
+        releaseDate = LocalDate.parse("2023-07-01"),
+        releaseType = "CRD",
+        lastUpdatedDate = null,
+        status = listOf(
+          PathwayStatus(
+            pathway = Pathway.ACCOMMODATION,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.parse("2023-09-01"),
+          ),
+          PathwayStatus(
+            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.parse("2023-09-01"),
+          ),
+        ),
+      ),
+    ),
+    pageSize = 7,
+    page = 0,
+    sortName = "releaseDate,DESC",
+    totalElements = 7,
+    last = true,
+  )
 }

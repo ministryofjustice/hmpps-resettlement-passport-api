@@ -10,7 +10,7 @@ data class PrisonersSearch(
   val releaseDate: LocalDate? = null,
   val nonDtoReleaseDateType: String? = null,
   val dateOfBirth: LocalDate? = null,
-  val age: Int? = 0,
+  val youthOffender: Boolean?,
   val prisonId: String,
   val prisonName: String,
   val cellLocation: String,

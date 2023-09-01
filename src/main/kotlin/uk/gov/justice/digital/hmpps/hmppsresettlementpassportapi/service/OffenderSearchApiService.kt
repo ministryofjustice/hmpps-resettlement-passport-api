@@ -63,44 +63,12 @@ class OffenderSearchApiService(
     } while (!pageOfData?.last!!)
   }
 
-  private fun findPrisonersByReleaseDate(
-    prisonId: String,
-    earliestReleaseDate: String,
-    latestReleaseDate: String,
-    prisonIds: List<String>,
-  ): Flow<List<PrisonersSearch>> = flow {
-    var page = 0
-    do {
-      val pageOfData = offendersSearchWebClientClientCredentials.post()
-        .uri(
-          "/prisoner-search/release-date-by-prison?size={size}&page={page}&sort={sort}",
-          mapOf(
-            "prisonId" to prisonId,
-            "size" to 50, // NB: API allows up 3,000 results per page
-            "page" to page,
-            "sort" to "releaseDate,ASC",
-          ),
-        ).bodyValue(
-          PrisonerRequest(
-            earliestReleaseDate = earliestReleaseDate,
-            latestReleaseDate = latestReleaseDate,
-            prisonIds = prisonIds,
-          ),
-        )
-        .retrieve()
-        .awaitBody<PrisonersSearchList>()
-      emit(pageOfData.content!!)
-      page += 1
-    } while (!pageOfData.last)
-  }
-
   /**
    * Searches for offenders in a prison using prison ID  (e.g. MDI)
    * returning a complete list.
    * Requires role PRISONER_IN_PRISON_SEARCH or PRISONER_SEARCH
    */
   suspend fun getPrisonersByPrisonId(
-    dateRangeAPI: Boolean,
     searchTerm: String,
     prisonId: String,
     days: Long,
@@ -119,28 +87,16 @@ class OffenderSearchApiService(
         "Page $pageNumber and Size $pageSize",
       )
     }
-    if (dateRangeAPI) {
-      val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-      val earliestReleaseDate = LocalDate.now().minusDays(days).format(pattern)
-      val latestReleaseDate = LocalDate.now().plusDays(days).format(pattern)
-      val prisonIds = ArrayList<String>()
-      prisonIds.add(prisonId)
-      findPrisonersByReleaseDate(
-        prisonId,
-        earliestReleaseDate.toString(),
-        latestReleaseDate.toString(),
-        prisonIds,
-      ).collect {
-        offenders.addAll(it)
-      }
-    } else {
       findPrisonersBySearchTerm(prisonId, searchTerm).collect {
         offenders.addAll(it)
-      }
     }
     if (offenders.isEmpty()) {
       throw NoDataWithCodeFoundException("Prisoners", prisonId)
     }
+
+    // RP2-487 Remove all youth offenders from the results
+    offenders.removeAll { it.youthOffender != null && it.youthOffender }
+
     val startIndex = (pageNumber * pageSize)
     if (startIndex >= offenders.size) {
       throw NoDataWithCodeFoundException(
@@ -286,7 +242,7 @@ class OffenderSearchApiService(
         val pathwayStatus = PathwayStatus(
           Pathway.getById(pathwayEntity.id),
           Status.getById(pathwayStatusEntity.status.id),
-          pathwayStatusEntity.updatedDate.toLocalDate(),
+          pathwayStatusEntity.updatedDate?.toLocalDate(),
         )
         pathwayStatuses.add(pathwayStatus)
       }

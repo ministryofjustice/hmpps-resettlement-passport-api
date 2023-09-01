@@ -51,7 +51,7 @@ enum class PathwayMap(val id: String) {
   RESET("GENERAL"),
 
   // TODO: Below lines to be removed
-  HIS("ACCOMODATION"),
+  HIS("ACCOMMODATION"),
   OSE("ATTITUDES_THINKING_AND_BEHAVIOUR"),
   REP_IEP("GENERAL"),
 }

@@ -162,12 +162,12 @@ class OffenderSearchApiServiceTest {
           PathwayStatus(
             pathway = Pathway.ACCOMMODATION,
             status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.parse("2023-09-01"),
+            lastDateChange = LocalDate.now(),
           ),
           PathwayStatus(
             pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
             status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.parse("2023-09-01"),
+            lastDateChange = LocalDate.now(),
           ),
         ),
       ),
@@ -183,12 +183,12 @@ class OffenderSearchApiServiceTest {
           PathwayStatus(
             pathway = Pathway.ACCOMMODATION,
             status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.parse("2023-09-01"),
+            lastDateChange = LocalDate.now(),
           ),
           PathwayStatus(
             pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
             status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.parse("2023-09-01"),
+            lastDateChange = LocalDate.now(),
           ),
         ),
       ),
@@ -204,12 +204,12 @@ class OffenderSearchApiServiceTest {
           PathwayStatus(
             pathway = Pathway.ACCOMMODATION,
             status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.parse("2023-09-01"),
+            lastDateChange = LocalDate.now(),
           ),
           PathwayStatus(
             pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
             status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.parse("2023-09-01"),
+            lastDateChange = LocalDate.now(),
           ),
         ),
       ),
@@ -225,12 +225,12 @@ class OffenderSearchApiServiceTest {
           PathwayStatus(
             pathway = Pathway.ACCOMMODATION,
             status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.parse("2023-09-01"),
+            lastDateChange = LocalDate.now(),
           ),
           PathwayStatus(
             pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
             status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.parse("2023-09-01"),
+            lastDateChange = LocalDate.now(),
           ),
         ),
       ),
@@ -246,12 +246,12 @@ class OffenderSearchApiServiceTest {
           PathwayStatus(
             pathway = Pathway.ACCOMMODATION,
             status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.parse("2023-09-01"),
+            lastDateChange = LocalDate.now(),
           ),
           PathwayStatus(
             pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
             status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.parse("2023-09-01"),
+            lastDateChange = LocalDate.now(),
           ),
         ),
       ),
@@ -267,12 +267,12 @@ class OffenderSearchApiServiceTest {
           PathwayStatus(
             pathway = Pathway.ACCOMMODATION,
             status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.parse("2023-09-01"),
+            lastDateChange = LocalDate.now(),
           ),
           PathwayStatus(
             pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
             status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.parse("2023-09-01"),
+            lastDateChange = LocalDate.now(),
           ),
         ),
       ),
@@ -288,12 +288,12 @@ class OffenderSearchApiServiceTest {
           PathwayStatus(
             pathway = Pathway.ACCOMMODATION,
             status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.parse("2023-09-01"),
+            lastDateChange = LocalDate.now(),
           ),
           PathwayStatus(
             pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
             status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.parse("2023-09-01"),
+            lastDateChange = LocalDate.now(),
           ),
         ),
       ),

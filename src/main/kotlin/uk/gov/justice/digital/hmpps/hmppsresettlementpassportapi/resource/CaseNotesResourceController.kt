@@ -50,8 +50,8 @@ class CaseNotesResourceController(
     @Schema(example = "10", required = true)
     @Parameter(required = true, description = "The size of the page to be returned")
     size: Int,
-    @Schema(example = "pathway,DESC")
-    @Parameter(required = true, description = "Sorting criteria in the format: property,(asc|desc) property supported are occurenceDateTime and pathway")
+    @Schema(example = "occurenceDateTime,DESC", required = true)
+    @Parameter(required = true, description = "Sorting criteria in the format: property,(ASC|DESC) property supported are occurenceDateTime and pathway.")
     sort: String,
   ): CaseNotesList = caseNotesService.getCaseNotesByNomisId(prisonerId, page, size, sort)
 }

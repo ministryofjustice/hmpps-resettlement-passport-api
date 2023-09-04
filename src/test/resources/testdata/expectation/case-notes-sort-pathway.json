@@ -1,22 +1,6 @@
 {
   "content": [
     {
-      "caseNoteId": "46670810",
-      "pathway": "GENERAL",
-      "creationDateTime": "2017-03-27T09:39:01.604862",
-      "occurenceDateTime": "2017-03-27T09:37:00",
-      "createdBy": "Venor, Odflicy",
-      "text": "PDpAzxjIjEuhBEdKwBaIejrrhSKCyLUTjcJwJKtRtWJMXbGarfXVoIHwWACyJEbTgEeKPWbqYjVBLxRZyiXPDpAzxjIjEuhBEdKwBaIejrrhSKCyLUTjcJwJKtRtWJMXbGarfXVoIHwWACyJEbTgEeKPWbqYjVBLxRZyi"
-    },
-    {
-      "caseNoteId": "45738660",
-      "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-      "creationDateTime": "2017-02-08T09:15:06.579931",
-      "occurenceDateTime": "2017-02-08T09:13:00",
-      "createdBy": "Venor, Odflicy",
-      "text": "zjTlNMMDDkBEMCjdqJoSorCEJquTFzjTlNMMDDkBEMCjdqJoSorCEJquTF"
-    },
-    {
       "caseNoteId": "45685779",
       "pathway": "ACCOMMODATION",
       "creationDateTime": "2017-02-05T14:19:15.026799",
@@ -49,14 +33,6 @@
       "text": "vvKMRXnAlNsCSvTIodZrpkyqmceBCiaEtEmvvKMRXnAlNsCSvTIodZrpkyqmceBCiaEtE"
     },
     {
-      "caseNoteId": "44583917",
-      "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-      "creationDateTime": "2016-12-07T14:21:38.667731",
-      "occurenceDateTime": "2016-12-07T14:20:00",
-      "createdBy": "Jackander, Udmastarie",
-      "text": "rEnIEhwbtzIhTatEgcxGyGfTNpePdAomCLZdEaToaoCrEnIEhwbtzIhTatEgcxGyGfTNpePdAomCLZdEaToaoC"
-    },
-    {
       "caseNoteId": "43366337",
       "pathway": "ACCOMMODATION",
       "creationDateTime": "2016-10-06T08:18:37.523651",
@@ -79,11 +55,35 @@
       "occurenceDateTime": "2016-10-04T19:40:00",
       "createdBy": "Roycington, Dopiskas",
       "text": "AtFcDGsbEXhTZcIPAtHaUCOCSHfoRJwtuOCKultewaTlQMSQBRGEzAoSBlRUQpVzlkeTNCuwTaMlOhTTZmsQKkMwAUfKaPehLxFdONNUsTpOiHlbYKlbZhvlFJenRZeeYSOdvgoSFhftsxXYeQmzxZSQGkRgmrzQlEsdoatesQURfTJjaQnOyxvfCgKiYAtFcDGsbEXhTZcIPAtHaUCOCSHfoRJwtuOCKultewaTlQMSQBRGEzAoSBlRUQpVzlkeTNCuwTaMlOhTTZmsQKkMwAUfKaPehLxFdONNUsTpOiHlbYKlbZhvlFJenRZeeYSOdvgoSFhftsxXYeQmzxZSQGkRgmrzQlEsdoatesQURfTJjaQnOyxvfCgKi"
+    },
+    {
+      "caseNoteId": "43335291",
+      "pathway": "GENERAL",
+      "creationDateTime": "2016-10-04T15:49:22.258572",
+      "occurenceDateTime": "2016-10-04T15:48:00",
+      "createdBy": "Priscid, Ijagorena",
+      "text": "oojnjKyrdFkXxSDosGeizIqWAqWjAHkDLAtnDaswrVfIrVpkdwNGEoojnjKyrdFkXxSDosGeizIqWAqWjAHkDLAtnDaswrVfIrVpkdwNGE"
+    },
+    {
+      "caseNoteId": "45738660",
+      "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+      "creationDateTime": "2017-02-08T09:15:06.579931",
+      "occurenceDateTime": "2017-02-08T09:13:00",
+      "createdBy": "Venor, Odflicy",
+      "text": "zjTlNMMDDkBEMCjdqJoSorCEJquTFzjTlNMMDDkBEMCjdqJoSorCEJquTF"
+    },
+    {
+      "caseNoteId": "44583917",
+      "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+      "creationDateTime": "2016-12-07T14:21:38.667731",
+      "occurenceDateTime": "2016-12-07T14:20:00",
+      "createdBy": "Jackander, Udmastarie",
+      "text": "rEnIEhwbtzIhTatEgcxGyGfTNpePdAomCLZdEaToaoCrEnIEhwbtzIhTatEgcxGyGfTNpePdAomCLZdEaToaoC"
     }
   ],
   "pageSize": 10,
   "page": 0,
-  "sortName": "occurenceDateTime,DESC",
+  "sortName": "pathway,ASC",
   "totalElements": 11,
   "last": false
 }

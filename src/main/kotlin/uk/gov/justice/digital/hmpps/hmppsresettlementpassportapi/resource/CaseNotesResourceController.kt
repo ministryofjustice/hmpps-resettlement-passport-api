@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
@@ -50,8 +51,8 @@ class CaseNotesResourceController(
     @Schema(example = "10", required = true)
     @Parameter(required = true, description = "The size of the page to be returned")
     size: Int,
-    @Schema(example = "pathway,DESC")
-    @Parameter(required = true, description = "Sorting criteria in the format: property,(asc|desc) property supported are occurenceDateTime and pathway")
+    @Schema(example = "occurenceDateTime,DESC", required= true)
+    @Parameter(required = true, description = "Sorting criteria in the format: property,(ASC|DESC) property supported are occurenceDateTime and pathway.")
     sort: String,
   ): CaseNotesList = caseNotesService.getCaseNotesByNomisId(prisonerId, page, size, sort)
 }

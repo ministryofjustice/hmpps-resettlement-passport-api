@@ -29,6 +29,11 @@ class CaseNotesApiService(
       throw NoDataWithCodeFoundException("Prisoner", nomisId)
     }
 
+    var sortValue = "occurenceDateTime,DESC"
+    if (!sort.isBlank() && !sort.isEmpty()) {
+      sortValue = sort
+    }
+
     if (pageNumber < 0 || pageSize <= 0) {
       throw NoDataWithCodeFoundException(
         "Data",
@@ -55,6 +60,21 @@ class CaseNotesApiService(
       throw NoDataWithCodeFoundException(
         "Data",
         "Page $pageNumber",
+      )
+    }
+
+    when (sortValue) {
+      "occurenceDateTime,ASC" -> offendersCaseNotes.sortBy { it.occurrenceDateTime }
+      "pathway,ASC" -> offendersCaseNotes.sortBy { it.subType }
+      "occurenceDateTime,asc" -> offendersCaseNotes.sortBy { it.occurrenceDateTime }
+      "pathway,asc" -> offendersCaseNotes.sortBy { it.subType }
+      "occurenceDateTime,DESC" -> offendersCaseNotes.sortByDescending { it.occurrenceDateTime }
+      "pathway,DESC" -> offendersCaseNotes.sortByDescending { it.subType }
+      "occurenceDateTime,desc" -> offendersCaseNotes.sortByDescending { it.occurrenceDateTime }
+      "pathway,desc" -> offendersCaseNotes.sortByDescending { it.subType }
+      else -> throw NoDataWithCodeFoundException(
+        "Data",
+        "Sort value Invalid",
       )
     }
 

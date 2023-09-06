@@ -18,7 +18,7 @@ api:
       arn: http://localhost:8084
       #arn: https://assess-risks-and-needs-dev.hmpps.service.justice.gov.uk
       prison: http://localhost:8086
-      #prison: https://api-dev.prison.service.justice.gov.uk
+      #prison: https://prison-api-dev.prison.service.justice.gov.uk
       offender-case-notes: https://dev.offender-case-notes.service.justice.gov.uk
 
 management.endpoint:

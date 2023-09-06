@@ -11,7 +11,7 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
     caseNotesApiMockServer.stubGetCaseNotesOldList("G4274GN", 500, 0, "REPORTS", "REP_IEP", 200)
     caseNotesApiMockServer.stubGetCaseNotesNewList("G4274GN", 500, 0, 200)
     webTestClient.get()
-      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=10&sort=occurenceDateTime,DESC")
+      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=10&sort=occurenceDateTime,DESC&days=0")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -24,7 +24,7 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
   fun `Get CaseNotes unauthorized`() {
     // Failing to set a valid Authorization header should result in 401 response
     webTestClient.get()
-      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=10&sort=occurenceDateTime,DESC")
+      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=10&sort=occurenceDateTime,DESC&days=0")
       .exchange()
       .expectStatus().isEqualTo(401)
   }
@@ -32,7 +32,7 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get CaseNotes forbidden`() {
     webTestClient.get()
-      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=10&sort=occurenceDateTime,DESC")
+      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=10&sort=occurenceDateTime,DESC&days=0")
       .headers(setAuthorisation())
       .exchange()
       .expectStatus().isForbidden
@@ -43,7 +43,7 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
     caseNotesApiMockServer.stubGetCaseNotesOldList("G4274GN", 500, 0, "REPORTS", "", 500)
     caseNotesApiMockServer.stubGetCaseNotesNewList("G4274GN", 500, 0, 500)
     webTestClient.get()
-      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=10&sort=occurenceDateTime,DESC")
+      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=10&sort=occurenceDateTime,DESC&days=0")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(500)
@@ -59,7 +59,7 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
     caseNotesApiMockServer.stubGetCaseNotesOldList("G4274GN", 500, 0, "REPORTS", "REP_IEP", 200)
     caseNotesApiMockServer.stubGetCaseNotesNewList("G4274GN", 500, 0, 200)
     webTestClient.get()
-      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=10&sort=pathway,ASC")
+      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=10&sort=pathway,ASC&days=0")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk

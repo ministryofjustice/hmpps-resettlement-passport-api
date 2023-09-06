@@ -13,6 +13,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCas
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNotes
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.PathwayMap
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Service
 class CaseNotesApiService(
@@ -24,6 +26,7 @@ class CaseNotesApiService(
     pageNumber: Int,
     pageSize: Int,
     sort: String,
+    days: Int,
   ): CaseNotesList {
     if (nomisId.isBlank() || nomisId.isEmpty()) {
       throw NoDataWithCodeFoundException("Prisoner", nomisId)
@@ -42,9 +45,9 @@ class CaseNotesApiService(
     }
     val offendersCaseNotes = mutableListOf<CaseNote>()
     // TODO "REPORTS" Need to be replace with "GEN" and searchSubTerm to be "RESET"
-    val caseNotesGEN = fetchCaseNotesByNomisId("REPORTS", "REP_IEP", nomisId)
+    val caseNotesGEN = fetchCaseNotesByNomisId("REPORTS", "REP_IEP", nomisId, days)
     // TODO "GEN" Need to be replace with "RESET"
-    val caseNotesRESET = fetchCaseNotesByNomisId("GEN", null, nomisId)
+    val caseNotesRESET = fetchCaseNotesByNomisId("GEN", null, nomisId, days)
     caseNotesGEN.collect {
       offendersCaseNotes.addAll(it)
     }
@@ -92,10 +95,18 @@ class CaseNotesApiService(
     return CaseNotesList(null, null, null, null, 0, false)
   }
 
-  private suspend fun fetchCaseNotesByNomisId(searchTerm: String, searchSubTerm: String?, nomisId: String): Flow<List<CaseNote>> = flow {
+  private suspend fun fetchCaseNotesByNomisId(searchTerm: String, searchSubTerm: String?, nomisId: String, days: Int): Flow<List<CaseNote>> = flow {
     var page = 0
     var uriValue = "/case-notes/{nomisId}?page={page}&size={size}&type={type}"
-    if (searchSubTerm != null) {
+    val pattern = DateTimeFormatter.ISO_LOCAL_DATE_TIME // ofPattern(DateTimeFormatter.ISO_LOCAL_DATE_TIME.toString())
+    val startDate = LocalDate.now().minusDays(days.toLong()).atStartOfDay().format(pattern)
+    val endDate = LocalDate.now().plusDays(1).atStartOfDay().format(pattern)
+    if (days != 0) {
+      uriValue = "/case-notes/{nomisId}?page={page}&size={size}&type={type}&startDate={startDate}&endDate={endDate}"
+    }
+    if (searchSubTerm != null && days != 0) {
+      uriValue = "/case-notes/{nomisId}?page={page}&size={size}&type={type}&subType={subType}&startDate={startDate}&endDate={endDate}"
+    } else if (searchSubTerm != null) {
       uriValue = "/case-notes/{nomisId}?page={page}&size={size}&type={type}&subType={subType}"
     }
 
@@ -109,9 +120,11 @@ class CaseNotesApiService(
             "page" to page,
             "type" to searchTerm,
             "subType" to searchSubTerm,
+            "startDate" to startDate,
+            "endDate" to endDate,
           ),
         )
-        .retrieve().onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("PrisonerId $nomisId not found") })
+        .retrieve().onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("PrisonerId 2 $nomisId not found") })
       val pageOfData = data.awaitBodyOrNull<CaseNotes>()
       if (pageOfData != null) {
         emit(pageOfData.content!!)

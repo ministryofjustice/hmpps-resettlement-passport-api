@@ -29,7 +29,7 @@ class CaseNotesApiService(
     days: Int,
   ): CaseNotesList {
     if (nomisId.isBlank() || nomisId.isEmpty()) {
-      throw NoDataWithCodeFoundException("Prisoner 1", nomisId)
+      throw NoDataWithCodeFoundException("Prisoner", nomisId)
     }
 
     var sortValue = "occurenceDateTime,DESC"

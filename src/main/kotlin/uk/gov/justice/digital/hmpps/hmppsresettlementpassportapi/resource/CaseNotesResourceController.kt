@@ -53,5 +53,8 @@ class CaseNotesResourceController(
     @Schema(example = "occurenceDateTime,DESC", required = true)
     @Parameter(required = true, description = "Sorting criteria in the format: property,(ASC|DESC) property supported are occurenceDateTime and pathway.")
     sort: String,
-  ): CaseNotesList = caseNotesService.getCaseNotesByNomisId(prisonerId, page, size, sort)
+    @Schema(example = "21")
+    @Parameter(description = "Get Case notes from created date older than given days and till current date")
+    days: Int,
+  ): CaseNotesList = caseNotesService.getCaseNotesByNomisId(prisonerId, page, size, sort, days)
 }

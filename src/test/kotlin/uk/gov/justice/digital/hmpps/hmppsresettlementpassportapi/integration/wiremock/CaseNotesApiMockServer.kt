@@ -10,6 +10,8 @@ class CaseNotesApiMockServer : WireMockServer(WIREMOCK_PORT) {
     private const val WIREMOCK_PORT = 8099
   }
 
+  // &startDate=$startDate&endDate=$endDate
+  // &startDate=$startDate&endDate=$endDate
   fun stubGetCaseNotesOldList(nomisId: String, size: Int, page: Int, type: String, subType: String?, status: Int) {
     var casenotesJSON = readFile("testdata/casenotes-api/case-notes.json")
 

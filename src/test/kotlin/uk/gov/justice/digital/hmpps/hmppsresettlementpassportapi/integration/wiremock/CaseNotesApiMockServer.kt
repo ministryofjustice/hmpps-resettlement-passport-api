@@ -11,7 +11,7 @@ class CaseNotesApiMockServer : WireMockServer(WIREMOCK_PORT) {
   }
 
   fun stubGetCaseNotesOldList(nomisId: String, size: Int, page: Int, type: String, subType: String?, status: Int) {
-    var casenotesJSON = readFile("testdata/casenotes-api/case-notes.json")
+    var casenotesJSON = readFile("testdata/casenotes-api/case-notes-gen.json")
 
     stubFor(
       get("/case-notes/$nomisId?page=$page&size=$size&type=$type&subType=$subType").willReturn(
@@ -32,11 +32,11 @@ class CaseNotesApiMockServer : WireMockServer(WIREMOCK_PORT) {
     )
   }
 
-  fun stubGetCaseNotesNewList(nomisId: String, size: Int, page: Int, status: Int) {
-    var casenotesJSON = readFile("testdata/casenotes-api/case-notes-gen.json")
-    // TODO "GEN" Need to be replace with "RESET"
+  fun stubGetCaseNotesNewList(nomisId: String, size: Int, page: Int, type: String, status: Int) {
+    val casenotesJSON = readFile("testdata/casenotes-api/case-notes.json")
+    // TODO "GEN" Need to be replace with "RESET" --DONE
     stubFor(
-      get("/case-notes/$nomisId?page=$page&size=$size&type=GEN").willReturn(
+      get("/case-notes/$nomisId?page=$page&size=$size&type=$type").willReturn(
         if (status == 200) {
           aResponse()
             .withHeader("Content-Type", "application/json")

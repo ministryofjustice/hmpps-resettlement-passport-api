@@ -15,6 +15,8 @@ import org.mockito.kotlin.mock
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.communityapi.OffenderManagerDTO
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.communityapi.StaffDTO
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 
@@ -80,5 +82,44 @@ class CommunityApiServiceTest {
 
     mockWebServer.enqueue(MockResponse().setBody("{}").addHeader("Content-Type", "application/json").setResponseCode(500))
     assertThrows<WebClientResponseException> { communityApiService.getCrn(nomsId) }
+  }
+
+  @Test
+  fun `test find COM from offender managers`() {
+    val offenderManagers = listOf(
+      OffenderManagerDTO(staffId = 1234, isPrisonOffenderManager = true, isUnallocated = false, StaffDTO("Jimmy", "White")),
+      OffenderManagerDTO(staffId = 5678, isPrisonOffenderManager = false, isUnallocated = true, StaffDTO("Unallocated", "Unallocated")),
+      OffenderManagerDTO(staffId = 2345, isPrisonOffenderManager = true, isUnallocated = true, StaffDTO("Unallocated", "Unallocated")),
+      OffenderManagerDTO(staffId = 6789, isPrisonOffenderManager = false, isUnallocated = false, StaffDTO("Steve", "Davis")),
+      OffenderManagerDTO(staffId = 6432, isPrisonOffenderManager = false, isUnallocated = false, StaffDTO("Mark", "Williams")),
+    )
+    val expectedCom = OffenderManagerDTO(staffId = 6789, isPrisonOffenderManager = false, isUnallocated = false, StaffDTO("Steve", "Davis"))
+
+    Assertions.assertEquals(expectedCom, communityApiService.findComFromOffenderManagers(offenderManagers))
+  }
+
+  @Test
+  fun `test find COM from offender managers - no COM`() {
+    val offenderManagers = listOf(
+      OffenderManagerDTO(staffId = 1234, isPrisonOffenderManager = true, isUnallocated = false, StaffDTO("Jimmy", "White")),
+      OffenderManagerDTO(staffId = 5678, isPrisonOffenderManager = false, isUnallocated = true, StaffDTO("Unallocated", "Unallocated")),
+      OffenderManagerDTO(staffId = 2345, isPrisonOffenderManager = true, isUnallocated = true, StaffDTO("Unallocated", "Unallocated")),
+    )
+
+    Assertions.assertNull(communityApiService.findComFromOffenderManagers(offenderManagers))
+  }
+
+  @Test
+  fun `test find COM from offender managers - COM with missing name`() {
+    val offenderManagers = listOf(
+      OffenderManagerDTO(staffId = 1234, isPrisonOffenderManager = true, isUnallocated = false, StaffDTO("Jimmy", "White")),
+      OffenderManagerDTO(staffId = 5678, isPrisonOffenderManager = false, isUnallocated = true, StaffDTO("Unallocated", "Unallocated")),
+      OffenderManagerDTO(staffId = 2345, isPrisonOffenderManager = true, isUnallocated = true, StaffDTO("Unallocated", "Unallocated")),
+      OffenderManagerDTO(staffId = 6789, isPrisonOffenderManager = false, isUnallocated = false, StaffDTO(null, null)),
+      OffenderManagerDTO(staffId = 6432, isPrisonOffenderManager = false, isUnallocated = false, StaffDTO("Mark", "Williams")),
+    )
+    val expectedCom = OffenderManagerDTO(staffId = 6789, isPrisonOffenderManager = false, isUnallocated = false, StaffDTO(null, null))
+
+    Assertions.assertEquals(expectedCom, communityApiService.findComFromOffenderManagers(offenderManagers))
   }
 }

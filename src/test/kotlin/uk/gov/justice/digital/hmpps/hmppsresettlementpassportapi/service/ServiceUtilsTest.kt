@@ -45,6 +45,23 @@ class ServiceUtilsTest {
     Arguments.of("na", TestEnum.NA),
     Arguments.of("n/a", TestEnum.NA),
   )
+
+  @ParameterizedTest
+  @MethodSource("test convert name to title case data")
+  fun `test convert name to title case`(inputString: String, expectedString: String) {
+    Assertions.assertEquals(expectedString, inputString.convertNameToTitleCase())
+  }
+
+  private fun `test convert name to title case data`(): Stream<Arguments> = Stream.of(
+    Arguments.of("", ""),
+    Arguments.of(" ", ""),
+    Arguments.of("    ", ""),
+    Arguments.of("some random name", "Some Random Name"),
+    Arguments.of("SOME RANDOM NAME", "Some Random Name"),
+    Arguments.of("Some Random Name", "Some Random Name"),
+    Arguments.of("sOMe RaNDoM nAme", "Some Random Name"),
+    Arguments.of("  some random name   ", "Some Random Name"),
+  )
 }
 
 enum class TestEnum {

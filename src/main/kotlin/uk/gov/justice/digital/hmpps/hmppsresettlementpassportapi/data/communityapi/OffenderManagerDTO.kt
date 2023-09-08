@@ -1,13 +1,13 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.communityapi
 
-data class OffenderManagerDTO (
+data class OffenderManagerDTO(
   val staffId: Long?,
   val isPrisonOffenderManager: Boolean?,
   val isUnallocated: Boolean?,
-  val staff: Staff?,
+  val staff: StaffDTO?,
 )
 
-data class Staff (
+data class StaffDTO(
   val forenames: String?,
   val surname: String?,
 )

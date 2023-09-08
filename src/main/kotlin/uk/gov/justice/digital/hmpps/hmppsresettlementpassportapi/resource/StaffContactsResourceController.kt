@@ -63,5 +63,4 @@ class StaffContactsResourceController(private val staffContactsApiService: Staff
     @Parameter(required = true)
     prisonerId: String,
   ) = staffContactsApiService.getStaffContacts(prisonerId)
-
 }

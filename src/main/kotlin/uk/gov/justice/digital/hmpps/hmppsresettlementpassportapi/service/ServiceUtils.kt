@@ -18,4 +18,4 @@ fun String.fuzzyMatch(string2: String?): Boolean {
   return this == string2?.trim()?.replace(Regex("[^A-Za-z0-9_ ]"), "")?.replace(Regex("\\s+"), "_")?.uppercase()
 }
 
-fun String.convertNameToTitleCase() = WordUtils.capitalizeFully(this)
+fun String.convertNameToTitleCase(): String = WordUtils.capitalizeFully(this).trim()

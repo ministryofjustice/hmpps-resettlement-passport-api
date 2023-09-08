@@ -79,7 +79,7 @@ class CommunityApiService(
       )
       .awaitSingle()
 
-    val comOffenderManager = findComFromPrisonOffenderManager(offenderManagers)
+    val comOffenderManager = findComFromOffenderManagers(offenderManagers)
     if (comOffenderManager?.staff?.forenames == null || comOffenderManager.staff.surname == null) {
       log.warn("No COM data found in Community API for NomsId $nomsId / CRN $crn")
       return null
@@ -88,8 +88,7 @@ class CommunityApiService(
     return "${comOffenderManager.staff.forenames} ${comOffenderManager.staff.surname}".convertNameToTitleCase()
   }
 
-  protected fun findComFromPrisonOffenderManager(offenderManagers: List<OffenderManagerDTO>) = offenderManagers.firstOrNull {
+  fun findComFromOffenderManagers(offenderManagers: List<OffenderManagerDTO>) = offenderManagers.firstOrNull {
     it.isUnallocated == false && it.isPrisonOffenderManager == false
   }
-
 }

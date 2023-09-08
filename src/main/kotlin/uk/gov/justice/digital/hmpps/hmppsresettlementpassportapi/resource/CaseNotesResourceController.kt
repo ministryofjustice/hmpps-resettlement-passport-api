@@ -18,10 +18,10 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorRes
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseNotesApiService
 
+@PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/case-notes", produces = [MediaType.APPLICATION_JSON_VALUE])
-//@PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class CaseNotesResourceController(
   private val caseNotesService: CaseNotesApiService,
 ) {

@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesList
@@ -20,7 +21,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseNot
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/case-notes", produces = [MediaType.APPLICATION_JSON_VALUE])
-@PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
+//@PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class CaseNotesResourceController(
   private val caseNotesService: CaseNotesApiService,
 ) {
@@ -44,17 +45,25 @@ class CaseNotesResourceController(
     @PathVariable("prisonerId")
     @Parameter(required = true)
     prisonerId: String,
-    @Schema(example = "0", required = true)
-    @Parameter(required = true, description = "Zero-based page index (0..N)")
+    @Schema(example = "0")
+    @Parameter(description = "Zero-based page index (0..N)")
+    @RequestParam(value = "page", defaultValue = "0")
     page: Int,
-    @Schema(example = "10", required = true)
-    @Parameter(required = true, description = "The size of the page to be returned")
+    @Schema(example = "10")
+    @Parameter(description = "The size of the page to be returned")
+    @RequestParam(value = "size", defaultValue = "10")
     size: Int,
-    @Schema(example = "occurenceDateTime,DESC", required = true)
-    @Parameter(required = true, description = "Sorting criteria in the format: property,(ASC|DESC) property supported are occurenceDateTime and pathway.")
+    @Schema(example = "occurenceDateTime,DESC")
+    @Parameter(description = "Sorting criteria in the format: property,(ASC|DESC) property supported are occurenceDateTime and pathway.")
+    @RequestParam(value = "sort", defaultValue = "occurenceDateTime,DESC")
     sort: String,
     @Schema(example = "21")
     @Parameter(description = "Get Case notes from created date older than given days and till current date")
-    days: Int,
-  ): CaseNotesList = caseNotesService.getCaseNotesByNomisId(prisonerId, page, size, sort, days)
+    @RequestParam(value = "days", defaultValue = "0")
+    days: Int = 0,
+    @Schema(example = "21")
+    @Parameter(description = "Get Case notes for a specific pathway, property supported are ACCOMMODATION, ATTITUDES_THINKING_AND_BEHAVIOUR, CHDFAMCOMCHILDREN_FAMILIES_AND_COMMUNITY, DRUGS_AND_ALCOHOL, EDUCATION_SKILLS_AND_WORK, FINANCE_AND_ID, HEALTH, GENERAL ")
+    @RequestParam(value = "pathwayType", defaultValue = "All")
+    pathwayType: String,
+  ): CaseNotesList = caseNotesService.getCaseNotesByNomisId(prisonerId, page, size, sort, days, pathwayType)
 }

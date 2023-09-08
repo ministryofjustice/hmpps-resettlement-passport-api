@@ -27,6 +27,7 @@ class CaseNotesApiService(
     pageSize: Int,
     sort: String,
     days: Int,
+    pathwayType: String,
   ): CaseNotesList {
     if (nomisId.isBlank() || nomisId.isEmpty()) {
       throw NoDataWithCodeFoundException("Prisoner", nomisId)
@@ -43,16 +44,35 @@ class CaseNotesApiService(
         "Page $pageNumber and Size $pageSize",
       )
     }
+    val pathwayValues = PathwayMap.values()
     val offendersCaseNotes = mutableListOf<CaseNote>()
-    // TODO "REPORTS" Need to be replace with "GEN" and searchSubTerm to be "RESET"
-    val caseNotesGEN = fetchCaseNotesByNomisId("REPORTS", "REP_IEP", nomisId, days)
-    // TODO "GEN" Need to be replace with "RESET"
-    val caseNotesRESET = fetchCaseNotesByNomisId("GEN", null, nomisId, days)
-    caseNotesGEN.collect {
-      offendersCaseNotes.addAll(it)
-    }
-    caseNotesRESET.collect {
-      offendersCaseNotes.addAll(it)
+    if (pathwayType == "All") {
+      val caseNotesGEN = fetchCaseNotesByNomisId("GEN", "RESET", nomisId, days)
+      val caseNotesRESET = fetchCaseNotesByNomisId("RESET", null, nomisId, days)
+      caseNotesGEN.collect {
+        offendersCaseNotes.addAll(it)
+      }
+      caseNotesRESET.collect {
+        offendersCaseNotes.addAll(it)
+      }
+    } else if (pathwayValues.any { it.id == pathwayType }) {
+      if (pathwayType == "GENERAL") {
+        val caseNotesGEN = fetchCaseNotesByNomisId("GEN", "RESET", nomisId, days)
+        caseNotesGEN.collect {
+          offendersCaseNotes.addAll(it)
+        }
+      } else {
+        val pathwayVal = pathwayValues.find { it.id == pathwayType }
+        val caseNotesRESET = fetchCaseNotesByNomisId("RESET", pathwayVal?.name, nomisId, days)
+        caseNotesRESET.collect {
+          offendersCaseNotes.addAll(it)
+        }
+      }
+    } else {
+      throw NoDataWithCodeFoundException(
+        "Data",
+        "PathwayType $pathwayType Invalid",
+      )
     }
     if (offendersCaseNotes.isEmpty()) {
       throw NoDataWithCodeFoundException("Prisoner", nomisId)
@@ -124,7 +144,7 @@ class CaseNotesApiService(
             "endDate" to endDate,
           ),
         )
-        .retrieve().onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("PrisonerId 2 $nomisId not found") })
+        .retrieve().onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("PrisonerId $nomisId not found") })
       val pageOfData = data.awaitBodyOrNull<CaseNotes>()
       if (pageOfData != null) {
         emit(pageOfData.content!!)

@@ -63,7 +63,7 @@ class CaseNotesResourceController(
     @RequestParam(value = "days", defaultValue = "0")
     days: Int = 0,
     @Schema(example = "21")
-    @Parameter(description = "Get Case notes for a specific pathway, property supported are ACCOMMODATION, ATTITUDES_THINKING_AND_BEHAVIOUR, CHDFAMCOMCHILDREN_FAMILIES_AND_COMMUNITY, DRUGS_AND_ALCOHOL, EDUCATION_SKILLS_AND_WORK, FINANCE_AND_ID, HEALTH, GENERAL ")
+    @Parameter(description = "Get Case notes for a specific pathway, property supported are ACCOMMODATION, ATTITUDES_THINKING_AND_BEHAVIOUR, CHILDREN_FAMILIES_AND_COMMUNITY, DRUGS_AND_ALCOHOL, EDUCATION_SKILLS_AND_WORK, FINANCE_AND_ID, HEALTH, GENERAL ")
     @RequestParam(value = "pathwayType", defaultValue = "All")
     pathwayType: String,
   ): CaseNotesList = caseNotesService.getCaseNotesByNomisId(prisonerId, page, size, sort, days, pathwayType)

@@ -42,7 +42,7 @@
     },
     {
       "caseNoteId": "47028551",
-      "pathway": "CHDFAMCOMCHILDREN_FAMILIES_AND_COMMUNITY",
+      "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
       "creationDateTime": "2023-09-06T10:23:44.475117334",
       "occurenceDateTime": "2023-08-26T07:00:48",
       "createdBy": "James Smith",
@@ -50,7 +50,7 @@
     },
     {
       "caseNoteId": "47028563",
-      "pathway": "CHDFAMCOMCHILDREN_FAMILIES_AND_COMMUNITY",
+      "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
       "creationDateTime": "2023-09-06T11:11:27.007398442",
       "occurenceDateTime": "2023-08-11T07:00:48",
       "createdBy": "James Smith",
@@ -58,7 +58,7 @@
     },
     {
       "caseNoteId": "47028557",
-      "pathway": "CHDFAMCOMCHILDREN_FAMILIES_AND_COMMUNITY",
+      "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
       "creationDateTime": "2023-09-06T11:11:05.636580772",
       "occurenceDateTime": "2023-08-10T07:00:48",
       "createdBy": "James Smith",

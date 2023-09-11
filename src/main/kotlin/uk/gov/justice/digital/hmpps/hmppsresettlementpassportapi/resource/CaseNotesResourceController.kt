@@ -98,7 +98,7 @@ class CaseNotesResourceController(
     @Parameter(required = true)
     prisonerId: String,
     @PathVariable("pathway")
-    @Parameter(required = true, description = "Get Case notes Creators for a specific pathway, property supported are ACCOMMODATION, ATTITUDES_THINKING_AND_BEHAVIOUR, CHDFAMCOMCHILDREN_FAMILIES_AND_COMMUNITY, DRUGS_AND_ALCOHOL, EDUCATION_SKILLS_AND_WORK, FINANCE_AND_ID, HEALTH, GENERAL ")
+    @Parameter(required = true, description = "Get Case notes Creators for a specific pathway, property supported are ACCOMMODATION, ATTITUDES_THINKING_AND_BEHAVIOUR, CHILDREN_FAMILIES_AND_COMMUNITY, DRUGS_AND_ALCOHOL, EDUCATION_SKILLS_AND_WORK, FINANCE_AND_ID, HEALTH, GENERAL ")
     pathway: String,
   ): List<CaseNotesMeta> = caseNotesService.getCaseNotesCreatorsByPathway(prisonerId, pathway)
 }

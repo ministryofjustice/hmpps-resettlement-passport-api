@@ -101,5 +101,16 @@ services:
     volumes:
       - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/prison-api:/home/wiremock:ro"
 
+  key-worker-api-stub:
+    image: wiremock/wiremock
+    command: "--no-request-journal --global-response-templating --verbose"
+    networks:
+      - hmpps
+    container_name: key-worker-api-stub
+    ports:
+      - "8087:8080"
+    volumes:
+      - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/key-worker-api:/home/wiremock:ro"
+
 networks:
   hmpps:

@@ -19,6 +19,7 @@ api:
       arn: http://localhost:8097
       prison: http://localhost:8098
       offender-case-notes: http://localhost:8099
+      key-worker: http://localhost:8100
 
 
 spring:

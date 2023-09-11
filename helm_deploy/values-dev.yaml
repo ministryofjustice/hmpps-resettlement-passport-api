@@ -17,6 +17,7 @@ generic-service:
     API_BASE_URL_ARN: http://arn-api-stub
     API_BASE_URL_PRISON: http://prison-api-stub
     API_BASE_URL_OFFENDER-CASE-NOTES: https://dev.offender-case-notes.service.justice.gov.uk
+    API_BASE_URL_KEY-WORKER: http://key-worker-api-stub
 
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
@@ -31,3 +32,4 @@ deploy_stubs:
   - arn-api
   - prisoner-offender-search-api
   - prison-api
+  - key-worker-api

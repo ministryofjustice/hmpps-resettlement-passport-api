@@ -20,6 +20,8 @@ api:
       prison: http://localhost:8086
       #prison: https://prison-api-dev.prison.service.justice.gov.uk
       offender-case-notes: https://dev.offender-case-notes.service.justice.gov.uk
+      key-worker: http://localhost:8087
+      #key-worker: https://keyworker-api-dev.prison.service.justice.gov.uk
 
 management.endpoint:
   health.cache.time-to-live: 0

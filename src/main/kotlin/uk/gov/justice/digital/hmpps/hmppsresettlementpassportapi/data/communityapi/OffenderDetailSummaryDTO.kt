@@ -61,7 +61,7 @@ data class OffenderProfile(
   val religion: String?,
   val sexualOrientation: String?,
   val offenderDetails: String?,
-  val remandStatus: String,
+  val remandStatus: String?,
   val previousConviction: PreviousConviction?,
   val riskColour: String?,
   val disabilities: List<Disability>?,
@@ -105,10 +105,10 @@ data class KeyValue(
 )
 
 data class Provision(
-  val provisionId: Long,
-  val notes: String,
-  val startDate: LocalDate,
-  val finishDate: LocalDate,
-  val provisionType: KeyValue,
-  val category: KeyValue,
+  val provisionId: Long?,
+  val notes: String?,
+  val startDate: LocalDate?,
+  val finishDate: LocalDate?,
+  val provisionType: KeyValue?,
+  val category: KeyValue?,
 )

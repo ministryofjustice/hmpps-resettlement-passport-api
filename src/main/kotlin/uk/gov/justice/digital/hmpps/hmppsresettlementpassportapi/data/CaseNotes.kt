@@ -19,3 +19,7 @@ data class CaseNotesList(
   val totalElements: Int?,
   val last: Boolean,
 )
+
+data class CaseNotesMeta(
+  val createdBy: String,
+)

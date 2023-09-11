@@ -4,12 +4,14 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
+import org.springframework.http.codec.ClientCodecConfigurer
 import org.springframework.security.oauth2.client.AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientProviderBuilder
 import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientService
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction
+import org.springframework.web.reactive.function.client.ExchangeStrategies
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.SYSTEM_USERNAME
@@ -163,5 +165,44 @@ class WebClientConfiguration(
       .filter(oauth2Client)
       .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }
       .build()
+  }
+
+  @Bean
+  fun offenderCaseNotesWebClientUserCredentials(
+    clientRegistrationRepository: ReactiveClientRegistrationRepository,
+    oAuth2AuthorizedClientService: ReactiveOAuth2AuthorizedClientService,
+  ): WebClient = getClientCredsWebClient(
+    offenderCaseNotesUri,
+    authorizedClientManagerAppScope(clientRegistrationRepository, oAuth2AuthorizedClientService),
+  )
+
+  private fun getClientCredsWebClient(
+    url: String,
+    authorizedClientManager: ReactiveOAuth2AuthorizedClientManager,
+    registrationId: String = "RESETTLEMENT_PASSPORT_API",
+  ): WebClient {
+    val oauth2Client = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
+    oauth2Client.setDefaultClientRegistrationId(registrationId)
+
+    val exchangeStrategies = ExchangeStrategies.builder()
+      .codecs { configurer: ClientCodecConfigurer -> configurer.defaultCodecs().maxInMemorySize(-1) }
+      .build()
+
+    return WebClient.builder()
+      .baseUrl(url)
+      .filter(oauth2Client)
+      .exchangeStrategies(exchangeStrategies)
+      .build()
+  }
+
+  fun authorizedClientManagerAppScope(
+    clientRegistrationRepository: ReactiveClientRegistrationRepository?,
+    oAuth2AuthorizedClientService: ReactiveOAuth2AuthorizedClientService?,
+  ): ReactiveOAuth2AuthorizedClientManager {
+    val authorizedClientProvider = ReactiveOAuth2AuthorizedClientProviderBuilder.builder().clientCredentials().build()
+    val authorizedClientManager =
+      AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager(clientRegistrationRepository, oAuth2AuthorizedClientService)
+    authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider)
+    return authorizedClientManager
   }
 }

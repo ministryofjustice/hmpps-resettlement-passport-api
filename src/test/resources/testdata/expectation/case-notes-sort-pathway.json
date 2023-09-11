@@ -5,7 +5,7 @@
       "pathway": "ACCOMMODATION",
       "creationDateTime": "2023-09-05T13:54:56.992827119",
       "occurenceDateTime": "2023-09-05T13:54:00",
-      "createdBy": "Rahuman, Abdul",
+      "createdBy": "James Smith",
       "text": "Test case note"
     },
     {
@@ -13,7 +13,7 @@
       "pathway": "ACCOMMODATION",
       "creationDateTime": "2023-09-05T13:57:13.214269427",
       "occurenceDateTime": "2023-09-05T07:00:48",
-      "createdBy": "Rahuman, Abdul",
+      "createdBy": "Mike Small",
       "text": "This is a test case note message from Resettlement Passport"
     },
     {
@@ -21,7 +21,7 @@
       "pathway": "ACCOMMODATION",
       "creationDateTime": "2023-09-05T14:03:18.14468552",
       "occurenceDateTime": "2023-09-05T07:00:48",
-      "createdBy": "Rahuman, Abdul",
+      "createdBy": "James Smith",
       "text": "This is a 2nd test case note message from Resettlement Passport"
     },
     {
@@ -29,7 +29,7 @@
       "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
       "creationDateTime": "2023-09-06T10:22:05.21868982",
       "occurenceDateTime": "2023-08-28T07:00:48",
-      "createdBy": "Rahuman, Abdul",
+      "createdBy": "James Smith",
       "text": "Resettlement status set to: Done \n This is a test case note message from Resettlement Passport"
     },
     {
@@ -37,31 +37,31 @@
       "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
       "creationDateTime": "2023-09-06T11:10:52.893484381",
       "occurenceDateTime": "2023-08-10T07:00:48",
-      "createdBy": "Rahuman, Abdul",
+      "createdBy": "James Smith",
       "text": "Resettlement status set to: Done \n This is a test case note message from Resettlement Passport, general message"
     },
     {
       "caseNoteId": "47028551",
-      "pathway": "CHDFAMCOMCHILDREN_FAMILIES_AND_COMMUNITY",
+      "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
       "creationDateTime": "2023-09-06T10:23:44.475117334",
       "occurenceDateTime": "2023-08-26T07:00:48",
-      "createdBy": "Rahuman, Abdul",
+      "createdBy": "James Smith",
       "text": "Resettlement status set to: Done \n This is a test case note message from Resettlement Passport"
     },
     {
       "caseNoteId": "47028563",
-      "pathway": "CHDFAMCOMCHILDREN_FAMILIES_AND_COMMUNITY",
+      "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
       "creationDateTime": "2023-09-06T11:11:27.007398442",
       "occurenceDateTime": "2023-08-11T07:00:48",
-      "createdBy": "Rahuman, Abdul",
+      "createdBy": "James Smith",
       "text": "Resettlement status set to:In progress \n This is a test case note message from Resettlement Passport, general message"
     },
     {
       "caseNoteId": "47028557",
-      "pathway": "CHDFAMCOMCHILDREN_FAMILIES_AND_COMMUNITY",
+      "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
       "creationDateTime": "2023-09-06T11:11:05.636580772",
       "occurenceDateTime": "2023-08-10T07:00:48",
-      "createdBy": "Rahuman, Abdul",
+      "createdBy": "James Smith",
       "text": "Resettlement status set to: Done \n This is a test case note message from Resettlement Passport, general message"
     },
     {
@@ -69,7 +69,7 @@
       "pathway": "FINANCE_AND_ID",
       "creationDateTime": "2023-09-06T11:06:28.04675538",
       "occurenceDateTime": "2023-08-10T07:00:48",
-      "createdBy": "Rahuman, Abdul",
+      "createdBy": "James Smith",
       "text": "Resettlement status set to:In progress \n This is a test case note message from Resettlement Passport"
     },
     {
@@ -77,7 +77,7 @@
       "pathway": "EDUCATION_SKILLS_AND_WORK",
       "creationDateTime": "2023-09-06T11:06:04.049008019",
       "occurenceDateTime": "2023-07-26T07:00:48",
-      "createdBy": "Rahuman, Abdul",
+      "createdBy": "James Smith",
       "text": "Resettlement status set to:Done \n This is a test case note message from Resettlement Passport"
     }
   ],

@@ -1,0 +1,83 @@
+{
+  "content": [
+    {
+      "caseNoteId": "47028491",
+      "offenderIdentifier": "A3426DZ",
+      "type": "RESET",
+      "typeDescription": "Resettlement",
+      "subType": "ACCOM",
+      "subTypeDescription": "Accommodation",
+      "source": "INST",
+      "creationDateTime": "2023-09-05T13:54:56.992827119",
+      "occurrenceDateTime": "2023-09-05T13:54:00",
+      "authorName": "James Smith",
+      "authorUserId": "487354",
+      "text": "Test case note",
+      "locationId": "MDI",
+      "eventId": 47028491,
+      "sensitive": false,
+      "amendments": []
+    },
+    {
+      "caseNoteId": "47028492",
+      "offenderIdentifier": "A3426DZ",
+      "type": "RESET",
+      "typeDescription": "Resettlement",
+      "subType": "ACCOM",
+      "subTypeDescription": "Accommodation",
+      "source": "INST",
+      "creationDateTime": "2023-09-05T13:57:13.214269427",
+      "occurrenceDateTime": "2023-09-05T07:00:48",
+      "authorName": "Mike Small",
+      "authorUserId": "487354",
+      "text": "This is a test case note message from Resettlement Passport",
+      "locationId": "MDI",
+      "eventId": 47028492,
+      "sensitive": false,
+      "amendments": []
+    },
+    {
+      "caseNoteId": "47028493",
+      "offenderIdentifier": "A3426DZ",
+      "type": "RESET",
+      "typeDescription": "Resettlement",
+      "subType": "ACCOM",
+      "subTypeDescription": "Accommodation",
+      "source": "INST",
+      "creationDateTime": "2023-09-05T14:03:18.14468552",
+      "occurrenceDateTime": "2023-09-05T07:00:48",
+      "authorName": "James Smith",
+      "authorUserId": "487354",
+      "text": "This is a 2nd test case note message from Resettlement Passport",
+      "locationId": "MDI",
+      "eventId": 47028493,
+      "sensitive": false,
+      "amendments": []
+    }
+  ],
+  "pageable": {
+    "pageNumber": 0,
+    "pageSize": 10,
+    "sort": {
+      "empty": false,
+      "sorted": true,
+      "unsorted": false
+    },
+    "offset": 0,
+    "paged": true,
+    "unpaged": false
+  },
+  "totalPages": 1,
+  "totalElements": 3,
+  "last": true,
+  "size": 10,
+  "number": 0,
+  "sort": {
+    "empty": false,
+    "sorted": true,
+    "unsorted": false
+  },
+  "first": true,
+  "numberOfElements": 3,
+  "empty": false
+}

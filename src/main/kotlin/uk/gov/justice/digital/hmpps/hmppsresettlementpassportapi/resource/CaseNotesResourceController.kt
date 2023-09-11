@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesMeta
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseNotesApiService
 
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
@@ -62,8 +63,42 @@ class CaseNotesResourceController(
     @RequestParam(value = "days", defaultValue = "0")
     days: Int = 0,
     @Schema(example = "21")
-    @Parameter(description = "Get Case notes for a specific pathway, property supported are ACCOMMODATION, ATTITUDES_THINKING_AND_BEHAVIOUR, CHDFAMCOMCHILDREN_FAMILIES_AND_COMMUNITY, DRUGS_AND_ALCOHOL, EDUCATION_SKILLS_AND_WORK, FINANCE_AND_ID, HEALTH, GENERAL ")
+    @Parameter(description = "Get Case notes for a specific pathway, property supported are ACCOMMODATION, ATTITUDES_THINKING_AND_BEHAVIOUR, CHILDREN_FAMILIES_AND_COMMUNITY, DRUGS_AND_ALCOHOL, EDUCATION_SKILLS_AND_WORK, FINANCE_AND_ID, HEALTH, GENERAL ")
     @RequestParam(value = "pathwayType", defaultValue = "All")
     pathwayType: String,
   ): CaseNotesList = caseNotesService.getCaseNotesByNomisId(prisonerId, page, size, sort, days, pathwayType)
+
+  @GetMapping("/{prisonerId}/creators/{pathway}")
+  @Operation(summary = "Get all case notes created by user list", description = "Get all case notes created by user list for the given pathway in Resettlement Passport")
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [
+          Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+    ],
+  )
+  suspend fun getCaseNotesCreators(
+    @PathVariable("prisonerId")
+    @Parameter(required = true)
+    prisonerId: String,
+    @PathVariable("pathway")
+    @Parameter(required = true, description = "Get Case notes Creators for a specific pathway, property supported are ACCOMMODATION, ATTITUDES_THINKING_AND_BEHAVIOUR, CHILDREN_FAMILIES_AND_COMMUNITY, DRUGS_AND_ALCOHOL, EDUCATION_SKILLS_AND_WORK, FINANCE_AND_ID, HEALTH, GENERAL ")
+    pathway: String,
+  ): List<CaseNotesMeta> = caseNotesService.getCaseNotesCreatorsByPathway(prisonerId, pathway)
 }

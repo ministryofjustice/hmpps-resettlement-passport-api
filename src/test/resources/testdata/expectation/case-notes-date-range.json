@@ -1,0 +1,17 @@
+{
+  "content": [
+    {
+      "caseNoteId": "47028555",
+      "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+      "creationDateTime": "2023-09-06T11:10:52.893484381",
+      "occurenceDateTime": "2023-08-10T07:00:48",
+      "createdBy": "James Smith",
+      "text": "Resettlement status set to: Done \n This is a test case note message from Resettlement Passport, general message"
+    }
+  ],
+  "pageSize": 10,
+  "page": 0,
+  "sortName": "occurenceDateTime,DESC",
+  "totalElements": 1,
+  "last": true
+}

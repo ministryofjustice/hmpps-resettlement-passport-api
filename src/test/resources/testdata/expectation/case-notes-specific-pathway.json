@@ -1,0 +1,33 @@
+{
+  "content": [
+    {
+      "caseNoteId": "47028491",
+      "pathway": "ACCOMMODATION",
+      "creationDateTime": "2023-09-05T13:54:56.992827119",
+      "occurenceDateTime": "2023-09-05T13:54:00",
+      "createdBy": "James Smith",
+      "text": "Test case note"
+    },
+    {
+      "caseNoteId": "47028492",
+      "pathway": "ACCOMMODATION",
+      "creationDateTime": "2023-09-05T13:57:13.214269427",
+      "occurenceDateTime": "2023-09-05T07:00:48",
+      "createdBy": "Mike Small",
+      "text": "This is a test case note message from Resettlement Passport"
+    },
+    {
+      "caseNoteId": "47028493",
+      "pathway": "ACCOMMODATION",
+      "creationDateTime": "2023-09-05T14:03:18.14468552",
+      "occurenceDateTime": "2023-09-05T07:00:48",
+      "createdBy": "James Smith",
+      "text": "This is a 2nd test case note message from Resettlement Passport"
+    }
+  ],
+  "pageSize": 3,
+  "page": 0,
+  "sortName": "occurenceDateTime,DESC",
+  "totalElements": 3,
+  "last": true
+}

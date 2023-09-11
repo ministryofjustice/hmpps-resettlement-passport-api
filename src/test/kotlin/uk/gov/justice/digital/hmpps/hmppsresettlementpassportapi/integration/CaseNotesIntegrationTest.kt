@@ -7,7 +7,6 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get All CaseNotes for a Prisoner  happy path`() {
     val expectedOutput = readFile("testdata/expectation/case-notes.json")
-    // TODO "REPORTS" Need to be replace with "GEN" and searchSubTerm to be "RESET" --DONE
     caseNotesApiMockServer.stubGetCaseNotesNewList("G4274GN", 500, 0, "RESET", 200)
     caseNotesApiMockServer.stubGetCaseNotesOldList("G4274GN", 500, 0, "GEN", "RESET", 200)
     webTestClient.get()
@@ -55,7 +54,6 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get All CaseNotes for a Prisoner  happy path sort by Pathway`() {
     val expectedOutput = readFile("testdata/expectation/case-notes-sort-pathway.json")
-    // TODO "REPORTS" Need to be replace with "GEN" and searchSubTerm to be "RESET" --DONE
     caseNotesApiMockServer.stubGetCaseNotesOldList("G4274GN", 500, 0, "GEN", "RESET", 200)
     caseNotesApiMockServer.stubGetCaseNotesNewList("G4274GN", 500, 0, "RESET", 200)
     webTestClient.get()
@@ -66,5 +64,86 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody()
       .json(expectedOutput)
+  }
+
+  @Test
+  fun `Get Pathway specific CaseNotes for a Prisoner happy path`() {
+    val expectedOutput = readFile("testdata/expectation/case-notes-specific-pathway.json")
+    caseNotesApiMockServer.stubGetCaseNotesSpecificPathway("G4274GN", 500, 0, "RESET", "ACCOM", 200)
+    webTestClient.get()
+      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=10&sort=occurenceDateTime,DESC&days=0&pathwayType=ACCOMMODATION")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
+  }
+
+  @Test
+  fun `Get Pathway specific CaseNotes for a Prisoner Invalid Pathway`() {
+    caseNotesApiMockServer.stubGetCaseNotesSpecificPathway("G4274GN", 500, 0, "RESET", "ACCOM", 404)
+    webTestClient.get()
+      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=10&sort=occurenceDateTime,DESC&days=0&pathwayType=unknown")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isEqualTo(404)
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(404)
+  }
+
+  @Test
+  fun `Get All CaseNotes for a Prisoner when NomisId not found`() {
+    caseNotesApiMockServer.stubGetCaseNotesNewList("G4274GN", 500, 0, "RESET", 404)
+    caseNotesApiMockServer.stubGetCaseNotesOldList("G4274GN", 500, 0, "GEN", "RESET", 404)
+    webTestClient.get()
+      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=10&sort=occurenceDateTime,DESC&days=0&pathwayType=All")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isEqualTo(404)
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(404)
+  }
+
+  @Test
+  fun `Get All CaseNotes CreatedBy List for a Prisoner  happy path`() {
+    val expectedOutput = readFile("testdata/expectation/case-notes-createdby-only.json")
+    caseNotesApiMockServer.stubGetCaseNotesSpecificPathway("G4274GN", 500, 0, "RESET", "ACCOM", 200)
+    webTestClient.get()
+      .uri("/resettlement-passport/case-notes/G4274GN/creators/ACCOMMODATION")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
+  }
+
+  @Test
+  fun `Get All CaseNotes CreatedBy List for a Prisoner  Invalid pathway`() {
+    caseNotesApiMockServer.stubGetCaseNotesSpecificPathway("G4274GN", 500, 0, "RESET", "ACCOM", 404)
+    webTestClient.get()
+      .uri("/resettlement-passport/case-notes/G4274GN/creators/UNKNOWN")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isEqualTo(404)
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(404)
+  }
+
+  @Test
+  fun `Get All CaseNotes CreatedBy List for a Prisoner when NomisId not found`() {
+    caseNotesApiMockServer.stubGetCaseNotesSpecificPathway("G4274GN", 500, 0, "RESET", "ACCOM", 404)
+    webTestClient.get()
+      .uri("/resettlement-passport/case-notes/G4274GN/creators/ACCOMMODATION")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isEqualTo(404)
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(404)
   }
 }

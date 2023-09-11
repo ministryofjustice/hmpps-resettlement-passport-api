@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wi
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
-import org.hibernate.query.sqm.tree.SqmNode.log
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -67,8 +66,6 @@ class CaseNotesApiMockServer : WireMockServer(WIREMOCK_PORT) {
     )
     val startDate = LocalDate.now().minusDays(days.toLong()).atStartOfDay().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME).toString()
     val endDate = LocalDate.now().plusDays(1).atStartOfDay().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME).toString()
-    log.fatal(" date in Mock Server $startDate and $endDate")
-    log.fatal("type and subtype $type and $subType")
     stubFor(
       get("/case-notes/$nomisId?page=$page&size=$size&type=$type&subType=$subType&startDate=$startDate&endDate=$endDate").willReturn(
         if (status == 200) {
@@ -93,8 +90,6 @@ class CaseNotesApiMockServer : WireMockServer(WIREMOCK_PORT) {
     casenotesJSON.replace("\"occurrenceDateTime\": \"2023-08-10T07:00:48\",", "\"occurrenceDateTime\":" + LocalDate.now().minusDays(days.toLong()).atStartOfDay().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
     val startDate = LocalDate.now().minusDays(days.toLong()).atStartOfDay().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME).toString()
     val endDate = LocalDate.now().plusDays(1).atStartOfDay().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME).toString()
-    log.fatal(" 2nd date in Mock Server $startDate and $endDate")
-    log.fatal(" 2nd type and subtype in Mock Server $type ")
 
     stubFor(
       get("/case-notes/$nomisId?page=$page&size=$size&type=$type&startDate=$startDate&endDate=$endDate").willReturn(

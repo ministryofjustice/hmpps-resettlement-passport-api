@@ -14,7 +14,7 @@ class KeyWorkerApiService(val keyWorkerWebClientCredentials: WebClient) {
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  suspend fun getKeyWorkerName(nomsId: String) : String? {
+  suspend fun getKeyWorkerName(nomsId: String): String? {
     val keyWorker = keyWorkerWebClientCredentials.get()
       .uri("/key-worker/offender/$nomsId")
       .retrieve()
@@ -35,5 +35,4 @@ class KeyWorkerApiService(val keyWorkerWebClientCredentials: WebClient) {
 
     return "${keyWorker.firstName} ${keyWorker.lastName}".convertNameToTitleCase()
   }
-
 }

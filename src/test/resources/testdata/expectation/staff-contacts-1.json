@@ -3,5 +3,7 @@
   "com": {
     "name": "Jane Doe"
   },
-  "keyWorker": null
+  "keyWorker": {
+    "name": "Steve Rendell"
+  }
 }

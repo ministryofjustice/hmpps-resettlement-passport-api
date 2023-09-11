@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wir
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CommunityApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CvlApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.HmppsAuthMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.KeyWorkerApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.OffenderSearchApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonRegisterApiMockServer
@@ -59,6 +60,9 @@ abstract class IntegrationTestBase : TestBase() {
     @JvmField
     val caseNotesApiMockServer = CaseNotesApiMockServer()
 
+    @JvmField
+    val keyWorkerApiMockServer = KeyWorkerApiMockServer()
+
     @BeforeAll
     @JvmStatic
     fun startMocks() {
@@ -71,6 +75,7 @@ abstract class IntegrationTestBase : TestBase() {
       offenderSearchApiMockServer.start()
       prisonApiMockServer.start()
       caseNotesApiMockServer.start()
+      keyWorkerApiMockServer.start()
     }
 
     @AfterAll
@@ -84,6 +89,7 @@ abstract class IntegrationTestBase : TestBase() {
       offenderSearchApiMockServer.stop()
       prisonApiMockServer.stop()
       caseNotesApiMockServer.stop()
+      keyWorkerApiMockServer.stop()
     }
   }
 

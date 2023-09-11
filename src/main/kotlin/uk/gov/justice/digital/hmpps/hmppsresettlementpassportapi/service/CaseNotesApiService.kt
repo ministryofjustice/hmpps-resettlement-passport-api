@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -136,9 +135,6 @@ class CaseNotesApiService(
     val pattern = DateTimeFormatter.ISO_LOCAL_DATE_TIME // ofPattern(DateTimeFormatter.ISO_LOCAL_DATE_TIME.toString())
     val startDate = LocalDate.now().minusDays(days.toLong()).atStartOfDay().format(pattern)
     val endDate = LocalDate.now().plusDays(1).atStartOfDay().format(pattern)
-    log.fatal("Start DAte : $startDate")
-    log.fatal("End Date : $endDate")
-    log.fatal("type $searchTerm and subType $searchSubTerm")
     if (days != 0) {
       uriValue = "/case-notes/{nomisId}?page={page}&size={size}&type={type}&startDate={startDate}&endDate={endDate}"
     }
@@ -148,9 +144,7 @@ class CaseNotesApiService(
     } else if (searchSubTerm != null) {
       uriValue = "/case-notes/{nomisId}?page={page}&size={size}&type={type}&subType={subType}"
     }
-    log.fatal("uriValue $uriValue")
     do {
-      log.fatal("page Value $page")
       val data = offenderCaseNotesWebClientCredentials.get()
         .uri(
           uriValue,
@@ -172,7 +166,6 @@ class CaseNotesApiService(
       }
       page += 1
     } while (!pageOfData?.last!!)
-    log.fatal("uriValue1 $uriValue")
   }
 
   private fun objectMapper(searchList: List<CaseNote>): List<PathwayCaseNote> {

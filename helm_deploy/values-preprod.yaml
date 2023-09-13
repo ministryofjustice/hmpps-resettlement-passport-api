@@ -18,6 +18,7 @@ generic-service:
     API_BASE_URL_PRISON: https://api-preprod.prison.service.justice.gov.uk
     API_BASE_URL_OFFENDER-CASE-NOTES: https://preprod.offender-case-notes.service.justice.gov.uk
     API_BASE_URL_KEY-WORKER: https://keyworker-api-preprod.prison.service.justice.gov.uk
+    API_BASE_URL_ALLOCATION-MANAGER: https://allocation-manager-preprod.apps.live.cloud-platform.service.justice.gov.uk
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts

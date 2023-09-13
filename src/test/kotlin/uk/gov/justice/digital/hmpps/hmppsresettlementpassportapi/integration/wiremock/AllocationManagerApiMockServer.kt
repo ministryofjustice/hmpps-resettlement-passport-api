@@ -4,9 +4,9 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 
-class KeyWorkerApiMockServer : WireMockServer(WIREMOCK_PORT) {
+class AllocationManagerApiMockServer : WireMockServer(WIREMOCK_PORT) {
   companion object {
-    private const val WIREMOCK_PORT = 8100
+    private const val WIREMOCK_PORT = 8101
   }
   fun stubGet(path: String, status: Int, jsonResponseFile: String?) {
     stubFor(

@@ -20,7 +20,7 @@ api:
       prison: http://localhost:8098
       offender-case-notes: http://localhost:8099
       key-worker: http://localhost:8100
-
+      allocation-manager: http://localhost:8101
 
 spring:
   devtools:

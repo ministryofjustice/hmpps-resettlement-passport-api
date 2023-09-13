@@ -22,6 +22,8 @@ api:
       offender-case-notes: https://dev.offender-case-notes.service.justice.gov.uk
       key-worker: http://localhost:8087
       #key-worker: https://keyworker-api-dev.prison.service.justice.gov.uk
+      allocation-manager: http://localhost:8088
+      #https://allocation-manager-staging.apps.live.cloud-platform.service.justice.gov.uk
 
 management.endpoint:
   health.cache.time-to-live: 0

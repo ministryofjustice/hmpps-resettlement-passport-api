@@ -112,5 +112,16 @@ services:
     volumes:
       - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/key-worker-api:/home/wiremock:ro"
 
+  allocation-manager-api-stub:
+    image: wiremock/wiremock
+    command: "--no-request-journal --global-response-templating --verbose"
+    networks:
+      - hmpps
+    container_name: allocation-manager-api-stub
+    ports:
+      - "8088:8080"
+    volumes:
+      - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/allocation-manager-api:/home/wiremock:ro"
+
 networks:
   hmpps:

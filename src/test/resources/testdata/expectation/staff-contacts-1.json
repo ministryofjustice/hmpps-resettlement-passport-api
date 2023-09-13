@@ -1,5 +1,10 @@
 {
-  "primaryPom": null,
+  "primaryPom": {
+    "name": "Test Jones"
+  },
+  "secondaryPom": {
+    "name": "Barbara Winter"
+  },
   "com": {
     "name": "Jane Doe"
   },

@@ -28,6 +28,7 @@ class WebClientConfiguration(
   @Value("\${api.base.url.prison}") private val prisonerImageUri: String,
   @Value("\${api.base.url.offender-case-notes}") private val offenderCaseNotesUri: String,
   @Value("\${api.base.url.key-worker}") private val keyWorkerRootUri: String,
+  @Value("\${api.base.url.allocation-manager}") private val allocationManagerRootUri: String,
 ) {
 
   @Bean
@@ -219,5 +220,19 @@ class WebClientConfiguration(
       AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager(clientRegistrationRepository, oAuth2AuthorizedClientService)
     authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider)
     return authorizedClientManager
+  }
+
+  @Bean
+  fun allocationManagerWebClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+    val oauth2Client = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
+    oauth2Client.setDefaultClientRegistrationId(SYSTEM_USERNAME)
+
+    val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
+    return WebClient.builder()
+      .baseUrl(allocationManagerRootUri)
+      .clientConnector(ReactorClientHttpConnector(httpClient))
+      .filter(oauth2Client)
+      .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }
+      .build()
   }
 }

@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/allocation/G4274GN"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "getPomsByNomsId-G4274GN-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

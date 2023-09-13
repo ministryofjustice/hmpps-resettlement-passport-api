@@ -257,7 +257,6 @@ class CaseNotesApiService(
           "locationId" to prisonCode,
           "type" to type,
           "subType" to subType,
-          // "occurrenceDateTime" to LocalDate.now(),
           "text" to casenotes.text,
         ),
       )

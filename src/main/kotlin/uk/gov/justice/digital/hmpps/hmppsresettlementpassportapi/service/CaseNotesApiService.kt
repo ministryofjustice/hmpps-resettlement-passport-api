@@ -5,22 +5,26 @@ import kotlinx.coroutines.flow.flow
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.awaitBody
 import org.springframework.web.reactive.function.client.awaitBodyOrNull
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesMeta
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNotes
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.PATHWAY_PARENT_TYPE
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.PathwayMap
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Service
 class CaseNotesApiService(
-  private val offenderCaseNotesWebClientCredentials: WebClient,
   private val offenderCaseNotesWebClientUserCredentials: WebClient,
+  private val offendersSearchWebClientClientCredentials: WebClient,
 ) {
 
   suspend fun getCaseNotesByNomisId(
@@ -30,6 +34,7 @@ class CaseNotesApiService(
     sort: String,
     days: Int,
     pathwayType: String,
+    createdBy: Int,
   ): CaseNotesList {
     if (nomisId.isBlank() || nomisId.isEmpty()) {
       throw NoDataWithCodeFoundException("Prisoner", nomisId)
@@ -60,14 +65,34 @@ class CaseNotesApiService(
     } else if (pathwayValues.any { it.id == pathwayType }) {
       if (pathwayType == "GENERAL") {
         val caseNotesGEN = fetchCaseNotesByNomisId("GEN", "RESET", nomisId, days)
-        caseNotesGEN.collect {
-          offendersCaseNotes.addAll(it)
+        if (createdBy != 0) {
+          caseNotesGEN.collect { caseNoteList ->
+            caseNoteList.forEach {
+              if (it.authorUserId.toInt() == createdBy) {
+                offendersCaseNotes.add(it)
+              }
+            }
+          }
+        } else {
+          caseNotesGEN.collect {
+            offendersCaseNotes.addAll(it)
+          }
         }
       } else {
         val pathwayVal = pathwayValues.find { it.id == pathwayType }
         val caseNotesRESET = fetchCaseNotesByNomisId("RESET", pathwayVal?.name, nomisId, days)
-        caseNotesRESET.collect {
-          offendersCaseNotes.addAll(it)
+        if (createdBy != 0) {
+          caseNotesRESET.collect { caseNoteList ->
+            caseNoteList.forEach {
+              if (it.authorUserId.toInt() == createdBy) {
+                offendersCaseNotes.add(it)
+              }
+            }
+          }
+        } else {
+          caseNotesRESET.collect {
+            offendersCaseNotes.addAll(it)
+          }
         }
       }
     } else {
@@ -145,7 +170,7 @@ class CaseNotesApiService(
       uriValue = "/case-notes/{nomisId}?page={page}&size={size}&type={type}&subType={subType}"
     }
     do {
-      val data = offenderCaseNotesWebClientCredentials.get()
+      val data = offenderCaseNotesWebClientUserCredentials.get()
         .uri(
           uriValue,
           mapOf(
@@ -207,6 +232,7 @@ class CaseNotesApiService(
       offendersCaseNotes.forEach { caseNote ->
         val casenoteMeta = CaseNotesMeta(
           caseNote.authorName,
+          caseNote.authorUserId,
         )
         creatorsList.add(casenoteMeta)
       }
@@ -217,5 +243,40 @@ class CaseNotesApiService(
         "PathwayType $pathwayType Invalid",
       )
     }
+  }
+  suspend fun postCaseNote(prisonerId: String, casenotes: CaseNotesRequest): CaseNote {
+    val type = PATHWAY_PARENT_TYPE
+    val pathwayValues = PathwayMap.values()
+    val pathwayVal = pathwayValues.find { it.id == casenotes.pathway }
+    val subType = pathwayVal?.name.toString()
+    val prisonCode = findPrisonerPersonalDetails(prisonerId).prisonId
+    return offenderCaseNotesWebClientUserCredentials.post()
+      .uri("/case-notes/{offenderNo}", prisonerId)
+      .bodyValue(
+        mapOf(
+          "locationId" to prisonCode,
+          "type" to type,
+          "subType" to subType,
+          // "occurrenceDateTime" to LocalDate.now(),
+          "text" to casenotes.text,
+        ),
+      )
+      .retrieve()
+      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $prisonerId not found") })
+      .awaitBody<CaseNote>()
+  }
+
+  suspend fun findPrisonerPersonalDetails(nomsId: String): PrisonersSearch {
+    return offendersSearchWebClientClientCredentials
+      .get()
+      .uri(
+        "/prisoner/{nomsId}",
+        mapOf(
+          "nomsId" to nomsId,
+        ),
+      )
+      .retrieve()
+      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found") })
+      .awaitBody<PrisonersSearch>()
   }
 }

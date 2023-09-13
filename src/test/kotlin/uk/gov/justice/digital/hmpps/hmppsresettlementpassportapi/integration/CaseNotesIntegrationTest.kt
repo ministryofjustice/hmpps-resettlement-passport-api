@@ -146,4 +146,18 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .jsonPath("status").isEqualTo(404)
   }
+
+  @Test
+  fun `Get Pathway specific and Created By specific CaseNotes for a Prisoner happy path`() {
+    val expectedOutput = readFile("testdata/expectation/case-notes-specific-pathway-and-userid.json")
+    caseNotesApiMockServer.stubGetCaseNotesSpecificPathway("G4274GN", 500, 0, "RESET", "ACCOM", 200)
+    webTestClient.get()
+      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=10&sort=occurenceDateTime,DESC&days=0&pathwayType=ACCOMMODATION&createdByUserId=487354")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
+  }
 }

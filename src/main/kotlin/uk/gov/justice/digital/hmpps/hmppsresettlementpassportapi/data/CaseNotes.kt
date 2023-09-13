@@ -22,4 +22,10 @@ data class CaseNotesList(
 
 data class CaseNotesMeta(
   val createdBy: String,
+  val userId: String,
+)
+
+data class CaseNotesRequest(
+  val pathway: String,
+  val text: String,
 )

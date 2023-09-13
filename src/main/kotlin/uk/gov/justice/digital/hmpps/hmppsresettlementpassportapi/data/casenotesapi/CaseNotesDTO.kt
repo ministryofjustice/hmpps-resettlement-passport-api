@@ -50,3 +50,5 @@ enum class PathwayMap(val id: String) {
   HEALTH("HEALTH"),
   RESET("GENERAL"),
 }
+
+val PATHWAY_PARENT_TYPE: String = "RESET"

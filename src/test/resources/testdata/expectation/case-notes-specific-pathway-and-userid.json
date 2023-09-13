@@ -1,0 +1,17 @@
+{
+  "content": [
+    {
+      "caseNoteId": "47028492",
+      "pathway": "ACCOMMODATION",
+      "creationDateTime": "2023-09-05T13:57:13.214269427",
+      "occurenceDateTime": "2023-09-05T07:00:48",
+      "createdBy": "Mike Small",
+      "text": "This is a test case note message from Resettlement Passport"
+    }
+  ],
+  "pageSize": 1,
+  "page": 0,
+  "sortName": "occurenceDateTime,DESC",
+  "totalElements": 1,
+  "last": true
+}

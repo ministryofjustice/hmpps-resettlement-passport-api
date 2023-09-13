@@ -104,14 +104,14 @@ class OffenderSearchApiService(
     }
 
     when (sort) {
-      "releaseDate,ASC" -> offenders.sortBy { it.releaseDate }
-      "firstName,ASC" -> offenders.sortBy { it.firstName }
-      "lastName,ASC" -> offenders.sortBy { it.lastName }
+      "releaseDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.releaseDate })
+      "firstName,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.firstName })
+      "lastName,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.lastName })
       "prisonerNumber,ASC" -> offenders.sortBy { it.prisonerNumber }
-      "releaseDate,DESC" -> offenders.sortByDescending { it.releaseDate }
-      "firstName,DESC" -> offenders.sortByDescending { it.firstName }
-      "lastName,DESC" -> offenders.sortByDescending { it.lastName }
-      "prisonerNumber,DESC" -> offenders.sortByDescending { it.prisonerNumber }
+      "releaseDate,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.releaseDate })
+      "firstName,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.firstName })
+      "lastName,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.lastName })
+      "prisonerNumber,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.prisonerNumber })
       else -> throw NoDataWithCodeFoundException(
         "Data",
         "Sort value Invalid",

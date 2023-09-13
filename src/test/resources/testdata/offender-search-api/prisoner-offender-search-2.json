@@ -753,7 +753,7 @@
       "recall": false,
       "indeterminateSentence": false,
       "sentenceStartDate": "2022-01-13",
-      "releaseDate": "2023-08-28",
+      "releaseDate": null,
       "sentenceExpiryDate": "2023-04-12",
       "licenceExpiryDate": "2023-04-12",
       "homeDetentionCurfewEligibilityDate": "2022-05-07",

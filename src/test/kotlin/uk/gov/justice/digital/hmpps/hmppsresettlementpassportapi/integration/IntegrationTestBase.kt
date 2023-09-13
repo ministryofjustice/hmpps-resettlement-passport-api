@@ -13,6 +13,7 @@ import org.springframework.test.context.jdbc.SqlMergeMode
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBase
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.AllocationManagerApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ArnApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CaseNotesApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CommunityApiMockServer
@@ -63,6 +64,9 @@ abstract class IntegrationTestBase : TestBase() {
     @JvmField
     val keyWorkerApiMockServer = KeyWorkerApiMockServer()
 
+    @JvmField
+    val allocationManagerApiMockServer = AllocationManagerApiMockServer()
+
     @BeforeAll
     @JvmStatic
     fun startMocks() {
@@ -76,6 +80,7 @@ abstract class IntegrationTestBase : TestBase() {
       prisonApiMockServer.start()
       caseNotesApiMockServer.start()
       keyWorkerApiMockServer.start()
+      allocationManagerApiMockServer.start()
     }
 
     @AfterAll
@@ -90,6 +95,7 @@ abstract class IntegrationTestBase : TestBase() {
       prisonApiMockServer.stop()
       caseNotesApiMockServer.stop()
       keyWorkerApiMockServer.stop()
+      allocationManagerApiMockServer.stop()
     }
   }
 

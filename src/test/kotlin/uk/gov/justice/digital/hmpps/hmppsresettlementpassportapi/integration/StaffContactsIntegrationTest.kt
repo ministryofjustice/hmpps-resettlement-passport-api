@@ -10,6 +10,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
   fun afterEach() {
     communityApiMockServer.resetMappings()
     keyWorkerApiMockServer.resetMappings()
+    allocationManagerApiMockServer.resetMappings()
   }
 
   @Test
@@ -21,6 +22,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
 
     communityApiMockServer.stubGetToCrn("/secure/offenders/crn/$crn/allOffenderManagers?includeProbationAreaTeams=true", 200, "testdata/community-api/offender-managers-1.json")
     keyWorkerApiMockServer.stubGet("/key-worker/offender/$prisonerId", 200, "testdata/key-worker-api/key-worker-1.json")
+    allocationManagerApiMockServer.stubGet("/api/allocation/$prisonerId", 200, "testdata/allocation-manager-api/poms-1.json")
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/staff-contacts")
@@ -57,6 +59,26 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
     val prisonerId = "123"
     val expectedOutput = readFile("testdata/expectation/staff-contacts-2.json")
 
+    keyWorkerApiMockServer.stubGet("/key-worker/offender/$prisonerId", 200, "testdata/key-worker-api/key-worker-2.json")
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$prisonerId/staff-contacts")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
+  fun `get staff contacts happy path - no POM data`() {
+    val prisonerId = "123"
+    val expectedOutput = readFile("testdata/expectation/staff-contacts-2.json")
+
+    allocationManagerApiMockServer.stubGet("/api/allocation/$prisonerId", 200, "testdata/allocation-manager-api/poms-2.json")
+
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/staff-contacts")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -74,7 +96,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/staff-contacts-2.json")
 
-    // Note that even if an individual call to get a staff contact fail, we should just log this and return no data
+    // Note that even if an individual call to get a staff contact fails, we should just log this and return no data
     communityApiMockServer.stubGetToCrn("/secure/offenders/crn/$crn/allOffenderManagers?includeProbationAreaTeams=true", 404, null)
 
     webTestClient.get()
@@ -93,8 +115,27 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
     val prisonerId = "123"
     val expectedOutput = readFile("testdata/expectation/staff-contacts-2.json")
 
-    // Note that even if an individual call to get a staff contact fail, we should just log this and return no data
+    // Note that even if an individual call to get a staff contact fails, we should just log this and return no data
     keyWorkerApiMockServer.stubGet("/key-worker/offender/$prisonerId", 404, null)
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$prisonerId/staff-contacts")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
+  fun `get staff contacts happy path error from allocation manager API`() {
+    val prisonerId = "123"
+    val expectedOutput = readFile("testdata/expectation/staff-contacts-2.json")
+
+    // Note that even if an individual call to get a staff contact fails, we should just log this and return no data
+    allocationManagerApiMockServer.stubGet("/api/allocation/$prisonerId", 404, null)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/staff-contacts")

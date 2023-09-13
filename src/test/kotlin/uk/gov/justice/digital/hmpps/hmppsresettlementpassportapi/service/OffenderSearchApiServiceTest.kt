@@ -96,7 +96,7 @@ class OffenderSearchApiServiceTest {
   @Test
   fun `test get PrisonersList happy path full json with sort releaseDate Ascending`() = runTest {
     val prisonId = "MDI"
-    val expectedPrisonerId = "G6933GF"
+    val expectedPrisonerId = "A8257DY"
 
     val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
@@ -235,27 +235,6 @@ class OffenderSearchApiServiceTest {
         ),
       ),
       Prisoners(
-        prisonerNumber = "A8257DY",
-        firstName = "GLENN",
-        middleNames = null,
-        lastName = "MCGRATH",
-        releaseDate = LocalDate.parse("2023-08-28"),
-        releaseType = "CRD",
-        lastUpdatedDate = null,
-        status = listOf(
-          PathwayStatus(
-            pathway = Pathway.ACCOMMODATION,
-            status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.now(),
-          ),
-          PathwayStatus(
-            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
-            status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.now(),
-          ),
-        ),
-      ),
-      Prisoners(
         prisonerNumber = "A8314DY",
         firstName = "CHAIM",
         middleNames = null,
@@ -282,6 +261,27 @@ class OffenderSearchApiServiceTest {
         middleNames = null,
         lastName = "MCVEIGH",
         releaseDate = LocalDate.parse("2023-07-01"),
+        releaseType = "CRD",
+        lastUpdatedDate = null,
+        status = listOf(
+          PathwayStatus(
+            pathway = Pathway.ACCOMMODATION,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.now(),
+          ),
+          PathwayStatus(
+            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.now(),
+          ),
+        ),
+      ),
+      Prisoners(
+        prisonerNumber = "A8257DY",
+        firstName = "GLENN",
+        middleNames = null,
+        lastName = "MCGRATH",
+        releaseDate = null,
         releaseType = "CRD",
         lastUpdatedDate = null,
         status = listOf(

@@ -1,10 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
-import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway

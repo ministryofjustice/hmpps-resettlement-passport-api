@@ -265,7 +265,7 @@ class CaseNotesApiService(
         ),
       )
       .retrieve()
-      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner 1 $prisonerId not found") })
+      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $prisonerId not found") })
       .awaitBody<CaseNote>()
   }
 
@@ -279,7 +279,7 @@ class CaseNotesApiService(
         ),
       )
       .retrieve()
-      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner 2 $nomsId not found") })
+      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found") })
       .awaitBody<PrisonersSearch>()
   }
 }

@@ -141,7 +141,7 @@ class CaseNotesApiMockServer : WireMockServer(WIREMOCK_PORT) {
         "locationId": "MDI",
         "type": "RESET",
         "subType": "ACCOM",
-        "text":  "This is a test casenotes create"
+        "text":  "This is a test case note message from Resettlement Passport, Health message"
       }
       """.trimIndent()
 

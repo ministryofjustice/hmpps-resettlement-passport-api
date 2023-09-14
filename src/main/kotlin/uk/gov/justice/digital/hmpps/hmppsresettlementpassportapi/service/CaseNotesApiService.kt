@@ -2,7 +2,9 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
@@ -245,23 +247,28 @@ class CaseNotesApiService(
     }
   }
   suspend fun postCaseNote(prisonerId: String, casenotes: CaseNotesRequest): CaseNote {
+    log.fatal("casenote request 1 " +casenotes.pathway.toString())
+    log.fatal("casenote request 2 " + casenotes.text.toString())
+
     val type = PATHWAY_PARENT_TYPE
     val pathwayValues = PathwayMap.values()
-    val pathwayVal = pathwayValues.find { it.id == casenotes.pathway }
+    val pathwayVal = pathwayValues.find { it.id == casenotes.pathway.toString() }
     val subType = pathwayVal?.name.toString()
+    log.fatal("SubType value is $subType")
     val prisonCode = findPrisonerPersonalDetails(prisonerId).prisonId
     return offenderCaseNotesWebClientUserCredentials.post()
-      .uri("/case-notes/{offenderNo}", prisonerId)
+      .uri("/case-notes/{prisonerId}", prisonerId
+      ).contentType(MediaType.APPLICATION_JSON)
       .bodyValue(
         mapOf(
           "locationId" to prisonCode,
           "type" to type,
           "subType" to subType,
-          "text" to casenotes.text,
+          "text" to casenotes.text.toString(),
         ),
       )
       .retrieve()
-      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $prisonerId not found") })
+      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner 1 $prisonerId not found") })
       .awaitBody<CaseNote>()
   }
 
@@ -275,7 +282,7 @@ class CaseNotesApiService(
         ),
       )
       .retrieve()
-      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found") })
+      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner 2 $nomsId not found") })
       .awaitBody<PrisonersSearch>()
   }
 }

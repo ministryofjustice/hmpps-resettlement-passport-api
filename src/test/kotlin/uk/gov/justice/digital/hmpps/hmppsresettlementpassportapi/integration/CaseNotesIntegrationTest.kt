@@ -1,6 +1,8 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
 import org.junit.jupiter.api.Test
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesRequest
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 
 class CaseNotesIntegrationTest : IntegrationTestBase() {
 
@@ -159,5 +161,26 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody()
       .json(expectedOutput)
+  }
+
+  @Test
+  fun `Create casenotes  happy path`() {
+    val prisonerId = "G4274GN"
+    val txt = "This is a test case note message from Resettlement Passport, Health message"
+    val prisonId = "MDI"
+    caseNotesApiMockServer.stubPostCaseNotes(prisonerId, "RESET", "ACCOM", txt, prisonId, 200)
+    webTestClient.post()
+      .uri("/resettlement-passport/case-notes/$prisonerId")
+      .header("Content-Type", "application/json")
+      .bodyValue(
+        CaseNotesRequest(
+          pathway = Pathway.ACCOMMODATION.toString(),
+          text = txt,
+          prisonId = prisonId,
+        ),
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
   }
 }

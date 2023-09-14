@@ -2,7 +2,9 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wi
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import com.github.tomakehurst.wiremock.client.WireMock.equalToJson
 import com.github.tomakehurst.wiremock.client.WireMock.get
+import com.github.tomakehurst.wiremock.client.WireMock.post
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -121,6 +123,61 @@ class CaseNotesApiMockServer : WireMockServer(WIREMOCK_PORT) {
             .withHeader("Content-Type", "application/json")
             .withBody(
               casenotesJSON,
+            )
+            .withStatus(status)
+        } else {
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody("{\"Error\" : \"$status\"}")
+            .withStatus(status)
+        },
+      ),
+    )
+  }
+
+  fun stubPostCaseNotes(nomisId: String, type: String, subType: String?, text: String, prisonId: String, status: Int) {
+    val expectedCreateCaseNotesResponseJSON = readFile("testdata/expectation/case-notes-create-response.json")
+
+    val casenotesJSON =
+      """
+      {
+        "locationId": "$prisonId",
+        "type": "$type",
+        "subType": "$subType",
+        "text": "$text"
+      }
+      """.trimIndent()
+
+    stubFor(
+      post("/case-notes/$nomisId")
+        .withRequestBody(equalToJson(casenotesJSON, true, true))
+        .willReturn(
+          if (status == 200) {
+            aResponse()
+              .withHeader("Content-Type", "application/json")
+              .withBody(
+                expectedCreateCaseNotesResponseJSON,
+              )
+              .withStatus(status)
+          } else {
+            aResponse()
+              .withHeader("Content-Type", "application/json")
+              .withBody("{\"Error\" : \"$status\"}")
+              .withStatus(status)
+          },
+        ),
+    )
+  }
+
+  fun stubGetPrisonerDetails(nomisId: String, status: Int) {
+    val prisonerDataJSON = readFile("testdata/offender-search-api/prisoner-offender-details.json")
+    stubFor(
+      get("/prisoner/$nomisId").willReturn(
+        if (status == 200) {
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody(
+              prisonerDataJSON,
             )
             .withStatus(status)
         } else {

@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
@@ -247,17 +248,20 @@ class CaseNotesApiService(
   suspend fun postCaseNote(prisonerId: String, casenotes: CaseNotesRequest): CaseNote {
     val type = PATHWAY_PARENT_TYPE
     val pathwayValues = PathwayMap.values()
-    val pathwayVal = pathwayValues.find { it.id == casenotes.pathway }
+    val pathwayVal = pathwayValues.find { it.id == casenotes.pathway.toString() }
     val subType = pathwayVal?.name.toString()
-    val prisonCode = findPrisonerPersonalDetails(prisonerId).prisonId
+    val prisonCode = casenotes.prisonId
     return offenderCaseNotesWebClientUserCredentials.post()
-      .uri("/case-notes/{offenderNo}", prisonerId)
+      .uri(
+        "/case-notes/{prisonerId}",
+        prisonerId,
+      ).contentType(MediaType.APPLICATION_JSON)
       .bodyValue(
         mapOf(
           "locationId" to prisonCode,
           "type" to type,
           "subType" to subType,
-          "text" to casenotes.text,
+          "text" to casenotes.text.toString(),
         ),
       )
       .retrieve()

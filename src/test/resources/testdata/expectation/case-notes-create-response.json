@@ -1,0 +1,18 @@
+{
+  "caseNoteId": "47028491",
+  "offenderIdentifier": "A3426DZ",
+  "type": "RESET",
+  "typeDescription": "Resettlement",
+  "subType": "ACCOM",
+  "subTypeDescription": "Accommodation",
+  "source": "INST",
+  "creationDateTime": "2023-09-05T13:54:56.992827119",
+  "occurrenceDateTime": "2023-09-05T13:54:00",
+  "authorName": "James Smith",
+  "authorUserId": "487354",
+  "text": "Test case note",
+  "locationId": "MDI",
+  "eventId": 47028491,
+  "sensitive": false,
+  "amendments": []
+}

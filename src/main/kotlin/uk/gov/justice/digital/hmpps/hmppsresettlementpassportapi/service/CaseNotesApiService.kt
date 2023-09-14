@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
@@ -246,6 +247,9 @@ class CaseNotesApiService(
     }
   }
   suspend fun postCaseNote(prisonerId: String, casenotes: CaseNotesRequest): CaseNote {
+    log.fatal("casenote request 1 " +casenotes.pathway.toString())
+    log.fatal("casenote request 2 " + casenotes.text.toString())
+
     val type = PATHWAY_PARENT_TYPE
     val pathwayValues = PathwayMap.values()
     val pathwayVal = pathwayValues.find { it.id == casenotes.pathway.toString() }
@@ -265,7 +269,7 @@ class CaseNotesApiService(
         ),
       )
       .retrieve()
-      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $prisonerId not found") })
+      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner 1 $prisonerId not found") })
       .awaitBody<CaseNote>()
   }
 
@@ -279,7 +283,7 @@ class CaseNotesApiService(
         ),
       )
       .retrieve()
-      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found") })
+      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner 2 $nomsId not found") })
       .awaitBody<PrisonersSearch>()
   }
 }

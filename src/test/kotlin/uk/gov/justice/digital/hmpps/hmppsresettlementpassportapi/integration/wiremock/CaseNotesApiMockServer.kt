@@ -1,7 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock.*
+import com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import com.github.tomakehurst.wiremock.client.WireMock.equalToJson
+import com.github.tomakehurst.wiremock.client.WireMock.get
+import com.github.tomakehurst.wiremock.client.WireMock.post
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -132,16 +135,16 @@ class CaseNotesApiMockServer : WireMockServer(WIREMOCK_PORT) {
     )
   }
 
-  fun stubPostCaseNotes(nomisId: String,  type: String, subType: String?, text: String, status: Int) {
+  fun stubPostCaseNotes(nomisId: String, type: String, subType: String?, text: String, prisonId: String, status: Int) {
     val expectedCreateCaseNotesResponseJSON = readFile("testdata/expectation/case-notes-create-response.json")
 
     val casenotesJSON =
       """
       {
-        "locationId": "MDI",
-        "type": "RESET",
-        "subType": "ACCOM",
-        "text":  "This is a test case note message from Resettlement Passport, Health message"
+        "locationId": "$prisonId",
+        "type": "$type",
+        "subType": "$subType",
+        "text": "$text"
       }
       """.trimIndent()
 
@@ -149,20 +152,20 @@ class CaseNotesApiMockServer : WireMockServer(WIREMOCK_PORT) {
       post("/case-notes/$nomisId")
         .withRequestBody(equalToJson(casenotesJSON, true, true))
         .willReturn(
-        if (status == 200) {
-          aResponse()
-            .withHeader("Content-Type", "application/json")
-            .withBody(
-              expectedCreateCaseNotesResponseJSON,
-            )
-            .withStatus(status)
-        } else {
-          aResponse()
-            .withHeader("Content-Type", "application/json")
-            .withBody("{\"Error\" : \"$status\"}")
-            .withStatus(status)
-        },
-      ),
+          if (status == 200) {
+            aResponse()
+              .withHeader("Content-Type", "application/json")
+              .withBody(
+                expectedCreateCaseNotesResponseJSON,
+              )
+              .withStatus(status)
+          } else {
+            aResponse()
+              .withHeader("Content-Type", "application/json")
+              .withBody("{\"Error\" : \"$status\"}")
+              .withStatus(status)
+          },
+        ),
     )
   }
 

@@ -1,16 +1,8 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
-import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.springframework.test.context.jdbc.Sql
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayAndStatus
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.*
-import java.time.LocalDateTime
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 
 class CaseNotesIntegrationTest : IntegrationTestBase() {
 
@@ -173,23 +165,22 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Create casenotes  happy path`() {
-
     val prisonerId = "G4274GN"
-    offenderSearchApiMockServer.stubGetPrisonerDetails(prisonerId, 200)
-    //caseNotesApiMockServer.stubGetPrisonerDetails(prisonerId, 200)
-    caseNotesApiMockServer.stubPostCaseNotes(prisonerId,  "RESET", "ACCOM", "This is a test casenotes create", 200)
+    val txt = "This is a test case note message from Resettlement Passport, Health message"
+    val prisonId = "MDI"
+    caseNotesApiMockServer.stubPostCaseNotes(prisonerId, "RESET", "ACCOM", txt, prisonId, 200)
     webTestClient.post()
       .uri("/resettlement-passport/case-notes/$prisonerId")
       .header("Content-Type", "application/json")
       .bodyValue(
         CaseNotesRequest(
           pathway = Pathway.ACCOMMODATION.toString(),
-          text = "This is a test case note message from Resettlement Passport, Health message"
+          text = txt,
+          prisonId = prisonId,
         ),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
-
   }
 }

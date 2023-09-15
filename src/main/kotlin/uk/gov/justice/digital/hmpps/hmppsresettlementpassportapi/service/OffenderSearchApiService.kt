@@ -237,6 +237,7 @@ class OffenderSearchApiService(
 
     val prisonerPersonal = PrisonerPersonal(
       prisonerSearch.prisonerNumber,
+      prisonerSearch.prisonId,
       prisonerSearch.firstName,
       prisonerSearch.middleNames,
       prisonerSearch.lastName,

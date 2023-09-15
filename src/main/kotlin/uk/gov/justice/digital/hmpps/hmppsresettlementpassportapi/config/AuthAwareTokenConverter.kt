@@ -44,6 +44,9 @@ class AuthAwareAuthenticationToken(
   private val aPrincipal: String,
   authorities: Collection<GrantedAuthority>,
 ) : JwtAuthenticationToken(jwt, authorities) {
+ // val userIdUser: SecurityUserContext.UserIdUser
+  val userIdUser: SecurityUserContext.UserIdUser = SecurityUserContext.UserIdUser(jwt.subject, aPrincipal)
+
   override fun getPrincipal(): String {
     return aPrincipal
   }

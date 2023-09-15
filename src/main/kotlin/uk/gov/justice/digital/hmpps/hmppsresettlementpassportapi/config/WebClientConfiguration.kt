@@ -1,8 +1,12 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config
 
+import io.opentelemetry.api.trace.Span
+import org.hibernate.query.sqm.tree.SqmNode.log
+import org.hibernate.validator.constraints.URL
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpHeaders
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.http.codec.ClientCodecConfigurer
 import org.springframework.security.oauth2.client.AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager
@@ -12,9 +16,14 @@ import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClient
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction
 import org.springframework.web.reactive.function.client.ExchangeStrategies
+import org.springframework.web.reactive.function.client.ClientRequest
+import org.springframework.web.reactive.function.client.ExchangeFilterFunction
+import org.springframework.web.reactive.function.client.ExchangeFunction
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClient.Builder
 import reactor.netty.http.client.HttpClient
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.SYSTEM_USERNAME
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.utils.UserContext
 import java.time.Duration
 
 @Configuration
@@ -164,7 +173,7 @@ class WebClientConfiguration(
     return WebClient.builder()
       .baseUrl(offenderCaseNotesUri)
       .clientConnector(ReactorClientHttpConnector(httpClient))
-      .filter(oauth2Client)
+      .filter(addAuthHeaderFilterFunction())
       .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }
       .build()
   }
@@ -235,4 +244,13 @@ class WebClientConfiguration(
       .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }
       .build()
   }
+
+  private fun addAuthHeaderFilterFunction(): ExchangeFilterFunction =
+    ExchangeFilterFunction { request: ClientRequest, next: ExchangeFunction ->
+      val filtered = ClientRequest.from(request)
+        .header(HttpHeaders.AUTHORIZATION, UserContext.authToken.toString())
+        .build()
+      next.exchange(filtered)
+    }
+
 }

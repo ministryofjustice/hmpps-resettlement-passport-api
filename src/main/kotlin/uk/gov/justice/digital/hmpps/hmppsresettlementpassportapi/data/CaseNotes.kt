@@ -28,5 +28,4 @@ data class CaseNotesMeta(
 data class CaseNotesRequest(
   val pathway: String,
   val text: String,
-  val prisonId: String,
 )

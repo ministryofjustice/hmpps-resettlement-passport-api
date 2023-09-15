@@ -253,7 +253,8 @@ class CaseNotesApiService(
     val pathwayValues = PathwayMap.values()
     val pathwayVal = pathwayValues.find { it.id == casenotes.pathway.toString() }
     val subType = pathwayVal?.name.toString()
-    val prisonCode = casenotes.prisonId
+    val prisonCode = findPrisonerPersonalDetails(prisonerId).prisonId
+
     return offenderCaseNotesWebClientUserCredentials.post()
       .uri(
         "/case-notes/{prisonerId}",

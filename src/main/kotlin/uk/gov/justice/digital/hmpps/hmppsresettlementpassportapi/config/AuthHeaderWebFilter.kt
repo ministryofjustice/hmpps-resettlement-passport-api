@@ -6,7 +6,6 @@ import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.WebFilter
 import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.utils.UserContext
 
 @Component
 class AuthHeaderWebFilter : WebFilter {

@@ -24,8 +24,10 @@ import java.time.format.DateTimeFormatter
 
 @Service
 class CaseNotesApiService(
-  private val offenderCaseNotesWebClientUserCredentials: WebClient,
-  private val offendersSearchWebClientClientCredentials: WebClient,
+
+  private  val offenderCaseNotesWebClientUserCredentials: WebClient,
+//  private val offendersSearchWebClientClientCredentials: WebClient,
+  //private val offendersSearchWebClientClientCredentials: WebClient,
 ) {
 
   suspend fun getCaseNotesByNomisId(
@@ -269,17 +271,4 @@ class CaseNotesApiService(
       .awaitBody<CaseNote>()
   }
 
-  suspend fun findPrisonerPersonalDetails(nomsId: String): PrisonersSearch {
-    return offendersSearchWebClientClientCredentials
-      .get()
-      .uri(
-        "/prisoner/{nomsId}",
-        mapOf(
-          "nomsId" to nomsId,
-        ),
-      )
-      .retrieve()
-      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found") })
-      .awaitBody<PrisonersSearch>()
-  }
 }

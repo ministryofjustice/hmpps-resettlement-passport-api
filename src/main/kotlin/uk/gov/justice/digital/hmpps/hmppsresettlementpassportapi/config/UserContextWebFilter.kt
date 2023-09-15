@@ -9,11 +9,10 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.utils.UserContext
 
 @Component
-class AuthHeaderWebFilter : WebFilter {
+class UserContextWebFilter : WebFilter {
   override fun filter(serverWebExchange: ServerWebExchange, webFilterChain: WebFilterChain): Mono<Void> {
-    val authHeader = serverWebExchange.request.headers[HttpHeaders.AUTHORIZATION]?.firstOrNull() ?: "none"
-    return webFilterChain.filter(serverWebExchange).contextWrite {
-      it.put(HttpHeaders.AUTHORIZATION, authHeader)
-    }
+    val authToken = serverWebExchange.request.headers[HttpHeaders.AUTHORIZATION]?.firstOrNull() ?: "none"
+    UserContext.authToken = authToken
+    return webFilterChain.filter(serverWebExchange)
   }
 }

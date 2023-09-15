@@ -28,7 +28,6 @@ class ClientTrackingWebFilter : WebFilter {
           currentSpan.setAttribute("enduser.id", this.toString()) // user_Id at the top level of the request
         }
         currentSpan.setAttribute("clientId", jwtBody.getClaim("client_id").toString())
-        currentSpan.setAttribute("token",token )
       } catch (e: ParseException) {
         log.warn("problem decoding jwt public key for application insights", e)
       }

@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono
 class AuthHeaderWebFilter : WebFilter {
   override fun filter(serverWebExchange: ServerWebExchange, webFilterChain: WebFilterChain): Mono<Void> {
     val authHeader = serverWebExchange.request.headers[HttpHeaders.AUTHORIZATION]?.firstOrNull() ?: "none"
+
     return webFilterChain.filter(serverWebExchange).contextWrite {
       it.put(HttpHeaders.AUTHORIZATION, authHeader)
     }

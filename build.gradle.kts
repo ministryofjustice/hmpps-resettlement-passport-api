@@ -34,9 +34,9 @@ dependencies {
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-    implementation("org.projectlombok:lombok:1.18.26")
+  implementation("org.projectlombok:lombok:1.18.26")
 
-    runtimeOnly("org.flywaydb:flyway-core")
+  runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("org.springframework.boot:spring-boot-starter-jdbc")
   runtimeOnly("org.postgresql:postgresql:42.6.0")
 

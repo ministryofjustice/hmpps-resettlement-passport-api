@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerPe
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonerImage
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonerRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
@@ -69,7 +70,7 @@ class OffenderSearchApiService(
   suspend fun getPrisonersByPrisonId(
     searchTerm: String,
     prisonId: String,
-    days: Long,
+    days: Int,
     pageNumber: Int,
     pageSize: Int,
     sort: String,
@@ -101,6 +102,12 @@ class OffenderSearchApiService(
         "Data",
         "Page $pageNumber",
       )
+    }
+
+    if (days > 0) {
+      val earliestReleaseDate = LocalDate.now().minusDays(1)
+      val latestReleaseDate = LocalDate.now().plusDays(days.toLong())
+      offenders.removeAll { it.releaseDate == null || it.releaseDate <= earliestReleaseDate || it.releaseDate > latestReleaseDate }
     }
 
     when (sort) {
@@ -284,5 +291,30 @@ class OffenderSearchApiService(
     if (!imageIdExists) {
       throw ResourceNotFoundException("Image not found")
     }
+  }
+
+  fun findPrisonersByReleaseDate(prisonId: String, earliestReleaseDate: String, latestReleaseDate: String, prisonIds: List<String>): Flow<List<PrisonersSearch>> = flow {
+    var page = 0
+    do {
+      val pageOfData = offendersSearchWebClientClientCredentials.post()
+        .uri(
+          "/prisoner-search/release-date-by-prison?size={size}&page={page}&sort={sort}",
+          mapOf(
+            "size" to 50, // NB: API allows up 3,000 results per page
+            "page" to page,
+            "sort" to "prisonserNumber,ASC",
+          ),
+        ).bodyValue(
+          PrisonerRequest(
+            earliestReleaseDate = earliestReleaseDate,
+            latestReleaseDate = latestReleaseDate,
+            prisonIds = prisonIds,
+          ),
+        )
+        .retrieve()
+        .awaitBody<PrisonersSearchList>()
+      emit(pageOfData.content!!)
+      page += 1
+    } while (!pageOfData.last)
   }
 }

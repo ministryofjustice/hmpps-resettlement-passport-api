@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoner
@@ -77,7 +78,11 @@ class OffenderSearchResourceController(
       description = "Sorting criteria in the format: property,(asc|desc) property supported are firstName, lastName, releaseDate and prisonerNumber",
     )
     sort: String,
-  ): PrisonersList = offenderSearchService.getPrisonersByPrisonId(term, prisonId, 0, page, size, sort)
+    @Schema(example = "21")
+    @Parameter(description = "Prisoners released (release date) within the given days from current date")
+    @RequestParam(value = "days", defaultValue = "0")
+    days: Int = 0,
+  ): PrisonersList = offenderSearchService.getPrisonersByPrisonId(term, prisonId, days, page, size, sort)
 
   @GetMapping("/prisoner/{nomisId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get prisoner by nomis Id", description = "Prisoner Details based on nomis Id")

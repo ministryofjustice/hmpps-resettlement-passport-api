@@ -152,9 +152,9 @@ class OffenderSearchApiServiceTest {
   fun `test get PrisonersList happy path full json with release date filter`() = runTest {
     val prisonId = "MDI"
     val expectedPrisonerId = "G6628UE"
-    var days = 84
+    val days = 84
     val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    var releaseDate = LocalDate.now().minusDays(84)
+    val releaseDate = LocalDate.now().minusDays(days.toLong())
     var mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
     mockedJsonResponse = mockedJsonResponse.replace("\"releaseDate\": \"2024-07-31\",", "\"releaseDate\": \"" + releaseDate.format(pattern) + "\",")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))

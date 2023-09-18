@@ -29,6 +29,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(MockitoExtension::class)
@@ -147,6 +148,19 @@ class OffenderSearchApiServiceTest {
     )
   }
 
+  @Test
+  fun `test get PrisonersList happy path full json with release date filter`() = runTest {
+    val prisonId = "MDI"
+    val expectedPrisonerId = "G6628UE"
+    var days = 84
+    val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    var releaseDate = LocalDate.now().minusDays(84)
+    var mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
+    mockedJsonResponse = mockedJsonResponse.replace("\"releaseDate\": \"2024-07-31\",", "\"releaseDate\": \"" + releaseDate.format(pattern) + "\",")
+    mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
+    val prisonersList = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, 0, 10, "firstName,ASC")
+    Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
+  }
   private fun getExpectedPrisonersListReleaseDateDescWithYO() = PrisonersList(
     content =
     listOf(

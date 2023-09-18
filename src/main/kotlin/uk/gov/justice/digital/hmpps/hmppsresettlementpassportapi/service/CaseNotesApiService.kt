@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
@@ -25,7 +26,9 @@ import java.time.format.DateTimeFormatter
 @Service
 class CaseNotesApiService(
   private val offenderCaseNotesWebClientUserCredentials: WebClient,
+  private val offenderCaseNotesWebClientCredentials: WebClient,
   private val offendersSearchWebClientClientCredentials: WebClient,
+
 ) {
 
   suspend fun getCaseNotesByNomisId(
@@ -171,7 +174,7 @@ class CaseNotesApiService(
       uriValue = "/case-notes/{nomisId}?page={page}&size={size}&type={type}&subType={subType}"
     }
     do {
-      val data = offenderCaseNotesWebClientUserCredentials.get()
+      val data = offenderCaseNotesWebClientCredentials.get()
         .uri(
           uriValue,
           mapOf(
@@ -245,17 +248,19 @@ class CaseNotesApiService(
       )
     }
   }
-  suspend fun postCaseNote(prisonerId: String, casenotes: CaseNotesRequest): CaseNote {
+  suspend fun postCaseNote(prisonerId: String, casenotes: CaseNotesRequest, auth: String): CaseNote {
     val type = PATHWAY_PARENT_TYPE
     val pathwayValues = PathwayMap.values()
     val pathwayVal = pathwayValues.find { it.id == casenotes.pathway.toString() }
     val subType = pathwayVal?.name.toString()
-    val prisonCode = casenotes.prisonId
+    val prisonCode = findPrisonerPersonalDetails(prisonerId).prisonId
+
     return offenderCaseNotesWebClientUserCredentials.post()
       .uri(
         "/case-notes/{prisonerId}",
         prisonerId,
       ).contentType(MediaType.APPLICATION_JSON)
+      .header(HttpHeaders.AUTHORIZATION, auth)
       .bodyValue(
         mapOf(
           "locationId" to prisonCode,

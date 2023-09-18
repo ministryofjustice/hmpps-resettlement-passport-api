@@ -167,8 +167,8 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
   fun `Create casenotes  happy path`() {
     val prisonerId = "G4274GN"
     val txt = "This is a test case note message from Resettlement Passport, Health message"
-    val prisonId = "MDI"
-    caseNotesApiMockServer.stubPostCaseNotes(prisonerId, "RESET", "ACCOM", txt, prisonId, 200)
+    offenderSearchApiMockServer.stubGetPrisonerDetails(prisonerId, 200)
+    caseNotesApiMockServer.stubPostCaseNotes(prisonerId, "RESET", "ACCOM", txt, "MDI", 200)
     webTestClient.post()
       .uri("/resettlement-passport/case-notes/$prisonerId")
       .header("Content-Type", "application/json")
@@ -176,7 +176,6 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
         CaseNotesRequest(
           pathway = Pathway.ACCOMMODATION.toString(),
           text = txt,
-          prisonId = prisonId,
         ),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))

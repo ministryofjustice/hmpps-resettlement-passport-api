@@ -36,7 +36,7 @@ class AssessmentRepositoryTest : TestBase() {
 
     val idDocument = setOf(IdTypeEntity(1, "Birth certificate"))
 
-    val assessment = AssessmentEntity(null, prisoner, LocalDateTime.now(), LocalDateTime.now(), isBankAccountRequired = true, isIdRequired = true, idDocument)
+    val assessment = AssessmentEntity(null, prisoner, LocalDateTime.now(), LocalDateTime.now(), isBankAccountRequired = true, isIdRequired = true, idDocument, false, null)
 
     assessmentRepository.save(assessment)
 

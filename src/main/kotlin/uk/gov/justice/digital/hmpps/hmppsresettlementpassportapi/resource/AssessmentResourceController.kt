@@ -36,6 +36,11 @@ class AssessmentResourceController(private val assessmentApiService: AssessmentA
         description = "Successful Operation",
       ),
       ApiResponse(
+        description = "Not found",
+        responseCode = "404",
+        content = [Content(mediaType = MediaType.APPLICATION_JSON_VALUE)],
+      ),
+      ApiResponse(
         responseCode = "401",
         description = "Unauthorized to access this endpoint",
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
@@ -97,6 +102,7 @@ class AssessmentResourceController(private val assessmentApiService: AssessmentA
   suspend fun postAssessmentByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("prisonerId")
+    prisonerId: String,
     @RequestBody
     assessmentDTO: AssessmentDTO,
   ) = assessmentApiService.createAssessment(assessmentDTO)
@@ -106,7 +112,7 @@ class AssessmentResourceController(private val assessmentApiService: AssessmentA
   @ApiResponses(
     value = [
       ApiResponse(
-        responseCode = "204",
+        responseCode = "200",
         description = "Successful Operation",
       ),
       ApiResponse(
@@ -135,7 +141,7 @@ class AssessmentResourceController(private val assessmentApiService: AssessmentA
     @PathVariable("prisonerId")
     @Parameter(required = true)
     prisonerId: String,
-    @PathVariable("AssessmentId")
+    @PathVariable("assessmentId")
     @Parameter(required = true)
     assessmentId: String,
   ) {

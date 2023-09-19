@@ -4,8 +4,8 @@ import java.time.LocalDateTime
 
 data class AssessmentDTO(
   val assessmentDate: LocalDateTime,
-  var isBankAccountRequired: Boolean,
-  var isIdRequired: Boolean,
-  var idDocuments: Set<String>,
+  val isBankAccountRequired: Boolean,
+  val isIdRequired: Boolean,
+  val idDocuments: Set<String>,
   val nomsId: String,
 )

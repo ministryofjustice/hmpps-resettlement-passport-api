@@ -29,7 +29,7 @@ class AssessmentApiService(
   suspend fun getAssessmentByNomsId(nomsId: String): AssessmentEntity? {
     var prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val assessment = assessmentRepository.findByPrisoner(prisoner) ?: return null
+    val assessment = assessmentRepository.findByPrisoner(prisoner) ?: throw ResourceNotFoundException("assessment not found")
     return if (assessment.isDeleted) null else assessment
   }
 

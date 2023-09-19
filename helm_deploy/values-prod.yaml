@@ -11,7 +11,7 @@ generic-service:
     API_BASE_URL_PRISON-REGISTER: https://prison-register.hmpps.service.justice.gov.uk
     API_BASE_URL_OFFENDER-SEARCH: https://prisoner-offender-search.prison.service.justice.gov.uk
     API_BASE_URL_CVL: https://create-and-vary-a-licence-api.hmpps.service.justice.gov.uk
-    API_BASE_URL_COMMUNITY: https://community-api.probation.service.justice.gov.uk
+    API_BASE_URL_COMMUNITY: https://resettlement-passport-and-delius.hmpps.service.justice.gov.uk
     API_BASE_URL_ARN: https://assess-risks-and-needs.hmpps.service.justice.gov.uk
     API_BASE_URL_PRISON: https://api.prison.service.justice.gov.uk
     API_BASE_URL_OFFENDER-CASE-NOTES: https://offender-case-notes.service.justice.gov.uk

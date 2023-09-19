@@ -12,31 +12,17 @@ class CommunityApiMockServer : WireMockServer(WIREMOCK_PORT) {
 
   fun stubGetCrnFromNomsId(nomsId: String, crn: String) {
     stubFor(
-      get("/secure/offenders/nomsNumber/$nomsId").willReturn(
+      get("/probation-cases/$nomsId/crn").willReturn(
         aResponse()
           .withHeader("Content-Type", "application/json")
           .withBody(
             """
               {
-                "offenderId": 0,
-                "otherIds": {
-                  "crn": "$crn"
-                }
+                "crn": "$crn"
               }
             """.trimIndent(),
           )
           .withStatus(200),
-      ),
-    )
-  }
-
-  fun stubGetCrnFromNomsIdNotFound(nomsId: String) {
-    stubFor(
-      get("/secure/offenders/nomsNumber/$nomsId").willReturn(
-        aResponse()
-          .withHeader("Content-Type", "application/json")
-          .withBody("{\"Error\" : \"Not Found\"}")
-          .withStatus(404),
       ),
     )
   }

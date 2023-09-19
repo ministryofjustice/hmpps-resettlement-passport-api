@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/secure/offenders/crn/U328968/risk/mappa"
+    "urlPath": "/probation-cases/U328968/mappa"
   },
   "response": {
     "status": 200,

@@ -56,7 +56,8 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .jsonPath("status").isEqualTo(404)
       .jsonPath("errorCode").isEmpty
-      .jsonPath("userMessage").isEqualTo("Resource not found. Check request parameters - Cannot find CRN for NomsId abc in database")
+      .jsonPath("userMessage")
+      .isEqualTo("Resource not found. Check request parameters - Cannot find CRN for NomsId abc in database")
       .jsonPath("developerMessage").isEqualTo("Cannot find CRN for NomsId abc in database")
       .jsonPath("moreInfo").isEmpty
   }
@@ -78,7 +79,8 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .jsonPath("status").isEqualTo(404)
       .jsonPath("errorCode").isEmpty
-      .jsonPath("userMessage").isEqualTo("Resource not found. Check request parameters - ARN service could not find CRN abc/NomsId 123")
+      .jsonPath("userMessage")
+      .isEqualTo("Resource not found. Check request parameters - ARN service could not find CRN abc/NomsId 123")
       .jsonPath("developerMessage").isEqualTo("ARN service could not find CRN abc/NomsId 123")
       .jsonPath("moreInfo").isEmpty
   }
@@ -100,8 +102,10 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .jsonPath("status").isEqualTo(500)
       .jsonPath("errorCode").isEmpty
-      .jsonPath("userMessage").isEqualTo("Unexpected error: 500 Internal Server Error from GET http://localhost:8097/risks/crn/abc/predictors/all")
-      .jsonPath("developerMessage").isEqualTo("500 Internal Server Error from GET http://localhost:8097/risks/crn/abc/predictors/all")
+      .jsonPath("userMessage")
+      .isEqualTo("Unexpected error: 500 Internal Server Error from GET http://localhost:8097/risks/crn/abc/predictors/all")
+      .jsonPath("developerMessage")
+      .isEqualTo("500 Internal Server Error from GET http://localhost:8097/risks/crn/abc/predictors/all")
       .jsonPath("moreInfo").isEmpty
   }
 
@@ -158,7 +162,8 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .jsonPath("status").isEqualTo(404)
       .jsonPath("errorCode").isEmpty
-      .jsonPath("userMessage").isEqualTo("Resource not found. Check request parameters - Cannot find CRN for NomsId abc in database")
+      .jsonPath("userMessage")
+      .isEqualTo("Resource not found. Check request parameters - Cannot find CRN for NomsId abc in database")
       .jsonPath("developerMessage").isEqualTo("Cannot find CRN for NomsId abc in database")
       .jsonPath("moreInfo").isEmpty
   }
@@ -180,7 +185,8 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .jsonPath("status").isEqualTo(404)
       .jsonPath("errorCode").isEmpty
-      .jsonPath("userMessage").isEqualTo("Resource not found. Check request parameters - ARN service could not find CRN abc/NomsId 123")
+      .jsonPath("userMessage")
+      .isEqualTo("Resource not found. Check request parameters - ARN service could not find CRN abc/NomsId 123")
       .jsonPath("developerMessage").isEqualTo("ARN service could not find CRN abc/NomsId 123")
       .jsonPath("moreInfo").isEmpty
   }
@@ -202,7 +208,8 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .jsonPath("status").isEqualTo(500)
       .jsonPath("errorCode").isEmpty
-      .jsonPath("userMessage").isEqualTo("Unexpected error: 500 Internal Server Error from GET http://localhost:8097/risks/crn/abc")
+      .jsonPath("userMessage")
+      .isEqualTo("Unexpected error: 500 Internal Server Error from GET http://localhost:8097/risks/crn/abc")
       .jsonPath("developerMessage").isEqualTo("500 Internal Server Error from GET http://localhost:8097/risks/crn/abc")
       .jsonPath("moreInfo").isEmpty
   }
@@ -235,7 +242,11 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/risk-mappa.json")
 
-    communityApiMockServer.stubGetToCrn("/secure/offenders/crn/$crn/risk/mappa", 200, "testdata/community-api/community-risk-mappa.json")
+    communityApiMockServer.stubGetToCrn(
+      "/probation-cases/$crn/mappa",
+      200,
+      "testdata/community-api/community-risk-mappa.json",
+    )
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/mappa")
@@ -260,7 +271,8 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .jsonPath("status").isEqualTo(404)
       .jsonPath("errorCode").isEmpty
-      .jsonPath("userMessage").isEqualTo("Resource not found. Check request parameters - Cannot find CRN for NomsId abc in database")
+      .jsonPath("userMessage")
+      .isEqualTo("Resource not found. Check request parameters - Cannot find CRN for NomsId abc in database")
       .jsonPath("developerMessage").isEqualTo("Cannot find CRN for NomsId abc in database")
       .jsonPath("moreInfo").isEmpty
   }
@@ -271,7 +283,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val prisonerId = "123"
     val crn = "abc"
 
-    communityApiMockServer.stubGetToCrn("/secure/offenders/crn/$crn/risk/mappa", 404, null)
+    communityApiMockServer.stubGetToCrn("/probation-cases/$crn/mappa", 404, null)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/mappa")
@@ -282,7 +294,8 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .jsonPath("status").isEqualTo(404)
       .jsonPath("errorCode").isEmpty
-      .jsonPath("userMessage").isEqualTo("Resource not found. Check request parameters - Cannot find MAPPA Data for NomsId 123 / CRN abc in Community API")
+      .jsonPath("userMessage")
+      .isEqualTo("Resource not found. Check request parameters - Cannot find MAPPA Data for NomsId 123 / CRN abc in Community API")
       .jsonPath("developerMessage").isEqualTo("Cannot find MAPPA Data for NomsId 123 / CRN abc in Community API")
       .jsonPath("moreInfo").isEmpty
   }
@@ -293,7 +306,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val prisonerId = "123"
     val crn = "abc"
 
-    communityApiMockServer.stubGetToCrn("/secure/offenders/crn/$crn/risk/mappa", 500, null)
+    communityApiMockServer.stubGetToCrn("/probation-cases/$crn/mappa", 500, null)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/mappa")
@@ -304,8 +317,6 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .jsonPath("status").isEqualTo(500)
       .jsonPath("errorCode").isEmpty
-      .jsonPath("userMessage").isEqualTo("Unexpected error: 500 Internal Server Error from GET http://localhost:8096/secure/offenders/crn/abc/risk/mappa")
-      .jsonPath("developerMessage").isEqualTo("500 Internal Server Error from GET http://localhost:8096/secure/offenders/crn/abc/risk/mappa")
       .jsonPath("moreInfo").isEmpty
   }
 

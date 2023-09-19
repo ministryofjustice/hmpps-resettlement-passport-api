@@ -20,7 +20,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/staff-contacts-1.json")
 
-    communityApiMockServer.stubGetToCrn("/secure/offenders/crn/$crn/allOffenderManagers?includeProbationAreaTeams=true", 200, "testdata/community-api/offender-managers-1.json")
+    communityApiMockServer.stubGetToCrn("/probation-cases/$crn/community-manager", 200, "testdata/community-api/offender-managers-1.json")
     keyWorkerApiMockServer.stubGet("/key-worker/offender/$prisonerId", 200, "testdata/key-worker-api/key-worker-1.json")
     allocationManagerApiMockServer.stubGet("/api/allocation/$prisonerId", 200, "testdata/allocation-manager-api/poms-1.json")
 
@@ -41,7 +41,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/staff-contacts-2.json")
 
-    communityApiMockServer.stubGetToCrn("/secure/offenders/crn/$crn/allOffenderManagers?includeProbationAreaTeams=true", 200, "testdata/community-api/offender-managers-2.json")
+    communityApiMockServer.stubGetToCrn("/probation-cases/$crn/community-manager", 200, "testdata/community-api/offender-managers-2.json")
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/staff-contacts")
@@ -97,7 +97,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
     val expectedOutput = readFile("testdata/expectation/staff-contacts-2.json")
 
     // Note that even if an individual call to get a staff contact fails, we should just log this and return no data
-    communityApiMockServer.stubGetToCrn("/secure/offenders/crn/$crn/allOffenderManagers?includeProbationAreaTeams=true", 404, null)
+    communityApiMockServer.stubGetToCrn("/probation-cases/$crn/community-manager", 404, null)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/staff-contacts")

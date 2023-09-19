@@ -44,4 +44,10 @@ data class AssessmentEntity(
     inverseJoinColumns = [JoinColumn(name = "id_type_id")],
   )
   var idDocuments: Set<IdTypeEntity>,
+
+  @Column(name = "is_deleted")
+  var isDeleted: Boolean = false,
+
+  @Column(name = "deleted_at")
+  var deletionDate: LocalDateTime?,
 )

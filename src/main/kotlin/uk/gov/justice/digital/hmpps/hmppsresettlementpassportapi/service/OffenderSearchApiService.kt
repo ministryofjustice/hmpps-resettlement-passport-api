@@ -87,8 +87,24 @@ class OffenderSearchApiService(
       )
     }
     findPrisonersBySearchTerm(prisonId, searchTerm).collect {
-      offenders.addAll(it)
+      it.forEach {
+        if (it.confirmedReleaseDate != null) {
+          it.displayReleaseDate = it.confirmedReleaseDate
+        } else if (it.actualParoleDate != null) {
+          it.displayReleaseDate = it.actualParoleDate
+        } else if (it.homeDetentionCurfewActualDate != null) {
+          it.displayReleaseDate = it.homeDetentionCurfewActualDate
+        } else if (it.conditionalReleaseDate != null) {
+          it.displayReleaseDate = it.conditionalReleaseDate
+        } else if (it.automaticReleaseDate != null) {
+          it.displayReleaseDate = it.automaticReleaseDate
+        } else {
+          it.displayReleaseDate = null
+        }
+        offenders.add(it)
+      }
     }
+
     if (offenders.isEmpty()) {
       throw NoDataWithCodeFoundException("Prisoners", prisonId)
     }
@@ -107,15 +123,15 @@ class OffenderSearchApiService(
     if (days > 0) {
       val earliestReleaseDate = LocalDate.now().minusDays(1)
       val latestReleaseDate = LocalDate.now().plusDays(days.toLong())
-      offenders.removeAll { it.releaseDate == null || it.releaseDate <= earliestReleaseDate || it.releaseDate > latestReleaseDate }
+      offenders.removeAll { it.displayReleaseDate == null || it.displayReleaseDate!! <= earliestReleaseDate || it.displayReleaseDate!! > latestReleaseDate }
     }
 
     when (sort) {
-      "releaseDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.releaseDate })
+      "releaseDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.displayReleaseDate })
       "firstName,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.firstName })
       "lastName,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.lastName })
       "prisonerNumber,ASC" -> offenders.sortBy { it.prisonerNumber }
-      "releaseDate,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.releaseDate })
+      "releaseDate,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.displayReleaseDate })
       "firstName,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.firstName })
       "lastName,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.lastName })
       "prisonerNumber,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.prisonerNumber })
@@ -146,8 +162,12 @@ class OffenderSearchApiService(
         prisonersSearch.firstName,
         prisonersSearch.middleNames,
         prisonersSearch.lastName,
-        prisonersSearch.releaseDate,
+        prisonersSearch.displayReleaseDate,
         prisonersSearch.nonDtoReleaseDateType,
+        null,
+        null,
+        prisonersSearch.homeDetentionCurfewEligibilityDate,
+        prisonersSearch.paroleEligibilityDate,
       )
 
       val prisonerEntity = prisonerRepository.findByNomsId(prisonersSearch.prisonerNumber)

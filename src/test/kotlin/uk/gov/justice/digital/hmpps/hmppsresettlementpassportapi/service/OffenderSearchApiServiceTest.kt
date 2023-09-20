@@ -75,7 +75,7 @@ class OffenderSearchApiServiceTest {
   @Test
   fun `test get PrisonersList happy path full json with sort releaseDate Descending`() = runTest {
     val prisonId = "MDI"
-    val expectedPrisonerId = "G6933GF"
+    val expectedPrisonerId = "A8229DY"
 
     val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
@@ -97,7 +97,7 @@ class OffenderSearchApiServiceTest {
   @Test
   fun `test get PrisonersList happy path full json with sort releaseDate Ascending`() = runTest {
     val prisonId = "MDI"
-    val expectedPrisonerId = "A8257DY"
+    val expectedPrisonerId = "A8339DY"
 
     val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
@@ -165,11 +165,11 @@ class OffenderSearchApiServiceTest {
     content =
     listOf(
       Prisoners(
-        prisonerNumber = "G6933GF",
-        firstName = "BUSTER",
-        middleNames = "CHRISTABERT HECTUR",
-        lastName = "CORALLO",
-        releaseDate = LocalDate.parse("2024-08-02"),
+        prisonerNumber = "A8229DY",
+        firstName = "STEPHEN",
+        middleNames = null,
+        lastName = "MCVEIGH",
+        releaseDate = LocalDate.parse("2026-08-01"),
         releaseType = "CRD",
         lastUpdatedDate = null,
         status = listOf(
@@ -184,13 +184,130 @@ class OffenderSearchApiServiceTest {
             lastDateChange = LocalDate.now(),
           ),
         ),
+        homeDetentionCurfewEligibilityDate = LocalDate.parse("2021-02-03"),
+        paroleEligibilityDate = null,
+      ),
+      Prisoners(
+        prisonerNumber = "A8258DY",
+        firstName = "COBBIE",
+        middleNames = null,
+        lastName = "FEDDER",
+        releaseDate = LocalDate.parse("2023-07-15"),
+        releaseType = "CRD",
+        lastUpdatedDate = null,
+        status = listOf(
+          PathwayStatus(
+            pathway = Pathway.ACCOMMODATION,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.now(),
+          ),
+          PathwayStatus(
+            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.now(),
+          ),
+        ),
+        homeDetentionCurfewEligibilityDate = null,
+        paroleEligibilityDate = null,
+      ),
+      Prisoners(
+        prisonerNumber = "A8257DY",
+        firstName = "GLENN",
+        middleNames = null,
+        lastName = "MCGRATH",
+        releaseDate = LocalDate.parse("2022-08-28"),
+        releaseType = "CRD",
+        lastUpdatedDate = null,
+        status = listOf(
+          PathwayStatus(
+            pathway = Pathway.ACCOMMODATION,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.now(),
+          ),
+          PathwayStatus(
+            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.now(),
+          ),
+        ),
+        homeDetentionCurfewEligibilityDate = LocalDate.parse("2022-05-07"),
+        paroleEligibilityDate = null,
+      ),
+      Prisoners(
+        prisonerNumber = "A8314DY",
+        firstName = "CHAIM",
+        middleNames = null,
+        lastName = "WITTKOPP",
+        releaseDate = LocalDate.parse("2022-04-13"),
+        releaseType = "CRD",
+        lastUpdatedDate = null,
+        status = listOf(
+          PathwayStatus(
+            pathway = Pathway.ACCOMMODATION,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.now(),
+          ),
+          PathwayStatus(
+            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.now(),
+          ),
+        ),
+        homeDetentionCurfewEligibilityDate = LocalDate.parse("2021-12-07"),
+        paroleEligibilityDate = null,
+      ),
+      Prisoners(
+        prisonerNumber = "G6933GF",
+        firstName = "BUSTER",
+        middleNames = "CHRISTABERT HECTUR",
+        lastName = "CORALLO",
+        releaseDate = LocalDate.parse("2021-10-14"),
+        releaseType = "CRD",
+        lastUpdatedDate = null,
+        status = listOf(
+          PathwayStatus(
+            pathway = Pathway.ACCOMMODATION,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.now(),
+          ),
+          PathwayStatus(
+            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.now(),
+          ),
+        ),
+        homeDetentionCurfewEligibilityDate = null,
+        paroleEligibilityDate = LocalDate.parse("2019-03-28"),
+      ),
+      Prisoners(
+        prisonerNumber = "G1458GV",
+        firstName = "FINN",
+        middleNames = "CHANDLEVIEVE",
+        lastName = "CRAWFIS",
+        releaseDate = LocalDate.parse("2018-09-12"),
+        releaseType = "CRD",
+        lastUpdatedDate = null,
+        status = listOf(
+          PathwayStatus(
+            pathway = Pathway.ACCOMMODATION,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.now(),
+          ),
+          PathwayStatus(
+            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.now(),
+          ),
+        ),
+        homeDetentionCurfewEligibilityDate = LocalDate.parse("2018-10-16"),
+        paroleEligibilityDate = null,
       ),
       Prisoners(
         prisonerNumber = "G6335VX",
         firstName = "GARRETT",
         middleNames = "SYLVANNA",
         lastName = "COUTCHER",
-        releaseDate = LocalDate.parse("2024-05-11"),
+        releaseDate = LocalDate.parse("2017-05-11"),
         releaseType = "PRRD",
         lastUpdatedDate = null,
         status = listOf(
@@ -205,111 +322,8 @@ class OffenderSearchApiServiceTest {
             lastDateChange = LocalDate.now(),
           ),
         ),
-      ),
-      Prisoners(
-        prisonerNumber = "G1458GV",
-        firstName = "FINN",
-        middleNames = "CHANDLEVIEVE",
-        lastName = "CRAWFIS",
-        releaseDate = LocalDate.parse("2023-12-12"),
-        releaseType = "CRD",
-        lastUpdatedDate = null,
-        status = listOf(
-          PathwayStatus(
-            pathway = Pathway.ACCOMMODATION,
-            status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.now(),
-          ),
-          PathwayStatus(
-            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
-            status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.now(),
-          ),
-        ),
-      ),
-      Prisoners(
-        prisonerNumber = "A8258DY",
-        firstName = "COBBIE",
-        middleNames = null,
-        lastName = "FEDDER",
-        releaseDate = LocalDate.parse("2023-09-15"),
-        releaseType = "CRD",
-        lastUpdatedDate = null,
-        status = listOf(
-          PathwayStatus(
-            pathway = Pathway.ACCOMMODATION,
-            status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.now(),
-          ),
-          PathwayStatus(
-            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
-            status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.now(),
-          ),
-        ),
-      ),
-      Prisoners(
-        prisonerNumber = "A8314DY",
-        firstName = "CHAIM",
-        middleNames = null,
-        lastName = "WITTKOPP",
-        releaseDate = LocalDate.parse("2023-07-01"),
-        releaseType = "CRD",
-        lastUpdatedDate = null,
-        status = listOf(
-          PathwayStatus(
-            pathway = Pathway.ACCOMMODATION,
-            status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.now(),
-          ),
-          PathwayStatus(
-            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
-            status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.now(),
-          ),
-        ),
-      ),
-      Prisoners(
-        prisonerNumber = "A8229DY",
-        firstName = "STEPHEN",
-        middleNames = null,
-        lastName = "MCVEIGH",
-        releaseDate = LocalDate.parse("2023-07-01"),
-        releaseType = "CRD",
-        lastUpdatedDate = null,
-        status = listOf(
-          PathwayStatus(
-            pathway = Pathway.ACCOMMODATION,
-            status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.now(),
-          ),
-          PathwayStatus(
-            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
-            status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.now(),
-          ),
-        ),
-      ),
-      Prisoners(
-        prisonerNumber = "A8257DY",
-        firstName = "GLENN",
-        middleNames = null,
-        lastName = "MCGRATH",
-        releaseDate = null,
-        releaseType = "CRD",
-        lastUpdatedDate = null,
-        status = listOf(
-          PathwayStatus(
-            pathway = Pathway.ACCOMMODATION,
-            status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.now(),
-          ),
-          PathwayStatus(
-            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
-            status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.now(),
-          ),
-        ),
+        homeDetentionCurfewEligibilityDate = null,
+        paroleEligibilityDate = null,
       ),
     ),
     pageSize = 7,

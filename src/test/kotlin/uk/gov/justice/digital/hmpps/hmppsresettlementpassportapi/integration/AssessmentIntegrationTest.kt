@@ -35,7 +35,6 @@ class AssessmentIntegrationTest : IntegrationTestBase() {
   fun `Get assessment by nomis ID - Not found`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    val expectedOutput = readFile("testdata/expectation/assessment-1.json")
 
     val prisonerId = "1234"
 
@@ -51,7 +50,6 @@ class AssessmentIntegrationTest : IntegrationTestBase() {
   fun `create assessment - Happy path`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    val expectedOutput = readFile("testdata/expectation/assessment-1.json")
 
     val prisonerId = "123"
 

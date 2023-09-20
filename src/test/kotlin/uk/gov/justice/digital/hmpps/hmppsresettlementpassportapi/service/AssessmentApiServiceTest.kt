@@ -69,7 +69,6 @@ class AssessmentApiServiceTest {
   @Test
   fun `test getAssessmentById - returns null if assessment does not exist`() = runTest {
     val assessmentId: Long = 1
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn")
     Mockito.`when`(assessmentRepository.findById(assessmentId)).thenReturn(null)
 
     val response = assessmentApiService.getAssessmentById(assessmentId)

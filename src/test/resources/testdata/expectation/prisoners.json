@@ -5,7 +5,7 @@
       "firstName": "BUSTER",
       "middleNames": "CHRISTABERT HECTUR",
       "lastName": "CORALLO",
-      "releaseDate": "2024-08-02",
+      "releaseDate": "2021-10-14",
       "releaseType": "CRD",
       "lastUpdatedDate": null,
       "status": [
@@ -44,14 +44,15 @@
           "status": "SUPPORT_NOT_REQUIRED",
           "lastDateChange": "2023-06-13"
         }
-      ]
+      ],
+      "paroleEligibilityDate": "2019-03-28"
     },
     {
       "prisonerNumber": "G6628UE",
       "firstName": "ALLIE",
       "middleNames": "MARCISHA",
       "lastName": "COSNER",
-      "releaseDate": "2024-07-31",
+      "releaseDate": "2017-03-31",
       "releaseType": "CRD",
       "lastUpdatedDate": null,
       "status": [
@@ -90,14 +91,16 @@
           "status": "SUPPORT_DECLINED",
           "lastDateChange": "2023-05-30"
         }
-      ]
+      ],
+      "homeDetentionCurfewEligibilityDate": "2017-01-01",
+      "paroleEligibilityDate": "2016-08-28"
     },
     {
       "prisonerNumber": "G6335VX",
       "firstName": "GARRETT",
       "middleNames": "SYLVANNA",
       "lastName": "COUTCHER",
-      "releaseDate": "2024-05-11",
+      "releaseDate": "2017-05-11",
       "releaseType": "PRRD",
       "lastUpdatedDate": null,
       "status": [
@@ -143,7 +146,7 @@
       "firstName": "FINN",
       "middleNames": "CHANDLEVIEVE",
       "lastName": "CRAWFIS",
-      "releaseDate": "2023-12-12",
+      "releaseDate": "2018-09-12",
       "releaseType": "CRD",
       "lastUpdatedDate": null,
       "status": [
@@ -182,14 +185,15 @@
           "status": "IN_PROGRESS",
           "lastDateChange": "2023-05-23"
         }
-      ]
+      ],
+      "homeDetentionCurfewEligibilityDate": "2018-10-16"
     },
     {
       "prisonerNumber": "A8339DY",
       "firstName": "MR",
       "middleNames": "BRIDGILLA",
       "lastName": "CRD-LR-TEST",
-      "releaseDate": "2023-11-11",
+      "releaseDate": null,
       "releaseType": "PRRD",
       "lastUpdatedDate": null,
       "status": [
@@ -235,7 +239,7 @@
       "firstName": "GEORGE",
       "middleNames": null,
       "lastName": "HAMILTON",
-      "releaseDate": "2023-10-23",
+      "releaseDate": "2015-07-23",
       "releaseType": "CRD",
       "lastUpdatedDate": null,
       "status": [
@@ -274,14 +278,15 @@
           "status": "IN_PROGRESS",
           "lastDateChange": "2023-06-27"
         }
-      ]
+      ],
+      "homeDetentionCurfewEligibilityDate": "2015-05-09"
     },
     {
       "prisonerNumber": "A8258DY",
       "firstName": "COBBIE",
       "middleNames": null,
       "lastName": "FEDDER",
-      "releaseDate": "2023-09-15",
+      "releaseDate": "2023-07-15",
       "releaseType": "CRD",
       "lastUpdatedDate": null,
       "status": [
@@ -320,14 +325,16 @@
           "status": "SUPPORT_DECLINED",
           "lastDateChange": "2023-07-04"
         }
-      ]
+      ],
+      "homeDetentionCurfewEligibilityDate": null,
+      "paroleEligibilityDate": null
     },
     {
       "prisonerNumber": "A8257DY",
       "firstName": "GLENN",
       "middleNames": null,
       "lastName": "MCGRATH",
-      "releaseDate": null,
+      "releaseDate": "2022-08-28",
       "releaseType": "CRD",
       "lastUpdatedDate": null,
       "status": [
@@ -366,14 +373,16 @@
           "status": "NOT_STARTED",
           "lastDateChange": "2023-07-11"
         }
-      ]
+      ],
+      "homeDetentionCurfewEligibilityDate": "2022-05-07",
+      "paroleEligibilityDate": "2023-04-28"
     },
     {
       "prisonerNumber": "A8229DY",
       "firstName": "STEPHEN",
       "middleNames": null,
       "lastName": "MCVEIGH",
-      "releaseDate": "2023-07-01",
+      "releaseDate": "2026-08-01",
       "releaseType": "CRD",
       "lastUpdatedDate": null,
       "status": [
@@ -412,14 +421,15 @@
           "status": "DONE",
           "lastDateChange": "2023-07-25"
         }
-      ]
+      ],
+      "homeDetentionCurfewEligibilityDate": "2021-02-03"
     },
     {
       "prisonerNumber": "A8314DY",
       "firstName": "CHAIM",
       "middleNames": null,
       "lastName": "WITTKOPP",
-      "releaseDate": "2023-07-01",
+      "releaseDate": "2022-04-13",
       "releaseType": "CRD",
       "lastUpdatedDate": null,
       "status": [
@@ -458,7 +468,8 @@
           "status": "SUPPORT_NOT_REQUIRED",
           "lastDateChange": "2023-07-18"
         }
-      ]
+      ],
+      "homeDetentionCurfewEligibilityDate": "2021-12-07"
     }
   ],
   "pageSize": 10,

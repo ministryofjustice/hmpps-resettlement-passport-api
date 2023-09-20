@@ -9,10 +9,12 @@ data class Prisoners(
   val firstName: String,
   val middleNames: String? = null,
   val lastName: String,
-  val releaseDate: LocalDate? = null,
+  var releaseDate: LocalDate? = null,
   val releaseType: String? = null,
   val lastUpdatedDate: LocalDate? = null,
   var status: List<PathwayStatus>? = ArrayList(),
+  val homeDetentionCurfewEligibilityDate: LocalDate? = null,
+  val paroleEligibilityDate: LocalDate? = null,
 )
 
 data class PrisonerPersonal(

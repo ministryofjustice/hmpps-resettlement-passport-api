@@ -36,7 +36,7 @@ class BankApplicationRepositoryTest : TestBase() {
     val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1")
     prisonerRepository.save(prisoner)
 
-    val logs = setOf(BankApplicationStatusLogEntity(null, null, status_changed_to = "Application Started", changedAtDate = LocalDateTime.now()))
+    val logs = setOf(BankApplicationStatusLogEntity(null, null, statusChangedTo = "Application Started", changedAtDate = LocalDateTime.now()))
 
     val application = BankApplicationEntity(null, prisoner, logs, LocalDateTime.now(), LocalDateTime.now(), status = "Application Started")
 
@@ -52,11 +52,11 @@ class BankApplicationRepositoryTest : TestBase() {
     val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1")
     prisonerRepository.save(prisoner)
 
-    val logs1 = setOf(BankApplicationStatusLogEntity(null, null, status_changed_to = "Application Started", changedAtDate = LocalDateTime.now()))
+    val logs1 = setOf(BankApplicationStatusLogEntity(null, null, statusChangedTo = "Application Started", changedAtDate = LocalDateTime.now()))
 
     val application1 = BankApplicationEntity(null, prisoner, logs1, LocalDateTime.now(), LocalDateTime.now(), status = "Application Started")
 
-    val application2 = BankApplicationEntity(null, prisoner, null, LocalDateTime.now(), LocalDateTime.now(), status = "Application Started", isDeleted = true, deletionDate = LocalDateTime.now())
+    val application2 = BankApplicationEntity(null, prisoner, emptySet(), LocalDateTime.now(), LocalDateTime.now(), status = "Application Started", isDeleted = true, deletionDate = LocalDateTime.now())
 
     bankApplicationRepository.save(application1)
     bankApplicationRepository.save(application2)

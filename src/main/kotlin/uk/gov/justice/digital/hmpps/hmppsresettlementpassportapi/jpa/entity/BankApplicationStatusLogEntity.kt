@@ -21,7 +21,7 @@ data class BankApplicationStatusLogEntity(
   val bankApplication: BankApplicationEntity?,
 
   @Column(name = "status_changed_to")
-  var status_changed_to: String,
+  var statusChangedTo: String,
 
   @Column(name = "changed_at")
   val changedAtDate: LocalDateTime,

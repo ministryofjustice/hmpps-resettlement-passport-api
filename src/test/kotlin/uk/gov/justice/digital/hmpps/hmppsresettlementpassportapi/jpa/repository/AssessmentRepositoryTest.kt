@@ -44,4 +44,22 @@ class AssessmentRepositoryTest : TestBase() {
 
     assertThat(assessmentFromDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(assessment)
   }
+
+  @Test
+  fun `test findByPrisonerAndIsDeleted`() {
+    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1")
+    prisonerRepository.save(prisoner)
+
+    val idDocument = setOf(IdTypeEntity(1, "Birth certificate"))
+
+    val assessment1 = AssessmentEntity(null, prisoner, LocalDateTime.now(), LocalDateTime.now(), isBankAccountRequired = true, isIdRequired = true, idDocument, false, null)
+    val assessment2 = AssessmentEntity(null, prisoner, LocalDateTime.now(), LocalDateTime.now(), isBankAccountRequired = true, isIdRequired = true, idDocument, true, LocalDateTime.now())
+
+    assessmentRepository.save(assessment1)
+    assessmentRepository.save(assessment2)
+
+    val assessmentFromDatabase = assessmentRepository.findByPrisonerAndIsDeleted(prisoner)
+
+    assertThat(assessmentFromDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(assessment1)
+  }
 }

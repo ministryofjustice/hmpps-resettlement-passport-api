@@ -7,5 +7,5 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 
 @Repository
 interface AssessmentRepository : JpaRepository<AssessmentEntity, Long> {
-  fun findByPrisoner(prisoner: PrisonerEntity): AssessmentEntity?
+  fun findByPrisonerAndIsDeleted(prisoner: PrisonerEntity, isDeleted: Boolean = false): AssessmentEntity?
 }

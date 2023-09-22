@@ -27,7 +27,7 @@
             "recall": false,
             "indeterminateSentence": false,
             "receptionDate": "2000-01-01",
-            "approvedParoleDate": "2034-04-07",
+            "actualParoleDate": "2034-04-07",
             "locationDescription": "Moorland (HMP & YOI)",
             "restrictedPatient": false,
             "currentIncentive": {
@@ -63,7 +63,7 @@
             "recall": false,
             "indeterminateSentence": false,
             "receptionDate": "2023-04-15",
-            "HDCApprovedDate": "2034-04-07",
+            "homeDetentionCurfewActualDate": "2034-04-07",
             "locationDescription": "Moorland (HMP & YOI)",
             "restrictedPatient": false,
             "currentIncentive": {
@@ -97,8 +97,8 @@
             "lastMovementReasonCode": "INT",
             "inOutStatus": "IN",
             "confirmedReleaseDate": "2034-03-31",
-            "approvedParoleDate": "2033-04-07",
-            "HDCApprovedDate": "2033-04-07",
+            "actualParoleDate": "2033-04-07",
+            "homeDetentionCurfewActualDate": "2033-04-07",
             "conditionalReleaseDate": "2033-03-31",
             "automaticReleaseDate": "2033-04-07",
             "prisonId": "MDI",

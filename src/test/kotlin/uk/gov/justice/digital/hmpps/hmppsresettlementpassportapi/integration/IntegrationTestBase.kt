@@ -16,14 +16,13 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBas
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.AllocationManagerApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ArnApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CaseNotesApiMockServer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CommunityApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CvlApiMockServer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.DeliusApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.KeyWorkerApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.OffenderSearchApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonRegisterApiMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ResettlementPassportDeliusApiMockServer
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
@@ -48,9 +47,6 @@ abstract class IntegrationTestBase : TestBase() {
     val cvlApiMockServer = CvlApiMockServer()
 
     @JvmField
-    val communityApiMockServer = CommunityApiMockServer()
-
-    @JvmField
     val arnApiMockServer = ArnApiMockServer()
 
     @JvmField
@@ -69,7 +65,7 @@ abstract class IntegrationTestBase : TestBase() {
     val allocationManagerApiMockServer = AllocationManagerApiMockServer()
 
     @JvmField
-    val deliusApiMockServer = DeliusApiMockServer()
+    val deliusApiMockServer = ResettlementPassportDeliusApiMockServer()
 
     @BeforeAll
     @JvmStatic
@@ -78,7 +74,6 @@ abstract class IntegrationTestBase : TestBase() {
       hmppsAuthMockServer.stubGrantToken()
       prisonRegisterApiMockServer.start()
       cvlApiMockServer.start()
-      communityApiMockServer.start()
       arnApiMockServer.start()
       offenderSearchApiMockServer.start()
       prisonApiMockServer.start()
@@ -94,7 +89,6 @@ abstract class IntegrationTestBase : TestBase() {
       prisonRegisterApiMockServer.stop()
       hmppsAuthMockServer.stop()
       cvlApiMockServer.stop()
-      communityApiMockServer.stop()
       arnApiMockServer.stop()
       offenderSearchApiMockServer.stop()
       prisonApiMockServer.stop()

@@ -1,21 +1,26 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.reactive.awaitSingle
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.awaitBodyOrNull
 import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.MappaData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.communityapi.CaseIdentifiers
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.communityapi.Manager
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.communityapi.MappaDetail
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.AppointmentsDeliusList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import java.time.LocalDate
 
 @Service
-class CommunityApiService(
-  private val communityWebClientClientCredentials: WebClient,
+class ResettlementPassportDeliusApiService(
+  private val rpDeliusWebClientCredentials: WebClient,
   private val prisonerRepository: PrisonerRepository,
 ) {
 
@@ -28,7 +33,7 @@ class CommunityApiService(
   }
 
   suspend fun getCrn(nomsId: String): String? {
-    val offenderDetails = communityWebClientClientCredentials.get()
+    val offenderDetails = rpDeliusWebClientCredentials.get()
       .uri("/probation-cases/$nomsId/crn")
       .retrieve()
       .onStatus(
@@ -43,7 +48,7 @@ class CommunityApiService(
 
   suspend fun getMappaDataByNomsId(nomsId: String): MappaData? {
     val crn = findCrn(nomsId) ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $nomsId in database")
-    val mappaDetail = communityWebClientClientCredentials.get()
+    val mappaDetail = rpDeliusWebClientCredentials.get()
       .uri("/probation-cases/$crn/mappa")
       .retrieve()
       .onStatus(
@@ -65,7 +70,7 @@ class CommunityApiService(
   suspend fun getComByNomsId(nomsId: String): String? {
     val crn = findCrn(nomsId) ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $nomsId in database")
 
-    val communityManager = communityWebClientClientCredentials.get()
+    val communityManager = rpDeliusWebClientCredentials.get()
       .uri("/probation-cases/$crn/community-manager")
       .retrieve()
       .bodyToMono<Manager>()
@@ -83,5 +88,24 @@ class CommunityApiService(
     }
 
     return "${communityManager.name.forename} ${communityManager.name.surname}".convertNameToTitleCase()
+  }
+
+  fun fetchAppointments(crn: String, startDate: LocalDate, endDate: LocalDate, page: Int, size: Int): Flow<AppointmentsDeliusList> = flow {
+    val data = rpDeliusWebClientCredentials.get()
+      .uri(
+        "/appointments/{crn}?page={page}&size={size}&startDate={startDate}&endDate={endDate}",
+        mapOf(
+          "crn" to crn,
+          "size" to size,
+          "page" to page,
+          "startDate" to startDate.toString(),
+          "endDate" to endDate.toString(),
+        ),
+      )
+      .retrieve().onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("CRN  $crn not found") })
+    val pageOfData = data.awaitBodyOrNull<AppointmentsDeliusList>()
+    if (pageOfData != null) {
+      emit(pageOfData)
+    }
   }
 }

@@ -10,7 +10,7 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
     val expectedOutput = readFile("testdata/expectation/appointments.json")
     val nomisId = "G1458GV"
     val crn = "CRN1"
-    communityApiMockServer.stubGetCrnFromNomsId(nomisId, crn)
+    deliusApiMockServer.stubGetCrnFromNomsId(nomisId, crn)
     deliusApiMockServer.stubGetAppointmentsFromCRN(crn, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomisId/appointments?page=0&size=50")
@@ -46,7 +46,7 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
   fun `Get All Appointments  Internal Error`() {
     val nomisId = "G1458GV"
     val crn = "CRN1"
-    communityApiMockServer.stubGetCrnFromNomsId(nomisId, crn)
+    deliusApiMockServer.stubGetCrnFromNomsId(nomisId, crn)
     deliusApiMockServer.stubGetAppointmentsFromCRN(crn, 500)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomisId/appointments?page=0&size=50")

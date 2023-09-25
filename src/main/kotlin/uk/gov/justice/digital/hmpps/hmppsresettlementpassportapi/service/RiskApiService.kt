@@ -22,7 +22,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.arnapi.Ris
 
 @Service
 class RiskApiService(
-  private val communityApiService: CommunityApiService,
+  private val communityApiService: ResettlementPassportDeliusApiService,
   private val arnWebClientClientCredentials: WebClient,
 ) {
 

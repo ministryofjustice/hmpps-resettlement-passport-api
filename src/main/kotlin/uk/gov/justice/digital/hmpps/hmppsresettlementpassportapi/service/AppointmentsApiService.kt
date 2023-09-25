@@ -40,14 +40,14 @@ class AppointmentsApiService(
     var crn = prisonerEntity.crn
 
     crn = if (crn.isBlank() or crn.isEmpty()) {
-      rpDeliuseApiService.getCrn(nomisId).toString()
+      rpDeliusApiService.getCrn(nomisId).toString()
     } else {
       prisonerEntity.crn
     }
 
     var appointmentList = AppointmentsList(listOf(), 0, 0, 0, 0)
 
-    val deliusAppointments = rpDeliuseApiService.fetchAppointments(crn, startDate, endDate, pageNumber, pageSize)
+    val deliusAppointments = rpDeliusApiService.fetchAppointments(crn, startDate, endDate, pageNumber, pageSize)
     deliusAppointments.collect {
       val appList: List<Appointment> = objectMapper(it.results)
       appointmentList = AppointmentsList(appList, it.totalElements, it.totalPages, it.page, it.size)

@@ -23,8 +23,7 @@ data class BankApplicationEntity(
   @JoinColumn(name = "prisoner_id", referencedColumnName = "id")
   val prisoner: PrisonerEntity,
 
-  @OneToMany(cascade = [CascadeType.ALL])
-  @JoinColumn(name = "bank_application_id", referencedColumnName = "id")
+  @OneToMany(mappedBy = "bankApplication")
   var logs: Set<BankApplicationStatusLogEntity>,
 
   @Column(name = "when_created")

@@ -205,6 +205,7 @@ class BankApplicationResourceController(private val bankApplicationApiService: B
       )
     }
     bankApplicationApiService.updateBankApplication(existingBankApplication = bankApplication, bankApplicationDTO)
-    return bankApplicationApiService.getBankApplicationByNomsId(prisonerId) ?: throw ResourceNotFoundException("Something went wrong")
+    return bankApplicationApiService.getBankApplicationByNomsId(prisonerId)
+      ?: throw ResourceNotFoundException("Bank application for prisoner: $prisonerId not found after update")
   }
 }

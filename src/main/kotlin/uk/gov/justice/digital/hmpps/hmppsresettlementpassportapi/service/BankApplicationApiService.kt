@@ -68,12 +68,14 @@ class BankApplicationApiService(
     )
     val newStatus = BankApplicationStatusLogEntity(null, bankApplication, statusChangedTo = statusText, now)
     bankApplicationStatusLogRepository.save(newStatus)
-    return getBankApplicationByNomsId(nomsId) ?: throw ResourceNotFoundException("Something went wrong")
+    return getBankApplicationByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Bank application for prisoner with id $nomsId not found in database ")
   }
 
   @Transactional
   suspend fun updateBankApplication(existingBankApplication: BankApplicationEntity, bankApplicationDTO: BankApplicationDTO) {
-    var logs = bankApplicationStatusLogRepository.findByBankApplication(existingBankApplication) ?: throw ResourceNotFoundException("Something went wrong")
+    var logs = bankApplicationStatusLogRepository.findByBankApplication(existingBankApplication)
+      ?: throw ResourceNotFoundException("Bank application for prisoner with id ${existingBankApplication.prisoner.nomsId} not found in database ")
 
     logs[0].bankApplication?.bankResponseDate = bankApplicationDTO.bankResponseDate ?: logs[0].bankApplication?.bankResponseDate
     logs[0].bankApplication?.status = bankApplicationDTO.status ?: logs[0].bankApplication?.status!!

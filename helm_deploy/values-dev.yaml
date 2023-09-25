@@ -19,6 +19,7 @@ generic-service:
     API_BASE_URL_OFFENDER-CASE-NOTES: https://dev.offender-case-notes.service.justice.gov.uk
     API_BASE_URL_KEY-WORKER: http://key-worker-api-stub
     API_BASE_URL_ALLOCATION-MANAGER: http://allocation-manager-api-stub
+    API_BASE_URL_RESETTLEMENT-PASSPORT-AND-DELIUS: https://resettlement-passport-and-delius-dev.hmpps.service.justice.gov.uk
 
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
@@ -35,3 +36,4 @@ deploy_stubs:
   - prison-api
   - key-worker-api
   - allocation-manager-api
+  - resettlement-passport-and-delius-api

@@ -6,6 +6,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import java.time.LocalDateTime
@@ -18,10 +19,11 @@ data class BankApplicationStatusLogEntity(
   val id: Long?,
 
   @ManyToOne(cascade = [CascadeType.ALL])
+  @JoinColumn(name = "bank_application_id", nullable = false)
   val bankApplication: BankApplicationEntity?,
 
   @Column(name = "status_changed_to")
-  var status_changed_to: String,
+  var statusChangedTo: String,
 
   @Column(name = "changed_at")
   val changedAtDate: LocalDateTime,

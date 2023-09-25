@@ -23,9 +23,8 @@ data class BankApplicationEntity(
   @JoinColumn(name = "prisoner_id", referencedColumnName = "id")
   val prisoner: PrisonerEntity,
 
-  @OneToMany(cascade = [CascadeType.ALL])
-  @JoinColumn(name = "bank_application_id", referencedColumnName = "id")
-  val logs: Set<BankApplicationStatusLogEntity>?,
+  @OneToMany(mappedBy = "bankApplication")
+  var logs: Set<BankApplicationStatusLogEntity>,
 
   @Column(name = "when_created")
   val creationDate: LocalDateTime,
@@ -34,7 +33,7 @@ data class BankApplicationEntity(
   val applicationSubmittedDate: LocalDateTime,
 
   @Column(name = "bank_response_date")
-  val bankResponseDate: LocalDateTime? = null,
+  var bankResponseDate: LocalDateTime? = null,
 
   @Column(name = "status")
   var status: String,

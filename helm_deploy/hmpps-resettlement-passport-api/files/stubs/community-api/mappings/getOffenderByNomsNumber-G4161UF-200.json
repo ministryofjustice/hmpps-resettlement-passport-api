@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/secure/offenders/nomsNumber/G4161UF"
+    "urlPath": "/probation-cases/G4161UF/crn"
   },
   "response": {
     "status": 200,

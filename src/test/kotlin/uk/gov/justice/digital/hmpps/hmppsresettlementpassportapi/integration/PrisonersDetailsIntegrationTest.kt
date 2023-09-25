@@ -21,6 +21,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
     communityApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
+    prisonRegisterApiMockServer.stubPrisonList(200)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId")
@@ -61,6 +62,25 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(404)
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(404)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
+  fun `Get Prisoner Details - prison not active (RP2-557)`() {
+    val nomsId = "123"
+    offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
+    communityApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
+    prisonRegisterApiMockServer.stubPrisonListNoData(200)
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isNotFound
       .expectHeader().contentType("application/json")
       .expectBody()
       .jsonPath("status").isEqualTo(404)

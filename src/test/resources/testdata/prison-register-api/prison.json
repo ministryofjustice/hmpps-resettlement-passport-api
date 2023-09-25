@@ -5,6 +5,11 @@
     "active": "false"
   },
   {
+    "prisonId": "MDI",
+    "prisonName": "Moorland (HMP & YOI)",
+    "active": "true"
+  },
+  {
     "prisonId": "SWI",
     "prisonName": "Swansea (HMP & YOI)",
     "active": "true"

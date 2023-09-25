@@ -8,15 +8,20 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.springframework.web.reactive.function.client.WebClient
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prison
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
@@ -52,6 +57,9 @@ class OffenderSearchApiServiceTest {
   @Mock
   private lateinit var pathwayApiService: PathwayApiService
 
+  @Mock
+  private lateinit var prisonApiService: PrisonApiService
+
   @BeforeEach
   fun beforeEach() {
     mockWebServer.start()
@@ -63,8 +71,8 @@ class OffenderSearchApiServiceTest {
       webClient,
       webClient,
       pathwayApiService,
+      prisonApiService,
     )
-    mockDatabaseCalls()
   }
 
   @AfterEach
@@ -74,6 +82,8 @@ class OffenderSearchApiServiceTest {
 
   @Test
   fun `test get PrisonersList happy path full json with sort releaseDate Descending`() = runTest {
+    mockDatabaseCalls()
+
     val prisonId = "MDI"
     val expectedPrisonerId = "A8229DY"
 
@@ -85,6 +95,8 @@ class OffenderSearchApiServiceTest {
 
   @Test
   fun `test get PrisonersList happy path full json with sort releaseDate Descending with youth offenders`() = runTest {
+    mockDatabaseCalls()
+
     val prisonId = "MDI"
 
     val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-2.json")
@@ -96,6 +108,8 @@ class OffenderSearchApiServiceTest {
 
   @Test
   fun `test get PrisonersList happy path full json with sort releaseDate Ascending`() = runTest {
+    mockDatabaseCalls()
+
     val prisonId = "MDI"
     val expectedPrisonerId = "A8339DY"
 
@@ -111,6 +125,8 @@ class OffenderSearchApiServiceTest {
 
   @Test
   fun `test get PrisonersList happy path full json with sort firstName Ascending`() = runTest {
+    mockDatabaseCalls()
+
     val prisonId = "MDI"
     val expectedPrisonerId = "G6628UE"
 
@@ -122,6 +138,8 @@ class OffenderSearchApiServiceTest {
 
   @Test
   fun `test get PrisonersList happy path full json for page size`() = runTest {
+    mockDatabaseCalls()
+
     val prisonId = "MDI"
     val expectedPageSize = 5
 
@@ -150,6 +168,8 @@ class OffenderSearchApiServiceTest {
 
   @Test
   fun `test get PrisonersList happy path full json with release date filter`() = runTest {
+    mockDatabaseCalls()
+
     val prisonId = "MDI"
     val expectedPrisonerId = "G6628UE"
     val days = 84
@@ -332,4 +352,32 @@ class OffenderSearchApiServiceTest {
     totalElements = 7,
     last = true,
   )
+
+  @Test
+  fun `test check prisoner is in active prison - happy path`() = runTest {
+    `when`(prisonApiService.getActivePrisonsList()).thenReturn(
+      mutableListOf(
+        Prison("ABC", "Test prison ABC", true),
+        Prison("DEF", "Test prison DEF", true),
+        Prison("GHI", "Test prison GHI", true),
+      ),
+    )
+    assertDoesNotThrow {
+      offenderSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("ABC"))
+      offenderSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("DEF"))
+      offenderSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("GHI"))
+    }
+  }
+
+  @Test
+  fun `test check prisoner is in active prison - not found`() = runTest {
+    `when`(prisonApiService.getActivePrisonsList()).thenReturn(mutableListOf())
+    assertThrows<ResourceNotFoundException> {
+      offenderSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("ABC"))
+      offenderSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("DEF"))
+      offenderSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("GHI"))
+    }
+  }
+
+  private fun createPrisoner(prisonId: String) = PrisonersSearch(prisonerNumber = "A123456", firstName = "firstName", lastName = "lastName", prisonId = prisonId, prisonName = "prisonName", cellLocation = null, youthOffender = false)
 }

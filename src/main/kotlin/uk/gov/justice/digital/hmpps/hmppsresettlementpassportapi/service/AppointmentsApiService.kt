@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter
 @Service
 class AppointmentsApiService(
   private val prisonerRepository: PrisonerRepository,
-  private val rpDeliuseApiService: ResettlementPassportDeliusApiService,
+  private val rpDeliusApiService: ResettlementPassportDeliusApiService,
 ) {
 
   suspend fun getAppointmentsByNomisId(

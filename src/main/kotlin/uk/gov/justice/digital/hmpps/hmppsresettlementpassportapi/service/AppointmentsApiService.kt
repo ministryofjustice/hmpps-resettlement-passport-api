@@ -2,8 +2,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.toList
-import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -63,19 +61,19 @@ class AppointmentsApiService(
         "Page $pageNumber and Size $pageSize",
       )
     }
-    val prisonerEntity = prisonerRepository.findByNomsId(nomisId)
-    var crn: String
-    if (prisonerEntity == null) {
-      crn = communityApiService.getCrn(nomisId).toString()
+    val prisonerEntity = prisonerRepository.findByNomsId(nomisId) ?: throw ResourceNotFoundException("Prisoner with id $nomisId not found in database")
+
+    var crn = prisonerEntity.crn
+
+    crn = if (crn.isBlank() or crn.isEmpty()) {
+      communityApiService.getCrn(nomisId).toString()
     } else {
-      crn = prisonerEntity.crn
+      prisonerEntity.crn
     }
 
     var appointmentList = AppointmentsList(listOf(), 0, 0, 0, 0)
-    log.fatal("CRN " + crn)
 
     val deliusAppointments = fetchAppointments(crn, startDate, endDate, pageNumber, pageSize)
-    log.fatal("After fetchAppointments " + deliusAppointments.toList().size)
     deliusAppointments.collect {
       val appList: List<Appointment> = objectMapper(it.results)
       appointmentList = AppointmentsList(appList, it.totalElements, it.totalPages, it.page, it.size)

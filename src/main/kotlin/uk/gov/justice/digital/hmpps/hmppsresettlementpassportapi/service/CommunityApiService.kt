@@ -33,7 +33,7 @@ class CommunityApiService(
       .retrieve()
       .onStatus(
         { it == HttpStatus.NOT_FOUND },
-        { throw ResourceNotFoundException("Cannot find CRN for NomsId $nomsId in Community API") },
+        { throw ResourceNotFoundException("Cannot find CRN for NomsId $nomsId in Delius API") },
       )
       .bodyToMono<CaseIdentifiers>()
       .awaitSingle()
@@ -48,7 +48,7 @@ class CommunityApiService(
       .retrieve()
       .onStatus(
         { it == HttpStatus.NOT_FOUND },
-        { throw ResourceNotFoundException("Cannot find MAPPA Data for NomsId $nomsId / CRN $crn in Community API") },
+        { throw ResourceNotFoundException("Cannot find MAPPA Data for NomsId $nomsId / CRN $crn in Delius API") },
       )
       .bodyToMono<MappaDetail>()
       .awaitSingle()
@@ -71,7 +71,7 @@ class CommunityApiService(
       .bodyToMono<Manager>()
       .onErrorReturn(
         {
-          log.warn("Unexpected error from Community API - ignoring but COM data will be missing from response!", it)
+          log.warn("Unexpected error from Delius API - ignoring but COM data will be missing from response!", it)
           true
         },
         Manager(null, true),

@@ -21,6 +21,7 @@ api:
       offender-case-notes: http://localhost:8099
       key-worker: http://localhost:8100
       allocation-manager: http://localhost:8101
+      resettlement-passport-delius: http://localhost:8102
 
 spring:
   devtools:

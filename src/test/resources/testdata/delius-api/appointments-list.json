@@ -1,0 +1,1234 @@
+{
+  "results": [
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2023-11-25T13:00:00Z",
+      "duration": "PT1H",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location",
+        "addresss": {
+          "buildingName": "Old Court  ",
+          "buildingNumber": "11",
+          "streetName": "Old Street",
+          "district": "OldPlace",
+          "town": "Old Town",
+          "county": "London",
+          "postcode": "EC3"
+        }
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "RSSR",
+        "description": "Rescheduled - Service Request"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2023-10-31T01:34:00Z",
+      "duration": "PT1M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location",
+        "address": {
+          "buildingName": "New Court  ",
+          "buildingNumber": "10",
+          "streetName": "New Street",
+          "district": "NewPlace",
+          "town": "New Town",
+          "county": "London",
+          "postcode": "EC2"
+        }
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "RSSR",
+        "description": "Rescheduled - Service Request"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2023-09-07T16:35:00+01:00",
+      "duration": "PT5M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location",
+        "address": {
+          "buildingName": "New Court  ",
+          "buildingNumber": "10",
+          "streetName": "New Street",
+          "district": "NewPlace",
+          "town": "New Town",
+          "county": "London",
+          "postcode": "EC2"
+        }
+      },
+      "description": "Appointment with CRS Staff (NS)"
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-09-02T01:01:00+01:00",
+      "duration": "PT1M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location",
+        "address": {
+          "buildingName": "Palm Court  ",
+          "buildingNumber": "10",
+          "streetName": "Palm Street",
+          "district": "PalmPlace",
+          "town": "Palm Town",
+          "county": "London",
+          "postcode": "EC4"
+        }
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "RSSR",
+        "description": "Rescheduled - Service Request"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-08-31T11:09:00+01:00",
+      "duration": "PT5M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location",
+        "address": {
+          "buildingName": "Palm Court  ",
+          "buildingNumber": "10",
+          "streetName": "Palm Street",
+          "district": "PalmPlace",
+          "town": "Palm Town",
+          "county": "London",
+          "postcode": "EC4"
+        }
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "RSSR",
+        "description": "Rescheduled - Service Request"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-08-31T10:09:00+01:00",
+      "duration": "PT5M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location",
+        "address": {
+          "buildingName": "Palm Court  ",
+          "buildingNumber": "10",
+          "streetName": "Palm Street",
+          "district": "PalmPlace",
+          "town": "Palm Town",
+          "county": "London",
+          "postcode": "EC4"
+        }
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "ATTC",
+        "description": "Attended - Complied"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-08-31T08:08:00+01:00",
+      "duration": "PT1M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "ATTC",
+        "description": "Attended - Complied"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-08-31T07:07:00+01:00",
+      "duration": "PT1M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "ATTC",
+        "description": "Attended - Complied"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-08-31T05:01:00+01:00",
+      "duration": "PT1M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "ATTC",
+        "description": "Attended - Complied"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-08-31T04:35:00+01:00",
+      "duration": "PT1M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "ATTC",
+        "description": "Attended - Complied"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-08-31T03:03:00+01:00",
+      "duration": "PT5M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "ATTC",
+        "description": "Attended - Complied"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2023-08-31T02:32:00+01:00",
+      "duration": "PT5M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "ATTC",
+        "description": "Attended - Complied"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2023-08-31T01:34:00+01:00",
+      "duration": "PT1M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "ATTC",
+        "description": "Attended - Complied"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2023-08-20T01:00:00+01:00",
+      "duration": "PT1H",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Staff (NS)"
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-07-27T15:47:00+01:00",
+      "duration": "PT1M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)"
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-07-27T15:40:00+01:00",
+      "duration": "PT1M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "AFTA",
+        "description": "Failed to Attend"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-07-26T17:30:00+01:00",
+      "duration": "PT10M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "ATTC",
+        "description": "Attended - Complied"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-07-26T17:25:00+01:00",
+      "duration": "PT10M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "RSSR",
+        "description": "Rescheduled - Service Request"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-07-26T17:23:00+01:00",
+      "duration": "PT10M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "AFTA",
+        "description": "Failed to Attend"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-07-26T17:15:00+01:00",
+      "duration": "PT10M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "AFTC",
+        "description": "Attended - Failed to Comply"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2023-07-26T17:00:00+01:00",
+      "duration": "PT15M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "AFTC",
+        "description": "Attended - Failed to Comply"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2023-07-26T13:00:00+01:00",
+      "duration": "PT1H",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "RSSR",
+        "description": "Rescheduled - Service Request"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2023-07-25T15:40:00+01:00",
+      "duration": "PT10H",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "AFTC",
+        "description": "Attended - Failed to Comply"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2023-07-21T13:00:00+01:00",
+      "duration": "PT1H",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "RSSR",
+        "description": "Rescheduled - Service Request"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-07-16T13:00:00+01:00",
+      "duration": "PT1H",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "RSSR",
+        "description": "Rescheduled - Service Request"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-07-13T14:00:00+01:00",
+      "duration": "PT1H",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "RSSR",
+        "description": "Rescheduled - Service Request"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-07-12T15:52:00+01:00",
+      "duration": "PT1M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "AFTC",
+        "description": "Attended - Failed to Comply"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-07-12T13:58:00+01:00",
+      "duration": "PT1H",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "AFTC",
+        "description": "Attended - Failed to Comply"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-07-11T15:10:00+01:00",
+      "duration": "PT1H",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "AFTA",
+        "description": "Failed to Attend"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-07-11T15:00:00+01:00",
+      "duration": "PT1H",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "RSSR",
+        "description": "Rescheduled - Service Request"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-07-11T14:05:00+01:00",
+      "duration": "PT1H",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "AFTC",
+        "description": "Attended - Failed to Comply"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-07-11T14:02:00+01:00",
+      "duration": "PT1H",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "AFTA",
+        "description": "Failed to Attend"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2023-07-11T14:00:00+01:00",
+      "duration": "PT1H",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "RSSR",
+        "description": "Rescheduled - Service Request"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2023-07-11T13:58:00+01:00",
+      "duration": "PT1H",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "RSSR",
+        "description": "Rescheduled - Service Request"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-07-11T13:58:00+01:00",
+      "duration": "PT1H",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "RSSR",
+        "description": "Rescheduled - Service Request"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2023-07-11T13:38:00+01:00",
+      "duration": "PT1H",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "ATTC",
+        "description": "Attended - Complied"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2023-07-11T11:23:00+01:00",
+      "duration": "PT1M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "AFTC",
+        "description": "Attended - Failed to Comply"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2023-07-11T11:20:00+01:00",
+      "duration": "PT1M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "AFTA",
+        "description": "Failed to Attend"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2023-07-10T10:08:00+01:00",
+      "duration": "PT2M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "AFTC",
+        "description": "Attended - Failed to Comply"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-07-06T01:01:00+01:00",
+      "duration": "PT1H1M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "ATTC",
+        "description": "Attended - Complied"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-06-25T15:00:00+01:00",
+      "duration": "PT2H",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)"
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-06-15T15:00:00+01:00",
+      "duration": "PT2H",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "RSSR",
+        "description": "Rescheduled - Service Request"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2023-05-22T14:40:00+01:00",
+      "duration": "PT2M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "ATTC",
+        "description": "Attended - Complied"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-05-22T14:32:00+01:00",
+      "duration": "PT1M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "ATTC",
+        "description": "Attended - Complied"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-05-22T14:28:00+01:00",
+      "duration": "PT1M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "RSSR",
+        "description": "Rescheduled - Service Request"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-05-22T14:19:00+01:00",
+      "duration": "PT2M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "ATTC",
+        "description": "Attended - Complied"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-05-22T14:16:00+01:00",
+      "duration": "PT2M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "AFTA",
+        "description": "Failed to Attend"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSAPT",
+        "description": "Appointment with CRS Provider (NS)"
+      },
+      "dateTime": "2023-05-22T14:13:00+01:00",
+      "duration": "PT2M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)",
+      "outcome": {
+        "code": "RSSR",
+        "description": "Rescheduled - Service Request"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2023-05-22T13:47:00+01:00",
+      "duration": "PT2M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "ATTC",
+        "description": "Attended - Complied"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2023-05-22T13:42:00+01:00",
+      "duration": "PT1M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "AFTA",
+        "description": "Failed to Attend"
+      }
+    }
+  ],
+  "totalElements": 50,
+  "totalPages": 1,
+  "page": 0,
+  "size": 50
+}

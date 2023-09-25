@@ -24,6 +24,8 @@ api:
       #key-worker: https://keyworker-api-dev.prison.service.justice.gov.uk
       allocation-manager: http://localhost:8088
       #https://allocation-manager-staging.apps.live.cloud-platform.service.justice.gov.uk
+      resettlement-passport-delius: http://localhost:8089
+      #https://resettlement-passport-and-delius-dev.hmpps.service.justice.gov.uk/
 
 management.endpoint:
   health.cache.time-to-live: 0

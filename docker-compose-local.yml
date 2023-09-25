@@ -123,5 +123,17 @@ services:
     volumes:
       - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/allocation-manager-api:/home/wiremock:ro"
 
+  resettlement-passport-and-delius-api-stub:
+    image: wiremock/wiremock
+    command: "--no-request-journal --global-response-templating --verbose"
+    networks:
+      - hmpps
+    container_name: resettlement-passport-and-delius-api-stub
+    ports:
+      - "8089:8080"
+    volumes:
+      - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/resettlement-passport-and-delius-api:/home/wiremock:ro"
+
+
 networks:
   hmpps:

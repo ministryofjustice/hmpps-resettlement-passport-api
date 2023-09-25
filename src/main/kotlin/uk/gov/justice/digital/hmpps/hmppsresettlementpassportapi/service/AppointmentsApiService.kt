@@ -1,18 +1,12 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
-import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.awaitBodyOrNull
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Address
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Appointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AppointmentsList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.AppointmentDelius
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.AppointmentsDeliusList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -20,29 +14,9 @@ import java.time.format.DateTimeFormatter
 
 @Service
 class AppointmentsApiService(
-  private val rpDeliusWebClientCredentials: WebClient,
   private val prisonerRepository: PrisonerRepository,
-  private val communityApiService: CommunityApiService,
+  private val rpDeliusApiService: ResettlementPassportDeliusApiService,
 ) {
-
-  private fun fetchAppointments(crn: String, startDate: LocalDate, endDate: LocalDate, page: Int, size: Int): Flow<AppointmentsDeliusList> = flow {
-    val data = rpDeliusWebClientCredentials.get()
-      .uri(
-        "/appointments/{crn}?page={page}&size={size}&startDate={startDate}&endDate={endDate}",
-        mapOf(
-          "crn" to crn,
-          "size" to size,
-          "page" to page,
-          "startDate" to startDate.toString(),
-          "endDate" to endDate.toString(),
-        ),
-      )
-      .retrieve().onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("CRN  $crn not found") })
-    val pageOfData = data.awaitBodyOrNull<AppointmentsDeliusList>()
-    if (pageOfData != null) {
-      emit(pageOfData)
-    }
-  }
 
   suspend fun getAppointmentsByNomisId(
     nomisId: String,
@@ -66,14 +40,14 @@ class AppointmentsApiService(
     var crn = prisonerEntity.crn
 
     crn = if (crn.isBlank() or crn.isEmpty()) {
-      communityApiService.getCrn(nomisId).toString()
+      rpDeliusApiService.getCrn(nomisId).toString()
     } else {
       prisonerEntity.crn
     }
 
     var appointmentList = AppointmentsList(listOf(), 0, 0, 0, 0)
 
-    val deliusAppointments = fetchAppointments(crn, startDate, endDate, pageNumber, pageSize)
+    val deliusAppointments = rpDeliusApiService.fetchAppointments(crn, startDate, endDate, pageNumber, pageSize)
     deliusAppointments.collect {
       val appList: List<Appointment> = objectMapper(it.results)
       appointmentList = AppointmentsList(appList, it.totalElements, it.totalPages, it.page, it.size)

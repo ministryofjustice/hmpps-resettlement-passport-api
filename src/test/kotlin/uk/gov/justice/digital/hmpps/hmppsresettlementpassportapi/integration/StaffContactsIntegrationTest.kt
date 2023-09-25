@@ -8,7 +8,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
 
   @AfterEach
   fun afterEach() {
-    communityApiMockServer.resetMappings()
+    deliusApiMockServer.resetMappings()
     keyWorkerApiMockServer.resetMappings()
     allocationManagerApiMockServer.resetMappings()
   }
@@ -20,7 +20,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/staff-contacts-1.json")
 
-    communityApiMockServer.stubGetToCrn("/probation-cases/$crn/community-manager", 200, "testdata/community-api/offender-managers-1.json")
+    deliusApiMockServer.stubGetToCrn("/probation-cases/$crn/community-manager", 200, "testdata/resettlement-passport-delius-api/offender-managers-1.json")
     keyWorkerApiMockServer.stubGet("/key-worker/offender/$prisonerId", 200, "testdata/key-worker-api/key-worker-1.json")
     allocationManagerApiMockServer.stubGet("/api/allocation/$prisonerId", 200, "testdata/allocation-manager-api/poms-1.json")
 
@@ -41,7 +41,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/staff-contacts-2.json")
 
-    communityApiMockServer.stubGetToCrn("/probation-cases/$crn/community-manager", 200, "testdata/community-api/offender-managers-2.json")
+    deliusApiMockServer.stubGetToCrn("/probation-cases/$crn/community-manager", 200, "testdata/resettlement-passport-delius-api/offender-managers-2.json")
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/staff-contacts")
@@ -91,13 +91,13 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
-  fun `get staff contacts happy path error from community API`() {
+  fun `get staff contacts happy path error from delius API`() {
     val prisonerId = "123"
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/staff-contacts-2.json")
 
     // Note that even if an individual call to get a staff contact fails, we should just log this and return no data
-    communityApiMockServer.stubGetToCrn("/probation-cases/$crn/community-manager", 404, null)
+    deliusApiMockServer.stubGetToCrn("/probation-cases/$crn/community-manager", 404, null)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/staff-contacts")

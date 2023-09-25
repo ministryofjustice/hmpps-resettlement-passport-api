@@ -13,7 +13,6 @@ generic-service:
     API_BASE_URL_PRISON-REGISTER: http://prison-register-api-stub
     API_BASE_URL_OFFENDER-SEARCH: http://prisoner-offender-search-api-stub
     API_BASE_URL_CVL: http://cvl-api-stub
-    API_BASE_URL_COMMUNITY: http://community-api-stub
     API_BASE_URL_ARN: http://arn-api-stub
     API_BASE_URL_PRISON: http://prison-api-stub
     API_BASE_URL_OFFENDER-CASE-NOTES: https://dev.offender-case-notes.service.justice.gov.uk
@@ -29,7 +28,6 @@ generic-prometheus-alerts:
 
 deploy_stubs:
   - cvl-api
-  - community-api
   - prison-register-api
   - arn-api
   - prisoner-offender-search-api

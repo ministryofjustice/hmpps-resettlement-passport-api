@@ -5,7 +5,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Contact
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.StaffContacts
 
 @Service
-class StaffContactsApiService(val communityApiService: CommunityApiService, val keyWorkerApiService: KeyWorkerApiService, val allocationManagerApiService: AllocationManagerApiService) {
+class StaffContactsApiService(val communityApiService: ResettlementPassportDeliusApiService, val keyWorkerApiService: KeyWorkerApiService, val allocationManagerApiService: AllocationManagerApiService) {
   suspend fun getStaffContacts(prisonerId: String): StaffContacts {
     // Get COM details from Community API
     val comName = communityApiService.getComByNomsId(prisonerId)

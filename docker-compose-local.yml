@@ -46,17 +46,6 @@ services:
     volumes:
       - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/cvl-api:/home/wiremock:ro"
 
-  community-api-stub:
-    image: wiremock/wiremock
-    command: "--no-request-journal --global-response-templating --verbose"
-    networks:
-      - hmpps
-    container_name: community-api-stub
-    ports:
-      - "8082:8080"
-    volumes:
-      - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/community-api:/home/wiremock:ro"
-
   prison-register-api-stub:
     image: wiremock/wiremock
     command: "--no-request-journal --global-response-templating --verbose"

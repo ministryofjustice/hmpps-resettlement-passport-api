@@ -242,10 +242,10 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/risk-mappa.json")
 
-    communityApiMockServer.stubGetToCrn(
+    deliusApiMockServer.stubGetToCrn(
       "/probation-cases/$crn/mappa",
       200,
-      "testdata/community-api/community-risk-mappa.json",
+      "testdata/resettlement-passport-delius-api/community-risk-mappa.json",
     )
 
     webTestClient.get()
@@ -283,7 +283,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val prisonerId = "123"
     val crn = "abc"
 
-    communityApiMockServer.stubGetToCrn("/probation-cases/$crn/mappa", 404, null)
+    deliusApiMockServer.stubGetToCrn("/probation-cases/$crn/mappa", 404, null)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/mappa")
@@ -306,7 +306,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val prisonerId = "123"
     val crn = "abc"
 
-    communityApiMockServer.stubGetToCrn("/probation-cases/$crn/mappa", 500, null)
+    deliusApiMockServer.stubGetToCrn("/probation-cases/$crn/mappa", 500, null)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/risk/mappa")

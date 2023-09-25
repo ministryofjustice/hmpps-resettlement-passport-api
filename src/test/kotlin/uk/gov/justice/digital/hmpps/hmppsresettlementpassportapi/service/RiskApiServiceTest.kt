@@ -29,7 +29,7 @@ import java.util.stream.Stream
 class RiskApiServiceTest {
 
   @Mock
-  private lateinit var communityApiService: CommunityApiService
+  private lateinit var communityApiService: ResettlementPassportDeliusApiService
 
   @Mock
   private lateinit var arnWebClientClientCredentials: WebClient

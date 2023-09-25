@@ -218,10 +218,7 @@ class OffenderSearchApiService(
   suspend fun getPrisonerDetailsByNomsId(nomsId: String): Prisoner {
     val prisonerSearch = findPrisonerPersonalDetails(nomsId)
 
-    // Send back a 404 if the prisonId is not in the active list as we should only display data for non-released prisoners.
-    if (!prisonApiService.getActivePrisonsList().map { it.id }.contains(prisonerSearch.prisonId)) {
-      throw ResourceNotFoundException("Prisoner with nomsId $nomsId and prisonId ${prisonerSearch.prisonId} not found in any active prison")
-    }
+    checkPrisonerIsInActivePrison(prisonerSearch)
 
     // Add initial pathway statuses if required
     pathwayApiService.addPrisonerAndInitialPathwayStatus(nomsId)
@@ -257,6 +254,13 @@ class OffenderSearchApiService(
     val pathwayStatuses = getPathwayStatuses(prisonerEntity, nomsId)
 
     return Prisoner(prisonerPersonal, pathwayStatuses)
+  }
+
+  suspend fun checkPrisonerIsInActivePrison(prisoner: PrisonersSearch) {
+    // Send back a 404 if the prisonId is not in the active list as we should only display data for non-released prisoners.
+    if (!prisonApiService.getActivePrisonsList().map { it.id }.contains(prisoner.prisonId)) {
+      throw ResourceNotFoundException("Prisoner with nomsId ${prisoner.prisonerNumber} and prisonId ${prisoner.prisonId} not found in any active prison")
+    }
   }
 
   protected fun getPathwayStatuses(

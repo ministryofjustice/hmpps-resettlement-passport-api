@@ -12,7 +12,6 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
@@ -356,11 +355,13 @@ class OffenderSearchApiServiceTest {
 
   @Test
   fun `test check prisoner is in active prison - happy path`() = runTest {
-    `when`(prisonApiService.getActivePrisonsList()).thenReturn(mutableListOf(
-      Prison("ABC", "Test prison ABC", true),
-      Prison("DEF", "Test prison DEF", true),
-      Prison("GHI", "Test prison GHI", true),
-      ))
+    `when`(prisonApiService.getActivePrisonsList()).thenReturn(
+      mutableListOf(
+        Prison("ABC", "Test prison ABC", true),
+        Prison("DEF", "Test prison DEF", true),
+        Prison("GHI", "Test prison GHI", true),
+      ),
+    )
     assertDoesNotThrow {
       offenderSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("ABC"))
       offenderSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("DEF"))

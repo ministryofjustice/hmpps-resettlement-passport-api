@@ -42,6 +42,7 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
   fun `Get All Appointments  Internal Error`() {
     val nomisId = "G1458GV"
     val crn = "CRN1"
@@ -90,6 +91,7 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
   fun `Get All Prisoners with no page and no size as Internal Error`() {
     val nomisId = "G1458GV"
     val crn = "CRN1"

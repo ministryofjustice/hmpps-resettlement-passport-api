@@ -295,8 +295,8 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(404)
       .jsonPath("errorCode").isEmpty
       .jsonPath("userMessage")
-      .isEqualTo("Resource not found. Check request parameters - Cannot find MAPPA Data for NomsId 123 / CRN abc in Community API")
-      .jsonPath("developerMessage").isEqualTo("Cannot find MAPPA Data for NomsId 123 / CRN abc in Community API")
+      .isEqualTo("Resource not found. Check request parameters - Cannot find MAPPA Data for NomsId 123 / CRN abc in Delius API")
+      .jsonPath("developerMessage").isEqualTo("Cannot find MAPPA Data for NomsId 123 / CRN abc in Delius API")
       .jsonPath("moreInfo").isEmpty
   }
 

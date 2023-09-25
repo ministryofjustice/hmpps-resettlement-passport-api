@@ -36,6 +36,7 @@ class OffenderSearchApiService(
   private val offendersSearchWebClientClientCredentials: WebClient,
   private val offendersImageWebClientCredentials: WebClient,
   private val pathwayApiService: PathwayApiService,
+  private val prisonApiService: PrisonApiService,
 ) {
 
   private fun findPrisonersBySearchTerm(prisonId: String, searchTerm: String): Flow<List<PrisonersSearch>> = flow {
@@ -217,6 +218,8 @@ class OffenderSearchApiService(
   suspend fun getPrisonerDetailsByNomsId(nomsId: String): Prisoner {
     val prisonerSearch = findPrisonerPersonalDetails(nomsId)
 
+    checkPrisonerIsInActivePrison(prisonerSearch)
+
     // Add initial pathway statuses if required
     pathwayApiService.addPrisonerAndInitialPathwayStatus(nomsId)
 
@@ -251,6 +254,13 @@ class OffenderSearchApiService(
     val pathwayStatuses = getPathwayStatuses(prisonerEntity, nomsId)
 
     return Prisoner(prisonerPersonal, pathwayStatuses)
+  }
+
+  suspend fun checkPrisonerIsInActivePrison(prisoner: PrisonersSearch) {
+    // Send back a 404 if the prisonId is not in the active list as we should only display data for non-released prisoners.
+    if (!prisonApiService.getActivePrisonsList().map { it.id }.contains(prisoner.prisonId)) {
+      throw ResourceNotFoundException("Prisoner with nomsId ${prisoner.prisonerNumber} and prisonId ${prisoner.prisonId} not found in any active prison")
+    }
   }
 
   protected fun getPathwayStatuses(

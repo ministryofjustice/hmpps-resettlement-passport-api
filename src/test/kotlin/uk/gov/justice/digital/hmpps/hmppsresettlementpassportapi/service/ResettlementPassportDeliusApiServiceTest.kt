@@ -2,7 +2,6 @@
 
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import io.netty.handler.codec.http.HttpHeaders.addHeader
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import okhttp3.mockwebserver.MockResponse
@@ -19,17 +18,17 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.Resource
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 
-class CommunityApiServiceTest {
+class ResettlementPassportDeliusApiServiceTest {
 
   private val mockWebServer: MockWebServer = MockWebServer()
-  private lateinit var communityApiService: CommunityApiService
+  private lateinit var rpDeliusApiService: ResettlementPassportDeliusApiService
 
   @BeforeEach
   fun beforeEach() {
     mockWebServer.start()
     val webClient = WebClient.create(mockWebServer.url("/").toUrl().toString())
     val prisonerRepository: PrisonerRepository = mock()
-    communityApiService = CommunityApiService(webClient, prisonerRepository)
+    rpDeliusApiService = ResettlementPassportDeliusApiService(webClient, prisonerRepository)
   }
 
   @AfterEach
@@ -42,10 +41,10 @@ class CommunityApiServiceTest {
     val nomsId = "ABC1234"
     val expectedCrn = "D345678"
 
-    val mockedJsonResponse = readFile("testdata/community-api/offender-details-valid-1.json")
+    val mockedJsonResponse = readFile("testdata/resettlement-passport-delius-api/offender-details-valid-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
 
-    Assertions.assertEquals(expectedCrn, communityApiService.getCrn(nomsId))
+    Assertions.assertEquals(expectedCrn, rpDeliusApiService.getCrn(nomsId))
   }
 
   @Test
@@ -53,10 +52,10 @@ class CommunityApiServiceTest {
     val nomsId = "ABC1234"
     val expectedCrn = "D345678"
 
-    val mockedJsonResponse = readFile("testdata/community-api/offender-details-valid-2.json")
+    val mockedJsonResponse = readFile("testdata/resettlement-passport-delius-api/offender-details-valid-2.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
 
-    Assertions.assertEquals(expectedCrn, communityApiService.getCrn(nomsId))
+    Assertions.assertEquals(expectedCrn, rpDeliusApiService.getCrn(nomsId))
   }
 
   @Test
@@ -64,7 +63,7 @@ class CommunityApiServiceTest {
     val nomsId = "ABC1234"
 
     mockWebServer.enqueue(MockResponse().setBody("{}").addHeader("Content-Type", "application/json").setResponseCode(404))
-    assertThrows<ResourceNotFoundException> { communityApiService.getCrn(nomsId) }
+    assertThrows<ResourceNotFoundException> { rpDeliusApiService.getCrn(nomsId) }
   }
 
   @Test
@@ -72,6 +71,6 @@ class CommunityApiServiceTest {
     val nomsId = "ABC1234"
 
     mockWebServer.enqueue(MockResponse().setBody("{}").addHeader("Content-Type", "application/json").setResponseCode(500))
-    assertThrows<WebClientResponseException> { communityApiService.getCrn(nomsId) }
+    assertThrows<WebClientResponseException> { rpDeliusApiService.getCrn(nomsId) }
   }
 }

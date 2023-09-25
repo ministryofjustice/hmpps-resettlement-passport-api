@@ -20,7 +20,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
-    communityApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
     prisonRegisterApiMockServer.stubPrisonList(200)
 
     webTestClient.get()
@@ -73,7 +73,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
-    communityApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
     prisonRegisterApiMockServer.stubPrisonListNoData(200)
 
     webTestClient.get()

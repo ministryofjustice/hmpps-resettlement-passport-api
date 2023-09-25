@@ -23,7 +23,7 @@ class PathwayApiService(
   private val prisonerRepository: PrisonerRepository,
   private val pathwayRepository: PathwayRepository,
   private val statusRepository: StatusRepository,
-  private val communityApiService: CommunityApiService,
+  private val communityApiService: ResettlementPassportDeliusApiService,
 ) {
 
   @Transactional

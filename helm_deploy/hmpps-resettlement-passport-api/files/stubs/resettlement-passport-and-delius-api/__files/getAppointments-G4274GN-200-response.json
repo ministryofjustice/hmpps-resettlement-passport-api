@@ -1,0 +1,70 @@
+{
+  "results": [
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2023-09-18T14:46:00+01:00",
+      "duration": "PT1M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location",
+        "Address": {
+          "buildingName": "New Court  ",
+          "buildingNumber": "10",
+          "streetName": "New Street",
+          "district": "NewPlace",
+          "town": "New Town",
+          "county": "London",
+          "postcode": "EC2"
+        }
+      },
+      "description": "Appointment with CRS Staff (NS)"
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2023-09-14T14:05:00+01:00",
+      "duration": "PT1M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location",
+        "Address": {
+          "buildingName": "Old Court  ",
+          "buildingNumber": "11",
+          "streetName": "Old Street",
+          "district": "OldPlace",
+          "town": "Old Town",
+          "county": "London",
+          "postcode": "EC3"
+        }
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "AFTA",
+        "description": "Failed to Attend"
+      }
+    }
+  ],
+  "totalElements": 2,
+  "totalPages": 1,
+  "page": 0,
+  "size": 50
+}

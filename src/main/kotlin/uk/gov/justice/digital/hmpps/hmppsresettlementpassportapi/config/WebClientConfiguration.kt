@@ -27,6 +27,7 @@ class WebClientConfiguration(
   @Value("\${api.base.url.offender-case-notes}") private val offenderCaseNotesUri: String,
   @Value("\${api.base.url.key-worker}") private val keyWorkerRootUri: String,
   @Value("\${api.base.url.allocation-manager}") private val allocationManagerRootUri: String,
+  @Value("\${api.base.url.resettlement-passport-delius}") private val rpDeliusRootUri: String,
 ) {
 
   @Bean
@@ -206,13 +207,18 @@ class WebClientConfiguration(
       .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }
       .build()
   }
-/*
-  private fun addAuthHeaderFilterFunction(): ExchangeFilterFunction =
-    ExchangeFilterFunction { request: ClientRequest, next: ExchangeFunction ->
-      val filtered = ClientRequest.from(request)
-        .header(HttpHeaders.AUTHORIZATION, UserContext.authToken.toString())
-        .build()
-      next.exchange(filtered)
-    }
-  */
+
+  @Bean
+  fun rpDeliusWebClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+    val oauth2Client = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
+    oauth2Client.setDefaultClientRegistrationId(SYSTEM_USERNAME)
+
+    val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
+    return WebClient.builder()
+      .baseUrl(rpDeliusRootUri)
+      .clientConnector(ReactorClientHttpConnector(httpClient))
+      .filter(oauth2Client)
+      .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }
+      .build()
+  }
 }

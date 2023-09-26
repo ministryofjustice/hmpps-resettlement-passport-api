@@ -29,7 +29,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput)
+      .expectBody().json(expectedOutput, true)
   }
 
   @Test

@@ -177,16 +177,7 @@
       },
       "location": {
         "code": "CRSEXTL",
-        "description": "CRS Provider Location",
-        "address": {
-          "buildingName": "Palm Court  ",
-          "buildingNumber": "10",
-          "streetName": "Palm Street",
-          "district": "PalmPlace",
-          "town": "Palm Town",
-          "county": "London",
-          "postcode": "EC4"
-        }
+        "description": "CRS Provider Location"
       },
       "description": "Appointment with CRS Provider (NS)",
       "outcome": {

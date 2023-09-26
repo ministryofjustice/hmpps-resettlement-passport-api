@@ -19,6 +19,7 @@ data class Prisoners(
 
 data class PrisonerPersonal(
   val prisonerNumber: String,
+  val prisonId: String,
   val firstName: String,
   val middleNames: String? = null,
   val lastName: String,

@@ -1,6 +1,7 @@
 {
   "personalDetails": {
     "prisonerNumber": "G4274GN",
+    "prisonId": "MDI",
     "firstName": "John",
     "middleNames": "Michael",
     "lastName": "Smith",

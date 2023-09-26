@@ -12,13 +12,14 @@ data class Appointment(
 )
 
 data class Address(
-  val buildingName: String,
-  val buildingNumber: String,
-  val streetName: String,
-  val district: String,
-  val town: String,
-  val county: String,
-  val postcode: String,
+  val buildingName: String?,
+  val buildingNumber: String?,
+  val streetName: String?,
+  val district: String?,
+  val town: String?,
+  val county: String?,
+  val postcode: String?,
+  val description: String?,
 )
 
 data class AppointmentsList(

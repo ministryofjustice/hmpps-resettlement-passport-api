@@ -59,7 +59,7 @@ class AppointmentsApiService(
   private suspend fun objectMapper(appList: List<AppointmentDelius>): List<Appointment> {
     val appointmentList = mutableListOf<Appointment>()
     appList.forEach {
-      var addressInfo: Address? = null
+      var addressInfo: Address?
       val appointment: Appointment?
       if (it.location?.address != null) {
         addressInfo = Address(
@@ -70,26 +70,19 @@ class AppointmentsApiService(
           it.location.address.town,
           it.location.address.county,
           it.location.address.postcode,
-        )
-      }
-      val formattedDateTime = OffsetDateTime.parse(it.dateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-      appointment = if (addressInfo != null) {
-        Appointment(
-          it.description,
-          it.staff.name.forename + " " + it.staff.name.surname,
-          formattedDateTime.toLocalDate(),
-          formattedDateTime.toLocalTime(),
-          addressInfo,
+          it.location.description,
         )
       } else {
-        Appointment(
-          it.description,
-          it.staff.name.forename + " " + it.staff.name.surname,
-          formattedDateTime.toLocalDate(),
-          formattedDateTime.toLocalTime(),
-          null,
-        )
+        addressInfo = Address(null, null, null, null, null, null, null, it.location?.description)
       }
+      val formattedDateTime = OffsetDateTime.parse(it.dateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+      appointment = Appointment(
+        it.description,
+        it.staff.name.forename + " " + it.staff.name.surname,
+        formattedDateTime.toLocalDate(),
+        formattedDateTime.toLocalTime(),
+        addressInfo,
+      )
       appointmentList.add(appointment)
     }
     return appointmentList

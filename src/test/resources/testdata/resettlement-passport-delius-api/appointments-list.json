@@ -16,16 +16,7 @@
       },
       "location": {
         "code": "CRSEXTL",
-        "description": "CRS Provider Location",
-        "addresss": {
-          "buildingName": "Old Court  ",
-          "buildingNumber": "11",
-          "streetName": "Old Street",
-          "district": "OldPlace",
-          "town": "Old Town",
-          "county": "London",
-          "postcode": "EC3"
-        }
+        "description": "CRS Provider Location"
       },
       "description": "Appointment with CRS Staff (NS)",
       "outcome": {
@@ -51,7 +42,7 @@
         "code": "CRSEXTL",
         "description": "CRS Provider Location",
         "address": {
-          "buildingName": "New Court  ",
+          "buildingName": "New Court",
           "buildingNumber": "10",
           "streetName": "New Street",
           "district": "NewPlace",
@@ -84,7 +75,7 @@
         "code": "CRSEXTL",
         "description": "CRS Provider Location",
         "address": {
-          "buildingName": "New Court  ",
+          "buildingName": "New Court",
           "buildingNumber": "10",
           "streetName": "New Street",
           "district": "NewPlace",
@@ -113,7 +104,7 @@
         "code": "CRSEXTL",
         "description": "CRS Provider Location",
         "address": {
-          "buildingName": "Palm Court  ",
+          "buildingName": "Palm Court",
           "buildingNumber": "10",
           "streetName": "Palm Street",
           "district": "PalmPlace",
@@ -146,7 +137,7 @@
         "code": "CRSEXTL",
         "description": "CRS Provider Location",
         "address": {
-          "buildingName": "Palm Court  ",
+          "buildingName": "Palm Court",
           "buildingNumber": "10",
           "streetName": "Palm Street",
           "district": "PalmPlace",
@@ -179,7 +170,7 @@
         "code": "CRSEXTL",
         "description": "CRS Provider Location",
         "address": {
-          "buildingName": "Palm Court  ",
+          "buildingName": "Palm Court",
           "buildingNumber": "10",
           "streetName": "Palm Street",
           "district": "PalmPlace",

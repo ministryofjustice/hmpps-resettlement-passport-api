@@ -80,4 +80,7 @@ data class IdApplicationEntity(
 
   @Column(name = "deleted_at")
   var deletionDate: LocalDateTime? = null,
+
+  @Column(name = "date_id_received")
+  var dateIdReceived: LocalDateTime? = null,
 )

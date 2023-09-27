@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.communityapi
+package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi
 
 data class Manager(
   val name: Name?,

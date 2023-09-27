@@ -11,10 +11,10 @@ import org.springframework.web.reactive.function.client.awaitBodyOrNull
 import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.MappaData
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.communityapi.CaseIdentifiers
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.communityapi.Manager
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.communityapi.MappaDetail
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.AppointmentsDeliusList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.CaseIdentifiers
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.Manager
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.MappaDetail
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import java.time.LocalDate
 

@@ -1,0 +1,32 @@
+{
+  "id": 1,
+  "prisoner": {
+    "id": 1,
+    "nomsId": "123",
+    "creationDate": "2023-08-16T12:21:38.709",
+    "crn": "abc"
+  },
+  "idType": {
+    "id": 1,
+    "name": "Birth certificate"
+  },
+  "creationDate": "2023-08-17T12:00:01",
+  "applicationSubmittedDate": "2023-08-17T12:00:01",
+  "isPriorityApplication": false,
+  "costOfApplication": 10.5,
+  "refundAmount": null,
+  "haveGro": true,
+  "isUkNationalBornOverseas": false,
+  "countryBornIn": null,
+  "caseNumber": null,
+  "courtDetails": null,
+  "driversLicenceType": null,
+  "driversLicenceApplicationMadeAt": null,
+  "isAddedToPersonalItems": true,
+  "addedToPersonalItemsDate": "2023-08-17T12:00:01",
+  "status": "Accepted",
+  "statusUpdateDate": "2023-08-17T12:00:01",
+  "isDeleted": false,
+  "deletionDate": null,
+  "dateIdReceived": "2023-08-17T12:00:01"
+}

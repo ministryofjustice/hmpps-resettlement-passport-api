@@ -17,5 +17,6 @@
   "currentStatus": "Pending",
   "bankResponseDate": null,
   "isAddedToPersonalItems": null,
-  "addedToPersonalItemsDate": null
+  "addedToPersonalItemsDate": null,
+  "bankName": "Lloyds"
 }

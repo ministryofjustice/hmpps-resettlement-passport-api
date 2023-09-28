@@ -1,0 +1,12 @@
+{
+  "mainAddress": {
+    "buildingName": "New Court",
+    "buildingNumber": "1",
+    "streetName": "New Street",
+    "district": "New District",
+    "town": "New Town",
+    "county": "New County",
+    "postcode": "LS1",
+    "message": "John Smith is currently of no fixed abode. They may require assistance finding accommodation. If a CRS referral or duty to refer have been made, details will be shown above"
+  }
+}

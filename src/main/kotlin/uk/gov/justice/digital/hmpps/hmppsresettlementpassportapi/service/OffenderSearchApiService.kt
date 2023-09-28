@@ -187,7 +187,7 @@ class OffenderSearchApiService(
     return prisonersList
   }
 
-  private suspend fun findPrisonerPersonalDetails(nomsId: String): PrisonersSearch {
+  suspend fun findPrisonerPersonalDetails(nomsId: String): PrisonersSearch {
     return offendersSearchWebClientClientCredentials
       .get()
       .uri(
@@ -197,7 +197,7 @@ class OffenderSearchApiService(
         ),
       )
       .retrieve()
-      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found") })
+      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found in offender search api") })
       .awaitBody<PrisonersSearch>()
   }
 

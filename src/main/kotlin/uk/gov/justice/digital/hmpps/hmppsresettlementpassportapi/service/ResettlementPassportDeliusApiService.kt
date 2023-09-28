@@ -11,6 +11,7 @@ import org.springframework.web.reactive.function.client.awaitBodyOrNull
 import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.MappaData
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.AccommodationsDelius
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.AppointmentsDeliusList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.CaseIdentifiers
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.Manager
@@ -90,7 +91,7 @@ class ResettlementPassportDeliusApiService(
     return "${communityManager.name.forename} ${communityManager.name.surname}".convertNameToTitleCase()
   }
 
-  fun fetchAppointments(crn: String, startDate: LocalDate, endDate: LocalDate, page: Int, size: Int): Flow<AppointmentsDeliusList> = flow {
+  fun fetchAppointments(nomsId: String, crn: String, startDate: LocalDate, endDate: LocalDate, page: Int, size: Int): Flow<AppointmentsDeliusList> = flow {
     val data = rpDeliusWebClientCredentials.get()
       .uri(
         "/appointments/{crn}?page={page}&size={size}&startDate={startDate}&endDate={endDate}",
@@ -102,10 +103,36 @@ class ResettlementPassportDeliusApiService(
           "endDate" to endDate.toString(),
         ),
       )
-      .retrieve().onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("CRN  $crn not found") })
+      .retrieve().onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("NomisId $nomsId / CRN  $crn not found") })
     val pageOfData = data.awaitBodyOrNull<AppointmentsDeliusList>()
     if (pageOfData != null) {
       emit(pageOfData)
     }
+  }
+
+  suspend fun fetchAccommodationMainAddress(nomsId: String, crn: String): AccommodationsDelius {
+    val mainAddressData = rpDeliusWebClientCredentials.get()
+      .uri(
+        "/duty-to-refer-nsi/$crn",
+      )
+      .retrieve()
+      .onStatus(
+        { it == HttpStatus.NOT_FOUND },
+        { throw ResourceNotFoundException("Cannot find MainAddress Data for NomsId $nomsId / CRN $crn in Delius API") },
+      )
+      .bodyToMono<AccommodationsDelius>()
+      .awaitSingle()
+
+    return AccommodationsDelius(
+      mainAddressData.nsiSubType,
+      mainAddressData.referralDate,
+      mainAddressData.provider,
+      mainAddressData.team,
+      mainAddressData.officer,
+      mainAddressData.status,
+      mainAddressData.startDateTime,
+      mainAddressData.notes,
+      mainAddressData.mainAddress,
+    )
   }
 }

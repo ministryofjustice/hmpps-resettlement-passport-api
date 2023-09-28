@@ -73,4 +73,28 @@ class ResettlementPassportDeliusApiMockServer : WireMockServer(WIREMOCK_PORT) {
       ),
     )
   }
+
+  fun stubGetAccommodationFromCRN(crn: String, noFixAbode: Boolean, status: Int) {
+    var dutyToReferNSIJSON = readFile("testdata/resettlement-passport-delius-api/duty-to-refer-nsi-abode-false.json")
+    if (noFixAbode) {
+      dutyToReferNSIJSON = readFile("testdata/resettlement-passport-delius-api/duty-to-refer-nsi-abode-true.json")
+    }
+    stubFor(
+      get("/duty-to-refer-nsi/$crn").willReturn(
+        if (status == 200) {
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody(
+              dutyToReferNSIJSON,
+            )
+            .withStatus(status)
+        } else {
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody("{\"Error\" : \"$status\"}")
+            .withStatus(status)
+        },
+      ),
+    )
+  }
 }

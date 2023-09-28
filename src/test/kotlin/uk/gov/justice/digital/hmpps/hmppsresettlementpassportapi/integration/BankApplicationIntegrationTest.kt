@@ -30,7 +30,7 @@ class BankApplicationIntegrationTest : IntegrationTestBase() {
     webTestClient.post()
       .uri("/resettlement-passport/prisoner/$prisonerId/bankapplication")
       .bodyValue(
-        BankApplicationDTO(applicationSubmittedDate = fakeNow),
+        BankApplicationDTO(applicationSubmittedDate = fakeNow, bankName = "Lloyds"),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()

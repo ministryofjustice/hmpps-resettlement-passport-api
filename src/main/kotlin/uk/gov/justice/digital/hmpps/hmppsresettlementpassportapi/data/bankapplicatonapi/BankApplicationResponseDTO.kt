@@ -9,6 +9,7 @@ data class BankApplicationResponseDTO(
   val logs: List<BankApplicationLogDTO>,
   val applicationSubmittedDate: LocalDateTime,
   val currentStatus: String,
+  val bankName: String,
   val bankResponseDate: LocalDateTime? = null,
   val isAddedToPersonalItems: Boolean? = null,
   val addedToPersonalItemsDate: LocalDateTime? = null,

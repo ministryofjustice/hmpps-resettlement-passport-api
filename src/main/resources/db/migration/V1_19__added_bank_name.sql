@@ -1,0 +1,1 @@
+alter table bank_application add bank_name varchar(250);

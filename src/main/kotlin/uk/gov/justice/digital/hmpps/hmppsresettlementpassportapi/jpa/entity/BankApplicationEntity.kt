@@ -38,6 +38,9 @@ data class BankApplicationEntity(
   @Column(name = "status")
   var status: String,
 
+  @Column(name = "bank_name")
+  var bankName: String,
+
   @Column(name = "added_to_personal_items")
   var isAddedToPersonalItems: Boolean? = null,
 

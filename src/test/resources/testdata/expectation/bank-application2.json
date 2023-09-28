@@ -22,5 +22,6 @@
   "currentStatus": "Account opened",
   "bankResponseDate": "2023-08-17T12:00:01",
   "isAddedToPersonalItems": null,
-  "addedToPersonalItemsDate": null
+  "addedToPersonalItemsDate": null,
+  "bankName": "Lloyds"
 }

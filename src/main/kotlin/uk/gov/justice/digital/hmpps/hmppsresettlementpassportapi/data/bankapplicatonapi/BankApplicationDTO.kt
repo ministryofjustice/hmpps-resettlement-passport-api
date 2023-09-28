@@ -4,6 +4,7 @@ import java.time.LocalDateTime
 data class BankApplicationDTO(
 
   val nomsId: String? = null,
+  val bankName: String? = null,
   val applicationSubmittedDate: LocalDateTime? = null,
   val bankResponseDate: LocalDateTime? = null,
   val status: String? = null,

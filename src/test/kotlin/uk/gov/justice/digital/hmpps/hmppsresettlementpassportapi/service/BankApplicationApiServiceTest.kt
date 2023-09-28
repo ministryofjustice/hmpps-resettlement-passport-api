@@ -71,7 +71,7 @@ class BankApplicationApiServiceTest {
       bankResponseDate = null,
       isAddedToPersonalItems = null,
       addedToPersonalItemsDate = null,
-      bankName = "Lloyds"
+      bankName = "Lloyds",
     )
     Mockito.`when`(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
     Mockito.`when`(bankApplicationRepository.findByPrisonerAndIsDeleted(any(), any())).thenReturn(bankApplicationEntity)
@@ -105,7 +105,7 @@ class BankApplicationApiServiceTest {
       status = "Pending",
       isDeleted = true,
       deletionDate = fakeNow,
-      bankName = "Lloyds"
+      bankName = "Lloyds",
     )
 
     bankApplicationApiService.deleteBankApplication(bankApplicationEntity)

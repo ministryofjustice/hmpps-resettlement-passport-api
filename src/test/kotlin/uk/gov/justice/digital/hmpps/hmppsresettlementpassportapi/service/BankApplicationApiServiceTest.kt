@@ -50,7 +50,7 @@ class BankApplicationApiServiceTest {
   @Test
   fun `test getBankApplicationById - returns bank application`() = runTest {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn")
-    val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity, emptySet(), fakeNow, fakeNow, status = "Pending")
+    val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity, emptySet(), fakeNow, fakeNow, status = "Pending", bankName = "Lloyds")
     Mockito.`when`(bankApplicationRepository.findById(1)).thenReturn(Optional.of(bankApplicationEntity))
 
     val response = bankApplicationApiService.getBankApplicationById(1).get()
@@ -61,7 +61,7 @@ class BankApplicationApiServiceTest {
   @Test
   fun `test getBankApplicationByPrisoner - returns bank application`() = runTest {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn")
-    val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity, emptySet(), fakeNow, fakeNow, status = "Pending", isDeleted = false)
+    val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity, emptySet(), fakeNow, fakeNow, status = "Pending", isDeleted = false, bankName = "Lloyds")
     val expectedResult = BankApplicationResponseDTO(
       id = 1,
       prisoner = prisonerEntity,
@@ -71,6 +71,7 @@ class BankApplicationApiServiceTest {
       bankResponseDate = null,
       isAddedToPersonalItems = null,
       addedToPersonalItemsDate = null,
+      bankName = "Lloyds",
     )
     Mockito.`when`(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
     Mockito.`when`(bankApplicationRepository.findByPrisonerAndIsDeleted(any(), any())).thenReturn(bankApplicationEntity)
@@ -94,7 +95,7 @@ class BankApplicationApiServiceTest {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn")
-    val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity, emptySet(), fakeNow, fakeNow, status = "Pending")
+    val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity, emptySet(), fakeNow, fakeNow, status = "Pending", bankName = "Lloyds")
     val expectedBankApplicationEntity = BankApplicationEntity(
       1,
       prisonerEntity,
@@ -104,6 +105,7 @@ class BankApplicationApiServiceTest {
       status = "Pending",
       isDeleted = true,
       deletionDate = fakeNow,
+      bankName = "Lloyds",
     )
 
     bankApplicationApiService.deleteBankApplication(bankApplicationEntity)
@@ -117,10 +119,10 @@ class BankApplicationApiServiceTest {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn")
-    val bankApplicationDTO = BankApplicationDTO(applicationSubmittedDate = fakeNow)
-    val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity, setOf(BankApplicationStatusLogEntity(null, null, "Pending", fakeNow)), fakeNow, fakeNow, status = "Pending", isDeleted = false)
+    val bankApplicationDTO = BankApplicationDTO(applicationSubmittedDate = fakeNow, bankName = "Lloyds")
+    val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity, setOf(BankApplicationStatusLogEntity(null, null, "Pending", fakeNow)), fakeNow, fakeNow, status = "Pending", isDeleted = false, bankName = "Lloyds")
     val logEntities = listOf(BankApplicationStatusLogEntity(1, bankApplicationEntity, "Pending", fakeNow))
-    val expectedBankApplicationEntity = BankApplicationEntity(null, prisonerEntity, emptySet(), fakeNow, fakeNow, status = "Pending")
+    val expectedBankApplicationEntity = BankApplicationEntity(null, prisonerEntity, emptySet(), fakeNow, fakeNow, status = "Pending", bankName = "Lloyds")
     val expectedLogEntity = BankApplicationStatusLogEntity(null, expectedBankApplicationEntity, "Pending", fakeNow)
     Mockito.`when`(prisonerRepository.findByNomsId(any())).thenReturn(prisonerEntity)
     Mockito.`when`(bankApplicationRepository.findByPrisonerAndIsDeleted(any(), any())).thenReturn(bankApplicationEntity)

@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import jakarta.transaction.Transactional
+import jakarta.validation.ValidationException
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.bankapplicatonapi.BankApplicationDTO
@@ -37,6 +38,7 @@ class BankApplicationApiService(
       prisoner = prisoner,
       logs = if (logs.isNullOrEmpty()) emptyList() else logs.map { BankApplicationLogDTO(it.id!!, it.statusChangedTo, it.changedAtDate) },
       currentStatus = bankApplication.status,
+      bankName = bankApplication.bankName,
       applicationSubmittedDate = bankApplication.applicationSubmittedDate,
       bankResponseDate = bankApplication.bankResponseDate,
       addedToPersonalItemsDate = bankApplication.addedToPersonalItemsDate,
@@ -62,6 +64,7 @@ class BankApplicationApiService(
       null,
       prisoner,
       emptySet(),
+      bankName = bankApplicationDTO.bankName ?: throw ValidationException("Bank name cannot be null"),
       creationDate = now,
       applicationSubmittedDate = bankApplicationDTO.applicationSubmittedDate!!,
       status = statusText,

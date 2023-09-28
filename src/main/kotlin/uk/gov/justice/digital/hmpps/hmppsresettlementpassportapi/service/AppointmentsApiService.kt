@@ -47,7 +47,7 @@ class AppointmentsApiService(
 
     var appointmentList = AppointmentsList(listOf(), 0, 0, 0, 0)
 
-    val deliusAppointments = rpDeliusApiService.fetchAppointments(crn, startDate, endDate, pageNumber, pageSize)
+    val deliusAppointments = rpDeliusApiService.fetchAppointments(nomisId, crn, startDate, endDate, pageNumber, pageSize)
     deliusAppointments.collect {
       val appList: List<Appointment> = objectMapper(it.results)
       appointmentList = AppointmentsList(appList, it.totalElements, it.totalPages, it.page, it.size)
@@ -70,7 +70,7 @@ class AppointmentsApiService(
           it.location.address.town,
           it.location.address.county,
           it.location.address.postcode,
-          it.location.description,
+          null,
         )
       } else {
         addressInfo = Address(null, null, null, null, null, null, null, it.location?.description)

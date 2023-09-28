@@ -1,0 +1,12 @@
+{
+  "mainAddress": {
+    "buildingName": "New Court",
+    "buildingNumber": "1",
+    "streetName": "New Street",
+    "district": "New District",
+    "town": "New Town",
+    "county": "New County",
+    "postcode": "LS1",
+    "message": ""
+  }
+}

@@ -3,6 +3,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -17,6 +18,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import java.time.LocalDate
 
 class ResettlementPassportDeliusApiServiceTest {
 
@@ -72,5 +74,31 @@ class ResettlementPassportDeliusApiServiceTest {
 
     mockWebServer.enqueue(MockResponse().setBody("{}").addHeader("Content-Type", "application/json").setResponseCode(500))
     assertThrows<WebClientResponseException> { rpDeliusApiService.getCrn(nomsId) }
+  }
+
+  @Test
+  fun `test fetch appointments  happy path full json`() = runTest {
+    val nomsId = "ABC1234"
+    val crn = "CRN1"
+    val expectedType = "Appointment with CRS Staff (NS)"
+
+    val mockedJsonResponse = readFile("testdata/resettlement-passport-delius-api/appointments-list.json")
+    mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
+
+    val appointmentList = rpDeliusApiService.fetchAppointments(nomsId, crn, LocalDate.now().minusDays(1), LocalDate.now().plusDays(365), 0, 10)
+    Assertions.assertEquals(expectedType, appointmentList.first().results[0].type.description)
+  }
+
+  @Test
+  fun `test fetch accommodation  happy path full json`() = runTest {
+    val nomsId = "ABC1234"
+    val crn = "CRN1"
+    val expectedBuildingName = "New Court"
+
+    val mockedJsonResponse = readFile("testdata/resettlement-passport-delius-api/duty-to-refer-nsi-abode-true.json")
+    mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
+
+    val accommodation = rpDeliusApiService.fetchAccommodationMainAddress(nomsId, crn)
+    Assertions.assertEquals(expectedBuildingName, accommodation.mainAddress?.buildingName)
   }
 }

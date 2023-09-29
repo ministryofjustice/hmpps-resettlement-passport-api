@@ -128,7 +128,7 @@ class BankApplicationApiServiceTest {
     Mockito.`when`(bankApplicationRepository.findByPrisonerAndIsDeleted(any(), any())).thenReturn(bankApplicationEntity)
     Mockito.`when`(bankApplicationStatusLogRepository.findByBankApplication(any())).thenReturn(logEntities)
 
-    bankApplicationApiService.createBankApplication(bankApplicationDTO, prisonerEntity.nomsId)
+    bankApplicationApiService.createBankApplication(bankApplicationDTO, prisonerEntity.nomsId, false)
 
     Mockito.verify(bankApplicationStatusLogRepository).save(expectedLogEntity)
     unmockkStatic(LocalDateTime::class)

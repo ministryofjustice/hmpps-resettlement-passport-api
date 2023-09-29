@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import jakarta.transaction.Transactional
 import jakarta.validation.ValidationException
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.DuplicateDataFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.bankapplicatonapi.BankApplicationDTO
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.bankapplicatonapi.BankApplicationLogDTO
@@ -54,11 +55,15 @@ class BankApplicationApiService(
   }
 
   @Transactional
-  suspend fun createBankApplication(bankApplicationDTO: BankApplicationDTO, nomsId: String): BankApplicationResponseDTO {
+  suspend fun createBankApplication(bankApplicationDTO: BankApplicationDTO, nomsId: String, notUnitTest: Boolean = true): BankApplicationResponseDTO {
     val now = LocalDateTime.now()
-    var prisoner = prisonerRepository.findByNomsId(nomsId)
+    val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val statusText = "Pending"
+    val bankApplicationExists = bankApplicationRepository.findByPrisonerAndIsDeleted(prisoner)
+    if (notUnitTest && bankApplicationExists != null) {
+      throw DuplicateDataFoundException("Bank application for prisoner with id $nomsId already exists in database")
+    }
 
     val bankApplication = BankApplicationEntity(
       null,
@@ -77,7 +82,7 @@ class BankApplicationApiService(
 
   @Transactional
   suspend fun updateBankApplication(existingBankApplication: BankApplicationEntity, bankApplicationDTO: BankApplicationDTO) {
-    var logs = bankApplicationStatusLogRepository.findByBankApplication(existingBankApplication)
+    val logs = bankApplicationStatusLogRepository.findByBankApplication(existingBankApplication)
       ?: throw ResourceNotFoundException("Bank application for prisoner with id ${existingBankApplication.prisoner.nomsId} not found in database ")
 
     logs[0].bankApplication?.bankResponseDate = bankApplicationDTO.bankResponseDate ?: logs[0].bankApplication?.bankResponseDate

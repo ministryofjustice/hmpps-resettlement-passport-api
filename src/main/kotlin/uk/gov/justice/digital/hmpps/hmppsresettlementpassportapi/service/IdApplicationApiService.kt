@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import jakarta.validation.ValidationException
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.DuplicateDataFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.idapplicationapi.IdApplicationPatchDTO
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.idapplicationapi.IdApplicationPostDTO
@@ -27,11 +28,16 @@ class IdApplicationApiService(
 
   suspend fun createIdApplication(idApplicationPostDTO: IdApplicationPostDTO, nomsId: String): IdApplicationEntity {
     val now = LocalDateTime.now()
-    var prisoner = prisonerRepository.findByNomsId(nomsId)
+    val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
 
     val idTypeEntity = idTypeRepository.findByName(idApplicationPostDTO.idType!!)
       ?: throw ResourceNotFoundException("Id type ${idApplicationPostDTO.idType} not found in database")
+
+    val idApplicationExists = idApplicationRepository.findByPrisonerAndIsDeleted(prisoner)
+    if (idApplicationExists != null) {
+      throw DuplicateDataFoundException("Id application for prisoner with id $nomsId already exists in database")
+    }
 
     if (idApplicationPostDTO.applicationSubmittedDate != null &&
       idApplicationPostDTO.isPriorityApplication != null &&

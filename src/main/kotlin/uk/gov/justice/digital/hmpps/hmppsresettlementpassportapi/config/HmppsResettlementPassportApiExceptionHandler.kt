@@ -99,6 +99,20 @@ class HmppsResettlementPassportApiExceptionHandler {
       )
   }
 
+  @ExceptionHandler(DuplicateDataFoundException::class)
+  fun handleDuplicateDataFoundException(e: DuplicateDataFoundException): ResponseEntity<ErrorResponse> {
+    log.info("Duplicate data found exception: {}", e.message)
+    return ResponseEntity
+      .status(HttpStatus.CONFLICT)
+      .body(
+        ErrorResponse(
+          status = HttpStatus.CONFLICT.value(),
+          userMessage = "Duplicate data found. Check request parameters - ${e.message}",
+          developerMessage = e.message,
+        ),
+      )
+  }
+
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
   }
@@ -143,3 +157,7 @@ enum class ErrorCode(val errorCode: Int) {
 open class ResourceNotFoundException(message: String) : RuntimeException(message)
 
 class NoDataWithCodeFoundException(dataType: String, code: String) : ResourceNotFoundException("No $dataType found for code `$code`")
+
+open class DuplicateDataFoundException(message: String) : RuntimeException(message)
+
+class DuplicateWithCodeFoundException(dataType: String, code: String) : DuplicateDataFoundException("Duplicate $dataType found for code `$code`")

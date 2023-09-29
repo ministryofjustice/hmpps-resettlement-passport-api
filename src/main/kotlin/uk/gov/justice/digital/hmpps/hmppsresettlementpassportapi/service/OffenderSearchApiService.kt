@@ -107,7 +107,7 @@ class OffenderSearchApiService(
     }
 
     if (offenders.isEmpty()) {
-      throw NoDataWithCodeFoundException("Prisoners", prisonId)
+      return PrisonersList(emptyList(), pageSize, pageNumber, sort, 0, true)
     }
 
     // RP2-487 Remove all youth offenders from the results
@@ -152,7 +152,7 @@ class OffenderSearchApiService(
       val pList: List<Prisoners> = objectMapper(searchList)
       return PrisonersList(pList, pList.toList().size, pageNumber, sort, offenders.size, true)
     }
-    return PrisonersList(null, null, null, null, 0, false)
+    return PrisonersList(emptyList(), 0, 0, sort, 0, false)
   }
 
   private fun objectMapper(searchList: List<PrisonersSearch>): List<Prisoners> {

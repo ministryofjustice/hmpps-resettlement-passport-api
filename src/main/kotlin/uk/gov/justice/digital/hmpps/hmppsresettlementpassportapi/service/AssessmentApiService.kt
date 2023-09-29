@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.DuplicateDataFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.assesmentapi.AssessmentDTO
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.AssessmentEntity
@@ -40,9 +41,13 @@ class AssessmentApiService(
   }
 
   suspend fun createAssessment(assessmentDTO: AssessmentDTO): AssessmentEntity {
-    var prisoner = prisonerRepository.findByNomsId(assessmentDTO.nomsId)
+    val prisoner = prisonerRepository.findByNomsId(assessmentDTO.nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id ${assessmentDTO.nomsId} not found in database")
 
+    val assessmentExists = assessmentRepository.findByPrisonerAndIsDeleted(prisoner)
+    if (assessmentExists != null) {
+      throw DuplicateDataFoundException("Assessment for prisoner with id ${assessmentDTO.nomsId} already exists in database")
+    }
     val idTypeEntities = idTypeRepository.findAll().filter { it.name in assessmentDTO.idDocuments }.toSet()
 
     val assessment = AssessmentEntity(

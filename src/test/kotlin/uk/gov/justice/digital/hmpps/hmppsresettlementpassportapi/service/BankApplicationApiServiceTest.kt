@@ -14,6 +14,7 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.DuplicateDataFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.bankapplicatonapi.BankApplicationDTO
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.bankapplicatonapi.BankApplicationResponseDTO
@@ -128,9 +129,29 @@ class BankApplicationApiServiceTest {
     Mockito.`when`(bankApplicationRepository.findByPrisonerAndIsDeleted(any(), any())).thenReturn(bankApplicationEntity)
     Mockito.`when`(bankApplicationStatusLogRepository.findByBankApplication(any())).thenReturn(logEntities)
 
-    bankApplicationApiService.createBankApplication(bankApplicationDTO, prisonerEntity.nomsId)
+    bankApplicationApiService.createBankApplication(bankApplicationDTO, prisonerEntity.nomsId, false)
 
     Mockito.verify(bankApplicationStatusLogRepository).save(expectedLogEntity)
+    unmockkStatic(LocalDateTime::class)
+  }
+
+  @Test
+  fun `test createBankApplication - creates bank application duplicate check`() = runTest {
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn")
+    val bankApplicationDTO = BankApplicationDTO(applicationSubmittedDate = fakeNow, bankName = "Lloyds")
+    val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity, setOf(BankApplicationStatusLogEntity(null, null, "Pending", fakeNow)), fakeNow, fakeNow, status = "Pending", isDeleted = false, bankName = "Lloyds")
+    val logEntities = listOf(BankApplicationStatusLogEntity(1, bankApplicationEntity, "Pending", fakeNow))
+    val expectedBankApplicationEntity = BankApplicationEntity(null, prisonerEntity, emptySet(), fakeNow, fakeNow, status = "Pending", bankName = "Lloyds")
+    val expectedLogEntity = BankApplicationStatusLogEntity(null, expectedBankApplicationEntity, "Pending", fakeNow)
+    Mockito.`when`(prisonerRepository.findByNomsId(any())).thenReturn(prisonerEntity)
+    Mockito.`when`(bankApplicationRepository.findByPrisonerAndIsDeleted(any(), any())).thenReturn(bankApplicationEntity)
+    Mockito.`when`(bankApplicationStatusLogRepository.findByBankApplication(any())).thenReturn(logEntities)
+    bankApplicationApiService.createBankApplication(bankApplicationDTO, prisonerEntity.nomsId, false)
+    Mockito.verify(bankApplicationStatusLogRepository).save(expectedLogEntity)
+    assertThrows<DuplicateDataFoundException> { bankApplicationApiService.createBankApplication(bankApplicationDTO, prisonerEntity.nomsId, true) }
+    Mockito.verify(bankApplicationRepository, Mockito.never()).save(Mockito.any())
     unmockkStatic(LocalDateTime::class)
   }
 }

@@ -14,15 +14,6 @@ generic-service:
     host: app-hostname.local    # override per environment
     tlsSecretName: resettlement-passport-api-cert
 
-  livenessProbe:
-    httpGet:
-      path: /health/liveness
-      port: metrics
-  readinessProbe:
-    httpGet:
-      path: /health
-      port: metrics
-
   # Environment variables to load into the deployment
   env:
     JAVA_OPTS: "-Xmx512m"

@@ -7,6 +7,7 @@ data class BankApplicationDTO(
   val bankName: String? = null,
   val applicationSubmittedDate: LocalDateTime? = null,
   val bankResponseDate: LocalDateTime? = null,
+  val resubmissionDate: LocalDateTime? = null,
   val status: String? = null,
   val isAddedToPersonalItems: Boolean? = null,
   val addedToPersonalItemsDate: LocalDateTime? = null,

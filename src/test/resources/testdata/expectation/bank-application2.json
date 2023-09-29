@@ -14,14 +14,19 @@
     },
     {
       "id": 2,
+      "status": "Account resubmitted",
+      "changeDate": "2023-08-17T12:00:01"
+    },
+    {
+      "id": 3,
       "status": "Account opened",
       "changeDate": "2023-08-17T12:00:01"
     }
   ],
   "applicationSubmittedDate": "2023-08-17T12:00:01",
   "currentStatus": "Account opened",
+  "bankName": "Lloyds",
   "bankResponseDate": "2023-08-17T12:00:01",
   "isAddedToPersonalItems": null,
-  "addedToPersonalItemsDate": null,
-  "bankName": "Lloyds"
+  "addedToPersonalItemsDate": null
 }

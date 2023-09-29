@@ -14,6 +14,15 @@ generic-service:
     host: app-hostname.local    # override per environment
     tlsSecretName: resettlement-passport-api-cert
 
+  livenessProbe:
+    httpGet:
+      path: /health/liveness
+      port: metrics
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: metrics
+
   # Environment variables to load into the deployment
   env:
     JAVA_OPTS: "-Xmx512m"
@@ -49,6 +58,12 @@ generic-service:
     cloudplatform-live-1: "35.178.209.113/32"
     cloudplatform-live-2: "3.8.51.207/32"
     cloudplatform-live-3: "35.177.252.54/32"
+
+  custommetrics:
+    enabled: true
+    scrapeInterval: 15s
+    metricsPath: /prometheus
+    metricsPort: 8080
 
 generic-prometheus-alerts:
   targetApplication: hmpps-resettlement-passport-api

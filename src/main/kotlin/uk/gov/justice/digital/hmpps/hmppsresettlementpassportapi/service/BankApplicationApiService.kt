@@ -85,8 +85,23 @@ class BankApplicationApiService(
     logs[0].bankApplication?.isAddedToPersonalItems = bankApplicationDTO.isAddedToPersonalItems ?: logs[0].bankApplication?.isAddedToPersonalItems
     logs[0].bankApplication?.addedToPersonalItemsDate = bankApplicationDTO.addedToPersonalItemsDate ?: logs[0].bankApplication?.addedToPersonalItemsDate
     bankApplicationStatusLogRepository.saveAll(logs)
+    if (bankApplicationDTO.resubmissionDate != null) {
+      val newStatus = BankApplicationStatusLogEntity(
+        null,
+        logs[0].bankApplication,
+        statusChangedTo = "Account resubmitted",
+        changedAtDate = bankApplicationDTO.resubmissionDate,
+      )
+      logs.plus(newStatus)
+      bankApplicationStatusLogRepository.save(newStatus)
+    }
     if (bankApplicationDTO.status != null) {
-      val newStatus = BankApplicationStatusLogEntity(null, logs[0].bankApplication, statusChangedTo = bankApplicationDTO.status, LocalDateTime.now())
+      val newStatus = BankApplicationStatusLogEntity(
+        null,
+        logs[0].bankApplication,
+        statusChangedTo = bankApplicationDTO.status,
+        changedAtDate = bankApplicationDTO.bankResponseDate ?: throw ValidationException("changedAtDate cant be null when changing status"),
+      )
       logs.plus(newStatus)
       bankApplicationStatusLogRepository.save(newStatus)
     }

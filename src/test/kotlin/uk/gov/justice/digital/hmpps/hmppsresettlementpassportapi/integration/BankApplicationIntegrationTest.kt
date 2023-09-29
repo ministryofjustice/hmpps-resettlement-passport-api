@@ -42,7 +42,7 @@ class BankApplicationIntegrationTest : IntegrationTestBase() {
     webTestClient.patch()
       .uri("/resettlement-passport/prisoner/$prisonerId/bankapplication/1")
       .bodyValue(
-        BankApplicationDTO(bankResponseDate = fakeNow, status = "Account opened"),
+        BankApplicationDTO(resubmissionDate = fakeNow, bankResponseDate = fakeNow, status = "Account opened"),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()

@@ -62,5 +62,5 @@ class AppointmentsController(
     @Schema(example = "10", required = true)
     @Parameter(required = true, description = "The size of the page to be returned")
     size: Int,
-  ): AppointmentsList = appointmentsService.getAppointmentsByNomisId(nomisId, LocalDate.now().minusDays(365), LocalDate.now().plusDays(365), page, size)
+  ): AppointmentsList = appointmentsService.getAppointmentsByNomisId(nomisId, LocalDate.now(), LocalDate.now().plusDays(365), page, size)
 }

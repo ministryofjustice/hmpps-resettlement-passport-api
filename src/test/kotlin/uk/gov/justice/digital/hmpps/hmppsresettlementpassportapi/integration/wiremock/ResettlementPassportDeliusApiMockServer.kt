@@ -13,7 +13,7 @@ class ResettlementPassportDeliusApiMockServer : WireMockServer(WIREMOCK_PORT) {
 
   fun stubGetAppointmentsFromCRN(crn: String, status: Int) {
     val appointmentsListJSON = readFile("testdata/resettlement-passport-delius-api/appointments-list.json")
-    val formattedStartDate = LocalDate.now().minusDays(365).toString()
+    val formattedStartDate = LocalDate.now().toString()
     val formattedEndDate = LocalDate.now().plusDays(365).toString()
     stubFor(
       get("/appointments/$crn?page=0&size=50&startDate=$formattedStartDate&endDate=$formattedEndDate").willReturn(

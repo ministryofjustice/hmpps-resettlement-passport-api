@@ -75,7 +75,7 @@ class BankApplicationApiService(
       applicationSubmittedDate = bankApplicationDTO.applicationSubmittedDate!!,
       status = statusText,
     )
-    val newStatus = BankApplicationStatusLogEntity(null, bankApplication, statusChangedTo = statusText, now)
+    val newStatus = BankApplicationStatusLogEntity(null, bankApplication, statusChangedTo = statusText, bankApplicationDTO.applicationSubmittedDate!!)
     bankApplicationStatusLogRepository.save(newStatus)
     return getBankApplicationByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Bank application for prisoner with id $nomsId not found in database ")

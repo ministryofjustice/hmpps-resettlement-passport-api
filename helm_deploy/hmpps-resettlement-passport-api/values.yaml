@@ -54,7 +54,7 @@ generic-service:
     enabled: true
     scrapeInterval: 15s
     metricsPath: /prometheus
-    metricsPort: 8080
+    metricsPort: http
 
 generic-prometheus-alerts:
   targetApplication: hmpps-resettlement-passport-api

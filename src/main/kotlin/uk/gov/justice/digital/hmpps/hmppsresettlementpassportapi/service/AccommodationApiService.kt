@@ -6,6 +6,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.Resource
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Accommodation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.OfficerInfo
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 @Service
 class AccommodationApiService(
@@ -63,7 +65,7 @@ class AccommodationApiService(
       accommodation.team,
       officerInfo,
       accommodation.status,
-      accommodation.startDateTime,
+      LocalDateTime.ofInstant(accommodation.startDateTime?.toInstant(), ZoneId.systemDefault()),
       accommodation.notes,
       mainAddress,
       msg,

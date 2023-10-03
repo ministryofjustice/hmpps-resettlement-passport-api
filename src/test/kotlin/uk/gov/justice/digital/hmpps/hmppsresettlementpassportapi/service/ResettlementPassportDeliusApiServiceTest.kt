@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.Resource
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import java.time.LocalDate
+import java.time.ZonedDateTime
 
 class ResettlementPassportDeliusApiServiceTest {
 
@@ -94,8 +95,8 @@ class ResettlementPassportDeliusApiServiceTest {
     val nomsId = "ABC1234"
     val crn = "CRN1"
     val expectedBuildingName = "New Court"
-    val expectedReferralDate = "24-08-2023"
-    val expectedStartDateTime = "2022-09-18T14:46:00+01:00"
+    val expectedReferralDate = LocalDate.parse("2023-08-24")
+    val expectedStartDateTime = ZonedDateTime.parse("2022-09-18T13:46:00Z")
 
     val mockedJsonResponse = readFile("testdata/resettlement-passport-delius-api/duty-to-refer-nsi-abode-true.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))

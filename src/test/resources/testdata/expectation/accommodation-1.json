@@ -1,5 +1,5 @@
 {
-  "referralDate": "24-08-2023",
+  "referralDate": "2023-08-24",
   "provider": "Provider A",
   "team": "Team A",
   "officer": {
@@ -7,7 +7,7 @@
     "surname": "Small"
   },
   "status": "Unknown",
-  "startDateTime": "2022-09-18T14:46:00+01:00",
+  "startDateTime": "2022-09-18T14:46:00",
   "notes": "New Notes",
   "mainAddress": "New Court, 1, New Street, New District, New Town, New County, LS1",
   "message": "John Smith is currently of no fixed abode. They may require assistance finding accommodation. If a CRS referral or duty to refer have been made, details will be shown above."

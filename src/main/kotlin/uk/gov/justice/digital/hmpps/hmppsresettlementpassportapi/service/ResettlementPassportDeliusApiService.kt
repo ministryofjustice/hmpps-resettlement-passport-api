@@ -110,7 +110,7 @@ class ResettlementPassportDeliusApiService(
     }
   }
 
-  suspend fun fetchAccommodationMainAddress(nomsId: String, crn: String): AccommodationsDelius {
+  suspend fun fetchAccommodation(nomsId: String, crn: String): AccommodationsDelius {
     val mainAddressData = rpDeliusWebClientCredentials.get()
       .uri(
         "/duty-to-refer-nsi/$crn",
@@ -118,7 +118,7 @@ class ResettlementPassportDeliusApiService(
       .retrieve()
       .onStatus(
         { it == HttpStatus.NOT_FOUND },
-        { throw ResourceNotFoundException("Cannot find MainAddress Data for NomsId $nomsId / CRN $crn in Delius API") },
+        { throw ResourceNotFoundException("Cannot find duty to refer nsi Data for NomsId $nomsId / CRN $crn in Delius API") },
       )
       .bodyToMono<AccommodationsDelius>()
       .awaitSingle()

@@ -68,15 +68,18 @@ class OffenderSearchResourceController(
     term: String,
     @Schema(example = "0", required = true)
     @Parameter(required = true, description = "Zero-based page index (0..N)")
+    @RequestParam(value = "page", defaultValue = "0")
     page: Int,
     @Schema(example = "10", required = true)
     @Parameter(required = true, description = "The size of the page to be returned")
+    @RequestParam(value = "size", defaultValue = "10")
     size: Int,
     @Schema(example = "releaseDate,ASC | releaseDate,DESC")
     @Parameter(
       required = true,
       description = "Sorting criteria in the format: property,(asc|desc) property supported are firstName, lastName, releaseDate and prisonerNumber",
     )
+    @RequestParam(value = "sort", defaultValue = "releaseDate,ASC")
     sort: String,
     @Schema(example = "21")
     @Parameter(description = "Prisoners released (release date) within the given days from current date")

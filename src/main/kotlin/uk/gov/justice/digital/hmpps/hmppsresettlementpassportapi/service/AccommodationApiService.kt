@@ -36,23 +36,23 @@ class AccommodationApiService(
 
     val accommodation = rpDeliusApiService.fetchAccommodation(nomisId, crn)
 
-    var msg = ""
+    var msg: String? = null
     if (accommodation.mainAddress?.noFixedAbode == true) {
       msg =
         prisonerDetails.firstName.convertNameToTitleCase() + " " + prisonerDetails.lastName.convertNameToTitleCase() + " is currently of no fixed abode. They may require assistance finding accommodation. If a CRS referral or duty to refer have been made, details will be shown above."
     }
     val mainAddress = constructAddress(
-        arrayOf(
-            accommodationAddress.mainAddress?.buildingName,
-            accommodationAddress.mainAddress?.addressNumber,
-            accommodationAddress.mainAddress?.streetName,
-            accommodationAddress.mainAddress?.district,
-            accommodationAddress.mainAddress?.town,
-            accommodationAddress.mainAddress?.county,
-            accommodationAddress.mainAddress?.postcode,
-        ),
+      arrayOf(
+        accommodation.mainAddress?.buildingName,
+        accommodation.mainAddress?.addressNumber,
+        accommodation.mainAddress?.streetName,
+        accommodation.mainAddress?.district,
+        accommodation.mainAddress?.town,
+        accommodation.mainAddress?.county,
+        accommodation.mainAddress?.postcode,
+      ),
     )
-    val officeInfo = OfficerInfo(
+    val officerInfo = OfficerInfo(
       accommodation.officer?.forename,
       accommodation.officer?.surname,
       accommodation.officer?.middlename,
@@ -61,11 +61,12 @@ class AccommodationApiService(
       accommodation.referralDate,
       accommodation.provider,
       accommodation.team,
-      officeInfo,
+      officerInfo,
       accommodation.status,
       accommodation.startDateTime,
       accommodation.notes,
-      addressInfo,
+      mainAddress,
+      msg,
     )
   }
 }

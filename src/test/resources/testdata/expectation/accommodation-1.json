@@ -9,14 +9,6 @@
   "status": "Unknown",
   "startDateTime": "2022-09-18T14:46:00+01:00",
   "notes": "New Notes",
-  "mainAddress": {
-    "buildingName": "New Court",
-    "buildingNumber": "1",
-    "streetName": "New Street",
-    "district": "New District",
-    "town": "New Town",
-    "county": "New County",
-    "postcode": "LS1",
-    "message": "John Smith is currently of no fixed abode. They may require assistance finding accommodation. If a CRS referral or duty to refer have been made, details will be shown above"
-  }
+  "mainAddress": "New Court, 1, New Street, New District, New Town, New County, LS1",
+  "message": "John Smith is currently of no fixed abode. They may require assistance finding accommodation. If a CRS referral or duty to refer have been made, details will be shown above."
 }

@@ -94,11 +94,15 @@ class ResettlementPassportDeliusApiServiceTest {
     val nomsId = "ABC1234"
     val crn = "CRN1"
     val expectedBuildingName = "New Court"
+    val expectedReferralDate = "24-08-2023"
+    val expectedStartDateTime = "2022-09-18T14:46:00+01:00"
 
     val mockedJsonResponse = readFile("testdata/resettlement-passport-delius-api/duty-to-refer-nsi-abode-true.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
 
-    val accommodation = rpDeliusApiService.fetchAccommodationMainAddress(nomsId, crn)
+    val accommodation = rpDeliusApiService.fetchAccommodation(nomsId, crn)
+    Assertions.assertEquals(expectedReferralDate, accommodation.referralDate)
+    Assertions.assertEquals(expectedStartDateTime, accommodation.startDateTime)
     Assertions.assertEquals(expectedBuildingName, accommodation.mainAddress?.buildingName)
   }
 }

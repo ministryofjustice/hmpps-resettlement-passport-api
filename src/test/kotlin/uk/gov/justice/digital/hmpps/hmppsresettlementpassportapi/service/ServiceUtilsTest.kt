@@ -62,6 +62,20 @@ class ServiceUtilsTest {
     Arguments.of("sOMe RaNDoM nAme", "Some Random Name"),
     Arguments.of("  some random name   ", "Some Random Name"),
   )
+
+  @ParameterizedTest
+  @MethodSource("test construct address data")
+  fun `test construct address`(inputStrings: Array<String?>, expectedString: String) {
+    Assertions.assertEquals(expectedString, constructAddress(inputStrings))
+  }
+
+  private fun `test construct address data`(): Stream<Arguments> = Stream.of(
+    Arguments.of(arrayOf(""), ""),
+    Arguments.of(arrayOf<String?>(null), ""),
+    Arguments.of(arrayOf("A bit of address"), "A bit of address"),
+    Arguments.of(arrayOf("A bit of address", "another bit", "some more"), "A bit of address, another bit, some more"),
+    Arguments.of(arrayOf("   A bit of address   ", " another bit  ", "   some more "), "A bit of address, another bit, some more"),
+  )
 }
 
 enum class TestEnum {

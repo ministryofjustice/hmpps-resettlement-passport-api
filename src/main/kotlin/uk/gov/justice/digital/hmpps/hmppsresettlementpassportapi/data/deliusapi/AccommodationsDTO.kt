@@ -1,13 +1,16 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi
 
+import java.time.LocalDate
+import java.time.ZonedDateTime
+
 data class AccommodationsDelius(
   val nsiSubType: String,
-  val referralDate: String?,
+  val referralDate: LocalDate?,
   val provider: String?,
   val team: String?,
   val officer: OfficerInfo?,
   val status: String?,
-  val startDateTime: String?,
+  val startDateTime: ZonedDateTime?,
   val notes: String?,
   val mainAddress: Location?,
 )

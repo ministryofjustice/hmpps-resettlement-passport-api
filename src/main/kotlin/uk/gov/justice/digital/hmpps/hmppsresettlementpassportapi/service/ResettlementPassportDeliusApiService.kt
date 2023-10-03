@@ -111,7 +111,7 @@ class ResettlementPassportDeliusApiService(
   }
 
   suspend fun fetchAccommodation(nomsId: String, crn: String): AccommodationsDelius {
-    val mainAddressData = rpDeliusWebClientCredentials.get()
+    return rpDeliusWebClientCredentials.get()
       .uri(
         "/duty-to-refer-nsi/$crn",
       )
@@ -122,17 +122,5 @@ class ResettlementPassportDeliusApiService(
       )
       .bodyToMono<AccommodationsDelius>()
       .awaitSingle()
-
-    return AccommodationsDelius(
-      mainAddressData.nsiSubType,
-      mainAddressData.referralDate,
-      mainAddressData.provider,
-      mainAddressData.team,
-      mainAddressData.officer,
-      mainAddressData.status,
-      mainAddressData.startDateTime,
-      mainAddressData.notes,
-      mainAddressData.mainAddress,
-    )
   }
 }

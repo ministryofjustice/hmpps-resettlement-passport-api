@@ -65,7 +65,7 @@ class AccommodationApiService(
       accommodation.team,
       officerInfo,
       accommodation.status,
-      LocalDateTime.ofInstant(accommodation.startDateTime?.toInstant(), ZoneId.systemDefault()),
+      LocalDateTime.ofInstant(accommodation.startDateTime?.toInstant(), ZoneId.of("Europe/London")),
       accommodation.notes,
       mainAddress,
       msg,

@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Accommodation
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AddressInfo
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.OfficerInfo
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 
@@ -22,7 +21,8 @@ class AccommodationApiService(
       throw NoDataWithCodeFoundException("Prisoner", nomisId)
     }
 
-    val prisonerEntity = prisonerRepository.findByNomsId(nomisId) ?: throw ResourceNotFoundException("Prisoner with id $nomisId not found in database")
+    val prisonerEntity = prisonerRepository.findByNomsId(nomisId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomisId not found in database")
 
     var crn = prisonerEntity.crn
 
@@ -38,17 +38,19 @@ class AccommodationApiService(
 
     var msg = ""
     if (accommodation.mainAddress?.noFixedAbode == true) {
-      msg = prisonerDetails.firstName + " " + prisonerDetails.lastName + " is currently of no fixed abode. They may require assistance finding accommodation. If a CRS referral or duty to refer have been made, details will be shown above"
+      msg =
+        prisonerDetails.firstName.convertNameToTitleCase() + " " + prisonerDetails.lastName.convertNameToTitleCase() + " is currently of no fixed abode. They may require assistance finding accommodation. If a CRS referral or duty to refer have been made, details will be shown above."
     }
-    val addressInfo = AddressInfo(
-      accommodation.mainAddress?.buildingName,
-      accommodation.mainAddress?.addressNumber,
-      accommodation.mainAddress?.streetName,
-      accommodation.mainAddress?.district,
-      accommodation.mainAddress?.town,
-      accommodation.mainAddress?.county,
-      accommodation.mainAddress?.postcode,
-      msg,
+    val mainAddress = constructAddress(
+        arrayOf(
+            accommodationAddress.mainAddress?.buildingName,
+            accommodationAddress.mainAddress?.addressNumber,
+            accommodationAddress.mainAddress?.streetName,
+            accommodationAddress.mainAddress?.district,
+            accommodationAddress.mainAddress?.town,
+            accommodationAddress.mainAddress?.county,
+            accommodationAddress.mainAddress?.postcode,
+        ),
     )
     val officeInfo = OfficerInfo(
       accommodation.officer?.forename,

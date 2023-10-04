@@ -117,7 +117,7 @@ class OffenderSearchApiService(
       offenders.removeAll { it.displayReleaseDate == null || it.displayReleaseDate!! <= earliestReleaseDate || it.displayReleaseDate!! > latestReleaseDate || (it.youthOffender != null && it.youthOffender) }
     } else {
       val earliestReleaseDate = LocalDate.now().minusDays(1)
-      offenders.removeAll { it.displayReleaseDate == null || it.displayReleaseDate!! <= earliestReleaseDate || (it.youthOffender != null && it.youthOffender) }
+      offenders.removeAll { (it.displayReleaseDate != null && it.displayReleaseDate!! <= earliestReleaseDate) || (it.youthOffender != null && it.youthOffender) }
     }
 
     val startIndex = (pageNumber * pageSize)

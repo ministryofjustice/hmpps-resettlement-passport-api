@@ -111,7 +111,7 @@ class OffenderSearchApiServiceTest {
     mockDatabaseCalls()
 
     val prisonId = "MDI"
-    val expectedPrisonerId = "G1458GV"
+    val expectedPrisonerId = "A8339DY"
 
     val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
@@ -141,7 +141,7 @@ class OffenderSearchApiServiceTest {
     mockDatabaseCalls()
 
     val prisonId = "MDI"
-    val expectedPageSize = 2
+    val expectedPageSize = 3
 
     val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))

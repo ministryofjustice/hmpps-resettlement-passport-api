@@ -105,11 +105,6 @@ class OffenderSearchApiService(
         offenders.add(it)
       }
     }
-
-    if (offenders.isEmpty()) {
-      return PrisonersList(emptyList(), pageSize, pageNumber, sort, 0, true)
-    }
-
     // RP2-487 Remove all youth offenders from the results
     if (days > 0) {
       val earliestReleaseDate = LocalDate.now().minusDays(1)
@@ -118,6 +113,10 @@ class OffenderSearchApiService(
     } else {
       val earliestReleaseDate = LocalDate.now().minusDays(1)
       offenders.removeAll { (it.displayReleaseDate != null && it.displayReleaseDate!! <= earliestReleaseDate) || (it.youthOffender != null && it.youthOffender) }
+    }
+
+    if (offenders.isEmpty()) {
+      return PrisonersList(emptyList(), pageSize, pageNumber, sort, 0, true)
     }
 
     val startIndex = (pageNumber * pageSize)

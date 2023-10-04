@@ -111,7 +111,16 @@ class OffenderSearchApiService(
     }
 
     // RP2-487 Remove all youth offenders from the results
-    offenders.removeAll { it.youthOffender != null && it.youthOffender }
+//    offenders.removeAll { (it.youthOffender != null && it.youthOffender) }
+
+    if (days > 0) {
+      val earliestReleaseDate = LocalDate.now().minusDays(1)
+      val latestReleaseDate = LocalDate.now().plusDays(days.toLong())
+      offenders.removeAll { it.displayReleaseDate == null || it.displayReleaseDate!! <= earliestReleaseDate || it.displayReleaseDate!! > latestReleaseDate || (it.youthOffender != null && it.youthOffender) }
+    } else {
+      val earliestReleaseDate = LocalDate.now().minusDays(1)
+      offenders.removeAll { it.displayReleaseDate == null || it.displayReleaseDate!! <= earliestReleaseDate || (it.youthOffender != null && it.youthOffender) }
+    }
 
     val startIndex = (pageNumber * pageSize)
     if (startIndex >= offenders.size) {
@@ -119,12 +128,6 @@ class OffenderSearchApiService(
         "Data",
         "Page $pageNumber",
       )
-    }
-
-    if (days > 0) {
-      val earliestReleaseDate = LocalDate.now().minusDays(1)
-      val latestReleaseDate = LocalDate.now().plusDays(days.toLong())
-      offenders.removeAll { it.displayReleaseDate == null || it.displayReleaseDate!! <= earliestReleaseDate || it.displayReleaseDate!! > latestReleaseDate }
     }
 
     when (sort) {

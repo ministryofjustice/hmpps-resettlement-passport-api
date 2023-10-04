@@ -111,8 +111,6 @@ class OffenderSearchApiService(
     }
 
     // RP2-487 Remove all youth offenders from the results
-//    offenders.removeAll { (it.youthOffender != null && it.youthOffender) }
-
     if (days > 0) {
       val earliestReleaseDate = LocalDate.now().minusDays(1)
       val latestReleaseDate = LocalDate.now().plusDays(days.toLong())

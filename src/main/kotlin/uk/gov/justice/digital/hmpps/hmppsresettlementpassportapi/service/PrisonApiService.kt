@@ -18,16 +18,6 @@ class PrisonApiService(
       .awaitBody()
   }
 
-  suspend fun getPrisonsList(): MutableList<Prison> {
-    val prisons = getPrisons()
-    val prisonList = mutableListOf<Prison>()
-    for (item in prisons) {
-      prisonList.add(Prison(item.prisonId, item.prisonName, item.active))
-    }
-    prisonList.sortBy { it.name }
-    return prisonList
-  }
-
   suspend fun getActivePrisonsList(): MutableList<Prison> {
     val prisons = getPrisons()
 

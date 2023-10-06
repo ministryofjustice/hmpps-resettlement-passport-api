@@ -43,6 +43,11 @@ class AccommodationApiService(
       msg =
         prisonerDetails.firstName.convertNameToTitleCase() + " " + prisonerDetails.lastName.convertNameToTitleCase() + " is currently of no fixed abode. They may require assistance finding accommodation. If a CRS referral or duty to refer have been made, details will be shown above."
     }
+    var startDateTimeVal: LocalDateTime?= null
+    if (accommodation.startDateTime!=null){
+      startDateTimeVal = LocalDateTime.ofInstant(accommodation.startDateTime.toInstant(), ZoneId.of("Europe/London"))
+    }
+
     val mainAddress = constructAddress(
       arrayOf(
         accommodation.mainAddress?.buildingName,
@@ -65,7 +70,7 @@ class AccommodationApiService(
       accommodation.team,
       officerInfo,
       accommodation.status,
-      LocalDateTime.ofInstant(accommodation.startDateTime?.toInstant(), ZoneId.of("Europe/London")),
+      startDateTimeVal,
       accommodation.notes,
       mainAddress,
       msg,

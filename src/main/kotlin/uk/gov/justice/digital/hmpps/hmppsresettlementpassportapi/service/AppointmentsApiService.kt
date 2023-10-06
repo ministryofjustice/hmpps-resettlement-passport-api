@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Appointmen
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.AppointmentDelius
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
@@ -75,12 +76,18 @@ class AppointmentsApiService(
       } else {
         addressInfo = Address(null, null, null, null, null, null, null, it.location?.description)
       }
-      val formattedDateTime = OffsetDateTime.parse(it.dateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+      var formattedDateVal: LocalDate? = null
+      var formattedTimeVal: LocalTime? = null
+      if (it.dateTime != null) {
+        formattedDateVal = OffsetDateTime.parse(it.dateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toLocalDate()
+        formattedTimeVal = OffsetDateTime.parse(it.dateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toLocalTime()
+      }
+
       appointment = Appointment(
         it.description,
         it.staff.name.forename + " " + it.staff.name.surname,
-        formattedDateTime.toLocalDate(),
-        formattedDateTime.toLocalTime(),
+        formattedDateVal,
+        formattedTimeVal,
         addressInfo,
       )
       appointmentList.add(appointment)

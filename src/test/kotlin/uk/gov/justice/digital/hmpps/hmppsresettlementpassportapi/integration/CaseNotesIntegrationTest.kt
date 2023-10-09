@@ -41,8 +41,7 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Get CaseNotes  Internal Error`() {
-    caseNotesApiMockServer.stubGetCaseNotesOldList("G4274GN", 500, 0, "REPORTS", "", 500)
-    caseNotesApiMockServer.stubGetCaseNotesNewList("G4274GN", 500, 0, "RESET", 500)
+    caseNotesApiMockServer.stubGetCaseNotesOldList("G4274GN", 500, 0, "GEN", "RESET", 500)
     webTestClient.get()
       .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=10&sort=occurenceDateTime,DESC&days=0&pathwayType=All")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -96,7 +95,7 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `Get All CaseNotes for a Prisoner when NomisId not found`() {
+  fun `Get All CaseNotes for a Prisoner when NomsId not found`() {
     caseNotesApiMockServer.stubGetCaseNotesNewList("G4274GN", 500, 0, "RESET", 404)
     caseNotesApiMockServer.stubGetCaseNotesOldList("G4274GN", 500, 0, "GEN", "RESET", 404)
     webTestClient.get()
@@ -137,7 +136,7 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `Get All CaseNotes CreatedBy List for a Prisoner when NomisId not found`() {
+  fun `Get All CaseNotes CreatedBy List for a Prisoner when NomsId not found`() {
     caseNotesApiMockServer.stubGetCaseNotesSpecificPathway("G4274GN", 500, 0, "RESET", "ACCOM", 404)
     webTestClient.get()
       .uri("/resettlement-passport/case-notes/G4274GN/creators/ACCOMMODATION")
@@ -164,13 +163,13 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `Create casenotes  happy path`() {
-    val prisonerId = "G4274GN"
+  fun `Create case notes  happy path`() {
+    val nomsId = "G4274GN"
     val txt = "This is a test case note message from Resettlement Passport, Health message"
-    offenderSearchApiMockServer.stubGetPrisonerDetails(prisonerId, 200)
-    caseNotesApiMockServer.stubPostCaseNotes(prisonerId, "RESET", "ACCOM", txt, "MDI", 200)
+    offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "ACCOM", txt, "MDI", 200)
     webTestClient.post()
-      .uri("/resettlement-passport/case-notes/$prisonerId")
+      .uri("/resettlement-passport/case-notes/$nomsId")
       .header("Content-Type", "application/json")
       .bodyValue(
         CaseNotesRequest(

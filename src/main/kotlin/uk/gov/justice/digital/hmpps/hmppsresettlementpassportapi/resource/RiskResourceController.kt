@@ -17,17 +17,17 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorRes
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.MappaData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.RiskScore
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.RoshData
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.RiskApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.RiskService
 
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class RiskResourceController(
-  private val riskApiService: RiskApiService,
+  private val riskService: RiskService,
 ) {
 
-  @GetMapping("{prisonerId}/risk/scores", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @GetMapping("{nomsId}/risk/scores", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
     summary = "Get risk score for a prisoner",
     description = "All risk score details for the given Prisoner Id.",
@@ -61,12 +61,12 @@ class RiskResourceController(
     ],
   )
   suspend fun getRiskScoresByNomsId(
-    @PathVariable("prisonerId")
+    @PathVariable("nomsId")
     @Parameter(required = true)
-    prisonerId: String,
-  ): RiskScore? = riskApiService.getRiskScoresByNomsId(prisonerId)
+    nomsId: String,
+  ): RiskScore? = riskService.getRiskScoresByNomsId(nomsId)
 
-  @GetMapping("{prisonerId}/risk/rosh", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @GetMapping("{nomsId}/risk/rosh", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
     summary = "Get RoSH data for a prisoner",
     description = "RoSH data for the given Prisoner Id.",
@@ -100,12 +100,12 @@ class RiskResourceController(
     ],
   )
   suspend fun getRoshDataByNomsId(
-    @PathVariable("prisonerId")
+    @PathVariable("nomsId")
     @Parameter(required = true)
-    prisonerId: String,
-  ): RoshData? = riskApiService.getRoshDataByNomsId(prisonerId)
+    nomsId: String,
+  ): RoshData? = riskService.getRoshDataByNomsId(nomsId)
 
-  @GetMapping("{prisonerId}/risk/mappa", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @GetMapping("{nomsId}/risk/mappa", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
     summary = "Get MAPPA data for a prisoner",
     description = "MAPPA data for the given Prisoner Id.",
@@ -139,8 +139,8 @@ class RiskResourceController(
     ],
   )
   suspend fun getMappaDataByNomsId(
-    @PathVariable("prisonerId")
+    @PathVariable("nomsId")
     @Parameter(required = true)
-    prisonerId: String,
-  ): MappaData? = riskApiService.getMappaDataByNomsId(prisonerId)
+    nomsId: String,
+  ): MappaData? = riskService.getMappaDataByNomsId(nomsId)
 }

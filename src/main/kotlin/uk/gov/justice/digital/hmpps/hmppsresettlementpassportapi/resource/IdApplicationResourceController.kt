@@ -19,19 +19,19 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.idapplicationapi.IdApplicationPatchDTO
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.idapplicationapi.IdApplicationPostDTO
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.IdApplicationPatch
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.IdApplicationPost
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.IdApplicationEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.IdApplicationApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.IdApplicationService
 
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
-class IdApplicationResourceController(private val idApplicationApiService: IdApplicationApiService) {
+class IdApplicationResourceController(private val idApplicationService: IdApplicationService) {
 
-  @GetMapping("/{prisonerId}/idapplication", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Get id application by nomis Id", description = "Id application based on nomis Id")
+  @GetMapping("/{nomsId}/idapplication", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(summary = "Get id application by noms Id", description = "Id application based on noms Id")
   @ApiResponses(
     value = [
       ApiResponse(
@@ -67,12 +67,12 @@ class IdApplicationResourceController(private val idApplicationApiService: IdApp
   )
   suspend fun getIdApplicationByNomsId(
     @Schema(example = "AXXXS", required = true)
-    @PathVariable("prisonerId")
+    @PathVariable("nomsId")
     @Parameter(required = true)
-    prisonerId: String,
-  ) = idApplicationApiService.getIdApplicationByNomsId(prisonerId)
+    nomsId: String,
+  ) = idApplicationService.getIdApplicationByNomsId(nomsId)
 
-  @PostMapping("/{prisonerId}/idapplication", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @PostMapping("/{nomsId}/idapplication", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create id application", description = "Create id application")
   @ApiResponses(
     value = [
@@ -104,13 +104,13 @@ class IdApplicationResourceController(private val idApplicationApiService: IdApp
   )
   suspend fun postBankApplicationByNomsId(
     @Schema(example = "AXXXS", required = true)
-    @PathVariable("prisonerId")
-    prisonerId: String,
+    @PathVariable("nomsId")
+    nomsId: String,
     @RequestBody
-    idApplicationPostDTO: IdApplicationPostDTO,
-  ) = idApplicationApiService.createIdApplication(idApplicationPostDTO, prisonerId)
+    idApplicationPost: IdApplicationPost,
+  ) = idApplicationService.createIdApplication(idApplicationPost, nomsId)
 
-  @DeleteMapping("/{prisonerId}/idapplication/{idApplicationId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @DeleteMapping("/{nomsId}/idapplication/{idApplicationId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create assessment", description = "Create assessment")
   @ApiResponses(
     value = [
@@ -141,24 +141,24 @@ class IdApplicationResourceController(private val idApplicationApiService: IdApp
     ],
   )
   suspend fun deleteAssessmentByNomsId(
-    @PathVariable("prisonerId")
+    @PathVariable("nomsId")
     @Parameter(required = true)
-    prisonerId: String,
+    nomsId: String,
     @PathVariable("idApplicationId")
     @Parameter(required = true)
     idApplicationId: String,
   ) {
-    val idApplication = idApplicationApiService.getIdApplicationByNomsId(prisonerId)
+    val idApplication = idApplicationService.getIdApplicationByNomsId(nomsId)
     if (idApplication.id != idApplicationId.toLong()) {
       throw NoDataWithCodeFoundException(
         "IdApplication",
         idApplicationId,
       )
     }
-    idApplicationApiService.deleteIdApplication(idApplication)
+    idApplicationService.deleteIdApplication(idApplication)
   }
 
-  @PatchMapping("/{prisonerId}/idapplication/{idApplicationId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @PatchMapping("/{nomsId}/idapplication/{idApplicationId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create assessment", description = "Create assessment")
   @ApiResponses(
     value = [
@@ -190,21 +190,21 @@ class IdApplicationResourceController(private val idApplicationApiService: IdApp
   )
   suspend fun patchBankApplicationByNomsId(
     @Schema(example = "AXXXS", required = true)
-    @PathVariable("prisonerId")
-    prisonerId: String,
+    @PathVariable("nomsId")
+    nomsId: String,
     @PathVariable("idApplicationId")
     @Parameter(required = true)
     idApplicationId: String,
     @RequestBody
-    idApplicationPatchDTO: IdApplicationPatchDTO,
+    idApplicationPatchDTO: IdApplicationPatch,
   ): IdApplicationEntity {
-    val idApplication = idApplicationApiService.getIdApplicationByNomsId(prisonerId)
+    val idApplication = idApplicationService.getIdApplicationByNomsId(nomsId)
     if (idApplication.id != idApplicationId.toLong()) {
       throw NoDataWithCodeFoundException(
         "IdApplication",
         idApplicationId,
       )
     }
-    return idApplicationApiService.updateIdApplication(idApplication, idApplicationPatchDTO)
+    return idApplicationService.updateIdApplication(idApplication, idApplicationPatchDTO)
   }
 }

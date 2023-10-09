@@ -1,0 +1,130 @@
+package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
+
+import jakarta.transaction.Transactional
+import jakarta.validation.ValidationException
+import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.DuplicateDataFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplication
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplicationLog
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplicationResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.BankApplicationEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.BankApplicationStatusLogEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.BankApplicationRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.BankApplicationStatusLogRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import java.time.LocalDateTime
+
+@Service
+class BankApplicationService(
+  private val prisonerRepository: PrisonerRepository,
+  private val bankApplicationRepository: BankApplicationRepository,
+  private val bankApplicationStatusLogRepository: BankApplicationStatusLogRepository,
+) {
+
+  @Transactional
+  suspend fun getBankApplicationById(id: Long) = bankApplicationRepository.findById(id)
+    ?: throw ResourceNotFoundException("Bank application with id $id not found in database")
+
+  @Transactional
+  suspend fun getBankApplicationByNomsId(nomsId: String): BankApplicationResponse? {
+    val prisoner = prisonerRepository.findByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+    val bankApplication = bankApplicationRepository.findByPrisonerAndIsDeleted(prisoner)
+      ?: throw ResourceNotFoundException(" no none deleted bank applications for prisoner: ${prisoner.nomsId} found in database")
+    bankApplication.logs = emptySet()
+    val logs = bankApplicationStatusLogRepository.findByBankApplication(bankApplication)
+    return BankApplicationResponse(
+      id = bankApplication.id!!,
+      prisoner = prisoner,
+      logs = if (logs.isNullOrEmpty()) emptyList() else logs.map { BankApplicationLog(it.id!!, it.statusChangedTo, it.changedAtDate) },
+      currentStatus = bankApplication.status,
+      bankName = bankApplication.bankName,
+      applicationSubmittedDate = bankApplication.applicationSubmittedDate,
+      bankResponseDate = bankApplication.bankResponseDate,
+      addedToPersonalItemsDate = bankApplication.addedToPersonalItemsDate,
+      isAddedToPersonalItems = bankApplication.isAddedToPersonalItems,
+    )
+  }
+
+  @Transactional
+  suspend fun deleteBankApplication(bankApplication: BankApplicationEntity) {
+    bankApplication.isDeleted = true
+    bankApplication.deletionDate = LocalDateTime.now()
+    bankApplicationRepository.save(bankApplication)
+  }
+
+  @Transactional
+  suspend fun createBankApplication(bankApplication: BankApplication, nomsId: String, notUnitTest: Boolean = true): BankApplicationResponse {
+    val now = LocalDateTime.now()
+    val prisoner = prisonerRepository.findByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+    val statusText = "Pending"
+
+    val bankApplicationExists = bankApplicationRepository.findByPrisonerAndIsDeleted(prisoner)
+    if (notUnitTest && bankApplicationExists != null) {
+      throw DuplicateDataFoundException("Bank application for prisoner with id $nomsId already exists in database")
+    }
+
+    val bankApplication = BankApplicationEntity(
+      null,
+      prisoner,
+      emptySet(),
+      bankName = bankApplication.bankName ?: throw ValidationException("Bank name cannot be null"),
+      creationDate = now,
+      applicationSubmittedDate = bankApplication.applicationSubmittedDate!!,
+      status = statusText,
+    )
+    val newStatus = BankApplicationStatusLogEntity(null, bankApplication, statusChangedTo = statusText, bankApplication.applicationSubmittedDate!!)
+    bankApplicationStatusLogRepository.save(newStatus)
+    return getBankApplicationByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Bank application for prisoner with id $nomsId not found in database ")
+  }
+
+  @Transactional
+  suspend fun patchBankApplication(nomsId: String, bankApplicationId: String, bankApplication: BankApplication): BankApplicationResponse {
+    val existingBankApplication = getBankApplicationById(bankApplicationId.toLong()).get()
+    if (existingBankApplication.prisoner.nomsId != nomsId) {
+      throw NoDataWithCodeFoundException(
+        "BankApplication",
+        bankApplicationId,
+      )
+    }
+    updateBankApplication(existingBankApplication = existingBankApplication, bankApplication)
+    return getBankApplicationByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Bank application for prisoner: $nomsId not found after update")
+  }
+
+  @Transactional
+  suspend fun updateBankApplication(existingBankApplication: BankApplicationEntity, bankApplication: BankApplication) {
+    val logs = bankApplicationStatusLogRepository.findByBankApplication(existingBankApplication)
+      ?: throw ResourceNotFoundException("Bank application for prisoner with id ${existingBankApplication.prisoner.nomsId} not found in database ")
+
+    logs[0].bankApplication?.bankResponseDate = bankApplication.bankResponseDate ?: logs[0].bankApplication?.bankResponseDate
+    logs[0].bankApplication?.status = bankApplication.status ?: logs[0].bankApplication?.status!!
+    logs[0].bankApplication?.isAddedToPersonalItems = bankApplication.isAddedToPersonalItems ?: logs[0].bankApplication?.isAddedToPersonalItems
+    logs[0].bankApplication?.addedToPersonalItemsDate = bankApplication.addedToPersonalItemsDate ?: logs[0].bankApplication?.addedToPersonalItemsDate
+    bankApplicationStatusLogRepository.saveAll(logs)
+    if (bankApplication.resubmissionDate != null) {
+      val newStatus = BankApplicationStatusLogEntity(
+        null,
+        logs[0].bankApplication,
+        statusChangedTo = "Account resubmitted",
+        changedAtDate = bankApplication.resubmissionDate,
+      )
+      logs.plus(newStatus)
+      bankApplicationStatusLogRepository.save(newStatus)
+    }
+    if (bankApplication.status != null) {
+      val newStatus = BankApplicationStatusLogEntity(
+        null,
+        logs[0].bankApplication,
+        statusChangedTo = bankApplication.status,
+        changedAtDate = bankApplication.bankResponseDate ?: throw ValidationException("changedAtDate cant be null when changing status"),
+      )
+      logs.plus(newStatus)
+      bankApplicationStatusLogRepository.save(newStatus)
+    }
+  }
+}

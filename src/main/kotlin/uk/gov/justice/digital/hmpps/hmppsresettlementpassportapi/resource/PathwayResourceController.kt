@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayAndStatus
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PathwayApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PathwayAndStatusService
 
 @RestController
 @RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
-class PathwayResourceController(private val pathwayApiService: PathwayApiService) {
+class PathwayResourceController(private val pathwayAndStatusService: PathwayAndStatusService) {
 
-  @PatchMapping("/{prisonerId}/pathway")
+  @PatchMapping("/{nomsId}/pathway")
   @Operation(
     summary = "Patch a pathway status",
     description = "Patch a pathway with a new status for a given prisoner",
@@ -61,10 +61,10 @@ class PathwayResourceController(private val pathwayApiService: PathwayApiService
     ],
   )
   suspend fun patchPathwayStatus(
-    @PathVariable("prisonerId")
+    @PathVariable("nomsId")
     @Parameter(required = true)
-    prisonerId: String,
+    nomsId: String,
     @RequestBody
     pathwayAndStatus: PathwayAndStatus,
-  ) = pathwayApiService.updatePathwayStatus(prisonerId, pathwayAndStatus)
+  ) = pathwayAndStatusService.updatePathwayStatus(nomsId, pathwayAndStatus)
 }

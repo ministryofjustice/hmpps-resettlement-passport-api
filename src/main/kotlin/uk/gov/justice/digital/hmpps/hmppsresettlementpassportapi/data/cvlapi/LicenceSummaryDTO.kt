@@ -4,7 +4,7 @@ data class LicenceSummary(
   val licenceId: Long,
   val licenceType: String,
   val licenceStatus: String,
-  val nomisId: String,
+  val nomsId: String,
   val surname: String,
   val forename: String,
   val prisonCode: String,

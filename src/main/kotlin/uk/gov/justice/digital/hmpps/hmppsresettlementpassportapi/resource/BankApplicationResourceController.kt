@@ -19,18 +19,17 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.bankapplicatonapi.BankApplicationDTO
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.bankapplicatonapi.BankApplicationResponseDTO
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.BankApplicationApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplication
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplicationResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.BankApplicationService
 
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
-class BankApplicationResourceController(private val bankApplicationApiService: BankApplicationApiService) {
-  @GetMapping("/{prisonerId}/bankapplication", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Get bank application by nomis Id", description = "Bank application based on nomis Id")
+class BankApplicationResourceController(private val bankApplicationService: BankApplicationService) {
+  @GetMapping("/{nomsId}/bankapplication", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(summary = "Get bank application by noms Id", description = "Bank application based on noms Id")
   @ApiResponses(
     value = [
       ApiResponse(
@@ -66,12 +65,12 @@ class BankApplicationResourceController(private val bankApplicationApiService: B
   )
   suspend fun getBankApplicationByNomsId(
     @Schema(example = "AXXXS", required = true)
-    @PathVariable("prisonerId")
+    @PathVariable("nomsId")
     @Parameter(required = true)
-    prisonerId: String,
-  ) = bankApplicationApiService.getBankApplicationByNomsId(prisonerId)
+    nomsId: String,
+  ) = bankApplicationService.getBankApplicationByNomsId(nomsId)
 
-  @PostMapping("/{prisonerId}/bankapplication", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @PostMapping("/{nomsId}/bankapplication", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create assessment", description = "Create assessment")
   @ApiResponses(
     value = [
@@ -103,13 +102,13 @@ class BankApplicationResourceController(private val bankApplicationApiService: B
   )
   suspend fun postBankApplicationByNomsId(
     @Schema(example = "AXXXS", required = true)
-    @PathVariable("prisonerId")
-    prisonerId: String,
+    @PathVariable("nomsId")
+    nomsId: String,
     @RequestBody
-    bankApplicationDTO: BankApplicationDTO,
-  ) = bankApplicationApiService.createBankApplication(bankApplicationDTO, prisonerId)
+    bankApplication: BankApplication,
+  ) = bankApplicationService.createBankApplication(bankApplication, nomsId)
 
-  @DeleteMapping("/{prisonerId}/bankapplication/{bankApplicationId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @DeleteMapping("/{nomsId}/bankapplication/{bankApplicationId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create assessment", description = "Create assessment")
   @ApiResponses(
     value = [
@@ -140,24 +139,24 @@ class BankApplicationResourceController(private val bankApplicationApiService: B
     ],
   )
   suspend fun deleteAssessmentByNomsId(
-    @PathVariable("prisonerId")
+    @PathVariable("nomsId")
     @Parameter(required = true)
-    prisonerId: String,
+    nomsId: String,
     @PathVariable("bankApplicationId")
     @Parameter(required = true)
     bankApplicationId: String,
   ) {
-    val bankApplication = bankApplicationApiService.getBankApplicationById(bankApplicationId.toLong()).get()
-    if (bankApplication.prisoner.nomsId != prisonerId) {
+    val bankApplication = bankApplicationService.getBankApplicationById(bankApplicationId.toLong()).get()
+    if (bankApplication.prisoner.nomsId != nomsId) {
       throw NoDataWithCodeFoundException(
         "BankApplication",
         bankApplicationId,
       )
     }
-    bankApplicationApiService.deleteBankApplication(bankApplication)
+    bankApplicationService.deleteBankApplication(bankApplication)
   }
 
-  @PatchMapping("/{prisonerId}/bankapplication/{bankApplicationId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @PatchMapping("/{nomsId}/bankapplication/{bankApplicationId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create assessment", description = "Create assessment")
   @ApiResponses(
     value = [
@@ -189,23 +188,12 @@ class BankApplicationResourceController(private val bankApplicationApiService: B
   )
   suspend fun patchBankApplicationByNomsId(
     @Schema(example = "AXXXS", required = true)
-    @PathVariable("prisonerId")
-    prisonerId: String,
+    @PathVariable("nomsId")
+    nomsId: String,
     @PathVariable("bankApplicationId")
     @Parameter(required = true)
     bankApplicationId: String,
     @RequestBody
-    bankApplicationDTO: BankApplicationDTO,
-  ): BankApplicationResponseDTO {
-    val bankApplication = bankApplicationApiService.getBankApplicationById(bankApplicationId.toLong()).get()
-    if (bankApplication.prisoner.nomsId != prisonerId) {
-      throw NoDataWithCodeFoundException(
-        "BankApplication",
-        bankApplicationId,
-      )
-    }
-    bankApplicationApiService.updateBankApplication(existingBankApplication = bankApplication, bankApplicationDTO)
-    return bankApplicationApiService.getBankApplicationByNomsId(prisonerId)
-      ?: throw ResourceNotFoundException("Bank application for prisoner: $prisonerId not found after update")
-  }
+    bankApplication: BankApplication,
+  ): BankApplicationResponse = bankApplicationService.patchBankApplication(nomsId, bankApplicationId, bankApplication)
 }

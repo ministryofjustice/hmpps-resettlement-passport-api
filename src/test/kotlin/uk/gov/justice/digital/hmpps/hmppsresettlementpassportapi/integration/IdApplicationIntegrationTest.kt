@@ -4,8 +4,8 @@ import io.mockk.every
 import io.mockk.mockkStatic
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.idapplicationapi.IdApplicationPatchDTO
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.idapplicationapi.IdApplicationPostDTO
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.IdApplicationPatch
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.IdApplicationPost
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -22,18 +22,18 @@ class IdApplicationIntegrationTest : IntegrationTestBase() {
     val expectedOutput = readFile("testdata/expectation/id-application-post-result.json")
     val expectedOutput2 = readFile("testdata/expectation/id-application-patch-result.json")
 
-    val prisonerId = "123"
+    val nomsId = "123"
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/idapplication")
+      .uri("/resettlement-passport/prisoner/$nomsId/idapplication")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
 
     webTestClient.post()
-      .uri("/resettlement-passport/prisoner/$prisonerId/idapplication")
+      .uri("/resettlement-passport/prisoner/$nomsId/idapplication")
       .bodyValue(
-        IdApplicationPostDTO(
+        IdApplicationPost(
           idType = "Birth certificate",
           applicationSubmittedDate = fakeNow,
           isPriorityApplication = false,
@@ -50,9 +50,9 @@ class IdApplicationIntegrationTest : IntegrationTestBase() {
       .json(expectedOutput)
 
     webTestClient.patch()
-      .uri("/resettlement-passport/prisoner/$prisonerId/idapplication/1")
+      .uri("/resettlement-passport/prisoner/$nomsId/idapplication/1")
       .bodyValue(
-        IdApplicationPatchDTO(
+        IdApplicationPatch(
           status = "Accepted",
           dateIdReceived = fakeNow,
           addedToPersonalItemsDate = fakeNow,
@@ -67,7 +67,7 @@ class IdApplicationIntegrationTest : IntegrationTestBase() {
       .json(expectedOutput2)
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/idapplication")
+      .uri("/resettlement-passport/prisoner/$nomsId/idapplication")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -75,13 +75,13 @@ class IdApplicationIntegrationTest : IntegrationTestBase() {
       .json(expectedOutput2)
 
     webTestClient.delete()
-      .uri("/resettlement-passport/prisoner/$prisonerId/idapplication/1")
+      .uri("/resettlement-passport/prisoner/$nomsId/idapplication/1")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/idapplication")
+      .uri("/resettlement-passport/prisoner/$nomsId/idapplication")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound

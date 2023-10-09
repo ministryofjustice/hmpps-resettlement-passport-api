@@ -32,10 +32,10 @@ class PathwayIntegrationTest : IntegrationTestBase() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
 
-    val prisonerId = "123"
+    val nomsId = "123"
 
     webTestClient.patch()
-      .uri("/resettlement-passport/prisoner/$prisonerId/pathway")
+      .uri("/resettlement-passport/prisoner/$nomsId/pathway")
       .bodyValue(
         PathwayAndStatus(
           pathway = Pathway.ACCOMMODATION,
@@ -81,10 +81,10 @@ class PathwayIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
   fun `Patch pathway status happy path - 404 on prisoner`() {
-    val prisonerId = "abc"
+    val nomsId = "abc"
 
     webTestClient.patch()
-      .uri("/resettlement-passport/prisoner/$prisonerId/pathway")
+      .uri("/resettlement-passport/prisoner/$nomsId/pathway")
       .bodyValue(
         PathwayAndStatus(
           pathway = Pathway.ACCOMMODATION,
@@ -106,10 +106,10 @@ class PathwayIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
   fun `Patch pathway status happy path - 404 on pathway status`() {
-    val prisonerId = "789"
+    val nomsId = "789"
 
     webTestClient.patch()
-      .uri("/resettlement-passport/prisoner/$prisonerId/pathway")
+      .uri("/resettlement-passport/prisoner/$nomsId/pathway")
       .bodyValue(
         PathwayAndStatus(
           pathway = Pathway.ACCOMMODATION,
@@ -130,10 +130,10 @@ class PathwayIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Patch pathway status happy path - 401`() {
-    val prisonerId = "123"
+    val nomsId = "123"
 
     webTestClient.patch()
-      .uri("/resettlement-passport/prisoner/$prisonerId/pathway")
+      .uri("/resettlement-passport/prisoner/$nomsId/pathway")
       .bodyValue(
         PathwayAndStatus(
           pathway = Pathway.ACCOMMODATION,
@@ -146,10 +146,10 @@ class PathwayIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Patch pathway status happy path - forbidden`() {
-    val prisonerId = "123"
+    val nomsId = "123"
 
     webTestClient.patch()
-      .uri("/resettlement-passport/prisoner/$prisonerId/pathway")
+      .uri("/resettlement-passport/prisoner/$nomsId/pathway")
       .headers(setAuthorisation())
       .bodyValue(
         PathwayAndStatus(
@@ -163,10 +163,10 @@ class PathwayIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Patch pathway status happy path - 400`() {
-    val prisonerId = "123"
+    val nomsId = "123"
 
     webTestClient.patch()
-      .uri("/resettlement-passport/prisoner/$prisonerId/pathway")
+      .uri("/resettlement-passport/prisoner/$nomsId/pathway")
       .header("Content-Type", "application/json")
       .bodyValue(
         """

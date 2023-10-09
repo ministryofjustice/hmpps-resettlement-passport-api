@@ -18,12 +18,12 @@ import java.time.Duration
 @Configuration
 class WebClientConfiguration(
   @Value("\${api.base.url.oauth}") val authBaseUri: String,
-  @Value("\${api.base.url.prison-register}") private val prisonRootUri: String,
-  @Value("\${api.base.url.offender-search}") private val offenderSearchUri: String,
+  @Value("\${api.base.url.prison-register}") private val prisonRegisterRootUri: String,
+  @Value("\${api.base.url.offender-search}") private val offenderSearchRootUri: String,
   @Value("\${api.base.url.cvl}") private val cvlRootUri: String,
   @Value("\${api.base.url.arn}") private val arnRootUri: String,
-  @Value("\${api.base.url.prison}") private val prisonerImageUri: String,
-  @Value("\${api.base.url.offender-case-notes}") private val offenderCaseNotesUri: String,
+  @Value("\${api.base.url.prison}") private val prisonRootUri: String,
+  @Value("\${api.base.url.offender-case-notes}") private val offenderCaseNotesRootUri: String,
   @Value("\${api.base.url.key-worker}") private val keyWorkerRootUri: String,
   @Value("\${api.base.url.allocation-manager}") private val allocationManagerRootUri: String,
   @Value("\${api.base.url.resettlement-passport-delius}") private val rpDeliusRootUri: String,
@@ -37,23 +37,13 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun prisonWebClient(): WebClient {
-    val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
-    return WebClient.builder()
-      .baseUrl(prisonRootUri)
-      .clientConnector(ReactorClientHttpConnector(httpClient))
-      .filter(AuthTokenFilterFunction())
-      .build()
-  }
-
-  @Bean
-  fun prisonWebClientClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+  fun prisonRegisterWebClientClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
     val oauth2Client = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
     oauth2Client.setDefaultClientRegistrationId(SYSTEM_USERNAME)
 
     val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
     return WebClient.builder()
-      .baseUrl(prisonRootUri)
+      .baseUrl(prisonRegisterRootUri)
       .clientConnector(ReactorClientHttpConnector(httpClient))
       .filter(oauth2Client)
       .build()
@@ -62,7 +52,7 @@ class WebClientConfiguration(
   @Bean
   fun prisonHealthWebClient(): WebClient {
     return WebClient.builder()
-      .baseUrl(prisonRootUri)
+      .baseUrl(prisonRegisterRootUri)
       .build()
   }
 
@@ -98,13 +88,13 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun offendersSearchWebClientClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+  fun offenderSearchWebClientClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
     val oauth2Client = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
     oauth2Client.setDefaultClientRegistrationId(SYSTEM_USERNAME)
 
     val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
     return WebClient.builder()
-      .baseUrl(offenderSearchUri)
+      .baseUrl(offenderSearchRootUri)
       .clientConnector(ReactorClientHttpConnector(httpClient))
       .filter(oauth2Client)
       .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }
@@ -126,13 +116,13 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun offendersImageWebClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+  fun prisonWebClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
     val oauth2Client = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
     oauth2Client.setDefaultClientRegistrationId(SYSTEM_USERNAME)
 
     val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
     return WebClient.builder()
-      .baseUrl(prisonerImageUri)
+      .baseUrl(prisonRootUri)
       .clientConnector(ReactorClientHttpConnector(httpClient))
       .filter(oauth2Client)
       .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }
@@ -145,7 +135,7 @@ class WebClientConfiguration(
     val oauth2Client = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
     oauth2Client.setDefaultClientRegistrationId(SYSTEM_USERNAME)
     return WebClient.builder()
-      .baseUrl(offenderCaseNotesUri)
+      .baseUrl(offenderCaseNotesRootUri)
       .clientConnector(ReactorClientHttpConnector(httpClient))
       .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }
       .build()
@@ -172,7 +162,7 @@ class WebClientConfiguration(
 
     val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
     return WebClient.builder()
-      .baseUrl(offenderCaseNotesUri)
+      .baseUrl(offenderCaseNotesRootUri)
       .clientConnector(ReactorClientHttpConnector(httpClient))
       .filter(oauth2Client)
       .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }

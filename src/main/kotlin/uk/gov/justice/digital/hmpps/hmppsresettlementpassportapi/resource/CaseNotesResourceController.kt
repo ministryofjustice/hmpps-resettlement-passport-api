@@ -22,17 +22,17 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesL
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesMeta
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNote
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseNotesApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseNotesService
 
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/case-notes", produces = [MediaType.APPLICATION_JSON_VALUE])
 class CaseNotesResourceController(
-  private val caseNotesService: CaseNotesApiService,
+  private val caseNotesService: CaseNotesService,
 ) {
 
-  @GetMapping("/{prisonerId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @GetMapping("/{nomsId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
     summary = "Get all case notes for Resettlement Passport",
     description = "Get all case notes for Resettlement passport of type is RESET",
@@ -51,9 +51,9 @@ class CaseNotesResourceController(
     ],
   )
   suspend fun getCaseNotesForPrisoner(
-    @PathVariable("prisonerId")
+    @PathVariable("nomsId")
     @Parameter(required = true)
-    prisonerId: String,
+    nomsId: String,
     @Schema(example = "0")
     @Parameter(description = "Zero-based page index (0..N)")
     @RequestParam(value = "page", defaultValue = "0")
@@ -79,9 +79,9 @@ class CaseNotesResourceController(
     @RequestParam(value = "createdByUserId", defaultValue = "0")
     createdByUserId: Int,
   ): CaseNotesList =
-    caseNotesService.getCaseNotesByNomisId(prisonerId, page, size, sort, days, pathwayType, createdByUserId)
+    caseNotesService.getCaseNotesByNomsId(nomsId, page, size, sort, days, pathwayType, createdByUserId)
 
-  @GetMapping("/{prisonerId}/creators/{pathway}")
+  @GetMapping("/{nomsId}/creators/{pathway}")
   @Operation(
     summary = "Get all case notes created by user list",
     description = "Get all case notes created by user list for the given pathway in Resettlement Passport",
@@ -110,18 +110,18 @@ class CaseNotesResourceController(
     ],
   )
   suspend fun getCaseNotesCreators(
-    @PathVariable("prisonerId")
+    @PathVariable("nomsId")
     @Parameter(required = true)
-    prisonerId: String,
+    nomsId: String,
     @PathVariable("pathway")
     @Parameter(
       required = true,
       description = "Get Case notes Creators for a specific pathway, property supported are ACCOMMODATION, ATTITUDES_THINKING_AND_BEHAVIOUR, CHILDREN_FAMILIES_AND_COMMUNITY, DRUGS_AND_ALCOHOL, EDUCATION_SKILLS_AND_WORK, FINANCE_AND_ID, HEALTH, GENERAL ",
     )
     pathway: String,
-  ): List<CaseNotesMeta> = caseNotesService.getCaseNotesCreatorsByPathway(prisonerId, pathway)
+  ): List<CaseNotesMeta> = caseNotesService.getCaseNotesCreatorsByPathway(nomsId, pathway)
 
-  @PostMapping("/{prisonerId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @PostMapping("/{nomsId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
     summary = "Create case notes for Resettlement Passport",
     description = "Create case notes for Resettlement passport of type is RESET",
@@ -159,13 +159,13 @@ class CaseNotesResourceController(
       ),
     ],
   )
-  suspend fun AddCaseNotesForPrisoner(
-    @PathVariable("prisonerId")
+  suspend fun addCaseNotesForPrisoner(
+    @PathVariable("nomsId")
     @Parameter(required = true)
-    prisonerId: String,
+    nomsId: String,
     @RequestBody
-    casenotes: CaseNotesRequest,
+    caseNotes: CaseNotesRequest,
     @RequestHeader("Authorization")
     authorizationHeader: String,
-  ): CaseNote = caseNotesService.postCaseNote(prisonerId, casenotes, authorizationHeader)
+  ): CaseNote = caseNotesService.postCaseNote(nomsId, caseNotes, authorizationHeader)
 }

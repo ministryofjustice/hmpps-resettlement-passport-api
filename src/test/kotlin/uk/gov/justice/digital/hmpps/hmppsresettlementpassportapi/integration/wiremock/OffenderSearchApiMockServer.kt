@@ -31,10 +31,10 @@ class OffenderSearchApiMockServer : WireMockServer(WIREMOCK_PORT) {
     )
   }
 
-  fun stubGetPrisonerDetails(nomisId: String, status: Int) {
+  fun stubGetPrisonerDetails(nomsId: String, status: Int) {
     val prisonerDataJSON = readFile("testdata/offender-search-api/prisoner-offender-details.json")
     stubFor(
-      get("/prisoner/$nomisId").willReturn(
+      get("/prisoner/$nomsId").willReturn(
         if (status == 200) {
           aResponse()
             .withHeader("Content-Type", "application/json")

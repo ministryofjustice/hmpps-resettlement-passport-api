@@ -13,8 +13,6 @@ api:
       offender-search: http://localhost:8085
       cvl: http://localhost:8081
       #cvl: https://create-and-vary-a-licence-api-dev.hmpps.service.justice.gov.uk
-      community: http://localhost:8082
-      #community: https://community-api.test.probation.service.justice.gov.uk
       arn: http://localhost:8084
       #arn: https://assess-risks-and-needs-dev.hmpps.service.justice.gov.uk
       prison: http://localhost:8086

@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.StaffContactsApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.StaffContactsService
 
 @RestController
 @RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
-class StaffContactsResourceController(private val staffContactsApiService: StaffContactsApiService) {
+class StaffContactsResourceController(private val staffContactsService: StaffContactsService) {
 
-  @GetMapping("/{prisonerId}/staff-contacts")
+  @GetMapping("/{nomsId}/staff-contacts")
   @Operation(
     summary = "Staff contacts for prisoner",
     description = "Get details of the POM, COM and Key Worker for a prisoner",
@@ -59,8 +59,8 @@ class StaffContactsResourceController(private val staffContactsApiService: Staff
     ],
   )
   suspend fun getStaffContacts(
-    @PathVariable("prisonerId")
+    @PathVariable("nomsId")
     @Parameter(required = true)
-    prisonerId: String,
-  ) = staffContactsApiService.getStaffContacts(prisonerId)
+    nomsId: String,
+  ) = staffContactsService.getStaffContacts(nomsId)
 }

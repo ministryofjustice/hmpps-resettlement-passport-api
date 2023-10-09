@@ -15,7 +15,6 @@ api:
       prison-register: http://localhost:8093
       offender-search: http://localhost:8094
       cvl: http://localhost:8095
-      community: http://localhost:8096
       arn: http://localhost:8097
       prison: http://localhost:8098
       offender-case-notes: http://localhost:8099

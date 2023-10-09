@@ -41,8 +41,7 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Get CaseNotes  Internal Error`() {
-    caseNotesApiMockServer.stubGetCaseNotesOldList("G4274GN", 500, 0, "REPORTS", "", 500)
-    caseNotesApiMockServer.stubGetCaseNotesNewList("G4274GN", 500, 0, "RESET", 500)
+    caseNotesApiMockServer.stubGetCaseNotesOldList("G4274GN", 500, 0, "GEN", "RESET", 500)
     webTestClient.get()
       .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=10&sort=occurenceDateTime,DESC&days=0&pathwayType=All")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))

@@ -23,7 +23,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.convert
 class ArnApiService(private val arnWebClientClientCredentials: WebClient) {
 
   suspend fun getRiskScoresByCrn(crn: String): RiskScore? {
-
     // Use CRN to get risk scores from ARN
     val riskScoresDtoList = arnWebClientClientCredentials.get()
       .uri("/risks/crn/$crn/predictors/all")
@@ -78,7 +77,6 @@ class ArnApiService(private val arnWebClientClientCredentials: WebClient) {
   fun List<RiskScoresDto>.getMostRecentRiskScore() = this.sortedBy { it.completedDate }.last()
 
   suspend fun getRoshDataByCrn(crn: String): RoshData? {
-
     // Use CRN to get risk scores from ARN
     val allRoshRiskData = arnWebClientClientCredentials.get()
       .uri("/risks/crn/$crn")

@@ -82,5 +82,4 @@ class PathwayAndStatusService(
 
   @Transactional
   fun findAllPathways(): List<PathwayEntity> = pathwayRepository.findAll()
-
 }

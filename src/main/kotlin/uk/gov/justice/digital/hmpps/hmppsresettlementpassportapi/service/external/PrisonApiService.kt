@@ -47,5 +47,4 @@ class PrisonApiService(val prisonWebClientCredentials: WebClient) {
       .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found") })
       .awaitBody<List<PrisonerImage>>()
   }
-
 }

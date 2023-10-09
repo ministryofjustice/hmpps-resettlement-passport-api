@@ -17,5 +17,4 @@ class LicenceConditionService(val cvlApiService: CvlApiService) {
   }
 
   fun getImageFromLicenceIdAndConditionId(licenceId: String, conditionId: String) = cvlApiService.getImageFromLicenceIdAndConditionId(licenceId, conditionId)
-
 }

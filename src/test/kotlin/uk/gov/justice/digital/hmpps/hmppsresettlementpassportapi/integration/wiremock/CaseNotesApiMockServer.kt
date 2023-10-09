@@ -13,7 +13,7 @@ class CaseNotesApiMockServer : WireMockServer(WIREMOCK_PORT) {
   }
 
   fun stubGetCaseNotesOldList(nomsId: String, size: Int, page: Int, type: String, subType: String?, status: Int) {
-    var casenotesJSON = readFile("testdata/casenotes-api/case-notes-gen.json")
+    val casenotesJSON = readFile("testdata/casenotes-api/case-notes-gen.json")
 
     stubFor(
       get("/case-notes/$nomsId?page=$page&size=$size&type=$type&subType=$subType").willReturn(

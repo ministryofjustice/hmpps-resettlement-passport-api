@@ -13,7 +13,7 @@ class CaseNotesApiMockServer : WireMockServer(WIREMOCK_PORT) {
   }
 
   fun stubGetCaseNotesOldList(nomsId: String, size: Int, page: Int, type: String, subType: String?, status: Int) {
-    val casenotesJSON = readFile("testdata/casenotes-api/case-notes-gen.json")
+    val caseNotesJSON = readFile("testdata/case-notes-api/case-notes-gen.json")
 
     stubFor(
       get("/case-notes/$nomsId?page=$page&size=$size&type=$type&subType=$subType").willReturn(
@@ -21,7 +21,7 @@ class CaseNotesApiMockServer : WireMockServer(WIREMOCK_PORT) {
           aResponse()
             .withHeader("Content-Type", "application/json")
             .withBody(
-              casenotesJSON,
+              caseNotesJSON,
             )
             .withStatus(status)
         } else {
@@ -35,14 +35,14 @@ class CaseNotesApiMockServer : WireMockServer(WIREMOCK_PORT) {
   }
 
   fun stubGetCaseNotesNewList(nomsId: String, size: Int, page: Int, type: String, status: Int) {
-    val casenotesJSON = readFile("testdata/casenotes-api/case-notes.json")
+    val caseNotesJSON = readFile("testdata/case-notes-api/case-notes.json")
     stubFor(
       get("/case-notes/$nomsId?page=$page&size=$size&type=$type").willReturn(
         if (status == 200) {
           aResponse()
             .withHeader("Content-Type", "application/json")
             .withBody(
-              casenotesJSON,
+              caseNotesJSON,
             )
             .withStatus(status)
         } else {
@@ -56,7 +56,7 @@ class CaseNotesApiMockServer : WireMockServer(WIREMOCK_PORT) {
   }
 
   fun stubGetCaseNotesSpecificPathway(nomsId: String, size: Int, page: Int, type: String, subType: String?, status: Int) {
-    val casenotesJSON = readFile("testdata/casenotes-api/case-notes-pathway-accom.json")
+    val caseNotesJSON = readFile("testdata/case-notes-api/case-notes-pathway-accom.json")
 
     stubFor(
       get("/case-notes/$nomsId?page=$page&size=$size&type=$type&subType=$subType").willReturn(
@@ -64,7 +64,7 @@ class CaseNotesApiMockServer : WireMockServer(WIREMOCK_PORT) {
           aResponse()
             .withHeader("Content-Type", "application/json")
             .withBody(
-              casenotesJSON,
+              caseNotesJSON,
             )
             .withStatus(status)
         } else {
@@ -80,7 +80,7 @@ class CaseNotesApiMockServer : WireMockServer(WIREMOCK_PORT) {
   fun stubPostCaseNotes(nomsId: String, type: String, subType: String?, text: String, prisonId: String, status: Int) {
     val expectedCreateCaseNotesResponseJSON = readFile("testdata/expectation/case-notes-create-response.json")
 
-    val casenotesJSON =
+    val caseNotesJSON =
       """
       {
         "locationId": "$prisonId",
@@ -92,7 +92,7 @@ class CaseNotesApiMockServer : WireMockServer(WIREMOCK_PORT) {
 
     stubFor(
       post("/case-notes/$nomsId")
-        .withRequestBody(equalToJson(casenotesJSON, true, true))
+        .withRequestBody(equalToJson(caseNotesJSON, true, true))
         .willReturn(
           if (status == 200) {
             aResponse()

@@ -9,23 +9,23 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 
 @Service
 class StaffContactsService(val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService, val keyWorkerApiService: KeyWorkerApiService, val allocationManagerApiService: AllocationManagerApiService) {
-  suspend fun getStaffContacts(prisonerId: String): StaffContacts {
+  suspend fun getStaffContacts(nomsId: String): StaffContacts {
     // Get COM details from Delius API
-    val comName = resettlementPassportDeliusApiService.getComByNomsId(prisonerId)
+    val comName = resettlementPassportDeliusApiService.getComByNomsId(nomsId)
     var com: Contact? = null
     if (comName != null) {
       com = Contact(comName)
     }
 
     // Get Key Worker details from Key Worker API
-    val keyWorkerName = keyWorkerApiService.getKeyWorkerName(prisonerId)
+    val keyWorkerName = keyWorkerApiService.getKeyWorkerName(nomsId)
     var keyWorker: Contact? = null
     if (keyWorkerName != null) {
       keyWorker = Contact(keyWorkerName)
     }
 
     // Get POM details from Allocation Manager API
-    val prisonOffenderManagers = allocationManagerApiService.getPomsByNomsId(prisonerId)
+    val prisonOffenderManagers = allocationManagerApiService.getPomsByNomsId(nomsId)
     var primaryPom: Contact? = null
     if (prisonOffenderManagers.primaryPom != null) {
       primaryPom = Contact(prisonOffenderManagers.primaryPom)

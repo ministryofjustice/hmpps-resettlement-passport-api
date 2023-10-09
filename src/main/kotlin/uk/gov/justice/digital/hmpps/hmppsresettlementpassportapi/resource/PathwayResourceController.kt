@@ -22,7 +22,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.Pathway
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class PathwayResourceController(private val pathwayAndStatusService: PathwayAndStatusService) {
 
-  @PatchMapping("/{prisonerId}/pathway")
+  @PatchMapping("/{nomsId}/pathway")
   @Operation(
     summary = "Patch a pathway status",
     description = "Patch a pathway with a new status for a given prisoner",
@@ -61,10 +61,10 @@ class PathwayResourceController(private val pathwayAndStatusService: PathwayAndS
     ],
   )
   suspend fun patchPathwayStatus(
-    @PathVariable("prisonerId")
+    @PathVariable("nomsId")
     @Parameter(required = true)
-    prisonerId: String,
+    nomsId: String,
     @RequestBody
     pathwayAndStatus: PathwayAndStatus,
-  ) = pathwayAndStatusService.updatePathwayStatus(prisonerId, pathwayAndStatus)
+  ) = pathwayAndStatusService.updatePathwayStatus(nomsId, pathwayAndStatus)
 }

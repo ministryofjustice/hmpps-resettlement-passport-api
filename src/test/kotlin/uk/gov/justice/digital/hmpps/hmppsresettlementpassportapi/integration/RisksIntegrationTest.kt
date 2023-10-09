@@ -8,14 +8,14 @@ class RisksIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
   fun `Get risk scores happy path 1`() {
-    val prisonerId = "123"
+    val nomsId = "123"
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/risk-scores.json")
 
     arnApiMockServer.stubGetToCrn("/risks/crn/$crn/predictors/all", 200, "testdata/arn-api/crn-risk-predictors-1.json")
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/risk/scores")
+      .uri("/resettlement-passport/prisoner/$nomsId/risk/scores")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -27,14 +27,14 @@ class RisksIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
   fun `Get risk scores happy path 2 - multiple sets of risk predictors`() {
-    val prisonerId = "123"
+    val nomsId = "123"
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/risk-scores.json")
 
     arnApiMockServer.stubGetToCrn("/risks/crn/$crn/predictors/all", 200, "testdata/arn-api/crn-risk-predictors-2.json")
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/risk/scores")
+      .uri("/resettlement-passport/prisoner/$nomsId/risk/scores")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -45,10 +45,10 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Get risk scores - no ARN found in database`() {
-    val prisonerId = "abc"
+    val nomsId = "abc"
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/risk/scores")
+      .uri("/resettlement-passport/prisoner/$nomsId/risk/scores")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
@@ -65,13 +65,13 @@ class RisksIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
   fun `Get risk scores - no data found in ARN API`() {
-    val prisonerId = "123"
+    val nomsId = "123"
     val crn = "abc"
 
     arnApiMockServer.stubGetToCrn("/risks/crn/$crn/predictors/all", 404, null)
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/risk/scores")
+      .uri("/resettlement-passport/prisoner/$nomsId/risk/scores")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
@@ -88,13 +88,13 @@ class RisksIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
   fun `Get risk scores - internal server error`() {
-    val prisonerId = "123"
+    val nomsId = "123"
     val crn = "abc"
 
     arnApiMockServer.stubGetToCrn("/risks/crn/$crn/predictors/all", 500, null)
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/risk/scores")
+      .uri("/resettlement-passport/prisoner/$nomsId/risk/scores")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(500)
@@ -111,20 +111,20 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Get risk scores - unauthorized`() {
-    val prisonerId = "abc"
+    val nomsId = "abc"
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/risk/scores")
+      .uri("/resettlement-passport/prisoner/$nomsId/risk/scores")
       .exchange()
       .expectStatus().isUnauthorized
   }
 
   @Test
   fun `Get risk scores - forbidden`() {
-    val prisonerId = "abc"
+    val nomsId = "abc"
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/risk/scores")
+      .uri("/resettlement-passport/prisoner/$nomsId/risk/scores")
       .headers(setAuthorisation())
       .exchange()
       .expectStatus().isForbidden
@@ -133,14 +133,14 @@ class RisksIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
   fun `Get RoSH happy path`() {
-    val prisonerId = "123"
+    val nomsId = "123"
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/risk-rosh.json")
 
     arnApiMockServer.stubGetToCrn("/risks/crn/$crn", 200, "testdata/arn-api/crn-risks.json")
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/risk/rosh")
+      .uri("/resettlement-passport/prisoner/$nomsId/risk/rosh")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -151,10 +151,10 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Get RoSH - no ARN found in database`() {
-    val prisonerId = "abc"
+    val nomsId = "abc"
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/risk/rosh")
+      .uri("/resettlement-passport/prisoner/$nomsId/risk/rosh")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
@@ -171,13 +171,13 @@ class RisksIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
   fun `Get RoSH - no data found in ARN API`() {
-    val prisonerId = "123"
+    val nomsId = "123"
     val crn = "abc"
 
     arnApiMockServer.stubGetToCrn("/risks/crn/$crn", 404, null)
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/risk/rosh")
+      .uri("/resettlement-passport/prisoner/$nomsId/risk/rosh")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
@@ -194,13 +194,13 @@ class RisksIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
   fun `Get RoSH scores - internal server error`() {
-    val prisonerId = "123"
+    val nomsId = "123"
     val crn = "abc"
 
     arnApiMockServer.stubGetToCrn("/risks/crn/$crn", 500, null)
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/risk/rosh")
+      .uri("/resettlement-passport/prisoner/$nomsId/risk/rosh")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(500)
@@ -216,20 +216,20 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Get RoSH - unauthorized`() {
-    val prisonerId = "abc"
+    val nomsId = "abc"
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/risk/rosh")
+      .uri("/resettlement-passport/prisoner/$nomsId/risk/rosh")
       .exchange()
       .expectStatus().isUnauthorized
   }
 
   @Test
   fun `Get RoSH - forbidden`() {
-    val prisonerId = "abc"
+    val nomsId = "abc"
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/risk/rosh")
+      .uri("/resettlement-passport/prisoner/$nomsId/risk/rosh")
       .headers(setAuthorisation())
       .exchange()
       .expectStatus().isForbidden
@@ -238,7 +238,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
   fun `Get MAPPA happy path`() {
-    val prisonerId = "123"
+    val nomsId = "123"
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/risk-mappa.json")
 
@@ -249,7 +249,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
     )
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/risk/mappa")
+      .uri("/resettlement-passport/prisoner/$nomsId/risk/mappa")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -260,10 +260,10 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Get MAPPA - no ARN found in database`() {
-    val prisonerId = "abc"
+    val nomsId = "abc"
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/risk/mappa")
+      .uri("/resettlement-passport/prisoner/$nomsId/risk/mappa")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
@@ -280,13 +280,13 @@ class RisksIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
   fun `Get MAPPA - no data found in Delius API`() {
-    val prisonerId = "123"
+    val nomsId = "123"
     val crn = "abc"
 
     deliusApiMockServer.stubGetToCrn("/probation-cases/$crn/mappa", 404, null)
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/risk/mappa")
+      .uri("/resettlement-passport/prisoner/$nomsId/risk/mappa")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
@@ -303,13 +303,13 @@ class RisksIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
   fun `Get MAPPA scores - internal server error`() {
-    val prisonerId = "123"
+    val nomsId = "123"
     val crn = "abc"
 
     deliusApiMockServer.stubGetToCrn("/probation-cases/$crn/mappa", 500, null)
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/risk/mappa")
+      .uri("/resettlement-passport/prisoner/$nomsId/risk/mappa")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(500)
@@ -322,20 +322,20 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Get MAPPA - unauthorized`() {
-    val prisonerId = "abc"
+    val nomsId = "abc"
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/risk/mappa")
+      .uri("/resettlement-passport/prisoner/$nomsId/risk/mappa")
       .exchange()
       .expectStatus().isUnauthorized
   }
 
   @Test
   fun `Get MAPPA - forbidden`() {
-    val prisonerId = "abc"
+    val nomsId = "abc"
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/risk/mappa")
+      .uri("/resettlement-passport/prisoner/$nomsId/risk/mappa")
       .headers(setAuthorisation())
       .exchange()
       .expectStatus().isForbidden

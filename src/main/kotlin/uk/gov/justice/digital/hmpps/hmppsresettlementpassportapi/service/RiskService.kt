@@ -26,5 +26,5 @@ class RiskService(
     return arnApiService.getRoshDataByCrn(crn)
   }
 
-  suspend fun getMappaDataByNomsId(prisonerId: String): MappaData? = resettlementPassportDeliusApiService.getMappaDataByNomsId(prisonerId)
+  suspend fun getMappaDataByNomsId(nomsId: String): MappaData? = resettlementPassportDeliusApiService.getMappaDataByNomsId(nomsId)
 }

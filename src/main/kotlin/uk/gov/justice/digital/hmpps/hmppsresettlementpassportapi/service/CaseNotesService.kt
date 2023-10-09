@@ -17,7 +17,7 @@ class CaseNotesService(val offenderCaseNotesApiService: OffenderCaseNotesApiServ
     return offenderCaseNotesApiService.getCaseNotesCreatorsByPathway(nomsId, pathwayType)
   }
 
-  suspend fun postCaseNote(prisonerId: String, casenotes: CaseNotesRequest, auth: String): CaseNote {
-    return offenderCaseNotesApiService.postCaseNote(prisonerId, casenotes, auth)
+  suspend fun postCaseNote(nomsId: String, caseNotes: CaseNotesRequest, auth: String): CaseNote {
+    return offenderCaseNotesApiService.postCaseNote(nomsId, caseNotes, auth)
   }
 }

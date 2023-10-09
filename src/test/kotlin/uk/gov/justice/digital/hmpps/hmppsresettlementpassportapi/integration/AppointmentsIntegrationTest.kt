@@ -107,7 +107,7 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `Get Appointments when prisonerId not found`() {
+  fun `Get Appointments when nomsId not found`() {
     val prisonId = "abc"
 
     offenderSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 404)

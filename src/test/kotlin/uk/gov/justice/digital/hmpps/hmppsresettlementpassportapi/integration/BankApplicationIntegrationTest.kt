@@ -19,16 +19,16 @@ class BankApplicationIntegrationTest : IntegrationTestBase() {
     val expectedOutput = readFile("testdata/expectation/bank-application.json")
     val expectedOutput2 = readFile("testdata/expectation/bank-application2.json")
 
-    val prisonerId = "123"
+    val nomsId = "123"
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/bankapplication")
+      .uri("/resettlement-passport/prisoner/$nomsId/bankapplication")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
 
     webTestClient.post()
-      .uri("/resettlement-passport/prisoner/$prisonerId/bankapplication")
+      .uri("/resettlement-passport/prisoner/$nomsId/bankapplication")
       .bodyValue(
         BankApplication(applicationSubmittedDate = fakeNow, bankName = "Lloyds"),
       )
@@ -40,7 +40,7 @@ class BankApplicationIntegrationTest : IntegrationTestBase() {
       .json(expectedOutput)
 
     webTestClient.patch()
-      .uri("/resettlement-passport/prisoner/$prisonerId/bankapplication/1")
+      .uri("/resettlement-passport/prisoner/$nomsId/bankapplication/1")
       .bodyValue(
         BankApplication(resubmissionDate = fakeNow, bankResponseDate = fakeNow, status = "Account opened"),
       )
@@ -52,7 +52,7 @@ class BankApplicationIntegrationTest : IntegrationTestBase() {
       .json(expectedOutput2)
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/bankapplication")
+      .uri("/resettlement-passport/prisoner/$nomsId/bankapplication")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -60,13 +60,13 @@ class BankApplicationIntegrationTest : IntegrationTestBase() {
       .json(expectedOutput2)
 
     webTestClient.delete()
-      .uri("/resettlement-passport/prisoner/$prisonerId/bankapplication/1")
+      .uri("/resettlement-passport/prisoner/$nomsId/bankapplication/1")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/bankapplication")
+      .uri("/resettlement-passport/prisoner/$nomsId/bankapplication")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound

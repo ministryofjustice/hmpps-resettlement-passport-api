@@ -18,10 +18,10 @@ class AssessmentIntegrationTest : IntegrationTestBase() {
     every { LocalDateTime.now() } returns fakeNow
     val expectedOutput = readFile("testdata/expectation/assessment-1.json")
 
-    val prisonerId = "123"
+    val nomsId = "123"
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/assessment")
+      .uri("/resettlement-passport/prisoner/$nomsId/assessment")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -36,10 +36,10 @@ class AssessmentIntegrationTest : IntegrationTestBase() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
 
-    val prisonerId = "1234"
+    val nomsId = "1234"
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/assessment")
+      .uri("/resettlement-passport/prisoner/$nomsId/assessment")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
@@ -51,23 +51,23 @@ class AssessmentIntegrationTest : IntegrationTestBase() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
 
-    val prisonerId = "123"
+    val nomsId = "123"
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/assessment")
+      .uri("/resettlement-passport/prisoner/$nomsId/assessment")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
 
     webTestClient.post()
-      .uri("/resettlement-passport/prisoner/$prisonerId/assessment")
+      .uri("/resettlement-passport/prisoner/$nomsId/assessment")
       .bodyValue(
         Assessment(
           assessmentDate = fakeNow,
           isIdRequired = true,
           isBankAccountRequired = true,
           idDocuments = setOf("Driving licence"),
-          nomsId = prisonerId,
+          nomsId = nomsId,
         ),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -75,7 +75,7 @@ class AssessmentIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/assessment")
+      .uri("/resettlement-passport/prisoner/$nomsId/assessment")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -87,22 +87,22 @@ class AssessmentIntegrationTest : IntegrationTestBase() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
 
-    val prisonerId = "123"
+    val nomsId = "123"
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/assessment")
+      .uri("/resettlement-passport/prisoner/$nomsId/assessment")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
 
     webTestClient.delete()
-      .uri("/resettlement-passport/prisoner/$prisonerId/assessment/1")
+      .uri("/resettlement-passport/prisoner/$nomsId/assessment/1")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$prisonerId/assessment/")
+      .uri("/resettlement-passport/prisoner/$nomsId/assessment/")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound

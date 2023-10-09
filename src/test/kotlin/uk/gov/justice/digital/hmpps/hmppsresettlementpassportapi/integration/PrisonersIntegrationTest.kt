@@ -142,7 +142,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `Get Prisoners when prisonerId not found`() {
+  fun `Get Prisoners when nomsId not found`() {
     val prisonId = "abc"
 
     offenderSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 404)

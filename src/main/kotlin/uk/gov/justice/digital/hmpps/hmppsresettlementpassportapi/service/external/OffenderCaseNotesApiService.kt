@@ -247,10 +247,10 @@ class OffenderCaseNotesApiService(
       )
     }
   }
-  suspend fun postCaseNote(nomsId: String, casenotes: CaseNotesRequest, auth: String): CaseNote {
+  suspend fun postCaseNote(nomsId: String, caseNotes: CaseNotesRequest, auth: String): CaseNote {
     val type = PATHWAY_PARENT_TYPE
     val pathwayValues = PathwayMap.values()
-    val pathwayVal = pathwayValues.find { it.id == casenotes.pathway }
+    val pathwayVal = pathwayValues.find { it.id == caseNotes.pathway }
     val subType = pathwayVal?.name.toString()
     val prisonCode = offenderSearchApiService.findPrisonerPersonalDetails(nomsId).prisonId
 
@@ -265,7 +265,7 @@ class OffenderCaseNotesApiService(
           "locationId" to prisonCode,
           "type" to type,
           "subType" to subType,
-          "text" to casenotes.text,
+          "text" to caseNotes.text,
         ),
       )
       .retrieve()

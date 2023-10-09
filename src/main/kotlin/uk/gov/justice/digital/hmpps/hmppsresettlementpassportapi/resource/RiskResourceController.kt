@@ -27,7 +27,7 @@ class RiskResourceController(
   private val riskService: RiskService,
 ) {
 
-  @GetMapping("{prisonerId}/risk/scores", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @GetMapping("{nomsId}/risk/scores", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
     summary = "Get risk score for a prisoner",
     description = "All risk score details for the given Prisoner Id.",
@@ -61,12 +61,12 @@ class RiskResourceController(
     ],
   )
   suspend fun getRiskScoresByNomsId(
-    @PathVariable("prisonerId")
+    @PathVariable("nomsId")
     @Parameter(required = true)
-    prisonerId: String,
-  ): RiskScore? = riskService.getRiskScoresByNomsId(prisonerId)
+    nomsId: String,
+  ): RiskScore? = riskService.getRiskScoresByNomsId(nomsId)
 
-  @GetMapping("{prisonerId}/risk/rosh", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @GetMapping("{nomsId}/risk/rosh", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
     summary = "Get RoSH data for a prisoner",
     description = "RoSH data for the given Prisoner Id.",
@@ -100,12 +100,12 @@ class RiskResourceController(
     ],
   )
   suspend fun getRoshDataByNomsId(
-    @PathVariable("prisonerId")
+    @PathVariable("nomsId")
     @Parameter(required = true)
-    prisonerId: String,
-  ): RoshData? = riskService.getRoshDataByNomsId(prisonerId)
+    nomsId: String,
+  ): RoshData? = riskService.getRoshDataByNomsId(nomsId)
 
-  @GetMapping("{prisonerId}/risk/mappa", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @GetMapping("{nomsId}/risk/mappa", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
     summary = "Get MAPPA data for a prisoner",
     description = "MAPPA data for the given Prisoner Id.",
@@ -139,8 +139,8 @@ class RiskResourceController(
     ],
   )
   suspend fun getMappaDataByNomsId(
-    @PathVariable("prisonerId")
+    @PathVariable("nomsId")
     @Parameter(required = true)
-    prisonerId: String,
-  ): MappaData? = riskService.getMappaDataByNomsId(prisonerId)
+    nomsId: String,
+  ): MappaData? = riskService.getMappaDataByNomsId(nomsId)
 }

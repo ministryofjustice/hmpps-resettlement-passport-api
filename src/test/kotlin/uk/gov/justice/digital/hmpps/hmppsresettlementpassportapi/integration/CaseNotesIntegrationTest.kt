@@ -163,13 +163,13 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `Create casenotes  happy path`() {
-    val prisonerId = "G4274GN"
+  fun `Create case notes  happy path`() {
+    val nomsId = "G4274GN"
     val txt = "This is a test case note message from Resettlement Passport, Health message"
-    offenderSearchApiMockServer.stubGetPrisonerDetails(prisonerId, 200)
-    caseNotesApiMockServer.stubPostCaseNotes(prisonerId, "RESET", "ACCOM", txt, "MDI", 200)
+    offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "ACCOM", txt, "MDI", 200)
     webTestClient.post()
-      .uri("/resettlement-passport/case-notes/$prisonerId")
+      .uri("/resettlement-passport/case-notes/$nomsId")
       .header("Content-Type", "application/json")
       .bodyValue(
         CaseNotesRequest(

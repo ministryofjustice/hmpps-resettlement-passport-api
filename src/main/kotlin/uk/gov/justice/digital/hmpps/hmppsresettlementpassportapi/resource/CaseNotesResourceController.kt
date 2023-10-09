@@ -164,8 +164,8 @@ class CaseNotesResourceController(
     @Parameter(required = true)
     nomsId: String,
     @RequestBody
-    casenotes: CaseNotesRequest,
+    caseNotes: CaseNotesRequest,
     @RequestHeader("Authorization")
     authorizationHeader: String,
-  ): CaseNote = caseNotesService.postCaseNote(nomsId, casenotes, authorizationHeader)
+  ): CaseNote = caseNotesService.postCaseNote(nomsId, caseNotes, authorizationHeader)
 }

@@ -18,17 +18,17 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.assesmentapi.AssessmentDTO
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AssessmentApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Assessment
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AssessmentService
 
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
-class AssessmentResourceController(private val assessmentApiService: AssessmentApiService) {
+class AssessmentResourceController(private val assessmentService: AssessmentService) {
 
-  @GetMapping("/{prisonerId}/assessment", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Get assessment by nomis Id", description = "Assessment based on nomis Id")
+  @GetMapping("/{nomsId}/assessment", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(summary = "Get assessment by noms Id", description = "Assessment based on noms Id")
   @ApiResponses(
     value = [
       ApiResponse(
@@ -64,12 +64,12 @@ class AssessmentResourceController(private val assessmentApiService: AssessmentA
   )
   suspend fun getAssessmentByNomsId(
     @Schema(example = "AXXXS", required = true)
-    @PathVariable("prisonerId")
+    @PathVariable("nomsId")
     @Parameter(required = true)
-    prisonerId: String,
-  ) = assessmentApiService.getAssessmentByNomsId(prisonerId)
+    nomsId: String,
+  ) = assessmentService.getAssessmentByNomsId(nomsId)
 
-  @PostMapping("/{prisonerId}/assessment", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @PostMapping("/{nomsId}/assessment", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create assessment", description = "Create assessment")
   @ApiResponses(
     value = [
@@ -101,13 +101,13 @@ class AssessmentResourceController(private val assessmentApiService: AssessmentA
   )
   suspend fun postAssessmentByNomsId(
     @Schema(example = "AXXXS", required = true)
-    @PathVariable("prisonerId")
-    prisonerId: String,
+    @PathVariable("nomsId")
+    nomsId: String,
     @RequestBody
-    assessmentDTO: AssessmentDTO,
-  ) = assessmentApiService.createAssessment(assessmentDTO)
+    assessment: Assessment,
+  ) = assessmentService.createAssessment(assessment)
 
-  @DeleteMapping("/{prisonerId}/assessment/{assessmentId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @DeleteMapping("/{nomsId}/assessment/{assessmentId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create assessment", description = "Create assessment")
   @ApiResponses(
     value = [
@@ -138,23 +138,23 @@ class AssessmentResourceController(private val assessmentApiService: AssessmentA
     ],
   )
   suspend fun deleteAssessmentByNomsId(
-    @PathVariable("prisonerId")
+    @PathVariable("nomsId")
     @Parameter(required = true)
-    prisonerId: String,
+    nomsId: String,
     @PathVariable("assessmentId")
     @Parameter(required = true)
     assessmentId: String,
   ) {
-    val assessment = assessmentApiService.getAssessmentById(assessmentId.toLong()) ?: throw NoDataWithCodeFoundException(
+    val assessment = assessmentService.getAssessmentById(assessmentId.toLong()) ?: throw NoDataWithCodeFoundException(
       "Assessment",
       assessmentId,
     )
-    if (assessment.prisoner.nomsId != prisonerId) {
+    if (assessment.prisoner.nomsId != nomsId) {
       throw NoDataWithCodeFoundException(
         "Assessment",
         assessmentId,
       )
     }
-    assessmentApiService.deleteAssessment(assessment)
+    assessmentService.deleteAssessment(assessment)
   }
 }

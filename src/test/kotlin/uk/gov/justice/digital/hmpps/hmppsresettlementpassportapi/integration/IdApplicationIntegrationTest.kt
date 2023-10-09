@@ -4,8 +4,8 @@ import io.mockk.every
 import io.mockk.mockkStatic
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.idapplicationapi.IdApplicationPatchDTO
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.idapplicationapi.IdApplicationPostDTO
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.IdApplicationPatch
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.IdApplicationPost
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -33,7 +33,7 @@ class IdApplicationIntegrationTest : IntegrationTestBase() {
     webTestClient.post()
       .uri("/resettlement-passport/prisoner/$prisonerId/idapplication")
       .bodyValue(
-        IdApplicationPostDTO(
+        IdApplicationPost(
           idType = "Birth certificate",
           applicationSubmittedDate = fakeNow,
           isPriorityApplication = false,
@@ -52,7 +52,7 @@ class IdApplicationIntegrationTest : IntegrationTestBase() {
     webTestClient.patch()
       .uri("/resettlement-passport/prisoner/$prisonerId/idapplication/1")
       .bodyValue(
-        IdApplicationPatchDTO(
+        IdApplicationPatch(
           status = "Accepted",
           dateIdReceived = fakeNow,
           addedToPersonalItemsDate = fakeNow,

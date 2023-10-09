@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceConditions
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.LicenceConditionApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.LicenceConditionService
 
 @RestController
 @Validated
@@ -27,10 +27,10 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.Licence
 )
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class LicenceConditionResourceController(
-  private val licenceConditionApiService: LicenceConditionApiService,
+  private val licenceConditionService: LicenceConditionService,
 ) {
 
-  @GetMapping("/{prisonerId}/licence-condition", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @GetMapping("/{nomsId}/licence-condition", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
     summary = "Get all Licence conditions available",
     description = "All Licence Conditions Details for the given Prisoner Id.",
@@ -63,20 +63,14 @@ class LicenceConditionResourceController(
       ),
     ],
   )
-  suspend fun getLicenceConditionByNomisId(
-    @PathVariable("prisonerId")
+  suspend fun getLicenceConditionByNomsId(
+    @PathVariable("nomsId")
     @Parameter(required = true)
-    prisonerId: String,
-  ): LicenceConditions? {
-    val licence = licenceConditionApiService.getLicenceByNomisId(prisonerId) ?: throw NoDataWithCodeFoundException(
-      "Prisoner",
-      prisonerId,
-    )
-    return licenceConditionApiService.getLicenceConditionsByLicenceId(licence.licenceId)
-  }
+    nomsId: String,
+  ): LicenceConditions? = licenceConditionService.getLicenceConditionsByNomsId(nomsId)
 
   @GetMapping(
-    "/{prisonerId}/licence-condition/id/{licenceId}/condition/{conditionId}/image",
+    "/{nomsId}/licence-condition/id/{licenceId}/condition/{conditionId}/image",
     produces = [MediaType.IMAGE_JPEG_VALUE, MediaType.APPLICATION_JSON_VALUE],
   )
   @Operation(
@@ -125,14 +119,14 @@ class LicenceConditionResourceController(
     ],
   )
   suspend fun getLicenceConditionImage(
-    @PathVariable("prisonerId")
+    @PathVariable("nomsId")
     @Parameter(required = true)
-    prisonerId: String,
+    nomsId: String,
     @PathVariable("licenceId")
     @Parameter(required = true)
     licenceId: String,
     @PathVariable("conditionId")
     @Parameter(required = true)
     conditionId: String,
-  ): Flow<ByteArray> = licenceConditionApiService.getImageFromLicenceIdAndConditionId(licenceId, conditionId)
+  ): Flow<ByteArray> = licenceConditionService.getImageFromLicenceIdAndConditionId(licenceId, conditionId)
 }

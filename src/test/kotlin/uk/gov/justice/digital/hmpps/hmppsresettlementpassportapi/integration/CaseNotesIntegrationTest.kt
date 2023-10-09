@@ -96,7 +96,7 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `Get All CaseNotes for a Prisoner when NomisId not found`() {
+  fun `Get All CaseNotes for a Prisoner when NomsId not found`() {
     caseNotesApiMockServer.stubGetCaseNotesNewList("G4274GN", 500, 0, "RESET", 404)
     caseNotesApiMockServer.stubGetCaseNotesOldList("G4274GN", 500, 0, "GEN", "RESET", 404)
     webTestClient.get()
@@ -137,7 +137,7 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `Get All CaseNotes CreatedBy List for a Prisoner when NomisId not found`() {
+  fun `Get All CaseNotes CreatedBy List for a Prisoner when NomsId not found`() {
     caseNotesApiMockServer.stubGetCaseNotesSpecificPathway("G4274GN", 500, 0, "RESET", "ACCOM", 404)
     webTestClient.get()
       .uri("/resettlement-passport/case-notes/G4274GN/creators/ACCOMMODATION")

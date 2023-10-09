@@ -4,7 +4,7 @@ import io.mockk.every
 import io.mockk.mockkStatic
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.assesmentapi.AssessmentDTO
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Assessment
 import java.time.LocalDateTime
 
 class AssessmentIntegrationTest : IntegrationTestBase() {
@@ -13,7 +13,7 @@ class AssessmentIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-assessment-1.sql")
-  fun `Get assessment by nomis ID - happy path`() {
+  fun `Get assessment by noms ID - happy path`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val expectedOutput = readFile("testdata/expectation/assessment-1.json")
@@ -32,7 +32,7 @@ class AssessmentIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-assessment-1.sql")
-  fun `Get assessment by nomis ID - Not found`() {
+  fun `Get assessment by noms ID - Not found`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
 
@@ -62,7 +62,7 @@ class AssessmentIntegrationTest : IntegrationTestBase() {
     webTestClient.post()
       .uri("/resettlement-passport/prisoner/$prisonerId/assessment")
       .bodyValue(
-        AssessmentDTO(
+        Assessment(
           assessmentDate = fakeNow,
           isIdRequired = true,
           isBankAccountRequired = true,

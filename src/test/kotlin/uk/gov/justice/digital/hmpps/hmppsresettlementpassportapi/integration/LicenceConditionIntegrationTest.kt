@@ -99,7 +99,7 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
     val prisonerId = "abc"
     val expectedOutput = readFile("testdata/expectation/licence-condition.json")
     val licenceId = 101
-    cvlApiMockServer.stubFindLicencesByNomisId(prisonerId, 200)
+    cvlApiMockServer.stubFindLicencesByNomsId(prisonerId, 200)
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/licence-condition")
@@ -116,7 +116,7 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
     val expectedOutput = readFile("testdata/expectation/licence-condition.json")
     expectedOutput.replace("Active", "InActive", true)
     val licenceId = 101
-    cvlApiMockServer.stubFindLicencesByNomisId(prisonerId, 200)
+    cvlApiMockServer.stubFindLicencesByNomsId(prisonerId, 200)
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/licence-condition")
@@ -154,7 +154,7 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
     val prisonerId = "abc"
     val licenceId = 101
 
-    cvlApiMockServer.stubFindLicencesByNomisId(prisonerId, 500)
+    cvlApiMockServer.stubFindLicencesByNomsId(prisonerId, 500)
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 500)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/licence-condition")
@@ -170,7 +170,7 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
   fun `Get licence condition from cvl when prisonerId not found`() {
     val prisonerId = "abc"
 
-    cvlApiMockServer.stubFindLicencesByNomisId(prisonerId, 404)
+    cvlApiMockServer.stubFindLicencesByNomsId(prisonerId, 404)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$prisonerId/licence-condition")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))

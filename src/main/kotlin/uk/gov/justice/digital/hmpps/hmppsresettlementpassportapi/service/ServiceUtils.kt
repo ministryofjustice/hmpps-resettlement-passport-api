@@ -20,7 +20,7 @@ fun String.fuzzyMatch(string2: String?): Boolean {
 
 fun String.convertNameToTitleCase(): String = WordUtils.capitalizeFully(this).trim()
 
-fun constructAddress(addressElements: Array<String?>): String? {
+fun constructAddress(addressElements: Array<String?>): String {
   var address = ""
   addressElements.filterNotNull().forEach {
     if (it.isNotBlank()) {

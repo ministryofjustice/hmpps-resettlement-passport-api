@@ -80,8 +80,8 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(404)
       .jsonPath("errorCode").isEmpty
       .jsonPath("userMessage")
-      .isEqualTo("Resource not found. Check request parameters - ARN service could not find CRN abc/NomsId 123")
-      .jsonPath("developerMessage").isEqualTo("ARN service could not find CRN abc/NomsId 123")
+      .isEqualTo("Resource not found. Check request parameters - ARN service could not find CRN abc")
+      .jsonPath("developerMessage").isEqualTo("ARN service could not find CRN abc")
       .jsonPath("moreInfo").isEmpty
   }
 
@@ -186,8 +186,8 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(404)
       .jsonPath("errorCode").isEmpty
       .jsonPath("userMessage")
-      .isEqualTo("Resource not found. Check request parameters - ARN service could not find CRN abc/NomsId 123")
-      .jsonPath("developerMessage").isEqualTo("ARN service could not find CRN abc/NomsId 123")
+      .isEqualTo("Resource not found. Check request parameters - ARN service could not find CRN abc")
+      .jsonPath("developerMessage").isEqualTo("ARN service could not find CRN abc")
       .jsonPath("moreInfo").isEmpty
   }
 
@@ -245,7 +245,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
     deliusApiMockServer.stubGetToCrn(
       "/probation-cases/$crn/mappa",
       200,
-      "testdata/resettlement-passport-delius-api/community-risk-mappa.json",
+      "testdata/resettlement-passport-delius-api/delius-risk-mappa.json",
     )
 
     webTestClient.get()
@@ -279,7 +279,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
-  fun `Get MAPPA - no data found in Community API`() {
+  fun `Get MAPPA - no data found in Delius API`() {
     val prisonerId = "123"
     val crn = "abc"
 

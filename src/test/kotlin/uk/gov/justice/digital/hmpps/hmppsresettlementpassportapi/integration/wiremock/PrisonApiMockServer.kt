@@ -12,10 +12,10 @@ class PrisonApiMockServer : WireMockServer(WIREMOCK_PORT) {
     const val TEST_IMAGE_BASE64 = "iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII"
   }
 
-  fun stubGetPrisonerImages(nomisId: String, status: Int) {
+  fun stubGetPrisonerImages(nomsId: String, status: Int) {
     val prisonerImagesListJSON = readFile("testdata/prison-api/prisoner-images-list.json")
     stubFor(
-      get("/api/images/offenders/$nomisId").willReturn(
+      get("/api/images/offenders/$nomsId").willReturn(
         if (status == 200) {
           aResponse()
             .withHeader("Content-Type", "application/json")

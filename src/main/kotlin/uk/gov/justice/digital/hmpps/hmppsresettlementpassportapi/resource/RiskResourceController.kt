@@ -17,14 +17,14 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorRes
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.MappaData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.RiskScore
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.RoshData
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.RiskApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.RiskService
 
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class RiskResourceController(
-  private val riskApiService: RiskApiService,
+  private val riskService: RiskService,
 ) {
 
   @GetMapping("{prisonerId}/risk/scores", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -64,7 +64,7 @@ class RiskResourceController(
     @PathVariable("prisonerId")
     @Parameter(required = true)
     prisonerId: String,
-  ): RiskScore? = riskApiService.getRiskScoresByNomsId(prisonerId)
+  ): RiskScore? = riskService.getRiskScoresByNomsId(prisonerId)
 
   @GetMapping("{prisonerId}/risk/rosh", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
@@ -103,7 +103,7 @@ class RiskResourceController(
     @PathVariable("prisonerId")
     @Parameter(required = true)
     prisonerId: String,
-  ): RoshData? = riskApiService.getRoshDataByNomsId(prisonerId)
+  ): RoshData? = riskService.getRoshDataByNomsId(prisonerId)
 
   @GetMapping("{prisonerId}/risk/mappa", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
@@ -142,5 +142,5 @@ class RiskResourceController(
     @PathVariable("prisonerId")
     @Parameter(required = true)
     prisonerId: String,
-  ): MappaData? = riskApiService.getMappaDataByNomsId(prisonerId)
+  ): MappaData? = riskService.getMappaDataByNomsId(prisonerId)
 }

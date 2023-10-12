@@ -101,14 +101,13 @@ class OffenderSearchApiService(
         offenders.add(it)
       }
     }
-    // RP2-487 Remove all youth offenders from the results
     if (days > 0) {
       val earliestReleaseDate = LocalDate.now().minusDays(1)
       val latestReleaseDate = LocalDate.now().plusDays(days.toLong())
-      offenders.removeAll { it.displayReleaseDate == null || it.displayReleaseDate!! <= earliestReleaseDate || it.displayReleaseDate!! > latestReleaseDate || (it.youthOffender != null && it.youthOffender) }
+      offenders.removeAll { it.displayReleaseDate == null || it.displayReleaseDate!! <= earliestReleaseDate || it.displayReleaseDate!! > latestReleaseDate }
     } else {
       val earliestReleaseDate = LocalDate.now().minusDays(1)
-      offenders.removeAll { (it.displayReleaseDate != null && it.displayReleaseDate!! <= earliestReleaseDate) || (it.youthOffender != null && it.youthOffender) }
+      offenders.removeAll { (it.displayReleaseDate != null && it.displayReleaseDate!! <= earliestReleaseDate) }
     }
 
     if (offenders.isEmpty()) {

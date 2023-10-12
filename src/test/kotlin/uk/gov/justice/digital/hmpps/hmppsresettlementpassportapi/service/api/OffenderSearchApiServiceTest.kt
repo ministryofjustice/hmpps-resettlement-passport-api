@@ -76,7 +76,7 @@ class OffenderSearchApiServiceTest {
   }
 
   @Test
-  fun `test get PrisonersList happy path full json with sort releaseDate Descending`() = runTest {
+  fun `test get PrisonersList happy path full json with sort releaseDate Descending - 1`() = runTest {
     mockDatabaseCalls()
 
     val prisonId = "MDI"
@@ -89,7 +89,7 @@ class OffenderSearchApiServiceTest {
   }
 
   @Test
-  fun `test get PrisonersList happy path full json with sort releaseDate Descending with youth offenders`() = runTest {
+  fun `test get PrisonersList happy path full json with sort releaseDate Descending - 2`() = runTest {
     mockDatabaseCalls()
 
     val prisonId = "MDI"
@@ -98,7 +98,7 @@ class OffenderSearchApiServiceTest {
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisoners = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, 0, 10, "releaseDate,DESC")
 
-    Assertions.assertEquals(getExpectedPrisonersListReleaseDateDescWithYO(), prisoners)
+    Assertions.assertEquals(getExpectedPrisonersListReleaseDateDesc(), prisoners)
   }
 
   @Test
@@ -176,7 +176,7 @@ class OffenderSearchApiServiceTest {
     val prisonersList = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, 0, 10, "firstName,ASC")
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
-  private fun getExpectedPrisonersListReleaseDateDescWithYO() = PrisonersList(
+  private fun getExpectedPrisonersListReleaseDateDesc() = PrisonersList(
     content =
     listOf(
       Prisoners(
@@ -225,11 +225,34 @@ class OffenderSearchApiServiceTest {
         homeDetentionCurfewEligibilityDate = LocalDate.parse("2018-10-16"),
         paroleEligibilityDate = null,
       ),
+      Prisoners(
+        prisonerNumber = "A8339DY",
+        firstName = "MR",
+        middleNames = "BRIDGILLA",
+        lastName = "CRD-LR-TEST",
+        releaseDate = null,
+        releaseType = "PRRD",
+        lastUpdatedDate = null,
+        status = listOf(
+          PathwayStatus(
+            pathway = Pathway.ACCOMMODATION,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.now(),
+          ),
+          PathwayStatus(
+            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.now(),
+          ),
+        ),
+        homeDetentionCurfewEligibilityDate = null,
+        paroleEligibilityDate = null,
+      ),
     ),
-    pageSize = 2,
+    pageSize = 3,
     page = 0,
     sortName = "releaseDate,DESC",
-    totalElements = 2,
+    totalElements = 3,
     last = true,
   )
 

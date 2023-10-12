@@ -226,27 +226,27 @@ class OffenderSearchApiServiceTest {
         paroleEligibilityDate = null,
       ),
       Prisoners(
-        prisonerNumber="A8339DY",
-        firstName="MR",
-        middleNames="BRIDGILLA",
-        lastName="CRD-LR-TEST",
-        releaseDate=null,
-        releaseType="PRRD",
-        lastUpdatedDate=null,
-        status=listOf(
+        prisonerNumber = "A8339DY",
+        firstName = "MR",
+        middleNames = "BRIDGILLA",
+        lastName = "CRD-LR-TEST",
+        releaseDate = null,
+        releaseType = "PRRD",
+        lastUpdatedDate = null,
+        status = listOf(
           PathwayStatus(
-            pathway=Pathway.ACCOMMODATION,
-            status=Status.NOT_STARTED,
-            lastDateChange=LocalDate.now()
+            pathway = Pathway.ACCOMMODATION,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.now(),
           ),
           PathwayStatus(
-            pathway=Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
-            status=Status.NOT_STARTED,
-            lastDateChange=LocalDate.now()
-          )
+            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.now(),
+          ),
         ),
-        homeDetentionCurfewEligibilityDate=null,
-        paroleEligibilityDate=null
+        homeDetentionCurfewEligibilityDate = null,
+        paroleEligibilityDate = null,
       ),
     ),
     pageSize = 3,

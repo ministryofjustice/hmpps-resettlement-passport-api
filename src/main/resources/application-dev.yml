@@ -24,8 +24,14 @@ api:
       #https://allocation-manager-staging.apps.live.cloud-platform.service.justice.gov.uk
       resettlement-passport-delius: http://localhost:8089
       #https://resettlement-passport-and-delius-dev.hmpps.service.justice.gov.uk/
+
+      education-employment: http://localhost:8090
+      #https://education-employment-api-dev.hmpps.service.justice.gov.uk
+      ciag: http://localhost:8091
+      #https://ciag-induction-api-dev.hmpps.service.justice.gov.uk
+
       interventions-service: http://localhost:8082
-      #https://hmpps-interventions-service-dev.apps.live-1.cloud-platform.service.justice.gov.uk/
+      #https://hmpps-interventions-service-dev.apps.live-1.cloud-platform.service.justice.gov.uk
 management.endpoint:
   health.cache.time-to-live: 0
   info.cache.time-to-live: 0

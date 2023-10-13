@@ -29,3 +29,21 @@ fun constructAddress(addressElements: Array<String?>): String {
   }
   return address.removeSuffix(", ")
 }
+
+interface EnumWithLabel {
+  fun customLabel(): String? = null
+}
+
+fun <T> getLabelFromEnum(enum: T?): String? where T : Enum<T>, T : EnumWithLabel {
+  return if (enum != null) {
+    if (enum.customLabel() != null) {
+      enum.customLabel()
+    } else {
+      enum.name.convertEnumToContent()
+    }
+  } else {
+    null
+  }
+}
+
+fun String.convertEnumToContent(): String = this.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() }

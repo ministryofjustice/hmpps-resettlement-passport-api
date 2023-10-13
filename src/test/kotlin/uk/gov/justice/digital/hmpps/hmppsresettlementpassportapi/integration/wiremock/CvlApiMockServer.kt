@@ -8,9 +8,8 @@ import com.github.tomakehurst.wiremock.client.WireMock.post
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import java.util.Base64
 
-class CvlApiMockServer : WireMockServer(WIREMOCK_PORT) {
+class CvlApiMockServer : WireMockServerBase(9095) {
   companion object {
-    private const val WIREMOCK_PORT = 8095
     const val TEST_IMAGE_BASE64 = "iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII"
   }
 

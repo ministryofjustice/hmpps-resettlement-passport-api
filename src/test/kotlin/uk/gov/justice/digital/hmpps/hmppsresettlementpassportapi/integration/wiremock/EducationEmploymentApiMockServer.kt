@@ -1,3 +1,3 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock
 
-class ArnApiMockServer : WireMockServerBase(9097)
+class EducationEmploymentApiMockServer : WireMockServerBase(9103)

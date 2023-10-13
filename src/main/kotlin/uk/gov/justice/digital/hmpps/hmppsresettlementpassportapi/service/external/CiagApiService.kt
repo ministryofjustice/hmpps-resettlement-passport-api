@@ -18,7 +18,7 @@ class CiagApiService(
 
   suspend fun getCiagProfileByNomsId(nomsId: String): CIAGProfileDTO {
     return ciagWebClientCredentials.get()
-      .uri("/readiness-profiles/$nomsId")
+      .uri("/ciag/induction/$nomsId")
       .retrieve()
       .bodyToMono(CIAGProfileDTO::class.java)
       .onErrorReturn(

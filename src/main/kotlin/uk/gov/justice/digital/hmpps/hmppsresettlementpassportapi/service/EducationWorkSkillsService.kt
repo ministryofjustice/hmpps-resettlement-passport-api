@@ -47,22 +47,6 @@ class EducationWorkSkillsService(
     )
   }
 
-  fun <T> convertEnumSetToStringSet(enumSet: Set<T>?, other: String?): Set<String>? where T : Enum<T>, T : EnumWithLabel {
-    var stringSet: Set<String>? = null
-    if (enumSet != null) {
-      stringSet = mutableSetOf()
-      enumSet.forEach { enum ->
-        if (enum.name != "OTHER") {
-          getLabelFromEnum(enum)?.let { stringSet.add(it) }
-        }
-      }
-      if (other != null) {
-        stringSet.add(other)
-      }
-    }
-    return stringSet
-  }
-
   fun buildVolunteeringAndExperience(workExperience: Set<WorkExperience>?): Set<VolunteeringAndExperience>? {
     var volunteeringAndExperienceSet: Set<VolunteeringAndExperience>? = null
     if (workExperience != null) {

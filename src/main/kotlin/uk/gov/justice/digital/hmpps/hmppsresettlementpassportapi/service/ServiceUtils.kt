@@ -46,4 +46,20 @@ fun <T> getLabelFromEnum(enum: T?): String? where T : Enum<T>, T : EnumWithLabel
   }
 }
 
-fun String.convertEnumToContent(): String = this.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() }
+private fun String.convertEnumToContent(): String = this.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() }
+
+fun <T> convertEnumSetToStringSet(enumSet: Set<T>?, other: String?): Set<String>? where T : Enum<T>, T : EnumWithLabel {
+  var stringSet: Set<String>? = null
+  if (enumSet != null) {
+    stringSet = mutableSetOf()
+    enumSet.forEach { enum ->
+      if (enum.name != "OTHER") {
+        getLabelFromEnum(enum)?.let { stringSet.add(it) }
+      }
+    }
+    if (other?.isNotBlank() == true) {
+      stringSet.add(other)
+    }
+  }
+  return stringSet
+}

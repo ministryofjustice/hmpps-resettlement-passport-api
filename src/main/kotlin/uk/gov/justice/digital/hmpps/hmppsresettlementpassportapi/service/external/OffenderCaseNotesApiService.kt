@@ -25,6 +25,7 @@ import java.time.format.DateTimeFormatter
 @Service
 class OffenderCaseNotesApiService(
   private val offenderCaseNotesWebClientCredentials: WebClient,
+  private val offenderCaseNotesWebClientUserCredentials: WebClient,
   private val offenderSearchApiService: OffenderSearchApiService,
 ) {
 
@@ -252,7 +253,7 @@ class OffenderCaseNotesApiService(
     val subType = pathwayVal?.name.toString()
     val prisonCode = offenderSearchApiService.findPrisonerPersonalDetails(nomsId).prisonId
 
-    return offenderCaseNotesWebClientCredentials.post()
+    return offenderCaseNotesWebClientUserCredentials.post()
       .uri(
         "/case-notes/{nomsId}",
         nomsId,

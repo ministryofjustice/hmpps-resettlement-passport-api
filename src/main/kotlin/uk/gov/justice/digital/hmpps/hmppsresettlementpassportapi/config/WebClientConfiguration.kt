@@ -85,6 +85,18 @@ class WebClientConfiguration(
   }
 
   @Bean
+  fun offenderCaseNotesWebClientUserCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+    val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
+    val oauth2Client = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
+    oauth2Client.setDefaultClientRegistrationId(SYSTEM_USERNAME)
+    return WebClient.builder()
+      .baseUrl(offenderCaseNotesRootUri)
+      .clientConnector(ReactorClientHttpConnector(httpClient))
+      .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }
+      .build()
+  }
+
+  @Bean
   fun allocationManagerWebClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
     return getWebClientCredentials(authorizedClientManager, allocationManagerRootUri)
   }

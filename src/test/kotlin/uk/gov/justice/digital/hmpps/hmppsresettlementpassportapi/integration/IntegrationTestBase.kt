@@ -16,7 +16,9 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBas
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.AllocationManagerApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ArnApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CaseNotesApiMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CiagApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CvlApiMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.EducationEmploymentApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.InterventionsServiceApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.KeyWorkerApiMockServer
@@ -69,6 +71,12 @@ abstract class IntegrationTestBase : TestBase() {
     val deliusApiMockServer = ResettlementPassportDeliusApiMockServer()
 
     @JvmField
+    val educationEmploymentApiMockServer = EducationEmploymentApiMockServer()
+
+    @JvmField
+    val ciagApiMockServer = CiagApiMockServer()
+
+    @JvmField
     val interventionsServiceApiMockServer = InterventionsServiceApiMockServer()
 
     @BeforeAll
@@ -85,6 +93,9 @@ abstract class IntegrationTestBase : TestBase() {
       keyWorkerApiMockServer.start()
       allocationManagerApiMockServer.start()
       deliusApiMockServer.start()
+      educationEmploymentApiMockServer.start()
+      ciagApiMockServer.start()
+
       interventionsServiceApiMockServer.start()
     }
 
@@ -101,6 +112,8 @@ abstract class IntegrationTestBase : TestBase() {
       keyWorkerApiMockServer.stop()
       allocationManagerApiMockServer.stop()
       deliusApiMockServer.stop()
+      educationEmploymentApiMockServer.stop()
+      ciagApiMockServer.stop()
       interventionsServiceApiMockServer.stop()
     }
   }

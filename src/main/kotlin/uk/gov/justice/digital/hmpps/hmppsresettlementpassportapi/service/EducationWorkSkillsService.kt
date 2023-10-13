@@ -17,7 +17,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 class EducationWorkSkillsService(
   val educationEmploymentApiService: EducationEmploymentApiService,
   val ciagApiService: CiagApiService,
-  ) {
+) {
   suspend fun getWorkReadinessData(nomsId: String): WorkReadinessStatusAndDetails {
     val readinessProfile = educationEmploymentApiService.getReadinessProfileByNomsId(nomsId)
     val ciagProfile = ciagApiService.getCiagProfileByNomsId(nomsId)

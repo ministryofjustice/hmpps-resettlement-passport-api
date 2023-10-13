@@ -13,7 +13,7 @@ data class CIAGProfileDTO(
   var skillsAndInterests: SkillsAndInterests?,
   var qualificationsAndTraining: EducationAndQualification?,
   var inPrisonInterests: PrisonWorkAndEducation?,
-  )
+)
 
 enum class AbilityToWorkImpactedBy : EnumWithLabel {
   CARING_RESPONSIBILITIES,
@@ -26,7 +26,7 @@ enum class AbilityToWorkImpactedBy : EnumWithLabel {
   NONE,
 }
 
-enum class ReasonToNotGetWork : EnumWithLabel  {
+enum class ReasonToNotGetWork : EnumWithLabel {
   LIMIT_THEIR_ABILITY,
   FULL_TIME_CARER,
   LACKS_CONFIDENCE_OR_MOTIVATION,
@@ -201,7 +201,7 @@ enum class OtherQualification : EnumWithLabel {
   NONE,
 }
 
-enum class PrisonTraining : EnumWithLabel  {
+enum class PrisonTraining : EnumWithLabel {
   BARBERING_AND_HAIRDRESSING,
   CATERING,
   COMMUNICATION_SKILLS,

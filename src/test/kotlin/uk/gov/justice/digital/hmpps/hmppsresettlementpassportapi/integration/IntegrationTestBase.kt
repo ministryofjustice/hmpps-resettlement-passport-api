@@ -95,7 +95,6 @@ abstract class IntegrationTestBase : TestBase() {
       deliusApiMockServer.start()
       educationEmploymentApiMockServer.start()
       ciagApiMockServer.start()
-
       interventionsServiceApiMockServer.start()
     }
 

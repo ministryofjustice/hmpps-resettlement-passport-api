@@ -18,7 +18,7 @@ class CrsReferralsIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val crn = "abc"
     offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
-    interventionsServiceApiMockServer.stubFetchProbationCaseReferrals(nomsId, crn, 200)
+    interventionsServiceApiMockServer.stubFetchProbationCaseReferrals(crn, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetComByCrn(crn, 200)
 
@@ -56,7 +56,7 @@ class CrsReferralsIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val crn = "abc"
     offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
-    interventionsServiceApiMockServer.stubFetchProbationCaseReferrals(nomsId, crn, 404)
+    interventionsServiceApiMockServer.stubFetchProbationCaseReferrals(crn, 404)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetComByCrn(crn, 200)
     webTestClient.get()
@@ -79,7 +79,7 @@ class CrsReferralsIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val crn = "abc"
     offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
-    interventionsServiceApiMockServer.stubFetchProbationCaseReferrals(nomsId, crn, 200)
+    interventionsServiceApiMockServer.stubFetchProbationCaseReferrals(crn, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetComByCrn(crn, 200)
 
@@ -102,7 +102,7 @@ class CrsReferralsIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val crn = "abc"
     offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
-    interventionsServiceApiMockServer.stubFetchProbationCaseReferrals(nomsId, crn, 200)
+    interventionsServiceApiMockServer.stubFetchProbationCaseReferrals(crn, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetComByCrn(crn, 200)
 

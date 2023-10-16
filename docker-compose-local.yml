@@ -123,6 +123,16 @@ services:
     volumes:
       - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/resettlement-passport-and-delius-api:/home/wiremock:ro"
 
+  interventions-service-api-stub:
+    image: wiremock/wiremock
+    command: "--no-request-journal --global-response-templating --verbose"
+    networks:
+      - hmpps
+    container_name: interventions-service-api-stub
+    ports:
+      - "8082:8080"
+    volumes:
+      - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/interventions-service-api:/home/wiremock:ro"
 
 networks:
   hmpps:

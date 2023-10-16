@@ -19,6 +19,7 @@ generic-service:
     API_BASE_URL_KEY-WORKER: http://key-worker-api-stub
     API_BASE_URL_ALLOCATION-MANAGER: http://allocation-manager-api-stub
     API_BASE_URL_RESETTLEMENT-PASSPORT-DELIUS: http://resettlement-passport-and-delius-api-stub
+    API_BASE_URL_INTERVENTIONS-SERVICE: http://interventions-service-api-stub
 
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack

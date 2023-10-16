@@ -27,6 +27,7 @@ class WebClientConfiguration(
   @Value("\${api.base.url.key-worker}") private val keyWorkerRootUri: String,
   @Value("\${api.base.url.allocation-manager}") private val allocationManagerRootUri: String,
   @Value("\${api.base.url.resettlement-passport-delius}") private val rpDeliusRootUri: String,
+  @Value("\${api.base.url.interventions-service}") private val interventionsRootUri: String,
 ) {
 
   @Bean
@@ -191,6 +192,20 @@ class WebClientConfiguration(
     val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
     return WebClient.builder()
       .baseUrl(rpDeliusRootUri)
+      .clientConnector(ReactorClientHttpConnector(httpClient))
+      .filter(oauth2Client)
+      .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }
+      .build()
+  }
+
+  @Bean
+  fun interventionsWebClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+    val oauth2Client = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
+    oauth2Client.setDefaultClientRegistrationId(SYSTEM_USERNAME)
+
+    val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
+    return WebClient.builder()
+      .baseUrl(interventionsRootUri)
       .clientConnector(ReactorClientHttpConnector(httpClient))
       .filter(oauth2Client)
       .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }

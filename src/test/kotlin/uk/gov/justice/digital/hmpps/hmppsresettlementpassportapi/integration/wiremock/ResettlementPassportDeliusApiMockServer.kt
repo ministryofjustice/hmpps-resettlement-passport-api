@@ -97,4 +97,22 @@ class ResettlementPassportDeliusApiMockServer : WireMockServer(WIREMOCK_PORT) {
       ),
     )
   }
+
+  fun stubGetComByCrn(crn: String, status: Int) {
+    stubFor(
+      get("/probation-cases/$crn/community-manager").willReturn(
+        if (status == 200) {
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody("{ \"name\" : { \"forename\" : \"John\", \"surname\": \"Doe\" }, \"unallocated\":false }")
+            .withStatus(200)
+        } else {
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody("{\"Error\" : \"$status\"}")
+            .withStatus(status)
+        },
+      ),
+    )
+  }
 }

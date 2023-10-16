@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wir
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CaseNotesApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CvlApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.HmppsAuthMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.InterventionsServiceApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.KeyWorkerApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.OffenderSearchApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonApiMockServer
@@ -67,6 +68,9 @@ abstract class IntegrationTestBase : TestBase() {
     @JvmField
     val deliusApiMockServer = ResettlementPassportDeliusApiMockServer()
 
+    @JvmField
+    val interventionsServiceApiMockServer = InterventionsServiceApiMockServer()
+
     @BeforeAll
     @JvmStatic
     fun startMocks() {
@@ -81,6 +85,7 @@ abstract class IntegrationTestBase : TestBase() {
       keyWorkerApiMockServer.start()
       allocationManagerApiMockServer.start()
       deliusApiMockServer.start()
+      interventionsServiceApiMockServer.start()
     }
 
     @AfterAll
@@ -96,6 +101,7 @@ abstract class IntegrationTestBase : TestBase() {
       keyWorkerApiMockServer.stop()
       allocationManagerApiMockServer.stop()
       deliusApiMockServer.stop()
+      interventionsServiceApiMockServer.stop()
     }
   }
 

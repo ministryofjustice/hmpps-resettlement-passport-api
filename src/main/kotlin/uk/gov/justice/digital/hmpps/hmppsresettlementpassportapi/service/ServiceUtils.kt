@@ -29,3 +29,37 @@ fun constructAddress(addressElements: Array<String?>): String {
   }
   return address.removeSuffix(", ")
 }
+
+interface EnumWithLabel {
+  fun customLabel(): String? = null
+}
+
+fun <T> getLabelFromEnum(enum: T?): String? where T : Enum<T>, T : EnumWithLabel {
+  return if (enum != null) {
+    if (enum.customLabel() != null) {
+      enum.customLabel()
+    } else {
+      enum.name.convertEnumToContent()
+    }
+  } else {
+    null
+  }
+}
+
+private fun String.convertEnumToContent(): String = this.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() }
+
+fun <T> convertEnumSetToStringSet(enumSet: Set<T>?, other: String?): Set<String>? where T : Enum<T>, T : EnumWithLabel {
+  var stringSet: Set<String>? = null
+  if (enumSet != null) {
+    stringSet = mutableSetOf()
+    enumSet.forEach { enum ->
+      if (enum.name != "OTHER") {
+        getLabelFromEnum(enum)?.let { stringSet.add(it) }
+      }
+    }
+    if (other?.isNotBlank() == true) {
+      stringSet.add(other)
+    }
+  }
+  return stringSet
+}

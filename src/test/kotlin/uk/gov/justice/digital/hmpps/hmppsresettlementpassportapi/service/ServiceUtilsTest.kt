@@ -74,10 +74,47 @@ class ServiceUtilsTest {
     Arguments.of(arrayOf<String?>(null), ""),
     Arguments.of(arrayOf("A bit of address"), "A bit of address"),
     Arguments.of(arrayOf("A bit of address", "another bit", "some more"), "A bit of address, another bit, some more"),
-    Arguments.of(arrayOf("   A bit of address   ", " another bit  ", "   some more "), "A bit of address, another bit, some more"),
+    Arguments.of(
+      arrayOf("   A bit of address   ", " another bit  ", "   some more "),
+      "A bit of address, another bit, some more",
+    ),
+  )
+
+  @ParameterizedTest
+  @MethodSource("test get label from enum data")
+  fun `test get label from enum`(enum: TestEnumWithCustomLabels?, expectation: String?) {
+    Assertions.assertEquals(expectation, getLabelFromEnum(enum))
+  }
+
+  private fun `test get label from enum data`() = Stream.of(
+    Arguments.of(null, null),
+    Arguments.of(TestEnumWithCustomLabels.NO, "No"),
+    Arguments.of(TestEnumWithCustomLabels.YES, "This is a custom label"),
+    Arguments.of(TestEnumWithCustomLabels.OTHER_SENTENCE_OF_WORDS, "Other sentence of words"),
+  )
+
+  @ParameterizedTest
+  @MethodSource("test convert enum set to string set data")
+  fun `test convert enum set to string set`(enums: Set<TestEnumWithCustomLabels>?, other: String?, expectation: Set<String>?) {
+    Assertions.assertEquals(expectation, convertEnumSetToStringSet(enums, other))
+  }
+
+  private fun `test convert enum set to string set data`() = Stream.of(
+    Arguments.of(null, null, null),
+    Arguments.of(setOf(TestEnumWithCustomLabels.YES, TestEnumWithCustomLabels.NO, TestEnumWithCustomLabels.OTHER_SENTENCE_OF_WORDS, TestEnumWithCustomLabels.OTHER), "Another thing", setOf("This is a custom label", "No", "Other sentence of words", "Another thing")),
+    Arguments.of(setOf(TestEnumWithCustomLabels.YES, TestEnumWithCustomLabels.NO, TestEnumWithCustomLabels.OTHER_SENTENCE_OF_WORDS), null, setOf("This is a custom label", "No", "Other sentence of words")),
   )
 }
 
 enum class TestEnum {
   YES, NO, DONT_KNOW, NA
+}
+
+enum class TestEnumWithCustomLabels : EnumWithLabel {
+  YES {
+    override fun customLabel() = "This is a custom label"
+  },
+  NO,
+  OTHER_SENTENCE_OF_WORDS,
+  OTHER,
 }

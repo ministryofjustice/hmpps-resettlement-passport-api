@@ -1,0 +1,111 @@
+{
+  "offenderId": "G4274GN",
+  "createdBy": "USER",
+  "createdDateTime": "2023-10-10T11:31:16.145912",
+  "modifiedBy": "USER",
+  "modifiedDateTime": "2023-10-10T10:31:15.981",
+  "desireToWork": true,
+  "hopingToGetWork": "YES",
+  "reasonToNotGetWorkOther": "Other reasons",
+  "abilityToWorkOther": "Other reasons",
+  "abilityToWork": [
+    "CARING_RESPONSIBILITIES", "HEALTH_ISSUES", "OTHER"
+  ],
+  "reasonToNotGetWork": [
+    "LACKS_CONFIDENCE_OR_MOTIVATION", "HEALTH", "FULL_TIME_CARER"
+  ],
+  "workExperience": {
+    "hasWorkedBefore": true,
+    "modifiedBy": "USER",
+    "modifiedDateTime": "2023-10-10T10:31:15.981",
+    "id": 207,
+    "typeOfWorkExperience": [
+      "CLEANING_AND_MAINTENANCE",
+      "OUTDOOR"
+    ],
+    "typeOfWorkExperienceOther": "IT",
+    "workExperience": [
+      {
+        "typeOfWorkExperience": "CLEANING_AND_MAINTENANCE",
+        "otherWork": "",
+        "role": "Maintenance worker",
+        "details": "Cleaning and Maintenance Ltd, Leeds"
+      },
+      {
+        "typeOfWorkExperience": "OUTDOOR",
+        "otherWork": "",
+        "role": "Groundskeeper",
+        "details": "Outdoor Resourcing PLC"
+      }
+    ],
+    "workInterests": {
+      "modifiedBy": "USER",
+      "modifiedDateTime": "2023-10-10T10:31:15.981",
+      "id": 206,
+      "workInterests": [
+        "EDUCATION_TRAINING", "TECHNICAL", "SPORTS"
+      ],
+      "workInterestsOther": "",
+      "particularJobInterests": [
+        {
+          "workInterest": "EDUCATION_TRAINING",
+          "role": "Training"
+        }
+      ]
+    }
+  },
+  "skillsAndInterests": {
+    "modifiedBy": "USER",
+    "modifiedDateTime": "2023-10-10T10:31:15.981",
+    "id": 205,
+    "skills": [
+      "TEAMWORK", "SELF_MANAGEMENT", "OTHER"
+    ],
+    "skillsOther": "Helping others",
+    "personalInterests": [
+      "CRAFTS", "TEAM_SPORTS", "OUTDOOR", "OTHER"
+    ],
+    "personalInterestsOther": "Politics"
+  },
+  "qualificationsAndTraining": {
+    "modifiedBy": "USER",
+    "modifiedDateTime": "2023-10-10T10:31:15.981",
+    "id": 204,
+    "educationLevel": "PRIMARY_SCHOOL",
+    "qualifications": [
+      {
+        "subject": "English",
+        "grade": "B",
+        "level": "LEVEL_3"
+      },
+      {
+        "subject": "Science",
+        "grade": "A",
+        "level": "ENTRY_LEVEL_3"
+      },
+      {
+        "subject": "Engineering",
+        "grade": "C",
+        "level": "LEVEL_5"
+      }
+    ],
+    "additionalTraining": [
+      "CSCS_CARD", "FULL_UK_DRIVING_LICENCE", "FOOD_HYGIENE_CERTIFICATE", "OTHER"
+    ],
+    "additionalTrainingOther": "Computer literacy"
+  },
+  "inPrisonInterests": {
+    "modifiedBy": "USER",
+    "modifiedDateTime": "2023-10-11T14:12:45.416Z",
+    "id": 0,
+    "inPrisonWork": [
+      "CLEANING_AND_HYGIENE", "COMPUTERS_OR_DESK_BASED", "GARDENING_AND_OUTDOORS", "KITCHENS_AND_COOKING", "WELDING_AND_METALWORK", "WOODWORK_AND_JOINERY", "OTHER"
+    ],
+    "inPrisonWorkOther": "Admin",
+    "inPrisonEducation": [
+      "CATERING", "COMMUNICATION_SKILLS", "ENGLISH_LANGUAGE_SKILLS", "RUNNING_A_BUSINESS", "SOCIAL_AND_LIFE_SKILLS", "OTHER"
+    ],
+    "inPrisonEducationOther": "IT skills"
+  },
+  "schemaVersion": null
+}

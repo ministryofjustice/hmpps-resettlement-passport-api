@@ -1,16 +1,12 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock
 
-import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.equalToJson
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 
-class CaseNotesApiMockServer : WireMockServer(WIREMOCK_PORT) {
-  companion object {
-    private const val WIREMOCK_PORT = 8099
-  }
+class CaseNotesApiMockServer : WireMockServerBase(9099) {
 
   fun stubGetCaseNotesOldList(nomsId: String, size: Int, page: Int, type: String, subType: String?, status: Int) {
     val caseNotesJSON = readFile("testdata/case-notes-api/case-notes-gen.json")

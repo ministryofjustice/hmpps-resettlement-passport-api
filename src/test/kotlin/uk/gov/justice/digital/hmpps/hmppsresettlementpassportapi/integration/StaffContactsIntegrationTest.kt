@@ -20,7 +20,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/staff-contacts-1.json")
 
-    deliusApiMockServer.stubGetToCrn("/probation-cases/$crn/community-manager", 200, "testdata/resettlement-passport-delius-api/offender-managers-1.json")
+    deliusApiMockServer.stubGet("/probation-cases/$crn/community-manager", 200, "testdata/resettlement-passport-delius-api/offender-managers-1.json")
     keyWorkerApiMockServer.stubGet("/key-worker/offender/$nomsId", 200, "testdata/key-worker-api/key-worker-1.json")
     allocationManagerApiMockServer.stubGet("/api/allocation/$nomsId", 200, "testdata/allocation-manager-api/poms-1.json")
 
@@ -41,7 +41,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/staff-contacts-2.json")
 
-    deliusApiMockServer.stubGetToCrn("/probation-cases/$crn/community-manager", 200, "testdata/resettlement-passport-delius-api/offender-managers-2.json")
+    deliusApiMockServer.stubGet("/probation-cases/$crn/community-manager", 200, "testdata/resettlement-passport-delius-api/offender-managers-2.json")
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/staff-contacts")
@@ -97,7 +97,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
     val expectedOutput = readFile("testdata/expectation/staff-contacts-2.json")
 
     // Note that even if an individual call to get a staff contact fails, we should just log this and return no data
-    deliusApiMockServer.stubGetToCrn("/probation-cases/$crn/community-manager", 404, null)
+    deliusApiMockServer.stubGet("/probation-cases/$crn/community-manager", 404, null)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/staff-contacts")

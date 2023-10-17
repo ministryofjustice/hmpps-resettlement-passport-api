@@ -19,6 +19,8 @@ generic-service:
     API_BASE_URL_KEY-WORKER: http://key-worker-api-stub
     API_BASE_URL_ALLOCATION-MANAGER: http://allocation-manager-api-stub
     API_BASE_URL_RESETTLEMENT-PASSPORT-DELIUS: http://resettlement-passport-and-delius-api-stub
+    API_BASE_URL_EDUCATION-EMPLOYMENT:  http://education-employment-api-stub
+    API_BASE_URL_CIAG: http://ciag-api-stub
     API_BASE_URL_INTERVENTIONS-SERVICE: http://interventions-service-api-stub
 
 
@@ -36,4 +38,6 @@ deploy_stubs:
   - key-worker-api
   - allocation-manager-api
   - resettlement-passport-and-delius-api
+  - education-employment-api
+  - ciag-api
   - interventions-service-api

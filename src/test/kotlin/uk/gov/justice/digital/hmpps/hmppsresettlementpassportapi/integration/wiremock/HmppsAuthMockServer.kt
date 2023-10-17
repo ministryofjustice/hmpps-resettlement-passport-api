@@ -1,17 +1,12 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock
 
-import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
-import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 import com.github.tomakehurst.wiremock.http.HttpHeader
 import com.github.tomakehurst.wiremock.http.HttpHeaders
 
-class HmppsAuthMockServer : WireMockServer(WIREMOCK_PORT) {
-  companion object {
-    private const val WIREMOCK_PORT = 8090
-  }
+class HmppsAuthMockServer : WireMockServerBase(9091) {
 
   fun stubGrantToken() {
     stubFor(
@@ -27,17 +22,6 @@ class HmppsAuthMockServer : WireMockServer(WIREMOCK_PORT) {
               """.trimIndent(),
             ),
         ),
-    )
-  }
-
-  fun stubHealthPing(status: Int) {
-    stubFor(
-      get("/auth/health/ping").willReturn(
-        aResponse()
-          .withHeader("Content-Type", "application/json")
-          .withBody(if (status == 200) "pong" else "some error")
-          .withStatus(status),
-      ),
     )
   }
 }

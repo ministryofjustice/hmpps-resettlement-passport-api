@@ -123,6 +123,28 @@ services:
     volumes:
       - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/resettlement-passport-and-delius-api:/home/wiremock:ro"
 
+  education-employment-api-stub:
+    image: wiremock/wiremock
+    command: "--no-request-journal --global-response-templating --verbose"
+    networks:
+      - hmpps
+    container_name: education-employment-api-stub
+    ports:
+      - "8090:8080"
+    volumes:
+      - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/education-employment-api:/home/wiremock:ro"
+
+  ciag-api-stub:
+    image: wiremock/wiremock
+    command: "--no-request-journal --global-response-templating --verbose"
+    networks:
+      - hmpps
+    container_name: ciag-api-stub
+    ports:
+      - "8091:8080"
+    volumes:
+      - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/ciag-api:/home/wiremock:ro"
+
   interventions-service-api-stub:
     image: wiremock/wiremock
     command: "--no-request-journal --global-response-templating --verbose"

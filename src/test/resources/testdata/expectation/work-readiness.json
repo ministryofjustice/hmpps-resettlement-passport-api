@@ -1,0 +1,94 @@
+{
+  "workReadinessStatus": "Ready to work",
+  "workReadinessStatusLastUpdated": "2023-10-13",
+  "details": {
+    "lastUpdated": "2023-10-10",
+    "workInterests": [
+      "Sports",
+      "Technical",
+      "Education training"
+    ],
+    "abilityToWork": [
+      "Health issues",
+      "Caring responsibilities",
+      "Other reasons"
+    ],
+    "reasonsToNotGetWork": [
+      "Lacks confidence or motivation",
+      "Full time carer",
+      "Health",
+      "Other reasons"
+    ],
+    "volunteeringAndExperience": [
+      {
+        "typeOfWorkExperience": "Cleaning and maintenance",
+        "otherWork": "",
+        "role": "Maintenance worker",
+        "details": "Cleaning and Maintenance Ltd, Leeds"
+      },
+      {
+        "typeOfWorkExperience": "Outdoor",
+        "otherWork": "",
+        "role": "Groundskeeper",
+        "details": "Outdoor Resourcing PLC"
+      }
+    ],
+    "educationalCoursesAndQualifications": {
+      "qualifications": [
+        {
+          "subject": "Science",
+          "grade": "A",
+          "level": "Entry level 3"
+        },
+        {
+          "subject": "English",
+          "grade": "B",
+          "level": "Level 3"
+        },
+        {
+          "subject": "Engineering",
+          "grade": "C",
+          "level": "Level 5"
+        }
+      ],
+      "additionalTraining": [
+        "Full UK driving licence",
+        "Food hygiene certificate",
+        "CSCS card",
+        "Computer literacy"
+      ]
+    },
+    "inPrisonWorkAndEducation": {
+      "inPrisonWork": [
+        "Woodwork and joinery",
+        "Cleaning and hygiene",
+        "Kitchens and cooking",
+        "Gardening and outdoors",
+        "Computers or desk based",
+        "Welding and metalwork",
+        "Admin"
+      ],
+      "inPrisonEducation": [
+        "Catering",
+        "Social and life skills",
+        "Running a business",
+        "English language skills",
+        "Communication skills",
+        "IT skills"
+      ]
+    },
+    "skillsAndInterests": {
+      "skills": [
+        "Teamwork",
+        "Self management",
+        "Helping others"
+      ],
+      "personalInterests": [
+        "Crafts",
+        "Team sports",
+        "Outdoor",
+        "Politics"
+      ]
+    }
+  }
+}

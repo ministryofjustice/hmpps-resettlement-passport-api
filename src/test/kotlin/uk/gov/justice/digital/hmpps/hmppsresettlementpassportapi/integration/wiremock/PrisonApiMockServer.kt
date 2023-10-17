@@ -1,14 +1,12 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock
 
-import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import java.util.*
 
-class PrisonApiMockServer : WireMockServer(WIREMOCK_PORT) {
+class PrisonApiMockServer : WireMockServerBase(9098) {
   companion object {
-    private const val WIREMOCK_PORT = 8098
     const val TEST_IMAGE_BASE64 = "iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII"
   }
 

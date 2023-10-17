@@ -1,0 +1,48 @@
+{
+  "offenderId": "G4161UF",
+  "createdBy": "USER",
+  "createdDateTime": "2023-10-09T16:58:32.154945",
+  "modifiedBy": "USER",
+  "modifiedDateTime": "2023-10-09T15:58:31.964",
+  "desireToWork": false,
+  "hopingToGetWork": "NO",
+  "reasonToNotGetWorkOther": "",
+  "abilityToWorkOther": null,
+  "abilityToWork": [],
+  "reasonToNotGetWork": [
+    "LACKS_CONFIDENCE_OR_MOTIVATION"
+  ],
+  "workExperience": null,
+  "skillsAndInterests": null,
+  "qualificationsAndTraining": {
+    "modifiedBy": "USER",
+    "modifiedDateTime": "2023-10-09T15:58:31.964",
+    "id": 195,
+    "educationLevel": null,
+    "qualifications": [
+      {
+        "subject": "English",
+        "grade": "C",
+        "level": "LEVEL_6"
+      }
+    ],
+    "additionalTraining": [
+      "TRADE_COURSE"
+    ],
+    "additionalTrainingOther": ""
+  },
+  "inPrisonInterests": {
+    "modifiedBy": "USER",
+    "modifiedDateTime": "2023-10-09T15:58:31.964",
+    "id": 194,
+    "inPrisonWork": [
+      "PRISON_LIBRARY"
+    ],
+    "inPrisonWorkOther": "",
+    "inPrisonEducation": [
+      "BARBERING_AND_HAIRDRESSING"
+    ],
+    "inPrisonEducationOther": ""
+  },
+  "schemaVersion": null
+}

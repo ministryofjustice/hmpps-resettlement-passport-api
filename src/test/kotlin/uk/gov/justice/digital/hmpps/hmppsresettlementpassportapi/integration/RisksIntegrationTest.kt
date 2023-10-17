@@ -12,7 +12,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/risk-scores.json")
 
-    arnApiMockServer.stubGetToCrn("/risks/crn/$crn/predictors/all", 200, "testdata/arn-api/crn-risk-predictors-1.json")
+    arnApiMockServer.stubGet("/risks/crn/$crn/predictors/all", 200, "testdata/arn-api/crn-risk-predictors-1.json")
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/risk/scores")
@@ -31,7 +31,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/risk-scores.json")
 
-    arnApiMockServer.stubGetToCrn("/risks/crn/$crn/predictors/all", 200, "testdata/arn-api/crn-risk-predictors-2.json")
+    arnApiMockServer.stubGet("/risks/crn/$crn/predictors/all", 200, "testdata/arn-api/crn-risk-predictors-2.json")
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/risk/scores")
@@ -68,7 +68,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val crn = "abc"
 
-    arnApiMockServer.stubGetToCrn("/risks/crn/$crn/predictors/all", 404, null)
+    arnApiMockServer.stubGet("/risks/crn/$crn/predictors/all", 404, null)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/risk/scores")
@@ -91,7 +91,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val crn = "abc"
 
-    arnApiMockServer.stubGetToCrn("/risks/crn/$crn/predictors/all", 500, null)
+    arnApiMockServer.stubGet("/risks/crn/$crn/predictors/all", 500, null)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/risk/scores")
@@ -103,9 +103,9 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(500)
       .jsonPath("errorCode").isEmpty
       .jsonPath("userMessage")
-      .isEqualTo("Unexpected error: 500 Internal Server Error from GET http://localhost:8097/risks/crn/abc/predictors/all")
+      .isEqualTo("Unexpected error: 500 Internal Server Error from GET http://localhost:9097/risks/crn/abc/predictors/all")
       .jsonPath("developerMessage")
-      .isEqualTo("500 Internal Server Error from GET http://localhost:8097/risks/crn/abc/predictors/all")
+      .isEqualTo("500 Internal Server Error from GET http://localhost:9097/risks/crn/abc/predictors/all")
       .jsonPath("moreInfo").isEmpty
   }
 
@@ -137,7 +137,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/risk-rosh.json")
 
-    arnApiMockServer.stubGetToCrn("/risks/crn/$crn", 200, "testdata/arn-api/crn-risks.json")
+    arnApiMockServer.stubGet("/risks/crn/$crn", 200, "testdata/arn-api/crn-risks.json")
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/risk/rosh")
@@ -174,7 +174,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val crn = "abc"
 
-    arnApiMockServer.stubGetToCrn("/risks/crn/$crn", 404, null)
+    arnApiMockServer.stubGet("/risks/crn/$crn", 404, null)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/risk/rosh")
@@ -197,7 +197,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val crn = "abc"
 
-    arnApiMockServer.stubGetToCrn("/risks/crn/$crn", 500, null)
+    arnApiMockServer.stubGet("/risks/crn/$crn", 500, null)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/risk/rosh")
@@ -209,8 +209,8 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(500)
       .jsonPath("errorCode").isEmpty
       .jsonPath("userMessage")
-      .isEqualTo("Unexpected error: 500 Internal Server Error from GET http://localhost:8097/risks/crn/abc")
-      .jsonPath("developerMessage").isEqualTo("500 Internal Server Error from GET http://localhost:8097/risks/crn/abc")
+      .isEqualTo("Unexpected error: 500 Internal Server Error from GET http://localhost:9097/risks/crn/abc")
+      .jsonPath("developerMessage").isEqualTo("500 Internal Server Error from GET http://localhost:9097/risks/crn/abc")
       .jsonPath("moreInfo").isEmpty
   }
 
@@ -242,7 +242,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/risk-mappa.json")
 
-    deliusApiMockServer.stubGetToCrn(
+    deliusApiMockServer.stubGet(
       "/probation-cases/$crn/mappa",
       200,
       "testdata/resettlement-passport-delius-api/delius-risk-mappa.json",
@@ -283,7 +283,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val crn = "abc"
 
-    deliusApiMockServer.stubGetToCrn("/probation-cases/$crn/mappa", 404, null)
+    deliusApiMockServer.stubGet("/probation-cases/$crn/mappa", 404, null)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/risk/mappa")
@@ -306,7 +306,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val crn = "abc"
 
-    deliusApiMockServer.stubGetToCrn("/probation-cases/$crn/mappa", 500, null)
+    deliusApiMockServer.stubGet("/probation-cases/$crn/mappa", 500, null)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/risk/mappa")

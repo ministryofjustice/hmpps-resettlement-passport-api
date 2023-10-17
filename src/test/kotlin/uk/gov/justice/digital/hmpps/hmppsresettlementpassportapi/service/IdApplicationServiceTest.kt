@@ -58,7 +58,9 @@ class IdApplicationServiceTest {
       isPriorityApplication = false,
       BigDecimal(10.00),
     )
-    Mockito.`when`(idApplicationRepository.findByPrisonerAndIsDeleted(prisonerEntity)).thenReturn(idApplicationEntity)
+    val idApplicationEntityList = emptyList<IdApplicationEntity>().toMutableList()
+    idApplicationEntityList[0] = idApplicationEntity
+    Mockito.`when`(idApplicationRepository.findByPrisonerAndIsDeleted(prisonerEntity)).thenReturn(idApplicationEntityList)
     val result = idApplicationService.getIdApplicationByNomsId(prisonerEntity.nomsId)
     Assertions.assertEquals(idApplicationEntity, result)
   }

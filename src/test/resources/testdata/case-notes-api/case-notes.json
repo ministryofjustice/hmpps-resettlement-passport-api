@@ -179,6 +179,24 @@
       "eventId": 47028552,
       "sensitive": false,
       "amendments": []
+    },
+    {
+      "caseNoteId": "47028554",
+      "offenderIdentifier": "A3426DZ",
+      "type": "RESET",
+      "typeDescription": "Resettlement",
+      "subType": "GEN",
+      "subTypeDescription": "General work",
+      "source": "INST",
+      "creationDateTime": "2023-09-06T11:06:04.049008019",
+      "occurrenceDateTime": "2023-07-26T07:00:48",
+      "authorName": "James Smith",
+      "authorUserId": "487354",
+      "text": "Resettlement status set to:Done \n This is a test case note message from Resettlement Passport",
+      "locationId": "MDI",
+      "eventId": 47028553,
+      "sensitive": false,
+      "amendments": []
     }
   ],
   "pageable": {

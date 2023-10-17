@@ -24,9 +24,10 @@ import java.time.format.DateTimeFormatter
 
 @Service
 class OffenderCaseNotesApiService(
-  private val offenderCaseNotesWebClientCredentials: WebClient,
   private val offenderCaseNotesWebClientUserCredentials: WebClient,
+  private val offenderCaseNotesWebClientCredentials: WebClient,
   private val offenderSearchApiService: OffenderSearchApiService,
+
 ) {
 
   suspend fun getCaseNotesByNomsId(

@@ -5,10 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 
-class InterventionsServiceApiMockServer : WireMockServer(WIREMOCK_PORT) {
-  companion object {
-    private const val WIREMOCK_PORT = 8103
-  }
+class InterventionsServiceApiMockServer : WireMockServerBase(9105) {
 
   fun stubFetchProbationCaseReferrals(crn: String, status: Int) {
     val referralJSON = readFile("testdata/interventions-service-api/crs-referrals.json")

@@ -65,6 +65,14 @@
       "text": "Resettlement status set to: Done \n This is a test case note message from Resettlement Passport, general message"
     },
     {
+      "caseNoteId": "47028552",
+      "pathway": "EDUCATION_SKILLS_AND_WORK",
+      "creationDateTime": "2023-09-06T11:06:04.049008019",
+      "occurenceDateTime": "2023-07-26T07:00:48",
+      "createdBy": "James Smith",
+      "text": "Resettlement status set to:Done \n This is a test case note message from Resettlement Passport"
+    },
+    {
       "caseNoteId": "47028553",
       "pathway": "FINANCE_AND_ID",
       "creationDateTime": "2023-09-06T11:06:28.04675538",
@@ -73,17 +81,25 @@
       "text": "Resettlement status set to:In progress \n This is a test case note message from Resettlement Passport"
     },
     {
-      "caseNoteId": "47028552",
-      "pathway": "EDUCATION_SKILLS_AND_WORK",
+      "caseNoteId": "47028554",
+      "pathway": "GENERAL",
       "creationDateTime": "2023-09-06T11:06:04.049008019",
       "occurenceDateTime": "2023-07-26T07:00:48",
       "createdBy": "James Smith",
       "text": "Resettlement status set to:Done \n This is a test case note message from Resettlement Passport"
+    },
+    {
+      "caseNoteId": "47028578",
+      "pathway": "GENERAL",
+      "creationDateTime": "2023-09-06T12:18:50.386747825",
+      "occurenceDateTime": "2023-09-06T12:17:00",
+      "createdBy": "James Smith",
+      "text": "Resettlement status set to: Done \\n This is a test case note from resettlement passport"
     }
   ],
-  "pageSize": 10,
+  "pageSize": 12,
   "page": 0,
   "sortName": "pathway,ASC",
-  "totalElements": 11,
-  "last": false
+  "totalElements": 12,
+  "last": true
 }

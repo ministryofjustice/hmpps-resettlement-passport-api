@@ -49,6 +49,7 @@ enum class PathwayMap(val id: String) {
   FINANCE_ID("FINANCE_AND_ID"),
   HEALTH("HEALTH"),
   RESET("GENERAL"),
+  GEN("GENERAL"),
 }
 
 val PATHWAY_PARENT_TYPE: String = "RESET"

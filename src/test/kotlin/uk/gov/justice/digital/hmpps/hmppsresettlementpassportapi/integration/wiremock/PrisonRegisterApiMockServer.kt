@@ -1,14 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock
 
-import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 
-class PrisonRegisterApiMockServer : WireMockServer(WIREMOCK_PORT) {
-  companion object {
-    private const val WIREMOCK_PORT = 8093
-  }
+class PrisonRegisterApiMockServer : WireMockServerBase(9093) {
 
   fun stubPrisonList(status: Int) {
     val prisonListJSON = readFile("testdata/prison-register-api/prison.json")

@@ -9,8 +9,8 @@ api:
       #oauth: http://localhost:9090/auth
       prison-register: http://localhost:8083
       #prison-register: https://prison-register-dev.hmpps.service.justice.gov.uk
-      #offender-search: https://prisoner-search-dev.prison.service.justice.gov.uk
       offender-search: http://localhost:8085
+      #offender-search: https://prisoner-search-dev.prison.service.justice.gov.uk
       cvl: http://localhost:8081
       #cvl: https://create-and-vary-a-licence-api-dev.hmpps.service.justice.gov.uk
       arn: http://localhost:8084
@@ -23,9 +23,14 @@ api:
       allocation-manager: http://localhost:8088
       #https://allocation-manager-staging.apps.live.cloud-platform.service.justice.gov.uk
       resettlement-passport-delius: http://localhost:8089
-      #https://resettlement-passport-and-delius-dev.hmpps.service.justice.gov.uk/
+      #https://resettlement-passport-and-delius-dev.hmpps.service.justice.gov.uk
+      education-employment: http://localhost:8090
+      #https://education-employment-api-dev.hmpps.service.justice.gov.uk
+      ciag: http://localhost:8091
+      #https://ciag-induction-api-dev.hmpps.service.justice.gov.uk
       interventions-service: http://localhost:8082
-      #https://hmpps-interventions-service-dev.apps.live-1.cloud-platform.service.justice.gov.uk/
+      #https://hmpps-interventions-service-dev.apps.live-1.cloud-platform.service.justice.gov.uk
+
 management.endpoint:
   health.cache.time-to-live: 0
   info.cache.time-to-live: 0

@@ -1,0 +1,23 @@
+{
+  "workReadinessStatus": null,
+  "workReadinessStatusLastUpdated": null,
+  "details": {
+    "lastUpdated": null,
+    "workInterests": null,
+    "abilityToWork": null,
+    "reasonsToNotGetWork": null,
+    "volunteeringAndExperience": null,
+    "educationalCoursesAndQualifications": {
+      "qualifications": null,
+      "additionalTraining": null
+    },
+    "inPrisonWorkAndEducation": {
+      "inPrisonWork": null,
+      "inPrisonEducation": null
+    },
+    "skillsAndInterests": {
+      "skills": null,
+      "personalInterests": null
+    }
+  }
+}

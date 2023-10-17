@@ -36,3 +36,4 @@ deploy_stubs:
   - key-worker-api
   - allocation-manager-api
   - resettlement-passport-and-delius-api
+  - interventions-service-api

@@ -24,7 +24,7 @@ class IdApplicationService(
   suspend fun getIdApplicationByNomsId(nomsId: String): IdApplicationEntity {
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    return idApplicationRepository.findByPrisonerAndIsDeleted(prisoner)
+    return idApplicationRepository.findByPrisonerAndIsDeleted(prisoner)[0]
       ?: throw ResourceNotFoundException("No active ID application found for prisoner with id $nomsId")
   }
 
@@ -37,9 +37,9 @@ class IdApplicationService(
     val idTypeEntity = idTypeRepository.findByName(idApplicationPost.idType!!)
       ?: throw ResourceNotFoundException("Id type ${idApplicationPost.idType} not found in database")
 
-    val idApplicationExists = idApplicationRepository.findByPrisonerAndIsDeleted(prisoner)
+    val idApplicationExists = idApplicationRepository.findByPrisonerAndIdTypeAndIsDeleted(prisoner, idTypeEntity)
     if (idApplicationExists != null) {
-      throw DuplicateDataFoundException("Id application for prisoner with id $nomsId already exists in database")
+      throw DuplicateDataFoundException("Id application for prisoner with id $nomsId and id application type ${idApplicationPost.idType} already exists in database")
     }
 
     if (idApplicationPost.applicationSubmittedDate != null &&
@@ -91,4 +91,21 @@ class IdApplicationService(
     existingIdApplication.deletionDate = LocalDateTime.now()
     idApplicationRepository.save(existingIdApplication)
   }
+
+  @Transactional
+  suspend fun getIdApplicationByNomsIdAndIdApplicationID(nomsId: String , idApplicationId: Long): IdApplicationEntity? {
+    val prisoner = prisonerRepository.findByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+    return idApplicationRepository.findByIdAndIsDeleted(idApplicationId, false)
+      ?: throw ResourceNotFoundException("No active ID application found for prisoner with id $nomsId and Application Id $idApplicationId")
+  }
+
+  @Transactional
+  suspend fun getAllIdApplicationsByNomsId(nomsId: String ): List<IdApplicationEntity?> {
+    val prisoner = prisonerRepository.findByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+    return idApplicationRepository.findByPrisonerAndIsDeleted(prisoner, false)
+      ?: throw ResourceNotFoundException("No active ID application found for prisoner with id $nomsId")
+  }
+
 }

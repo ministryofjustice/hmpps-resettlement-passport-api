@@ -102,7 +102,7 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
       ),
     ],
   )
-  suspend fun postBankApplicationByNomsId(
+  suspend fun postIdApplicationByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     nomsId: String,
@@ -111,7 +111,7 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
   ) = idApplicationService.createIdApplication(idApplicationPost, nomsId)
 
   @DeleteMapping("/{nomsId}/idapplication/{idApplicationId}", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Create assessment", description = "Create assessment")
+  @Operation(summary = "Create Id Application", description = "Create Id Application for a prisoner")
   @ApiResponses(
     value = [
       ApiResponse(
@@ -140,7 +140,7 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
       ),
     ],
   )
-  suspend fun deleteAssessmentByNomsId(
+  suspend fun deleteIdApplicationByNomsId(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
@@ -148,14 +148,18 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
     @Parameter(required = true)
     idApplicationId: String,
   ) {
-    val idApplication = idApplicationService.getIdApplicationByNomsId(nomsId)
-    if (idApplication.id != idApplicationId.toLong()) {
-      throw NoDataWithCodeFoundException(
-        "IdApplication",
-        idApplicationId,
-      )
+    val idApplication = idApplicationService.getIdApplicationByNomsIdAndIdApplicationID(nomsId, idApplicationId.toLong())
+    if (idApplication != null) {
+      if (idApplication.id != idApplicationId.toLong()) {
+        throw NoDataWithCodeFoundException(
+          "IdApplication",
+          idApplicationId,
+        )
+      }
     }
-    idApplicationService.deleteIdApplication(idApplication)
+    if (idApplication != null) {
+      idApplicationService.deleteIdApplication(idApplication)
+    }
   }
 
   @PatchMapping("/{nomsId}/idapplication/{idApplicationId}", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -188,7 +192,7 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
       ),
     ],
   )
-  suspend fun patchBankApplicationByNomsId(
+  suspend fun patchIdApplicationByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     nomsId: String,
@@ -197,14 +201,54 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
     idApplicationId: String,
     @RequestBody
     idApplicationPatchDTO: IdApplicationPatch,
-  ): IdApplicationEntity {
-    val idApplication = idApplicationService.getIdApplicationByNomsId(nomsId)
-    if (idApplication.id != idApplicationId.toLong()) {
-      throw NoDataWithCodeFoundException(
+  ): IdApplicationEntity? {
+    val idApplication = idApplicationService.getIdApplicationByNomsIdAndIdApplicationID(nomsId, idApplicationId.toLong())
+      ?: throw NoDataWithCodeFoundException(
         "IdApplication",
         idApplicationId,
       )
-    }
     return idApplicationService.updateIdApplication(idApplication, idApplicationPatchDTO)
   }
+
+  @GetMapping("/{nomsId}/idapplication/all", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(summary = "Get all id applications by noms Id", description = "All Id application based on noms Id")
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+      ),
+      ApiResponse(
+        description = "Not found",
+        responseCode = "404",
+        content = [Content(mediaType = MediaType.APPLICATION_JSON_VALUE)],
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [
+          Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "400",
+        description = "Incorrect information provided to perform assessment match",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  suspend fun getAllIdApplicationsByNomsId(
+    @Schema(example = "AXXXS", required = true)
+    @PathVariable("nomsId")
+    @Parameter(required = true)
+    nomsId: String,
+  ) = idApplicationService.getAllIdApplicationsByNomsId(nomsId)
 }

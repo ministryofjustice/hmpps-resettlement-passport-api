@@ -58,7 +58,9 @@ class IdApplicationServiceTest {
       isPriorityApplication = false,
       BigDecimal(10.00),
     )
-    Mockito.`when`(idApplicationRepository.findByPrisonerAndIsDeleted(prisonerEntity)).thenReturn(idApplicationEntity)
+    val idApplicationEntityList = emptyList<IdApplicationEntity>().toMutableList()
+    idApplicationEntityList.add(idApplicationEntity)
+    Mockito.`when`(idApplicationRepository.findByPrisonerAndIsDeleted(prisonerEntity)).thenReturn(idApplicationEntityList)
     val result = idApplicationService.getIdApplicationByNomsId(prisonerEntity.nomsId)
     Assertions.assertEquals(idApplicationEntity, result)
   }
@@ -212,5 +214,36 @@ class IdApplicationServiceTest {
 
     Mockito.verify(idApplicationRepository).save(expectedDeleteCall)
     unmockkStatic(LocalDateTime::class)
+  }
+
+  @Test
+  fun `test getAllIdApplicationByNomsId - returns id application`() = runTest {
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn")
+    Mockito.`when`(prisonerRepository.findByNomsId(prisonerEntity.nomsId)).thenReturn(prisonerEntity)
+    val idApplicationEntity1 = IdApplicationEntity(
+      null,
+      prisonerEntity,
+      IdTypeEntity(1, "Birth Certificate"),
+      fakeNow,
+      fakeNow,
+      isPriorityApplication = false,
+      BigDecimal(10.00),
+    )
+    val idApplicationEntity2 = IdApplicationEntity(
+      null,
+      prisonerEntity,
+      IdTypeEntity(1, "Marriage Certificate"),
+      fakeNow,
+      fakeNow,
+      isPriorityApplication = false,
+      BigDecimal(10.00),
+    )
+    val idApplicationEntityList = emptyList<IdApplicationEntity>().toMutableList()
+    idApplicationEntityList.add(idApplicationEntity1)
+    idApplicationEntityList.add(idApplicationEntity2)
+
+    Mockito.`when`(idApplicationRepository.findByPrisonerAndIsDeleted(prisonerEntity)).thenReturn(idApplicationEntityList)
+    val result = idApplicationService.getAllIdApplicationsByNomsId(prisonerEntity.nomsId)
+    Assertions.assertEquals(idApplicationEntityList, result)
   }
 }

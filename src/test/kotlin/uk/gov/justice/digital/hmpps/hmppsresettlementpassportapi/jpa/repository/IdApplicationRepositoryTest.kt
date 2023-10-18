@@ -92,7 +92,7 @@ class IdApplicationRepositoryTest : TestBase() {
     idApplicationRepository.save(application1)
     idApplicationRepository.save(application2)
 
-    val assessmentFromDatabase = idApplicationRepository.findByPrisonerAndIsDeleted(prisoner)
+    val assessmentFromDatabase = idApplicationRepository.findByPrisonerAndIdTypeAndIsDeleted(prisoner, idType)
 
     Assertions.assertThat(assessmentFromDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(application1)
   }

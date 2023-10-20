@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientException
 import org.springframework.web.reactive.function.client.awaitBodyOrNull
 import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
@@ -38,11 +39,14 @@ class ResettlementPassportDeliusApiService(
     val offenderDetails = rpDeliusWebClientCredentials.get()
       .uri("/probation-cases/$nomsId/crn")
       .retrieve()
-      .onStatus(
-        { it == HttpStatus.NOT_FOUND },
-        { throw ResourceNotFoundException("Cannot find CRN for NomsId $nomsId in Delius API") },
-      )
       .bodyToMono<CaseIdentifiers>()
+      .onErrorReturn(
+        {
+          log.warn("Unable to find CRN for nomsId $nomsId in delius due to error. Setting to null.", it)
+          it is WebClientException
+        },
+        CaseIdentifiers(null),
+      )
       .awaitSingle()
 
     return offenderDetails.crn

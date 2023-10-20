@@ -63,20 +63,27 @@ class PathwayAndStatusService(
   @Transactional
   suspend fun addPrisonerAndInitialPathwayStatus(nomsId: String) {
     // Seed the Prisoner data into the DB
-    var prisonerEntity = prisonerRepository.findByNomsId(nomsId)
-    if (prisonerEntity == null) {
+    val existingPrisonerEntity = prisonerRepository.findByNomsId(nomsId)
+    if (existingPrisonerEntity == null) {
       val crn = resettlementPassportDeliusApiService.getCrn(nomsId)
-      prisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), crn.toString())
-      prisonerEntity = prisonerRepository.save(prisonerEntity)
+      val newPrisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), crn)
+      prisonerRepository.save(newPrisonerEntity)
       val statusRepoData = statusRepository.findById(Status.NOT_STARTED.id)
       val pathwayRepoData = pathwayRepository.findAll()
       pathwayRepoData.forEach {
         if (it.active) {
           val pathwayStatusEntity =
-            PathwayStatusEntity(null, prisonerEntity, it, statusRepoData.get(), null)
+            PathwayStatusEntity(null, newPrisonerEntity, it, statusRepoData.get(), null)
           pathwayStatusRepository.save(pathwayStatusEntity)
         }
       }
+    } else if (existingPrisonerEntity.crn == null) {
+      // If the CRN failed to be added last time, try again
+      val crn = resettlementPassportDeliusApiService.getCrn(nomsId)
+      if (crn != null) {
+        existingPrisonerEntity.crn = crn
+      }
+      prisonerRepository.save(existingPrisonerEntity)
     }
   }
 

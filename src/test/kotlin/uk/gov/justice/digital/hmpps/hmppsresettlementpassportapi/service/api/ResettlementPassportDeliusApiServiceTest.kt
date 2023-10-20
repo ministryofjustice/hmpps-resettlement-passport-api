@@ -12,11 +12,8 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.mock
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.WebClientResponseException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService

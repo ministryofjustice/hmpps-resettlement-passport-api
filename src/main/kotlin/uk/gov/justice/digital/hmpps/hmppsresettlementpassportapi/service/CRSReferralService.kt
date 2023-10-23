@@ -7,7 +7,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CRSReferra
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CRSReferralResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CRSReferralsWithPathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.PathwayMap
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.interventionsapi.Referral
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.interventionsapi.ReferralDTO
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.InterventionsApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderSearchApiService
@@ -61,7 +61,7 @@ class CRSReferralService(
     return crsReferralsResponse
   }
 
-  private suspend fun objectMapper(referralList: List<Referral>, pathway: String? = null, nomsId: String): CRSReferralResponse {
+  private suspend fun objectMapper(referralList: List<ReferralDTO>, pathway: String? = null, nomsId: String): CRSReferralResponse {
     val crsReferralACCOMList = mutableListOf<CRSReferral>()
     val crsReferralATBList = mutableListOf<CRSReferral>()
     val crsReferralCHDFAMCOMList = mutableListOf<CRSReferral>()

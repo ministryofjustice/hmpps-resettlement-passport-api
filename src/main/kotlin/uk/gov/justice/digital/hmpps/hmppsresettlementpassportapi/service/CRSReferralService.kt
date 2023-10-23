@@ -29,9 +29,8 @@ class CRSReferralService(
     }
 
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val crn = prisonerEntity.crn
+    val crn = prisonerEntity.crn ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in database")
 
-    // val results = CRSReferrals(emptyList())
     var crsReferralsResponse = CRSReferralResponse(emptyList())
     val referrals = interventionsApiService.fetchProbationCaseReferrals(nomsId, crn)
     referrals.collect {
@@ -52,7 +51,7 @@ class CRSReferralService(
     }
 
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val crn = prisonerEntity.crn
+    val crn = prisonerEntity.crn ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in database")
 
     var crsReferralsResponse = CRSReferralResponse(emptyList())
     val referrals = interventionsApiService.fetchProbationCaseReferrals(nomsId, crn)

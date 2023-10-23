@@ -22,5 +22,5 @@ data class PrisonerEntity(
   val creationDate: LocalDateTime,
 
   @Column(name = "crn")
-  var crn: String,
+  var crn: String?,
 )

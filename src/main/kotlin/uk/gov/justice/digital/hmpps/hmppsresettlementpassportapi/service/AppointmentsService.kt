@@ -39,7 +39,7 @@ class AppointmentsService(
     }
 
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val crn = prisonerEntity.crn
+    val crn = prisonerEntity.crn ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in database")
 
     var appointmentList = AppointmentsList(listOf(), 0, 0, 0, 0)
 

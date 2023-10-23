@@ -1,0 +1,1 @@
+alter table prisoner alter column crn drop not null;

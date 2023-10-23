@@ -9,13 +9,11 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.mock
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.WebClientResponseException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
@@ -63,11 +61,11 @@ class ResettlementPassportDeliusApiServiceTest {
   }
 
   @Test
-  fun `test get CRN 404 error upstream`() = runTest {
+  fun `test get CRN not found upstream`() = runTest {
     val nomsId = "ABC1234"
 
     mockWebServer.enqueue(MockResponse().setBody("{}").addHeader("Content-Type", "application/json").setResponseCode(404))
-    assertThrows<ResourceNotFoundException> { rpDeliusApiService.getCrn(nomsId) }
+    assertNull(rpDeliusApiService.getCrn(nomsId))
   }
 
   @Test
@@ -75,7 +73,7 @@ class ResettlementPassportDeliusApiServiceTest {
     val nomsId = "ABC1234"
 
     mockWebServer.enqueue(MockResponse().setBody("{}").addHeader("Content-Type", "application/json").setResponseCode(500))
-    assertThrows<WebClientResponseException> { rpDeliusApiService.getCrn(nomsId) }
+    assertNull(rpDeliusApiService.getCrn(nomsId))
   }
 
   @Test

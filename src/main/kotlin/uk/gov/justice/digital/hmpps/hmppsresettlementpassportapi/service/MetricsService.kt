@@ -31,7 +31,6 @@ class MetricsService(
     val offenders24Weeks = mutableListOf<PrisonersSearch>()
     val offendersAllTime = mutableListOf<PrisonersSearch>()
     for (item in prisonList) {
-      println("Prison Id --> " + item.id)
       try {
         if (item.active) {
           offenderSearchApiService.findPrisonersBySearchTerm(item.id, "").collect {

@@ -9,7 +9,6 @@ class SchedularService(
   val metricsService: MetricsService,
 ) {
 
-  //@Scheduled(fixedDelay = 1800000)
   @Scheduled(cron = "0 0/30 * * * ?")
   fun metricsScheduledTask() {
     runBlocking {

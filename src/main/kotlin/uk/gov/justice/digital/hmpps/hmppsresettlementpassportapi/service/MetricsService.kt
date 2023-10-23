@@ -4,9 +4,6 @@ import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tags
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
 import java.time.LocalDate
@@ -15,8 +12,6 @@ import java.time.LocalDate
 class MetricsService(
   private val offenderSearchApiService: OffenderSearchApiService,
   private val prisonRegisterApiService: PrisonRegisterApiService,
-  private val prisonerRepository: PrisonerRepository,
-  private val pathwayStatusRepository: PathwayStatusRepository,
   private val registry: MeterRegistry,
 ) {
 
@@ -26,10 +21,13 @@ class MetricsService(
 
   suspend fun recordPrisonersCountForEachPrison() {
     val prisonList = prisonRegisterApiService.getActivePrisonsList()
-    val offenders = mutableListOf<PrisonersSearch>()
-    val offenders12Weeks = mutableListOf<PrisonersSearch>()
-    val offenders24Weeks = mutableListOf<PrisonersSearch>()
-    val offendersAllTime = mutableListOf<PrisonersSearch>()
+    var prisonersCount = 0
+    var prisoners12WeeksCount = 0
+    var prisoners24WeeksCount = 0
+    var prisonersAllTimeCount = 0
+    val earliestReleaseDate = LocalDate.now().minusDays(1)
+    val latestRD12Weeks = LocalDate.now().plusDays(84)
+    val latestRD24Weeks = LocalDate.now().plusDays(168)
     for (item in prisonList) {
       try {
         if (item.active) {
@@ -48,23 +46,21 @@ class MetricsService(
               } else {
                 it.displayReleaseDate = null
               }
-              offenders.add(it)
-              offenders12Weeks.add(it)
-              offenders24Weeks.add(it)
-              offendersAllTime.add(it)
+              prisonersCount++
+              if (it.displayReleaseDate != null && (it.displayReleaseDate!! > earliestReleaseDate || it.displayReleaseDate!! < latestRD12Weeks)) {
+                prisoners12WeeksCount++
+              }
+              if (it.displayReleaseDate != null && (it.displayReleaseDate!! > earliestReleaseDate || it.displayReleaseDate!! < latestRD24Weeks)) {
+                prisoners24WeeksCount++
+              }
+              if (it.displayReleaseDate != null && (it.displayReleaseDate!! < earliestReleaseDate)) {
+                prisonersAllTimeCount++
+              }
             }
-            registry.gauge("total_prisoners_count", Tags.of("prison", item.name), offenders.size)
-
-            val earliestReleaseDate = LocalDate.now().minusDays(1)
-            var latestReleaseDate = LocalDate.now().plusDays(84)
-            offenders12Weeks.removeAll { it.displayReleaseDate == null || it.displayReleaseDate!! <= earliestReleaseDate || it.displayReleaseDate!! > latestReleaseDate }
-            registry.gauge("total_prisoners_12Weeks_count", Tags.of("prison", item.name), offenders12Weeks.size)
-            latestReleaseDate = LocalDate.now().plusDays(168)
-            offenders24Weeks.removeAll { it.displayReleaseDate == null || it.displayReleaseDate!! <= earliestReleaseDate || it.displayReleaseDate!! > latestReleaseDate }
-            registry.gauge("total_prisoners_24Weeks_count", Tags.of("prison", item.name), offenders24Weeks.size)
-
-            offendersAllTime.removeAll { it.displayReleaseDate == null || it.displayReleaseDate!! >= earliestReleaseDate }
-            registry.gauge("total_prisoners_AllTime_count", Tags.of("prison", item.name), offendersAllTime.size)
+            registry.gauge("total_prisoners_count", Tags.of("prison", item.name), prisonersCount)
+            registry.gauge("total_prisoners_12Weeks_count", Tags.of("prison", item.name), prisoners12WeeksCount)
+            registry.gauge("total_prisoners_24Weeks_count", Tags.of("prison", item.name), prisoners24WeeksCount)
+            registry.gauge("total_prisoners_AllTime_count", Tags.of("prison", item.name), prisonersAllTimeCount)
           }
         }
       } catch (ex: Exception) {

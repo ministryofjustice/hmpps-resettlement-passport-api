@@ -2,13 +2,12 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.extern
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBodyOrNull
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.interventionsapi.Referral
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.interventionsapi.ReferralDTO
 
 @Service
 class InterventionsApiService(
@@ -16,11 +15,7 @@ class InterventionsApiService(
 
 ) {
 
-  companion object {
-    private val log = LoggerFactory.getLogger(this::class.java)
-  }
-
-  fun fetchProbationCaseReferrals(nomsId: String, crn: String): Flow<List<Referral>> = flow {
+  fun fetchProbationCaseReferrals(nomsId: String, crn: String): Flow<List<ReferralDTO>> = flow {
     val data = interventionsWebClientCredentials.get()
       .uri(
         "/probation-case/{crn}/referral",
@@ -29,7 +24,7 @@ class InterventionsApiService(
         ),
       )
       .retrieve().onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("NomsId $nomsId / CRN  $crn not found in InterventionService for Probation Case Referral") })
-    val pageOfData = data.awaitBodyOrNull<List<Referral>>()
+    val pageOfData = data.awaitBodyOrNull<List<ReferralDTO>>()
     if (pageOfData != null) {
       emit(pageOfData)
     }

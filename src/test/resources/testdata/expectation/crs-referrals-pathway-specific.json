@@ -16,7 +16,7 @@
           "serviceProviderUser": null,
           "serviceProviderLocation": null,
           "serviceProviderName": null,
-          "draft": false
+          "draft": true
         },
         {
           "serviceCategories": [
@@ -31,7 +31,7 @@
           "serviceProviderUser": null,
           "serviceProviderLocation": null,
           "serviceProviderName": null,
-          "draft": false
+          "draft": true
         },
         {
           "serviceCategories": [
@@ -46,7 +46,7 @@
           "serviceProviderUser": null,
           "serviceProviderLocation": null,
           "serviceProviderName": null,
-          "draft": false
+          "draft": true
         },
         {
           "serviceCategories": [
@@ -61,7 +61,7 @@
           "serviceProviderUser": null,
           "serviceProviderLocation": null,
           "serviceProviderName": null,
-          "draft": false
+          "draft": true
         },
         {
           "serviceCategories": [
@@ -76,7 +76,7 @@
           "serviceProviderUser": null,
           "serviceProviderLocation": null,
           "serviceProviderName": null,
-          "draft": false
+          "draft": true
         },
         {
           "serviceCategories": [
@@ -106,7 +106,7 @@
           "serviceProviderUser": null,
           "serviceProviderLocation": null,
           "serviceProviderName": null,
-          "draft": false
+          "draft": true
         },
         {
           "serviceCategories": [
@@ -136,7 +136,7 @@
           "serviceProviderUser": null,
           "serviceProviderLocation": null,
           "serviceProviderName": null,
-          "draft": false
+          "draft": true
         },
         {
           "serviceCategories": [
@@ -151,7 +151,7 @@
           "serviceProviderUser": null,
           "serviceProviderLocation": null,
           "serviceProviderName": null,
-          "draft": false
+          "draft": true
         },
         {
           "serviceCategories": [
@@ -166,7 +166,7 @@
           "serviceProviderUser": null,
           "serviceProviderLocation": null,
           "serviceProviderName": null,
-          "draft": false
+          "draft": true
         },
         {
           "serviceCategories": [
@@ -181,7 +181,7 @@
           "serviceProviderUser": null,
           "serviceProviderLocation": null,
           "serviceProviderName": null,
-          "draft": false
+          "draft": true
         },
         {
           "serviceCategories": [
@@ -196,7 +196,7 @@
           "serviceProviderUser": null,
           "serviceProviderLocation": null,
           "serviceProviderName": null,
-          "draft": false
+          "draft": true
         },
         {
           "serviceCategories": [
@@ -211,7 +211,7 @@
           "serviceProviderUser": null,
           "serviceProviderLocation": null,
           "serviceProviderName": null,
-          "draft": false
+          "draft": true
         },
         {
           "serviceCategories": [
@@ -226,7 +226,7 @@
           "serviceProviderUser": null,
           "serviceProviderLocation": null,
           "serviceProviderName": null,
-          "draft": false
+          "draft": true
         },
         {
           "serviceCategories": [
@@ -256,7 +256,7 @@
           "serviceProviderUser": null,
           "serviceProviderLocation": null,
           "serviceProviderName": null,
-          "draft": false
+          "draft": true
         },
         {
           "serviceCategories": [
@@ -271,7 +271,7 @@
           "serviceProviderUser": null,
           "serviceProviderLocation": null,
           "serviceProviderName": null,
-          "draft": false
+          "draft": true
         },
         {
           "serviceCategories": [
@@ -301,7 +301,7 @@
           "serviceProviderUser": null,
           "serviceProviderLocation": null,
           "serviceProviderName": null,
-          "draft": false
+          "draft": true
         }
       ],
       "message": ""

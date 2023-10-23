@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
+import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.security.oauth2.client.AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientProviderBuilder
@@ -16,6 +17,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.SYSTEM_USERNAME
 import java.time.Duration
 
 @Configuration
+@EnableScheduling
 class WebClientConfiguration(
   @Value("\${api.base.url.oauth}") val authBaseUri: String,
   @Value("\${api.base.url.prison-register}") private val prisonRegisterRootUri: String,

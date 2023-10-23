@@ -1,9 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.interventionsapi
 
-data class ReferralsDTO(
-  val crsReferralList: List<Referral> = listOf(),
-)
-
 data class Referral(
   val serviceCategories: List<String> = listOf(),
   val contractType: String?,
@@ -15,6 +11,6 @@ data class Referral(
   val serviceProviderUser: String?,
   val serviceProviderLocation: String?,
   val serviceProviderName: String?,
-  val draft: Boolean,
+  val isDraft: Boolean,
 
 )

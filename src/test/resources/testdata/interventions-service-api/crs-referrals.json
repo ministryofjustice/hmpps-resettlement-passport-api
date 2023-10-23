@@ -12,7 +12,7 @@
     "serviceProviderUser": null,
     "serviceProviderLocation": null,
     "serviceProviderName": null,
-    "isDraft": true
+    "isDraft": false
   },
   {
     "serviceCategories": [
@@ -87,7 +87,7 @@
     "serviceProviderUser": null,
     "serviceProviderLocation": null,
     "serviceProviderName": null,
-    "isDraft": true
+    "isDraft": false
   },
   {
     "serviceCategories": [
@@ -148,7 +148,7 @@
     "serviceProviderUser": null,
     "serviceProviderLocation": null,
     "serviceProviderName": null,
-    "isDraft": true
+    "isDraft": false
   },
   {
     "serviceCategories": [
@@ -223,7 +223,7 @@
     "serviceProviderUser": null,
     "serviceProviderLocation": null,
     "serviceProviderName": null,
-    "isDraft": true
+    "isDraft": false
   },
   {
     "serviceCategories": [
@@ -314,7 +314,7 @@
     "serviceProviderUser": null,
     "serviceProviderLocation": null,
     "serviceProviderName": null,
-    "isDraft": true
+    "isDraft": false
   },
   {
     "serviceCategories": [
@@ -419,7 +419,7 @@
     "serviceProviderUser": null,
     "serviceProviderLocation": null,
     "serviceProviderName": null,
-    "isDraft": true
+    "isDraft": false
   },
   {
     "serviceCategories": [
@@ -518,7 +518,7 @@
     "serviceProviderUser": null,
     "serviceProviderLocation": null,
     "serviceProviderName": null,
-    "isDraft": true
+    "isDraft": false
   },
   {
     "serviceCategories": [
@@ -681,7 +681,7 @@
     "serviceProviderUser": null,
     "serviceProviderLocation": null,
     "serviceProviderName": null,
-    "isDraft": true
+    "isDraft": false
   },
   {
     "serviceCategories": [
@@ -769,7 +769,7 @@
     "serviceProviderUser": null,
     "serviceProviderLocation": null,
     "serviceProviderName": null,
-    "isDraft": true
+    "isDraft": false
   },
   {
     "serviceCategories": [
@@ -887,7 +887,7 @@
     "serviceProviderUser": null,
     "serviceProviderLocation": null,
     "serviceProviderName": null,
-    "isDraft": true
+    "isDraft": false
   },
   {
     "serviceCategories": [
@@ -1020,6 +1020,6 @@
     "serviceProviderUser": null,
     "serviceProviderLocation": null,
     "serviceProviderName": null,
-    "isDraft": true
+    "isDraft": false
   }
 ]

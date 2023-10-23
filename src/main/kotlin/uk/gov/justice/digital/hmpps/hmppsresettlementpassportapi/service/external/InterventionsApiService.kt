@@ -16,10 +16,6 @@ class InterventionsApiService(
 
 ) {
 
-  companion object {
-    private val log = LoggerFactory.getLogger(this::class.java)
-  }
-
   fun fetchProbationCaseReferrals(nomsId: String, crn: String): Flow<List<Referral>> = flow {
     val data = interventionsWebClientCredentials.get()
       .uri(

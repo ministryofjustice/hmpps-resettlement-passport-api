@@ -1,0 +1,52 @@
+{
+  "personalDetails": {
+    "prisonerNumber": "G4274GN",
+    "prisonId": "MDI",
+    "firstName": "John",
+    "middleNames": "Michael",
+    "lastName": "Smith",
+    "releaseDate": "2017-03-31",
+    "releaseType": "CRD",
+    "dateOfBirth": "1982-10-24",
+    "age": REPLACE_WITH_AGE,
+    "location": "K-3-011",
+    "facialImageId": "1313058"
+  },
+  "pathways": [
+    {
+      "pathway": "ACCOMMODATION",
+      "status": "NOT_STARTED",
+      "lastDateChange": null
+    },
+    {
+      "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+      "status": "NOT_STARTED",
+      "lastDateChange": null
+    },
+    {
+      "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+      "status": "NOT_STARTED",
+      "lastDateChange": null
+    },
+    {
+      "pathway": "DRUGS_AND_ALCOHOL",
+      "status": "NOT_STARTED",
+      "lastDateChange": null
+    },
+    {
+      "pathway": "EDUCATION_SKILLS_AND_WORK",
+      "status": "NOT_STARTED",
+      "lastDateChange": null
+    },
+    {
+      "pathway": "FINANCE_AND_ID",
+      "status": "NOT_STARTED",
+      "lastDateChange": null
+    },
+    {
+      "pathway": "HEALTH",
+      "status": "NOT_STARTED",
+      "lastDateChange": null
+    }
+  ]
+}

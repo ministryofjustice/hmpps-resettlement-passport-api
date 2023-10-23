@@ -28,7 +28,8 @@ class AccommodationService(
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
 
-    val crn = prisonerEntity.crn
+    val crn = prisonerEntity.crn ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in database")
+
     val accommodation = rpDeliusApiService.fetchAccommodation(nomsId, crn)
 
     var msg: String? = null

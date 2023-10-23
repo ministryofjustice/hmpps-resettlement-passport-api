@@ -35,7 +35,7 @@ class OffenderSearchApiService(
   private val prisonApiService: PrisonApiService,
 ) {
 
-  private fun findPrisonersBySearchTerm(prisonId: String, searchTerm: String): Flow<List<PrisonersSearch>> = flow {
+  fun findPrisonersBySearchTerm(prisonId: String, searchTerm: String?): Flow<List<PrisonersSearch>> = flow {
     var page = 0
     do {
       val data = offenderSearchWebClientClientCredentials.get()

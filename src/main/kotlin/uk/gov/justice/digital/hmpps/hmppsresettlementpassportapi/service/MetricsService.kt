@@ -21,14 +21,14 @@ class MetricsService(
 
   suspend fun recordPrisonersCountForEachPrison() {
     val prisonList = prisonRegisterApiService.getActivePrisonsList()
-    var prisonersCount = 0
-    var prisoners12WeeksCount = 0
-    var prisoners24WeeksCount = 0
-    var prisonersAllTimeCount = 0
     val earliestReleaseDate = LocalDate.now().minusDays(1)
     val latestRD12Weeks = LocalDate.now().plusDays(84)
     val latestRD24Weeks = LocalDate.now().plusDays(168)
     for (item in prisonList) {
+      var prisonersCount = 0
+      var prisoners12WeeksCount = 0
+      var prisoners24WeeksCount = 0
+      var prisonersAllTimeCount = 0
       try {
         if (item.active) {
           offenderSearchApiService.findPrisonersBySearchTerm(item.id, "").collect {
@@ -46,15 +46,15 @@ class MetricsService(
               } else {
                 it.displayReleaseDate = null
               }
-              prisonersCount++
+              prisonersCount.inc()
               if (it.displayReleaseDate != null && (it.displayReleaseDate!! > earliestReleaseDate || it.displayReleaseDate!! < latestRD12Weeks)) {
-                prisoners12WeeksCount++
+                prisoners12WeeksCount.inc()
               }
               if (it.displayReleaseDate != null && (it.displayReleaseDate!! > earliestReleaseDate || it.displayReleaseDate!! < latestRD24Weeks)) {
-                prisoners24WeeksCount++
+                prisoners24WeeksCount.inc()
               }
               if (it.displayReleaseDate != null && (it.displayReleaseDate!! < earliestReleaseDate)) {
-                prisonersAllTimeCount++
+                prisonersAllTimeCount.inc()
               }
             }
             registry.gauge("total_prisoners_count", Tags.of("prison", item.name), prisonersCount)

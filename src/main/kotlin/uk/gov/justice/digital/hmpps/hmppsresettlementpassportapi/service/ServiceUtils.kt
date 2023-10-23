@@ -48,6 +48,8 @@ fun <T> getLabelFromEnum(enum: T?): String? where T : Enum<T>, T : EnumWithLabel
 
 private fun String.convertEnumToContent(): String = this.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() }
 
+fun String.convertEnumStringToLowercaseContent(): String = this.replace("_", " ").lowercase()
+
 fun <T> convertEnumSetToStringSet(enumSet: Set<T>?, other: String?): Set<String>? where T : Enum<T>, T : EnumWithLabel {
   var stringSet: Set<String>? = null
   if (enumSet != null) {

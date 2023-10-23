@@ -7,7 +7,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CRSReferra
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CRSReferralResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CRSReferralsWithPathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.PathwayMap
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.interventionsapi.Referral
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.interventionsapi.ReferralDTO
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.InterventionsApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderSearchApiService
@@ -21,7 +21,7 @@ class CRSReferralService(
   private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
 ) {
 
-  suspend fun getAllPathwayCRSReferralsByNomisId(
+  suspend fun getAllPathwayCRSReferralsByNomsId(
     nomsId: String,
   ): CRSReferralResponse {
     if (nomsId.isBlank()) {
@@ -61,7 +61,7 @@ class CRSReferralService(
     return crsReferralsResponse
   }
 
-  private suspend fun objectMapper(referralList: List<Referral>, pathway: String? = null, nomisId: String): CRSReferralResponse {
+  private suspend fun objectMapper(referralList: List<ReferralDTO>, pathway: String? = null, nomsId: String): CRSReferralResponse {
     val crsReferralACCOMList = mutableListOf<CRSReferral>()
     val crsReferralATBList = mutableListOf<CRSReferral>()
     val crsReferralCHDFAMCOMList = mutableListOf<CRSReferral>()
@@ -86,7 +86,7 @@ class CRSReferralService(
         it.serviceProviderUser,
         it.serviceProviderLocation,
         it.serviceProviderName,
-        it.draft,
+        it.isDraft,
       )
       if (it.contractType?.startsWith("Accommodation") == true) {
         crsReferralACCOMList.add(crsReferral)
@@ -119,64 +119,62 @@ class CRSReferralService(
 
     when (pathway) {
       null -> {
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.ACCOM.id.toString(), crsReferralACCOMList, getAlternateMessage(nomisId, PathwayMap.ACCOM.id.toString(), crsReferralACCOMList)))
+        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.ACCOM.id, crsReferralACCOMList, getAlternateMessage(nomsId, PathwayMap.ACCOM.id, crsReferralACCOMList)))
         crsReferralWithPathwaysList.add(
           CRSReferralsWithPathway(
-            PathwayMap.CHDFAMCOM.id.toString(),
+            PathwayMap.CHDFAMCOM.id,
             crsReferralCHDFAMCOMList,
-            getAlternateMessage(nomisId, PathwayMap.CHDFAMCOM.id.toString(), crsReferralCHDFAMCOMList),
+            getAlternateMessage(nomsId, PathwayMap.CHDFAMCOM.id, crsReferralCHDFAMCOMList),
           ),
         )
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.DRUG_ALCOHOL.id.toString(), crsReferralDAList, getAlternateMessage(nomisId, PathwayMap.DRUG_ALCOHOL.id.toString(), crsReferralDAList)))
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.ED_SKL_WRK.id.toString(), crsReferralESKList, getAlternateMessage(nomisId, PathwayMap.ED_SKL_WRK.id.toString(), crsReferralESKList)))
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.FINANCE_ID.id.toString(), crsReferralFINList, getAlternateMessage(nomisId, PathwayMap.FINANCE_ID.id.toString(), crsReferralFINList)))
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.HEALTH.id.toString(), crsReferralHELList, getAlternateMessage(nomisId, PathwayMap.HEALTH.id.toString(), crsReferralHELList)))
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.ATB.id.toString(), crsReferralATBList, getAlternateMessage(nomisId, PathwayMap.ATB.id.toString(), crsReferralATBList)))
+        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.DRUG_ALCOHOL.id, crsReferralDAList, getAlternateMessage(nomsId, PathwayMap.DRUG_ALCOHOL.id, crsReferralDAList)))
+        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.ED_SKL_WRK.id, crsReferralESKList, getAlternateMessage(nomsId, PathwayMap.ED_SKL_WRK.id, crsReferralESKList)))
+        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.FINANCE_ID.id, crsReferralFINList, getAlternateMessage(nomsId, PathwayMap.FINANCE_ID.id, crsReferralFINList)))
+        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.HEALTH.id, crsReferralHELList, getAlternateMessage(nomsId, PathwayMap.HEALTH.id, crsReferralHELList)))
+        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.ATB.id, crsReferralATBList, getAlternateMessage(nomsId, PathwayMap.ATB.id, crsReferralATBList)))
       }
-      PathwayMap.ACCOM.id.toString() -> {
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.ACCOM.id.toString(), crsReferralACCOMList, getAlternateMessage(nomisId, PathwayMap.ACCOM.id.toString(), crsReferralACCOMList)))
+      PathwayMap.ACCOM.id -> {
+        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.ACCOM.id, crsReferralACCOMList, getAlternateMessage(nomsId, PathwayMap.ACCOM.id, crsReferralACCOMList)))
       }
-      PathwayMap.CHDFAMCOM.id.toString() -> {
+      PathwayMap.CHDFAMCOM.id -> {
         crsReferralWithPathwaysList.add(
           CRSReferralsWithPathway(
-            PathwayMap.CHDFAMCOM.id.toString(),
+            PathwayMap.CHDFAMCOM.id,
             crsReferralCHDFAMCOMList,
-            getAlternateMessage(nomisId, PathwayMap.CHDFAMCOM.id.toString(), crsReferralCHDFAMCOMList),
+            getAlternateMessage(nomsId, PathwayMap.CHDFAMCOM.id, crsReferralCHDFAMCOMList),
           ),
         )
       }
-      PathwayMap.DRUG_ALCOHOL.id.toString() -> {
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.DRUG_ALCOHOL.id.toString(), crsReferralDAList, getAlternateMessage(nomisId, PathwayMap.DRUG_ALCOHOL.id.toString(), crsReferralDAList)))
+      PathwayMap.DRUG_ALCOHOL.id -> {
+        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.DRUG_ALCOHOL.id, crsReferralDAList, getAlternateMessage(nomsId, PathwayMap.DRUG_ALCOHOL.id, crsReferralDAList)))
       }
-      PathwayMap.ED_SKL_WRK.id.toString() -> {
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.ED_SKL_WRK.id.toString(), crsReferralESKList, getAlternateMessage(nomisId, PathwayMap.ED_SKL_WRK.id.toString(), crsReferralESKList)))
+      PathwayMap.ED_SKL_WRK.id -> {
+        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.ED_SKL_WRK.id, crsReferralESKList, getAlternateMessage(nomsId, PathwayMap.ED_SKL_WRK.id, crsReferralESKList)))
       }
-      PathwayMap.FINANCE_ID.id.toString() -> {
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.FINANCE_ID.id.toString(), crsReferralFINList, getAlternateMessage(nomisId, PathwayMap.FINANCE_ID.id.toString(), crsReferralFINList)))
+      PathwayMap.FINANCE_ID.id -> {
+        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.FINANCE_ID.id, crsReferralFINList, getAlternateMessage(nomsId, PathwayMap.FINANCE_ID.id, crsReferralFINList)))
       }
-      PathwayMap.HEALTH.id.toString() -> {
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.HEALTH.id.toString(), crsReferralHELList, getAlternateMessage(nomisId, PathwayMap.HEALTH.id.toString(), crsReferralHELList)))
+      PathwayMap.HEALTH.id -> {
+        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.HEALTH.id, crsReferralHELList, getAlternateMessage(nomsId, PathwayMap.HEALTH.id, crsReferralHELList)))
       }
-      PathwayMap.ATB.id.toString() -> {
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.ATB.id.toString(), crsReferralATBList, getAlternateMessage(nomisId, PathwayMap.ATB.id.toString(), crsReferralATBList)))
+      PathwayMap.ATB.id -> {
+        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.ATB.id, crsReferralATBList, getAlternateMessage(nomsId, PathwayMap.ATB.id, crsReferralATBList)))
       }
     }
     crsReferralResponse.results = crsReferralWithPathwaysList
     return crsReferralResponse
   }
 
-  private suspend fun getAlternateMessage(nomsId: String, pathway: String?, crsReferralList: MutableList<CRSReferral>): String {
-    var message: String = ""
+  private suspend fun getAlternateMessage(nomsId: String, pathway: String, crsReferralList: MutableList<CRSReferral>): String {
+    var message = ""
     if (crsReferralList.isEmpty()) {
-      val prisoner = offenderSearchApiService.findPrisonerPersonalDetails(nomsId) ?: null
+      val prisoner = offenderSearchApiService.findPrisonerPersonalDetails(nomsId)
       var prisonerName = ""
-      if (prisoner != null) {
-        prisonerName =
-          "${prisoner.firstName} ${prisoner.lastName}".convertNameToTitleCase()
-      }
+      prisonerName =
+        "${prisoner.firstName} ${prisoner.lastName}".convertNameToTitleCase()
       val comName = resettlementPassportDeliusApiService.getComByNomsId(nomsId) ?: ""
       message =
-        "No $pathway referral currently exists for $prisonerName. If you think this incorrect, please contact their COM, ${comName.convertNameToTitleCase()}."
+        "No ${pathway.convertEnumStringToLowercaseContent()} referral currently exists for $prisonerName. If you think this incorrect, please contact their COM, ${comName.convertNameToTitleCase()}."
     }
     return message
   }

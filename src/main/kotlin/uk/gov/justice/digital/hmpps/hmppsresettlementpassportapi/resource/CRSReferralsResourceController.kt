@@ -91,5 +91,5 @@ class CRSReferralsResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-  ): CRSReferralResponse = crsReferralService.getAllPathwayCRSReferralsByNomisId(nomsId)
+  ): CRSReferralResponse = crsReferralService.getAllPathwayCRSReferralsByNomsId(nomsId)
 }

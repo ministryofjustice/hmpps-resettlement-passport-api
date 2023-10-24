@@ -46,15 +46,15 @@ class MetricsService(
               } else {
                 it.displayReleaseDate = null
               }
-              prisonersCount.inc()
+              prisonersCount++
               if (it.displayReleaseDate != null && (it.displayReleaseDate!! > earliestReleaseDate || it.displayReleaseDate!! < latestRD12Weeks)) {
-                prisoners12WeeksCount.inc()
+                prisoners12WeeksCount++
               }
               if (it.displayReleaseDate != null && (it.displayReleaseDate!! > earliestReleaseDate || it.displayReleaseDate!! < latestRD24Weeks)) {
-                prisoners24WeeksCount.inc()
+                prisoners24WeeksCount++
               }
               if (it.displayReleaseDate != null && (it.displayReleaseDate!! < earliestReleaseDate)) {
-                prisonersAllTimeCount.inc()
+                prisonersAllTimeCount++
               }
             }
             registry.gauge("total_prisoners_count", Tags.of("prison", item.name), prisonersCount.toInt())

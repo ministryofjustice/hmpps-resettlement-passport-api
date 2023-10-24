@@ -32,7 +32,7 @@ class IdApplicationRepositoryTest : TestBase() {
 
   @Test
   fun `test persist new assessment`() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1")
+    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1")
     prisonerRepository.save(prisoner)
 
     val idType = IdTypeEntity(1, "Birth certificate")
@@ -58,7 +58,7 @@ class IdApplicationRepositoryTest : TestBase() {
 
   @Test
   fun `test findByPrisonerAndIsDeleted`() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1")
+    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1")
     prisonerRepository.save(prisoner)
 
     val idType = IdTypeEntity(1, "Birth certificate")

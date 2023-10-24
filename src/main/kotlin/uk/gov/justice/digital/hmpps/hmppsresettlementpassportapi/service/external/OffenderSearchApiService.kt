@@ -1,7 +1,9 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external
 
+import jakarta.transaction.Transactional
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -35,6 +37,10 @@ class OffenderSearchApiService(
   private val prisonApiService: PrisonApiService,
 ) {
 
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+  }
+
   fun findPrisonersBySearchTerm(prisonId: String, searchTerm: String?): Flow<List<PrisonersSearch>> = flow {
     var page = 0
     do {
@@ -49,7 +55,8 @@ class OffenderSearchApiService(
             "sort" to "prisonerNumber",
           ),
         )
-        .retrieve().onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("PrisonId $prisonId not found") })
+        .retrieve()
+        .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("PrisonId $prisonId not found") })
 
       val pageOfData = data.awaitBodyOrNull<PrisonersSearchList>()
       if (pageOfData != null) {
@@ -192,7 +199,10 @@ class OffenderSearchApiService(
         ),
       )
       .retrieve()
-      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found in offender search api") })
+      .onStatus(
+        { it == HttpStatus.NOT_FOUND },
+        { throw ResourceNotFoundException("Prisoner $nomsId not found in offender search api") },
+      )
       .awaitBody<PrisonersSearch>()
   }
 
@@ -202,7 +212,7 @@ class OffenderSearchApiService(
     checkPrisonerIsInActivePrison(prisonerSearch)
 
     // Add initial pathway statuses if required
-    pathwayAndStatusService.addPrisonerAndInitialPathwayStatus(nomsId)
+    pathwayAndStatusService.addPrisonerAndInitialPathwayStatus(nomsId, prisonerSearch.prisonId)
 
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Unable to find prisoner $nomsId in database.")
@@ -254,7 +264,8 @@ class OffenderSearchApiService(
     pathwayRepoData.forEach { pathwayEntity ->
       if (pathwayEntity.active) {
         // Find the status in the database of each pathway for this prisoner - if any data is missing then throw an exception (should never happen)
-        val pathwayStatusEntity = pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(pathwayEntity, prisonerEntity)
+        val pathwayStatusEntity =
+          pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(pathwayEntity, prisonerEntity)
         val pathwayStatus = PathwayStatus(
           Pathway.getById(pathwayEntity.id),
           Status.getById(pathwayStatusEntity.status.id),
@@ -280,5 +291,20 @@ class OffenderSearchApiService(
       }
     }
     return pathwayStatuses
+  }
+
+  @Transactional
+  suspend fun updatePrisonId() {
+    val prisonersList = prisonerRepository.findAllByPrisonIdIsNull()
+    log.warn("Found ${prisonersList.size} prisoners having prisonId is empty")
+    for (prisoner in prisonersList) {
+      try {
+        val prisonersSearch = findPrisonerPersonalDetails(prisoner.nomsId)
+        prisoner.prisonId = prisonersSearch.prisonId
+        prisonerRepository.save(prisoner)
+      } catch (ex: ResourceNotFoundException) {
+        log.warn("Failed to update prison Id for Prisoner  ${prisoner.nomsId}")
+      }
+    }
   }
 }

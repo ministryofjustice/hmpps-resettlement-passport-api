@@ -27,7 +27,7 @@ class PathwayStatusRepositoryTest : TestBase() {
 
   @Test
   fun `test create new pathway status`() {
-    var prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1")
+    var prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1")
     prisoner = prisonerRepository.save(prisoner)
 
     val pathwayStatus = PathwayStatusEntity(

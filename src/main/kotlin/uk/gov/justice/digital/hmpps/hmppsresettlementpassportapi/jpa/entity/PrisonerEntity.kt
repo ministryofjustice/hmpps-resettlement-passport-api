@@ -23,4 +23,7 @@ data class PrisonerEntity(
 
   @Column(name = "crn")
   var crn: String?,
+
+  @Column(name = "prison_id")
+  var prisonId: String?,
 )

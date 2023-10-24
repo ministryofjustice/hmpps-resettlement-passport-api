@@ -25,10 +25,10 @@ class MetricsService(
     val latestRD12Weeks = LocalDate.now().plusDays(84)
     val latestRD24Weeks = LocalDate.now().plusDays(168)
     for (item in prisonList) {
-      var prisonersCount = 0
-      var prisoners12WeeksCount = 0
-      var prisoners24WeeksCount = 0
-      var prisonersAllTimeCount = 0
+      val prisonersCount = 0
+      val prisoners12WeeksCount = 0
+      val prisoners24WeeksCount = 0
+      val prisonersAllTimeCount = 0
       try {
         if (item.active) {
           offenderSearchApiService.findPrisonersBySearchTerm(item.id, "").collect {
@@ -57,10 +57,10 @@ class MetricsService(
                 prisonersAllTimeCount.inc()
               }
             }
-            registry.gauge("total_prisoners_count", Tags.of("prison", item.name), prisonersCount)
-            registry.gauge("total_prisoners_12Weeks_count", Tags.of("prison", item.name), prisoners12WeeksCount)
-            registry.gauge("total_prisoners_24Weeks_count", Tags.of("prison", item.name), prisoners24WeeksCount)
-            registry.gauge("total_prisoners_AllTime_count", Tags.of("prison", item.name), prisonersAllTimeCount)
+            registry.gauge("total_prisoners_count", Tags.of("prison", item.name), prisonersCount.toInt())
+            registry.gauge("total_prisoners_12Weeks_count", Tags.of("prison", item.name), prisoners12WeeksCount.toInt())
+            registry.gauge("total_prisoners_24Weeks_count", Tags.of("prison", item.name), prisoners24WeeksCount.toInt())
+            registry.gauge("total_prisoners_AllTime_count", Tags.of("prison", item.name), prisonersAllTimeCount.toInt())
           }
         }
       } catch (ex: Exception) {

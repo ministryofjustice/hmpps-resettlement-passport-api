@@ -67,9 +67,10 @@ class PathwayAndStatusServiceTest {
 
     val nomsId = "abc"
     val crn = "crn1"
+    val prisonId = "xyz"
     val pathwayEntity = PathwayEntity(1, "Accommodation", true, testDate)
     val newStatusEntity = StatusEntity(2, "In Progress", true, testDate)
-    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, crn)
+    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, crn, prisonId)
     val oldStatusEntity = StatusEntity(1, "Not Started", true, testDate)
     val pathwayStatusEntity = PathwayStatusEntity(1, prisonerEntity, pathwayEntity, oldStatusEntity, testDate)
 
@@ -100,9 +101,10 @@ class PathwayAndStatusServiceTest {
   fun `test update pathway status - pathway status not found`() = runTest {
     val nomsId = "abc"
     val crn = "crn1"
+    val prisonId = "xyz1"
     val pathwayEntity = PathwayEntity(1, "Accommodation", true, testDate)
     val newStatusEntity = StatusEntity(2, "In Progress", true, testDate)
-    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, crn)
+    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, crn, prisonId)
 
     Mockito.`when`(pathwayRepository.findById(Pathway.ACCOMMODATION.id)).thenReturn(Optional.of(pathwayEntity))
     Mockito.`when`(statusRepository.findById(Status.IN_PROGRESS.id)).thenReturn(Optional.of(newStatusEntity))

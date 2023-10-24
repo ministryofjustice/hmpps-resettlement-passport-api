@@ -54,6 +54,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
           "123",
           LocalDateTime.parse("2023-08-16T12:21:38.709"),
           "abc",
+          "xyz",
         ),
         PathwayEntity(
           1,

@@ -25,10 +25,10 @@ class MetricsService(
     val latestRD12Weeks = LocalDate.now().plusDays(84)
     val latestRD24Weeks = LocalDate.now().plusDays(168)
     for (item in prisonList) {
-      val prisonersCount = 0
-      val prisoners12WeeksCount = 0
-      val prisoners24WeeksCount = 0
-      val prisonersAllTimeCount = 0
+      var prisonersCount = 0
+      var prisoners12WeeksCount = 0
+      var prisoners24WeeksCount = 0
+      var prisonersAllTimeCount = 0
       try {
         if (item.active) {
           offenderSearchApiService.findPrisonersBySearchTerm(item.id, "").collect {

@@ -47,7 +47,7 @@ class IdApplicationServiceTest {
 
   @Test
   fun `test getIdApplicationByNomsId - returns id application`() = runTest {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
     Mockito.`when`(prisonerRepository.findByNomsId(prisonerEntity.nomsId)).thenReturn(prisonerEntity)
     val idApplicationEntity = IdApplicationEntity(
       null,
@@ -69,7 +69,7 @@ class IdApplicationServiceTest {
   fun `test createIdApplication - creates and returns idAppliaction`() = runTest {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
     val idTypeEntity = IdTypeEntity(1, "Drivers Licence")
     val idApplicationPost = IdApplicationPost(
       idType = "Drivers licence",
@@ -117,7 +117,7 @@ class IdApplicationServiceTest {
   fun `test updateIdApplication - updates and returns idAppliaction`() = runTest {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
     val idTypeEntity = IdTypeEntity(1, "Drivers Licence")
     val idApplicationPatchDTO = IdApplicationPatch(
       status = "Approved",
@@ -185,7 +185,7 @@ class IdApplicationServiceTest {
   fun `test deleteIdApplication - sets is deleted and deletion date`() = runTest {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
     val idTypeEntity = IdTypeEntity(1, "Drivers Licence")
     val idApplicationEntity = IdApplicationEntity(
       id = null,
@@ -218,7 +218,7 @@ class IdApplicationServiceTest {
 
   @Test
   fun `test getAllIdApplicationByNomsId - returns id application`() = runTest {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
     Mockito.`when`(prisonerRepository.findByNomsId(prisonerEntity.nomsId)).thenReturn(prisonerEntity)
     val idApplicationEntity1 = IdApplicationEntity(
       null,

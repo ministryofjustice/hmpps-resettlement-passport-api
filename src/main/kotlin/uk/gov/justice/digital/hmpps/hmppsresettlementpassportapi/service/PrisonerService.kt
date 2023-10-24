@@ -19,4 +19,6 @@ class PrisonerService(val offenderSearchApiService: OffenderSearchApiService, va
   suspend fun getPrisonerDetailsByNomsId(nomsId: String) = offenderSearchApiService.getPrisonerDetailsByNomsId(nomsId)
 
   suspend fun getPrisonerImageData(nomsId: String, imageId: Int) = prisonApiService.getPrisonerImageData(nomsId, imageId)
+
+  suspend fun updatePrisonIdInPrisoners() = offenderSearchApiService.updatePrisonId()
 }

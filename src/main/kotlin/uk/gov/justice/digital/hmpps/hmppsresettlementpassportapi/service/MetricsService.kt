@@ -13,13 +13,19 @@ class MetricsService(
   private val offenderSearchApiService: OffenderSearchApiService,
   private val prisonRegisterApiService: PrisonRegisterApiService,
   private val registry: MeterRegistry,
+
 ) {
 
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
+    private var prisonersCountMap = HashMap<String, Int>()
   }
 
-  suspend fun recordPrisonersCountForEachPrison() {
+  suspend fun recordCustomMetrics() {
+    registry.clear()
+    recordPrisonersCountForEachPrison()
+  }
+  private suspend fun recordPrisonersCountForEachPrison() {
     val prisonList = prisonRegisterApiService.getActivePrisonsList()
     val earliestReleaseDate = LocalDate.now().minusDays(1)
     val latestRD12Weeks = LocalDate.now().plusDays(84)
@@ -56,11 +62,40 @@ class MetricsService(
               if (it.displayReleaseDate != null && (it.displayReleaseDate!! < earliestReleaseDate)) {
                 prisonersAllTimeCount++
               }
+              prisonersCountMap["total_prisoners_count_${it.prisonId}"] = prisonersCount
+              prisonersCountMap["total_prisoners_12Weeks_count_${it.prisonId}"] = prisoners12WeeksCount
+              prisonersCountMap["total_prisoners_24Weeks_count_${it.prisonId}"] = prisoners24WeeksCount
+              prisonersCountMap["total_prisoners_AllTime_count_${it.prisonId}"] = prisonersAllTimeCount
             }
-            registry.gauge("total_prisoners_count", Tags.of("prison", item.name), prisonersCount.toInt())
-            registry.gauge("total_prisoners_12Weeks_count", Tags.of("prison", item.name), prisoners12WeeksCount.toInt())
-            registry.gauge("total_prisoners_24Weeks_count", Tags.of("prison", item.name), prisoners24WeeksCount.toInt())
-            registry.gauge("total_prisoners_AllTime_count", Tags.of("prison", item.name), prisonersAllTimeCount.toInt())
+
+            prisonersCountMap["total_prisoners_count_${item.id}"]?.let { it1 ->
+              registry.gauge(
+                "total_prisoners_count",
+                Tags.of("prison", item.name),
+                it1,
+              )
+            }
+            prisonersCountMap["total_prisoners_12Weeks_count_${item.id}"]?.let { it1 ->
+              registry.gauge(
+                "total_prisoners_12Weeks_count",
+                Tags.of("prison", item.name),
+                it1,
+              )
+            }
+            prisonersCountMap["total_prisoners_24Weeks_count_${item.id}"]?.let { it1 ->
+              registry.gauge(
+                "total_prisoners_24Weeks_count",
+                Tags.of("prison", item.name),
+                it1,
+              )
+            }
+            prisonersCountMap["total_prisoners_AllTime_count_${item.id}"]?.let { it1 ->
+              registry.gauge(
+                "total_prisoners_AllTime_count",
+                Tags.of("prison", item.name),
+                it1,
+              )
+            }
           }
         }
       } catch (ex: Exception) {

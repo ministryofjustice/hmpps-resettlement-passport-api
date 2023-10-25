@@ -10,10 +10,10 @@ class SchedularService(
   val prisonerService: PrisonerService,
 ) {
 
-  @Scheduled(cron = "0 0/30 * * * ?")
+  @Scheduled(cron = "0 0/15 * * * ?")
   fun metricsScheduledTask() {
     runBlocking {
-      metricsService.recordPrisonersCountForEachPrison()
+      metricsService.recordCustomMetrics()
     }
   }
 

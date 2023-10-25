@@ -212,21 +212,6 @@
   },
   {
     "serviceCategories": [
-      "Dependency and Recovery (Kent, Surrey and Sussex)"
-    ],
-    "contractType": "Dependency and Recovery (Kent, Surrey and Sussex)",
-    "referralCreatedAt": "2023-10-03T14:50:38.904823+01:00",
-    "referralSentAt": null,
-    "interventionTitle": "Dependency and Recovery Services in Kent, Surrey & Sussex",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": null,
-    "serviceProviderUser": null,
-    "serviceProviderLocation": null,
-    "serviceProviderName": null,
-    "isDraft": true
-  },
-  {
-    "serviceCategories": [
       "Family and Significant Others"
     ],
     "contractType": "Personal Wellbeing",

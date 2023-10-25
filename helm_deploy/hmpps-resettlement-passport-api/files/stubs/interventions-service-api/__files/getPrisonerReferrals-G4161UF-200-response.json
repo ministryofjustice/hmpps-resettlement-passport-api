@@ -379,21 +379,6 @@
   },
   {
     "serviceCategories": [
-      "Dependency and Recovery (South Yorkshire)"
-    ],
-    "contractType": "Dependency and Recovery (South Yorkshire)",
-    "referralCreatedAt": "2022-10-07T15:14:42.652568+01:00",
-    "referralSentAt": "2022-10-07T15:15:12.876563+01:00",
-    "interventionTitle": "Dependence and Recovery services in South Yorkshire",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": "R&MP Practitioner",
-    "serviceProviderUser": null,
-    "serviceProviderLocation": "South Yorkshire",
-    "serviceProviderName": "Change Grow Live (CGL) Services Ltd",
-    "isDraft": false
-  },
-  {
-    "serviceCategories": [
       "Accommodation"
     ],
     "contractType": "Accommodation",
@@ -893,36 +878,6 @@
   },
   {
     "serviceCategories": [
-      "Dependency and Recovery (North East: Northumbria)"
-    ],
-    "contractType": "Dependency and Recovery (North East: Northumbria)",
-    "referralCreatedAt": "2022-11-04T13:39:19.320525Z",
-    "referralSentAt": "2022-11-04T13:40:22.531937Z",
-    "interventionTitle": "Dependency and Recovery Services in Northumbria",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": "R&MP Practitioner",
-    "serviceProviderUser": null,
-    "serviceProviderLocation": "Northumbria",
-    "serviceProviderName": "Ingeus UK Limited",
-    "isDraft": false
-  },
-  {
-    "serviceCategories": [
-      "Dependency and Recovery (North East: Northumbria)"
-    ],
-    "contractType": "Dependency and Recovery (North East: Northumbria)",
-    "referralCreatedAt": "2022-11-04T14:57:51.342217Z",
-    "referralSentAt": "2022-11-04T16:25:05.596105Z",
-    "interventionTitle": "Dependency and Recovery Services in Northumbria",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": "R&MP Practitioner",
-    "serviceProviderUser": null,
-    "serviceProviderLocation": "Northumbria",
-    "serviceProviderName": "Ingeus UK Limited",
-    "isDraft": false
-  },
-  {
-    "serviceCategories": [
       "Education, Training and Employment (ETE)"
     ],
     "contractType": "Education, Training and Employment (ETE)",
@@ -1266,21 +1221,6 @@
     "serviceProviderUser": null,
     "serviceProviderLocation": "Gwent",
     "serviceProviderName": "The Forward Trust",
-    "isDraft": false
-  },
-  {
-    "serviceCategories": [
-      "Dependency and Recovery (Kent, Surrey and Sussex)"
-    ],
-    "contractType": "Dependency and Recovery (Kent, Surrey and Sussex)",
-    "referralCreatedAt": "2023-02-15T15:10:29.577852Z",
-    "referralSentAt": "2023-02-15T15:35:42.840776Z",
-    "interventionTitle": "Dependency and Recovery Services in Kent, Surrey & Sussex",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": "R&MP Practitioner",
-    "serviceProviderUser": null,
-    "serviceProviderLocation": "Kent, Surrey and Sussex",
-    "serviceProviderName": "Change Grow Live (CGL) Services Ltd",
     "isDraft": false
   },
   {
@@ -3740,21 +3680,6 @@
   },
   {
     "serviceCategories": [
-      "Dependency and Recovery (South Central)"
-    ],
-    "contractType": "Dependency and Recovery (South Central)",
-    "referralCreatedAt": "2022-10-07T15:10:31.573197+01:00",
-    "referralSentAt": null,
-    "interventionTitle": "Dependency and Recovery Services in Hampshire",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": null,
-    "serviceProviderUser": null,
-    "serviceProviderLocation": null,
-    "serviceProviderName": null,
-    "isDraft": true
-  },
-  {
-    "serviceCategories": [
       "Education, Training and Employment (ETE)"
     ],
     "contractType": "Education, Training and Employment (ETE)",
@@ -3806,21 +3731,6 @@
     "referralCreatedAt": "2022-10-05T15:38:35.716263+01:00",
     "referralSentAt": null,
     "interventionTitle": "ETE Services for Kent, Surrey & Sussex",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": null,
-    "serviceProviderUser": null,
-    "serviceProviderLocation": null,
-    "serviceProviderName": null,
-    "isDraft": true
-  },
-  {
-    "serviceCategories": [
-      "Dependency and Recovery (Kent, Surrey and Sussex)"
-    ],
-    "contractType": "Dependency and Recovery (Kent, Surrey and Sussex)",
-    "referralCreatedAt": "2022-10-07T15:12:20.895436+01:00",
-    "referralSentAt": null,
-    "interventionTitle": "Dependency and Recovery Services in Kent, Surrey & Sussex",
     "referringOfficer": "R&MP Practitioner",
     "responsibleOfficer": null,
     "serviceProviderUser": null,
@@ -4340,36 +4250,6 @@
     "referralCreatedAt": "2022-11-01T09:42:34.964592Z",
     "referralSentAt": null,
     "interventionTitle": "Finance, Benefit & Debt in Custody in Yorkshire and the Humber",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": null,
-    "serviceProviderUser": null,
-    "serviceProviderLocation": null,
-    "serviceProviderName": null,
-    "isDraft": true
-  },
-  {
-    "serviceCategories": [
-      "Dependency and Recovery (North East: Northumbria)"
-    ],
-    "contractType": "Dependency and Recovery (North East: Northumbria)",
-    "referralCreatedAt": "2022-11-04T13:39:19.320525Z",
-    "referralSentAt": null,
-    "interventionTitle": "Dependency and Recovery Services in Northumbria",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": null,
-    "serviceProviderUser": null,
-    "serviceProviderLocation": null,
-    "serviceProviderName": null,
-    "isDraft": true
-  },
-  {
-    "serviceCategories": [
-      "Dependency and Recovery (North East: Northumbria)"
-    ],
-    "contractType": "Dependency and Recovery (North East: Northumbria)",
-    "referralCreatedAt": "2022-11-04T15:50:37.727369Z",
-    "referralSentAt": null,
-    "interventionTitle": "Dependency and Recovery Services in Northumbria",
     "referringOfficer": "R&MP Practitioner",
     "responsibleOfficer": null,
     "serviceProviderUser": null,
@@ -5174,21 +5054,6 @@
   },
   {
     "serviceCategories": [
-      "Dependency and Recovery (Kent, Surrey and Sussex)"
-    ],
-    "contractType": "Dependency and Recovery (Kent, Surrey and Sussex)",
-    "referralCreatedAt": "2023-02-02T09:42:31.083113Z",
-    "referralSentAt": null,
-    "interventionTitle": "Dependency and Recovery Services in Kent, Surrey & Sussex",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": null,
-    "serviceProviderUser": null,
-    "serviceProviderLocation": null,
-    "serviceProviderName": null,
-    "isDraft": true
-  },
-  {
-    "serviceCategories": [
       "Social Inclusion"
     ],
     "contractType": "Personal Wellbeing",
@@ -5369,21 +5234,6 @@
     "referralCreatedAt": "2023-02-15T16:36:56.635747Z",
     "referralSentAt": null,
     "interventionTitle": "Women's Services in Kent",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": null,
-    "serviceProviderUser": null,
-    "serviceProviderLocation": null,
-    "serviceProviderName": null,
-    "isDraft": true
-  },
-  {
-    "serviceCategories": [
-      "Dependency and Recovery (Kent, Surrey and Sussex)"
-    ],
-    "contractType": "Dependency and Recovery (Kent, Surrey and Sussex)",
-    "referralCreatedAt": "2023-02-15T15:10:29.577852Z",
-    "referralSentAt": null,
-    "interventionTitle": "Dependency and Recovery Services in Kent, Surrey & Sussex",
     "referringOfficer": "R&MP Practitioner",
     "responsibleOfficer": null,
     "serviceProviderUser": null,

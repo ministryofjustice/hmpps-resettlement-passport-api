@@ -46,15 +46,17 @@ class CvlApiService(
       var breakFlag = false
       val pattern = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
       licenceList.collect {
-        val dateCreated = LocalDateTime.parse(it.dateCreated, pattern)
-        if (licences.isEmpty()) {
-          licences.add(0, it)
-        } else {
-          if (it.licenceStatus == "ACTIVE") {
+        if (it.dateCreated != null) {
+          val dateCreated = LocalDateTime.parse(it.dateCreated, pattern)
+          if (licences.isEmpty()) {
             licences.add(0, it)
-            breakFlag = true
-          } else if (!breakFlag && dateCreated.isAfter(LocalDateTime.parse(it.dateCreated, pattern))) {
-            licences.add(0, it)
+          } else {
+            if (it.licenceStatus == "ACTIVE") {
+              licences.add(0, it)
+              breakFlag = true
+            } else if (!breakFlag && dateCreated.isAfter(LocalDateTime.parse(it.dateCreated, pattern))) {
+              licences.add(0, it)
+            }
           }
         }
       }

@@ -12,7 +12,7 @@ data class CRSReferrals(
 
 data class CRSReferral(
   var serviceCategories: List<String> = listOf(),
-  val contractType: String?,
+  val contractType: String,
   val referralCreatedAt: String?,
   val referralSentAt: String?,
   val interventionTitle: String?,

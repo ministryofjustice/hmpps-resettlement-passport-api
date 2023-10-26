@@ -75,7 +75,7 @@ class MetricsService(
                 }
               }
 
-              if (it.displayReleaseDate == null || (it.displayReleaseDate != null && it.displayReleaseDate!! > latestRD24Weeks)) {
+              if (it.displayReleaseDate == null || (it.displayReleaseDate != null && (it.displayReleaseDate!! <= earliestReleaseDate || it.displayReleaseDate!! > latestRD24Weeks))) {
                 prisonersAllTimeCount++
                 if (activePrisonersList.contains(it.prisonerNumber)) {
                   activePrisonersAllTimeCount++

@@ -440,21 +440,6 @@
   },
   {
     "serviceCategories": [
-      "Finance, Benefit and Debt (Yorkshire and the Humber)"
-    ],
-    "contractType": "Finance, Benefit and Debt (Yorkshire and the Humber)",
-    "referralCreatedAt": "2022-10-27T10:56:39.179137+01:00",
-    "referralSentAt": "2022-10-27T10:58:57.014087+01:00",
-    "interventionTitle": "Finance, Benefit & Debt in Custody in Yorkshire and the Humber",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": "R&MP Practitioner",
-    "serviceProviderUser": null,
-    "serviceProviderLocation": "Yorkshire and the Humber",
-    "serviceProviderName": "The Growth Company Ltd",
-    "isDraft": false
-  },
-  {
-    "serviceCategories": [
       "Education, Training and Employment (ETE)"
     ],
     "contractType": "Education, Training and Employment (ETE)",
@@ -1643,20 +1628,6 @@
   },
   {
     "serviceCategories": [
-      "Finance, Benefit and Debt (South Central)"
-    ],
-    "contractType": "Finance, Benefit and Debt (South Central)",
-    "referralCreatedAt": "2022-08-19T14:00:24.426078+01:00",
-    "referralSentAt": null,
-    "interventionTitle": "Finance, Benefit and Debt Services in Thames Valley",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": null,
-    "serviceProviderUser": null,
-    "serviceProviderLocation": null,
-    "serviceProviderName": null,
-    "isDraft": true
-  },
-  {
     "serviceCategories": [],
     "contractType": "Women's Services",
     "referralCreatedAt": "2022-07-05T16:39:14.795161+01:00",
@@ -2264,51 +2235,6 @@
   },
   {
     "serviceCategories": [
-      "Finance, Benefit and Debt (Yorkshire and the Humber)"
-    ],
-    "contractType": "Finance, Benefit and Debt (Yorkshire and the Humber)",
-    "referralCreatedAt": "2022-10-26T16:28:59.485207+01:00",
-    "referralSentAt": null,
-    "interventionTitle": "Finance, Benefit & Debt in Custody in Yorkshire and the Humber",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": null,
-    "serviceProviderUser": null,
-    "serviceProviderLocation": null,
-    "serviceProviderName": null,
-    "isDraft": true
-  },
-  {
-    "serviceCategories": [
-      "Finance, Benefit and Debt (Yorkshire and the Humber)"
-    ],
-    "contractType": "Finance, Benefit and Debt (Yorkshire and the Humber)",
-    "referralCreatedAt": "2022-10-27T10:56:39.179137+01:00",
-    "referralSentAt": null,
-    "interventionTitle": "Finance, Benefit & Debt in Custody in Yorkshire and the Humber",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": null,
-    "serviceProviderUser": null,
-    "serviceProviderLocation": null,
-    "serviceProviderName": null,
-    "isDraft": true
-  },
-  {
-    "serviceCategories": [
-      "Finance, Benefit and Debt (Yorkshire and the Humber)"
-    ],
-    "contractType": "Finance, Benefit and Debt (Yorkshire and the Humber)",
-    "referralCreatedAt": "2022-11-01T09:42:34.964592Z",
-    "referralSentAt": null,
-    "interventionTitle": "Finance, Benefit & Debt in Custody in Yorkshire and the Humber",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": null,
-    "serviceProviderUser": null,
-    "serviceProviderLocation": null,
-    "serviceProviderName": null,
-    "isDraft": true
-  },
-  {
-    "serviceCategories": [
       "Dependency and Recovery (North East: Northumbria)"
     ],
     "contractType": "Dependency and Recovery (North East: Northumbria)",
@@ -2524,21 +2450,6 @@
   },
   {
     "serviceCategories": [
-      "Finance, Benefit and Debt (North West)"
-    ],
-    "contractType": "Finance, Benefit and Debt (North West)",
-    "referralCreatedAt": "2022-11-29T16:07:22.242265Z",
-    "referralSentAt": null,
-    "interventionTitle": "Finance Benefit & Debt Services in the North West",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": null,
-    "serviceProviderUser": null,
-    "serviceProviderLocation": null,
-    "serviceProviderName": null,
-    "isDraft": true
-  },
-  {
-    "serviceCategories": [
       "Social Inclusion",
       "Emotional Wellbeing",
       "Lifestyle and Associates",
@@ -2635,36 +2546,6 @@
     "referralCreatedAt": "2022-12-01T14:26:16.021965Z",
     "referralSentAt": null,
     "interventionTitle": "Women's Specific Services for London (S/SE)",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": null,
-    "serviceProviderUser": null,
-    "serviceProviderLocation": null,
-    "serviceProviderName": null,
-    "isDraft": true
-  },
-  {
-    "serviceCategories": [
-      "Finance, Benefit and Debt (North West)"
-    ],
-    "contractType": "Finance, Benefit and Debt (North West)",
-    "referralCreatedAt": "2022-12-02T10:10:33.60936Z",
-    "referralSentAt": null,
-    "interventionTitle": "Finance Benefit & Debt Services in the North West",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": null,
-    "serviceProviderUser": null,
-    "serviceProviderLocation": null,
-    "serviceProviderName": null,
-    "isDraft": true
-  },
-  {
-    "serviceCategories": [
-      "Finance, Benefit and Debt (North West)"
-    ],
-    "contractType": "Finance, Benefit and Debt (North West)",
-    "referralCreatedAt": "2022-12-02T10:41:33.021533Z",
-    "referralSentAt": null,
-    "interventionTitle": "Finance Benefit & Debt Services in the North West",
     "referringOfficer": "R&MP Practitioner",
     "responsibleOfficer": null,
     "serviceProviderUser": null,

@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNotes
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.PATHWAY_PARENT_TYPE
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.PathwayMap
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.isAllowedSubTypes
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -198,16 +199,21 @@ class OffenderCaseNotesApiService(
 
   private fun objectMapper(searchList: List<CaseNote>): List<PathwayCaseNote> {
     val caseNotesList = mutableListOf<PathwayCaseNote>()
+    var subType: String
     searchList.forEach { caseNote ->
+      subType = if (isAllowedSubTypes(caseNote.subType)) {
+        PathwayMap.valueOf(caseNote.subType).id
+      } else {
+        PathwayMap.GEN.id
+      }
       val prisoner = PathwayCaseNote(
         caseNote.caseNoteId,
-        PathwayMap.valueOf(caseNote.subType).id,
+        subType,
         caseNote.creationDateTime,
         caseNote.occurrenceDateTime,
         caseNote.authorName,
         caseNote.text,
       )
-
       caseNotesList.add(prisoner)
     }
     return caseNotesList

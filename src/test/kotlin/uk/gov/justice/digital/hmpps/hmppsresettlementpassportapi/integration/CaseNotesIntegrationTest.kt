@@ -181,4 +181,19 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
   }
+
+  @Test
+  fun `Get All CaseNotes for a Prisoner have new subType  happy path`() {
+    val expectedOutput = readFile("testdata/expectation/case-notes-new-subtype.json")
+    caseNotesApiMockServer.stubGetCaseNotesNewSubTypeList("G4274GN", 500, 0, "RESET", 200)
+    caseNotesApiMockServer.stubGetCaseNotesOldList("G4274GN", 500, 0, "GEN", "RESET", 200)
+    webTestClient.get()
+      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=15&sort=occurenceDateTime,DESC&days=0&pathwayType=All")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
+  }
 }

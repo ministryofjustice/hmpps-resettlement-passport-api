@@ -12,6 +12,7 @@ import java.time.LocalDate
 class MetricsService(
   private val offenderSearchApiService: OffenderSearchApiService,
   private val prisonRegisterApiService: PrisonRegisterApiService,
+  private val prisonerService: PrisonerService,
   private val registry: MeterRegistry,
 
 ) {
@@ -35,8 +36,13 @@ class MetricsService(
       var prisoners12WeeksCount = 0
       var prisoners24WeeksCount = 0
       var prisonersAllTimeCount = 0
+      var activePrisonersCount = 0
+      var activePrisoners12WeeksCount = 0
+      var activePrisoners24WeeksCount = 0
+      var activePrisonersAllTimeCount = 0
       try {
         if (item.active) {
+          val activePrisonersList = prisonerService.getActiveNomisIdsByPrisonId(item.id)
           offenderSearchApiService.findPrisonersBySearchTerm(item.id, "").collect {
             it.forEach {
               if (it.confirmedReleaseDate != null) {
@@ -53,49 +59,105 @@ class MetricsService(
                 it.displayReleaseDate = null
               }
               prisonersCount++
-              if (it.displayReleaseDate != null && (it.displayReleaseDate!! > earliestReleaseDate || it.displayReleaseDate!! < latestRD12Weeks)) {
+              if (activePrisonersList.contains(it.prisonerNumber)) {
+                activePrisonersCount++
+              }
+              if (it.displayReleaseDate != null && (it.displayReleaseDate!! > earliestReleaseDate && it.displayReleaseDate!! <= latestRD12Weeks)) {
                 prisoners12WeeksCount++
+                if (activePrisonersList.contains(it.prisonerNumber)) {
+                  activePrisoners12WeeksCount++
+                }
               }
-              if (it.displayReleaseDate != null && (it.displayReleaseDate!! > earliestReleaseDate || it.displayReleaseDate!! < latestRD24Weeks)) {
+              if (it.displayReleaseDate != null && (it.displayReleaseDate!! > earliestReleaseDate && (it.displayReleaseDate!! > latestRD12Weeks && it.displayReleaseDate!! <= latestRD24Weeks))) {
                 prisoners24WeeksCount++
+                if (activePrisonersList.contains(it.prisonerNumber)) {
+                  activePrisoners24WeeksCount++
+                }
               }
-              if (it.displayReleaseDate != null && (it.displayReleaseDate!! < earliestReleaseDate)) {
-                prisonersAllTimeCount++
-              }
-              prisonersCountMap["total_prisoners_count_${it.prisonId}"] = prisonersCount
-              prisonersCountMap["total_prisoners_12Weeks_count_${it.prisonId}"] = prisoners12WeeksCount
-              prisonersCountMap["total_prisoners_24Weeks_count_${it.prisonId}"] = prisoners24WeeksCount
-              prisonersCountMap["total_prisoners_AllTime_count_${it.prisonId}"] = prisonersAllTimeCount
-            }
 
-            prisonersCountMap["total_prisoners_count_${item.id}"]?.let { it1 ->
-              registry.gauge(
-                "total_prisoners_count",
-                Tags.of("prison", item.name),
-                it1,
-              )
+              if (it.displayReleaseDate == null || (it.displayReleaseDate != null && it.displayReleaseDate!! > latestRD24Weeks)) {
+                prisonersAllTimeCount++
+                if (activePrisonersList.contains(it.prisonerNumber)) {
+                  activePrisonersAllTimeCount++
+                }
+              }
             }
-            prisonersCountMap["total_prisoners_12Weeks_count_${item.id}"]?.let { it1 ->
-              registry.gauge(
-                "total_prisoners_12Weeks_count",
-                Tags.of("prison", item.name),
-                it1,
-              )
-            }
-            prisonersCountMap["total_prisoners_24Weeks_count_${item.id}"]?.let { it1 ->
-              registry.gauge(
-                "total_prisoners_24Weeks_count",
-                Tags.of("prison", item.name),
-                it1,
-              )
-            }
-            prisonersCountMap["total_prisoners_AllTime_count_${item.id}"]?.let { it1 ->
-              registry.gauge(
-                "total_prisoners_AllTime_count",
-                Tags.of("prison", item.name),
-                it1,
-              )
-            }
+          }
+
+          prisonersCountMap["total_active_prisoners_count_${item.id}"] = activePrisonersCount
+          prisonersCountMap["total_active_prisoners_12Weeks_count_${item.id}"] = activePrisoners12WeeksCount
+          prisonersCountMap["total_active_prisoners_24Weeks_count_${item.id}"] = activePrisoners24WeeksCount
+          prisonersCountMap["total_active_prisoners_AllTime_count_${item.id}"] = activePrisonersAllTimeCount
+
+          prisonersCountMap["total_prisoners_count_${item.id}"] = prisonersCount
+          prisonersCountMap["total_prisoners_12Weeks_count_${item.id}"] = prisoners12WeeksCount
+          prisonersCountMap["total_prisoners_24Weeks_count_${item.id}"] = prisoners24WeeksCount
+          prisonersCountMap["total_prisoners_AllTime_count_${item.id}"] = prisonersAllTimeCount
+
+          val tag1 = Tags.of("prison", item.name)
+          prisonersCountMap["total_prisoners_count_${item.id}"]?.let { it1 ->
+            registry.gauge(
+              "total_prisoners_count",
+              tag1.and("releaseDate", "Overall"),
+              it1,
+            )
+          }
+
+          val tag2 = Tags.of("prison", item.name)
+
+          prisonersCountMap["total_prisoners_12Weeks_count_${item.id}"]?.let { it1 ->
+            registry.gauge(
+              "total_prisoners_12Weeks_count",
+              tag2.and("releaseDate", "12 Weeks"),
+              it1,
+            )
+          }
+          val tag3 = Tags.of("prison", item.name)
+
+          prisonersCountMap["total_prisoners_24Weeks_count_${item.id}"]?.let { it1 ->
+            registry.gauge(
+              "total_prisoners_24Weeks_count",
+              tag3.and("releaseDate", "24 Weeks"),
+              it1,
+            )
+          }
+          val tag4 = Tags.of("prison", item.name)
+
+          prisonersCountMap["total_prisoners_AllTime_count_${item.id}"]?.let { it1 ->
+            registry.gauge(
+              "total_prisoners_AllTime_count",
+              tag4.and("releaseDate", "Past or Unknown"),
+              it1,
+            )
+          }
+
+          prisonersCountMap["total_active_prisoners_count_${item.id}"]?.let { it1 ->
+            registry.gauge(
+              "total_active_prisoners_count",
+              tag1.and("releaseDate", "Overall"),
+              it1,
+            )
+          }
+          prisonersCountMap["total_active_prisoners_12Weeks_count_${item.id}"]?.let { it1 ->
+            registry.gauge(
+              "total_active_prisoners_12Weeks_count",
+              tag2.and("releaseDate", "12 Weeks"),
+              it1,
+            )
+          }
+          prisonersCountMap["total_active_prisoners_24Weeks_count_${item.id}"]?.let { it1 ->
+            registry.gauge(
+              "total_active_prisoners_24Weeks_count",
+              tag3.and("releaseDate", "24 Weeks"),
+              it1,
+            )
+          }
+          prisonersCountMap["total_active_prisoners_AllTime_count_${item.id}"]?.let { it1 ->
+            registry.gauge(
+              "total_active_prisoners_AllTime_count",
+              tag4.and("releaseDate", "Past or Unknown"),
+              it1,
+            )
           }
         }
       } catch (ex: Exception) {

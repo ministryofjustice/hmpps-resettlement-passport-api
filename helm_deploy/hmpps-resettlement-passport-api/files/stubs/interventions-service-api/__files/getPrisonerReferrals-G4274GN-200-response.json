@@ -122,21 +122,6 @@
   },
   {
     "serviceCategories": [
-      "Finance, Benefit and Debt (South Central)"
-    ],
-    "contractType": "Finance, Benefit and Debt (South Central)",
-    "referralCreatedAt": "2023-06-26T09:40:31.854454+01:00",
-    "referralSentAt": null,
-    "interventionTitle": "Finance, Benefit and Debt Services in Thames Valley",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": null,
-    "serviceProviderUser": null,
-    "serviceProviderLocation": null,
-    "serviceProviderName": null,
-    "isDraft": true
-  },
-  {
-    "serviceCategories": [
       "Education, Training and Employment (ETE)"
     ],
     "contractType": "Education, Training and Employment (ETE)",

@@ -1,12 +1,14 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonApiService
 
 @Service
-class PrisonerService(val offenderSearchApiService: OffenderSearchApiService, val prisonApiService: PrisonApiService) {
+class PrisonerService(val offenderSearchApiService: OffenderSearchApiService, val prisonApiService: PrisonApiService, val prisonerRepository: PrisonerRepository) {
   suspend fun getPrisonersByPrisonId(
     term: String,
     prisonId: String,
@@ -21,4 +23,9 @@ class PrisonerService(val offenderSearchApiService: OffenderSearchApiService, va
   suspend fun getPrisonerImageData(nomsId: String, imageId: Int) = prisonApiService.getPrisonerImageData(nomsId, imageId)
 
   suspend fun updatePrisonIdInPrisoners() = offenderSearchApiService.updatePrisonId()
+
+  suspend fun getActivePrisonersCountByPrisonId(prisonId: String) = prisonerRepository.countByPrisonId(prisonId)
+
+  @Transactional
+  suspend fun getActiveNomisIdsByPrisonId(prisonId: String) = prisonerRepository.findNomisIdsByPrisonId(prisonId)
 }

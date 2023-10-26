@@ -106,4 +106,25 @@ class CaseNotesApiMockServer : WireMockServerBase(9099) {
         ),
     )
   }
+
+  fun stubGetCaseNotesNewSubTypeList(nomsId: String, size: Int, page: Int, type: String, status: Int) {
+    val caseNotesJSON = readFile("testdata/case-notes-api/case-notes-new-subtype.json")
+    stubFor(
+      get("/case-notes/$nomsId?page=$page&size=$size&type=$type").willReturn(
+        if (status == 200) {
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody(
+              caseNotesJSON,
+            )
+            .withStatus(status)
+        } else {
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody("{\"Error\" : \"$status\"}")
+            .withStatus(status)
+        },
+      ),
+    )
+  }
 }

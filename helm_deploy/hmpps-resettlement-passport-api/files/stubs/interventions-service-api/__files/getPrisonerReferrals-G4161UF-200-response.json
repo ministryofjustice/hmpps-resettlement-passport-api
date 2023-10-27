@@ -677,21 +677,6 @@
   },
   {
     "serviceCategories": [
-      "Family and Significant Others"
-    ],
-    "contractType": "Personal Wellbeing",
-    "referralCreatedAt": "2023-04-18T11:23:05.985894+01:00",
-    "referralSentAt": "2023-04-18T11:23:52.817627+01:00",
-    "interventionTitle": "Women's Lifestyle Coaching",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": "R&MP Practitioner",
-    "serviceProviderUser": null,
-    "serviceProviderLocation": "Sussex",
-    "serviceProviderName": "Safe Living Ltd.",
-    "isDraft": false
-  },
-  {
-    "serviceCategories": [
       "Education, Training and Employment (ETE)"
     ],
     "contractType": "Education, Training and Employment (ETE)",
@@ -882,21 +867,6 @@
     "responsibleOfficer": "R&MP Practitioner",
     "serviceProviderUser": "R&M Active Probation Practitioner",
     "serviceProviderLocation": "East of England",
-    "serviceProviderName": "Seetec Business Technology Centre Limited",
-    "isDraft": false
-  },
-  {
-    "serviceCategories": [
-      "Family and Significant Others"
-    ],
-    "contractType": "Personal Wellbeing",
-    "referralCreatedAt": "2023-07-10T16:23:18.889576+01:00",
-    "referralSentAt": "2023-07-10T16:27:47.780476+01:00",
-    "interventionTitle": "Personal Wellbeing Services in Kent",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": "R&MP Practitioner",
-    "serviceProviderUser": null,
-    "serviceProviderLocation": "Kent",
     "serviceProviderName": "Seetec Business Technology Centre Limited",
     "isDraft": false
   },
@@ -1138,36 +1108,6 @@
     "serviceProviderUser": null,
     "serviceProviderLocation": "East of England",
     "serviceProviderName": "Seetec Business Technology Centre Limited",
-    "isDraft": false
-  },
-  {
-    "serviceCategories": [
-      "Family and Significant Others"
-    ],
-    "contractType": "Personal Wellbeing",
-    "referralCreatedAt": "2023-06-26T10:13:03.973825+01:00",
-    "referralSentAt": "2023-06-26T10:13:51.354178+01:00",
-    "interventionTitle": "Women's Lifestyle Coaching",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": "R&MP Practitioner",
-    "serviceProviderUser": null,
-    "serviceProviderLocation": "Sussex",
-    "serviceProviderName": "Safe Living Ltd.",
-    "isDraft": false
-  },
-  {
-    "serviceCategories": [
-      "Family and Significant Others"
-    ],
-    "contractType": "Personal Wellbeing",
-    "referralCreatedAt": "2023-06-27T09:22:34.745369+01:00",
-    "referralSentAt": "2023-06-27T09:24:22.933618+01:00",
-    "interventionTitle": "Women's Lifestyle Coaching",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": "R&MP Practitioner",
-    "serviceProviderUser": null,
-    "serviceProviderLocation": "Sussex",
-    "serviceProviderName": "Safe Living Ltd.",
     "isDraft": false
   },
   {
@@ -2027,21 +1967,6 @@
   },
   {
     "serviceCategories": [
-      "Family and Significant Others"
-    ],
-    "contractType": "Personal Wellbeing",
-    "referralCreatedAt": "2023-02-15T16:39:19.609179Z",
-    "referralSentAt": null,
-    "interventionTitle": "Women's Lifestyle Coaching",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": null,
-    "serviceProviderUser": null,
-    "serviceProviderLocation": null,
-    "serviceProviderName": null,
-    "isDraft": true
-  },
-  {
-    "serviceCategories": [
       "Education, Training and Employment (ETE)"
     ],
     "contractType": "Education, Training and Employment (ETE)",
@@ -2237,21 +2162,6 @@
   },
   {
     "serviceCategories": [
-      "Family and Significant Others"
-    ],
-    "contractType": "Personal Wellbeing",
-    "referralCreatedAt": "2023-04-18T11:23:05.985894+01:00",
-    "referralSentAt": null,
-    "interventionTitle": "Women's Lifestyle Coaching",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": null,
-    "serviceProviderUser": null,
-    "serviceProviderLocation": null,
-    "serviceProviderName": null,
-    "isDraft": true
-  },
-  {
-    "serviceCategories": [
       "Education, Training and Employment (ETE)"
     ],
     "contractType": "Education, Training and Employment (ETE)",
@@ -2348,21 +2258,6 @@
     "referralCreatedAt": "2023-05-02T10:26:43.333577+01:00",
     "referralSentAt": null,
     "interventionTitle": "ETE Services for the East of England",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": null,
-    "serviceProviderUser": null,
-    "serviceProviderLocation": null,
-    "serviceProviderName": null,
-    "isDraft": true
-  },
-  {
-    "serviceCategories": [
-      "Family and Significant Others"
-    ],
-    "contractType": "Personal Wellbeing",
-    "referralCreatedAt": "2023-06-16T08:35:30.332489+01:00",
-    "referralSentAt": null,
-    "interventionTitle": "Women's Lifestyle Coaching",
     "referringOfficer": "R&MP Practitioner",
     "responsibleOfficer": null,
     "serviceProviderUser": null,

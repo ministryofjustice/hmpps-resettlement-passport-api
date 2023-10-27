@@ -137,36 +137,6 @@
   },
   {
     "serviceCategories": [
-      "Family and Significant Others"
-    ],
-    "contractType": "Personal Wellbeing",
-    "referralCreatedAt": "2023-06-26T10:13:03.973825+01:00",
-    "referralSentAt": null,
-    "interventionTitle": "Women's Lifestyle Coaching",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": null,
-    "serviceProviderUser": null,
-    "serviceProviderLocation": null,
-    "serviceProviderName": null,
-    "isDraft": true
-  },
-  {
-    "serviceCategories": [
-      "Family and Significant Others"
-    ],
-    "contractType": "Personal Wellbeing",
-    "referralCreatedAt": "2023-06-27T09:22:34.745369+01:00",
-    "referralSentAt": null,
-    "interventionTitle": "Women's Lifestyle Coaching",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": null,
-    "serviceProviderUser": null,
-    "serviceProviderLocation": null,
-    "serviceProviderName": null,
-    "isDraft": true
-  },
-  {
-    "serviceCategories": [
       "Education, Training and Employment (ETE)"
     ],
     "contractType": "Education, Training and Employment (ETE)",

@@ -18,7 +18,7 @@ class CrsReferralsIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val crn = "abc"
     offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
-    interventionsServiceApiMockServer.stubFetchProbationCaseReferrals(crn, 200)
+    interventionsServiceApiMockServer.stubGet("/probation-case/$crn/referral", 200, "testdata/interventions-service-api/crs-referrals.json")
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetComByCrn(crn, 200)
 
@@ -56,7 +56,7 @@ class CrsReferralsIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val crn = "abc"
     offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
-    interventionsServiceApiMockServer.stubFetchProbationCaseReferrals(crn, 404)
+    interventionsServiceApiMockServer.stubGet("/probation-case/$crn/referral", 404, null)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetComByCrn(crn, 200)
     webTestClient.get()
@@ -79,7 +79,7 @@ class CrsReferralsIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val crn = "abc"
     offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
-    interventionsServiceApiMockServer.stubFetchProbationCaseReferrals(crn, 200)
+    interventionsServiceApiMockServer.stubGet("/probation-case/$crn/referral", 200, "testdata/interventions-service-api/crs-referrals.json")
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetComByCrn(crn, 200)
 
@@ -102,7 +102,7 @@ class CrsReferralsIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val crn = "abc"
     offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
-    interventionsServiceApiMockServer.stubFetchProbationCaseReferrals(crn, 200)
+    interventionsServiceApiMockServer.stubGet("/probation-case/$crn/referral", 200, "testdata/interventions-service-api/crs-referrals-no-matches.json")
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetComByCrn(crn, 200)
 

@@ -167,22 +167,6 @@
   },
   {
     "serviceCategories": [
-      "Emotional Wellbeing",
-      "Finance, Benefits and Debt (FBD)"
-    ],
-    "contractType": "Women's Services",
-    "referralCreatedAt": "2023-06-29T11:27:44.852182+01:00",
-    "referralSentAt": null,
-    "interventionTitle": "Women's Services in Kent",
-    "referringOfficer": "R&MP Practitioner",
-    "responsibleOfficer": null,
-    "serviceProviderUser": null,
-    "serviceProviderLocation": null,
-    "serviceProviderName": null,
-    "isDraft": true
-  },
-  {
-    "serviceCategories": [
       "Education, Training and Employment (ETE)"
     ],
     "contractType": "Education, Training and Employment (ETE)",

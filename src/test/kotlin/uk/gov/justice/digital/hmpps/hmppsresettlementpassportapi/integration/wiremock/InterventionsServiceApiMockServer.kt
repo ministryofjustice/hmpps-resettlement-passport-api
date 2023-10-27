@@ -1,29 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock
 
-import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 
-class InterventionsServiceApiMockServer : WireMockServerBase(9105) {
-
-  fun stubFetchProbationCaseReferrals(crn: String, status: Int) {
-    val referralJSON = readFile("testdata/interventions-service-api/crs-referrals.json")
-    stubFor(
-      get("/probation-case/$crn/referral").willReturn(
-        if (status == 200) {
-          aResponse()
-            .withHeader("Content-Type", "application/json")
-            .withBody(
-              referralJSON,
-            )
-            .withStatus(status)
-        } else {
-          aResponse()
-            .withHeader("Content-Type", "application/json")
-            .withBody("{\"Error\" : \"$status\"}")
-            .withStatus(status)
-        },
-      ),
-    )
-  }
-}
+class InterventionsServiceApiMockServer : WireMockServerBase(9105)

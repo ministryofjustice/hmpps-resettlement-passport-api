@@ -812,8 +812,41 @@
     },
     {
       "pathway": "HEALTH",
-      "referrals": [],
-      "message": "No health referral currently exists for John Smith. If you think this incorrect, please contact their COM, John Doe."
+      "referrals": [
+        {
+          "serviceCategories": [
+            "Emotional Wellbeing",
+            "Finance, Benefits and Debt (FBD)"
+          ],
+          "contractType": "Women's Services",
+          "referralCreatedAt": "2023-06-29T11:27:44.852182+01:00",
+          "referralSentAt": null,
+          "interventionTitle": "Women's Services in Kent",
+          "referringOfficer": "R&MP Practitioner",
+          "responsibleOfficer": null,
+          "serviceProviderUser": null,
+          "serviceProviderLocation": null,
+          "serviceProviderName": null,
+          "draft": true
+        },
+        {
+          "serviceCategories": [
+            "Misc service category",
+            "Another service category"
+          ],
+          "contractType": "Women's Support Services (GM)",
+          "referralCreatedAt": "2023-09-30T03:04:05.123234+01:00",
+          "referralSentAt": null,
+          "interventionTitle": "Women's Support Services in Kent",
+          "referringOfficer": "R&MP Practitioner",
+          "responsibleOfficer": null,
+          "serviceProviderUser": null,
+          "serviceProviderLocation": null,
+          "serviceProviderName": null,
+          "draft": true
+        }
+      ],
+      "message": ""
     },
     {
       "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",

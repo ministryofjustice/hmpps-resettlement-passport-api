@@ -88,31 +88,29 @@ class CRSReferralService(
         it.serviceProviderName,
         it.isDraft,
       )
-      if (it.contractType?.startsWith("Accommodation") == true) {
+      if (it.contractType.startsWith("Accommodation")) {
         crsReferralACCOMList.add(crsReferral)
-      } else if (it.contractType?.startsWith("Dependency and Recovery") == true) {
+      } else if (it.contractType.startsWith("Dependency and Recovery")) {
         crsReferralDAList.add(crsReferral)
-      } else if (it.contractType?.startsWith("Education, Training and Employment") == true) {
+      } else if (it.contractType.startsWith("Education, Training and Employment")) {
         crsReferralESKList.add(crsReferral)
-      } else if (it.contractType?.startsWith("Finance, Benefit and Debt") == true) {
+      } else if (it.contractType.startsWith("Finance, Benefit and Debt")) {
         crsReferralFINList.add(crsReferral)
-      } else if (it.contractType?.startsWith("Mentoring") == true) {
+      } else if (it.contractType.startsWith("Mentoring")) {
         crsReferralATBList.add(crsReferral)
-      } else if (it.contractType?.startsWith("Personal Wellbeing") == true &&
-        (
-          it.serviceCategories.contains("Family and Significant Others") ||
-            it.serviceCategories.contains("Family and Significant Others (GM)")
-          )
+      } else if (it.contractType.startsWith("Personal Wellbeing") && (
+        it.serviceCategories.contains("Family and Significant Others") ||
+          it.serviceCategories.contains("Family and Significant Others (GM)")
+        )
       ) {
         crsReferralCHDFAMCOMList.add(crsReferral)
-      } else if (it.contractType?.startsWith("Personal Wellbeing") == true &&
-        (
-          !it.serviceCategories.contains("Family and Significant Others") ||
-            !it.serviceCategories.contains("Family and Significant Others (GM)")
-          )
+      } else if (it.contractType.startsWith("Personal Wellbeing") && (
+        !it.serviceCategories.contains("Family and Significant Others") ||
+          !it.serviceCategories.contains("Family and Significant Others (GM)")
+        )
       ) {
         crsReferralATBList.add(crsReferral)
-      } else if (it.contractType?.startsWith("Women's Support Services (GM)") == true) {
+      } else if (it.contractType.startsWith("Women's Support Services (GM)") || it.contractType.startsWith("Women's Services")) {
         crsReferralHELList.add(crsReferral)
       }
     }

@@ -98,12 +98,16 @@ class CRSReferralService(
         crsReferralFINList.add(crsReferral)
       } else if (it.contractType.startsWith("Mentoring")) {
         crsReferralATBList.add(crsReferral)
-      } else if (it.contractType.startsWith("Personal Wellbeing") && (it.serviceCategories.contains("Family and Significant Others") ||
-              it.serviceCategories.contains("Family and Significant Others (GM)"))
+      } else if (it.contractType.startsWith("Personal Wellbeing") && (
+        it.serviceCategories.contains("Family and Significant Others") ||
+          it.serviceCategories.contains("Family and Significant Others (GM)")
+        )
       ) {
         crsReferralCHDFAMCOMList.add(crsReferral)
-      } else if (it.contractType.startsWith("Personal Wellbeing") && (!it.serviceCategories.contains("Family and Significant Others") ||
-              !it.serviceCategories.contains("Family and Significant Others (GM)"))
+      } else if (it.contractType.startsWith("Personal Wellbeing") && (
+        !it.serviceCategories.contains("Family and Significant Others") ||
+          !it.serviceCategories.contains("Family and Significant Others (GM)")
+        )
       ) {
         crsReferralATBList.add(crsReferral)
       } else if (it.contractType.startsWith("Women's Support Services (GM)") || it.contractType.startsWith("Women's Services")) {

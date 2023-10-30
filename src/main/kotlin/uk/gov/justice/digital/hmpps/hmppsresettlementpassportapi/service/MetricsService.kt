@@ -47,7 +47,7 @@ class MetricsService(
       try {
         if (item.active) {
           val activePrisonersList = prisonerService.getActiveNomisIdsByPrisonId(item.id)
-          val inusePrisonersList = prisonerService.getInuseNomisIdsByPrisonId(item.id)
+          val inusePrisonersList = prisonerService.getInUseNomisIdsByPrisonId(item.id)
           offenderSearchApiService.findPrisonersBySearchTerm(item.id, "").collect {
             it.forEach {
               if (it.confirmedReleaseDate != null) {

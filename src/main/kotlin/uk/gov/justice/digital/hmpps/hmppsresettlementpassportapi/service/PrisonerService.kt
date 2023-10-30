@@ -3,12 +3,19 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonApiService
 
 @Service
-class PrisonerService(val offenderSearchApiService: OffenderSearchApiService, val prisonApiService: PrisonApiService, val prisonerRepository: PrisonerRepository) {
+class PrisonerService(
+  val offenderSearchApiService: OffenderSearchApiService,
+  val prisonApiService: PrisonApiService,
+  val prisonerRepository: PrisonerRepository,
+  private val pathwayStatusRepository: PathwayStatusRepository,
+) {
   suspend fun getPrisonersByPrisonId(
     term: String,
     prisonId: String,
@@ -28,4 +35,7 @@ class PrisonerService(val offenderSearchApiService: OffenderSearchApiService, va
 
   @Transactional
   suspend fun getActiveNomisIdsByPrisonId(prisonId: String) = prisonerRepository.findNomisIdsByPrisonId(prisonId)
+
+  @Transactional
+  suspend fun getInuseNomisIdsByPrisonId(prisonId: String) = pathwayStatusRepository.findInusePrisonersByPrisonIdAndStatus(prisonId, Status.NOT_STARTED.id)
 }

@@ -36,17 +36,17 @@ class MetricsService(
       var prisoners12WeeksCount = 0
       var prisoners24WeeksCount = 0
       var prisonersAllTimeCount = 0
-      var activePrisonersCount = 0
-      var activePrisoners12WeeksCount = 0
-      var activePrisoners24WeeksCount = 0
-      var activePrisonersAllTimeCount = 0
+      var notStartedPrisonersCount = 0
+      var notStartedPrisoners12WeeksCount = 0
+      var notStartedPrisoners24WeeksCount = 0
+      var notStartedPrisonersAllTimeCount = 0
       var inusePrisonersCount = 0
       var inusePrisoners12WeeksCount = 0
       var inusePrisoners24WeeksCount = 0
       var inusePrisonersAllTimeCount = 0
       try {
         if (item.active) {
-          val activePrisonersList = prisonerService.getActiveNomisIdsByPrisonId(item.id)
+          val activePrisonersList = prisonerService.getNotStartedNomisIdsByPrisonId(item.id)
           val inusePrisonersList = prisonerService.getInUseNomisIdsByPrisonId(item.id)
           offenderSearchApiService.findPrisonersBySearchTerm(item.id, "").collect {
             it.forEach {
@@ -65,7 +65,7 @@ class MetricsService(
               }
               prisonersCount++
               if (activePrisonersList.contains(it.prisonerNumber)) {
-                activePrisonersCount++
+                notStartedPrisonersCount++
               }
               if (inusePrisonersList.contains(it.prisonerNumber)) {
                 inusePrisonersCount++
@@ -73,7 +73,7 @@ class MetricsService(
               if (it.displayReleaseDate != null && (it.displayReleaseDate!! > earliestReleaseDate && it.displayReleaseDate!! <= latestRD12Weeks)) {
                 prisoners12WeeksCount++
                 if (activePrisonersList.contains(it.prisonerNumber)) {
-                  activePrisoners12WeeksCount++
+                  notStartedPrisoners12WeeksCount++
                 }
                 if (inusePrisonersList.contains(it.prisonerNumber)) {
                   inusePrisoners12WeeksCount++
@@ -82,7 +82,7 @@ class MetricsService(
               if (it.displayReleaseDate != null && (it.displayReleaseDate!! > earliestReleaseDate && it.displayReleaseDate!! <= latestRD24Weeks)) {
                 prisoners24WeeksCount++
                 if (activePrisonersList.contains(it.prisonerNumber)) {
-                  activePrisoners24WeeksCount++
+                  notStartedPrisoners24WeeksCount++
                 }
                 if (inusePrisonersList.contains(it.prisonerNumber)) {
                   inusePrisoners24WeeksCount++
@@ -92,7 +92,7 @@ class MetricsService(
               if (it.displayReleaseDate == null || (it.displayReleaseDate != null && (it.displayReleaseDate!! <= earliestReleaseDate || it.displayReleaseDate!! > latestRD24Weeks))) {
                 prisonersAllTimeCount++
                 if (activePrisonersList.contains(it.prisonerNumber)) {
-                  activePrisonersAllTimeCount++
+                  notStartedPrisonersAllTimeCount++
                 }
                 if (inusePrisonersList.contains(it.prisonerNumber)) {
                   inusePrisonersAllTimeCount++
@@ -106,10 +106,10 @@ class MetricsService(
           prisonersCountMap["total_inuse_prisoners_24Weeks_count_${item.id}"] = inusePrisoners24WeeksCount
           prisonersCountMap["total_inuse_prisoners_AllTime_count_${item.id}"] = inusePrisonersAllTimeCount
 
-          prisonersCountMap["total_active_prisoners_count_${item.id}"] = activePrisonersCount
-          prisonersCountMap["total_active_prisoners_12Weeks_count_${item.id}"] = activePrisoners12WeeksCount
-          prisonersCountMap["total_active_prisoners_24Weeks_count_${item.id}"] = activePrisoners24WeeksCount
-          prisonersCountMap["total_active_prisoners_AllTime_count_${item.id}"] = activePrisonersAllTimeCount
+          prisonersCountMap["total_notstarted_prisoners_count_${item.id}"] = notStartedPrisonersCount
+          prisonersCountMap["total_notstarted_prisoners_12Weeks_count_${item.id}"] = notStartedPrisoners12WeeksCount
+          prisonersCountMap["total_notstarted_prisoners_24Weeks_count_${item.id}"] = notStartedPrisoners24WeeksCount
+          prisonersCountMap["total_notstarted_prisoners_AllTime_count_${item.id}"] = notStartedPrisonersAllTimeCount
 
           prisonersCountMap["total_prisoners_count_${item.id}"] = prisonersCount
           prisonersCountMap["total_prisoners_12Weeks_count_${item.id}"] = prisoners12WeeksCount
@@ -153,30 +153,30 @@ class MetricsService(
             )
           }
 
-          prisonersCountMap["total_active_prisoners_count_${item.id}"]?.let { it1 ->
+          prisonersCountMap["total_notstarted_prisoners_count_${item.id}"]?.let { it1 ->
             registry.gauge(
-              "total_active_prisoners_count",
+              "total_notstarted_prisoners_count",
               tag1.and("releaseDate", "Overall"),
               it1,
             )
           }
-          prisonersCountMap["total_active_prisoners_12Weeks_count_${item.id}"]?.let { it1 ->
+          prisonersCountMap["total_notstarted_prisoners_12Weeks_count_${item.id}"]?.let { it1 ->
             registry.gauge(
-              "total_active_prisoners_12Weeks_count",
+              "total_notstarted_prisoners_12Weeks_count",
               tag2.and("releaseDate", "12 Weeks"),
               it1,
             )
           }
-          prisonersCountMap["total_active_prisoners_24Weeks_count_${item.id}"]?.let { it1 ->
+          prisonersCountMap["total_notstarted_prisoners_24Weeks_count_${item.id}"]?.let { it1 ->
             registry.gauge(
-              "total_active_prisoners_24Weeks_count",
+              "total_notstarted_prisoners_24Weeks_count",
               tag3.and("releaseDate", "24 Weeks"),
               it1,
             )
           }
-          prisonersCountMap["total_active_prisoners_AllTime_count_${item.id}"]?.let { it1 ->
+          prisonersCountMap["total_notstarted_prisoners_AllTime_count_${item.id}"]?.let { it1 ->
             registry.gauge(
-              "total_active_prisoners_AllTime_count",
+              "total_notStarted_prisoners_AllTime_count",
               tag4.and("releaseDate", "Past or Unknown"),
               it1,
             )

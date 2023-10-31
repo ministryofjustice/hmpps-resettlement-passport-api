@@ -114,4 +114,27 @@ class CrsReferralsIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody().json(expectedOutput, true)
   }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
+  fun `Get CRS Referrals - 404 from interventions service api`() {
+    var expectedOutput = readFile("testdata/expectation/crs-referrals-pathway-specific-empty.json")
+    val dob = LocalDate.of(1982, 10, 24)
+    val age = Period.between(dob, LocalDate.now()).years
+    expectedOutput = expectedOutput.replace("REPLACE_WITH_AGE", "$age")
+    val nomsId = "123"
+    val crn = "abc"
+    offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    interventionsServiceApiMockServer.stubGet("/probation-case/$crn/referral", 404, null)
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
+    deliusApiMockServer.stubGetComByCrn(crn, 200)
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/crs-referrals/HEALTH")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput, true)
+  }
 }

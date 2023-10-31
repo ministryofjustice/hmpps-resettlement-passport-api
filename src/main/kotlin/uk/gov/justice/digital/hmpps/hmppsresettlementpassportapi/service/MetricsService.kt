@@ -79,7 +79,7 @@ class MetricsService(
                   inusePrisoners12WeeksCount++
                 }
               }
-              if (it.displayReleaseDate != null && (it.displayReleaseDate!! > earliestReleaseDate && (it.displayReleaseDate!! > latestRD12Weeks && it.displayReleaseDate!! <= latestRD24Weeks))) {
+              if (it.displayReleaseDate != null && (it.displayReleaseDate!! > earliestReleaseDate && it.displayReleaseDate!! <= latestRD24Weeks)) {
                 prisoners24WeeksCount++
                 if (activePrisonersList.contains(it.prisonerNumber)) {
                   activePrisoners24WeeksCount++

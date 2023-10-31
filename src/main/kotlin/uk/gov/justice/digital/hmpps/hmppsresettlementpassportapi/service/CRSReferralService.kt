@@ -28,15 +28,12 @@ class CRSReferralService(
       throw NoDataWithCodeFoundException("Prisoner", nomsId)
     }
 
-    val prisonerEntity = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+    val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val crn = prisonerEntity.crn ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in database")
 
-    var crsReferralsResponse = CRSReferralResponse(emptyList())
     val referrals = interventionsApiService.fetchProbationCaseReferrals(nomsId, crn)
-    referrals.collect {
-      crsReferralsResponse = objectMapper(it, null, nomsId)
-    }
-    return crsReferralsResponse
+    return objectMapper(referrals, null, nomsId)
   }
 
   suspend fun getCRSReferralsByPathway(
@@ -50,15 +47,12 @@ class CRSReferralService(
       throw NoDataWithCodeFoundException("Pathway", pathway)
     }
 
-    val prisonerEntity = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+    val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val crn = prisonerEntity.crn ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in database")
 
-    var crsReferralsResponse = CRSReferralResponse(emptyList())
     val referrals = interventionsApiService.fetchProbationCaseReferrals(nomsId, crn)
-    referrals.collect {
-      crsReferralsResponse = objectMapper(it, pathway, nomsId)
-    }
-    return crsReferralsResponse
+    return objectMapper(referrals, pathway, nomsId)
   }
 
   private suspend fun objectMapper(referralList: List<ReferralDTO>, pathway: String? = null, nomsId: String): CRSReferralResponse {

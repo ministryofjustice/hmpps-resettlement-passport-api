@@ -38,4 +38,7 @@ class PrisonerService(
 
   @Transactional
   suspend fun getInUseNomisIdsByPrisonId(prisonId: String) = pathwayStatusRepository.findInUsePrisonersByPrisonIdAndStatus(prisonId, Status.NOT_STARTED.id)
+
+  @Transactional
+  suspend fun getNotStartedNomisIdsByPrisonId(prisonId: String) = pathwayStatusRepository.findNotStartedPrisonersByPrisonIdAndStatus(prisonId, Status.NOT_STARTED.id)
 }

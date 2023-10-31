@@ -13,4 +13,7 @@ interface PathwayStatusRepository : JpaRepository<PathwayStatusEntity, Long> {
 
   @Query("select p.nomsId from PathwayStatusEntity ps, PrisonerEntity p where ps.status.id != :status and p.prisonId = :prisonId and p.id = ps.prisoner.id group by p.nomsId having count(ps) > 0")
   fun findInUsePrisonersByPrisonIdAndStatus(prisonId: String, status: Long): List<String>
+
+  @Query("select p.nomsId from PathwayStatusEntity ps, PrisonerEntity p where ps.status.id = :status and p.prisonId = :prisonId and p.id = ps.prisoner.id group by p.nomsId having count(ps) = 7")
+  fun findNotStartedPrisonersByPrisonIdAndStatus(prisonId: String, status: Long): List<String>
 }

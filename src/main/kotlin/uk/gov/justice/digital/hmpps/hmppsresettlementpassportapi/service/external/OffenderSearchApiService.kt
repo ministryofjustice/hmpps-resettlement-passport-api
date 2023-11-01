@@ -90,21 +90,9 @@ class OffenderSearchApiService(
         "Page $pageNumber and Size $pageSize",
       )
     }
-    findPrisonersBySearchTerm(prisonId, searchTerm).collect {
-      it.forEach {
-        if (it.confirmedReleaseDate != null) {
-          it.displayReleaseDate = it.confirmedReleaseDate
-        } else if (it.actualParoleDate != null) {
-          it.displayReleaseDate = it.actualParoleDate
-        } else if (it.homeDetentionCurfewActualDate != null) {
-          it.displayReleaseDate = it.homeDetentionCurfewActualDate
-        } else if (it.conditionalReleaseDate != null) {
-          it.displayReleaseDate = it.conditionalReleaseDate
-        } else if (it.automaticReleaseDate != null) {
-          it.displayReleaseDate = it.automaticReleaseDate
-        } else {
-          it.displayReleaseDate = null
-        }
+    findPrisonersBySearchTerm(prisonId, searchTerm).collect { prisoners ->
+      prisoners.forEach {
+        setDisplayedReleaseDate(it)
         offenders.add(it)
       }
     }
@@ -305,6 +293,22 @@ class OffenderSearchApiService(
       } catch (ex: ResourceNotFoundException) {
         log.warn("Failed to update prison Id for Prisoner  ${prisoner.nomsId}")
       }
+    }
+  }
+
+  fun setDisplayedReleaseDate(prisoner: PrisonersSearch) {
+    if (prisoner.confirmedReleaseDate != null) {
+      prisoner.displayReleaseDate = prisoner.confirmedReleaseDate
+    } else if (prisoner.actualParoleDate != null) {
+      prisoner.displayReleaseDate = prisoner.actualParoleDate
+    } else if (prisoner.homeDetentionCurfewActualDate != null) {
+      prisoner.displayReleaseDate = prisoner.homeDetentionCurfewActualDate
+    } else if (prisoner.conditionalReleaseDate != null) {
+      prisoner.displayReleaseDate = prisoner.conditionalReleaseDate
+    } else if (prisoner.automaticReleaseDate != null) {
+      prisoner.displayReleaseDate = prisoner.automaticReleaseDate
+    } else {
+      prisoner.displayReleaseDate = null
     }
   }
 }

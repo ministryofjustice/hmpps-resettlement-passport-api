@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderSearchApiService
@@ -31,14 +30,19 @@ class PrisonerService(
 
   suspend fun updatePrisonIdInPrisoners() = offenderSearchApiService.updatePrisonId()
 
-  suspend fun getActivePrisonersCountByPrisonId(prisonId: String) = prisonerRepository.countByPrisonId(prisonId)
+  @Transactional
+  suspend fun getInProgressNomsIdsByPrisonId(prisonId: String): List<String> {
+    val inProgressPrisoners = mutableListOf<String>()
+    val inProgressOrDonePrisoners = pathwayStatusRepository.findPrisonersByPrisonIdWithAtLeastOnePathwayNotInNotStarted(prisonId)
+    val donePrisoners = pathwayStatusRepository.findPrisonersByPrisonWithAllPathwaysDone(prisonId)
+    inProgressPrisoners.addAll(inProgressOrDonePrisoners)
+    inProgressPrisoners.removeAll(donePrisoners)
+    return inProgressPrisoners
+  }
 
   @Transactional
-  suspend fun getActiveNomisIdsByPrisonId(prisonId: String) = prisonerRepository.findNomisIdsByPrisonId(prisonId)
+  suspend fun getNotStartedNomsIdsByPrisonId(prisonId: String) = pathwayStatusRepository.findPrisonersByPrisonIdWithAllPathwaysNotStarted(prisonId)
 
   @Transactional
-  suspend fun getInUseNomisIdsByPrisonId(prisonId: String) = pathwayStatusRepository.findInUsePrisonersByPrisonIdAndStatus(prisonId, Status.NOT_STARTED.id)
-
-  @Transactional
-  suspend fun getNotStartedNomisIdsByPrisonId(prisonId: String) = pathwayStatusRepository.findNotStartedPrisonersByPrisonIdAndStatus(prisonId, Status.NOT_STARTED.id)
+  suspend fun getDoneNomsIdsByPrisonId(prisonId: String) = pathwayStatusRepository.findPrisonersByPrisonWithAllPathwaysDone(prisonId)
 }

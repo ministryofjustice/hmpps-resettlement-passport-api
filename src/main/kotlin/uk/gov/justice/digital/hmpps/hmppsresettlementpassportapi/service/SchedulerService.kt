@@ -5,7 +5,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
 @Service
-class SchedularService(
+class SchedulerService(
   val metricsService: MetricsService,
   val prisonerService: PrisonerService,
 ) {

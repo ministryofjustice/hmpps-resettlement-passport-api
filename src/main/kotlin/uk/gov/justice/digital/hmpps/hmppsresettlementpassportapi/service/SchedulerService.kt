@@ -10,7 +10,7 @@ class SchedulerService(
   val prisonerService: PrisonerService,
 ) {
 
-  @Scheduled(cron = "0 0/1 * * * ?")
+  @Scheduled(cron = "0 0/15 * * * ?")
   fun metricsScheduledTask() {
     runBlocking {
       metricsService.recordCustomMetrics()

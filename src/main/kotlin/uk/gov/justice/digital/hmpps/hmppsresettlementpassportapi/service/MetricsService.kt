@@ -6,9 +6,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
-import java.lang.IllegalArgumentException
 import java.time.LocalDate
-import java.util.concurrent.atomic.AtomicLong
 
 @Service
 class MetricsService(
@@ -16,7 +14,7 @@ class MetricsService(
   private val prisonRegisterApiService: PrisonRegisterApiService,
   private val prisonerService: PrisonerService,
   private val registry: MeterRegistry,
-  ) {
+) {
 
   private val prisonersCountMap = HashMap<String, Int>()
 
@@ -208,7 +206,6 @@ class MetricsService(
         ) {
           it.getValueFromMapAsDouble("total_done_prisoners_24Weeks_count_${prison.id}")
         }
-
       } catch (ex: Exception) {
         log.warn("Prisoners data not found. Unable to fetch Prisoners for the Prison Id ${prison.id}")
       }

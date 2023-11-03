@@ -31,6 +31,66 @@
   },
   {
     "serviceCategories": [
+      "Accommodation"
+    ],
+    "contractType": "Accommodation",
+    "referralCreatedAt": "2023-10-27T12:24:54.711134+01:00",
+    "referralSentAt": "2023-10-27T12:24:54.711134+01:00",
+    "interventionTitle": "Accommodation Services - South West",
+    "referringOfficer": "R&MP Practitioner",
+    "responsibleOfficer": "R&MP Practitioner",
+    "serviceProviderUser": "R&MP Practitioner",
+    "serviceProviderLocation": "Test",
+    "serviceProviderName": "Accommodation Services Ltd",
+    "isDraft": false
+  },
+  {
+    "serviceCategories": [
+      "Accommodation"
+    ],
+    "contractType": "Accommodation",
+    "referralCreatedAt": "2022-03-02T12:24:54.711134+01:00",
+    "referralSentAt": null,
+    "interventionTitle": "Accommodation Services - South West",
+    "referringOfficer": "R&MP Practitioner",
+    "responsibleOfficer": null,
+    "serviceProviderUser": null,
+    "serviceProviderLocation": null,
+    "serviceProviderName": null,
+    "isDraft": true
+  },
+  {
+    "serviceCategories": [
+      "Accommodation"
+    ],
+    "contractType": "Accommodation",
+    "referralCreatedAt": "2023-09-28T12:24:54.711134+01:00",
+    "referralSentAt": null,
+    "interventionTitle": "Accommodation Services - South West",
+    "referringOfficer": "R&MP Practitioner",
+    "responsibleOfficer": null,
+    "serviceProviderUser": null,
+    "serviceProviderLocation": null,
+    "serviceProviderName": null,
+    "isDraft": false
+  },
+  {
+    "serviceCategories": [
+      "Accommodation"
+    ],
+    "contractType": "Accommodation",
+    "referralCreatedAt": "2021-01-01T12:24:54.711134+01:00",
+    "referralSentAt": null,
+    "interventionTitle": "Accommodation Services - Other",
+    "referringOfficer": "R&MP Practitioner",
+    "responsibleOfficer": null,
+    "serviceProviderUser": null,
+    "serviceProviderLocation": null,
+    "serviceProviderName": null,
+    "isDraft": true
+  },
+  {
+    "serviceCategories": [
       "Family and Significant Others"
     ],
     "contractType": "Personal Wellbeing",

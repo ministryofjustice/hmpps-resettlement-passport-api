@@ -67,8 +67,8 @@ class CRSReferralServiceTest {
         createCRSReferral(
           "contractType1",
           listOf("serviceCategory1"),
-          LocalDateTime.parse("2023-05-03T10:55:50")
-        )
+          LocalDateTime.parse("2023-05-03T10:55:50"),
+        ),
       ),
     ),
     // Multiple different referrals not changed

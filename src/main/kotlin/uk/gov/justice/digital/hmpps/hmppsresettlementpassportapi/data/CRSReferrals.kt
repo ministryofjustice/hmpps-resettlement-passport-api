@@ -26,7 +26,7 @@ data class CRSReferral(
   val serviceProviderName: String?,
   val draft: Boolean?,
 
-  )
+)
 
 data class CRSReferralResponse(
   var results: List<CRSReferralsWithPathway> = mutableListOf(),

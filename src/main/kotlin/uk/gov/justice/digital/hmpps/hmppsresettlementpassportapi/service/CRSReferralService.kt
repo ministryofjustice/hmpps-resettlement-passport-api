@@ -6,12 +6,16 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.Resource
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CRSReferral
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CRSReferralResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CRSReferralsWithPathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.PathwayMap
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ContractTypeAndServiceCategories
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.interventionsapi.ReferralDTO
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.InterventionsApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
+import java.lang.IllegalArgumentException
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 @Service
 class CRSReferralService(
@@ -24,27 +28,15 @@ class CRSReferralService(
   suspend fun getAllPathwayCRSReferralsByNomsId(
     nomsId: String,
   ): CRSReferralResponse {
-    if (nomsId.isBlank()) {
-      throw NoDataWithCodeFoundException("Prisoner", nomsId)
-    }
-
-    val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
-      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val crn = prisonerEntity.crn ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in database")
-
-    val referrals = interventionsApiService.fetchProbationCaseReferrals(nomsId, crn)
-    return objectMapper(referrals, null, nomsId)
+    return getCRSReferralsByPathway(nomsId, Pathway.getAllPathways())
   }
 
   suspend fun getCRSReferralsByPathway(
     nomsId: String,
-    pathway: String,
+    pathways: Set<Pathway>,
   ): CRSReferralResponse {
     if (nomsId.isBlank()) {
       throw NoDataWithCodeFoundException("Prisoner", nomsId)
-    }
-    if (!PathwayMap.values().any { it.id == pathway } || pathway == "RESET") {
-      throw NoDataWithCodeFoundException("Pathway", pathway)
     }
 
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
@@ -52,28 +44,27 @@ class CRSReferralService(
     val crn = prisonerEntity.crn ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in database")
 
     val referrals = interventionsApiService.fetchProbationCaseReferrals(nomsId, crn)
-    return objectMapper(referrals, pathway, nomsId)
+    return objectMapper(referrals, pathways, nomsId)
   }
 
-  private suspend fun objectMapper(referralList: List<ReferralDTO>, pathway: String? = null, nomsId: String): CRSReferralResponse {
-    val crsReferralACCOMList = mutableListOf<CRSReferral>()
-    val crsReferralATBList = mutableListOf<CRSReferral>()
-    val crsReferralCHDFAMCOMList = mutableListOf<CRSReferral>()
-    val crsReferralDAList = mutableListOf<CRSReferral>()
-    val crsReferralESKList = mutableListOf<CRSReferral>()
-    val crsReferralHELList = mutableListOf<CRSReferral>()
-    val crsReferralFINList = mutableListOf<CRSReferral>()
+  private suspend fun objectMapper(
+    referralList: List<ReferralDTO>,
+    pathways: Set<Pathway>,
+    nomsId: String,
+  ): CRSReferralResponse {
+    val pathwayToCrsReferralMap = HashMap<Pathway, MutableList<CRSReferral>>()
 
-    val crsReferralResponse = CRSReferralResponse(emptyList())
-    val crsReferralWithPathwaysList = mutableListOf<CRSReferralsWithPathway>()
+    Pathway.values().forEach {
+      pathwayToCrsReferralMap[it] = mutableListOf()
+    }
 
     referralList.forEach {
       val crsReferral: CRSReferral?
       crsReferral = CRSReferral(
         it.serviceCategories,
         it.contractType,
-        it.referralCreatedAt,
-        it.referralSentAt,
+        if (it.referralCreatedAt != null) LocalDateTime.ofInstant(it.referralCreatedAt.toInstant(), ZoneId.of("Europe/London")) else null,
+        if (it.referralSentAt != null) LocalDateTime.ofInstant(it.referralSentAt.toInstant(), ZoneId.of("Europe/London")) else null,
         it.interventionTitle,
         it.referringOfficer,
         it.responsibleOfficer,
@@ -83,91 +74,75 @@ class CRSReferralService(
         it.isDraft,
       )
       if (it.contractType.startsWith("Accommodation")) {
-        crsReferralACCOMList.add(crsReferral)
+        pathwayToCrsReferralMap[Pathway.ACCOMMODATION]?.add(crsReferral)
       } else if (it.contractType.startsWith("Dependency and Recovery")) {
-        crsReferralDAList.add(crsReferral)
+        pathwayToCrsReferralMap[Pathway.DRUGS_AND_ALCOHOL]?.add(crsReferral)
       } else if (it.contractType.startsWith("Education, Training and Employment")) {
-        crsReferralESKList.add(crsReferral)
+        pathwayToCrsReferralMap[Pathway.EDUCATION_SKILLS_AND_WORK]?.add(crsReferral)
       } else if (it.contractType.startsWith("Finance, Benefit and Debt")) {
-        crsReferralFINList.add(crsReferral)
+        pathwayToCrsReferralMap[Pathway.FINANCE_AND_ID]?.add(crsReferral)
       } else if (it.contractType.startsWith("Mentoring")) {
-        crsReferralATBList.add(crsReferral)
+        pathwayToCrsReferralMap[Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR]?.add(crsReferral)
       } else if (it.contractType.startsWith("Personal Wellbeing") && (
         it.serviceCategories.contains("Family and Significant Others") ||
           it.serviceCategories.contains("Family and Significant Others (GM)")
         )
       ) {
-        crsReferralCHDFAMCOMList.add(crsReferral)
+        pathwayToCrsReferralMap[Pathway.CHILDREN_FAMILIES_AND_COMMUNITY]?.add(crsReferral)
       } else if (it.contractType.startsWith("Personal Wellbeing") && (
         !it.serviceCategories.contains("Family and Significant Others") ||
           !it.serviceCategories.contains("Family and Significant Others (GM)")
         )
       ) {
-        crsReferralATBList.add(crsReferral)
+        pathwayToCrsReferralMap[Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR]?.add(crsReferral)
       } else if (it.contractType.startsWith("Women's Support Services (GM)") || it.contractType.startsWith("Women's Services")) {
-        crsReferralHELList.add(crsReferral)
+        pathwayToCrsReferralMap[Pathway.HEALTH]?.add(crsReferral)
       }
     }
 
-    when (pathway) {
-      null -> {
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.ACCOM.id, crsReferralACCOMList, getAlternateMessage(nomsId, PathwayMap.ACCOM.id, crsReferralACCOMList)))
-        crsReferralWithPathwaysList.add(
-          CRSReferralsWithPathway(
-            PathwayMap.CHDFAMCOM.id,
-            crsReferralCHDFAMCOMList,
-            getAlternateMessage(nomsId, PathwayMap.CHDFAMCOM.id, crsReferralCHDFAMCOMList),
-          ),
-        )
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.DRUG_ALCOHOL.id, crsReferralDAList, getAlternateMessage(nomsId, PathwayMap.DRUG_ALCOHOL.id, crsReferralDAList)))
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.ED_SKL_WRK.id, crsReferralESKList, getAlternateMessage(nomsId, PathwayMap.ED_SKL_WRK.id, crsReferralESKList)))
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.FINANCE_ID.id, crsReferralFINList, getAlternateMessage(nomsId, PathwayMap.FINANCE_ID.id, crsReferralFINList)))
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.HEALTH.id, crsReferralHELList, getAlternateMessage(nomsId, PathwayMap.HEALTH.id, crsReferralHELList)))
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.ATB.id, crsReferralATBList, getAlternateMessage(nomsId, PathwayMap.ATB.id, crsReferralATBList)))
-      }
-      PathwayMap.ACCOM.id -> {
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.ACCOM.id, crsReferralACCOMList, getAlternateMessage(nomsId, PathwayMap.ACCOM.id, crsReferralACCOMList)))
-      }
-      PathwayMap.CHDFAMCOM.id -> {
-        crsReferralWithPathwaysList.add(
-          CRSReferralsWithPathway(
-            PathwayMap.CHDFAMCOM.id,
-            crsReferralCHDFAMCOMList,
-            getAlternateMessage(nomsId, PathwayMap.CHDFAMCOM.id, crsReferralCHDFAMCOMList),
-          ),
-        )
-      }
-      PathwayMap.DRUG_ALCOHOL.id -> {
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.DRUG_ALCOHOL.id, crsReferralDAList, getAlternateMessage(nomsId, PathwayMap.DRUG_ALCOHOL.id, crsReferralDAList)))
-      }
-      PathwayMap.ED_SKL_WRK.id -> {
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.ED_SKL_WRK.id, crsReferralESKList, getAlternateMessage(nomsId, PathwayMap.ED_SKL_WRK.id, crsReferralESKList)))
-      }
-      PathwayMap.FINANCE_ID.id -> {
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.FINANCE_ID.id, crsReferralFINList, getAlternateMessage(nomsId, PathwayMap.FINANCE_ID.id, crsReferralFINList)))
-      }
-      PathwayMap.HEALTH.id -> {
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.HEALTH.id, crsReferralHELList, getAlternateMessage(nomsId, PathwayMap.HEALTH.id, crsReferralHELList)))
-      }
-      PathwayMap.ATB.id -> {
-        crsReferralWithPathwaysList.add(CRSReferralsWithPathway(PathwayMap.ATB.id, crsReferralATBList, getAlternateMessage(nomsId, PathwayMap.ATB.id, crsReferralATBList)))
-      }
+    val crsReferralWithPathwaysList = mutableListOf<CRSReferralsWithPathway>()
+
+    pathways.forEach { pathway ->
+      val crsReferralList = pathwayToCrsReferralMap[pathway]
+        ?: throw IllegalArgumentException("Cannot find Pathway in pathwayToCrsReferralMap - this is likely a coding error!")
+      val finalDuplicateReferrals = removeDuplicateReferrals(crsReferralList)
+      crsReferralWithPathwaysList.add(
+        CRSReferralsWithPathway(
+          pathway,
+          finalDuplicateReferrals,
+          getAlternateMessage(nomsId, pathway, finalDuplicateReferrals),
+        ),
+      )
     }
-    crsReferralResponse.results = crsReferralWithPathwaysList
-    return crsReferralResponse
+
+    return CRSReferralResponse(crsReferralWithPathwaysList)
   }
 
-  private suspend fun getAlternateMessage(nomsId: String, pathway: String, crsReferralList: MutableList<CRSReferral>): String {
+  private suspend fun getAlternateMessage(nomsId: String, pathway: Pathway, crsReferralList: List<CRSReferral>): String {
     var message = ""
     if (crsReferralList.isEmpty()) {
       val prisoner = offenderSearchApiService.findPrisonerPersonalDetails(nomsId)
-      var prisonerName = ""
-      prisonerName =
-        "${prisoner.firstName} ${prisoner.lastName}".convertNameToTitleCase()
-      val comName = resettlementPassportDeliusApiService.getComByNomsId(nomsId) ?: ""
+      val prisonerName: String = "${prisoner.firstName} ${prisoner.lastName}".convertNameToTitleCase()
+      val comName = resettlementPassportDeliusApiService.getComByNomsId(nomsId) ?: "NO DATA"
       message =
-        "No ${pathway.convertEnumStringToLowercaseContent()} referral currently exists for $prisonerName. If you think this incorrect, please contact their COM, ${comName.convertNameToTitleCase()}."
+        "No ${pathway.toString().convertEnumStringToLowercaseContent()} referral currently exists for $prisonerName. If you think this incorrect, please contact their COM, ${comName.convertNameToTitleCase()}."
     }
     return message
+  }
+
+  fun removeDuplicateReferrals(crsReferralList: List<CRSReferral>): List<CRSReferral> {
+    // RP2-753 We should only display the latest referral for each Contract Type/Service Category combination
+    val duplicateCRSReferralsMap = mutableMapOf<ContractTypeAndServiceCategories, MutableList<CRSReferral>>()
+    crsReferralList.forEach { crsReferral ->
+      val existingEntry = duplicateCRSReferralsMap[ContractTypeAndServiceCategories(crsReferral.contractType, crsReferral.serviceCategories.sorted())]
+      if (existingEntry != null) {
+        existingEntry.add(crsReferral)
+      } else {
+        duplicateCRSReferralsMap[ContractTypeAndServiceCategories(crsReferral.contractType, crsReferral.serviceCategories.sorted())] =
+          mutableListOf(crsReferral)
+      }
+    }
+
+    return duplicateCRSReferralsMap.map { entry -> entry.value.sortedByDescending { it.referralCreatedAt }.first() }
   }
 }

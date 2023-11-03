@@ -34,5 +34,7 @@ enum class Pathway(val id: Long) {
 
   companion object {
     fun getById(id: Long) = values().first { it.id == id }
+
+    fun getAllPathways() = values().sortedBy { it.id }.toSet()
   }
 }

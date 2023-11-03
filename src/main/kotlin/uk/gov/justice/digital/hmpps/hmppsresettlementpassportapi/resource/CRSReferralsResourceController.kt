@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CRSReferralResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CRSReferralService
 
 @RestController
@@ -58,8 +59,8 @@ class CRSReferralsResourceController(
     @Schema(example = "HEALTH", required = true)
     @PathVariable("pathway")
     @Parameter(required = true)
-    pathway: String,
-  ): CRSReferralResponse = crsReferralService.getCRSReferralsByPathway(nomsId, pathway)
+    pathway: Pathway,
+  ): CRSReferralResponse = crsReferralService.getCRSReferralsByPathway(nomsId, setOf(pathway))
 
   @GetMapping("/{nomsId}/crs-referrals")
   @Operation(summary = "Get all crs referrals", description = "Get crs referrals for all pathways from Interventions service")

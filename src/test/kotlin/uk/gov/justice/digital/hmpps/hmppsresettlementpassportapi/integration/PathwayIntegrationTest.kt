@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 class PathwayIntegrationTest : IntegrationTestBase() {
@@ -55,6 +56,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
           LocalDateTime.parse("2023-08-16T12:21:38.709"),
           "abc",
           "xyz",
+          LocalDate.parse("2025-01-23"),
         ),
         PathwayEntity(
           1,

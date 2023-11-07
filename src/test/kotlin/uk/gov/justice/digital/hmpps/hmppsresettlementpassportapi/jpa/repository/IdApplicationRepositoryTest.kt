@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.IdAp
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.IdTypeEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import java.math.BigDecimal
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @SpringBootTest
@@ -32,7 +33,7 @@ class IdApplicationRepositoryTest : TestBase() {
 
   @Test
   fun `test persist new assessment`() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1")
+    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23"))
     prisonerRepository.save(prisoner)
 
     val idType = IdTypeEntity(1, "Birth certificate")
@@ -58,7 +59,7 @@ class IdApplicationRepositoryTest : TestBase() {
 
   @Test
   fun `test findByPrisonerAndIsDeleted`() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1")
+    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23"))
     prisonerRepository.save(prisoner)
 
     val idType = IdTypeEntity(1, "Birth certificate")

@@ -32,5 +32,6 @@ enum class Status(val id: Long) {
 
   companion object {
     fun getById(id: Long) = values().first { it.id == id }
+    fun getCompletedStatuses() = listOf(SUPPORT_NOT_REQUIRED.id, SUPPORT_DECLINED.id, DONE.id)
   }
 }

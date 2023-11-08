@@ -19,6 +19,6 @@ interface PathwayStatusRepository : JpaRepository<PathwayStatusEntity, Long> {
   @Query("select p.nomsId from PathwayStatusEntity ps, PrisonerEntity p where ps.status.id = :status and p.prisonId = :prisonId and p.id = ps.prisoner.id group by p.nomsId having count(ps) = :numberOfPathways")
   fun findPrisonersByPrisonIdWithAllPathwaysNotStarted(prisonId: String, status: Long = Status.NOT_STARTED.id, numberOfPathways: Int = Pathway.values().size): List<String>
 
-  @Query("select p.nomsId from PathwayStatusEntity ps, PrisonerEntity p where ps.status.id = :status and p.prisonId = :prisonId and p.id = ps.prisoner.id group by p.nomsId having count(ps) = :numberOfPathways")
-  fun findPrisonersByPrisonWithAllPathwaysDone(prisonId: String, status: Long = Status.DONE.id, numberOfPathways: Int = Pathway.values().size): List<String>
+  @Query("select p.nomsId from PathwayStatusEntity ps, PrisonerEntity p where ps.status.id in (:statuses) and p.prisonId = :prisonId and p.id = ps.prisoner.id group by p.nomsId having count(ps) = :numberOfPathways")
+  fun findPrisonersByPrisonWithAllPathwaysDone(prisonId: String, statuses: List<Long> = Status.getCompletedStatuses(), numberOfPathways: Int = Pathway.values().size): List<String>
 }

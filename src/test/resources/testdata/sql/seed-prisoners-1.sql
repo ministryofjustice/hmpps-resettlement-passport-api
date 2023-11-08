@@ -1,0 +1,10 @@
+INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id, release_date) VALUES (1, 'G1458GV', '2023-05-17 12:21:44.0', 'CRN1', 'xyz', '2025-01-01');
+INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id, release_date) VALUES (2, 'G6628UE', '2023-05-17 12:21:44.0', 'CRN2', 'xyz', '2026-06-30');
+INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id, release_date) VALUES (3, 'G6335VX', '2023-05-17 12:21:44.0', 'CRN3', 'xyz', '2021-05-21');
+INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id, release_date) VALUES (4, 'G6933GF', '2023-05-17 12:21:44.0', 'CRN4', 'xyz', '2027-11-10');
+INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id, release_date) VALUES (5, 'A8339DY', '2023-05-17 12:21:44.0', 'CRN5', 'xyz', '2019-09-15');
+INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id, release_date) VALUES (6, 'A8132DY', '2023-05-17 12:21:44.0', 'CRN6', 'xyz', '2050-02-08');
+INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id, release_date) VALUES (7, 'A8258DY', '2023-05-17 12:21:44.0', 'CRN7', 'xyz', '2090-02-05');
+INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id, release_date) VALUES (8, 'A8257DY', '2023-05-17 12:21:44.0', 'CRN8', 'xyz', '2040-12-12');
+INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id, release_date) VALUES (9, 'A8314DY', '2023-05-17 12:21:44.0', 'CRN9', 'xyz', '2027-11-09');
+INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id, release_date) VALUES (10, 'A8229DY', '2023-05-17 12:21:44.0', 'CRN10', 'xyz', '2010-04-03');

@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Path
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @SpringBootTest
@@ -27,7 +28,7 @@ class PathwayStatusRepositoryTest : TestBase() {
 
   @Test
   fun `test create new pathway status`() {
-    var prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1")
+    var prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23"))
     prisoner = prisonerRepository.save(prisoner)
 
     val pathwayStatus = PathwayStatusEntity(

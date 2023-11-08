@@ -24,11 +24,6 @@ data class PrisonersSearch(
   var displayReleaseDate: LocalDate? = null,
 )
 
-data class PrisonerRequest(
-  val earliestReleaseDate: String,
-  val latestReleaseDate: String,
-  val prisonIds: List<String>,
-)
 data class PrisonersSearchList(
   val content: List<PrisonersSearch>?,
   val pageSize: Int?,

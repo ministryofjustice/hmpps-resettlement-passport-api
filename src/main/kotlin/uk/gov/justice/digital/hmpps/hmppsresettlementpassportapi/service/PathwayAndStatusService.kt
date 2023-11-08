@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.StatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Service
@@ -61,12 +62,12 @@ class PathwayAndStatusService(
   }
 
   @Transactional
-  suspend fun addPrisonerAndInitialPathwayStatus(nomsId: String, prisonId: String) {
+  suspend fun addPrisonerAndInitialPathwayStatus(nomsId: String, prisonId: String, releaseDate: LocalDate?) {
     // Seed the Prisoner data into the DB
     val existingPrisonerEntity = prisonerRepository.findByNomsId(nomsId)
     if (existingPrisonerEntity == null) {
       val crn = resettlementPassportDeliusApiService.getCrn(nomsId)
-      val newPrisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), crn, prisonId)
+      val newPrisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), crn, prisonId, releaseDate)
       prisonerRepository.save(newPrisonerEntity)
       val statusRepoData = statusRepository.findById(Status.NOT_STARTED.id)
       val pathwayRepoData = pathwayRepository.findAll()

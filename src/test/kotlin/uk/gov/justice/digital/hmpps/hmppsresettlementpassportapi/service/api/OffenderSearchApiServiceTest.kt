@@ -146,7 +146,7 @@ class OffenderSearchApiServiceTest {
   }
 
   private fun mockDatabaseCalls() {
-    val mockPrisonerEntity = PrisonerEntity(1, "TEST", LocalDateTime.now(), "test", "xyz")
+    val mockPrisonerEntity = PrisonerEntity(1, "TEST", LocalDateTime.now(), "test", "xyz", LocalDate.parse("2025-01-23"))
     val mockPathwayEntity1 = PathwayEntity(1, "Accommodation", true, LocalDateTime.now())
     val mockPathwayEntity2 = PathwayEntity(2, "Attitudes, thinking and behaviour", true, LocalDateTime.now())
     val mockPathwayEntity3 = PathwayEntity(3, "Children, families and communities", false, LocalDateTime.now())

@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBas
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.AssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.IdTypeEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @SpringBootTest
@@ -31,7 +32,7 @@ class AssessmentRepositoryTest : TestBase() {
 
   @Test
   fun `test persist new assessment`() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1")
+    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23"))
     prisonerRepository.save(prisoner)
 
     val idDocument = setOf(IdTypeEntity(1, "Birth certificate"))
@@ -47,7 +48,7 @@ class AssessmentRepositoryTest : TestBase() {
 
   @Test
   fun `test findByPrisonerAndIsDeleted`() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1")
+    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23"))
     prisonerRepository.save(prisoner)
 
     val idDocument = setOf(IdTypeEntity(1, "Birth certificate"))

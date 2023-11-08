@@ -40,7 +40,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
       .expectBody().json(expectedOutput, true)
 
     val prisonerEntity = prisonerRepository.findByNomsId("123")
-    val expectedPrisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), "abc", "MDI")
+    val expectedPrisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), "abc", "MDI", LocalDate.parse("2023-08-20"))
     assertThat(expectedPrisonerEntity).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java)
       .ignoringFields("id").isEqualTo(prisonerEntity)
   }
@@ -67,7 +67,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
       .expectBody().json(expectedOutput, true)
 
     val prisonerEntity = prisonerRepository.findByNomsId("123")
-    val expectedPrisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), "abc", "xyz")
+    val expectedPrisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), "abc", "xyz", LocalDate.parse("2025-01-23"))
     assertThat(expectedPrisonerEntity).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java)
       .ignoringFields("id").isEqualTo(prisonerEntity)
   }
@@ -93,7 +93,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
       .expectBody().json(expectedOutput, true)
 
     val prisonerEntity = prisonerRepository.findByNomsId("123")
-    val expectedPrisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), null, "MDI")
+    val expectedPrisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), null, "MDI", LocalDate.parse("2023-08-20"))
     assertThat(expectedPrisonerEntity).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java)
       .ignoringFields("id").isEqualTo(prisonerEntity)
   }
@@ -120,7 +120,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
       .expectBody().json(expectedOutput, true)
 
     val prisonerEntity = prisonerRepository.findByNomsId("123")
-    val expectedPrisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), "abc", "xyz")
+    val expectedPrisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), "abc", "xyz", LocalDate.parse("2030-09-12"))
     assertThat(expectedPrisonerEntity).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java)
       .ignoringFields("id").isEqualTo(prisonerEntity)
   }

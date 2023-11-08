@@ -1,13 +1,13 @@
-INSERT INTO prisoner (id, noms_id, creation_date, crn) VALUES (1, 'G1458GV', '2023-05-17 12:21:44.0', 'CRN1');
-INSERT INTO prisoner (id, noms_id, creation_date, crn) VALUES (2, 'G6628UE', '2023-05-17 12:21:44.0', 'CRN2');
-INSERT INTO prisoner (id, noms_id, creation_date, crn) VALUES (3, 'G6335VX', '2023-05-17 12:21:44.0', 'CRN3');
-INSERT INTO prisoner (id, noms_id, creation_date, crn) VALUES (4, 'G6933GF', '2023-05-17 12:21:44.0', 'CRN4');
-INSERT INTO prisoner (id, noms_id, creation_date, crn) VALUES (5, 'A8339DY', '2023-05-17 12:21:44.0', 'CRN5');
-INSERT INTO prisoner (id, noms_id, creation_date, crn) VALUES (6, 'A8132DY', '2023-05-17 12:21:44.0', 'CRN6');
-INSERT INTO prisoner (id, noms_id, creation_date, crn) VALUES (7, 'A8258DY', '2023-05-17 12:21:44.0', 'CRN7');
-INSERT INTO prisoner (id, noms_id, creation_date, crn) VALUES (8, 'A8257DY', '2023-05-17 12:21:44.0', 'CRN8');
-INSERT INTO prisoner (id, noms_id, creation_date, crn) VALUES (9, 'A8314DY', '2023-05-17 12:21:44.0', 'CRN9');
-INSERT INTO prisoner (id, noms_id, creation_date, crn) VALUES (10, 'A8229DY', '2023-05-17 12:21:44.0', 'CRN10');
+INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id) VALUES (1, 'G1458GV', '2023-05-17 12:21:44.0', 'CRN1', 'xyz');
+INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id) VALUES (2, 'G6628UE', '2023-05-17 12:21:44.0', 'CRN2', 'xyz');
+INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id) VALUES (3, 'G6335VX', '2023-05-17 12:21:44.0', 'CRN3', 'xyz');
+INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id) VALUES (4, 'G6933GF', '2023-05-17 12:21:44.0', 'CRN4', 'xyz');
+INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id) VALUES (5, 'A8339DY', '2023-05-17 12:21:44.0', 'CRN5', 'xyz');
+INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id) VALUES (6, 'A8132DY', '2023-05-17 12:21:44.0', 'CRN6', 'xyz');
+INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id) VALUES (7, 'A8258DY', '2023-05-17 12:21:44.0', 'CRN7', 'xyz');
+INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id) VALUES (8, 'A8257DY', '2023-05-17 12:21:44.0', 'CRN8', 'xyz');
+INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id) VALUES (9, 'A8314DY', '2023-05-17 12:21:44.0', 'CRN9', 'xyz');
+INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id) VALUES (10, 'A8229DY', '2023-05-17 12:21:44.0', 'CRN10', 'xyz');
 
 INSERT INTO pathway_status (id, prisoner_id, pathway_id, status_id, updated_date) VALUES (1, 1, 1, 1, '2023-05-17 12:21:44.0');
 INSERT INTO pathway_status (id, prisoner_id, pathway_id, status_id, updated_date) VALUES (2, 1, 2, 2, '2023-05-18 12:21:44.0');

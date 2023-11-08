@@ -1,9 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external
 
-import jakarta.transaction.Transactional
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -36,10 +34,6 @@ class OffenderSearchApiService(
   private val prisonRegisterApiService: PrisonRegisterApiService,
   private val prisonApiService: PrisonApiService,
 ) {
-
-  companion object {
-    private val log = LoggerFactory.getLogger(this::class.java)
-  }
 
   fun findPrisonersBySearchTerm(prisonId: String, searchTerm: String?): Flow<List<PrisonersSearch>> = flow {
     var page = 0
@@ -196,11 +190,12 @@ class OffenderSearchApiService(
 
   suspend fun getPrisonerDetailsByNomsId(nomsId: String): Prisoner {
     val prisonerSearch = findPrisonerPersonalDetails(nomsId)
+    setDisplayedReleaseDate(prisonerSearch)
 
     checkPrisonerIsInActivePrison(prisonerSearch)
 
     // Add initial pathway statuses if required
-    pathwayAndStatusService.addPrisonerAndInitialPathwayStatus(nomsId, prisonerSearch.prisonId)
+    pathwayAndStatusService.addPrisonerAndInitialPathwayStatus(nomsId, prisonerSearch.prisonId, prisonerSearch.displayReleaseDate)
 
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Unable to find prisoner $nomsId in database.")
@@ -279,21 +274,6 @@ class OffenderSearchApiService(
       }
     }
     return pathwayStatuses
-  }
-
-  @Transactional
-  suspend fun updatePrisonId() {
-    val prisonersList = prisonerRepository.findAllByPrisonIdIsNull()
-    log.warn("Found ${prisonersList.size} prisoners having prisonId is empty")
-    for (prisoner in prisonersList) {
-      try {
-        val prisonersSearch = findPrisonerPersonalDetails(prisoner.nomsId)
-        prisoner.prisonId = prisonersSearch.prisonId
-        prisonerRepository.save(prisoner)
-      } catch (ex: ResourceNotFoundException) {
-        log.warn("Failed to update prison Id for Prisoner  ${prisoner.nomsId}")
-      }
-    }
   }
 
   fun setDisplayedReleaseDate(prisoner: PrisonersSearch) {

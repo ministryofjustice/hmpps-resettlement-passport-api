@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.IdTypeRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Optional
 
@@ -47,7 +48,7 @@ class AssessmentServiceTest {
   @Test
   fun `test getAssessmentById - returns assessment`() = runTest {
     val assessmentId: Long = 1
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz1")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz1", LocalDate.parse("2025-01-23"))
     val assessmentEntity = AssessmentEntity(1, prisonerEntity, fakeNow, fakeNow, isBankAccountRequired = true, isIdRequired = true, idDocuments = emptySet(), isDeleted = false, deletionDate = null)
     Mockito.`when`(assessmentRepository.findById(assessmentId)).thenReturn(Optional.of(assessmentEntity))
 
@@ -58,7 +59,7 @@ class AssessmentServiceTest {
   @Test
   fun `test getAssessmentById - returns null if assessment is deleted`() = runTest {
     val assessmentId: Long = 1
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
     val assessmentEntity = AssessmentEntity(1, prisonerEntity, fakeNow, fakeNow, isBankAccountRequired = true, isIdRequired = true, idDocuments = emptySet(), isDeleted = true, deletionDate = fakeNow)
     Mockito.`when`(assessmentRepository.findById(assessmentId)).thenReturn(Optional.of(assessmentEntity))
 
@@ -79,7 +80,7 @@ class AssessmentServiceTest {
   fun `test deleteAssessment - sets deleted flag`() = runTest {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
     val assessmentEntity = AssessmentEntity(1, prisonerEntity, fakeNow, fakeNow, isBankAccountRequired = true, isIdRequired = true, idDocuments = emptySet(), isDeleted = false, deletionDate = null)
     val expectedAssessmentEntity = AssessmentEntity(1, prisonerEntity, fakeNow, fakeNow, isBankAccountRequired = true, isIdRequired = true, idDocuments = emptySet(), isDeleted = true, deletionDate = fakeNow)
 
@@ -94,7 +95,7 @@ class AssessmentServiceTest {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val nomsId = "abc"
-    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
     val idTypes = listOf(IdTypeEntity(1, "Driving licence"), IdTypeEntity(2, "Birth certificate"), IdTypeEntity(1, "Something else"))
     val expectedIdTypes = listOf(IdTypeEntity(1, "Driving licence"), IdTypeEntity(2, "Birth certificate"))
     val expectedAssessmentEntity = AssessmentEntity(null, prisonerEntity, fakeNow, fakeNow, isBankAccountRequired = true, isIdRequired = true, idDocuments = expectedIdTypes.toSet(), isDeleted = false, deletionDate = null)

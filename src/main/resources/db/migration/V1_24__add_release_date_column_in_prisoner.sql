@@ -1,0 +1,1 @@
+alter table prisoner add release_date date;

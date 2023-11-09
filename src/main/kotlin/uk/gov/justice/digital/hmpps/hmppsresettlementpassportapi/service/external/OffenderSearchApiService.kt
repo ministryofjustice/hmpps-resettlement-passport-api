@@ -218,7 +218,7 @@ class OffenderSearchApiService(
       prisonerSearch.firstName,
       prisonerSearch.middleNames,
       prisonerSearch.lastName,
-      prisonerSearch.releaseDate,
+      prisonerSearch.displayReleaseDate,
       prisonerSearch.nonDtoReleaseDateType,
       prisonerSearch.dateOfBirth,
       age,

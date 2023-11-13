@@ -25,13 +25,13 @@ class CRSReferralService(
   private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
 ) {
 
-  suspend fun getAllPathwayCRSReferralsByNomsId(
+  fun getAllPathwayCRSReferralsByNomsId(
     nomsId: String,
   ): CRSReferralResponse {
     return getCRSReferralsByPathway(nomsId, Pathway.getAllPathways())
   }
 
-  suspend fun getCRSReferralsByPathway(
+  fun getCRSReferralsByPathway(
     nomsId: String,
     pathways: Set<Pathway>,
   ): CRSReferralResponse {
@@ -47,7 +47,7 @@ class CRSReferralService(
     return objectMapper(referrals, pathways, nomsId)
   }
 
-  private suspend fun objectMapper(
+  private fun objectMapper(
     referralList: List<ReferralDTO>,
     pathways: Set<Pathway>,
     nomsId: String,
@@ -118,7 +118,7 @@ class CRSReferralService(
     return CRSReferralResponse(crsReferralWithPathwaysList)
   }
 
-  private suspend fun getAlternateMessage(nomsId: String, pathway: Pathway, crsReferralList: List<CRSReferral>): String {
+  private fun getAlternateMessage(nomsId: String, pathway: Pathway, crsReferralList: List<CRSReferral>): String {
     var message = ""
     if (crsReferralList.isEmpty()) {
       val prisoner = offenderSearchApiService.findPrisonerPersonalDetails(nomsId)

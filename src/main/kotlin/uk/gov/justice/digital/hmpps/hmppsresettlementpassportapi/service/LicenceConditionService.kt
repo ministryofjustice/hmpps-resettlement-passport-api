@@ -8,7 +8,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 @Service
 class LicenceConditionService(val cvlApiService: CvlApiService) {
 
-  suspend fun getLicenceConditionsByNomsId(nomsId: String): LicenceConditions? {
+  fun getLicenceConditionsByNomsId(nomsId: String): LicenceConditions? {
     val licence = cvlApiService.getLicenceByNomsId(nomsId) ?: throw NoDataWithCodeFoundException(
       "Prisoner",
       nomsId,
@@ -16,5 +16,5 @@ class LicenceConditionService(val cvlApiService: CvlApiService) {
     return cvlApiService.getLicenceConditionsByLicenceId(licence.licenceId)
   }
 
-  fun getImageFromLicenceIdAndConditionId(licenceId: String, conditionId: String) = cvlApiService.getImageFromLicenceIdAndConditionId(licenceId, conditionId)
+  fun getImageFromLicenceIdAndConditionId(licenceId: String, conditionId: String): ByteArray = cvlApiService.getImageFromLicenceIdAndConditionId(licenceId, conditionId)
 }

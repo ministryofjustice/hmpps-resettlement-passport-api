@@ -62,7 +62,7 @@ class AssessmentResourceController(private val assessmentService: AssessmentServ
       ),
     ],
   )
-  suspend fun getAssessmentByNomsId(
+  fun getAssessmentByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     @Parameter(required = true)
@@ -99,7 +99,7 @@ class AssessmentResourceController(private val assessmentService: AssessmentServ
       ),
     ],
   )
-  suspend fun postAssessmentByNomsId(
+  fun postAssessmentByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     nomsId: String,
@@ -137,7 +137,7 @@ class AssessmentResourceController(private val assessmentService: AssessmentServ
       ),
     ],
   )
-  suspend fun deleteAssessmentByNomsId(
+  fun deleteAssessmentByNomsId(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,

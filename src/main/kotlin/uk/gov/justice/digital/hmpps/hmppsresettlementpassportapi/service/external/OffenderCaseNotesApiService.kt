@@ -1,14 +1,11 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.awaitBody
-import org.springframework.web.reactive.function.client.awaitBodyOrNull
+import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesList
@@ -19,6 +16,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNotes
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.PATHWAY_PARENT_TYPE
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.PathwayMap
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.isAllowedSubTypes
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -31,7 +29,7 @@ class OffenderCaseNotesApiService(
 
 ) {
 
-  suspend fun getCaseNotesByNomsId(
+  fun getCaseNotesByNomsId(
     nomsId: String,
     pageNumber: Int,
     pageSize: Int,
@@ -60,43 +58,31 @@ class OffenderCaseNotesApiService(
     if (pathwayType == "All") {
       val caseNotesGEN = fetchCaseNotesByNomsId("GEN", "RESET", nomsId, days)
       val caseNotesRESET = fetchCaseNotesByNomsId("RESET", null, nomsId, days)
-      caseNotesGEN.collect {
-        offendersCaseNotes.addAll(it)
-      }
-      caseNotesRESET.collect {
-        offendersCaseNotes.addAll(it)
-      }
+      offendersCaseNotes.addAll(caseNotesGEN)
+      offendersCaseNotes.addAll(caseNotesRESET)
     } else if (pathwayValues.any { it.id == pathwayType }) {
       if (pathwayType == "GENERAL") {
         val caseNotesGEN = fetchCaseNotesByNomsId("GEN", "RESET", nomsId, days)
         if (createdBy != 0) {
-          caseNotesGEN.collect { caseNoteList ->
-            caseNoteList.forEach {
-              if (it.authorUserId.toInt() == createdBy) {
-                offendersCaseNotes.add(it)
-              }
+          caseNotesGEN.forEach {
+            if (it.authorUserId.toInt() == createdBy) {
+              offendersCaseNotes.add(it)
             }
           }
         } else {
-          caseNotesGEN.collect {
-            offendersCaseNotes.addAll(it)
-          }
+          offendersCaseNotes.addAll(caseNotesGEN)
         }
       } else {
         val pathwayVal = pathwayValues.find { it.id == pathwayType }
         val caseNotesRESET = fetchCaseNotesByNomsId("RESET", pathwayVal?.name, nomsId, days)
         if (createdBy != 0) {
-          caseNotesRESET.collect { caseNoteList ->
-            caseNoteList.forEach {
-              if (it.authorUserId.toInt() == createdBy) {
-                offendersCaseNotes.add(it)
-              }
+          caseNotesRESET.forEach {
+            if (it.authorUserId.toInt() == createdBy) {
+              offendersCaseNotes.add(it)
             }
           }
         } else {
-          caseNotesRESET.collect {
-            offendersCaseNotes.addAll(it)
-          }
+          offendersCaseNotes.addAll(caseNotesRESET)
         }
       }
     } else {
@@ -153,12 +139,14 @@ class OffenderCaseNotesApiService(
     return CaseNotesList(null, null, null, null, 0, false)
   }
 
-  private suspend fun fetchCaseNotesByNomsId(
+  private fun fetchCaseNotesByNomsId(
     searchTerm: String,
     searchSubTerm: String?,
     nomsId: String,
     days: Int,
-  ): Flow<List<CaseNote>> = flow {
+  ): List<CaseNote> {
+    val listToReturn = mutableListOf<CaseNote>()
+
     var page = 0
     var uriValue = "/case-notes/{nomsId}?page={page}&size={size}&type={type}"
     val pattern = DateTimeFormatter.ISO_LOCAL_DATE_TIME // ofPattern(DateTimeFormatter.ISO_LOCAL_DATE_TIME.toString())
@@ -188,13 +176,18 @@ class OffenderCaseNotesApiService(
           ),
         )
         .retrieve()
-        .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("PrisonerId $nomsId not found and the uri is $uriValue") })
-      val pageOfData = data.awaitBodyOrNull<CaseNotes>()
+        .onStatus(
+          { it == HttpStatus.NOT_FOUND },
+          { throw ResourceNotFoundException("PrisonerId $nomsId not found and the uri is $uriValue") },
+        )
+      val pageOfData = data.bodyToMono<CaseNotes>().block()
       if (pageOfData != null) {
-        emit(pageOfData.content!!)
+        listToReturn.addAll(pageOfData.content!!)
       }
       page += 1
     } while (!pageOfData?.last!!)
+
+    return listToReturn
   }
 
   private fun objectMapper(searchList: List<CaseNote>): List<PathwayCaseNote> {
@@ -219,7 +212,7 @@ class OffenderCaseNotesApiService(
     return caseNotesList
   }
 
-  suspend fun getCaseNotesCreatorsByPathway(nomsId: String, pathwayType: String): List<CaseNotesMeta> {
+  fun getCaseNotesCreatorsByPathway(nomsId: String, pathwayType: String): List<CaseNotesMeta> {
     val type: String
     val subType: String
     val pathwayValues = PathwayMap.values()
@@ -232,13 +225,9 @@ class OffenderCaseNotesApiService(
         val pathwayVal = pathwayValues.find { it.id == pathwayType }
         subType = pathwayVal?.name.toString()
       }
-      val offendersCaseNotes = mutableListOf<CaseNote>()
       val creatorsList = mutableListOf<CaseNotesMeta>()
       val caseNotes = fetchCaseNotesByNomsId(type, subType, nomsId, 0)
-      caseNotes.collect {
-        offendersCaseNotes.addAll(it)
-      }
-      offendersCaseNotes.forEach { caseNote ->
+      caseNotes.forEach { caseNote ->
         val casenoteMeta = CaseNotesMeta(
           caseNote.authorName,
           caseNote.authorUserId,
@@ -253,10 +242,14 @@ class OffenderCaseNotesApiService(
       )
     }
   }
-  suspend fun postCaseNote(nomsId: String, caseNotes: CaseNotesRequest, auth: String): CaseNote {
+
+  fun postCaseNote(nomsId: String, pathway: Pathway, caseNotesText: String, auth: String) =
+    postCaseNote(nomsId, CaseNotesRequest(pathway, caseNotesText), auth)
+
+  fun postCaseNote(nomsId: String, caseNotes: CaseNotesRequest, auth: String): CaseNote? {
     val type = PATHWAY_PARENT_TYPE
     val pathwayValues = PathwayMap.values()
-    val pathwayVal = pathwayValues.find { it.id == caseNotes.pathway }
+    val pathwayVal = pathwayValues.find { it.id == caseNotes.pathway.name }
     val subType = pathwayVal?.name.toString()
     val prisonCode = offenderSearchApiService.findPrisonerPersonalDetails(nomsId).prisonId
 
@@ -276,6 +269,7 @@ class OffenderCaseNotesApiService(
       )
       .retrieve()
       .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found") })
-      .awaitBody<CaseNote>()
+      .bodyToMono<CaseNote>()
+      .block()
   }
 }

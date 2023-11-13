@@ -19,13 +19,13 @@ class AssessmentService(
 ) {
 
   @Transactional
-  suspend fun getAssessmentById(id: Long): AssessmentEntity? {
+  fun getAssessmentById(id: Long): AssessmentEntity? {
     val assessment = assessmentRepository.findById(id) ?: return null
     return if (assessment.get().isDeleted) null else assessment.get()
   }
 
   @Transactional
-  suspend fun getAssessmentByNomsId(nomsId: String): AssessmentEntity? {
+  fun getAssessmentByNomsId(nomsId: String): AssessmentEntity? {
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val assessment = assessmentRepository.findByPrisonerAndIsDeleted(prisoner) ?: throw ResourceNotFoundException("assessment not found")
@@ -33,14 +33,14 @@ class AssessmentService(
   }
 
   @Transactional
-  suspend fun deleteAssessment(assessment: AssessmentEntity) {
+  fun deleteAssessment(assessment: AssessmentEntity) {
     assessment.isDeleted = true
     assessment.deletionDate = LocalDateTime.now()
     assessmentRepository.save(assessment)
   }
 
   @Transactional
-  suspend fun createAssessment(assessment: Assessment): AssessmentEntity {
+  fun createAssessment(assessment: Assessment): AssessmentEntity {
     val prisoner = prisonerRepository.findByNomsId(assessment.nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id ${assessment.nomsId} not found in database")
 

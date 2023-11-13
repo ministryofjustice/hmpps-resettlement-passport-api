@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
-import kotlinx.coroutines.flow.Flow
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
@@ -58,14 +57,14 @@ class PrisonerResourceController(
       ),
     ],
   )
-  suspend fun getPrisonersByPrisonId(
+  fun getPrisonersByPrisonId(
     @Schema(example = "MDI", required = true, minLength = 3, maxLength = 6)
     @PathVariable("prisonId")
     @Parameter(required = true)
     prisonId: String,
     @Schema(example = "James South ", required = false)
     @Parameter(description = "The primary search term. Whe absent all prisoners will be returned at the prison")
-    term: String,
+    term: String?,
     @Schema(example = "0", required = true)
     @Parameter(required = true, description = "Zero-based page index (0..N)")
     @RequestParam(value = "page", defaultValue = "0")
@@ -117,7 +116,7 @@ class PrisonerResourceController(
       ),
     ],
   )
-  suspend fun getPrisonerDetails(
+  fun getPrisonerDetails(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     @Parameter(required = true)
@@ -163,7 +162,7 @@ class PrisonerResourceController(
       ),
     ],
   )
-  suspend fun getPrisonerImage(
+  fun getPrisonerImage(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     @Parameter(required = true)
@@ -171,5 +170,5 @@ class PrisonerResourceController(
     @PathVariable("id")
     @Parameter(required = true)
     id: Int,
-  ): Flow<ByteArray> = prisonerService.getPrisonerImageData(nomsId, id)
+  ): ByteArray? = prisonerService.getPrisonerImageData(nomsId, id)
 }

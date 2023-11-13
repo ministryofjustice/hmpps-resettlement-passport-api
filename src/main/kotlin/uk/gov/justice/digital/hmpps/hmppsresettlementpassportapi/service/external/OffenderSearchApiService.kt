@@ -1,12 +1,9 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.awaitBody
-import org.springframework.web.reactive.function.client.awaitBodyOrNull
+import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
@@ -35,7 +32,9 @@ class OffenderSearchApiService(
   private val prisonApiService: PrisonApiService,
 ) {
 
-  fun findPrisonersBySearchTerm(prisonId: String, searchTerm: String?): Flow<List<PrisonersSearch>> = flow {
+  fun findPrisonersBySearchTerm(prisonId: String, searchTerm: String?): List<PrisonersSearch> {
+    val listToReturn = mutableListOf<PrisonersSearch>()
+
     var page = 0
     do {
       val data = offenderSearchWebClientClientCredentials.get()
@@ -52,12 +51,13 @@ class OffenderSearchApiService(
         .retrieve()
         .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("PrisonId $prisonId not found") })
 
-      val pageOfData = data.awaitBodyOrNull<PrisonersSearchList>()
+      val pageOfData = data.bodyToMono<PrisonersSearchList>().block()
       if (pageOfData != null) {
-        emit(pageOfData.content!!)
+        listToReturn.addAll(pageOfData.content!!)
       }
       page += 1
     } while (!pageOfData?.last!!)
+    return listToReturn
   }
 
   /**
@@ -65,8 +65,8 @@ class OffenderSearchApiService(
    * returning a complete list.
    * Requires role PRISONER_IN_PRISON_SEARCH or PRISONER_SEARCH
    */
-  suspend fun getPrisonersByPrisonId(
-    searchTerm: String,
+  fun getPrisonersByPrisonId(
+    searchTerm: String?,
     prisonId: String,
     days: Int,
     pageNumber: Int,
@@ -84,11 +84,9 @@ class OffenderSearchApiService(
         "Page $pageNumber and Size $pageSize",
       )
     }
-    findPrisonersBySearchTerm(prisonId, searchTerm).collect { prisoners ->
-      prisoners.forEach {
-        setDisplayedReleaseDate(it)
-        offenders.add(it)
-      }
+    findPrisonersBySearchTerm(prisonId, searchTerm).forEach {
+      setDisplayedReleaseDate(it)
+      offenders.add(it)
     }
     if (days > 0) {
       val earliestReleaseDate = LocalDate.now().minusDays(1)
@@ -171,7 +169,7 @@ class OffenderSearchApiService(
     return prisonersList
   }
 
-  suspend fun findPrisonerPersonalDetails(nomsId: String): PrisonersSearch {
+  fun findPrisonerPersonalDetails(nomsId: String): PrisonersSearch {
     return offenderSearchWebClientClientCredentials
       .get()
       .uri(
@@ -185,17 +183,22 @@ class OffenderSearchApiService(
         { it == HttpStatus.NOT_FOUND },
         { throw ResourceNotFoundException("Prisoner $nomsId not found in offender search api") },
       )
-      .awaitBody<PrisonersSearch>()
+      .bodyToMono<PrisonersSearch>()
+      .block() ?: throw RuntimeException("Unexpected null returned from request.")
   }
 
-  suspend fun getPrisonerDetailsByNomsId(nomsId: String): Prisoner {
+  fun getPrisonerDetailsByNomsId(nomsId: String): Prisoner {
     val prisonerSearch = findPrisonerPersonalDetails(nomsId)
     setDisplayedReleaseDate(prisonerSearch)
 
     checkPrisonerIsInActivePrison(prisonerSearch)
 
     // Add initial pathway statuses if required
-    pathwayAndStatusService.addPrisonerAndInitialPathwayStatus(nomsId, prisonerSearch.prisonId, prisonerSearch.displayReleaseDate)
+    pathwayAndStatusService.addPrisonerAndInitialPathwayStatus(
+      nomsId,
+      prisonerSearch.prisonId,
+      prisonerSearch.displayReleaseDate,
+    )
 
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Unable to find prisoner $nomsId in database.")
@@ -231,7 +234,7 @@ class OffenderSearchApiService(
     return Prisoner(prisonerPersonal, pathwayStatuses)
   }
 
-  suspend fun checkPrisonerIsInActivePrison(prisoner: PrisonersSearch) {
+  fun checkPrisonerIsInActivePrison(prisoner: PrisonersSearch) {
     // Send back a 404 if the prisonId is not in the active list as we should only display data for non-released prisoners.
     if (!prisonRegisterApiService.getActivePrisonsList().map { it.id }.contains(prisoner.prisonId)) {
       throw ResourceNotFoundException("Prisoner with nomsId ${prisoner.prisonerNumber} and prisonId ${prisoner.prisonId} not found in any active prison")

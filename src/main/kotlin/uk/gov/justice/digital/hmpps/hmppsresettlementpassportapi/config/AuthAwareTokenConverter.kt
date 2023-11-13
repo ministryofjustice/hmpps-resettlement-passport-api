@@ -1,21 +1,21 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config
+
 import org.springframework.core.convert.converter.Converter
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter
-import reactor.core.publisher.Mono
 
-class AuthAwareTokenConverter : Converter<Jwt, Mono<AuthAwareAuthenticationToken>> {
+class AuthAwareTokenConverter : Converter<Jwt, AuthAwareAuthenticationToken> {
   private val jwtGrantedAuthoritiesConverter: Converter<Jwt, Collection<GrantedAuthority>> =
     JwtGrantedAuthoritiesConverter()
 
-  override fun convert(jwt: Jwt): Mono<AuthAwareAuthenticationToken> {
+  override fun convert(jwt: Jwt): AuthAwareAuthenticationToken {
     val claims = jwt.claims
     val principal = findPrincipal(claims)
     val authorities = extractAuthorities(jwt)
-    return Mono.just(AuthAwareAuthenticationToken(jwt, principal, authorities))
+    return AuthAwareAuthenticationToken(jwt, principal, authorities)
   }
 
   private fun findPrincipal(claims: Map<String, Any?>): String {

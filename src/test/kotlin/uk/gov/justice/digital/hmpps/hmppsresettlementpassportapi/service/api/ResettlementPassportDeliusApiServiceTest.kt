@@ -3,7 +3,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.api
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -86,7 +85,7 @@ class ResettlementPassportDeliusApiServiceTest {
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
 
     val appointmentList = rpDeliusApiService.fetchAppointments(nomsId, crn, LocalDate.now().minusDays(1), LocalDate.now().plusDays(365), 0, 10)
-    Assertions.assertEquals(expectedType, appointmentList.first().results[0].type.description)
+    Assertions.assertEquals(expectedType, appointmentList.results[0].type.description)
   }
 
   @Test

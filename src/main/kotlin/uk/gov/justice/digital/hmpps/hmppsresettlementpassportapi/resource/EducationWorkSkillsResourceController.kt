@@ -49,7 +49,7 @@ class EducationWorkSkillsResourceController(
       ),
     ],
   )
-  suspend fun getWorkReadinessData(
+  fun getWorkReadinessData(
     @Schema(example = "ABC1234", required = true)
     @PathVariable("nomsId")
     @Parameter(required = true)

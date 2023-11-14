@@ -22,5 +22,4 @@ interface PathwayStatusRepository : JpaRepository<PathwayStatusEntity, Long> {
 
   @Query("select p from PathwayStatusEntity ps, PrisonerEntity p where ps.status.id in (:statuses) and p.prisonId = :prisonId and p.id = ps.prisoner.id and ((p.releaseDate between :earliestReleaseDate and :latestReleaseDate) or p.releaseDate is null) group by p having count(ps) = :numberOfPathways")
   fun findPrisonersByPrisonWithAllPathwaysDone(prisonId: String, earliestReleaseDate: LocalDate, latestReleaseDate: LocalDate, statuses: List<Long> = Status.getCompletedStatuses(), numberOfPathways: Int = Pathway.values().size): List<PrisonerEntity>
-
 }

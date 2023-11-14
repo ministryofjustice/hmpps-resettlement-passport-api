@@ -28,7 +28,6 @@ class MetricsService(
   }
 
   private fun recordPrisonersCountForEachPrison() {
-
     log.info("Started running scheduled metrics job")
 
     val earliestReleaseDate = LocalDate.now().minusDays(1)
@@ -40,13 +39,11 @@ class MetricsService(
 
     for (prison in prisonList) {
       try {
-
-        offenderSearchApiService.findPrisonersBySearchTerm(prison.id, "").collect { prisoners ->
-          prisoners.forEach { offenderSearchApiService.setDisplayedReleaseDate(it) }
-          prisonersCountMap["total_prisoners_count_${prison.id}"] = prisoners.filter { it.displayReleaseDate == null || it.displayReleaseDate!! > earliestReleaseDate }.size
-          prisonersCountMap["total_prisoners_12Weeks_count_${prison.id}"] = prisoners.filter { it.displayReleaseDate != null && it.displayReleaseDate!! > earliestReleaseDate && it.displayReleaseDate!! < latestRD12Weeks }.size
-          prisonersCountMap["total_prisoners_24Weeks_count_${prison.id}"] = prisoners.filter { it.displayReleaseDate != null && it.displayReleaseDate!! > earliestReleaseDate && it.displayReleaseDate!! < latestRD24Weeks }.size
-        }
+        val prisoners = offenderSearchApiService.findPrisonersBySearchTerm(prison.id, "")
+        prisoners.forEach { offenderSearchApiService.setDisplayedReleaseDate(it) }
+        prisonersCountMap["total_prisoners_count_${prison.id}"] = prisoners.filter { it.displayReleaseDate == null || it.displayReleaseDate!! > earliestReleaseDate }.size
+        prisonersCountMap["total_prisoners_12Weeks_count_${prison.id}"] = prisoners.filter { it.displayReleaseDate != null && it.displayReleaseDate!! > earliestReleaseDate && it.displayReleaseDate!! < latestRD12Weeks }.size
+        prisonersCountMap["total_prisoners_24Weeks_count_${prison.id}"] = prisoners.filter { it.displayReleaseDate != null && it.displayReleaseDate!! > earliestReleaseDate && it.displayReleaseDate!! < latestRD24Weeks }.size
 
         prisonersCountMap["total_not_started_prisoners_count_${prison.id}"] = prisonerService.getNotStartedPrisonersByPrisonId(prison.id, earliestReleaseDate, latestAllTimeReleaseDate).size
         prisonersCountMap["total_not_started_prisoners_12Weeks_count_${prison.id}"] = prisonerService.getNotStartedPrisonersByPrisonId(prison.id, earliestReleaseDate, latestRD12Weeks).filter { it.releaseDate != null }.size

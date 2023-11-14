@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonApiService
+import java.time.LocalDate
 import java.util.stream.Stream
 
 @Service
@@ -39,20 +40,20 @@ class PrisonerService(
   fun getPrisonerImageData(nomsId: String, imageId: Int): ByteArray? = prisonApiService.getPrisonerImageData(nomsId, imageId)
 
   @Transactional
-  fun getInProgressNomsIdsByPrisonId(prisonId: String): List<String> {
-    val inProgressPrisoners = mutableListOf<String>()
-    val inProgressOrDonePrisoners = pathwayStatusRepository.findPrisonersByPrisonIdWithAtLeastOnePathwayNotInNotStarted(prisonId)
-    val donePrisoners = pathwayStatusRepository.findPrisonersByPrisonWithAllPathwaysDone(prisonId)
+  fun getInProgressPrisonersByPrisonId(prisonId: String, earliestReleaseDate: LocalDate, latestReleaseDate: LocalDate): List<PrisonerEntity> {
+    val inProgressPrisoners = mutableListOf<PrisonerEntity>()
+    val inProgressOrDonePrisoners = pathwayStatusRepository.findPrisonersByPrisonIdWithAtLeastOnePathwayNotInNotStarted(prisonId, earliestReleaseDate, latestReleaseDate)
+    val donePrisoners = pathwayStatusRepository.findPrisonersByPrisonWithAllPathwaysDone(prisonId, earliestReleaseDate, latestReleaseDate)
     inProgressPrisoners.addAll(inProgressOrDonePrisoners)
     inProgressPrisoners.removeAll(donePrisoners)
     return inProgressPrisoners
   }
 
   @Transactional
-  fun getNotStartedNomsIdsByPrisonId(prisonId: String) = pathwayStatusRepository.findPrisonersByPrisonIdWithAllPathwaysNotStarted(prisonId)
+  fun getNotStartedPrisonersByPrisonId(prisonId: String, earliestReleaseDate: LocalDate, latestReleaseDate: LocalDate) = pathwayStatusRepository.findPrisonersByPrisonIdWithAllPathwaysNotStarted(prisonId, earliestReleaseDate, latestReleaseDate)
 
   @Transactional
-  fun getDoneNomsIdsByPrisonId(prisonId: String) = pathwayStatusRepository.findPrisonersByPrisonWithAllPathwaysDone(prisonId)
+  fun getDonePrisonersByPrisonId(prisonId: String, earliestReleaseDate: LocalDate, latestReleaseDate: LocalDate) = pathwayStatusRepository.findPrisonersByPrisonWithAllPathwaysDone(prisonId, earliestReleaseDate, latestReleaseDate)
 
   @Transactional
   fun addReleaseDateToPrisoners() {

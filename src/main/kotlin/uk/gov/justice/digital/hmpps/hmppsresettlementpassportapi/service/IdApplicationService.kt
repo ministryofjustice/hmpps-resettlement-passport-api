@@ -21,7 +21,7 @@ class IdApplicationService(
 ) {
 
   @Transactional
-  suspend fun getIdApplicationByNomsId(nomsId: String): IdApplicationEntity? {
+  fun getIdApplicationByNomsId(nomsId: String): IdApplicationEntity? {
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val idApplicationEntityList = idApplicationRepository.findByPrisonerAndIsDeleted(prisoner)
@@ -33,7 +33,7 @@ class IdApplicationService(
   }
 
   @Transactional
-  suspend fun createIdApplication(idApplicationPost: IdApplicationPost, nomsId: String): IdApplicationEntity {
+  fun createIdApplication(idApplicationPost: IdApplicationPost, nomsId: String): IdApplicationEntity {
     val now = LocalDateTime.now()
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
@@ -78,7 +78,7 @@ class IdApplicationService(
   }
 
   @Transactional
-  suspend fun updateIdApplication(existingIdApplication: IdApplicationEntity, idApplicationPatchDTO: IdApplicationPatch): IdApplicationEntity {
+  fun updateIdApplication(existingIdApplication: IdApplicationEntity, idApplicationPatchDTO: IdApplicationPatch): IdApplicationEntity {
     val now = LocalDateTime.now()
     existingIdApplication.status = idApplicationPatchDTO.status ?: throw ValidationException("status must be updated")
     existingIdApplication.isAddedToPersonalItems = idApplicationPatchDTO.isAddedToPersonalItems ?: existingIdApplication.isAddedToPersonalItems
@@ -90,14 +90,14 @@ class IdApplicationService(
   }
 
   @Transactional
-  suspend fun deleteIdApplication(existingIdApplication: IdApplicationEntity) {
+  fun deleteIdApplication(existingIdApplication: IdApplicationEntity) {
     existingIdApplication.isDeleted = true
     existingIdApplication.deletionDate = LocalDateTime.now()
     idApplicationRepository.save(existingIdApplication)
   }
 
   @Transactional
-  suspend fun getIdApplicationByNomsIdAndIdApplicationID(nomsId: String, idApplicationId: Long): IdApplicationEntity? {
+  fun getIdApplicationByNomsIdAndIdApplicationID(nomsId: String, idApplicationId: Long): IdApplicationEntity? {
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     return idApplicationRepository.findByIdAndIsDeleted(idApplicationId, false)
@@ -105,7 +105,7 @@ class IdApplicationService(
   }
 
   @Transactional
-  suspend fun getAllIdApplicationsByNomsId(nomsId: String): List<IdApplicationEntity?> {
+  fun getAllIdApplicationsByNomsId(nomsId: String): List<IdApplicationEntity?> {
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     return idApplicationRepository.findByPrisonerAndIsDeleted(prisoner, false)

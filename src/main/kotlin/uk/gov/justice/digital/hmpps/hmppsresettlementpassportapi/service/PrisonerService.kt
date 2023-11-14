@@ -21,8 +21,8 @@ class PrisonerService(
   val prisonerRepository: PrisonerRepository,
   private val pathwayStatusRepository: PathwayStatusRepository,
 ) {
-  suspend fun getPrisonersByPrisonId(
-    term: String,
+  fun getPrisonersByPrisonId(
+    term: String?,
     prisonId: String,
     days: Int,
     page: Int,
@@ -34,12 +34,12 @@ class PrisonerService(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  suspend fun getPrisonerDetailsByNomsId(nomsId: String) = offenderSearchApiService.getPrisonerDetailsByNomsId(nomsId)
+  fun getPrisonerDetailsByNomsId(nomsId: String) = offenderSearchApiService.getPrisonerDetailsByNomsId(nomsId)
 
-  suspend fun getPrisonerImageData(nomsId: String, imageId: Int) = prisonApiService.getPrisonerImageData(nomsId, imageId)
+  fun getPrisonerImageData(nomsId: String, imageId: Int): ByteArray? = prisonApiService.getPrisonerImageData(nomsId, imageId)
 
   @Transactional
-  suspend fun getInProgressNomsIdsByPrisonId(prisonId: String): List<String> {
+  fun getInProgressNomsIdsByPrisonId(prisonId: String): List<String> {
     val inProgressPrisoners = mutableListOf<String>()
     val inProgressOrDonePrisoners = pathwayStatusRepository.findPrisonersByPrisonIdWithAtLeastOnePathwayNotInNotStarted(prisonId)
     val donePrisoners = pathwayStatusRepository.findPrisonersByPrisonWithAllPathwaysDone(prisonId)
@@ -49,13 +49,13 @@ class PrisonerService(
   }
 
   @Transactional
-  suspend fun getNotStartedNomsIdsByPrisonId(prisonId: String) = pathwayStatusRepository.findPrisonersByPrisonIdWithAllPathwaysNotStarted(prisonId)
+  fun getNotStartedNomsIdsByPrisonId(prisonId: String) = pathwayStatusRepository.findPrisonersByPrisonIdWithAllPathwaysNotStarted(prisonId)
 
   @Transactional
-  suspend fun getDoneNomsIdsByPrisonId(prisonId: String) = pathwayStatusRepository.findPrisonersByPrisonWithAllPathwaysDone(prisonId)
+  fun getDoneNomsIdsByPrisonId(prisonId: String) = pathwayStatusRepository.findPrisonersByPrisonWithAllPathwaysDone(prisonId)
 
   @Transactional
-  suspend fun addReleaseDateToPrisoners() {
+  fun addReleaseDateToPrisoners() {
     log.info("Start updating prisoner entities to add release date")
 
     val prisonersToUpdate = prisonerRepository.findAllByReleaseDateIsNull()
@@ -75,7 +75,7 @@ class PrisonerService(
   fun getSliceOfAllPrisoners(page: Pageable): Slice<PrisonerEntity> = prisonerRepository.findAll(page)
 
   @Transactional
-  suspend fun updateAndSaveNewReleaseDates(prisonerEntities: Stream<PrisonerEntity>) {
+  fun updateAndSaveNewReleaseDates(prisonerEntities: Stream<PrisonerEntity>) {
     for (prisonerEntity in prisonerEntities) {
       try {
         val prisoner = offenderSearchApiService.findPrisonerPersonalDetails(prisonerEntity.nomsId)

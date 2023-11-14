@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.PageRequest
@@ -21,34 +20,29 @@ class SchedulerService(
 
   @Scheduled(cron = "0 0/15 * * * ?")
   fun metricsScheduledTask() {
-    runBlocking {
-      metricsService.recordCustomMetrics()
-    }
+    metricsService.recordCustomMetrics()
   }
 
   @Scheduled(initialDelay = 30000, fixedDelay = Long.MAX_VALUE)
   fun oneTimeScheduledTask() {
-    runBlocking {
-      prisonerService.addReleaseDateToPrisoners()
-    }
+    prisonerService.addReleaseDateToPrisoners()
   }
 
   @Scheduled(cron = "0 0 2 * * *")
   fun reconcileReleaseDatesInDatabase() {
-    runBlocking {
-      log.info("Start updating prisoner entities with new release date")
+    log.info("Start updating prisoner entities with new release date")
 
-      var slice = prisonerService.getSliceOfAllPrisoners(PageRequest.of(0, batchSize).withSort(Sort.by(Sort.Direction.ASC, "id")))
+    var slice =
+      prisonerService.getSliceOfAllPrisoners(PageRequest.of(0, batchSize).withSort(Sort.by(Sort.Direction.ASC, "id")))
+    log.info("Updating prisoner entities with new release date - Page ${slice.number + 1}")
+    prisonerService.updateAndSaveNewReleaseDates(slice.get())
+
+    while (slice.hasNext()) {
+      slice = prisonerService.getSliceOfAllPrisoners((slice.nextPageable()))
       log.info("Updating prisoner entities with new release date - Page ${slice.number + 1}")
       prisonerService.updateAndSaveNewReleaseDates(slice.get())
-
-      while (slice.hasNext()) {
-        slice = prisonerService.getSliceOfAllPrisoners((slice.nextPageable()))
-        log.info("Updating prisoner entities with new release date - Page ${slice.number + 1}")
-        prisonerService.updateAndSaveNewReleaseDates(slice.get())
-      }
-
-      log.info("Finished updating prisoner entities with new release date")
     }
+
+    log.info("Finished updating prisoner entities with new release date")
   }
 }

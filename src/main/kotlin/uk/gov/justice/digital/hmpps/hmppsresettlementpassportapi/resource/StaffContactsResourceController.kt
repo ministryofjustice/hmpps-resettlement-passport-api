@@ -58,7 +58,7 @@ class StaffContactsResourceController(private val staffContactsService: StaffCon
       ),
     ],
   )
-  suspend fun getStaffContacts(
+  fun getStaffContacts(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,

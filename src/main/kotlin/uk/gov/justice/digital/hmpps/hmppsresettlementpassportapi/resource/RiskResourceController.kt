@@ -60,7 +60,7 @@ class RiskResourceController(
       ),
     ],
   )
-  suspend fun getRiskScoresByNomsId(
+  fun getRiskScoresByNomsId(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
@@ -99,7 +99,7 @@ class RiskResourceController(
       ),
     ],
   )
-  suspend fun getRoshDataByNomsId(
+  fun getRoshDataByNomsId(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
@@ -138,7 +138,7 @@ class RiskResourceController(
       ),
     ],
   )
-  suspend fun getMappaDataByNomsId(
+  fun getMappaDataByNomsId(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,

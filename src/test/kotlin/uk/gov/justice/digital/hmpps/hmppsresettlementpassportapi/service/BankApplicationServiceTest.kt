@@ -3,8 +3,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -28,7 +26,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Optional
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(MockitoExtension::class)
 class BankApplicationServiceTest {
   private lateinit var bankApplicationService: BankApplicationService
@@ -50,7 +47,7 @@ class BankApplicationServiceTest {
   }
 
   @Test
-  fun `test getBankApplicationById - returns bank application`() = runTest {
+  fun `test getBankApplicationById - returns bank application`() {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
     val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity, emptySet(), fakeNow, fakeNow, status = "Pending", bankName = "Lloyds")
     Mockito.`when`(bankApplicationRepository.findById(1)).thenReturn(Optional.of(bankApplicationEntity))
@@ -61,7 +58,7 @@ class BankApplicationServiceTest {
   }
 
   @Test
-  fun `test getBankApplicationByPrisoner - returns bank application`() = runTest {
+  fun `test getBankApplicationByPrisoner - returns bank application`() {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
     val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity, emptySet(), fakeNow, fakeNow, status = "Pending", isDeleted = false, bankName = "Lloyds")
     val expectedResult = BankApplicationResponse(
@@ -84,7 +81,7 @@ class BankApplicationServiceTest {
   }
 
   @Test
-  fun `test getBankApplicationByPrisoner - throws if not found`() = runTest {
+  fun `test getBankApplicationByPrisoner - throws if not found`() {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
     Mockito.`when`(prisonerRepository.findByNomsId(prisonerEntity.nomsId)).thenReturn(prisonerEntity)
     Mockito.`when`(bankApplicationRepository.findByPrisonerAndIsDeleted(any(), any())).thenReturn(null)
@@ -93,7 +90,7 @@ class BankApplicationServiceTest {
   }
 
   @Test
-  fun `test deleteBankApplication - updates isDeleted and deletionDate`() = runTest {
+  fun `test deleteBankApplication - updates isDeleted and deletionDate`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
@@ -117,7 +114,7 @@ class BankApplicationServiceTest {
   }
 
   @Test
-  fun `test createBankApplication - creates bank application`() = runTest {
+  fun `test createBankApplication - creates bank application`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
@@ -137,7 +134,7 @@ class BankApplicationServiceTest {
   }
 
   @Test
-  fun `test createBankApplication - creates bank application duplicate check`() = runTest {
+  fun `test createBankApplication - creates bank application duplicate check`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))

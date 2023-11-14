@@ -18,7 +18,7 @@ class AccommodationService(
   private val offenderSearchApiService: OffenderSearchApiService,
 ) {
 
-  suspend fun getAccommodationMainAddressByNomsId(
+  fun getAccommodationMainAddressByNomsId(
     nomsId: String,
   ): Accommodation {
     if (nomsId.isBlank()) {

@@ -9,15 +9,15 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 
 @Service
 class CaseNotesService(val offenderCaseNotesApiService: OffenderCaseNotesApiService) {
-  suspend fun getCaseNotesByNomsId(nomsId: String, page: Int, size: Int, sort: String, days: Int, pathwayType: String, createdByUserId: Int): CaseNotesList {
+  fun getCaseNotesByNomsId(nomsId: String, page: Int, size: Int, sort: String, days: Int, pathwayType: String, createdByUserId: Int): CaseNotesList {
     return offenderCaseNotesApiService.getCaseNotesByNomsId(nomsId, page, size, sort, days, pathwayType, createdByUserId)
   }
 
-  suspend fun getCaseNotesCreatorsByPathway(nomsId: String, pathwayType: String): List<CaseNotesMeta> {
+  fun getCaseNotesCreatorsByPathway(nomsId: String, pathwayType: String): List<CaseNotesMeta> {
     return offenderCaseNotesApiService.getCaseNotesCreatorsByPathway(nomsId, pathwayType)
   }
 
-  suspend fun postCaseNote(nomsId: String, caseNotes: CaseNotesRequest, auth: String): CaseNote {
+  fun postCaseNote(nomsId: String, caseNotes: CaseNotesRequest, auth: String): CaseNote? {
     return offenderCaseNotesApiService.postCaseNote(nomsId, caseNotes, auth)
   }
 }

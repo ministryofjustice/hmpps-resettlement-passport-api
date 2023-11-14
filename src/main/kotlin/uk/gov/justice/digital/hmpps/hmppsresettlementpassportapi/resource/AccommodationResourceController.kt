@@ -50,7 +50,7 @@ class AccommodationResourceController(
       ),
     ],
   )
-  suspend fun getAccommodationMainAddress(
+  fun getAccommodationMainAddress(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     @Parameter(required = true)

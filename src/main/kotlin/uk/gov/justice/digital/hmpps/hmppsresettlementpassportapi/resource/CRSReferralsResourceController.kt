@@ -51,7 +51,7 @@ class CRSReferralsResourceController(
       ),
     ],
   )
-  suspend fun getCRSReferralsByPathway(
+  fun getCRSReferralsByPathway(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     @Parameter(required = true)
@@ -87,7 +87,7 @@ class CRSReferralsResourceController(
       ),
     ],
   )
-  suspend fun getCRSReferralsForAllPathways(
+  fun getCRSReferralsForAllPathways(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     @Parameter(required = true)

@@ -1,14 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.reactive.awaitSingle
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientException
-import org.springframework.web.reactive.function.client.awaitBodyOrNull
 import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.MappaData
@@ -31,11 +27,11 @@ class ResettlementPassportDeliusApiService(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  suspend fun findCrn(nomsId: String): String? {
+  fun findCrn(nomsId: String): String? {
     return prisonerRepository.findByNomsId(nomsId)?.crn
   }
 
-  suspend fun getCrn(nomsId: String): String? {
+  fun getCrn(nomsId: String): String? {
     val offenderDetails = rpDeliusWebClientCredentials.get()
       .uri("/probation-cases/$nomsId/crn")
       .retrieve()
@@ -47,12 +43,12 @@ class ResettlementPassportDeliusApiService(
         },
         CaseIdentifiers(null),
       )
-      .awaitSingle()
+      .block()
 
-    return offenderDetails.crn
+    return offenderDetails?.crn
   }
 
-  suspend fun getMappaDataByNomsId(nomsId: String): MappaData? {
+  fun getMappaDataByNomsId(nomsId: String): MappaData? {
     val crn = findCrn(nomsId) ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $nomsId in database")
     val mappaDetail = rpDeliusWebClientCredentials.get()
       .uri("/probation-cases/$crn/mappa")
@@ -62,18 +58,18 @@ class ResettlementPassportDeliusApiService(
         { throw ResourceNotFoundException("Cannot find MAPPA Data for NomsId $nomsId / CRN $crn in Delius API") },
       )
       .bodyToMono<MappaDetail>()
-      .awaitSingle()
+      .block()
     return MappaData(
-      mappaDetail.level,
-      mappaDetail.levelDescription,
-      mappaDetail.category,
-      mappaDetail.categoryDescription,
-      mappaDetail.startDate,
-      mappaDetail.reviewDate,
+      mappaDetail?.level,
+      mappaDetail?.levelDescription,
+      mappaDetail?.category,
+      mappaDetail?.categoryDescription,
+      mappaDetail?.startDate,
+      mappaDetail?.reviewDate,
     )
   }
 
-  suspend fun getComByNomsId(nomsId: String): String? {
+  fun getComByNomsId(nomsId: String): String? {
     val crn = findCrn(nomsId) ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $nomsId in database")
 
     val communityManager = rpDeliusWebClientCredentials.get()
@@ -86,9 +82,9 @@ class ResettlementPassportDeliusApiService(
           true
         },
         Manager(null, true),
-      ).awaitSingle()
+      ).block()
 
-    if (communityManager.unallocated || communityManager.name == null) {
+    if (communityManager?.unallocated == true || communityManager?.name == null) {
       log.warn("No COM data found in Community API for NomsId $nomsId / CRN $crn")
       return null
     }
@@ -96,8 +92,8 @@ class ResettlementPassportDeliusApiService(
     return "${communityManager.name.forename} ${communityManager.name.surname}".convertNameToTitleCase()
   }
 
-  fun fetchAppointments(nomsId: String, crn: String, startDate: LocalDate, endDate: LocalDate, page: Int, size: Int): Flow<AppointmentsDeliusList> = flow {
-    val data = rpDeliusWebClientCredentials.get()
+  fun fetchAppointments(nomsId: String, crn: String, startDate: LocalDate, endDate: LocalDate, page: Int, size: Int): AppointmentsDeliusList {
+    return rpDeliusWebClientCredentials.get()
       .uri(
         "/appointments/{crn}?page={page}&size={size}&startDate={startDate}&endDate={endDate}",
         mapOf(
@@ -109,13 +105,11 @@ class ResettlementPassportDeliusApiService(
         ),
       )
       .retrieve().onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("NomsId $nomsId / CRN  $crn not found") })
-    val pageOfData = data.awaitBodyOrNull<AppointmentsDeliusList>()
-    if (pageOfData != null) {
-      emit(pageOfData)
-    }
+      .bodyToMono<AppointmentsDeliusList>()
+      .block() ?: throw RuntimeException("Unexpected null returned from request.")
   }
 
-  suspend fun fetchAccommodation(nomsId: String, crn: String): AccommodationsDelius {
+  fun fetchAccommodation(nomsId: String, crn: String): AccommodationsDelius {
     return rpDeliusWebClientCredentials.get()
       .uri(
         "/duty-to-refer-nsi/$crn",
@@ -126,6 +120,6 @@ class ResettlementPassportDeliusApiService(
         { throw ResourceNotFoundException("Cannot find duty to refer nsi Data for NomsId $nomsId / CRN $crn in Delius API") },
       )
       .bodyToMono<AccommodationsDelius>()
-      .awaitSingle()
+      .block() ?: throw RuntimeException("Unexpected null returned from request.")
   }
 }

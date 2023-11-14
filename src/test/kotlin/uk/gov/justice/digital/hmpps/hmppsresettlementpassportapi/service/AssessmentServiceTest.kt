@@ -3,8 +3,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -24,7 +22,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Optional
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(MockitoExtension::class)
 class AssessmentServiceTest {
   private lateinit var assessmentService: AssessmentService
@@ -46,7 +43,7 @@ class AssessmentServiceTest {
   }
 
   @Test
-  fun `test getAssessmentById - returns assessment`() = runTest {
+  fun `test getAssessmentById - returns assessment`() {
     val assessmentId: Long = 1
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz1", LocalDate.parse("2025-01-23"))
     val assessmentEntity = AssessmentEntity(1, prisonerEntity, fakeNow, fakeNow, isBankAccountRequired = true, isIdRequired = true, idDocuments = emptySet(), isDeleted = false, deletionDate = null)
@@ -57,7 +54,7 @@ class AssessmentServiceTest {
   }
 
   @Test
-  fun `test getAssessmentById - returns null if assessment is deleted`() = runTest {
+  fun `test getAssessmentById - returns null if assessment is deleted`() {
     val assessmentId: Long = 1
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
     val assessmentEntity = AssessmentEntity(1, prisonerEntity, fakeNow, fakeNow, isBankAccountRequired = true, isIdRequired = true, idDocuments = emptySet(), isDeleted = true, deletionDate = fakeNow)
@@ -68,7 +65,7 @@ class AssessmentServiceTest {
   }
 
   @Test
-  fun `test getAssessmentById - returns null if assessment does not exist`() = runTest {
+  fun `test getAssessmentById - returns null if assessment does not exist`() {
     val assessmentId: Long = 1
     Mockito.`when`(assessmentRepository.findById(assessmentId)).thenReturn(null)
 
@@ -77,7 +74,7 @@ class AssessmentServiceTest {
   }
 
   @Test
-  fun `test deleteAssessment - sets deleted flag`() = runTest {
+  fun `test deleteAssessment - sets deleted flag`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
@@ -91,7 +88,7 @@ class AssessmentServiceTest {
   }
 
   @Test
-  fun `test createAssessment - creates assessment`() = runTest {
+  fun `test createAssessment - creates assessment`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val nomsId = "abc"

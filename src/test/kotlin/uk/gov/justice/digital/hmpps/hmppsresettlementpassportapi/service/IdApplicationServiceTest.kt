@@ -3,8 +3,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -25,7 +23,6 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(MockitoExtension::class)
 class IdApplicationServiceTest {
   private lateinit var idApplicationService: IdApplicationService
@@ -47,7 +44,7 @@ class IdApplicationServiceTest {
   }
 
   @Test
-  fun `test getIdApplicationByNomsId - returns id application`() = runTest {
+  fun `test getIdApplicationByNomsId - returns id application`() {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
     Mockito.`when`(prisonerRepository.findByNomsId(prisonerEntity.nomsId)).thenReturn(prisonerEntity)
     val idApplicationEntity = IdApplicationEntity(
@@ -67,7 +64,7 @@ class IdApplicationServiceTest {
   }
 
   @Test
-  fun `test createIdApplication - creates and returns idAppliaction`() = runTest {
+  fun `test createIdApplication - creates and returns idAppliaction`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
@@ -115,7 +112,7 @@ class IdApplicationServiceTest {
   }
 
   @Test
-  fun `test updateIdApplication - updates and returns idAppliaction`() = runTest {
+  fun `test updateIdApplication - updates and returns idAppliaction`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
@@ -183,7 +180,7 @@ class IdApplicationServiceTest {
   }
 
   @Test
-  fun `test deleteIdApplication - sets is deleted and deletion date`() = runTest {
+  fun `test deleteIdApplication - sets is deleted and deletion date`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
@@ -218,7 +215,7 @@ class IdApplicationServiceTest {
   }
 
   @Test
-  fun `test getAllIdApplicationByNomsId - returns id application`() = runTest {
+  fun `test getAllIdApplicationByNomsId - returns id application`() {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
     Mockito.`when`(prisonerRepository.findByNomsId(prisonerEntity.nomsId)).thenReturn(prisonerEntity)
     val idApplicationEntity1 = IdApplicationEntity(

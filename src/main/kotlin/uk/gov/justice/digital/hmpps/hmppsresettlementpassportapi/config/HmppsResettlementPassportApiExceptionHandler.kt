@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageConversionException
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.access.AuthorizationServiceException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -69,6 +70,11 @@ class HmppsResettlementPassportApiExceptionHandler {
           developerMessage = e.cause?.message,
         ),
       )
+  }
+
+  @ExceptionHandler(HttpMessageConversionException::class)
+  fun handleHttpMessageConversionException(e: Exception): ResponseEntity<ErrorResponse> {
+    return handleServerWebInputException(e)
   }
 
   @ExceptionHandler(ResourceNotFoundException::class)

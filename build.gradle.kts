@@ -97,6 +97,8 @@ tasks {
 
 tasks.test {
   finalizedBy(tasks.jacocoTestReport)
+  // https://github.com/mockk/mockk/issues/681
+  jvmArgs("--add-opens", "java.base/java.time=ALL-UNNAMED")
 }
 
 tasks.jacocoTestReport {

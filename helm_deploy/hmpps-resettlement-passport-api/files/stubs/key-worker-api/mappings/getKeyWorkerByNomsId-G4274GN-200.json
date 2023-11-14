@@ -4,7 +4,7 @@
     "urlPath": "/key-worker/offender/G4274GN"
   },
   "response": {
-    "status": 404,
+    "status": 200,
     "bodyFileName": "getKeyWorkerByNomsId-G4274GN-200-response.json",
     "headers": {
       "Content-Type": "application/json;charset=UTF-8",

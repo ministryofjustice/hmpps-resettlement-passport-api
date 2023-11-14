@@ -1,9 +1,5 @@
-@file:OptIn(ExperimentalCoroutinesApi::class)
-
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.api
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
@@ -38,7 +34,7 @@ class ResettlementPassportDeliusApiServiceTest {
   }
 
   @Test
-  fun `test get CRN happy path full json`() = runTest {
+  fun `test get CRN happy path full json`() {
     val nomsId = "ABC1234"
     val expectedCrn = "D345678"
 
@@ -49,7 +45,7 @@ class ResettlementPassportDeliusApiServiceTest {
   }
 
   @Test
-  fun `test get CRN happy path min json`() = runTest {
+  fun `test get CRN happy path min json`() {
     val nomsId = "ABC1234"
     val expectedCrn = "D345678"
 
@@ -60,7 +56,7 @@ class ResettlementPassportDeliusApiServiceTest {
   }
 
   @Test
-  fun `test get CRN not found upstream`() = runTest {
+  fun `test get CRN not found upstream`() {
     val nomsId = "ABC1234"
 
     mockWebServer.enqueue(MockResponse().setBody("{}").addHeader("Content-Type", "application/json").setResponseCode(404))
@@ -68,7 +64,7 @@ class ResettlementPassportDeliusApiServiceTest {
   }
 
   @Test
-  fun `test get CRN 500 error upstream`() = runTest {
+  fun `test get CRN 500 error upstream`() {
     val nomsId = "ABC1234"
 
     mockWebServer.enqueue(MockResponse().setBody("{}").addHeader("Content-Type", "application/json").setResponseCode(500))
@@ -76,7 +72,7 @@ class ResettlementPassportDeliusApiServiceTest {
   }
 
   @Test
-  fun `test fetch appointments  happy path full json`() = runTest {
+  fun `test fetch appointments  happy path full json`() {
     val nomsId = "ABC1234"
     val crn = "CRN1"
     val expectedType = "Appointment with CRS Staff (NS)"
@@ -89,7 +85,7 @@ class ResettlementPassportDeliusApiServiceTest {
   }
 
   @Test
-  fun `test fetch accommodation  happy path full json`() = runTest {
+  fun `test fetch accommodation  happy path full json`() {
     val nomsId = "ABC1234"
     val crn = "CRN1"
     val expectedBuildingName = "New Court"

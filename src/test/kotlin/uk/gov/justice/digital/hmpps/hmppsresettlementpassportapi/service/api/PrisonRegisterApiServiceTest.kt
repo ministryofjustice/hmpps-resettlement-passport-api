@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.api
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
@@ -30,9 +28,8 @@ class PrisonRegisterApiServiceTest {
     mockWebServer.shutdown()
   }
 
-  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
-  fun `test get active Prisons happy path full json`() = runTest {
+  fun `test get active Prisons happy path full json`() {
     val expectedPrisonList = listOf(Prison("MDI", "Moorland (HMP & YOI)", true), Prison("SWI", "Swansea (HMP & YOI)", true))
     val mockedJsonResponse =
       readFile("testdata/prison-register-api/prison.json")

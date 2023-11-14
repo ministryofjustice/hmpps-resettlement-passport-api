@@ -3,8 +3,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -31,7 +29,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(MockitoExtension::class)
 class PathwayAndStatusServiceTest {
 
@@ -61,7 +58,7 @@ class PathwayAndStatusServiceTest {
   }
 
   @Test
-  fun `test update pathway status`() = runTest {
+  fun `test update pathway status`() {
     // Mock calls to LocalDateTime.now() so we can test the updatedDate is being updated
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
@@ -90,7 +87,7 @@ class PathwayAndStatusServiceTest {
   }
 
   @Test
-  fun `test update pathway status - prisoner not found`() = runTest {
+  fun `test update pathway status - prisoner not found`() {
     val nomsId = "abc"
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(null)
 
@@ -99,7 +96,7 @@ class PathwayAndStatusServiceTest {
   }
 
   @Test
-  fun `test update pathway status - pathway status not found`() = runTest {
+  fun `test update pathway status - pathway status not found`() {
     val nomsId = "abc"
     val crn = "crn1"
     val prisonId = "xyz1"

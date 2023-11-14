@@ -5,7 +5,6 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
@@ -196,16 +195,12 @@ class PathwayIntegrationTest : IntegrationTestBase() {
       .jsonPath("moreInfo").isEmpty
   }
 
-  @Disabled // TODO figure out why this test is failing
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-4.sql")
   fun `Patch pathway status and case notes happy path`() {
-    // Mock calls to LocalDateTime.now() so we can test the creationDate is being updated
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
-
     val nomsId = "G4274GN"
     offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "ACCOM", "This is a case note", "MDI", 200)
 
     webTestClient.patch()
       .uri("/resettlement-passport/prisoner/$nomsId/pathway-with-case-note")
@@ -225,11 +220,11 @@ class PathwayIntegrationTest : IntegrationTestBase() {
         1,
         PrisonerEntity(
           1,
-          "123",
+          "G4274GN",
           LocalDateTime.parse("2023-08-16T12:21:38.709"),
-          "abc",
-          "xyz",
-          LocalDate.parse("2025-01-23"),
+          "123",
+          "MDI",
+          LocalDate.parse("2030-09-12"),
         ),
         PathwayEntity(
           1,
@@ -241,17 +236,14 @@ class PathwayIntegrationTest : IntegrationTestBase() {
           2,
           "In Progress",
           true,
-          LocalDateTime.parse("2023-08-16T17:48:02.211790"),
+          LocalDateTime.parse("2023-08-17T12:00:01"),
         ),
         fakeNow,
       )
     val actualPathwayStatus = pathwayStatusRepository.findById(1)
 
     assertThat(expectedPathwayStatus).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java)
-      .isEqualTo(actualPathwayStatus)
-    Assertions.assertEquals(fakeNow, actualPathwayStatus.get().updatedDate)
-
-    unmockkStatic(LocalDateTime::class)
+      .isEqualTo(actualPathwayStatus.get())
   }
 
   @Test

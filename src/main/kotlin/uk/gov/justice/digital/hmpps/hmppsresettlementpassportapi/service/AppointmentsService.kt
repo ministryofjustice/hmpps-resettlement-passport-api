@@ -20,7 +20,7 @@ class AppointmentsService(
   private val rpDeliusApiService: ResettlementPassportDeliusApiService,
 ) {
 
-  suspend fun getAppointmentsByNomsId(
+  fun getAppointmentsByNomsId(
     nomsId: String,
     startDate: LocalDate,
     endDate: LocalDate,
@@ -38,21 +38,23 @@ class AppointmentsService(
       )
     }
 
-    val prisonerEntity = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+    val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val crn = prisonerEntity.crn ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in database")
 
-    var appointmentList = AppointmentsList(listOf(), 0, 0, 0, 0)
-
     val deliusAppointments = rpDeliusApiService.fetchAppointments(nomsId, crn, startDate, endDate, pageNumber, pageSize)
-    deliusAppointments.collect {
-      val appList: List<Appointment> = objectMapper(it.results)
-      appointmentList = AppointmentsList(appList, it.totalElements, it.totalPages, it.page, it.size)
-    }
+    val appList: List<Appointment> = objectMapper(deliusAppointments.results)
 
-    return appointmentList
+    return AppointmentsList(
+      appList,
+      deliusAppointments.totalElements,
+      deliusAppointments.totalPages,
+      deliusAppointments.page,
+      deliusAppointments.size,
+    )
   }
 
-  private suspend fun objectMapper(appList: List<AppointmentDelius>): List<Appointment> {
+  private fun objectMapper(appList: List<AppointmentDelius>): List<Appointment> {
     val appointmentList = mutableListOf<Appointment>()
     appList.forEach {
       val appointment: Appointment?

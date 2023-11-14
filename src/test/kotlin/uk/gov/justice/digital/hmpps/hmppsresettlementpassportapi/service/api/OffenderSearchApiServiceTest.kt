@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.api
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
@@ -38,7 +36,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(MockitoExtension::class)
 class OffenderSearchApiServiceTest {
 
@@ -76,7 +73,7 @@ class OffenderSearchApiServiceTest {
   }
 
   @Test
-  fun `test get PrisonersList happy path full json with sort releaseDate Descending - 1`() = runTest {
+  fun `test get PrisonersList happy path full json with sort releaseDate Descending - 1`() {
     mockDatabaseCalls()
 
     val prisonId = "MDI"
@@ -89,7 +86,7 @@ class OffenderSearchApiServiceTest {
   }
 
   @Test
-  fun `test get PrisonersList happy path full json with sort releaseDate Descending - 2`() = runTest {
+  fun `test get PrisonersList happy path full json with sort releaseDate Descending - 2`() {
     mockDatabaseCalls()
 
     val prisonId = "MDI"
@@ -102,7 +99,7 @@ class OffenderSearchApiServiceTest {
   }
 
   @Test
-  fun `test get PrisonersList happy path full json with sort releaseDate Ascending`() = runTest {
+  fun `test get PrisonersList happy path full json with sort releaseDate Ascending`() {
     mockDatabaseCalls()
 
     val prisonId = "MDI"
@@ -119,7 +116,7 @@ class OffenderSearchApiServiceTest {
   }
 
   @Test
-  fun `test get PrisonersList happy path full json with sort firstName Ascending`() = runTest {
+  fun `test get PrisonersList happy path full json with sort firstName Ascending`() {
     mockDatabaseCalls()
 
     val prisonId = "MDI"
@@ -132,7 +129,7 @@ class OffenderSearchApiServiceTest {
   }
 
   @Test
-  fun `test get PrisonersList happy path full json for page size`() = runTest {
+  fun `test get PrisonersList happy path full json for page size`() {
     mockDatabaseCalls()
 
     val prisonId = "MDI"
@@ -162,7 +159,7 @@ class OffenderSearchApiServiceTest {
   }
 
   @Test
-  fun `test get PrisonersList happy path full json with release date filter`() = runTest {
+  fun `test get PrisonersList happy path full json with release date filter`() {
     mockDatabaseCalls()
 
     val prisonId = "MDI"
@@ -257,7 +254,7 @@ class OffenderSearchApiServiceTest {
   )
 
   @Test
-  fun `test check prisoner is in active prison - happy path`() = runTest {
+  fun `test check prisoner is in active prison - happy path`() {
     `when`(prisonRegisterApiService.getActivePrisonsList()).thenReturn(
       mutableListOf(
         Prison("ABC", "Test prison ABC", true),
@@ -273,7 +270,7 @@ class OffenderSearchApiServiceTest {
   }
 
   @Test
-  fun `test check prisoner is in active prison - not found`() = runTest {
+  fun `test check prisoner is in active prison - not found`() {
     `when`(prisonRegisterApiService.getActivePrisonsList()).thenReturn(mutableListOf())
     assertThrows<ResourceNotFoundException> {
       offenderSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("ABC"))

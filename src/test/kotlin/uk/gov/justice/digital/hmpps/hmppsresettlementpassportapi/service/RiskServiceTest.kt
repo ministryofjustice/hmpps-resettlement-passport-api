@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -13,7 +11,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.Resource
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ArnApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @ExtendWith(MockitoExtension::class)
 class RiskServiceTest {
 
@@ -31,14 +28,14 @@ class RiskServiceTest {
   }
 
   @Test
-  fun `get risk scores - test missing crn from database`() = runTest {
+  fun `get risk scores - test missing crn from database`() {
     val nomsId = "ABC1234"
     Mockito.`when`(resettlementPassportDeliusApiService.findCrn(nomsId)).thenReturn(null)
     assertThrows<ResourceNotFoundException> { riskService.getRiskScoresByNomsId(nomsId) }
   }
 
   @Test
-  fun `get RoSH data - test missing crn from database`() = runTest {
+  fun `get RoSH data - test missing crn from database`() {
     val nomsId = "ABC1234"
     Mockito.`when`(resettlementPassportDeliusApiService.findCrn(nomsId)).thenReturn(null)
     assertThrows<ResourceNotFoundException> { riskService.getRoshDataByNomsId(nomsId) }

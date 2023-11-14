@@ -65,7 +65,7 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
       ),
     ],
   )
-  suspend fun getIdApplicationByNomsId(
+  fun getIdApplicationByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     @Parameter(required = true)
@@ -102,7 +102,7 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
       ),
     ],
   )
-  suspend fun postIdApplicationByNomsId(
+  fun postIdApplicationByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     nomsId: String,
@@ -140,7 +140,7 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
       ),
     ],
   )
-  suspend fun deleteIdApplicationByNomsId(
+  fun deleteIdApplicationByNomsId(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
@@ -192,7 +192,7 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
       ),
     ],
   )
-  suspend fun patchIdApplicationByNomsId(
+  fun patchIdApplicationByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     nomsId: String,
@@ -245,7 +245,7 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
       ),
     ],
   )
-  suspend fun getAllIdApplicationsByNomsId(
+  fun getAllIdApplicationsByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     @Parameter(required = true)

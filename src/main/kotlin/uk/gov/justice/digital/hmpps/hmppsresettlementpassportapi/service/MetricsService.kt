@@ -22,11 +22,11 @@ class MetricsService(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  suspend fun recordCustomMetrics() {
+  fun recordCustomMetrics() {
     recordPrisonersCountForEachPrison()
   }
 
-  private suspend fun recordPrisonersCountForEachPrison() {
+  private fun recordPrisonersCountForEachPrison() {
     val prisonList = prisonRegisterApiService.getActivePrisonsList()
     val earliestReleaseDate = LocalDate.now().minusDays(1)
     val latestRD12Weeks = LocalDate.now().plusDays(84)
@@ -50,45 +50,43 @@ class MetricsService(
         val inProgressPrisonersList = prisonerService.getInProgressNomsIdsByPrisonId(prison.id)
         val donePrisonersList = prisonerService.getDoneNomsIdsByPrisonId(prison.id)
 
-        offenderSearchApiService.findPrisonersBySearchTerm(prison.id, "").collect { prisoners ->
-          prisoners.forEach { prisoner ->
-            totalPrisonersCount++
+        offenderSearchApiService.findPrisonersBySearchTerm(prison.id, "").forEach { prisoner ->
+          totalPrisonersCount++
 
-            offenderSearchApiService.setDisplayedReleaseDate(prisoner)
+          offenderSearchApiService.setDisplayedReleaseDate(prisoner)
 
+          if (activePrisonersList.contains(prisoner.prisonerNumber)) {
+            notStartedPrisonersCount++
+          }
+          if (inProgressPrisonersList.contains(prisoner.prisonerNumber)) {
+            inProgressPrisonersCount++
+          }
+          if (donePrisonersList.contains(prisoner.prisonerNumber)) {
+            donePrisonersCount++
+          }
+          if (prisoner.displayReleaseDate != null && (prisoner.displayReleaseDate!! > earliestReleaseDate && prisoner.displayReleaseDate!! <= latestRD12Weeks)) {
+            totalPrisoners12WeeksCount++
             if (activePrisonersList.contains(prisoner.prisonerNumber)) {
-              notStartedPrisonersCount++
+              notStartedPrisoners12WeeksCount++
             }
             if (inProgressPrisonersList.contains(prisoner.prisonerNumber)) {
-              inProgressPrisonersCount++
+              inProgressPrisoners12WeeksCount++
             }
             if (donePrisonersList.contains(prisoner.prisonerNumber)) {
-              donePrisonersCount++
+              donePrisoners12WeeksCount++
             }
-            if (prisoner.displayReleaseDate != null && (prisoner.displayReleaseDate!! > earliestReleaseDate && prisoner.displayReleaseDate!! <= latestRD12Weeks)) {
-              totalPrisoners12WeeksCount++
-              if (activePrisonersList.contains(prisoner.prisonerNumber)) {
-                notStartedPrisoners12WeeksCount++
-              }
-              if (inProgressPrisonersList.contains(prisoner.prisonerNumber)) {
-                inProgressPrisoners12WeeksCount++
-              }
-              if (donePrisonersList.contains(prisoner.prisonerNumber)) {
-                donePrisoners12WeeksCount++
-              }
-            }
+          }
 
-            if (prisoner.displayReleaseDate != null && (prisoner.displayReleaseDate!! > earliestReleaseDate && prisoner.displayReleaseDate!! <= latestRD24Weeks)) {
-              totalPrisoners24WeeksCount++
-              if (activePrisonersList.contains(prisoner.prisonerNumber)) {
-                notStartedPrisoners24WeeksCount++
-              }
-              if (inProgressPrisonersList.contains(prisoner.prisonerNumber)) {
-                inProgressPrisoners24WeeksCount++
-              }
-              if (donePrisonersList.contains(prisoner.prisonerNumber)) {
-                donePrisoners24WeeksCount++
-              }
+          if (prisoner.displayReleaseDate != null && (prisoner.displayReleaseDate!! > earliestReleaseDate && prisoner.displayReleaseDate!! <= latestRD24Weeks)) {
+            totalPrisoners24WeeksCount++
+            if (activePrisonersList.contains(prisoner.prisonerNumber)) {
+              notStartedPrisoners24WeeksCount++
+            }
+            if (inProgressPrisonersList.contains(prisoner.prisonerNumber)) {
+              inProgressPrisoners24WeeksCount++
+            }
+            if (donePrisonersList.contains(prisoner.prisonerNumber)) {
+              donePrisoners24WeeksCount++
             }
           }
         }

@@ -173,7 +173,7 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
       .header("Content-Type", "application/json")
       .bodyValue(
         CaseNotesRequest(
-          pathway = Pathway.ACCOMMODATION.toString(),
+          pathway = Pathway.ACCOMMODATION,
           text = txt,
         ),
       )

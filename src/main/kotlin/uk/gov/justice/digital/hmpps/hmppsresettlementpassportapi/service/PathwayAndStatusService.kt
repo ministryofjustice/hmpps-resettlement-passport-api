@@ -28,8 +28,7 @@ class PathwayAndStatusService(
   private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
 ) {
 
-  @Transactional
-  suspend fun updatePathwayStatus(nomsId: String, pathwayAndStatus: PathwayAndStatus): ResponseEntity<Void> {
+  fun updatePathwayStatus(nomsId: String, pathwayAndStatus: PathwayAndStatus): ResponseEntity<Void> {
     val prisoner = getPrisonerEntityFromNomsId(nomsId)
     val pathway = getPathwayEntity(pathwayAndStatus.pathway)
     val newStatus = getStatusEntity(pathwayAndStatus.status)
@@ -40,21 +39,16 @@ class PathwayAndStatusService(
     return ResponseEntity.ok().build()
   }
 
-  @Transactional
   fun getPathwayEntity(pathway: Pathway) = pathwayRepository.findById(pathway.id).get()
 
-  @Transactional
   fun getStatusEntity(status: Status) = statusRepository.findById(status.id).get()
 
-  @Transactional
   fun getPrisonerEntityFromNomsId(nomsId: String) = prisonerRepository.findByNomsId(nomsId)
     ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
 
-  @Transactional
   fun findPathwayStatusFromPathwayAndPrisoner(pathway: PathwayEntity, prisoner: PrisonerEntity) = pathwayStatusRepository.findByPathwayAndPrisoner(pathway, prisoner)
     ?: throw ResourceNotFoundException("Prisoner with id ${prisoner.nomsId} has no pathway_status entry for ${pathway.name} in database")
 
-  @Transactional
   fun updatePathwayStatusWithNewStatus(pathwayStatus: PathwayStatusEntity, newStatus: StatusEntity) {
     pathwayStatus.status = newStatus
     pathwayStatus.updatedDate = LocalDateTime.now()
@@ -62,7 +56,7 @@ class PathwayAndStatusService(
   }
 
   @Transactional
-  suspend fun addPrisonerAndInitialPathwayStatus(nomsId: String, prisonId: String, releaseDate: LocalDate?) {
+  fun addPrisonerAndInitialPathwayStatus(nomsId: String, prisonId: String, releaseDate: LocalDate?) {
     // Seed the Prisoner data into the DB
     val existingPrisonerEntity = prisonerRepository.findByNomsId(nomsId)
     if (existingPrisonerEntity == null) {

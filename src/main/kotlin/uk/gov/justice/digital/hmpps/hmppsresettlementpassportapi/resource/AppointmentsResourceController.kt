@@ -52,7 +52,7 @@ class AppointmentsResourceController(
       ),
     ],
   )
-  suspend fun getAppointments(
+  fun getAppointments(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     @Parameter(required = true)

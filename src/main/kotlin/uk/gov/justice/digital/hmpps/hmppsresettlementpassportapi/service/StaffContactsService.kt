@@ -9,7 +9,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 
 @Service
 class StaffContactsService(val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService, val keyWorkerApiService: KeyWorkerApiService, val allocationManagerApiService: AllocationManagerApiService) {
-  suspend fun getStaffContacts(nomsId: String): StaffContacts {
+  fun getStaffContacts(nomsId: String): StaffContacts {
     // Get COM details from Delius API
     val comName = resettlementPassportDeliusApiService.getComByNomsId(nomsId)
     var com: Contact? = null

@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
-import kotlinx.coroutines.flow.Flow
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
@@ -62,7 +61,7 @@ class LicenceConditionResourceController(
       ),
     ],
   )
-  suspend fun getLicenceConditionByNomsId(
+  fun getLicenceConditionByNomsId(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
@@ -117,7 +116,7 @@ class LicenceConditionResourceController(
       ),
     ],
   )
-  suspend fun getLicenceConditionImage(
+  fun getLicenceConditionImage(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
@@ -127,5 +126,5 @@ class LicenceConditionResourceController(
     @PathVariable("conditionId")
     @Parameter(required = true)
     conditionId: String,
-  ): Flow<ByteArray> = licenceConditionService.getImageFromLicenceIdAndConditionId(licenceId, conditionId)
+  ): ByteArray = licenceConditionService.getImageFromLicenceIdAndConditionId(licenceId, conditionId)
 }

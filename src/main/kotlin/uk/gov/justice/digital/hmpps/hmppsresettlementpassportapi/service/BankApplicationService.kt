@@ -24,11 +24,11 @@ class BankApplicationService(
 ) {
 
   @Transactional
-  suspend fun getBankApplicationById(id: Long) = bankApplicationRepository.findById(id)
+  fun getBankApplicationById(id: Long) = bankApplicationRepository.findById(id)
     ?: throw ResourceNotFoundException("Bank application with id $id not found in database")
 
   @Transactional
-  suspend fun getBankApplicationByNomsId(nomsId: String): BankApplicationResponse? {
+  fun getBankApplicationByNomsId(nomsId: String): BankApplicationResponse? {
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val bankApplication = bankApplicationRepository.findByPrisonerAndIsDeleted(prisoner)
@@ -49,14 +49,14 @@ class BankApplicationService(
   }
 
   @Transactional
-  suspend fun deleteBankApplication(bankApplication: BankApplicationEntity) {
+  fun deleteBankApplication(bankApplication: BankApplicationEntity) {
     bankApplication.isDeleted = true
     bankApplication.deletionDate = LocalDateTime.now()
     bankApplicationRepository.save(bankApplication)
   }
 
   @Transactional
-  suspend fun createBankApplication(bankApplication: BankApplication, nomsId: String, notUnitTest: Boolean = true): BankApplicationResponse {
+  fun createBankApplication(bankApplication: BankApplication, nomsId: String, notUnitTest: Boolean = true): BankApplicationResponse {
     val now = LocalDateTime.now()
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
@@ -83,7 +83,7 @@ class BankApplicationService(
   }
 
   @Transactional
-  suspend fun patchBankApplication(nomsId: String, bankApplicationId: String, bankApplication: BankApplication): BankApplicationResponse {
+  fun patchBankApplication(nomsId: String, bankApplicationId: String, bankApplication: BankApplication): BankApplicationResponse {
     val existingBankApplication = getBankApplicationById(bankApplicationId.toLong()).get()
     if (existingBankApplication.prisoner.nomsId != nomsId) {
       throw NoDataWithCodeFoundException(
@@ -97,7 +97,7 @@ class BankApplicationService(
   }
 
   @Transactional
-  suspend fun updateBankApplication(existingBankApplication: BankApplicationEntity, bankApplication: BankApplication) {
+  fun updateBankApplication(existingBankApplication: BankApplicationEntity, bankApplication: BankApplication) {
     val logs = bankApplicationStatusLogRepository.findByBankApplication(existingBankApplication)
       ?: throw ResourceNotFoundException("Bank application for prisoner with id ${existingBankApplication.prisoner.nomsId} not found in database ")
 

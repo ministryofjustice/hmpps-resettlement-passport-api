@@ -5,12 +5,12 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.scheduling.annotation.EnableScheduling
-import org.springframework.security.oauth2.client.AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager
-import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientManager
-import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientProviderBuilder
-import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientService
-import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository
-import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction
+import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
+import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.SYSTEM_USERNAME
@@ -35,20 +35,20 @@ class WebClientConfiguration(
 ) {
 
   @Bean
-  fun prisonRegisterWebClientClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+  fun prisonRegisterWebClientClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
     return getWebClientCredentials(authorizedClientManager, prisonRegisterRootUri)
   }
 
   @Bean
   fun authorizedClientManager(
-    clientRegistrationRepository: ReactiveClientRegistrationRepository,
-    oAuth2AuthorizedClientService: ReactiveOAuth2AuthorizedClientService,
-  ): ReactiveOAuth2AuthorizedClientManager {
-    val authorizedClientProvider = ReactiveOAuth2AuthorizedClientProviderBuilder.builder()
+    clientRegistrationRepository: ClientRegistrationRepository,
+    oAuth2AuthorizedClientService: OAuth2AuthorizedClientService,
+  ): OAuth2AuthorizedClientManager {
+    val authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder.builder()
       .clientCredentials()
       .build()
 
-    val authorizedClientManager = AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager(
+    val authorizedClientManager = AuthorizedClientServiceOAuth2AuthorizedClientManager(
       clientRegistrationRepository,
       oAuth2AuthorizedClientService,
     )
@@ -57,39 +57,39 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun cvlWebClientClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+  fun cvlWebClientClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
     return getWebClientCredentials(authorizedClientManager, cvlRootUri)
   }
 
   @Bean
-  fun offenderSearchWebClientClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+  fun offenderSearchWebClientClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
     return getWebClientCredentials(authorizedClientManager, offenderSearchRootUri)
   }
 
   @Bean
-  fun arnWebClientClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+  fun arnWebClientClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
     return getWebClientCredentials(authorizedClientManager, arnRootUri)
   }
 
   @Bean
-  fun prisonWebClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+  fun prisonWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
     return getWebClientCredentials(authorizedClientManager, prisonRootUri)
   }
 
   @Bean
-  fun keyWorkerWebClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+  fun keyWorkerWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
     return getWebClientCredentials(authorizedClientManager, keyWorkerRootUri)
   }
 
   @Bean
-  fun offenderCaseNotesWebClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+  fun offenderCaseNotesWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
     return getWebClientCredentials(authorizedClientManager, offenderCaseNotesRootUri)
   }
 
   @Bean
-  fun offenderCaseNotesWebClientUserCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+  fun offenderCaseNotesWebClientUserCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
     val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
-    val oauth2Client = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
+    val oauth2Client = ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
     oauth2Client.setDefaultClientRegistrationId(SYSTEM_USERNAME)
     return WebClient.builder()
       .baseUrl(offenderCaseNotesRootUri)
@@ -99,32 +99,32 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun allocationManagerWebClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+  fun allocationManagerWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
     return getWebClientCredentials(authorizedClientManager, allocationManagerRootUri)
   }
 
   @Bean
-  fun rpDeliusWebClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+  fun rpDeliusWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
     return getWebClientCredentials(authorizedClientManager, rpDeliusRootUri)
   }
 
   @Bean
-  fun educationEmploymentWebClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+  fun educationEmploymentWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
     return getWebClientCredentials(authorizedClientManager, educationEmploymentRootUri)
   }
 
   @Bean
-  fun ciagWebClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+  fun ciagWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
     return getWebClientCredentials(authorizedClientManager, ciagRootUri)
   }
 
   @Bean
-  fun interventionsWebClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager): WebClient {
+  fun interventionsWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
     return getWebClientCredentials(authorizedClientManager, interventionsRootUri)
   }
 
-  private fun getWebClientCredentials(authorizedClientManager: ReactiveOAuth2AuthorizedClientManager, baseUrl: String): WebClient {
-    val oauth2Client = ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
+  private fun getWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager, baseUrl: String): WebClient {
+    val oauth2Client = ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
     oauth2Client.setDefaultClientRegistrationId(SYSTEM_USERNAME)
 
     val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))

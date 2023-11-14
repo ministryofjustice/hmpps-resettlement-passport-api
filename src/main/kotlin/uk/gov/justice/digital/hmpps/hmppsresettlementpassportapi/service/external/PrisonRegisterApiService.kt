@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.extern
 
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.awaitBody
+import org.springframework.web.reactive.function.client.bodyToFlux
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prison
 
 @Service
@@ -10,15 +10,17 @@ class PrisonRegisterApiService(
   private val prisonRegisterWebClientClientCredentials: WebClient,
 ) {
 
-  private suspend fun getPrisons(): List<uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonapi.Prison> {
+  private fun getPrisons(): List<uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonapi.Prison> {
     return prisonRegisterWebClientClientCredentials
       .get()
       .uri("/prisons")
       .retrieve()
-      .awaitBody()
+      .bodyToFlux<uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonapi.Prison>()
+      .collectList()
+      .block() ?: throw RuntimeException("Unexpected null returned from request.")
   }
 
-  suspend fun getActivePrisonsList(): MutableList<Prison> {
+  fun getActivePrisonsList(): MutableList<Prison> {
     val prisons = getPrisons()
 
     val prisonList = mutableListOf<Prison>()

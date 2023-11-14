@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external
 
-import kotlinx.coroutines.reactive.awaitSingle
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -16,7 +15,7 @@ class CiagApiService(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  suspend fun getCiagProfileByNomsId(nomsId: String): CIAGProfileDTO {
+  fun getCiagProfileByNomsId(nomsId: String): CIAGProfileDTO {
     return ciagWebClientCredentials.get()
       .uri("/ciag/induction/$nomsId")
       .retrieve()
@@ -28,6 +27,6 @@ class CiagApiService(
         },
         CIAGProfileDTO(null, null, null, null, null, null, null, null, null),
       )
-      .awaitSingle()
+      .block() ?: throw RuntimeException("Unexpected null returned from request.")
   }
 }

@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external
 
-import kotlinx.coroutines.reactive.awaitSingle
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -15,7 +14,7 @@ class KeyWorkerApiService(val keyWorkerWebClientCredentials: WebClient) {
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  suspend fun getKeyWorkerName(nomsId: String): String? {
+  fun getKeyWorkerName(nomsId: String): String? {
     val keyWorker = keyWorkerWebClientCredentials.get()
       .uri("/key-worker/offender/$nomsId")
       .retrieve()
@@ -27,7 +26,7 @@ class KeyWorkerApiService(val keyWorkerWebClientCredentials: WebClient) {
         },
         KeyWorkerDTO(null, null, null),
       )
-      .awaitSingle()
+      .block()
 
     if (keyWorker?.firstName == null || keyWorker.lastName == null) {
       log.warn("No Key Worker data found in Key Worker API for NomsId $nomsId")

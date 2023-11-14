@@ -50,7 +50,7 @@ class CaseNotesResourceController(
       ),
     ],
   )
-  suspend fun getCaseNotesForPrisoner(
+  fun getCaseNotesForPrisoner(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
@@ -109,7 +109,7 @@ class CaseNotesResourceController(
       ),
     ],
   )
-  suspend fun getCaseNotesCreators(
+  fun getCaseNotesCreators(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
@@ -159,7 +159,8 @@ class CaseNotesResourceController(
       ),
     ],
   )
-  suspend fun addCaseNotesForPrisoner(
+  @Deprecated("Use PATCH endpoint /resettlement-passport/prisoner/{nomsId}/pathway-with-case-note to add a case note.")
+  fun addCaseNotesForPrisoner(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
@@ -167,5 +168,5 @@ class CaseNotesResourceController(
     caseNotes: CaseNotesRequest,
     @RequestHeader("Authorization")
     authorizationHeader: String,
-  ): CaseNote = caseNotesService.postCaseNote(nomsId, caseNotes, authorizationHeader)
+  ): CaseNote? = caseNotesService.postCaseNote(nomsId, caseNotes, authorizationHeader)
 }

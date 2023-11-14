@@ -63,7 +63,7 @@ class BankApplicationResourceController(private val bankApplicationService: Bank
       ),
     ],
   )
-  suspend fun getBankApplicationByNomsId(
+  fun getBankApplicationByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     @Parameter(required = true)
@@ -100,7 +100,7 @@ class BankApplicationResourceController(private val bankApplicationService: Bank
       ),
     ],
   )
-  suspend fun postBankApplicationByNomsId(
+  fun postBankApplicationByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     nomsId: String,
@@ -138,7 +138,7 @@ class BankApplicationResourceController(private val bankApplicationService: Bank
       ),
     ],
   )
-  suspend fun deleteAssessmentByNomsId(
+  fun deleteAssessmentByNomsId(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
@@ -186,7 +186,7 @@ class BankApplicationResourceController(private val bankApplicationService: Bank
       ),
     ],
   )
-  suspend fun patchBankApplicationByNomsId(
+  fun patchBankApplicationByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     nomsId: String,

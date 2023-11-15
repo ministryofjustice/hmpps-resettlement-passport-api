@@ -59,66 +59,98 @@ class MetricsIntegrationTest : IntegrationTestBase() {
     metricsService.recordCustomMetrics()
 
     Assertions.assertEquals(
+      6.0,
+      registry.get("total_prisoners_count")
+        .tags("prison", "Moorland (HMP & YOI)", "status", "All", "releaseDate", "Past").gauge()
+        .value(),
+    )
+    Assertions.assertEquals(
       4.0,
-      registry.get("total_prisoners_count").tags("prison", "Moorland (HMP & YOI)", "releaseDate", "Overall").gauge()
+      registry.get("total_prisoners_count")
+        .tags("prison", "Moorland (HMP & YOI)", "status", "All", "releaseDate", "All Future").gauge()
         .value(),
     )
     Assertions.assertEquals(
       0.0,
-      registry.get("total_prisoners_count").tags("prison", "Moorland (HMP & YOI)", "releaseDate", "12 Weeks").gauge()
+      registry.get("total_prisoners_count")
+        .tags("prison", "Moorland (HMP & YOI)", "status", "All", "releaseDate", "12 Weeks").gauge()
         .value(),
     )
     Assertions.assertEquals(
       0.0,
-      registry.get("total_prisoners_count").tags("prison", "Moorland (HMP & YOI)", "releaseDate", "24 Weeks").gauge()
+      registry.get("total_prisoners_count")
+        .tags("prison", "Moorland (HMP & YOI)", "status", "All", "releaseDate", "24 Weeks").gauge()
         .value(),
     )
 
     Assertions.assertEquals(
+      6.0,
+      registry.get("total_prisoners_count")
+        .tags("prison", "Moorland (HMP & YOI)", "status", "Not Started", "releaseDate", "Past").gauge()
+        .value(),
+    )
+    Assertions.assertEquals(
       42.0,
-      registry.get("total_not_started_prisoners_count").tags("prison", "Moorland (HMP & YOI)", "releaseDate", "Overall")
+      registry.get("total_prisoners_count")
+        .tags("prison", "Moorland (HMP & YOI)", "status", "Not Started", "releaseDate", "All Future")
         .gauge().value(),
     )
     Assertions.assertEquals(
       9.0,
-      registry.get("total_not_started_prisoners_count")
-        .tags("prison", "Moorland (HMP & YOI)", "releaseDate", "12 Weeks").gauge().value(),
+      registry.get("total_prisoners_count")
+        .tags("prison", "Moorland (HMP & YOI)", "status", "Not Started", "releaseDate", "12 Weeks").gauge().value(),
     )
     Assertions.assertEquals(
       21.0,
-      registry.get("total_not_started_prisoners_count")
-        .tags("prison", "Moorland (HMP & YOI)", "releaseDate", "24 Weeks").gauge().value(),
+      registry.get("total_prisoners_count")
+        .tags("prison", "Moorland (HMP & YOI)", "status", "Not Started", "releaseDate", "24 Weeks").gauge().value(),
     )
 
     Assertions.assertEquals(
+      4.0,
+      registry.get("total_prisoners_count")
+        .tags("prison", "Moorland (HMP & YOI)", "status", "In Progress", "releaseDate", "Past")
+        .gauge().value(),
+    )
+    Assertions.assertEquals(
       28.0,
-      registry.get("total_in_progress_prisoners_count").tags("prison", "Moorland (HMP & YOI)", "releaseDate", "Overall")
+      registry.get("total_prisoners_count")
+        .tags("prison", "Moorland (HMP & YOI)", "status", "In Progress", "releaseDate", "All Future")
         .gauge().value(),
     )
     Assertions.assertEquals(
       6.0,
-      registry.get("total_in_progress_prisoners_count")
-        .tags("prison", "Moorland (HMP & YOI)", "releaseDate", "12 Weeks").gauge().value(),
+      registry.get("total_prisoners_count")
+        .tags("prison", "Moorland (HMP & YOI)", "status", "In Progress", "releaseDate", "12 Weeks").gauge().value(),
     )
     Assertions.assertEquals(
       14.0,
-      registry.get("total_in_progress_prisoners_count")
-        .tags("prison", "Moorland (HMP & YOI)", "releaseDate", "24 Weeks").gauge().value(),
+      registry.get("total_prisoners_count")
+        .tags("prison", "Moorland (HMP & YOI)", "status", "In Progress", "releaseDate", "24 Weeks").gauge().value(),
     )
 
     Assertions.assertEquals(
+      8.0,
+      registry.get("total_prisoners_count")
+        .tags("prison", "Moorland (HMP & YOI)", "status", "Done", "releaseDate", "Past")
+        .gauge().value(),
+    )
+    Assertions.assertEquals(
       56.0,
-      registry.get("total_done_prisoners_count").tags("prison", "Moorland (HMP & YOI)", "releaseDate", "Overall")
+      registry.get("total_prisoners_count")
+        .tags("prison", "Moorland (HMP & YOI)", "status", "Done", "releaseDate", "All Future")
         .gauge().value(),
     )
     Assertions.assertEquals(
       12.0,
-      registry.get("total_done_prisoners_count").tags("prison", "Moorland (HMP & YOI)", "releaseDate", "12 Weeks")
+      registry.get("total_prisoners_count")
+        .tags("prison", "Moorland (HMP & YOI)", "status", "Done", "releaseDate", "12 Weeks")
         .gauge().value(),
     )
     Assertions.assertEquals(
       28.0,
-      registry.get("total_done_prisoners_count").tags("prison", "Moorland (HMP & YOI)", "releaseDate", "24 Weeks")
+      registry.get("total_prisoners_count")
+        .tags("prison", "Moorland (HMP & YOI)", "status", "Done", "releaseDate", "24 Weeks")
         .gauge().value(),
     )
 
@@ -128,13 +160,14 @@ class MetricsIntegrationTest : IntegrationTestBase() {
   private fun seedPathwayStatuses() {
     val uniqueId = AtomicInteger()
 
+    // Note - we have set today to 1st Jan 2023 for this test
     val releaseDates = listOf(
       // In past
       LocalDate.parse("2022-11-01"),
       LocalDate.parse("2022-12-23"),
 
       // Within 12 weeks
-      LocalDate.parse("2023-01-02"),
+      LocalDate.parse("2023-01-01"), // Today should be included in the future
       LocalDate.parse("2023-03-20"),
       LocalDate.parse("2023-02-28"),
 

@@ -5,7 +5,7 @@
   },
   "response": {
     "status": 200,
-    "bodyFileName": "getPrisonerReferrals-G4274GN-200-response.json",
+    "bodyFileName": "getPrisonerReferrals-A8731DY-200-response.json",
     "headers": {
       "Content-Type": "application/json;charset=UTF-8",
       "Server": "wiremock"

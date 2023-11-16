@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/probation-cases/G4274GN/crn"
+    "urlPath": "/api/allocation/A8731DY"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "getOffenderByNomsNumber-G4274GN-200-response.json",
+    "bodyFileName": "getPomsByNomsId-A8731DY-200-response.json",
     "headers": {
       "Content-Type": "application/json;charset=UTF-8",
       "Server": "wiremock"

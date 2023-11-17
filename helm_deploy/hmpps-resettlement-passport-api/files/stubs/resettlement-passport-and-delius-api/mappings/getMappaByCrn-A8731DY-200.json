@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/ciag/induction/G4274GN"
+    "urlPath": "/probation-cases/U328968/mappa"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "getCiagInductionByNomsId-G4274GN-200-response.json",
+    "bodyFileName": "getMappaByCrn-A8731DY-200-response.json",
     "headers": {
       "Content-Type": "application/json;charset=UTF-8",
       "Server": "wiremock"

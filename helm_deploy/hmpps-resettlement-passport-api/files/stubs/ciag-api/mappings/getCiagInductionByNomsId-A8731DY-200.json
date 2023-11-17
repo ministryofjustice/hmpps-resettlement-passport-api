@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/prisoner/G4274GN"
+    "urlPath": "/ciag/induction/A8731DY"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "getPrisonerDetails-G4274GN-200-response.json",
+    "bodyFileName": "getCiagInductionByNomsId-A8731DY-200-response.json",
     "headers": {
       "Content-Type": "application/json;charset=UTF-8",
       "Server": "wiremock"

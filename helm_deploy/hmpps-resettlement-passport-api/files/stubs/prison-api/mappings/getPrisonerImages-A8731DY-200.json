@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/probation-cases/U328968/mappa"
+    "urlPath": "/api/images/offenders/A8731DY"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "getMappaByCrn-G4274GN-200-response.json",
+    "bodyFileName": "getPrisonerImages-A8731DY-200-response.json",
     "headers": {
       "Content-Type": "application/json;charset=UTF-8",
       "Server": "wiremock"

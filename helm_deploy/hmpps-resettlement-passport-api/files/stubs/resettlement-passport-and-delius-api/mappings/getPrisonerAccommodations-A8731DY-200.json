@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/key-worker/offender/G4274GN"
+    "urlPath": "/duty-to-refer-nsi/U328968"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "getKeyWorkerByNomsId-G4274GN-200-response.json",
+    "bodyFileName": "getAccommodations-A8731DY-200-response.json",
     "headers": {
       "Content-Type": "application/json;charset=UTF-8",
       "Server": "wiremock"

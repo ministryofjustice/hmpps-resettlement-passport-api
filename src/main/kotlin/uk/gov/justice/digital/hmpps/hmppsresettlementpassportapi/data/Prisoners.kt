@@ -12,7 +12,8 @@ data class Prisoners(
   var releaseDate: LocalDate? = null,
   val releaseType: String? = null,
   val lastUpdatedDate: LocalDate? = null,
-  var status: List<PathwayStatus>? = ArrayList(),
+  val status: List<PathwayStatus>? = ArrayList(),
+  val pathwayStatus: Status?,
   val homeDetentionCurfewEligibilityDate: LocalDate? = null,
   val paroleEligibilityDate: LocalDate? = null,
 )

@@ -5,9 +5,12 @@ import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderSearchApiService
@@ -26,10 +29,17 @@ class PrisonerService(
     term: String?,
     prisonId: String,
     days: Int,
+    pathwayView: Pathway?,
+    pathwayStatus: Status?,
     page: Int,
     size: Int,
     sort: String,
-  ): PrisonersList = offenderSearchApiService.getPrisonersByPrisonId(term, prisonId, days, page, size, sort)
+  ): PrisonersList {
+    if (pathwayStatus != null && pathwayView == null) {
+      throw ServerWebInputException("pathwayStatus cannot be used without pathwayStatus")
+    }
+    return offenderSearchApiService.getPrisonersByPrisonId(term, prisonId, days, pathwayView, pathwayStatus, page, size, sort)
+  }
 
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)

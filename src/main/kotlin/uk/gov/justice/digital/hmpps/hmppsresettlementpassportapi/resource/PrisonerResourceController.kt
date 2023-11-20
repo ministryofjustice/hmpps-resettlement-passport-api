@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoner
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PrisonerService
 
 @RestController
@@ -52,7 +54,7 @@ class PrisonerResourceController(
       ),
       ApiResponse(
         responseCode = "400",
-        description = "Incorrect information provided to perform prisoner match",
+        description = "Incorrect input options provided",
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
     ],
@@ -84,7 +86,15 @@ class PrisonerResourceController(
     @Parameter(description = "Prisoners released (release date) within the given days from current date")
     @RequestParam(value = "days", defaultValue = "0")
     days: Int = 0,
-  ): PrisonersList = prisonerService.getPrisonersByPrisonId(term, prisonId, days, page, size, sort)
+    @Schema(example = "ACCOMMODATION")
+    @Parameter(description = "Pathway to filter statuses to")
+    @RequestParam(value = "pathwayView")
+    pathwayView: Pathway?,
+    @Schema(example = "IN_PROGRESS")
+    @Parameter(description = "Status to filter the results on. This can only be used if pathwayView is provided.")
+    @RequestParam(value = "pathwayStatus")
+    pathwayStatus: Status?,
+  ): PrisonersList = prisonerService.getPrisonersByPrisonId(term, prisonId, days, pathwayView, pathwayStatus, page, size, sort)
 
   @GetMapping("/prisoner/{nomsId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get prisoner by noms Id", description = "Prisoner Details based on noms Id")

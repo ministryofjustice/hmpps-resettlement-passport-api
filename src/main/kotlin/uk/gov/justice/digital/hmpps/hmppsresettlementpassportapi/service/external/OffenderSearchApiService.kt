@@ -69,6 +69,8 @@ class OffenderSearchApiService(
     searchTerm: String?,
     prisonId: String,
     days: Int,
+    pathwayView: Pathway?,
+    pathwayStatus: Status?,
     pageNumber: Int,
     pageSize: Int,
     sort: String,
@@ -124,47 +126,53 @@ class OffenderSearchApiService(
       )
     }
 
+    val fullList = objectMapper(offenders, pathwayView, pathwayStatus)
+
     val endIndex = (pageNumber * pageSize) + (pageSize)
-    if (startIndex < endIndex && endIndex <= offenders.size) {
-      val searchList = offenders.subList(startIndex, endIndex)
-      val pList: List<Prisoners> = objectMapper(searchList)
-      return PrisonersList(pList, pList.toList().size, pageNumber, sort, offenders.size, (endIndex == offenders.size))
+    if (startIndex < endIndex && endIndex <= fullList.size) {
+      val pList = fullList.subList(startIndex, endIndex)
+      return PrisonersList(pList, pList.toList().size, pageNumber, sort, fullList.size, (endIndex == fullList.size))
     } else if (startIndex < endIndex) {
-      val searchList = offenders.subList(startIndex, offenders.size)
-      val pList: List<Prisoners> = objectMapper(searchList)
-      return PrisonersList(pList, pList.toList().size, pageNumber, sort, offenders.size, true)
+      val pList = fullList.subList(startIndex, fullList.size)
+      return PrisonersList(pList, pList.toList().size, pageNumber, sort, fullList.size, true)
     }
     return PrisonersList(emptyList(), 0, 0, sort, 0, false)
   }
 
-  private fun objectMapper(searchList: List<PrisonersSearch>): List<Prisoners> {
+  private fun objectMapper(searchList: List<PrisonersSearch>, pathwayView: Pathway?, pathwayStatusToFilter: Status?): List<Prisoners> {
     val prisonersList = mutableListOf<Prisoners>()
     searchList.forEach { prisonersSearch ->
-      val prisoner = Prisoners(
-        prisonersSearch.prisonerNumber,
-        prisonersSearch.firstName,
-        prisonersSearch.middleNames,
-        prisonersSearch.lastName,
-        prisonersSearch.displayReleaseDate,
-        prisonersSearch.nonDtoReleaseDateType,
-        null,
-        null,
-        prisonersSearch.homeDetentionCurfewEligibilityDate,
-        prisonersSearch.paroleEligibilityDate,
-      )
 
       val prisonerEntity = prisonerRepository.findByNomsId(prisonersSearch.prisonerNumber)
 
+      val pathwayStatuses: List<PathwayStatus>?
+      val pathwayStatus: Status?
+
       if (prisonerEntity != null) {
-        val pathwayStatuses = getPathwayStatuses(prisonerEntity, prisonersSearch.prisonerNumber)
-        prisoner.status = pathwayStatuses
+        pathwayStatuses = if (pathwayView == null) getPathwayStatuses(prisonerEntity) else null
+        pathwayStatus = if (pathwayView != null) getPathwayStatus(prisonerEntity, pathwayView) else null
       } else {
         // We don't know about this prisoner yet so just set all the statuses to NOT_STARTED.
-        val pathwayStatuses = getDefaultPathwayStatuses()
-        prisoner.status = pathwayStatuses
+        pathwayStatuses = if (pathwayView == null) getDefaultPathwayStatuses() else null
+        pathwayStatus = if (pathwayView != null) Status.NOT_STARTED else null
       }
 
-      prisonersList.add(prisoner)
+      if (pathwayStatusToFilter == null || pathwayStatusToFilter == pathwayStatus) {
+        val prisoner = Prisoners(
+          prisonersSearch.prisonerNumber,
+          prisonersSearch.firstName,
+          prisonersSearch.middleNames,
+          prisonersSearch.lastName,
+          prisonersSearch.displayReleaseDate,
+          prisonersSearch.nonDtoReleaseDateType,
+          null,
+          pathwayStatuses,
+          pathwayStatus,
+          prisonersSearch.homeDetentionCurfewEligibilityDate,
+          prisonersSearch.paroleEligibilityDate,
+        )
+        prisonersList.add(prisoner)
+      }
     }
     return prisonersList
   }
@@ -229,7 +237,7 @@ class OffenderSearchApiService(
       prisonerImage?.imageId,
     )
 
-    val pathwayStatuses = getPathwayStatuses(prisonerEntity, nomsId)
+    val pathwayStatuses = getPathwayStatuses(prisonerEntity)
 
     return Prisoner(prisonerPersonal, pathwayStatuses)
   }
@@ -243,7 +251,6 @@ class OffenderSearchApiService(
 
   protected fun getPathwayStatuses(
     prisonerEntity: PrisonerEntity,
-    nomsId: String,
   ): ArrayList<PathwayStatus> {
     val pathwayStatuses = ArrayList<PathwayStatus>()
     val pathwayRepoData = pathwayAndStatusService.findAllPathways()
@@ -261,6 +268,11 @@ class OffenderSearchApiService(
       }
     }
     return pathwayStatuses
+  }
+
+  private fun getPathwayStatus(prisonerEntity: PrisonerEntity, pathwayView: Pathway): Status {
+    val pathwayStatusEntity = pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(pathwayAndStatusService.getPathwayEntity(pathwayView), prisonerEntity)
+    return Status.getById(pathwayStatusEntity.status.id)
   }
 
   fun getDefaultPathwayStatuses(): List<PathwayStatus> {

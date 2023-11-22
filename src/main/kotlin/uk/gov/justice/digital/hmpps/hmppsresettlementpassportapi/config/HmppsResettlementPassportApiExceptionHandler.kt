@@ -11,6 +11,7 @@ import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.access.AuthorizationServiceException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import org.springframework.web.server.ServerWebInputException
 
 @RestControllerAdvice
@@ -44,22 +45,8 @@ class HmppsResettlementPassportApiExceptionHandler {
       )
   }
 
-  @ExceptionHandler(ValidationException::class)
+  @ExceptionHandler(value = [ValidationException::class, ServerWebInputException::class, HttpMessageConversionException::class, MethodArgumentTypeMismatchException::class])
   fun handleValidationException(e: Exception): ResponseEntity<ErrorResponse> {
-    log.info("Validation exception: {}", e.message)
-    return ResponseEntity
-      .status(BAD_REQUEST)
-      .body(
-        ErrorResponse(
-          status = BAD_REQUEST,
-          userMessage = "Validation failure: ${e.message}",
-          developerMessage = e.message,
-        ),
-      )
-  }
-
-  @ExceptionHandler(ServerWebInputException::class)
-  fun handleServerWebInputException(e: Exception): ResponseEntity<ErrorResponse> {
     log.info("Validation exception: {}", e.cause?.message)
     return ResponseEntity
       .status(BAD_REQUEST)
@@ -70,11 +57,6 @@ class HmppsResettlementPassportApiExceptionHandler {
           developerMessage = e.cause?.message,
         ),
       )
-  }
-
-  @ExceptionHandler(HttpMessageConversionException::class)
-  fun handleHttpMessageConversionException(e: Exception): ResponseEntity<ErrorResponse> {
-    return handleServerWebInputException(e)
   }
 
   @ExceptionHandler(ResourceNotFoundException::class)

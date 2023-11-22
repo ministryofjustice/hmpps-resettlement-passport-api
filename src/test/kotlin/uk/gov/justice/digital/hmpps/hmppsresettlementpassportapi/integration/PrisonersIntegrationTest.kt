@@ -155,4 +155,43 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .jsonPath("status").isEqualTo(404)
   }
+
+  @Test
+  fun `Get All Prisoners - 400 pathway does not exist`() {
+    val prisonId = "MDI"
+    webTestClient.get()
+      .uri("/resettlement-passport/prison/$prisonId/prisoners?term=&page=0&size=10&sort=releaseDate,DESC&pathwayView=FAKE_PATHWAY")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isBadRequest
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(400)
+  }
+
+  @Test
+  fun `Get All Prisoners - 400 status does not exist`() {
+    val prisonId = "MDI"
+    webTestClient.get()
+      .uri("/resettlement-passport/prison/$prisonId/prisoners?term=&page=0&size=10&sort=releaseDate,DESC&pathwayView=ACCOMMODATION&pathwayStatus=FAKE_STATUS")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isBadRequest
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(400)
+  }
+
+  @Test
+  fun `Get All Prisoners - 400 pathwayStatus given with no pathwayView`() {
+    val prisonId = "MDI"
+    webTestClient.get()
+      .uri("/resettlement-passport/prison/$prisonId/prisoners?term=&page=0&size=10&sort=releaseDate,DESC&pathwayStatus=NOT_STARTED")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isBadRequest
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(400)
+  }
 }

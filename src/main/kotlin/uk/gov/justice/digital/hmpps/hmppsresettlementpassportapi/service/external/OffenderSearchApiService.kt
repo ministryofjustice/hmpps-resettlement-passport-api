@@ -111,22 +111,9 @@ class OffenderSearchApiService(
       )
     }
 
-    when (sort) {
-      "releaseDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.displayReleaseDate })
-      "firstName,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.firstName })
-      "lastName,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.lastName })
-      "prisonerNumber,ASC" -> offenders.sortBy { it.prisonerNumber }
-      "releaseDate,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.displayReleaseDate })
-      "firstName,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.firstName })
-      "lastName,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.lastName })
-      "prisonerNumber,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.prisonerNumber })
-      else -> throw NoDataWithCodeFoundException(
-        "Data",
-        "Sort value Invalid",
-      )
-    }
-
     val fullList = objectMapper(offenders, pathwayView, pathwayStatus)
+
+    sortPrisoners(sort, fullList)
 
     val endIndex = (pageNumber * pageSize) + (pageSize)
     if (startIndex < endIndex && endIndex <= fullList.size) {
@@ -139,7 +126,31 @@ class OffenderSearchApiService(
     return PrisonersList(emptyList(), 0, 0, sort, 0, false)
   }
 
-  private fun objectMapper(searchList: List<PrisonersSearch>, pathwayView: Pathway?, pathwayStatusToFilter: Status?): List<Prisoners> {
+  fun sortPrisoners(
+    sort: String,
+    offenders: MutableList<Prisoners>,
+  ) {
+    when (sort) {
+      "releaseDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.releaseDate })
+      "paroleEligibilityDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.paroleEligibilityDate })
+      "name,ASC" -> offenders.sortWith(compareBy { "${it.lastName}, ${it.firstName}" })
+      "prisonerNumber,ASC" -> offenders.sortBy { it.prisonerNumber }
+      "releaseDate,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.releaseDate })
+      "paroleEligibilityDate,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.paroleEligibilityDate })
+      "name,DESC" -> offenders.sortWith(compareByDescending { "${it.lastName}, ${it.firstName}" })
+      "prisonerNumber,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.prisonerNumber })
+      else -> throw NoDataWithCodeFoundException(
+        "Data",
+        "Sort value Invalid",
+      )
+      }
+  }
+
+  private fun compareByDescending(comparator: () -> Int, selector: (PrisonersSearch) -> String) {
+
+  }
+
+  private fun objectMapper(searchList: List<PrisonersSearch>, pathwayView: Pathway?, pathwayStatusToFilter: Status?): MutableList<Prisoners> {
     val prisonersList = mutableListOf<Prisoners>()
     searchList.forEach { prisonersSearch ->
 
@@ -160,11 +171,12 @@ class OffenderSearchApiService(
       if (pathwayStatusToFilter == null || pathwayStatusToFilter == pathwayStatus) {
         val prisoner = Prisoners(
           prisonersSearch.prisonerNumber,
-          prisonersSearch.firstName,
-          prisonersSearch.middleNames,
-          prisonersSearch.lastName,
+          prisonersSearch.firstName.trim(),
+          prisonersSearch.middleNames?.trim(),
+          prisonersSearch.lastName.trim(),
           prisonersSearch.displayReleaseDate,
           prisonersSearch.nonDtoReleaseDateType,
+          //TODO set lastUpdated to actual value
           null,
           pathwayStatuses,
           pathwayStatus,

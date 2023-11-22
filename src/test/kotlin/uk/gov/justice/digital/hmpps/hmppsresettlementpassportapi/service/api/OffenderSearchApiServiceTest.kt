@@ -412,5 +412,37 @@ class OffenderSearchApiServiceTest {
     }
   }
 
+  @Test
+  fun `test sort prisoners- sort prisoners by name ascending`(){
+    val prisoners = mutableListOf(
+      createPrisonerName("BERTRAND", "ANDERSON"),
+      createPrisonerName("ZACHARY", "SMITH"),
+      createPrisonerName("ZACHARY", "SMITH"),
+      createPrisonerName("ANDY", "ANDERSON"),
+      createPrisonerName("CHARLIE", "FOSTER"),
+      createPrisonerName("ARRAN", "PETERSON"),
+      createPrisonerName("LOUIS", "MCCARTHY"),
+      createPrisonerName("CORMAC", "CRAY"),
+      createPrisonerName("VLODIMIR", "MARSH"),
+      createPrisonerName("TOM", "WILLIAMSON")
+    )
+    val sortedPrisoners = mutableListOf(
+      createPrisonerName("ANDY", "ANDERSON"),
+      createPrisonerName("BERTRAND", "ANDERSON"),
+      createPrisonerName("CORMAC", "CRAY"),
+      createPrisonerName("CHARLIE", "FOSTER"),
+      createPrisonerName("VLODIMIR", "MARSH"),
+      createPrisonerName("LOUIS", "MCCARTHY"),
+      createPrisonerName("ARRAN", "PETERSON"),
+      createPrisonerName("ZACHARY", "SMITH"),
+      createPrisonerName("ZACHARY", "SMITH"),
+      createPrisonerName("TOM", "WILLIAMSON")
+    )
+    offenderSearchApiService.sortPrisoners("name,ASC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
   private fun createPrisoner(prisonId: String) = PrisonersSearch(prisonerNumber = "A123456", firstName = "firstName", lastName = "lastName", prisonId = prisonId, prisonName = "prisonName", cellLocation = null, youthOffender = false)
 }
+
+  private fun createPrisonerName(firstName: String, lastName: String) = Prisoners(prisonerNumber = "A123456", firstName = firstName, lastName = lastName, pathwayStatus = null)
+

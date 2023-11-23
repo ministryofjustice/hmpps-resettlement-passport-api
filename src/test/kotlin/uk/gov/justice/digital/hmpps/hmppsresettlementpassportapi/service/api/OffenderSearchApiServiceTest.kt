@@ -27,6 +27,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Path
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepositoryTest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PathwayAndStatusService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderSearchApiService
@@ -500,6 +501,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerParoleEligibilityDate(LocalDate.parse("2078-04-03")),
     )
     offenderSearchApiService.sortPrisoners("paroleEligibilityDate,ASC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
   @Test
@@ -523,17 +525,63 @@ class OffenderSearchApiServiceTest {
       createPrisonerParoleEligibilityDate(LocalDate.parse("2037-01-01")),
       createPrisonerParoleEligibilityDate(LocalDate.parse("2029-08-30")),
       createPrisonerParoleEligibilityDate(LocalDate.parse("2028-11-11")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-21")),
       createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-24")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-21")),
       createPrisonerParoleEligibilityDate(LocalDate.parse("2026-02-01")),
       createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-09")),
       createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-08")),
     )
-    offenderSearchApiService.sortPrisoners("paroleEligibilityDate,ASC", prisoners)
+    offenderSearchApiService.sortPrisoners("paroleEligibilityDate,DESC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
   }
+
+  @Test
+  fun `sort prisoners by pathway status- ascending`(){
+    val prisoners = mutableListOf(
+      createPrisonerPathwayStatus(Status.SUPPORT_DECLINED),
+      createPrisonerPathwayStatus(Status.NOT_STARTED),
+      createPrisonerPathwayStatus(Status.IN_PROGRESS),
+      createPrisonerPathwayStatus(Status.DONE),
+      createPrisonerPathwayStatus(Status.SUPPORT_NOT_REQUIRED)
+    )
+
+    val sortedPrisoners = mutableListOf(
+      createPrisonerPathwayStatus(Status.NOT_STARTED),
+      createPrisonerPathwayStatus(Status.IN_PROGRESS),
+      createPrisonerPathwayStatus(Status.SUPPORT_NOT_REQUIRED),
+      createPrisonerPathwayStatus(Status.SUPPORT_DECLINED),
+      createPrisonerPathwayStatus(Status.DONE)
+    )
+    offenderSearchApiService.sortPrisoners("pathwayStatus,ASC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
+  @Test
+  fun `sort prisoners by pathway status- descending`(){
+    val prisoners = mutableListOf(
+      createPrisonerPathwayStatus(Status.SUPPORT_DECLINED),
+      createPrisonerPathwayStatus(Status.NOT_STARTED),
+      createPrisonerPathwayStatus(Status.IN_PROGRESS),
+      createPrisonerPathwayStatus(Status.DONE),
+      createPrisonerPathwayStatus(Status.SUPPORT_NOT_REQUIRED)
+    )
+
+    val sortedPrisoners = mutableListOf(
+      createPrisonerPathwayStatus(Status.DONE),
+      createPrisonerPathwayStatus(Status.SUPPORT_DECLINED),
+      createPrisonerPathwayStatus(Status.SUPPORT_NOT_REQUIRED),
+      createPrisonerPathwayStatus(Status.IN_PROGRESS),
+      createPrisonerPathwayStatus(Status.NOT_STARTED)
+    )
+    offenderSearchApiService.sortPrisoners("pathwayStatus,DESC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
   private fun createPrisoner(prisonId: String) = PrisonersSearch(prisonerNumber = "A123456", firstName = "firstName", lastName = "lastName", prisonId = prisonId, prisonName = "prisonName", cellLocation = null, youthOffender = false)
 }
 
   private fun createPrisonerName(firstName: String, lastName: String) = Prisoners(prisonerNumber = "A123456", firstName = firstName, lastName = lastName, pathwayStatus = null)
 
   private fun createPrisonerParoleEligibilityDate(paroleEligibilityDate: LocalDate) = Prisoners(prisonerNumber = "A123456", firstName = "SIMON", lastName = "BAMFORD", pathwayStatus = null, paroleEligibilityDate = paroleEligibilityDate)
+
+  private fun createPrisonerPathwayStatus(pathwayStatus: Status) = Prisoners(prisonerNumber = "A123456", firstName = "BORIS", lastName = "FRANKLIN", pathwayStatus = pathwayStatus)

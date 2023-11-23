@@ -36,7 +36,7 @@ class PrisonerService(
     sort: String,
   ): PrisonersList {
     if (pathwayStatus != null && pathwayView == null) {
-      throw ServerWebInputException("pathwayStatus cannot be used without pathwayStatus")
+      throw ServerWebInputException("pathwayStatus cannot be used without pathwayView")
     }
     return offenderSearchApiService.getPrisonersByPrisonId(term, prisonId, days, pathwayView, pathwayStatus, page, size, sort)
   }

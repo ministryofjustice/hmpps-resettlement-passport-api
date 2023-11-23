@@ -441,8 +441,99 @@ class OffenderSearchApiServiceTest {
     offenderSearchApiService.sortPrisoners("name,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
+
+  @Test
+  fun `test sort prisoners- sort prisoners by name descending`(){
+    val prisoners = mutableListOf(
+      createPrisonerName("BERTRAND", "ANDERSON"),
+      createPrisonerName("ZACHARY", "SMITH"),
+      createPrisonerName("ZACHARY", "SMITH"),
+      createPrisonerName("ANDY", "ANDERSON"),
+      createPrisonerName("CHARLIE", "FOSTER"),
+      createPrisonerName("ARRAN", "PETERSON"),
+      createPrisonerName("LOUIS", "MCCARTHY"),
+      createPrisonerName("CORMAC", "CRAY"),
+      createPrisonerName("VLODIMIR", "MARSH"),
+      createPrisonerName("TOM", "WILLIAMSON")
+    )
+    val sortedPrisoners = mutableListOf(
+      createPrisonerName("TOM", "WILLIAMSON"),
+      createPrisonerName("ZACHARY", "SMITH"),
+      createPrisonerName("ZACHARY", "SMITH"),
+      createPrisonerName("ARRAN", "PETERSON"),
+      createPrisonerName("LOUIS", "MCCARTHY"),
+      createPrisonerName("VLODIMIR", "MARSH"),
+      createPrisonerName("CHARLIE", "FOSTER"),
+      createPrisonerName("CORMAC", "CRAY"),
+      createPrisonerName("BERTRAND", "ANDERSON"),
+      createPrisonerName("ANDY", "ANDERSON"),
+    )
+    offenderSearchApiService.sortPrisoners("name,DESC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
+  @Test
+  fun `sort prisoners by parole eligibility date- ascending`(){
+    val prisoners = mutableListOf(
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2029-08-30")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2037-01-01")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2028-11-11")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-08")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-21")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2078-04-03")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2046-12-03")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-02-01")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-24")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-09"))
+    )
+
+    val sortedPrisoners = mutableListOf(
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-08")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-09")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-02-01")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-21")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-24")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2028-11-11")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2029-08-30")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2037-01-01")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2046-12-03")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2078-04-03")),
+    )
+    offenderSearchApiService.sortPrisoners("paroleEligibilityDate,ASC", prisoners)
+  }
+
+  @Test
+  fun `sort prisoners by parole eligibility date- descending`(){
+    val prisoners = mutableListOf(
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2029-08-30")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2037-01-01")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2028-11-11")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-08")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-21")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2078-04-03")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2046-12-03")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-02-01")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-24")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-09"))
+    )
+
+    val sortedPrisoners = mutableListOf(
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2078-04-03")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2046-12-03")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2037-01-01")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2029-08-30")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2028-11-11")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-21")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-24")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-02-01")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-09")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-08")),
+    )
+    offenderSearchApiService.sortPrisoners("paroleEligibilityDate,ASC", prisoners)
+  }
   private fun createPrisoner(prisonId: String) = PrisonersSearch(prisonerNumber = "A123456", firstName = "firstName", lastName = "lastName", prisonId = prisonId, prisonName = "prisonName", cellLocation = null, youthOffender = false)
 }
 
   private fun createPrisonerName(firstName: String, lastName: String) = Prisoners(prisonerNumber = "A123456", firstName = firstName, lastName = lastName, pathwayStatus = null)
 
+  private fun createPrisonerParoleEligibilityDate(paroleEligibilityDate: LocalDate) = Prisoners(prisonerNumber = "A123456", firstName = "SIMON", lastName = "BAMFORD", pathwayStatus = null, paroleEligibilityDate = paroleEligibilityDate)

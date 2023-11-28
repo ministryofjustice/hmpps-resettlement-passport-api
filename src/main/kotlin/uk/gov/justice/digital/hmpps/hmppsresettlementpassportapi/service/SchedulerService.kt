@@ -23,11 +23,6 @@ class SchedulerService(
     metricsService.recordCustomMetrics()
   }
 
-  @Scheduled(initialDelay = 30000, fixedDelay = Long.MAX_VALUE)
-  fun oneTimeScheduledTask() {
-    prisonerService.addReleaseDateToPrisoners()
-  }
-
   @Scheduled(cron = "0 0 2 * * *")
   fun reconcileReleaseDatesInDatabase() {
     log.info("Start updating prisoner entities with new release date")

@@ -5,7 +5,10 @@ import io.micrometer.core.instrument.Tags
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prison
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerCountMetric
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerCountMetrics
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ReleaseDateTag
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.StatusTag
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
 import java.time.LocalDate
@@ -110,28 +113,16 @@ class MetricsService(
 
     log.info("Finished running scheduled metrics job")
   }
-}
 
-data class PrisonerCountMetrics(
-  val metrics: MutableMap<Prison, List<PrisonerCountMetric>> = mutableMapOf(),
-)
-
-data class PrisonerCountMetric(
-  val status: StatusTag,
-  val releaseDate: ReleaseDateTag,
-  val value: Int,
-)
-
-enum class StatusTag(val label: String) {
-  ALL("All"),
-  NOT_STARTED("Not Started"),
-  IN_PROGRESS("In Progress"),
-  DONE("Done"),
-}
-
-enum class ReleaseDateTag(val label: String) {
-  PAST("Past"),
-  ALL_FUTURE("All Future"),
-  TWELVE_WEEKS("12 Weeks"),
-  TWENTY_FOUR_WEEKS("24 Weeks"),
+  fun getMetricsByPrisonId(prisonId: String): List<PrisonerCountMetric> {
+    if (prisonerCountMetrics.metrics.isEmpty()) {
+      recordPrisonersCountForEachPrison()
+    }
+    val metrics = prisonerCountMetrics.metrics.filter { it.key.id == prisonId }.values.firstOrNull()
+    if (metrics != null) {
+      return metrics
+    } else {
+      throw ResourceNotFoundException("No metrics found for prison [$prisonId]")
+    }
+  }
 }

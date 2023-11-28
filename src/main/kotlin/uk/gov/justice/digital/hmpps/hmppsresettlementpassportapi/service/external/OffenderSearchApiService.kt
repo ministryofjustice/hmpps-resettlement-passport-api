@@ -141,9 +141,11 @@ class OffenderSearchApiService(
       "pathwayStatus,ASC" -> offenders.sortBy { it.pathwayStatus }
       "releaseDate,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.releaseDate })
       "paroleEligibilityDate,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.paroleEligibilityDate })
-      "name,DESC" -> offenders.sortWith(compareByDescending { "${it.lastName}, ${it.firstName}" })
+      "name,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { "${it.lastName}, ${it.firstName}" })
+      "lastUpdatedDate,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.lastUpdatedDate })
       "prisonerNumber,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.prisonerNumber })
       "pathwayStatus,DESC" -> offenders.sortByDescending { it.pathwayStatus }
+
       else -> throw NoDataWithCodeFoundException(
         "Data",
         "Sort value Invalid",
@@ -172,14 +174,16 @@ class OffenderSearchApiService(
       val prisonerEntity = prisonerRepository.findByNomsId(prisonersSearch.prisonerNumber)
 
       val pathwayStatuses: List<PathwayStatus>?
+      val sortedPathwayStatuses: List<PathwayStatus>?
       val pathwayStatus: Status?
       val lastUpdatedDate: LocalDate?
 
+
       if (prisonerEntity != null) {
-        pathwayStatuses = if (pathwayView == null) getPathwayStatuses(prisonerEntity).sortBy{ it.lastDateChange } else null
+        pathwayStatuses = if (pathwayView == null) getPathwayStatuses(prisonerEntity) else null
+        sortedPathwayStatuses = pathwayStatuses?.sortedWith(compareBy(nullsLast()) { it.lastDateChange} )
+        lastUpdatedDate = if (pathwayView == null) sortedPathwayStatuses?.first()?.lastDateChange else if (pathwayView != null) getPathwayStatusLastUpdated(prisonerEntity, pathwayView) else null
         pathwayStatus = if (pathwayView != null) getPathwayStatus(prisonerEntity, pathwayView) else null
-        lastUpdatedDate = if (pathwayView != null) getPathwayStatusLastUpdated(prisonerEntity, pathwayView) else null
-        pathwayStatuses?.filter { it.pathway?.name == pathwayView?.name }.sortBy
       } else {
         // We don't know about this prisoner yet so just set all the statuses to NOT_STARTED.
         pathwayStatuses = if (pathwayView == null) getDefaultPathwayStatuses() else null
@@ -280,6 +284,7 @@ class OffenderSearchApiService(
   }
 
   protected fun getPathwayStatuses(
+
     prisonerEntity: PrisonerEntity,
   ): ArrayList<PathwayStatus> {
     val pathwayStatuses = ArrayList<PathwayStatus>()

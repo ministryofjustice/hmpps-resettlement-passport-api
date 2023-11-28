@@ -536,7 +536,7 @@ class OffenderSearchApiServiceTest {
   }
 
   @Test
-  fun `sort prisoners by pathway status- ascending`(){
+  fun `sort prisoners by pathway status- pathway view set- ascending`(){
     val prisoners = mutableListOf(
       createPrisonerPathwayStatus(Status.SUPPORT_DECLINED),
       createPrisonerPathwayStatus(Status.NOT_STARTED),
@@ -557,7 +557,7 @@ class OffenderSearchApiServiceTest {
   }
 
   @Test
-  fun `sort prisoners by pathway status- descending`(){
+  fun `sort prisoners by pathway status- pathway view set- descending`(){
     val prisoners = mutableListOf(
       createPrisonerPathwayStatus(Status.SUPPORT_DECLINED),
       createPrisonerPathwayStatus(Status.NOT_STARTED),
@@ -577,6 +577,65 @@ class OffenderSearchApiServiceTest {
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
+  @Test
+  fun `sort prisoners by last updated- pathway view is set- descending`(){
+    val prisoners = mutableListOf(
+      createPrisonerLastUpdatedDate(Status.IN_PROGRESS, LocalDate.parse("2023-05-08")),
+      createPrisonerLastUpdatedDate(Status.DONE, LocalDate.parse("2023-11-08")),
+      createPrisonerLastUpdatedDate(Status.DONE, LocalDate.parse("2023-10-08")),
+      createPrisonerLastUpdatedDate(Status.NOT_STARTED, null),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_DECLINED, LocalDate.parse("2023-10-31")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_NOT_REQUIRED, LocalDate.parse("2023-09-30")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_DECLINED, LocalDate.parse("2023-09-30")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_NOT_REQUIRED, LocalDate.parse("2023-08-03")),
+      createPrisonerLastUpdatedDate(Status.IN_PROGRESS, LocalDate.parse("2023-11-22"))
+    )
+
+    val sortedPrisoners = mutableListOf(
+
+      createPrisonerLastUpdatedDate(Status.IN_PROGRESS, LocalDate.parse("2023-11-22")),
+      createPrisonerLastUpdatedDate(Status.DONE, LocalDate.parse("2023-11-08")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_DECLINED, LocalDate.parse("2023-10-31")),
+      createPrisonerLastUpdatedDate(Status.DONE, LocalDate.parse("2023-10-08")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_NOT_REQUIRED, LocalDate.parse("2023-09-30")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_DECLINED, LocalDate.parse("2023-09-30")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_NOT_REQUIRED, LocalDate.parse("2023-08-03")),
+      createPrisonerLastUpdatedDate(Status.IN_PROGRESS, LocalDate.parse("2023-05-08")),
+      createPrisonerLastUpdatedDate(Status.NOT_STARTED, null),
+    )
+    offenderSearchApiService.sortPrisoners("lastUpdatedDate,DESC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
+  @Test
+  fun `sort prisoners by last updated- pathway view is set- ascending`(){
+    val prisoners = mutableListOf(
+      createPrisonerLastUpdatedDate(Status.IN_PROGRESS, LocalDate.parse("2023-05-08")),
+      createPrisonerLastUpdatedDate(Status.DONE, LocalDate.parse("2023-11-08")),
+      createPrisonerLastUpdatedDate(Status.DONE, LocalDate.parse("2023-10-08")),
+      createPrisonerLastUpdatedDate(Status.NOT_STARTED, null),
+      createPrisonerLastUpdatedDate(Status.NOT_STARTED, null),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_DECLINED, LocalDate.parse("2023-10-31")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_NOT_REQUIRED, LocalDate.parse("2023-09-30")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_NOT_REQUIRED, LocalDate.parse("2023-08-03")),
+      createPrisonerLastUpdatedDate(Status.IN_PROGRESS, LocalDate.parse("2023-11-22"))
+    )
+
+    val sortedPrisoners = mutableListOf(
+      createPrisonerLastUpdatedDate(Status.IN_PROGRESS, LocalDate.parse("2023-05-08")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_NOT_REQUIRED, LocalDate.parse("2023-08-03")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_NOT_REQUIRED, LocalDate.parse("2023-09-30")),
+      createPrisonerLastUpdatedDate(Status.DONE, LocalDate.parse("2023-10-08")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_DECLINED, LocalDate.parse("2023-10-31")),
+      createPrisonerLastUpdatedDate(Status.DONE, LocalDate.parse("2023-11-08")),
+      createPrisonerLastUpdatedDate(Status.IN_PROGRESS, LocalDate.parse("2023-11-22")),
+      createPrisonerLastUpdatedDate(Status.NOT_STARTED, null),
+      createPrisonerLastUpdatedDate(Status.NOT_STARTED, null),
+    )
+    offenderSearchApiService.sortPrisoners("lastUpdatedDate,ASC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
   private fun createPrisoner(prisonId: String) = PrisonersSearch(prisonerNumber = "A123456", firstName = "firstName", lastName = "lastName", prisonId = prisonId, prisonName = "prisonName", cellLocation = null, youthOffender = false)
 }
 
@@ -585,3 +644,5 @@ class OffenderSearchApiServiceTest {
   private fun createPrisonerParoleEligibilityDate(paroleEligibilityDate: LocalDate) = Prisoners(prisonerNumber = "A123456", firstName = "SIMON", lastName = "BAMFORD", pathwayStatus = null, paroleEligibilityDate = paroleEligibilityDate)
 
   private fun createPrisonerPathwayStatus(pathwayStatus: Status) = Prisoners(prisonerNumber = "A123456", firstName = "BORIS", lastName = "FRANKLIN", pathwayStatus = pathwayStatus)
+
+  private fun createPrisonerLastUpdatedDate(pathwayStatus: Status, lastUpdatedDate: LocalDate?) = Prisoners(prisonerNumber = "A123456", firstName = "OLIVER", lastName = "HAYES", pathwayStatus = pathwayStatus, lastUpdatedDate = lastUpdatedDate)

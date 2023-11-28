@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.HmppsResettlementPassportApiExceptionHandler
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prison
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
@@ -30,6 +31,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Stat
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepositoryTest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PathwayAndStatusService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PrisonerService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
@@ -55,6 +57,9 @@ class OffenderSearchApiServiceTest {
 
   @Mock
   private lateinit var prisonApiService: PrisonApiService
+
+  @Mock
+  private lateinit var prisonerService: PrisonerService
 
   @BeforeEach
   fun beforeEach() {
@@ -413,10 +418,19 @@ class OffenderSearchApiServiceTest {
     }
   }
 
+  //@Test
+  //fun `Test exception thrown when pathway view not set, attempt to sort by pathway status` (){
+   //`when` (prisonerService.getPrisonersByPrisonId(prisonId = "MDI", days = 20, page=0, size=500, sort="pathwayStatus,ASC", term=null, pathwayStatus=null, pathwayView=null ))
+  // assetThrows<handleServerWebInputException>{
+
+   //}
+ // }
+
   @Test
   fun `test sort prisoners- sort prisoners by name ascending`(){
     val prisoners = mutableListOf(
       createPrisonerName("BERTRAND", "ANDERSON"),
+      createPrisonerName("ZACHARY", "SMITH"),
       createPrisonerName("ZACHARY", "SMITH"),
       createPrisonerName("ZACHARY", "SMITH"),
       createPrisonerName("ANDY", "ANDERSON"),
@@ -435,6 +449,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerName("VLODIMIR", "MARSH"),
       createPrisonerName("LOUIS", "MCCARTHY"),
       createPrisonerName("ARRAN", "PETERSON"),
+      createPrisonerName("ZACHARY", "SMITH"),
       createPrisonerName("ZACHARY", "SMITH"),
       createPrisonerName("ZACHARY", "SMITH"),
       createPrisonerName("TOM", "WILLIAMSON")
@@ -449,6 +464,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerName("BERTRAND", "ANDERSON"),
       createPrisonerName("ZACHARY", "SMITH"),
       createPrisonerName("ZACHARY", "SMITH"),
+      createPrisonerName("ZACHARY", "SMITH"),
       createPrisonerName("ANDY", "ANDERSON"),
       createPrisonerName("CHARLIE", "FOSTER"),
       createPrisonerName("ARRAN", "PETERSON"),
@@ -458,16 +474,17 @@ class OffenderSearchApiServiceTest {
       createPrisonerName("TOM", "WILLIAMSON")
     )
     val sortedPrisoners = mutableListOf(
-      createPrisonerName("TOM", "WILLIAMSON"),
-      createPrisonerName("ZACHARY", "SMITH"),
-      createPrisonerName("ZACHARY", "SMITH"),
-      createPrisonerName("ARRAN", "PETERSON"),
-      createPrisonerName("LOUIS", "MCCARTHY"),
-      createPrisonerName("VLODIMIR", "MARSH"),
-      createPrisonerName("CHARLIE", "FOSTER"),
-      createPrisonerName("CORMAC", "CRAY"),
-      createPrisonerName("BERTRAND", "ANDERSON"),
       createPrisonerName("ANDY", "ANDERSON"),
+      createPrisonerName("BERTRAND", "ANDERSON"),
+      createPrisonerName("CORMAC", "CRAY"),
+      createPrisonerName("CHARLIE", "FOSTER"),
+      createPrisonerName("VLODIMIR", "MARSH"),
+      createPrisonerName("LOUIS", "MCCARTHY"),
+      createPrisonerName("ARRAN", "PETERSON"),
+      createPrisonerName("ZACHARY", "SMITH"),
+      createPrisonerName("ZACHARY", "SMITH"),
+      createPrisonerName("ZACHARY", "SMITH"),
+      createPrisonerName("TOM", "WILLIAMSON")
     )
     offenderSearchApiService.sortPrisoners("name,DESC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
@@ -578,7 +595,7 @@ class OffenderSearchApiServiceTest {
   }
 
   @Test
-  fun `sort prisoners by last updated- pathway view is set- descending`(){
+  fun `sort prisoners by last updated- descending`(){
     val prisoners = mutableListOf(
       createPrisonerLastUpdatedDate(Status.IN_PROGRESS, LocalDate.parse("2023-05-08")),
       createPrisonerLastUpdatedDate(Status.DONE, LocalDate.parse("2023-11-08")),
@@ -608,7 +625,7 @@ class OffenderSearchApiServiceTest {
   }
 
   @Test
-  fun `sort prisoners by last updated- pathway view is set- ascending`(){
+  fun `sort prisoners by last updated- ascending`(){
     val prisoners = mutableListOf(
       createPrisonerLastUpdatedDate(Status.IN_PROGRESS, LocalDate.parse("2023-05-08")),
       createPrisonerLastUpdatedDate(Status.DONE, LocalDate.parse("2023-11-08")),
@@ -636,11 +653,78 @@ class OffenderSearchApiServiceTest {
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
+  @Test
+  fun `test secondary sort by NomsId ascending, primary sort by prisoner name ascending`(){
+    val prisoners = mutableListOf(
+      createPrisonerNameAndNumber("A123456", "BERTRAND", "ANDERSON"),
+      createPrisonerNameAndNumber("C394839","ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("Y945849","ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("Y340302","ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("G394839","ANDY", "ANDERSON"),
+      createPrisonerNameAndNumber("B394839","CHARLIE", "FOSTER"),
+      createPrisonerNameAndNumber("N394839","ARRAN", "PETERSON"),
+      createPrisonerNameAndNumber("W394839","LOUIS", "MCCARTHY"),
+      createPrisonerNameAndNumber("S394839","CORMAC", "CRAY"),
+      createPrisonerNameAndNumber("K394839","VLODIMIR", "MARSH"),
+      createPrisonerNameAndNumber("E394839","TOM", "WILLIAMSON")
+    )
+    val sortedPrisoners = mutableListOf(
+      createPrisonerNameAndNumber("G394839","ANDY", "ANDERSON"),
+      createPrisonerNameAndNumber("A123456","BERTRAND", "ANDERSON"),
+      createPrisonerNameAndNumber("S394839","CORMAC", "CRAY"),
+      createPrisonerNameAndNumber("B394839","CHARLIE", "FOSTER"),
+      createPrisonerNameAndNumber("K394839","VLODIMIR", "MARSH"),
+      createPrisonerNameAndNumber("W394839","LOUIS", "MCCARTHY"),
+      createPrisonerNameAndNumber("N394839","ARRAN", "PETERSON"),
+      createPrisonerNameAndNumber("C394839","ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("Y340302","ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("Y945849","ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("E394839","TOM", "WILLIAMSON")
+    )
+    offenderSearchApiService.sortPrisonersByNomsId("ASC", prisoners)
+    offenderSearchApiService.sortPrisoners("name,ASC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
+  @Test
+  fun `test secondary sort by NomsId descending, primary sort by prisoner name ascending`() {
+    val prisoners = mutableListOf(
+      createPrisonerNameAndNumber("A123456", "BERTRAND", "ANDERSON"),
+      createPrisonerNameAndNumber("C394839","ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("Y945849","ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("Y340302","ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("G394839","ANDY", "ANDERSON"),
+      createPrisonerNameAndNumber("B394839","CHARLIE", "FOSTER"),
+      createPrisonerNameAndNumber("N394839","ARRAN", "PETERSON"),
+      createPrisonerNameAndNumber("W394839","LOUIS", "MCCARTHY"),
+      createPrisonerNameAndNumber("S394839","CORMAC", "CRAY"),
+      createPrisonerNameAndNumber("K394839","VLODIMIR", "MARSH"),
+      createPrisonerNameAndNumber("E394839","TOM", "WILLIAMSON")
+    )
+    val sortedPrisoners = mutableListOf(
+      createPrisonerNameAndNumber("G394839","ANDY", "ANDERSON"),
+      createPrisonerNameAndNumber("A123456","BERTRAND", "ANDERSON"),
+      createPrisonerNameAndNumber("S394839","CORMAC", "CRAY"),
+      createPrisonerNameAndNumber("B394839","CHARLIE", "FOSTER"),
+      createPrisonerNameAndNumber("K394839","VLODIMIR", "MARSH"),
+      createPrisonerNameAndNumber("W394839","LOUIS", "MCCARTHY"),
+      createPrisonerNameAndNumber("N394839","ARRAN", "PETERSON"),
+      createPrisonerNameAndNumber("Y945849","ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("Y340302","ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("C394839","ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("E394839","TOM", "WILLIAMSON")
+    )
+    offenderSearchApiService.sortPrisonersByNomsId("DESC", prisoners)
+    offenderSearchApiService.sortPrisoners("name,ASC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
   private fun createPrisoner(prisonId: String) = PrisonersSearch(prisonerNumber = "A123456", firstName = "firstName", lastName = "lastName", prisonId = prisonId, prisonName = "prisonName", cellLocation = null, youthOffender = false)
 }
 
   private fun createPrisonerName(firstName: String, lastName: String) = Prisoners(prisonerNumber = "A123456", firstName = firstName, lastName = lastName, pathwayStatus = null)
 
+  private fun createPrisonerNameAndNumber(prisonerNumber: String, firstName: String, lastName: String) = Prisoners(prisonerNumber = prisonerNumber, firstName = firstName, lastName = lastName, pathwayStatus = null)
   private fun createPrisonerParoleEligibilityDate(paroleEligibilityDate: LocalDate) = Prisoners(prisonerNumber = "A123456", firstName = "SIMON", lastName = "BAMFORD", pathwayStatus = null, paroleEligibilityDate = paroleEligibilityDate)
 
   private fun createPrisonerPathwayStatus(pathwayStatus: Status) = Prisoners(prisonerNumber = "A123456", firstName = "BORIS", lastName = "FRANKLIN", pathwayStatus = pathwayStatus)

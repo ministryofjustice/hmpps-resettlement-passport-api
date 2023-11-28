@@ -113,7 +113,7 @@ class OffenderSearchApiService(
 
     val fullList = objectMapper(offenders, pathwayView, pathwayStatus)
 
-    sortPrisonersByNomsId(fullList)
+    sortPrisonersByNomsId(sort, fullList)
 
     sortPrisoners(sort, fullList)
 
@@ -154,9 +154,13 @@ class OffenderSearchApiService(
   }
 
   fun sortPrisonersByNomsId(
+    sort: String,
     offenders: MutableList<Prisoners>
   ){
-    offenders.sortWith(compareBy(nullsLast()) { it.prisonerNumber })
+    when (sort){
+    "ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.prisonerNumber })
+      "DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.prisonerNumber })
+  }
   }
 
   fun sortAllPathwaysByLastUpdated(){

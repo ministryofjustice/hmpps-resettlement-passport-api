@@ -6,11 +6,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoner
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerPersonal
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.*
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonerImage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
@@ -21,7 +17,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PathwayAndStatusService
 import java.time.LocalDate
 import java.time.Period
-import kotlin.collections.ArrayList
 
 @Service
 class OffenderSearchApiService(
@@ -131,7 +126,7 @@ class OffenderSearchApiService(
   fun sortPrisoners(
     sort: String,
     offenders: MutableList<Prisoners>,
-  ){
+  ) {
     when (sort) {
       "releaseDate,ASC" -> offenders.sortWith(compareBy(nullsFirst()) { it.releaseDate })
       "paroleEligibilityDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.paroleEligibilityDate })
@@ -155,15 +150,15 @@ class OffenderSearchApiService(
 
   fun sortPrisonersByNomsId(
     sort: String,
-    offenders: MutableList<Prisoners>
-  ){
-    when (sort){
-    "ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.prisonerNumber })
+    offenders: MutableList<Prisoners>,
+  ) {
+    when (sort) {
+      "ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.prisonerNumber })
       "DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.prisonerNumber })
-  }
+    }
   }
 
-  fun sortAllPathwaysByLastUpdated(){
+  fun sortAllPathwaysByLastUpdated() {
 
   }
 
@@ -171,7 +166,11 @@ class OffenderSearchApiService(
 
   }
 
-  private fun objectMapper(searchList: List<PrisonersSearch>, pathwayView: Pathway?, pathwayStatusToFilter: Status?): MutableList<Prisoners> {
+  private fun objectMapper(
+    searchList: List<PrisonersSearch>,
+    pathwayView: Pathway?,
+    pathwayStatusToFilter: Status?,
+  ): MutableList<Prisoners> {
     val prisonersList = mutableListOf<Prisoners>()
     searchList.forEach { prisonersSearch ->
 
@@ -185,8 +184,12 @@ class OffenderSearchApiService(
 
       if (prisonerEntity != null) {
         pathwayStatuses = if (pathwayView == null) getPathwayStatuses(prisonerEntity) else null
-        sortedPathwayStatuses = pathwayStatuses?.sortedWith(compareBy(nullsLast()) { it.lastDateChange} )
-        lastUpdatedDate = if (pathwayView == null) sortedPathwayStatuses?.first()?.lastDateChange else if (pathwayView != null) getPathwayStatusLastUpdated(prisonerEntity, pathwayView) else null
+        sortedPathwayStatuses = pathwayStatuses?.sortedWith(compareBy(nullsLast()) { it.lastDateChange })
+        lastUpdatedDate =
+          if (pathwayView == null) sortedPathwayStatuses?.first()?.lastDateChange else if (pathwayView != null) getPathwayStatusLastUpdated(
+            prisonerEntity,
+            pathwayView,
+          ) else null
         pathwayStatus = if (pathwayView != null) getPathwayStatus(prisonerEntity, pathwayView) else null
       } else {
         // We don't know about this prisoner yet so just set all the statuses to NOT_STARTED.
@@ -310,12 +313,16 @@ class OffenderSearchApiService(
   }
 
   private fun getPathwayStatus(prisonerEntity: PrisonerEntity, pathwayView: Pathway): Status {
-    val pathwayStatusEntity = pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(pathwayAndStatusService.getPathwayEntity(pathwayView), prisonerEntity)
+    val pathwayStatusEntity = pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(
+      pathwayAndStatusService.getPathwayEntity(pathwayView), prisonerEntity,
+    )
     return Status.getById(pathwayStatusEntity.status.id)
   }
 
   private fun getPathwayStatusLastUpdated(prisonerEntity: PrisonerEntity, pathwayView: Pathway): LocalDate? {
-    val pathwayStatusEntity = pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(pathwayAndStatusService.getPathwayEntity(pathwayView), prisonerEntity)
+    val pathwayStatusEntity = pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(
+      pathwayAndStatusService.getPathwayEntity(pathwayView), prisonerEntity,
+    )
     return pathwayStatusEntity.updatedDate?.toLocalDate()
   }
 

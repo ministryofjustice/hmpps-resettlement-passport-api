@@ -734,7 +734,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerNumber("G567809"),
       createPrisonerNumber("G678952"),
     )
-    offenderSearchApiService.sortPrisoners(null, prisoners )
+    offenderSearchApiService.sortPrisoners(null, prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 

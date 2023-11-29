@@ -125,11 +125,11 @@ class OffenderSearchApiService(
     return PrisonersList(emptyList(), 0, 0, sort, 0, false)
   }
 
-  fun sortPrisoners(sort: String?, offenders: MutableList<Prisoners>){
-    if (sort == null) { sortPrisonersByNomsId("ASC", offenders)}
-  else {
-    sortPrisonersByNomsId(sort, offenders)
-    sortPrisonersByField(sort, offenders)}
+  fun sortPrisoners(sort: String?, offenders: MutableList<Prisoners>) {
+    if (sort == null) { sortPrisonersByNomsId("ASC", offenders) } else {
+      sortPrisonersByNomsId(sort, offenders)
+      sortPrisonersByField(sort, offenders)
+    }
   }
 
   fun sortPrisonersByField(
@@ -166,9 +166,6 @@ class OffenderSearchApiService(
       "ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.prisonerNumber })
       "DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.prisonerNumber })
     }
-  }
-
-  private fun compareByDescending(comparator: () -> Int, selector: (PrisonersSearch) -> String) {
   }
 
   private fun objectMapper(

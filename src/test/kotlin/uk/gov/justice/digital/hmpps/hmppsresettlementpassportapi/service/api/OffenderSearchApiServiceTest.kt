@@ -440,7 +440,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerName("ZACHARY", "SMITH"),
       createPrisonerName("TOM", "WILLIAMSON"),
     )
-    offenderSearchApiService.sortPrisoners("name,ASC", prisoners)
+    offenderSearchApiService.sortPrisonersByField("name,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -472,7 +472,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerName("ZACHARY", "SMITH"),
       createPrisonerName("TOM", "WILLIAMSON"),
     )
-    offenderSearchApiService.sortPrisoners("name,DESC", prisoners)
+    offenderSearchApiService.sortPrisonersByField("name,DESC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -507,7 +507,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerParoleEligibilityDate(null),
       createPrisonerParoleEligibilityDate(null),
     )
-    offenderSearchApiService.sortPrisoners("paroleEligibilityDate,ASC", prisoners)
+    offenderSearchApiService.sortPrisonersByField("paroleEligibilityDate,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -542,7 +542,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-09")),
       createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-08")),
     )
-    offenderSearchApiService.sortPrisoners("paroleEligibilityDate,DESC", prisoners)
+    offenderSearchApiService.sortPrisonersByField("paroleEligibilityDate,DESC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -563,7 +563,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerPathwayStatus(Status.SUPPORT_DECLINED),
       createPrisonerPathwayStatus(Status.DONE),
     )
-    offenderSearchApiService.sortPrisoners("pathwayStatus,ASC", prisoners)
+    offenderSearchApiService.sortPrisonersByField("pathwayStatus,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -584,7 +584,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerPathwayStatus(Status.IN_PROGRESS),
       createPrisonerPathwayStatus(Status.NOT_STARTED),
     )
-    offenderSearchApiService.sortPrisoners("pathwayStatus,DESC", prisoners)
+    offenderSearchApiService.sortPrisonersByField("pathwayStatus,DESC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -614,7 +614,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerLastUpdatedDate(Status.SUPPORT_NOT_REQUIRED, LocalDate.parse("2023-08-03")),
       createPrisonerLastUpdatedDate(Status.IN_PROGRESS, LocalDate.parse("2023-05-08")),
     )
-    offenderSearchApiService.sortPrisoners("lastUpdatedDate,DESC", prisoners)
+    offenderSearchApiService.sortPrisonersByField("lastUpdatedDate,DESC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -643,7 +643,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerLastUpdatedDate(Status.NOT_STARTED, null),
       createPrisonerLastUpdatedDate(Status.NOT_STARTED, null),
     )
-    offenderSearchApiService.sortPrisoners("lastUpdatedDate,ASC", prisoners)
+    offenderSearchApiService.sortPrisonersByField("lastUpdatedDate,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -676,7 +676,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerNameAndNumber("E394839", "TOM", "WILLIAMSON"),
     )
     offenderSearchApiService.sortPrisonersByNomsId("ASC", prisoners)
-    offenderSearchApiService.sortPrisoners("name,ASC", prisoners)
+    offenderSearchApiService.sortPrisonersByField("name,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -709,7 +709,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerNameAndNumber("E394839", "TOM", "WILLIAMSON"),
     )
     offenderSearchApiService.sortPrisonersByNomsId("DESC", prisoners)
-    offenderSearchApiService.sortPrisoners("name,ASC", prisoners)
+    offenderSearchApiService.sortPrisonersByField("name,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -734,7 +734,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerNumber("G567809"),
       createPrisonerNumber("G678952"),
     )
-    offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10)
+    offenderSearchApiService.sortPrisoners(null, prisoners )
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 

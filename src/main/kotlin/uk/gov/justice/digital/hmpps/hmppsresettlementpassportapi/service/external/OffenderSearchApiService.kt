@@ -112,8 +112,6 @@ class OffenderSearchApiService(
 
     val fullList = objectMapper(offenders, pathwayView, pathwayStatus)
 
-    sortPrisonersByNomsId(sort, fullList)
-
     sortPrisoners(sort, fullList)
 
     val endIndex = (pageNumber * pageSize) + (pageSize)
@@ -127,8 +125,15 @@ class OffenderSearchApiService(
     return PrisonersList(emptyList(), 0, 0, sort, 0, false)
   }
 
-  fun sortPrisoners(
-    sort: String?,
+  fun sortPrisoners(sort: String?, offenders: MutableList<Prisoners>){
+    if (sort == null) { sortPrisonersByNomsId("ASC", offenders)}
+  else {
+    sortPrisonersByNomsId(sort, offenders)
+    sortPrisonersByField(sort, offenders)}
+  }
+
+  fun sortPrisonersByField(
+    sort: String,
     offenders: MutableList<Prisoners>,
   ) {
     when (sort) {
@@ -153,10 +158,10 @@ class OffenderSearchApiService(
   }
 
   fun sortPrisonersByNomsId(
-    sort: String? = "ASC",
+    sort: String,
     offenders: MutableList<Prisoners>,
   ) {
-    val sortNoms = sort?.split(",")?.last()
+    val sortNoms = sort.split(",").last()
     when (sortNoms) {
       "ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.prisonerNumber })
       "DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.prisonerNumber })

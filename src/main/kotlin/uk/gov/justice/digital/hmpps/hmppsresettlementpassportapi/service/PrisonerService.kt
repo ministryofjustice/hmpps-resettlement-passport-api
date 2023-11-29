@@ -65,24 +65,6 @@ class PrisonerService(
   @Transactional
   fun getDonePrisonersByPrisonId(prisonId: String, earliestReleaseDate: LocalDate, latestReleaseDate: LocalDate) = pathwayStatusRepository.findPrisonersByPrisonWithAllPathwaysDone(prisonId, earliestReleaseDate, latestReleaseDate)
 
-  @Transactional
-  fun addReleaseDateToPrisoners() {
-    log.info("Start updating prisoner entities to add release date")
-
-    val prisonersToUpdate = prisonerRepository.findAllByReleaseDateIsNull()
-
-    log.info("Found [${prisonersToUpdate.size}] prisoners to update")
-
-    prisonersToUpdate.forEach { prisonerEntity ->
-      val prisoner = offenderSearchApiService.findPrisonerPersonalDetails(prisonerEntity.nomsId)
-      offenderSearchApiService.setDisplayedReleaseDate(prisoner)
-      prisonerEntity.releaseDate = prisoner.confirmedReleaseDate
-    }
-
-    prisonerRepository.saveAll(prisonersToUpdate)
-    log.info("Finished updating prisoner entities to add release date")
-  }
-
   fun getSliceOfAllPrisoners(page: Pageable): Slice<PrisonerEntity> = prisonerRepository.findAll(page)
 
   @Transactional

@@ -29,7 +29,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Stat
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PathwayAndStatusService
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PrisonerService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
@@ -55,9 +54,6 @@ class OffenderSearchApiServiceTest {
 
   @Mock
   private lateinit var prisonApiService: PrisonApiService
-
-  @Mock
-  private lateinit var prisonerService: PrisonerService
 
   @BeforeEach
   fun beforeEach() {
@@ -717,8 +713,35 @@ class OffenderSearchApiServiceTest {
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
+  @Test
+  fun `test sorts by nomsId by default`() {
+    val prisonId = "MDI"
+    val prisoners = mutableListOf(
+      createPrisonerNumber("G234098"),
+      createPrisonerNumber("A009090"),
+      createPrisonerNumber("A471234"),
+      createPrisonerNumber("G678952"),
+      createPrisonerNumber("G567809"),
+      createPrisonerNumber("G023456"),
+      createPrisonerNumber("G461234"),
+    )
+    val sortedPrisoners = mutableListOf(
+      createPrisonerNumber("A009090"),
+      createPrisonerNumber("A471234"),
+      createPrisonerNumber("G023456"),
+      createPrisonerNumber("G234098"),
+      createPrisonerNumber("G461234"),
+      createPrisonerNumber("G567809"),
+      createPrisonerNumber("G678952"),
+    )
+    offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
   private fun createPrisoner(prisonId: String) = PrisonersSearch(prisonerNumber = "A123456", firstName = "firstName", lastName = "lastName", prisonId = prisonId, prisonName = "prisonName", cellLocation = null, youthOffender = false)
 }
+
+private fun createPrisonerNumber(prisonerNumber: String) = Prisoners(prisonerNumber = prisonerNumber, firstName = "firstName", lastName = "lastName", pathwayStatus = null)
 
 private fun createPrisonerName(firstName: String, lastName: String) = Prisoners(prisonerNumber = "A123456", firstName = firstName, lastName = lastName, pathwayStatus = null)
 

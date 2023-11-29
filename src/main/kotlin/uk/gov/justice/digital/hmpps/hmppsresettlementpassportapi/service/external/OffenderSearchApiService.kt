@@ -72,7 +72,7 @@ class OffenderSearchApiService(
     pathwayStatus: Status?,
     pageNumber: Int,
     pageSize: Int,
-    sort: String,
+    sort: String? = "ASC",
   ): PrisonersList {
     val offenders = mutableListOf<PrisonersSearch>()
     if (prisonId.isBlank() || prisonId.isEmpty()) {
@@ -128,7 +128,7 @@ class OffenderSearchApiService(
   }
 
   fun sortPrisoners(
-    sort: String,
+    sort: String?,
     offenders: MutableList<Prisoners>,
   ) {
     when (sort) {
@@ -153,16 +153,14 @@ class OffenderSearchApiService(
   }
 
   fun sortPrisonersByNomsId(
-    sort: String,
+    sort: String? = "ASC",
     offenders: MutableList<Prisoners>,
   ) {
-    when (sort) {
+    val sortNoms = sort?.split(",")?.last()
+    when (sortNoms) {
       "ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.prisonerNumber })
       "DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.prisonerNumber })
     }
-  }
-
-  fun sortAllPathwaysByLastUpdated() {
   }
 
   private fun compareByDescending(comparator: () -> Int, selector: (PrisonersSearch) -> String) {
@@ -205,7 +203,7 @@ class OffenderSearchApiService(
 
       if (pathwayStatusToFilter == null || pathwayStatusToFilter == pathwayStatus) {
         val prisoner = Prisoners(
-          prisonersSearch.prisonerNumber,
+          prisonersSearch.prisonerNumber.trim(),
           prisonersSearch.firstName.trim(),
           prisonersSearch.middleNames?.trim(),
           prisonersSearch.lastName.trim(),

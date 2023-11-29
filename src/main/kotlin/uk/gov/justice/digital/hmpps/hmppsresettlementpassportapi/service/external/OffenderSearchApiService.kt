@@ -6,7 +6,11 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.*
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoner
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerPersonal
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonerImage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
@@ -159,11 +163,9 @@ class OffenderSearchApiService(
   }
 
   fun sortAllPathwaysByLastUpdated() {
-
   }
 
   private fun compareByDescending(comparator: () -> Int, selector: (PrisonersSearch) -> String) {
-
   }
 
   private fun objectMapper(
@@ -181,15 +183,18 @@ class OffenderSearchApiService(
       val pathwayStatus: Status?
       val lastUpdatedDate: LocalDate?
 
-
       if (prisonerEntity != null) {
         pathwayStatuses = if (pathwayView == null) getPathwayStatuses(prisonerEntity) else null
         sortedPathwayStatuses = pathwayStatuses?.sortedWith(compareBy(nullsLast()) { it.lastDateChange })
         lastUpdatedDate =
-          if (pathwayView == null) sortedPathwayStatuses?.first()?.lastDateChange else getPathwayStatusLastUpdated(
-            prisonerEntity,
-            pathwayView,
-          )
+          if (pathwayView == null) {
+            sortedPathwayStatuses?.first()?.lastDateChange
+          } else {
+            getPathwayStatusLastUpdated(
+              prisonerEntity,
+              pathwayView,
+            )
+          }
         pathwayStatus = if (pathwayView != null) getPathwayStatus(prisonerEntity, pathwayView) else null
       } else {
         // We don't know about this prisoner yet so just set all the statuses to NOT_STARTED.
@@ -314,14 +319,16 @@ class OffenderSearchApiService(
 
   private fun getPathwayStatus(prisonerEntity: PrisonerEntity, pathwayView: Pathway): Status {
     val pathwayStatusEntity = pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(
-      pathwayAndStatusService.getPathwayEntity(pathwayView), prisonerEntity,
+      pathwayAndStatusService.getPathwayEntity(pathwayView),
+      prisonerEntity,
     )
     return Status.getById(pathwayStatusEntity.status.id)
   }
 
   private fun getPathwayStatusLastUpdated(prisonerEntity: PrisonerEntity, pathwayView: Pathway): LocalDate? {
     val pathwayStatusEntity = pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(
-      pathwayAndStatusService.getPathwayEntity(pathwayView), prisonerEntity,
+      pathwayAndStatusService.getPathwayEntity(pathwayView),
+      prisonerEntity,
     )
     return pathwayStatusEntity.updatedDate?.toLocalDate()
   }

@@ -47,16 +47,25 @@ class MetricsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `test collect metrics - happy path`() {
+  fun `test get metrics - happy path`() {
+    val prisonId = "MDI"
+    val expectedOutput = readFile("testdata/expectation/prisoner-counts.json")
+
     mockkStatic(LocalDate::class)
     every { LocalDate.now() } returns fakeNow
 
     seedPathwayStatuses()
 
     prisonRegisterApiMockServer.stubPrisonList(200)
-    offenderSearchApiMockServer.stubGetPrisonersList("MDI", "", 500, 0, 200)
+    offenderSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 200)
 
-    metricsService.recordCustomMetrics()
+    webTestClient.get()
+      .uri("/resettlement-passport/metrics/prisoner-counts?prisonId=$prisonId")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput)
 
     Assertions.assertEquals(
       6.0,
@@ -157,6 +166,47 @@ class MetricsIntegrationTest : IntegrationTestBase() {
     unmockkAll()
   }
 
+  @Test
+  fun `test get metrics - 400 (missing prisonId)`() {
+    webTestClient.get()
+      .uri("/resettlement-passport/metrics/prisoner-counts")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isBadRequest
+      .expectHeader().contentType("application/json")
+      .expectBody().jsonPath("status").isEqualTo(400)
+  }
+
+  @Test
+  fun `test get metrics - 404 (not existent prisonId)`() {
+    webTestClient.get()
+      .uri("/resettlement-passport/metrics/prisoner-counts?prisonId=ABC")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isNotFound
+      .expectHeader().contentType("application/json")
+      .expectBody().jsonPath("status").isEqualTo(404)
+  }
+
+  @Test
+  fun `test get metrics - 401`() {
+    webTestClient.get()
+      .uri("/resettlement-passport/metrics/prisoner-counts?prisonId=MDI")
+      .exchange()
+      .expectStatus().isUnauthorized
+  }
+
+  @Test
+  fun `test get metrics - 403`() {
+    webTestClient.get()
+      .uri("/resettlement-passport/metrics/prisoner-counts?prisonId=MDI")
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
+      .expectHeader().contentType("application/json")
+      .expectBody().jsonPath("status").isEqualTo(403)
+  }
+
   private fun seedPathwayStatuses() {
     val uniqueId = AtomicInteger()
 
@@ -229,5 +279,9 @@ class MetricsIntegrationTest : IntegrationTestBase() {
         }
       }
     }
+  }
+
+  @Test
+  fun `get metrics for MDI - happy path`() {
   }
 }

@@ -133,17 +133,17 @@ class OffenderSearchApiService(
     offenders: MutableList<Prisoners>,
   ){
     when (sort) {
-      "releaseDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.releaseDate })
+      "releaseDate,ASC" -> offenders.sortWith(compareBy(nullsFirst()) { it.releaseDate })
       "paroleEligibilityDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.paroleEligibilityDate })
       "name,ASC" -> offenders.sortWith(compareBy { "${it.lastName}, ${it.firstName}" })
       "lastUpdatedDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.lastUpdatedDate })
       "prisonerNumber,ASC" -> offenders.sortBy { it.prisonerNumber }
       "pathwayStatus,ASC" -> offenders.sortBy { it.pathwayStatus }
-      "releaseDate,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.releaseDate })
-      "paroleEligibilityDate,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.paroleEligibilityDate })
-      "name,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { "${it.lastName}, ${it.firstName}" })
-      "lastUpdatedDate,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.lastUpdatedDate })
-      "prisonerNumber,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.prisonerNumber })
+      "releaseDate,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.releaseDate })
+      "paroleEligibilityDate,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.paroleEligibilityDate })
+      "name,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { "${it.lastName}, ${it.firstName}" })
+      "lastUpdatedDate,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.lastUpdatedDate })
+      "prisonerNumber,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.prisonerNumber })
       "pathwayStatus,DESC" -> offenders.sortByDescending { it.pathwayStatus }
 
       else -> throw NoDataWithCodeFoundException(

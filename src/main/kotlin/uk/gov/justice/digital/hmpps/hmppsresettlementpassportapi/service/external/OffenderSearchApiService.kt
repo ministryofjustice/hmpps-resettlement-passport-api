@@ -186,10 +186,10 @@ class OffenderSearchApiService(
         pathwayStatuses = if (pathwayView == null) getPathwayStatuses(prisonerEntity) else null
         sortedPathwayStatuses = pathwayStatuses?.sortedWith(compareBy(nullsLast()) { it.lastDateChange })
         lastUpdatedDate =
-          if (pathwayView == null) sortedPathwayStatuses?.first()?.lastDateChange else if (pathwayView != null) getPathwayStatusLastUpdated(
+          if (pathwayView == null) sortedPathwayStatuses?.first()?.lastDateChange else getPathwayStatusLastUpdated(
             prisonerEntity,
             pathwayView,
-          ) else null
+          )
         pathwayStatus = if (pathwayView != null) getPathwayStatus(prisonerEntity, pathwayView) else null
       } else {
         // We don't know about this prisoner yet so just set all the statuses to NOT_STARTED.

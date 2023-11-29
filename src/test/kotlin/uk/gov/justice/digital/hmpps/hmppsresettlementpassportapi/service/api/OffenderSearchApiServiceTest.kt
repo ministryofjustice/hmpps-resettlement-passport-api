@@ -2,12 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.api
 
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
-import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
@@ -21,12 +16,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.*
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PathwayAndStatusService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderSearchApiService
@@ -35,7 +25,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 @ExtendWith(MockitoExtension::class)
 class OffenderSearchApiServiceTest {
@@ -82,7 +71,8 @@ class OffenderSearchApiServiceTest {
 
     val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisonersList = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "releaseDate,DESC")
+    val prisonersList =
+      offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "releaseDate,DESC")
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
 
@@ -94,7 +84,8 @@ class OffenderSearchApiServiceTest {
 
     val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-2.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisoners = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "releaseDate,DESC")
+    val prisoners =
+      offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "releaseDate,DESC")
 
     Assertions.assertEquals(getExpectedPrisonersListReleaseDateDesc(), prisoners)
   }
@@ -108,7 +99,8 @@ class OffenderSearchApiServiceTest {
 
     val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisonersList = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "releaseDate,ASC")
+    val prisonersList =
+      offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "releaseDate,ASC")
     Assertions.assertEquals(
       expectedPrisonerId,
       prisonersList.content?.get((prisonersList.content!!.toList().size - 1))?.prisonerNumber
@@ -125,7 +117,8 @@ class OffenderSearchApiServiceTest {
 
     val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisonersList = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "firstName,ASC")
+    val prisonersList =
+      offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "firstName,ASC")
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
 
@@ -138,7 +131,8 @@ class OffenderSearchApiServiceTest {
 
     val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisonersList = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 5, "firstName,ASC")
+    val prisonersList =
+      offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 5, "firstName,ASC")
     Assertions.assertEquals(expectedPageSize, prisonersList.pageSize)
     prisonersList.content?.toList()?.let { Assertions.assertEquals(expectedPageSize, it.size) }
   }
@@ -153,9 +147,13 @@ class OffenderSearchApiServiceTest {
     val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val releaseDate = LocalDate.now().minusDays(days.toLong())
     var mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
-    mockedJsonResponse = mockedJsonResponse.replace("\"releaseDate\": \"2024-07-31\",", "\"releaseDate\": \"" + releaseDate.format(pattern) + "\",")
+    mockedJsonResponse = mockedJsonResponse.replace(
+      "\"releaseDate\": \"2024-07-31\",",
+      "\"releaseDate\": \"" + releaseDate.format(pattern) + "\",",
+    )
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisonersList = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "firstName,ASC")
+    val prisonersList =
+      offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "firstName,ASC")
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
 
@@ -167,7 +165,16 @@ class OffenderSearchApiServiceTest {
 
     val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-2.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisoners = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, Pathway.ACCOMMODATION, null, 0, 10, "releaseDate,DESC")
+    val prisoners = offenderSearchApiService.getPrisonersByPrisonId(
+      "",
+      prisonId,
+      0,
+      Pathway.ACCOMMODATION,
+      null,
+      0,
+      10,
+      "releaseDate,DESC",
+    )
 
     Assertions.assertEquals(getExpectedPrisonersPathwayView(), prisoners)
   }
@@ -180,13 +187,23 @@ class OffenderSearchApiServiceTest {
 
     val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-2.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisoners = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, Pathway.ACCOMMODATION, Status.SUPPORT_DECLINED, 0, 10, "releaseDate,DESC")
+    val prisoners = offenderSearchApiService.getPrisonersByPrisonId(
+      "",
+      prisonId,
+      0,
+      Pathway.ACCOMMODATION,
+      Status.SUPPORT_DECLINED,
+      0,
+      10,
+      "releaseDate,DESC",
+    )
 
     Assertions.assertEquals(getExpectedPrisonersPathwayViewAndPathwayStatus(), prisoners)
   }
 
   private fun mockDatabaseCalls() {
-    val mockPrisonerEntity = PrisonerEntity(1, "TEST", LocalDateTime.now(), "test", "xyz", LocalDate.parse("2025-01-23"))
+    val mockPrisonerEntity =
+      PrisonerEntity(1, "TEST", LocalDateTime.now(), "test", "xyz", LocalDate.parse("2025-01-23"))
     val mockPathwayEntity1 = PathwayEntity(1, "Accommodation", true, LocalDateTime.now())
     val mockPathwayEntity2 = PathwayEntity(2, "Attitudes, thinking and behaviour", true, LocalDateTime.now())
     val mockPathwayEntity3 = PathwayEntity(3, "Children, families and communities", false, LocalDateTime.now())
@@ -194,7 +211,13 @@ class OffenderSearchApiServiceTest {
     val mockStatusEntity = StatusEntity(1, "Not Started", true, LocalDateTime.now())
 
     `when`(prisonerRepository.findByNomsId(any())).thenReturn(mockPrisonerEntity)
-    `when`(pathwayAndStatusService.findAllPathways()).thenReturn(listOf(mockPathwayEntity1, mockPathwayEntity2, mockPathwayEntity3))
+    `when`(pathwayAndStatusService.findAllPathways()).thenReturn(
+      listOf(
+        mockPathwayEntity1,
+        mockPathwayEntity2,
+        mockPathwayEntity3,
+      ),
+    )
 
     `when`(pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(any(), any())).thenReturn(
       PathwayStatusEntity(1, mockPrisonerEntity, mockPathwayEntity1, mockStatusEntity, LocalDateTime.now()),
@@ -202,9 +225,12 @@ class OffenderSearchApiServiceTest {
   }
 
   private fun mockDatabaseCallsForPathwayView() {
-    val mockPrisonerEntity1 = PrisonerEntity(1, "A8229DY", LocalDateTime.now(), "1", "xyz", LocalDate.parse("2025-01-23"))
-    val mockPrisonerEntity2 = PrisonerEntity(2, "G1458GV", LocalDateTime.now(), "2", "xyz", LocalDate.parse("2025-01-23"))
-    val mockPrisonerEntity3 = PrisonerEntity(3, "A8339DY", LocalDateTime.now(), "3", "xyz", LocalDate.parse("2025-01-23"))
+    val mockPrisonerEntity1 =
+      PrisonerEntity(1, "A8229DY", LocalDateTime.now(), "1", "xyz", LocalDate.parse("2025-01-23"))
+    val mockPrisonerEntity2 =
+      PrisonerEntity(2, "G1458GV", LocalDateTime.now(), "2", "xyz", LocalDate.parse("2025-01-23"))
+    val mockPrisonerEntity3 =
+      PrisonerEntity(3, "A8339DY", LocalDateTime.now(), "3", "xyz", LocalDate.parse("2025-01-23"))
 
     val mockPathwayEntity1 = PathwayEntity(1, "Accommodation", true, LocalDateTime.now())
 
@@ -218,13 +244,28 @@ class OffenderSearchApiServiceTest {
     `when`(prisonerRepository.findByNomsId("G1458GV")).thenReturn(mockPrisonerEntity2)
     `when`(prisonerRepository.findByNomsId("A8339DY")).thenReturn(mockPrisonerEntity3)
 
-    `when`(pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(mockPathwayEntity1, mockPrisonerEntity1)).thenReturn(
+    `when`(
+      pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(
+        mockPathwayEntity1,
+        mockPrisonerEntity1,
+      ),
+    ).thenReturn(
       PathwayStatusEntity(1, mockPrisonerEntity1, mockPathwayEntity1, mockStatusEntity1, LocalDateTime.now()),
     )
-    `when`(pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(mockPathwayEntity1, mockPrisonerEntity2)).thenReturn(
+    `when`(
+      pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(
+        mockPathwayEntity1,
+        mockPrisonerEntity2,
+      ),
+    ).thenReturn(
       PathwayStatusEntity(8, mockPrisonerEntity2, mockPathwayEntity1, mockStatusEntity4, LocalDateTime.now()),
     )
-    `when`(pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(mockPathwayEntity1, mockPrisonerEntity3)).thenReturn(
+    `when`(
+      pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(
+        mockPathwayEntity1,
+        mockPrisonerEntity3,
+      ),
+    ).thenReturn(
       PathwayStatusEntity(15, mockPrisonerEntity3, mockPathwayEntity1, mockStatusEntity5, LocalDateTime.now()),
     )
   }
@@ -738,16 +779,41 @@ class OffenderSearchApiServiceTest {
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
-  private fun createPrisoner(prisonId: String) = PrisonersSearch(prisonerNumber = "A123456", firstName = "firstName", lastName = "lastName", prisonId = prisonId, prisonName = "prisonName", cellLocation = null, youthOffender = false)
+  private fun createPrisoner(prisonId: String) = PrisonersSearch(
+    prisonerNumber = "A123456",
+    firstName = "firstName",
+    lastName = "lastName",
+    prisonId = prisonId,
+    prisonName = "prisonName",
+    cellLocation = null,
+    youthOffender = false,
+  )
 }
 
-private fun createPrisonerNumber(prisonerNumber: String) = Prisoners(prisonerNumber = prisonerNumber, firstName = "firstName", lastName = "lastName", pathwayStatus = null)
+private fun createPrisonerNumber(prisonerNumber: String) =
+  Prisoners(prisonerNumber = prisonerNumber, firstName = "firstName", lastName = "lastName", pathwayStatus = null)
 
-private fun createPrisonerName(firstName: String, lastName: String) = Prisoners(prisonerNumber = "A123456", firstName = firstName, lastName = lastName, pathwayStatus = null)
+private fun createPrisonerName(firstName: String, lastName: String) =
+  Prisoners(prisonerNumber = "A123456", firstName = firstName, lastName = lastName, pathwayStatus = null)
 
-private fun createPrisonerNameAndNumber(prisonerNumber: String, firstName: String, lastName: String) = Prisoners(prisonerNumber = prisonerNumber, firstName = firstName, lastName = lastName, pathwayStatus = null)
-private fun createPrisonerParoleEligibilityDate(paroleEligibilityDate: LocalDate?) = Prisoners(prisonerNumber = "A123456", firstName = "SIMON", lastName = "BAMFORD", pathwayStatus = null, paroleEligibilityDate = paroleEligibilityDate)
+private fun createPrisonerNameAndNumber(prisonerNumber: String, firstName: String, lastName: String) =
+  Prisoners(prisonerNumber = prisonerNumber, firstName = firstName, lastName = lastName, pathwayStatus = null)
 
-private fun createPrisonerPathwayStatus(pathwayStatus: Status) = Prisoners(prisonerNumber = "A123456", firstName = "BORIS", lastName = "FRANKLIN", pathwayStatus = pathwayStatus)
+private fun createPrisonerParoleEligibilityDate(paroleEligibilityDate: LocalDate?) = Prisoners(
+  prisonerNumber = "A123456",
+  firstName = "SIMON",
+  lastName = "BAMFORD",
+  pathwayStatus = null,
+  paroleEligibilityDate = paroleEligibilityDate,
+)
 
-private fun createPrisonerLastUpdatedDate(pathwayStatus: Status, lastUpdatedDate: LocalDate?) = Prisoners(prisonerNumber = "A123456", firstName = "OLIVER", lastName = "HAYES", pathwayStatus = pathwayStatus, lastUpdatedDate = lastUpdatedDate)
+private fun createPrisonerPathwayStatus(pathwayStatus: Status) =
+  Prisoners(prisonerNumber = "A123456", firstName = "BORIS", lastName = "FRANKLIN", pathwayStatus = pathwayStatus)
+
+private fun createPrisonerLastUpdatedDate(pathwayStatus: Status, lastUpdatedDate: LocalDate?) = Prisoners(
+  prisonerNumber = "A123456",
+  firstName = "OLIVER",
+  lastName = "HAYES",
+  pathwayStatus = pathwayStatus,
+  lastUpdatedDate = lastUpdatedDate,
+)

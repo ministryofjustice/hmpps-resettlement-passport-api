@@ -122,7 +122,6 @@ class MetricsService(
     }
     val metrics = prisonerCountMetrics.metrics.filter { it.key.id == prisonId }.values.firstOrNull()
     if (metrics != null) {
-
       return PrisonerCountMetricsByReleaseDate(
         twelveWeeks = PrisonerCounts(
           totalPopulation = getNumberFromMetrics(metrics, ReleaseDateTag.TWELVE_WEEKS, StatusTag.ALL),

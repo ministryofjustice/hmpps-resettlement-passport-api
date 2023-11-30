@@ -72,7 +72,7 @@ class OffenderSearchApiService(
     pathwayStatus: Status?,
     pageNumber: Int,
     pageSize: Int,
-    sort: String? = "ASC",
+    sort: String?,
   ): PrisonersList {
     val offenders = mutableListOf<PrisonersSearch>()
     if (prisonId.isBlank() || prisonId.isEmpty()) {
@@ -125,7 +125,7 @@ class OffenderSearchApiService(
     return PrisonersList(emptyList(), 0, 0, sort, 0, false)
   }
 
-  fun sortPrisoners(sort: String? = null, offenders: MutableList<Prisoners>) {
+  fun sortPrisoners(sort: String?, offenders: MutableList<Prisoners>) {
     if (sort == null) {
       sortPrisonersByNomsId("ASC", offenders)
     } else {

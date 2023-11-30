@@ -35,7 +35,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 @ExtendWith(MockitoExtension::class)
 class OffenderSearchApiServiceTest {
@@ -78,11 +77,12 @@ class OffenderSearchApiServiceTest {
     mockDatabaseCalls()
 
     val prisonId = "MDI"
-    val expectedPrisonerId = "G1458GV"
+    val expectedPrisonerId = "A8339DY"
 
     val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisonersList = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "releaseDate,DESC")
+    val prisonersList =
+      offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "releaseDate,DESC")
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
 
@@ -94,7 +94,8 @@ class OffenderSearchApiServiceTest {
 
     val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-2.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisoners = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "releaseDate,DESC")
+    val prisoners =
+      offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "releaseDate,DESC")
 
     Assertions.assertEquals(getExpectedPrisonersListReleaseDateDesc(), prisoners)
   }
@@ -108,7 +109,8 @@ class OffenderSearchApiServiceTest {
 
     val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisonersList = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "releaseDate,ASC")
+    val prisonersList =
+      offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 20, "releaseDate,ASC")
     Assertions.assertEquals(
       expectedPrisonerId,
       prisonersList.content?.get((prisonersList.content!!.toList().size - 1))?.prisonerNumber
@@ -117,7 +119,7 @@ class OffenderSearchApiServiceTest {
   }
 
   @Test
-  fun `test get PrisonersList happy path full json with sort firstName Ascending`() {
+  fun `test get PrisonersList happy path full json with sort name Ascending`() {
     mockDatabaseCalls()
 
     val prisonId = "MDI"
@@ -125,7 +127,8 @@ class OffenderSearchApiServiceTest {
 
     val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisonersList = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "firstName,ASC")
+    val prisonersList =
+      offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "name,ASC")
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
 
@@ -138,7 +141,8 @@ class OffenderSearchApiServiceTest {
 
     val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisonersList = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 5, "firstName,ASC")
+    val prisonersList =
+      offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 5, "name,ASC")
     Assertions.assertEquals(expectedPageSize, prisonersList.pageSize)
     prisonersList.content?.toList()?.let { Assertions.assertEquals(expectedPageSize, it.size) }
   }
@@ -153,9 +157,13 @@ class OffenderSearchApiServiceTest {
     val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val releaseDate = LocalDate.now().minusDays(days.toLong())
     var mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
-    mockedJsonResponse = mockedJsonResponse.replace("\"releaseDate\": \"2024-07-31\",", "\"releaseDate\": \"" + releaseDate.format(pattern) + "\",")
+    mockedJsonResponse = mockedJsonResponse.replace(
+      "\"releaseDate\": \"2024-07-31\",",
+      "\"releaseDate\": \"" + releaseDate.format(pattern) + "\",",
+    )
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisonersList = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "firstName,ASC")
+    val prisonersList =
+      offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "name,ASC")
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
 
@@ -167,7 +175,16 @@ class OffenderSearchApiServiceTest {
 
     val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-2.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisoners = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, Pathway.ACCOMMODATION, null, 0, 10, "releaseDate,DESC")
+    val prisoners = offenderSearchApiService.getPrisonersByPrisonId(
+      "",
+      prisonId,
+      0,
+      Pathway.ACCOMMODATION,
+      null,
+      0,
+      10,
+      "releaseDate,DESC",
+    )
 
     Assertions.assertEquals(getExpectedPrisonersPathwayView(), prisoners)
   }
@@ -180,13 +197,23 @@ class OffenderSearchApiServiceTest {
 
     val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-2.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisoners = offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, Pathway.ACCOMMODATION, Status.SUPPORT_DECLINED, 0, 10, "releaseDate,DESC")
+    val prisoners = offenderSearchApiService.getPrisonersByPrisonId(
+      "",
+      prisonId,
+      0,
+      Pathway.ACCOMMODATION,
+      Status.SUPPORT_DECLINED,
+      0,
+      10,
+      "releaseDate,DESC",
+    )
 
     Assertions.assertEquals(getExpectedPrisonersPathwayViewAndPathwayStatus(), prisoners)
   }
 
   private fun mockDatabaseCalls() {
-    val mockPrisonerEntity = PrisonerEntity(1, "TEST", LocalDateTime.now(), "test", "xyz", LocalDate.parse("2025-01-23"))
+    val mockPrisonerEntity =
+      PrisonerEntity(1, "TEST", LocalDateTime.now(), "test", "xyz", LocalDate.parse("2025-01-23"))
     val mockPathwayEntity1 = PathwayEntity(1, "Accommodation", true, LocalDateTime.now())
     val mockPathwayEntity2 = PathwayEntity(2, "Attitudes, thinking and behaviour", true, LocalDateTime.now())
     val mockPathwayEntity3 = PathwayEntity(3, "Children, families and communities", false, LocalDateTime.now())
@@ -194,7 +221,13 @@ class OffenderSearchApiServiceTest {
     val mockStatusEntity = StatusEntity(1, "Not Started", true, LocalDateTime.now())
 
     `when`(prisonerRepository.findByNomsId(any())).thenReturn(mockPrisonerEntity)
-    `when`(pathwayAndStatusService.findAllPathways()).thenReturn(listOf(mockPathwayEntity1, mockPathwayEntity2, mockPathwayEntity3))
+    `when`(pathwayAndStatusService.findAllPathways()).thenReturn(
+      listOf(
+        mockPathwayEntity1,
+        mockPathwayEntity2,
+        mockPathwayEntity3,
+      ),
+    )
 
     `when`(pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(any(), any())).thenReturn(
       PathwayStatusEntity(1, mockPrisonerEntity, mockPathwayEntity1, mockStatusEntity, LocalDateTime.now()),
@@ -202,9 +235,12 @@ class OffenderSearchApiServiceTest {
   }
 
   private fun mockDatabaseCallsForPathwayView() {
-    val mockPrisonerEntity1 = PrisonerEntity(1, "A8229DY", LocalDateTime.now(), "1", "xyz", LocalDate.parse("2025-01-23"))
-    val mockPrisonerEntity2 = PrisonerEntity(2, "G1458GV", LocalDateTime.now(), "2", "xyz", LocalDate.parse("2025-01-23"))
-    val mockPrisonerEntity3 = PrisonerEntity(3, "A8339DY", LocalDateTime.now(), "3", "xyz", LocalDate.parse("2025-01-23"))
+    val mockPrisonerEntity1 =
+      PrisonerEntity(1, "A8229DY", LocalDateTime.now(), "1", "xyz", LocalDate.parse("2025-01-23"))
+    val mockPrisonerEntity2 =
+      PrisonerEntity(2, "G1458GV", LocalDateTime.now(), "2", "xyz", LocalDate.parse("2025-01-23"))
+    val mockPrisonerEntity3 =
+      PrisonerEntity(3, "A8339DY", LocalDateTime.now(), "3", "xyz", LocalDate.parse("2025-01-23"))
 
     val mockPathwayEntity1 = PathwayEntity(1, "Accommodation", true, LocalDateTime.now())
 
@@ -218,13 +254,28 @@ class OffenderSearchApiServiceTest {
     `when`(prisonerRepository.findByNomsId("G1458GV")).thenReturn(mockPrisonerEntity2)
     `when`(prisonerRepository.findByNomsId("A8339DY")).thenReturn(mockPrisonerEntity3)
 
-    `when`(pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(mockPathwayEntity1, mockPrisonerEntity1)).thenReturn(
+    `when`(
+      pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(
+        mockPathwayEntity1,
+        mockPrisonerEntity1,
+      ),
+    ).thenReturn(
       PathwayStatusEntity(1, mockPrisonerEntity1, mockPathwayEntity1, mockStatusEntity1, LocalDateTime.now()),
     )
-    `when`(pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(mockPathwayEntity1, mockPrisonerEntity2)).thenReturn(
+    `when`(
+      pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(
+        mockPathwayEntity1,
+        mockPrisonerEntity2,
+      ),
+    ).thenReturn(
       PathwayStatusEntity(8, mockPrisonerEntity2, mockPathwayEntity1, mockStatusEntity4, LocalDateTime.now()),
     )
-    `when`(pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(mockPathwayEntity1, mockPrisonerEntity3)).thenReturn(
+    `when`(
+      pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(
+        mockPathwayEntity1,
+        mockPrisonerEntity3,
+      ),
+    ).thenReturn(
       PathwayStatusEntity(15, mockPrisonerEntity3, mockPathwayEntity1, mockStatusEntity5, LocalDateTime.now()),
     )
   }
@@ -233,13 +284,37 @@ class OffenderSearchApiServiceTest {
     content =
     listOf(
       Prisoners(
+        prisonerNumber = "A8339DY",
+        firstName = "MR",
+        middleNames = "BRIDGILLA",
+        lastName = "CRD-LR-TEST",
+        releaseDate = null,
+        releaseType = "PRRD",
+        lastUpdatedDate = LocalDate.parse("2023-11-30"),
+        status = listOf(
+          PathwayStatus(
+            pathway = Pathway.ACCOMMODATION,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.now(),
+          ),
+          PathwayStatus(
+            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+            status = Status.NOT_STARTED,
+            lastDateChange = LocalDate.now(),
+          ),
+        ),
+        pathwayStatus = null,
+        homeDetentionCurfewEligibilityDate = null,
+        paroleEligibilityDate = null,
+      ),
+      Prisoners(
         prisonerNumber = "A8229DY",
         firstName = "STEPHEN",
         middleNames = null,
         lastName = "MCVEIGH",
         releaseDate = LocalDate.parse("2099-08-01"),
         releaseType = "CRD",
-        lastUpdatedDate = null,
+        lastUpdatedDate = LocalDate.parse("2023-11-30"),
         status = listOf(
           PathwayStatus(
             pathway = Pathway.ACCOMMODATION,
@@ -263,7 +338,7 @@ class OffenderSearchApiServiceTest {
         lastName = "CRAWFIS",
         releaseDate = LocalDate.parse("2098-09-12"),
         releaseType = "CRD",
-        lastUpdatedDate = null,
+        lastUpdatedDate = LocalDate.parse("2023-11-30"),
         status = listOf(
           PathwayStatus(
             pathway = Pathway.ACCOMMODATION,
@@ -278,30 +353,6 @@ class OffenderSearchApiServiceTest {
         ),
         pathwayStatus = null,
         homeDetentionCurfewEligibilityDate = LocalDate.parse("2018-10-16"),
-        paroleEligibilityDate = null,
-      ),
-      Prisoners(
-        prisonerNumber = "A8339DY",
-        firstName = "MR",
-        middleNames = "BRIDGILLA",
-        lastName = "CRD-LR-TEST",
-        releaseDate = null,
-        releaseType = "PRRD",
-        lastUpdatedDate = null,
-        status = listOf(
-          PathwayStatus(
-            pathway = Pathway.ACCOMMODATION,
-            status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.now(),
-          ),
-          PathwayStatus(
-            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
-            status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.now(),
-          ),
-        ),
-        pathwayStatus = null,
-        homeDetentionCurfewEligibilityDate = null,
         paroleEligibilityDate = null,
       ),
     ),
@@ -316,13 +367,26 @@ class OffenderSearchApiServiceTest {
     content =
     listOf(
       Prisoners(
+        prisonerNumber = "A8339DY",
+        firstName = "MR",
+        middleNames = "BRIDGILLA",
+        lastName = "CRD-LR-TEST",
+        releaseDate = null,
+        releaseType = "PRRD",
+        lastUpdatedDate = LocalDate.parse("2023-11-30"),
+        status = null,
+        pathwayStatus = Status.DONE,
+        homeDetentionCurfewEligibilityDate = null,
+        paroleEligibilityDate = null,
+      ),
+      Prisoners(
         prisonerNumber = "A8229DY",
         firstName = "STEPHEN",
         middleNames = null,
         lastName = "MCVEIGH",
         releaseDate = LocalDate.parse("2099-08-01"),
         releaseType = "CRD",
-        lastUpdatedDate = null,
+        lastUpdatedDate = LocalDate.parse("2023-11-30"),
         status = null,
         pathwayStatus = Status.NOT_STARTED,
         homeDetentionCurfewEligibilityDate = LocalDate.parse("2021-02-03"),
@@ -335,23 +399,10 @@ class OffenderSearchApiServiceTest {
         lastName = "CRAWFIS",
         releaseDate = LocalDate.parse("2098-09-12"),
         releaseType = "CRD",
-        lastUpdatedDate = null,
+        lastUpdatedDate = LocalDate.parse("2023-11-30"),
         status = null,
         pathwayStatus = Status.SUPPORT_DECLINED,
         homeDetentionCurfewEligibilityDate = LocalDate.parse("2018-10-16"),
-        paroleEligibilityDate = null,
-      ),
-      Prisoners(
-        prisonerNumber = "A8339DY",
-        firstName = "MR",
-        middleNames = "BRIDGILLA",
-        lastName = "CRD-LR-TEST",
-        releaseDate = null,
-        releaseType = "PRRD",
-        lastUpdatedDate = null,
-        status = null,
-        pathwayStatus = Status.DONE,
-        homeDetentionCurfewEligibilityDate = null,
         paroleEligibilityDate = null,
       ),
     ),
@@ -372,7 +423,7 @@ class OffenderSearchApiServiceTest {
         lastName = "CRAWFIS",
         releaseDate = LocalDate.parse("2098-09-12"),
         releaseType = "CRD",
-        lastUpdatedDate = null,
+        lastUpdatedDate = LocalDate.parse("2023-11-30"),
         status = null,
         pathwayStatus = Status.SUPPORT_DECLINED,
         homeDetentionCurfewEligibilityDate = LocalDate.parse("2018-10-16"),
@@ -412,5 +463,484 @@ class OffenderSearchApiServiceTest {
     }
   }
 
-  private fun createPrisoner(prisonId: String) = PrisonersSearch(prisonerNumber = "A123456", firstName = "firstName", lastName = "lastName", prisonId = prisonId, prisonName = "prisonName", cellLocation = null, youthOffender = false)
+  @Test
+  fun `test sort prisoners- sort prisoners by name ascending`() {
+    val prisoners = mutableListOf(
+      createPrisonerName("BERTRAND", "ANDERSON"),
+      createPrisonerName("ZACHARY", "SMITH"),
+      createPrisonerName("ZACHARY", "SMITH"),
+      createPrisonerName("ZACHARY", "SMITH"),
+      createPrisonerName("ANDY", "ANDERSON"),
+      createPrisonerName("CHARLIE", "FOSTER"),
+      createPrisonerName("ARRAN", "PETERSON"),
+      createPrisonerName("LOUIS", "MCCARTHY"),
+      createPrisonerName("CORMAC", "CRAY"),
+      createPrisonerName("VLODIMIR", "MARSH"),
+      createPrisonerName("TOM", "WILLIAMSON"),
+    )
+    val sortedPrisoners = mutableListOf(
+      createPrisonerName("ANDY", "ANDERSON"),
+      createPrisonerName("BERTRAND", "ANDERSON"),
+      createPrisonerName("CORMAC", "CRAY"),
+      createPrisonerName("CHARLIE", "FOSTER"),
+      createPrisonerName("VLODIMIR", "MARSH"),
+      createPrisonerName("LOUIS", "MCCARTHY"),
+      createPrisonerName("ARRAN", "PETERSON"),
+      createPrisonerName("ZACHARY", "SMITH"),
+      createPrisonerName("ZACHARY", "SMITH"),
+      createPrisonerName("ZACHARY", "SMITH"),
+      createPrisonerName("TOM", "WILLIAMSON"),
+    )
+    offenderSearchApiService.sortPrisonersByField("name,ASC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
+  @Test
+  fun `test sort prisoners- sort prisoners by name descending`() {
+    val prisoners = mutableListOf(
+      createPrisonerName("BERTRAND", "ANDERSON"),
+      createPrisonerName("ZACHARY", "SMITH"),
+      createPrisonerName("ANDY", "ANDERSON"),
+      createPrisonerName("CHARLIE", "FOSTER"),
+      createPrisonerName("ARRAN", "PETERSON"),
+      createPrisonerName("LOUIS", "MCCARTHY"),
+      createPrisonerName("CORMAC", "CRAY"),
+      createPrisonerName("VLODIMIR", "MARSH"),
+      createPrisonerName("TOM", "WILLIAMSON"),
+    )
+    val sortedPrisoners = mutableListOf(
+      createPrisonerName("TOM", "WILLIAMSON"),
+      createPrisonerName("ZACHARY", "SMITH"),
+      createPrisonerName("ARRAN", "PETERSON"),
+      createPrisonerName("LOUIS", "MCCARTHY"),
+      createPrisonerName("VLODIMIR", "MARSH"),
+      createPrisonerName("CHARLIE", "FOSTER"),
+      createPrisonerName("CORMAC", "CRAY"),
+      createPrisonerName("BERTRAND", "ANDERSON"),
+      createPrisonerName("ANDY", "ANDERSON"),
+    )
+    offenderSearchApiService.sortPrisonersByField("name,DESC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
+  @Test
+  fun `sort prisoners by parole eligibility date- ascending`() {
+    val prisoners = mutableListOf(
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2029-08-30")),
+      createPrisonerParoleEligibilityDate(null),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2037-01-01")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2028-11-11")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-08")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-21")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2078-04-03")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2046-12-03")),
+      createPrisonerParoleEligibilityDate(null),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-02-01")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-24")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-09")),
+    )
+
+    val sortedPrisoners = mutableListOf(
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-08")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-09")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-02-01")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-21")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-24")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2028-11-11")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2029-08-30")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2037-01-01")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2046-12-03")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2078-04-03")),
+      createPrisonerParoleEligibilityDate(null),
+      createPrisonerParoleEligibilityDate(null),
+    )
+    offenderSearchApiService.sortPrisonersByField("paroleEligibilityDate,ASC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
+  @Test
+  fun `sort prisoners by parole eligibility date- descending`() {
+    val prisoners = mutableListOf(
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2029-08-30")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2037-01-01")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2028-11-11")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-08")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-21")),
+      createPrisonerParoleEligibilityDate(null),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2078-04-03")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2046-12-03")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-02-01")),
+      createPrisonerParoleEligibilityDate(null),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-24")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-09")),
+    )
+
+    val sortedPrisoners = mutableListOf(
+      createPrisonerParoleEligibilityDate(null),
+      createPrisonerParoleEligibilityDate(null),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2078-04-03")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2046-12-03")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2037-01-01")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2029-08-30")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2028-11-11")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-24")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-21")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-02-01")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-09")),
+      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-08")),
+    )
+    offenderSearchApiService.sortPrisonersByField("paroleEligibilityDate,DESC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
+  @Test
+  fun `sort prisoners by release date- descending`() {
+    val prisoners = mutableListOf(
+      createPrisonerReleaseDate(LocalDate.parse("2029-08-30")),
+      createPrisonerReleaseDate(LocalDate.parse("2037-01-01")),
+      createPrisonerReleaseDate(LocalDate.parse("2028-11-11")),
+      createPrisonerReleaseDate(LocalDate.parse("2024-12-08")),
+      createPrisonerReleaseDate(LocalDate.parse("2026-07-21")),
+      createPrisonerReleaseDate(null),
+      createPrisonerReleaseDate(LocalDate.parse("2078-04-03")),
+      createPrisonerReleaseDate(LocalDate.parse("2046-12-03")),
+      createPrisonerReleaseDate(LocalDate.parse("2026-02-01")),
+      createPrisonerReleaseDate(null),
+      createPrisonerReleaseDate(LocalDate.parse("2026-07-24")),
+      createPrisonerReleaseDate(LocalDate.parse("2024-12-09")),
+    )
+
+    val sortedPrisoners = mutableListOf(
+      createPrisonerReleaseDate(null),
+      createPrisonerReleaseDate(null),
+      createPrisonerReleaseDate(LocalDate.parse("2078-04-03")),
+      createPrisonerReleaseDate(LocalDate.parse("2046-12-03")),
+      createPrisonerReleaseDate(LocalDate.parse("2037-01-01")),
+      createPrisonerReleaseDate(LocalDate.parse("2029-08-30")),
+      createPrisonerReleaseDate(LocalDate.parse("2028-11-11")),
+      createPrisonerReleaseDate(LocalDate.parse("2026-07-24")),
+      createPrisonerReleaseDate(LocalDate.parse("2026-07-21")),
+      createPrisonerReleaseDate(LocalDate.parse("2026-02-01")),
+      createPrisonerReleaseDate(LocalDate.parse("2024-12-09")),
+      createPrisonerReleaseDate(LocalDate.parse("2024-12-08")),
+    )
+    offenderSearchApiService.sortPrisonersByField("releaseDate,DESC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
+  @Test
+  fun `sort prisoners by release date- ascending`() {
+    val prisoners = mutableListOf(
+      createPrisonerReleaseDate(LocalDate.parse("2029-08-30")),
+      createPrisonerReleaseDate(LocalDate.parse("2037-01-01")),
+      createPrisonerReleaseDate(LocalDate.parse("2028-11-11")),
+      createPrisonerReleaseDate(LocalDate.parse("2024-12-08")),
+      createPrisonerReleaseDate(LocalDate.parse("2026-07-21")),
+      createPrisonerReleaseDate(null),
+      createPrisonerReleaseDate(LocalDate.parse("2078-04-03")),
+      createPrisonerReleaseDate(LocalDate.parse("2046-12-03")),
+      createPrisonerReleaseDate(LocalDate.parse("2026-02-01")),
+      createPrisonerReleaseDate(null),
+      createPrisonerReleaseDate(LocalDate.parse("2026-07-24")),
+      createPrisonerReleaseDate(LocalDate.parse("2024-12-09")),
+    )
+
+    val sortedPrisoners = mutableListOf(
+      createPrisonerReleaseDate(LocalDate.parse("2024-12-08")),
+      createPrisonerReleaseDate(LocalDate.parse("2024-12-09")),
+      createPrisonerReleaseDate(LocalDate.parse("2026-02-01")),
+      createPrisonerReleaseDate(LocalDate.parse("2026-07-21")),
+      createPrisonerReleaseDate(LocalDate.parse("2026-07-24")),
+      createPrisonerReleaseDate(LocalDate.parse("2028-11-11")),
+      createPrisonerReleaseDate(LocalDate.parse("2029-08-30")),
+      createPrisonerReleaseDate(LocalDate.parse("2037-01-01")),
+      createPrisonerReleaseDate(LocalDate.parse("2046-12-03")),
+      createPrisonerReleaseDate(LocalDate.parse("2078-04-03")),
+      createPrisonerReleaseDate(null),
+      createPrisonerReleaseDate(null),
+    )
+    offenderSearchApiService.sortPrisonersByField("releaseDate,ASC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
+  @Test
+  fun `sort prisoners by pathway status- pathway view set- ascending`() {
+    val prisoners = mutableListOf(
+      createPrisonerPathwayStatus(Status.SUPPORT_DECLINED),
+      createPrisonerPathwayStatus(Status.NOT_STARTED),
+      createPrisonerPathwayStatus(Status.IN_PROGRESS),
+      createPrisonerPathwayStatus(Status.DONE),
+      createPrisonerPathwayStatus(Status.SUPPORT_NOT_REQUIRED),
+    )
+
+    val sortedPrisoners = mutableListOf(
+      createPrisonerPathwayStatus(Status.NOT_STARTED),
+      createPrisonerPathwayStatus(Status.IN_PROGRESS),
+      createPrisonerPathwayStatus(Status.SUPPORT_NOT_REQUIRED),
+      createPrisonerPathwayStatus(Status.SUPPORT_DECLINED),
+      createPrisonerPathwayStatus(Status.DONE),
+    )
+    offenderSearchApiService.sortPrisonersByField("pathwayStatus,ASC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
+  @Test
+  fun `sort prisoners by pathway status- pathway view set- descending`() {
+    val prisoners = mutableListOf(
+      createPrisonerPathwayStatus(Status.SUPPORT_DECLINED),
+      createPrisonerPathwayStatus(Status.NOT_STARTED),
+      createPrisonerPathwayStatus(Status.IN_PROGRESS),
+      createPrisonerPathwayStatus(Status.DONE),
+      createPrisonerPathwayStatus(Status.SUPPORT_NOT_REQUIRED),
+    )
+
+    val sortedPrisoners = mutableListOf(
+      createPrisonerPathwayStatus(Status.DONE),
+      createPrisonerPathwayStatus(Status.SUPPORT_DECLINED),
+      createPrisonerPathwayStatus(Status.SUPPORT_NOT_REQUIRED),
+      createPrisonerPathwayStatus(Status.IN_PROGRESS),
+      createPrisonerPathwayStatus(Status.NOT_STARTED),
+    )
+    offenderSearchApiService.sortPrisonersByField("pathwayStatus,DESC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
+  @Test
+  fun `sort prisoners by last updated- descending`() {
+    val prisoners = mutableListOf(
+      createPrisonerLastUpdatedDate(Status.IN_PROGRESS, LocalDate.parse("2023-05-08")),
+      createPrisonerLastUpdatedDate(Status.DONE, LocalDate.parse("2023-11-08")),
+      createPrisonerLastUpdatedDate(Status.DONE, LocalDate.parse("2023-10-08")),
+      createPrisonerLastUpdatedDate(Status.NOT_STARTED, null),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_DECLINED, LocalDate.parse("2023-10-31")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_NOT_REQUIRED, LocalDate.parse("2023-09-30")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_DECLINED, LocalDate.parse("2023-09-30")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_NOT_REQUIRED, LocalDate.parse("2023-08-03")),
+      createPrisonerLastUpdatedDate(Status.IN_PROGRESS, LocalDate.parse("2023-11-22")),
+    )
+
+    val sortedPrisoners = mutableListOf(
+
+      createPrisonerLastUpdatedDate(Status.NOT_STARTED, null),
+      createPrisonerLastUpdatedDate(Status.IN_PROGRESS, LocalDate.parse("2023-11-22")),
+      createPrisonerLastUpdatedDate(Status.DONE, LocalDate.parse("2023-11-08")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_DECLINED, LocalDate.parse("2023-10-31")),
+      createPrisonerLastUpdatedDate(Status.DONE, LocalDate.parse("2023-10-08")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_NOT_REQUIRED, LocalDate.parse("2023-09-30")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_DECLINED, LocalDate.parse("2023-09-30")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_NOT_REQUIRED, LocalDate.parse("2023-08-03")),
+      createPrisonerLastUpdatedDate(Status.IN_PROGRESS, LocalDate.parse("2023-05-08")),
+    )
+    offenderSearchApiService.sortPrisonersByField("lastUpdatedDate,DESC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
+  @Test
+  fun `sort prisoners by last updated- ascending`() {
+    val prisoners = mutableListOf(
+      createPrisonerLastUpdatedDate(Status.IN_PROGRESS, LocalDate.parse("2023-05-08")),
+      createPrisonerLastUpdatedDate(Status.DONE, LocalDate.parse("2023-11-08")),
+      createPrisonerLastUpdatedDate(Status.DONE, LocalDate.parse("2023-10-08")),
+      createPrisonerLastUpdatedDate(Status.NOT_STARTED, null),
+      createPrisonerLastUpdatedDate(Status.NOT_STARTED, null),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_DECLINED, LocalDate.parse("2023-10-31")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_NOT_REQUIRED, LocalDate.parse("2023-09-30")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_NOT_REQUIRED, LocalDate.parse("2023-08-03")),
+      createPrisonerLastUpdatedDate(Status.IN_PROGRESS, LocalDate.parse("2023-11-22")),
+    )
+
+    val sortedPrisoners = mutableListOf(
+      createPrisonerLastUpdatedDate(Status.IN_PROGRESS, LocalDate.parse("2023-05-08")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_NOT_REQUIRED, LocalDate.parse("2023-08-03")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_NOT_REQUIRED, LocalDate.parse("2023-09-30")),
+      createPrisonerLastUpdatedDate(Status.DONE, LocalDate.parse("2023-10-08")),
+      createPrisonerLastUpdatedDate(Status.SUPPORT_DECLINED, LocalDate.parse("2023-10-31")),
+      createPrisonerLastUpdatedDate(Status.DONE, LocalDate.parse("2023-11-08")),
+      createPrisonerLastUpdatedDate(Status.IN_PROGRESS, LocalDate.parse("2023-11-22")),
+      createPrisonerLastUpdatedDate(Status.NOT_STARTED, null),
+      createPrisonerLastUpdatedDate(Status.NOT_STARTED, null),
+    )
+    offenderSearchApiService.sortPrisonersByField("lastUpdatedDate,ASC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
+  @Test
+  fun `test secondary sort by NomsId ascending, primary sort by prisoner number ascending`() {
+    val prisoners = mutableListOf(
+      createPrisonerNumber("A123456"),
+      createPrisonerNumber("C394839"),
+      createPrisonerNumber("Y945849"),
+      createPrisonerNumber("Y340302"),
+      createPrisonerNumber("G394839"),
+      createPrisonerNumber("B394839"),
+      createPrisonerNumber("N394839"),
+      createPrisonerNumber("W394839"),
+      createPrisonerNumber("S394839"),
+      createPrisonerNumber("K394839"),
+      createPrisonerNumber("E394839"),
+    )
+    val sortedPrisoners = mutableListOf(
+      createPrisonerNumber("A123456"),
+      createPrisonerNumber("B394839"),
+      createPrisonerNumber("C394839"),
+      createPrisonerNumber("E394839"),
+      createPrisonerNumber("G394839"),
+      createPrisonerNumber("K394839"),
+      createPrisonerNumber("N394839"),
+      createPrisonerNumber("S394839"),
+      createPrisonerNumber("W394839"),
+      createPrisonerNumber("Y340302"),
+      createPrisonerNumber("Y945849"),
+
+    )
+    offenderSearchApiService.sortPrisoners("prisonerNumber,ASC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
+  @Test
+  fun `test secondary sort by NomsId ascending, primary sort by prisoner name ascending`() {
+    val prisoners = mutableListOf(
+      createPrisonerNameAndNumber("A123456", "BERTRAND", "ANDERSON"),
+      createPrisonerNameAndNumber("C394839", "ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("Y340302", "ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("G394839", "ANDY", "ANDERSON"),
+      createPrisonerNameAndNumber("B394839", "CHARLIE", "FOSTER"),
+      createPrisonerNameAndNumber("N394839", "ARRAN", "PETERSON"),
+      createPrisonerNameAndNumber("W394839", "LOUIS", "MCCARTHY"),
+      createPrisonerNameAndNumber("S394839", "CORMAC", "CRAY"),
+      createPrisonerNameAndNumber("Y945849", "ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("A098762", "SAMUEL", "MARSH"),
+      createPrisonerNameAndNumber("P234501", "ADAM", "MARSH"),
+      createPrisonerNameAndNumber("K394839", "VLODIMIR", "MARSH"),
+      createPrisonerNameAndNumber("E394839", "TOM", "WILLIAMSON"),
+      createPrisonerNameAndNumber("A645849", "ZACHARY", "SMITH"),
+    )
+    val sortedPrisoners = mutableListOf(
+      createPrisonerNameAndNumber("G394839", "ANDY", "ANDERSON"),
+      createPrisonerNameAndNumber("A123456", "BERTRAND", "ANDERSON"),
+      createPrisonerNameAndNumber("S394839", "CORMAC", "CRAY"),
+      createPrisonerNameAndNumber("B394839", "CHARLIE", "FOSTER"),
+      createPrisonerNameAndNumber("P234501", "ADAM", "MARSH"),
+      createPrisonerNameAndNumber("A098762", "SAMUEL", "MARSH"),
+      createPrisonerNameAndNumber("K394839", "VLODIMIR", "MARSH"),
+      createPrisonerNameAndNumber("W394839", "LOUIS", "MCCARTHY"),
+      createPrisonerNameAndNumber("N394839", "ARRAN", "PETERSON"),
+      createPrisonerNameAndNumber("A645849", "ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("C394839", "ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("Y340302", "ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("Y945849", "ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("E394839", "TOM", "WILLIAMSON"),
+    )
+    offenderSearchApiService.sortPrisoners("name,ASC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
+  @Test
+  fun `test secondary sort by NomsId descending, primary sort by prisoner name descending`() {
+    val prisoners = mutableListOf(
+      createPrisonerNameAndNumber("A123456", "BERTRAND", "ANDERSON"),
+      createPrisonerNameAndNumber("C394839", "ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("Y340302", "ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("G394839", "ANDY", "ANDERSON"),
+      createPrisonerNameAndNumber("B394839", "CHARLIE", "FOSTER"),
+      createPrisonerNameAndNumber("N394839", "ARRAN", "PETERSON"),
+      createPrisonerNameAndNumber("W394839", "LOUIS", "MCCARTHY"),
+      createPrisonerNameAndNumber("S394839", "CORMAC", "CRAY"),
+      createPrisonerNameAndNumber("Y945849", "ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("A098762", "SAMUEL", "MARSH"),
+      createPrisonerNameAndNumber("P234501", "ADAM", "MARSH"),
+      createPrisonerNameAndNumber("K394839", "VLODIMIR", "MARSH"),
+      createPrisonerNameAndNumber("E394839", "TOM", "WILLIAMSON"),
+      createPrisonerNameAndNumber("A645849", "ZACHARY", "SMITH"),
+    )
+    val sortedPrisoners = mutableListOf(
+      createPrisonerNameAndNumber("E394839", "TOM", "WILLIAMSON"),
+      createPrisonerNameAndNumber("Y945849", "ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("Y340302", "ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("C394839", "ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("A645849", "ZACHARY", "SMITH"),
+      createPrisonerNameAndNumber("N394839", "ARRAN", "PETERSON"),
+      createPrisonerNameAndNumber("W394839", "LOUIS", "MCCARTHY"),
+      createPrisonerNameAndNumber("K394839", "VLODIMIR", "MARSH"),
+      createPrisonerNameAndNumber("A098762", "SAMUEL", "MARSH"),
+      createPrisonerNameAndNumber("P234501", "ADAM", "MARSH"),
+      createPrisonerNameAndNumber("B394839", "CHARLIE", "FOSTER"),
+      createPrisonerNameAndNumber("S394839", "CORMAC", "CRAY"),
+      createPrisonerNameAndNumber("A123456", "BERTRAND", "ANDERSON"),
+      createPrisonerNameAndNumber("G394839", "ANDY", "ANDERSON"),
+    )
+    offenderSearchApiService.sortPrisoners("name,DESC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
+  @Test
+  fun `test sorts by nomsId by default`() {
+    val prisonId = "MDI"
+    val prisoners = mutableListOf(
+      createPrisonerNumber("G234098"),
+      createPrisonerNumber("A009090"),
+      createPrisonerNumber("A471234"),
+      createPrisonerNumber("G678952"),
+      createPrisonerNumber("G567809"),
+      createPrisonerNumber("G023456"),
+      createPrisonerNumber("G461234"),
+    )
+    val sortedPrisoners = mutableListOf(
+      createPrisonerNumber("A009090"),
+      createPrisonerNumber("A471234"),
+      createPrisonerNumber("G023456"),
+      createPrisonerNumber("G234098"),
+      createPrisonerNumber("G461234"),
+      createPrisonerNumber("G567809"),
+      createPrisonerNumber("G678952"),
+    )
+    offenderSearchApiService.sortPrisoners(null, prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
+  private fun createPrisoner(prisonId: String) = PrisonersSearch(
+    prisonerNumber = "A123456",
+    firstName = "firstName",
+    lastName = "lastName",
+    prisonId = prisonId,
+    prisonName = "prisonName",
+    cellLocation = null,
+    youthOffender = false,
+  )
 }
+
+private fun createPrisonerNumber(prisonerNumber: String) =
+  Prisoners(prisonerNumber = prisonerNumber, firstName = "firstName", lastName = "lastName", pathwayStatus = null)
+
+private fun createPrisonerName(firstName: String, lastName: String) =
+  Prisoners(prisonerNumber = "A123456", firstName = firstName, lastName = lastName, pathwayStatus = null)
+
+private fun createPrisonerNameAndNumber(prisonerNumber: String, firstName: String, lastName: String) =
+  Prisoners(prisonerNumber = prisonerNumber, firstName = firstName, lastName = lastName, pathwayStatus = null)
+
+private fun createPrisonerParoleEligibilityDate(paroleEligibilityDate: LocalDate?) = Prisoners(
+  prisonerNumber = "A123456",
+  firstName = "SIMON",
+  lastName = "BAMFORD",
+  pathwayStatus = null,
+  paroleEligibilityDate = paroleEligibilityDate,
+)
+
+private fun createPrisonerReleaseDate(releaseDate: LocalDate?) = Prisoners(
+  prisonerNumber = "A123456",
+  firstName = "PATRICK",
+  lastName = "WICKENDEN",
+  pathwayStatus = null,
+  releaseDate = releaseDate,
+)
+
+private fun createPrisonerPathwayStatus(pathwayStatus: Status) =
+  Prisoners(prisonerNumber = "A123456", firstName = "BORIS", lastName = "FRANKLIN", pathwayStatus = pathwayStatus)
+
+private fun createPrisonerLastUpdatedDate(pathwayStatus: Status, lastUpdatedDate: LocalDate?) = Prisoners(
+  prisonerNumber = "A123456",
+  firstName = "OLIVER",
+  lastName = "HAYES",
+  pathwayStatus = pathwayStatus,
+  lastUpdatedDate = lastUpdatedDate,
+)

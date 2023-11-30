@@ -1,13 +1,61 @@
 {
   "content": [
     {
+      "prisonerNumber": "A8339DY",
+      "firstName": "MR",
+      "middleNames": "BRIDGILLA",
+      "lastName": "CRD-LR-TEST",
+      "releaseDate": null,
+      "releaseType": "PRRD",
+      "lastUpdatedDate": "2023-06-14",
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-06-14"
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "DONE",
+          "lastDateChange": "2023-06-15"
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "NOT_STARTED",
+          "lastDateChange": "2023-06-16"
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-06-17"
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "SUPPORT_NOT_REQUIRED",
+          "lastDateChange": "2023-06-18"
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-06-19"
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "DONE",
+          "lastDateChange": "2023-06-20"
+        }
+      ],
+      "homeDetentionCurfewEligibilityDate": null,
+      "paroleEligibilityDate": null
+    },
+    {
       "prisonerNumber": "G1458GV",
       "firstName": "FINN",
       "middleNames": "CHANDLEVIEVE",
       "lastName": "CRAWFIS",
       "releaseDate": "2099-09-12",
       "releaseType": "CRD",
-      "lastUpdatedDate": null,
+      "lastUpdatedDate": "2023-05-17",
       "status": [
         {
           "pathway": "ACCOMMODATION",
@@ -55,7 +103,7 @@
       "lastName": "MCVEIGH",
       "releaseDate": "2099-08-01",
       "releaseType": "CRD",
-      "lastUpdatedDate": null,
+      "lastUpdatedDate": "2023-07-19",
       "status": [
         {
           "pathway": "ACCOMMODATION",
@@ -94,54 +142,6 @@
         }
       ],
       "homeDetentionCurfewEligibilityDate": "2021-02-03",
-      "paroleEligibilityDate": null
-    },
-    {
-      "prisonerNumber": "A8339DY",
-      "firstName": "MR",
-      "middleNames": "BRIDGILLA",
-      "lastName": "CRD-LR-TEST",
-      "releaseDate": null,
-      "releaseType": "PRRD",
-      "lastUpdatedDate": null,
-      "status": [
-        {
-          "pathway": "ACCOMMODATION",
-          "status": "SUPPORT_DECLINED",
-          "lastDateChange": "2023-06-14"
-        },
-        {
-          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-          "status": "DONE",
-          "lastDateChange": "2023-06-15"
-        },
-        {
-          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
-          "status": "NOT_STARTED",
-          "lastDateChange": "2023-06-16"
-        },
-        {
-          "pathway": "DRUGS_AND_ALCOHOL",
-          "status": "IN_PROGRESS",
-          "lastDateChange": "2023-06-17"
-        },
-        {
-          "pathway": "EDUCATION_SKILLS_AND_WORK",
-          "status": "SUPPORT_NOT_REQUIRED",
-          "lastDateChange": "2023-06-18"
-        },
-        {
-          "pathway": "FINANCE_AND_ID",
-          "status": "SUPPORT_DECLINED",
-          "lastDateChange": "2023-06-19"
-        },
-        {
-          "pathway": "HEALTH",
-          "status": "DONE",
-          "lastDateChange": "2023-06-20"
-        }
-      ],
-      "homeDetentionCurfewEligibilityDate": null,
       "paroleEligibilityDate": null
     }
   ],

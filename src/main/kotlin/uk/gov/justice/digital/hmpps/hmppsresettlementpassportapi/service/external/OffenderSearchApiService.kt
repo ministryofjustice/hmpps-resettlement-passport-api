@@ -6,7 +6,11 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.*
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoner
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerPersonal
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonerImage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
@@ -121,7 +125,7 @@ class OffenderSearchApiService(
     return PrisonersList(emptyList(), 0, 0, sort, 0, false)
   }
 
-  fun sortPrisoners(sort: String?, offenders: MutableList<Prisoners>) {
+  fun sortPrisoners(sort: String? = null, offenders: MutableList<Prisoners>) {
     if (sort == null) {
       sortPrisonersByNomsId("ASC", offenders)
     } else {
@@ -135,7 +139,7 @@ class OffenderSearchApiService(
     offenders: MutableList<Prisoners>,
   ) {
     when (sort) {
-      "releaseDate,ASC" -> offenders.sortWith(compareBy(nullsFirst()) { it.releaseDate })
+      "releaseDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.releaseDate })
       "paroleEligibilityDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.paroleEligibilityDate })
       "name,ASC" -> offenders.sortWith(compareBy { "${it.lastName}, ${it.firstName}" })
       "lastUpdatedDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.lastUpdatedDate })
@@ -161,8 +165,8 @@ class OffenderSearchApiService(
   ) {
     val sortNoms = sort.split(",").last()
     when (sortNoms) {
-      "ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.prisonerNumber })
-      "DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.prisonerNumber })
+      "ASC" -> offenders.sortBy { it.prisonerNumber }
+      "DESC" -> offenders.sortByDescending { it.prisonerNumber }
     }
   }
 

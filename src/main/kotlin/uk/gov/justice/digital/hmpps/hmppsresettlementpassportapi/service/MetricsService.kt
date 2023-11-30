@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerCountMetric
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerCountMetrics
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerCountMetricsByReleaseDate
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerCounts
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ReleaseDateTag
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.StatusTag
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderSearchApiService
@@ -114,15 +116,36 @@ class MetricsService(
     log.info("Finished running scheduled metrics job")
   }
 
-  fun getMetricsByPrisonId(prisonId: String): List<PrisonerCountMetric> {
+  fun getMetricsByPrisonId(prisonId: String): PrisonerCountMetricsByReleaseDate {
     if (prisonerCountMetrics.metrics.isEmpty()) {
       recordPrisonersCountForEachPrison()
     }
     val metrics = prisonerCountMetrics.metrics.filter { it.key.id == prisonId }.values.firstOrNull()
     if (metrics != null) {
-      return metrics
+      return PrisonerCountMetricsByReleaseDate(
+        twelveWeeks = PrisonerCounts(
+          totalPopulation = getNumberFromMetrics(metrics, ReleaseDateTag.TWELVE_WEEKS, StatusTag.ALL),
+          notStarted = getNumberFromMetrics(metrics, ReleaseDateTag.TWELVE_WEEKS, StatusTag.NOT_STARTED),
+          inProgress = getNumberFromMetrics(metrics, ReleaseDateTag.TWELVE_WEEKS, StatusTag.IN_PROGRESS),
+          done = getNumberFromMetrics(metrics, ReleaseDateTag.TWELVE_WEEKS, StatusTag.DONE),
+        ),
+        twentyFourWeeks = PrisonerCounts(
+          totalPopulation = getNumberFromMetrics(metrics, ReleaseDateTag.TWENTY_FOUR_WEEKS, StatusTag.ALL),
+          notStarted = getNumberFromMetrics(metrics, ReleaseDateTag.TWENTY_FOUR_WEEKS, StatusTag.NOT_STARTED),
+          inProgress = getNumberFromMetrics(metrics, ReleaseDateTag.TWENTY_FOUR_WEEKS, StatusTag.IN_PROGRESS),
+          done = getNumberFromMetrics(metrics, ReleaseDateTag.TWENTY_FOUR_WEEKS, StatusTag.DONE),
+        ),
+        allFuture = PrisonerCounts(
+          totalPopulation = getNumberFromMetrics(metrics, ReleaseDateTag.ALL_FUTURE, StatusTag.ALL),
+          notStarted = getNumberFromMetrics(metrics, ReleaseDateTag.ALL_FUTURE, StatusTag.NOT_STARTED),
+          inProgress = getNumberFromMetrics(metrics, ReleaseDateTag.ALL_FUTURE, StatusTag.IN_PROGRESS),
+          done = getNumberFromMetrics(metrics, ReleaseDateTag.ALL_FUTURE, StatusTag.DONE),
+        ),
+      )
     } else {
       throw ResourceNotFoundException("No metrics found for prison [$prisonId]")
     }
   }
+
+  fun getNumberFromMetrics(metrics: List<PrisonerCountMetric>, releaseDateTag: ReleaseDateTag, statusTag: StatusTag): Int? = metrics.firstOrNull { it.releaseDate == releaseDateTag && it.status == statusTag }?.value
 }

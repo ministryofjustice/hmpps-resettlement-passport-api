@@ -1,9 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
-
 data class PrisonerCountMetrics(
   val metrics: MutableMap<Prison, List<PrisonerCountMetric>> = mutableMapOf(),
 )
@@ -28,9 +24,15 @@ enum class ReleaseDateTag(val label: String) {
   TWENTY_FOUR_WEEKS("24 Weeks"),
 }
 
-class MetricsMapSerializer : JsonSerializer<Prison>() {
+data class PrisonerCountMetricsByReleaseDate(
+  val twelveWeeks: PrisonerCounts,
+  val twentyFourWeeks: PrisonerCounts,
+  val allFuture: PrisonerCounts,
+)
 
-  override fun serialize(value: Prison?, gen: JsonGenerator?, serializers: SerializerProvider?) {
-    gen?.writeFieldName(value?.id)
-  }
-}
+data class PrisonerCounts(
+  val totalPopulation: Int?,
+  val notStarted: Int?,
+  val inProgress: Int?,
+  val done: Int?,
+)

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerCountMetric
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerCountMetricsByReleaseDate
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.MetricsService
 
 @RestController
@@ -63,5 +63,5 @@ class MetricsResourceController(private val metricsService: MetricsService) {
     @RequestParam("prisonId")
     @Parameter(required = true)
     prisonId: String,
-  ): List<PrisonerCountMetric> = metricsService.getMetricsByPrisonId(prisonId)
+  ): PrisonerCountMetricsByReleaseDate = metricsService.getMetricsByPrisonId(prisonId)
 }

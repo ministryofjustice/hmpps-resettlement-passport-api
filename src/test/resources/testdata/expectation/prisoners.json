@@ -7,7 +7,7 @@
       "lastName": "CRD-LR-TEST",
       "releaseDate": null,
       "releaseType": "PRRD",
-      "lastUpdatedDate": null,
+      "lastUpdatedDate": "2023-06-14",
       "status": [
         {
           "pathway": "ACCOMMODATION",
@@ -55,7 +55,7 @@
       "lastName": "CRAWFIS",
       "releaseDate": "2099-09-12",
       "releaseType": "CRD",
-      "lastUpdatedDate": null,
+      "lastUpdatedDate": "2023-05-17",
       "status": [
         {
           "pathway": "ACCOMMODATION",
@@ -103,7 +103,7 @@
       "lastName": "MCVEIGH",
       "releaseDate": "2099-08-01",
       "releaseType": "CRD",
-      "lastUpdatedDate": null,
+      "lastUpdatedDate": "2023-07-19",
       "status": [
         {
           "pathway": "ACCOMMODATION",

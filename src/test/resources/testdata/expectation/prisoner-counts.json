@@ -1,82 +1,20 @@
-[
-  {
-    "status": "ALL",
-    "releaseDate": "PAST",
-    "value": 6
+{
+  "twelveWeeks": {
+    "totalPopulation": 0,
+    "notStarted": 9,
+    "inProgress": 6,
+    "done": 12
   },
-  {
-    "status": "ALL",
-    "releaseDate": "ALL_FUTURE",
-    "value": 4
+  "twentyFourWeeks": {
+    "totalPopulation": 0,
+    "notStarted": 21,
+    "inProgress": 14,
+    "done": 28
   },
-  {
-    "status": "ALL",
-    "releaseDate": "TWELVE_WEEKS",
-    "value": 0
-  },
-  {
-    "status": "ALL",
-    "releaseDate": "TWENTY_FOUR_WEEKS",
-    "value": 0
-  },
-  {
-    "status": "NOT_STARTED",
-    "releaseDate": "PAST",
-    "value": 6
-  },
-  {
-    "status": "NOT_STARTED",
-    "releaseDate": "ALL_FUTURE",
-    "value": 42
-  },
-  {
-    "status": "NOT_STARTED",
-    "releaseDate": "TWELVE_WEEKS",
-    "value": 9
-  },
-  {
-    "status": "NOT_STARTED",
-    "releaseDate": "TWENTY_FOUR_WEEKS",
-    "value": 21
-  },
-  {
-    "status": "IN_PROGRESS",
-    "releaseDate": "PAST",
-    "value": 4
-  },
-  {
-    "status": "IN_PROGRESS",
-    "releaseDate": "ALL_FUTURE",
-    "value": 28
-  },
-  {
-    "status": "IN_PROGRESS",
-    "releaseDate": "TWELVE_WEEKS",
-    "value": 6
-  },
-  {
-    "status": "IN_PROGRESS",
-    "releaseDate": "TWENTY_FOUR_WEEKS",
-    "value": 14
-  },
-  {
-    "status": "DONE",
-    "releaseDate": "PAST",
-    "value": 8
-  },
-  {
-    "status": "DONE",
-    "releaseDate": "ALL_FUTURE",
-    "value": 56
-  },
-  {
-    "status": "DONE",
-    "releaseDate": "TWELVE_WEEKS",
-    "value": 12
-  },
-  {
-    "status": "DONE",
-    "releaseDate": "TWENTY_FOUR_WEEKS",
-    "value": 28
+  "allFuture": {
+    "totalPopulation": 4,
+    "notStarted": 42,
+    "inProgress": 28,
+    "done": 56
   }
-]
+}

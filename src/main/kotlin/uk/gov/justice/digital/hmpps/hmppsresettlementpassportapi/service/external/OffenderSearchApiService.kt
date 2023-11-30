@@ -21,7 +21,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PathwayAndStatusService
 import java.time.LocalDate
 import java.time.Period
-import kotlin.collections.ArrayList
 
 @Service
 class OffenderSearchApiService(
@@ -73,7 +72,7 @@ class OffenderSearchApiService(
     pathwayStatus: Status?,
     pageNumber: Int,
     pageSize: Int,
-    sort: String,
+    sort: String?,
   ): PrisonersList {
     val offenders = mutableListOf<PrisonersSearch>()
     if (prisonId.isBlank() || prisonId.isEmpty()) {
@@ -111,22 +110,9 @@ class OffenderSearchApiService(
       )
     }
 
-    when (sort) {
-      "releaseDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.displayReleaseDate })
-      "firstName,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.firstName })
-      "lastName,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.lastName })
-      "prisonerNumber,ASC" -> offenders.sortBy { it.prisonerNumber }
-      "releaseDate,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.displayReleaseDate })
-      "firstName,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.firstName })
-      "lastName,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.lastName })
-      "prisonerNumber,DESC" -> offenders.sortWith(compareByDescending(nullsFirst()) { it.prisonerNumber })
-      else -> throw NoDataWithCodeFoundException(
-        "Data",
-        "Sort value Invalid",
-      )
-    }
-
     val fullList = objectMapper(offenders, pathwayView, pathwayStatus)
+
+    sortPrisoners(sort, fullList)
 
     val endIndex = (pageNumber * pageSize) + (pageSize)
     if (startIndex < endIndex && endIndex <= fullList.size) {
@@ -139,33 +125,95 @@ class OffenderSearchApiService(
     return PrisonersList(emptyList(), 0, 0, sort, 0, false)
   }
 
-  private fun objectMapper(searchList: List<PrisonersSearch>, pathwayView: Pathway?, pathwayStatusToFilter: Status?): List<Prisoners> {
+  fun sortPrisoners(sort: String?, offenders: MutableList<Prisoners>) {
+    if (sort == null) {
+      sortPrisonersByNomsId("ASC", offenders)
+    } else {
+      sortPrisonersByNomsId(sort, offenders)
+      sortPrisonersByField(sort, offenders)
+    }
+  }
+
+  fun sortPrisonersByField(
+    sort: String,
+    offenders: MutableList<Prisoners>,
+  ) {
+    when (sort) {
+      "releaseDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.releaseDate })
+      "paroleEligibilityDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.paroleEligibilityDate })
+      "name,ASC" -> offenders.sortWith(compareBy { "${it.lastName}, ${it.firstName}" })
+      "lastUpdatedDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.lastUpdatedDate })
+      "prisonerNumber,ASC" -> offenders.sortBy { it.prisonerNumber }
+      "pathwayStatus,ASC" -> offenders.sortBy { it.pathwayStatus }
+      "releaseDate,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.releaseDate })
+      "paroleEligibilityDate,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.paroleEligibilityDate })
+      "name,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { "${it.lastName}, ${it.firstName}" })
+      "lastUpdatedDate,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.lastUpdatedDate })
+      "prisonerNumber,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.prisonerNumber })
+      "pathwayStatus,DESC" -> offenders.sortByDescending { it.pathwayStatus }
+
+      else -> throw NoDataWithCodeFoundException(
+        "Data",
+        "Sort value Invalid",
+      )
+    }
+  }
+
+  fun sortPrisonersByNomsId(
+    sort: String,
+    offenders: MutableList<Prisoners>,
+  ) {
+    val sortNoms = sort.split(",").last()
+    when (sortNoms) {
+      "ASC" -> offenders.sortBy { it.prisonerNumber }
+      "DESC" -> offenders.sortByDescending { it.prisonerNumber }
+    }
+  }
+
+  private fun objectMapper(
+    searchList: List<PrisonersSearch>,
+    pathwayView: Pathway?,
+    pathwayStatusToFilter: Status?,
+  ): MutableList<Prisoners> {
     val prisonersList = mutableListOf<Prisoners>()
     searchList.forEach { prisonersSearch ->
 
       val prisonerEntity = prisonerRepository.findByNomsId(prisonersSearch.prisonerNumber)
 
       val pathwayStatuses: List<PathwayStatus>?
+      val sortedPathwayStatuses: List<PathwayStatus>?
       val pathwayStatus: Status?
+      val lastUpdatedDate: LocalDate?
 
       if (prisonerEntity != null) {
         pathwayStatuses = if (pathwayView == null) getPathwayStatuses(prisonerEntity) else null
+        sortedPathwayStatuses = pathwayStatuses?.sortedWith(compareBy(nullsLast()) { it.lastDateChange })
+        lastUpdatedDate =
+          if (pathwayView == null) {
+            sortedPathwayStatuses?.first()?.lastDateChange
+          } else {
+            getPathwayStatusLastUpdated(
+              prisonerEntity,
+              pathwayView,
+            )
+          }
         pathwayStatus = if (pathwayView != null) getPathwayStatus(prisonerEntity, pathwayView) else null
       } else {
         // We don't know about this prisoner yet so just set all the statuses to NOT_STARTED.
         pathwayStatuses = if (pathwayView == null) getDefaultPathwayStatuses() else null
         pathwayStatus = if (pathwayView != null) Status.NOT_STARTED else null
+        lastUpdatedDate = null
       }
 
       if (pathwayStatusToFilter == null || pathwayStatusToFilter == pathwayStatus) {
         val prisoner = Prisoners(
-          prisonersSearch.prisonerNumber,
-          prisonersSearch.firstName,
-          prisonersSearch.middleNames,
-          prisonersSearch.lastName,
+          prisonersSearch.prisonerNumber.trim(),
+          prisonersSearch.firstName.trim(),
+          prisonersSearch.middleNames?.trim(),
+          prisonersSearch.lastName.trim(),
           prisonersSearch.displayReleaseDate,
           prisonersSearch.nonDtoReleaseDateType,
-          null,
+          lastUpdatedDate,
           pathwayStatuses,
           pathwayStatus,
           prisonersSearch.homeDetentionCurfewEligibilityDate,
@@ -250,6 +298,7 @@ class OffenderSearchApiService(
   }
 
   protected fun getPathwayStatuses(
+
     prisonerEntity: PrisonerEntity,
   ): ArrayList<PathwayStatus> {
     val pathwayStatuses = ArrayList<PathwayStatus>()
@@ -271,8 +320,19 @@ class OffenderSearchApiService(
   }
 
   private fun getPathwayStatus(prisonerEntity: PrisonerEntity, pathwayView: Pathway): Status {
-    val pathwayStatusEntity = pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(pathwayAndStatusService.getPathwayEntity(pathwayView), prisonerEntity)
+    val pathwayStatusEntity = pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(
+      pathwayAndStatusService.getPathwayEntity(pathwayView),
+      prisonerEntity,
+    )
     return Status.getById(pathwayStatusEntity.status.id)
+  }
+
+  private fun getPathwayStatusLastUpdated(prisonerEntity: PrisonerEntity, pathwayView: Pathway): LocalDate? {
+    val pathwayStatusEntity = pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(
+      pathwayAndStatusService.getPathwayEntity(pathwayView),
+      prisonerEntity,
+    )
+    return pathwayStatusEntity.updatedDate?.toLocalDate()
   }
 
   fun getDefaultPathwayStatuses(): List<PathwayStatus> {

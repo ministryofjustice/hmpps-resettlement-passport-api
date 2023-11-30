@@ -142,6 +142,21 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `Get All Prisoners with sort by pathway status- no pathway view selected`() {
+    val prisonId = "MDI"
+    offenderSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 200)
+    webTestClient.get()
+      .uri("/resettlement-passport/prison/$prisonId/prisoners?page=0&size=10&sort=pathwayStatus,ASC")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isEqualTo(400)
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(400)
+      .jsonPath("developerMessage").toString().contains("Pathway must be selected to sort by pathway status")
+  }
+
+  @Test
   fun `Get Prisoners when nomsId not found`() {
     val prisonId = "abc"
 

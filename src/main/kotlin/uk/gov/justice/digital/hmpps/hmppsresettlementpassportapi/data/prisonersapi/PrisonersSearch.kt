@@ -16,6 +16,7 @@ data class PrisonersSearch(
   val homeDetentionCurfewEligibilityDate: LocalDate? = null,
   val paroleEligibilityDate: LocalDate? = null,
   val nonDtoReleaseDateType: String? = null,
+  val releaseOnTemporaryLicenceDate: LocalDate? = null,
   val dateOfBirth: LocalDate? = null,
   val youthOffender: Boolean?,
   val prisonId: String,

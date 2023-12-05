@@ -58,6 +58,7 @@ data class Offenders(
   var conditionalReleaseDate: LocalDate? = null,
   var actualParoleDate: LocalDate? = null,
   var tariffDate: LocalDate? = null,
+  var releaseOnTemporaryLicenceDate: LocalDate? = null,
   var locationDescription: String? = null,
   var restrictedPatient: Boolean = false,
   var supportingPrisonId: String? = null,

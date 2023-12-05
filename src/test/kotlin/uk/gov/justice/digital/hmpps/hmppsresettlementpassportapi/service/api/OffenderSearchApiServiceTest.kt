@@ -290,7 +290,7 @@ class OffenderSearchApiServiceTest {
         lastName = "CRD-LR-TEST",
         releaseDate = null,
         releaseType = "PRRD",
-        lastUpdatedDate = LocalDate.parse("2023-11-30"),
+        lastUpdatedDate = LocalDate.now(),
         status = listOf(
           PathwayStatus(
             pathway = Pathway.ACCOMMODATION,
@@ -314,7 +314,7 @@ class OffenderSearchApiServiceTest {
         lastName = "MCVEIGH",
         releaseDate = LocalDate.parse("2099-08-01"),
         releaseType = "CRD",
-        lastUpdatedDate = LocalDate.parse("2023-11-30"),
+        lastUpdatedDate = LocalDate.now(),
         status = listOf(
           PathwayStatus(
             pathway = Pathway.ACCOMMODATION,
@@ -338,7 +338,7 @@ class OffenderSearchApiServiceTest {
         lastName = "CRAWFIS",
         releaseDate = LocalDate.parse("2098-09-12"),
         releaseType = "CRD",
-        lastUpdatedDate = LocalDate.parse("2023-11-30"),
+        lastUpdatedDate = LocalDate.now(),
         status = listOf(
           PathwayStatus(
             pathway = Pathway.ACCOMMODATION,
@@ -373,7 +373,7 @@ class OffenderSearchApiServiceTest {
         lastName = "CRD-LR-TEST",
         releaseDate = null,
         releaseType = "PRRD",
-        lastUpdatedDate = LocalDate.parse("2023-11-30"),
+        lastUpdatedDate = LocalDate.now(),
         status = null,
         pathwayStatus = Status.DONE,
         homeDetentionCurfewEligibilityDate = null,
@@ -386,7 +386,7 @@ class OffenderSearchApiServiceTest {
         lastName = "MCVEIGH",
         releaseDate = LocalDate.parse("2099-08-01"),
         releaseType = "CRD",
-        lastUpdatedDate = LocalDate.parse("2023-11-30"),
+        lastUpdatedDate = LocalDate.now(),
         status = null,
         pathwayStatus = Status.NOT_STARTED,
         homeDetentionCurfewEligibilityDate = LocalDate.parse("2021-02-03"),
@@ -399,7 +399,7 @@ class OffenderSearchApiServiceTest {
         lastName = "CRAWFIS",
         releaseDate = LocalDate.parse("2098-09-12"),
         releaseType = "CRD",
-        lastUpdatedDate = LocalDate.parse("2023-11-30"),
+        lastUpdatedDate = LocalDate.now(),
         status = null,
         pathwayStatus = Status.SUPPORT_DECLINED,
         homeDetentionCurfewEligibilityDate = LocalDate.parse("2018-10-16"),
@@ -423,7 +423,7 @@ class OffenderSearchApiServiceTest {
         lastName = "CRAWFIS",
         releaseDate = LocalDate.parse("2098-09-12"),
         releaseType = "CRD",
-        lastUpdatedDate = LocalDate.parse("2023-11-30"),
+        lastUpdatedDate = LocalDate.now(),
         status = null,
         pathwayStatus = Status.SUPPORT_DECLINED,
         homeDetentionCurfewEligibilityDate = LocalDate.parse("2018-10-16"),
@@ -660,6 +660,76 @@ class OffenderSearchApiServiceTest {
       createPrisonerReleaseDate(null),
     )
     offenderSearchApiService.sortPrisonersByField("releaseDate,ASC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
+  @Test
+  fun `sort prisoners by release on temporary licence date- ascending`() {
+    val prisoners = mutableListOf(
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2029-08-30")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2037-01-01")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2028-11-11")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2024-12-08")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2026-07-21")),
+      createPrisonerReleaseOnTempLicenceDate(null),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2078-04-03")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2046-12-03")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2026-02-01")),
+      createPrisonerReleaseOnTempLicenceDate(null),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2026-07-24")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2024-12-09")),
+    )
+
+    val sortedPrisoners = mutableListOf(
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2024-12-08")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2024-12-09")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2026-02-01")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2026-07-21")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2026-07-24")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2028-11-11")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2029-08-30")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2037-01-01")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2046-12-03")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2078-04-03")),
+      createPrisonerReleaseOnTempLicenceDate(null),
+      createPrisonerReleaseOnTempLicenceDate(null),
+    )
+    offenderSearchApiService.sortPrisoners("releaseOnTemporaryLicenceDate,ASC", prisoners)
+    Assertions.assertEquals(sortedPrisoners, prisoners)
+  }
+
+  @Test
+  fun `sort prisoners by release on temporary licence date- descending`() {
+    val prisoners = mutableListOf(
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2029-08-30")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2037-01-01")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2028-11-11")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2024-12-08")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2026-07-21")),
+      createPrisonerReleaseOnTempLicenceDate(null),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2078-04-03")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2046-12-03")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2026-02-01")),
+      createPrisonerReleaseOnTempLicenceDate(null),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2026-07-24")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2024-12-09")),
+    )
+
+    val sortedPrisoners = mutableListOf(
+      createPrisonerReleaseOnTempLicenceDate(null),
+      createPrisonerReleaseOnTempLicenceDate(null),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2078-04-03")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2046-12-03")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2037-01-01")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2029-08-30")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2028-11-11")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2026-07-24")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2026-07-21")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2026-02-01")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2024-12-09")),
+      createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2024-12-08")),
+    )
+    offenderSearchApiService.sortPrisoners("releaseOnTemporaryLicenceDate,DESC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -932,6 +1002,14 @@ private fun createPrisonerReleaseDate(releaseDate: LocalDate?) = Prisoners(
   lastName = "WICKENDEN",
   pathwayStatus = null,
   releaseDate = releaseDate,
+)
+
+private fun createPrisonerReleaseOnTempLicenceDate(releaseOnTempLicenceDate: LocalDate?) = Prisoners(
+  prisonerNumber = "A123456",
+  firstName = "PATRICK",
+  lastName = "WICKENDEN",
+  pathwayStatus = null,
+  releaseOnTemporaryLicenceDate = releaseOnTempLicenceDate,
 )
 
 private fun createPrisonerPathwayStatus(pathwayStatus: Status) =

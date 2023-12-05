@@ -16,6 +16,7 @@ data class Prisoners(
   val pathwayStatus: Status?,
   val homeDetentionCurfewEligibilityDate: LocalDate? = null,
   val paroleEligibilityDate: LocalDate? = null,
+  val releaseOnTemporaryLicenceDate: LocalDate? = null,
 )
 
 data class PrisonerPersonal(

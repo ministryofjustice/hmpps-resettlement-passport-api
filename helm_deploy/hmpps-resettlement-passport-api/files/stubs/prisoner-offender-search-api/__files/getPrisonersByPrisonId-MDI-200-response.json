@@ -28,6 +28,7 @@
             "indeterminateSentence": false,
             "receptionDate": "2000-01-01",
             "actualParoleDate": "2034-04-07",
+            "releaseOnTemporaryLicenceDate": "2024-12-12",
             "locationDescription": "Moorland (HMP & YOI)",
             "restrictedPatient": false,
             "currentIncentive": {
@@ -64,6 +65,7 @@
             "indeterminateSentence": false,
             "receptionDate": "2023-04-15",
             "homeDetentionCurfewActualDate": "2034-04-07",
+            "releaseOnTemporaryLicenceDate": "2027-07-02",
             "locationDescription": "Moorland (HMP & YOI)",
             "restrictedPatient": false,
             "currentIncentive": {
@@ -133,6 +135,7 @@
             "recall": false,
             "indeterminateSentence": false,
             "receptionDate": "2016-07-19",
+            "releaseOnTemporaryLicenceDate": "2024-05-01",
             "locationDescription": "Moorland (HMP & YOI)",
             "restrictedPatient": false,
             "currentIncentive": {
@@ -408,6 +411,7 @@
             "nonDtoReleaseDateType": "CRD",
             "receptionDate": "2016-11-18",
             "conditionalReleaseDate": "2019-10-12",
+            "releaseOnTemporaryLicenceDate": "2066-03-10",
             "locationDescription": "Moorland (HMP & YOI)",
             "restrictedPatient": false,
             "currentIncentive": {
@@ -468,6 +472,7 @@
             "nonDtoReleaseDateType": "CRD",
             "receptionDate": "2023-01-01",
             "conditionalReleaseDate": "2024-03-31",
+            "releaseOnTemporaryLicenceDate": "2065-09-18",
             "locationDescription": "Moorland (HMP & YOI)",
             "restrictedPatient": false,
             "currentIncentive": {
@@ -547,6 +552,7 @@
             "nonDtoReleaseDateType": "CRD",
             "receptionDate": "2014-12-10",
             "conditionalReleaseDate": "2027-08-30",
+            "releaseOnTemporaryLicenceDate": "2033-10-10",
             "locationDescription": "Moorland (HMP & YOI)",
             "restrictedPatient": false,
             "currentIncentive": {

@@ -145,12 +145,14 @@ class OffenderSearchApiService(
       "lastUpdatedDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.lastUpdatedDate })
       "prisonerNumber,ASC" -> offenders.sortBy { it.prisonerNumber }
       "pathwayStatus,ASC" -> offenders.sortBy { it.pathwayStatus }
+      "releaseOnTemporaryLicenceDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.releaseOnTemporaryLicenceDate })
       "releaseDate,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.releaseDate })
       "paroleEligibilityDate,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.paroleEligibilityDate })
       "name,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { "${it.lastName}, ${it.firstName}" })
       "lastUpdatedDate,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.lastUpdatedDate })
       "prisonerNumber,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.prisonerNumber })
       "pathwayStatus,DESC" -> offenders.sortByDescending { it.pathwayStatus }
+      "releaseOnTemporaryLicenceDate,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.releaseOnTemporaryLicenceDate })
 
       else -> throw NoDataWithCodeFoundException(
         "Data",
@@ -218,6 +220,7 @@ class OffenderSearchApiService(
           pathwayStatus,
           prisonersSearch.homeDetentionCurfewEligibilityDate,
           prisonersSearch.paroleEligibilityDate,
+          prisonersSearch.releaseOnTemporaryLicenceDate,
         )
         prisonersList.add(prisoner)
       }

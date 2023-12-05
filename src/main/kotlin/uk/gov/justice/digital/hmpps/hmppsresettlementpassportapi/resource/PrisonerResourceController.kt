@@ -78,7 +78,7 @@ class PrisonerResourceController(
     @Schema(example = "releaseDate,ASC | releaseDate,DESC")
     @Parameter(
       required = true,
-      description = "Sorting criteria in the format: property,(asc|desc) property supported are firstName, lastName, releaseDate and prisonerNumber",
+      description = "Sorting criteria in the format: property,(asc|desc) property supported are name, releaseDate, paroleEligibilityDate, pathwayStatus (only when pathwayView is set), releaseOnTemporaryLicenceDate and prisonerNumber",
     )
     @RequestParam(value = "sort", defaultValue = "releaseDate,ASC")
     sort: String,

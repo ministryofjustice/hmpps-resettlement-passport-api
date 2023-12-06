@@ -11,17 +11,12 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesMeta
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseNotesService
 
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
@@ -120,53 +115,4 @@ class CaseNotesResourceController(
     )
     pathway: String,
   ): List<CaseNotesMeta> = caseNotesService.getCaseNotesCreatorsByPathway(nomsId, pathway)
-
-  @PostMapping("/{nomsId}", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(
-    summary = "Create case notes for Resettlement Passport",
-    description = "Create case notes for Resettlement passport of type is RESET",
-  )
-  @ApiResponses(
-    value = [
-      ApiResponse(
-        responseCode = "200",
-        description = "Successful Operation",
-      ),
-      ApiResponse(
-        responseCode = "401",
-        description = "Unauthorized to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-      ApiResponse(
-        responseCode = "403",
-        description = "Forbidden, requires an appropriate role",
-        content = [
-          Content(
-            mediaType = MediaType.APPLICATION_JSON_VALUE,
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
-      ),
-      ApiResponse(
-        responseCode = "400",
-        description = "Incorrect information in request body. Check schema and try again.",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-      ApiResponse(
-        responseCode = "404",
-        description = "Cannot find prisoner or pathway status entry to update",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-    ],
-  )
-  @Deprecated("Use PATCH endpoint /resettlement-passport/prisoner/{nomsId}/pathway-with-case-note to add a case note.")
-  fun addCaseNotesForPrisoner(
-    @PathVariable("nomsId")
-    @Parameter(required = true)
-    nomsId: String,
-    @RequestBody
-    caseNotes: CaseNotesRequest,
-    @RequestHeader("Authorization")
-    authorizationHeader: String,
-  ): CaseNote? = caseNotesService.postCaseNote(nomsId, caseNotes, authorizationHeader)
 }

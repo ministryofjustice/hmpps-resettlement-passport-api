@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import org.apache.commons.text.WordUtils
 import org.slf4j.LoggerFactory
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.PathwayMap
-import java.lang.IllegalArgumentException
 import kotlin.reflect.KClass
 
 private val log = LoggerFactory.getLogger(object {}::class.java.`package`.name)
@@ -81,8 +80,4 @@ fun isAllowedSubTypes(subType: String): Boolean {
   )
 
   return (allowedPathwaySubTypes.contains(subType))
-}
-
-fun <K, V : Number> Map<K, V>.getValueFromMapAsDouble(key: K): Double {
-  return this[key]?.toDouble() ?: throw IllegalArgumentException("Trying to access key that doesn't exist - this is almost certainly an error in the code!")
 }

@@ -1,21 +1,20 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
 import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayAndStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatusAndCaseNote
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Category
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ContactType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DeliusContactEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.DeliusContactRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -25,179 +24,12 @@ class PathwayIntegrationTest : IntegrationTestBase() {
   @Autowired
   private lateinit var pathwayStatusRepository: PathwayStatusRepository
 
-  private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
-
-  @Test
-  @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
-  fun `Patch pathway status happy path`() {
-    // Mock calls to LocalDateTime.now() so we can test the creationDate is being updated
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
-
-    val nomsId = "123"
-
-    webTestClient.patch()
-      .uri("/resettlement-passport/prisoner/$nomsId/pathway")
-      .bodyValue(
-        PathwayAndStatus(
-          pathway = Pathway.ACCOMMODATION,
-          status = Status.IN_PROGRESS,
-        ),
-      )
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
-      .expectStatus().isOk
-
-    val expectedPathwayStatus =
-      PathwayStatusEntity(
-        1,
-        PrisonerEntity(
-          1,
-          "123",
-          LocalDateTime.parse("2023-08-16T12:21:38.709"),
-          "abc",
-          "xyz",
-          LocalDate.parse("2025-01-23"),
-        ),
-        PathwayEntity(
-          1,
-          "Accommodation",
-          true,
-          LocalDateTime.parse("2023-08-15T11:32:22.171"),
-        ),
-        StatusEntity(
-          2,
-          "In Progress",
-          true,
-          LocalDateTime.parse("2023-08-16T17:48:02.211790"),
-        ),
-        fakeNow,
-      )
-    val actualPathwayStatus = pathwayStatusRepository.findById(1).get()
-
-    assertThat(expectedPathwayStatus).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java)
-      .isEqualTo(actualPathwayStatus)
-    Assertions.assertEquals(fakeNow, actualPathwayStatus.updatedDate)
-
-    unmockkStatic(LocalDateTime::class)
-  }
-
-  @Test
-  @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
-  fun `Patch pathway status happy path - 404 on prisoner`() {
-    val nomsId = "abc"
-
-    webTestClient.patch()
-      .uri("/resettlement-passport/prisoner/$nomsId/pathway")
-      .bodyValue(
-        PathwayAndStatus(
-          pathway = Pathway.ACCOMMODATION,
-          status = Status.IN_PROGRESS,
-        ),
-      )
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
-      .expectStatus().isNotFound
-      .expectHeader().contentType("application/json")
-      .expectBody()
-      .jsonPath("status").isEqualTo(404)
-      .jsonPath("errorCode").isEmpty
-      .jsonPath("userMessage").isEqualTo("Resource not found. Check request parameters - Prisoner with id abc not found in database")
-      .jsonPath("developerMessage").isEqualTo("Prisoner with id abc not found in database")
-      .jsonPath("moreInfo").isEmpty
-  }
-
-  @Test
-  @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
-  fun `Patch pathway status happy path - 404 on pathway status`() {
-    val nomsId = "789"
-
-    webTestClient.patch()
-      .uri("/resettlement-passport/prisoner/$nomsId/pathway")
-      .bodyValue(
-        PathwayAndStatus(
-          pathway = Pathway.ACCOMMODATION,
-          status = Status.IN_PROGRESS,
-        ),
-      )
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
-      .expectStatus().isNotFound
-      .expectHeader().contentType("application/json")
-      .expectBody()
-      .jsonPath("status").isEqualTo(404)
-      .jsonPath("errorCode").isEmpty
-      .jsonPath("userMessage").isEqualTo("Resource not found. Check request parameters - Prisoner with id 789 has no pathway_status entry for Accommodation in database")
-      .jsonPath("developerMessage").isEqualTo("Prisoner with id 789 has no pathway_status entry for Accommodation in database")
-      .jsonPath("moreInfo").isEmpty
-  }
-
-  @Test
-  fun `Patch pathway status happy path - 401`() {
-    val nomsId = "123"
-
-    webTestClient.patch()
-      .uri("/resettlement-passport/prisoner/$nomsId/pathway")
-      .bodyValue(
-        PathwayAndStatus(
-          pathway = Pathway.ACCOMMODATION,
-          status = Status.IN_PROGRESS,
-        ),
-      )
-      .exchange()
-      .expectStatus().isUnauthorized
-  }
-
-  @Test
-  fun `Patch pathway status happy path - forbidden`() {
-    val nomsId = "123"
-
-    webTestClient.patch()
-      .uri("/resettlement-passport/prisoner/$nomsId/pathway")
-      .headers(setAuthorisation())
-      .bodyValue(
-        PathwayAndStatus(
-          pathway = Pathway.ACCOMMODATION,
-          status = Status.IN_PROGRESS,
-        ),
-      )
-      .exchange()
-      .expectStatus().isForbidden
-  }
-
-  @Test
-  fun `Patch pathway status happy path - 400`() {
-    val nomsId = "123"
-
-    webTestClient.patch()
-      .uri("/resettlement-passport/prisoner/$nomsId/pathway")
-      .header("Content-Type", "application/json")
-      .bodyValue(
-        """
-          {
-            "pathway": "FAKE_PATHWAY",
-            "status": "IN_PROGRESS"
-          }
-        """.trimIndent(),
-      )
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
-      .expectStatus().isBadRequest
-      .expectHeader().contentType("application/json")
-      .expectBody()
-      .jsonPath("status").isEqualTo(400)
-      .jsonPath("errorCode").isEmpty
-      .jsonPath("userMessage").isEqualTo("Validation failure - please check request parameters and try again")
-      .jsonPath("developerMessage").isEqualTo(
-        "Cannot deserialize value of type `uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway` from String \"FAKE_PATHWAY\": not one of the values accepted for Enum class: [ACCOMMODATION, CHILDREN_FAMILIES_AND_COMMUNITY, FINANCE_AND_ID, DRUGS_AND_ALCOHOL, ATTITUDES_THINKING_AND_BEHAVIOUR, EDUCATION_SKILLS_AND_WORK, HEALTH]\n" +
-          " at [Source: (org.springframework.util.StreamUtils\$NonClosingInputStream); line: 2, column: 14] (through reference chain: uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayAndStatus[\"pathway\"])",
-      )
-      .jsonPath("moreInfo").isEmpty
-  }
+  @Autowired
+  private lateinit var deliusContactRepository: DeliusContactRepository
 
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-4.sql")
-  fun `Patch pathway status and case notes happy path`() {
+  fun `Patch pathway status and case notes happy path - NOMIS user`() {
     val nomsId = "G4274GN"
     offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "ACCOM", "This is a case note", "MDI", 200)
@@ -211,7 +43,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
           caseNoteText = "This is a case note",
         ),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), authSource = "nomis"))
       .exchange()
       .expectStatus().isOk
 
@@ -238,7 +70,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
           true,
           LocalDateTime.parse("2023-08-17T12:00:01"),
         ),
-        fakeNow,
+        LocalDateTime.now(),
       )
     val actualPathwayStatus = pathwayStatusRepository.findById(1)
 
@@ -247,8 +79,74 @@ class PathwayIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-4.sql")
+  fun `Patch pathway status and case notes happy path - Delius user`() {
+    val nomsId = "G4274GN"
+    offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+
+    webTestClient.patch()
+      .uri("/resettlement-passport/prisoner/$nomsId/pathway-with-case-note")
+      .bodyValue(
+        PathwayStatusAndCaseNote(
+          pathway = Pathway.ACCOMMODATION,
+          status = Status.IN_PROGRESS,
+          caseNoteText = "This is a case note",
+        ),
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), authSource = "delius"))
+      .exchange()
+      .expectStatus().isOk
+
+    val expectedPrisoner = PrisonerEntity(
+      1,
+      "G4274GN",
+      LocalDateTime.parse("2023-08-16T12:21:38.709"),
+      "123",
+      "MDI",
+      LocalDate.parse("2030-09-12"),
+    )
+
+    val expectedPathwayStatus =
+      PathwayStatusEntity(
+        1,
+        expectedPrisoner,
+        PathwayEntity(
+          1,
+          "Accommodation",
+          true,
+          LocalDateTime.parse("2023-08-15T11:32:22.171"),
+        ),
+        StatusEntity(
+          2,
+          "In Progress",
+          true,
+          LocalDateTime.parse("2023-08-17T12:00:01"),
+        ),
+        LocalDateTime.now(),
+      )
+    val actualPathwayStatus = pathwayStatusRepository.findById(1)
+
+    val expectedDeliusContact = DeliusContactEntity(
+      id = 1,
+      prisoner = expectedPrisoner,
+      category = Category.ACCOMMODATION,
+      contactType = ContactType.CASE_NOTE,
+      createdDate = LocalDateTime.now(),
+      notes = "This is a case note",
+      createdBy = "RESETTLEMENTPASSPORT_ADM",
+    )
+
+    val actualDeliusContact = deliusContactRepository.findById(1)
+
+    assertThat(actualPathwayStatus.get()).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java)
+      .isEqualTo(expectedPathwayStatus)
+    assertThat(actualDeliusContact.get()).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java)
+      .isEqualTo(expectedDeliusContact)
+  }
+
+  @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
-  fun `Patch pathway status and case notes happy path - 404 on prisoner`() { // TODO fix
+  fun `Patch pathway status and case notes happy path - 404 on prisoner`() {
     val nomsId = "abc"
 
     webTestClient.patch()
@@ -260,21 +158,22 @@ class PathwayIntegrationTest : IntegrationTestBase() {
           caseNoteText = "Case note text",
         ),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), authSource = "nomis"))
       .exchange()
       .expectStatus().isNotFound
       .expectHeader().contentType("application/json")
       .expectBody()
       .jsonPath("status").isEqualTo(404)
       .jsonPath("errorCode").isEmpty
-      .jsonPath("userMessage").isEqualTo("Resource not found. Check request parameters - Prisoner with id abc not found in database")
+      .jsonPath("userMessage")
+      .isEqualTo("Resource not found. Check request parameters - Prisoner with id abc not found in database")
       .jsonPath("developerMessage").isEqualTo("Prisoner with id abc not found in database")
       .jsonPath("moreInfo").isEmpty
   }
 
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
-  fun `Patch pathway status and case notes happy path - 404 on pathway status`() { // TODO fix
+  fun `Patch pathway status and case notes happy path - 404 on pathway status`() {
     val nomsId = "789"
 
     webTestClient.patch()
@@ -286,20 +185,22 @@ class PathwayIntegrationTest : IntegrationTestBase() {
           caseNoteText = "Case note text",
         ),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), authSource = "nomis"))
       .exchange()
       .expectStatus().isNotFound
       .expectHeader().contentType("application/json")
       .expectBody()
       .jsonPath("status").isEqualTo(404)
       .jsonPath("errorCode").isEmpty
-      .jsonPath("userMessage").isEqualTo("Resource not found. Check request parameters - Prisoner with id 789 has no pathway_status entry for Accommodation in database")
-      .jsonPath("developerMessage").isEqualTo("Prisoner with id 789 has no pathway_status entry for Accommodation in database")
+      .jsonPath("userMessage")
+      .isEqualTo("Resource not found. Check request parameters - Prisoner with id 789 has no pathway_status entry for Accommodation in database")
+      .jsonPath("developerMessage")
+      .isEqualTo("Prisoner with id 789 has no pathway_status entry for Accommodation in database")
       .jsonPath("moreInfo").isEmpty
   }
 
   @Test
-  fun `Patch pathway status and case notes happy path - 401`() { // TODO fix
+  fun `Patch pathway status and case notes happy path - 401`() {
     val nomsId = "123"
 
     webTestClient.patch()
@@ -316,7 +217,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `Patch pathway status and case notes happy path - forbidden`() { // TODO fix
+  fun `Patch pathway status and case notes happy path - forbidden`() {
     val nomsId = "123"
 
     webTestClient.patch()
@@ -334,7 +235,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `Patch pathway status and case notes happy path - 400`() { // TODO fix
+  fun `Patch pathway status and case notes happy path - 400`() {
     val nomsId = "123"
 
     webTestClient.patch()
@@ -349,7 +250,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
           }
         """.trimIndent(),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), authSource = "nomis"))
       .exchange()
       .expectStatus().isBadRequest
       .expectHeader().contentType("application/json")

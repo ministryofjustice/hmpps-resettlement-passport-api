@@ -30,12 +30,14 @@ class JwtAuthHelper {
     user: String = "RESETTLEMENTPASSPORT_ADM",
     roles: List<String> = listOf(),
     scopes: List<String> = listOf(),
+    authSource: String,
   ): (HttpHeaders) -> Unit {
     val token = createJwt(
       subject = user,
       scope = scopes,
       expiryTime = Duration.ofHours(1L),
       roles = roles,
+      authSource = authSource,
     )
     return { it.set(HttpHeaders.AUTHORIZATION, "Bearer $token") }
   }
@@ -46,12 +48,15 @@ class JwtAuthHelper {
     roles: List<String>? = listOf(),
     expiryTime: Duration = Duration.ofHours(1),
     jwtId: String = UUID.randomUUID().toString(),
+    authSource: String = "none",
   ): String =
     mutableMapOf<String, Any>()
       .also { subject?.let { subject -> it["user_name"] = subject } }
       .also { it["client_id"] = "hmpps-resettlementpassport-api" }
       .also { roles?.let { roles -> it["authorities"] = roles } }
       .also { scope?.let { scope -> it["scope"] = scope } }
+      .also { authSource.let { authSource -> it["auth_source"] = authSource } }
+      .also { subject?.let { subject -> it["name"] = subject } }
       .let {
         Jwts.builder()
           .setId(jwtId)

@@ -4,4 +4,5 @@ DELETE from assessment;
 DELETE from bank_application_status_log;
 DELETE from bank_application;
 DELETE from id_application;
+DELETE from delius_contact;
 DELETE from prisoner;

@@ -3,6 +3,8 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -22,9 +24,11 @@ data class DeliusContactEntity(
   @JoinColumn(name = "prisoner_id", referencedColumnName = "id")
   val prisoner: PrisonerEntity,
 
+  @Enumerated(EnumType.STRING)
   val category: Category,
 
   @Column(name = "contact_type")
+  @Enumerated(EnumType.STRING)
   val contactType: ContactType,
 
   @Column(name = "created_date")

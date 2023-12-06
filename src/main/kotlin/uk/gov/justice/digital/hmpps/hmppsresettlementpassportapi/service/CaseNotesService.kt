@@ -3,8 +3,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesMeta
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderCaseNotesApiService
 
 @Service
@@ -15,9 +13,5 @@ class CaseNotesService(val offenderCaseNotesApiService: OffenderCaseNotesApiServ
 
   fun getCaseNotesCreatorsByPathway(nomsId: String, pathwayType: String): List<CaseNotesMeta> {
     return offenderCaseNotesApiService.getCaseNotesCreatorsByPathway(nomsId, pathwayType)
-  }
-
-  fun postCaseNote(nomsId: String, caseNotes: CaseNotesRequest, auth: String): CaseNote? {
-    return offenderCaseNotesApiService.postCaseNote(nomsId, caseNotes, auth)
   }
 }

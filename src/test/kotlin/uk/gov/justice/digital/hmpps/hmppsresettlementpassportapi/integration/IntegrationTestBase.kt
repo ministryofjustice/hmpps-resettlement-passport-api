@@ -125,7 +125,8 @@ abstract class IntegrationTestBase : TestBase() {
     user: String = "RESETTLEMENTPASSPORT_ADM",
     roles: List<String> = listOf(),
     scopes: List<String> = listOf(),
-  ): (HttpHeaders) -> Unit = jwtAuthHelper.setAuthorisation(user, roles, scopes)
+    authSource: String = "none",
+  ): (HttpHeaders) -> Unit = jwtAuthHelper.setAuthorisation(user, roles, scopes, authSource)
 }
 
 fun readFile(file: String): String = Resources.getResource(file).readText()

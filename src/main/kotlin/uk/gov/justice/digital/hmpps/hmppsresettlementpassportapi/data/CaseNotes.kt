@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import java.time.LocalDateTime
 
 data class PathwayCaseNote(
@@ -24,9 +23,4 @@ data class CaseNotesList(
 data class CaseNotesMeta(
   val createdBy: String,
   val userId: String,
-)
-
-data class CaseNotesRequest(
-  val pathway: Pathway,
-  val text: String,
 )

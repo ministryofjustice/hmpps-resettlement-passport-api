@@ -10,7 +10,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWi
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesMeta
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNotes
@@ -243,13 +242,10 @@ class OffenderCaseNotesApiService(
     }
   }
 
-  fun postCaseNote(nomsId: String, pathway: Pathway, caseNotesText: String, auth: String) =
-    postCaseNote(nomsId, CaseNotesRequest(pathway, caseNotesText), auth)
-
-  fun postCaseNote(nomsId: String, caseNotes: CaseNotesRequest, auth: String): CaseNote? {
+  fun postCaseNote(nomsId: String, pathway: Pathway, caseNotesText: String, auth: String): CaseNote? {
     val type = PATHWAY_PARENT_TYPE
     val pathwayValues = PathwayMap.values()
-    val pathwayVal = pathwayValues.find { it.id == caseNotes.pathway.name }
+    val pathwayVal = pathwayValues.find { it.id == pathway.name }
     val subType = pathwayVal?.name.toString()
     val prisonCode = offenderSearchApiService.findPrisonerPersonalDetails(nomsId).prisonId
 
@@ -264,7 +260,7 @@ class OffenderCaseNotesApiService(
           "locationId" to prisonCode,
           "type" to type,
           "subType" to subType,
-          "text" to caseNotes.text,
+          "text" to caseNotesText,
         ),
       )
       .retrieve()

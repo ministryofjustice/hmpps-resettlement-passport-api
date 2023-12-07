@@ -261,7 +261,6 @@ class OffenderSearchApiService(
 
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Unable to find prisoner $nomsId in database.")
-
     val prisonerImageDetailsList = prisonApiService.findPrisonerImageDetails(nomsId)
     var prisonerImage: PrisonerImage? = null
     prisonerImageDetailsList.forEach {

@@ -945,7 +945,6 @@ class OffenderSearchApiServiceTest {
 
   @Test
   fun `test sorts by nomsId by default`() {
-    val prisonId = "MDI"
     val prisoners = mutableListOf(
       createPrisonerNumber("G234098"),
       createPrisonerNumber("A009090"),

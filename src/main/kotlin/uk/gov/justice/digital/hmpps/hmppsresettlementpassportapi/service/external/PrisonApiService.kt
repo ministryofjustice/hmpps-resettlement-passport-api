@@ -45,9 +45,9 @@ class PrisonApiService(val prisonWebClientCredentials: WebClient) {
         ),
       )
       .retrieve()
-      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found") })
       .bodyToFlux<PrisonerImage>()
       .collectList()
-      .block() ?: throw RuntimeException("Unexpected null returned from request.")
+      .onErrorComplete(Exception::class.java)
+      .block() ?: emptyList()
   }
 }

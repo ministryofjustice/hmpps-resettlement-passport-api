@@ -1,0 +1,15 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/risks/crn/U416101/predictors/all"
+  },
+  "response": {
+    "status": 200,
+    "fixedDelayMilliseconds": 60000,
+    "bodyFileName": "getRiskPredictorsByCrn-G8203UV-timeout-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

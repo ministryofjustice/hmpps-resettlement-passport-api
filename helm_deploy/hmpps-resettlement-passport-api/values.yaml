@@ -1,7 +1,7 @@
 generic-service:
   nameOverride: hmpps-resettlement-passport-api
 
-  replicaCount: 4
+  replicaCount: 5
 
   image:
     repository: quay.io/hmpps/hmpps-resettlement-passport-api

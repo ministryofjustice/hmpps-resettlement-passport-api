@@ -1,0 +1,104 @@
+{
+  "prisonerNumber": "G8203UV",
+  "pncNumber": "09/612712C",
+  "pncNumberCanonicalShort": "09/612712C",
+  "pncNumberCanonicalLong": "2009/612712C",
+  "croNumber": "469179/09K",
+  "bookingId": "1175689",
+  "bookNumber": "26505A",
+  "firstName": "BRINKLEY",
+  "lastName": "BRIDGERS",
+  "dateOfBirth": "1983-06-07",
+  "gender": "Male",
+  "ethnicity": "Asian/Asian British: Any other backgr'nd",
+  "youthOffender": false,
+  "maritalStatus": "Single-not married/in civil partnership",
+  "religion": "Shia Muslim",
+  "nationality": "Iranian",
+  "status": "ACTIVE OUT",
+  "lastMovementTypeCode": "TAP",
+  "lastMovementReasonCode": "OPA",
+  "inOutStatus": "OUT",
+  "prisonId": "MDI",
+  "prisonName": "Moorland (HMP & YOI)",
+  "cellLocation": "3-1-016",
+  "aliases": [
+    {
+      "firstName": "OGONANTHOMASIN",
+      "middleNames": "CHELSELIA",
+      "lastName": "EMERICIA",
+      "dateOfBirth": "1974-06-10",
+      "gender": "Male"
+    }
+  ],
+  "alerts": [
+    {
+      "alertType": "C",
+      "alertCode": "C4",
+      "active": true,
+      "expired": false
+    },
+    {
+      "alertType": "S",
+      "alertCode": "SR",
+      "active": true,
+      "expired": false
+    },
+    {
+      "alertType": "P",
+      "alertCode": "P1",
+      "active": true,
+      "expired": false
+    },
+    {
+      "alertType": "R",
+      "alertCode": "RCS",
+      "active": true,
+      "expired": false
+    },
+    {
+      "alertType": "R",
+      "alertCode": "RVR",
+      "active": true,
+      "expired": false
+    }
+  ],
+  "csra": "High",
+  "category": "C",
+  "legalStatus": "SENTENCED",
+  "imprisonmentStatus": "ADIMP_ORA",
+  "imprisonmentStatusDescription": "ORA CJA03 Standard Determinate Sentence",
+  "mostSeriousOffence": "Foreign national failing to register with the police",
+  "recall": false,
+  "indeterminateSentence": false,
+  "sentenceStartDate": "2017-03-21",
+  "releaseDate": "2027-04-18",
+  "confirmedReleaseDate": "2027-04-18",
+  "sentenceExpiryDate": "2017-07-27",
+  "licenceExpiryDate": "2017-07-25",
+  "homeDetentionCurfewEligibilityDate": "2017-04-07",
+  "topupSupervisionStartDate": "2017-07-26",
+  "topupSupervisionExpiryDate": "2018-05-14",
+  "nonDtoReleaseDate": "2017-06-07",
+  "nonDtoReleaseDateType": "CRD",
+  "receptionDate": "2017-02-15",
+  "conditionalReleaseDate": "2017-06-07",
+  "locationDescription": "Moorland (HMP & YOI)",
+  "restrictedPatient": false,
+  "currentIncentive": {
+    "level": {
+      "code": "STD",
+      "description": "Standard"
+    },
+    "dateTime": "2017-03-23T11:57:36",
+    "nextReviewDate": "2018-03-23"
+  },
+  "heightCentimetres": 183,
+  "weightKilograms": 76,
+  "hairColour": "Black",
+  "rightEyeColour": "Brown",
+  "leftEyeColour": "Brown",
+  "facialHair": "Full Beard",
+  "shapeOfFace": "Oval",
+  "build": "Thin"
+}

@@ -1,0 +1,65 @@
+{
+  "riskToSelf": {
+    "suicide": {
+      "risk": "DON'T KNOW",
+      "previous": "No",
+      "previousConcernsText": "Risk of self harms concerns due to ...",
+      "current": "Yes",
+      "currentConcernsText": "Risk of self harms concerns due to ..."
+    },
+    "selfHarm": {
+      "risk": "Don't know",
+      "previous": "No",
+      "previousConcernsText": "Risk of self harms concerns due to ...",
+      "current": "Yes",
+      "currentConcernsText": "Risk of self harms concerns due to ..."
+    },
+    "custody": {
+      "risk": "Yes",
+      "previous": "No",
+      "previousConcernsText": "Risk of self harms concerns due to ...",
+      "current": "Yes",
+      "currentConcernsText": "Risk of self harms concerns due to ..."
+    },
+    "hostelSetting": {
+      "risk": "No",
+      "previous": "Don't know",
+      "previousConcernsText": "Risk of self harms concerns due to ...",
+      "current": "Don't know",
+      "currentConcernsText": "Risk of self harms concerns due to ..."
+    },
+    "vulnerability": {
+      "risk": "null",
+      "previous": "No",
+      "previousConcernsText": "Risk of self harms concerns due to ...",
+      "current": "Yes",
+      "currentConcernsText": "Risk of self harms concerns due to ..."
+    }
+  },
+  "otherRisks": {
+    "escapeOrAbscond": "YES",
+    "controlIssuesDisruptiveBehaviour": "YES",
+    "breachOfTrust": "YES",
+    "riskToOtherPrisoners": "YES"
+  },
+  "summary": {
+    "whoIsAtRisk": "X, Y and Z are at risk",
+    "natureOfRisk": "The nature of the risk is X",
+    "riskImminence": "the risk is imminent and more probably in X situation",
+    "riskIncreaseFactors": "If offender in situation X the risk can be higher",
+    "riskMitigationFactors": "Giving offender therapy in X will reduce the risk",
+    "riskInCommunity": {
+      "VERY_HIGH": ["Staff"],
+      "HIGH": ["Prisoners"],
+      "MEDIUM": ["Public"],
+      "LOW": ["Children", "Known adult"]
+    },
+    "riskInCustody": {
+      "HIGH": ["Known adult"],
+      "VERY_HIGH": ["Staff", "Prisoners"],
+      "LOW": ["Children", "Public"]
+    },
+    "overallRiskLevel": "VERY_HIGH"
+  },
+  "assessedOn": "2023-08-01T12:12:13"
+}

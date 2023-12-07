@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.api
 
+import okhttp3.internal.immutableListOf
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
@@ -306,6 +307,8 @@ class OffenderSearchApiServiceTest {
         pathwayStatus = null,
         homeDetentionCurfewEligibilityDate = null,
         paroleEligibilityDate = null,
+        releaseEligibilityDate = null,
+        releaseEligibilityType = null,
       ),
       Prisoners(
         prisonerNumber = "A8229DY",
@@ -330,6 +333,8 @@ class OffenderSearchApiServiceTest {
         pathwayStatus = null,
         homeDetentionCurfewEligibilityDate = LocalDate.parse("2021-02-03"),
         paroleEligibilityDate = null,
+        releaseEligibilityDate = LocalDate.parse("2021-02-03"),
+        releaseEligibilityType = "HDCED",
       ),
       Prisoners(
         prisonerNumber = "G1458GV",
@@ -354,6 +359,8 @@ class OffenderSearchApiServiceTest {
         pathwayStatus = null,
         homeDetentionCurfewEligibilityDate = LocalDate.parse("2018-10-16"),
         paroleEligibilityDate = null,
+        releaseEligibilityDate = LocalDate.parse("2018-10-16"),
+        releaseEligibilityType = "HDCED",
       ),
     ),
     pageSize = 3,
@@ -378,6 +385,8 @@ class OffenderSearchApiServiceTest {
         pathwayStatus = Status.DONE,
         homeDetentionCurfewEligibilityDate = null,
         paroleEligibilityDate = null,
+        releaseEligibilityDate = null,
+        releaseEligibilityType = null,
       ),
       Prisoners(
         prisonerNumber = "A8229DY",
@@ -391,6 +400,8 @@ class OffenderSearchApiServiceTest {
         pathwayStatus = Status.NOT_STARTED,
         homeDetentionCurfewEligibilityDate = LocalDate.parse("2021-02-03"),
         paroleEligibilityDate = null,
+        releaseEligibilityDate = LocalDate.parse("2021-02-03"),
+        releaseEligibilityType = "HDCED",
       ),
       Prisoners(
         prisonerNumber = "G1458GV",
@@ -404,6 +415,8 @@ class OffenderSearchApiServiceTest {
         pathwayStatus = Status.SUPPORT_DECLINED,
         homeDetentionCurfewEligibilityDate = LocalDate.parse("2018-10-16"),
         paroleEligibilityDate = null,
+        releaseEligibilityDate = LocalDate.parse("2018-10-16"),
+        releaseEligibilityType = "HDCED",
       ),
     ),
     pageSize = 3,
@@ -428,6 +441,8 @@ class OffenderSearchApiServiceTest {
         pathwayStatus = Status.SUPPORT_DECLINED,
         homeDetentionCurfewEligibilityDate = LocalDate.parse("2018-10-16"),
         paroleEligibilityDate = null,
+        releaseEligibilityDate = LocalDate.parse("2018-10-16"),
+        releaseEligibilityType = "HDCED",
       ),
     ),
     pageSize = 1,
@@ -524,72 +539,114 @@ class OffenderSearchApiServiceTest {
   }
 
   @Test
-  fun `sort prisoners by parole eligibility date- ascending`() {
+  fun `Unit test- get release eligibility date from PED and HDCED`() {
+    val prisoner = (
+      createPrisonerPEDandHDCED(LocalDate.parse("2029-08-30"), null)
+      )
+    val releaseEligibilityDate = offenderSearchApiService.getDisplayedReleaseEligibilityDate(prisoner)
+    Assertions.assertEquals(LocalDate.parse("2029-08-30"), releaseEligibilityDate)
+  }
+
+  @Test
+  fun `Prisoner List- get release eligibility date from PED and HDCED`() {
+    val prisoners = immutableListOf(
+      createPrisonerPEDandHDCED(LocalDate.parse("2029-08-30"), null),
+      createPrisonerPEDandHDCED(null, null),
+      createPrisonerPEDandHDCED(null, LocalDate.parse("2037-01-01")),
+      createPrisonerPEDandHDCED(LocalDate.parse("2028-11-11"), null),
+      createPrisonerPEDandHDCED(null, LocalDate.parse("2024-12-08")),
+      createPrisonerPEDandHDCED(null, LocalDate.parse("2026-07-21")),
+      createPrisonerPEDandHDCED(LocalDate.parse("2078-04-03"), LocalDate.parse("2036-04-03")),
+      createPrisonerPEDandHDCED(LocalDate.parse("2078-12-03"), LocalDate.parse("2046-12-03")),
+      createPrisonerPEDandHDCED(null, null),
+      createPrisonerPEDandHDCED(null, LocalDate.parse("2026-02-01")),
+      createPrisonerPEDandHDCED(LocalDate.parse("2026-07-24"), null),
+      createPrisonerPEDandHDCED(LocalDate.parse("2024-12-09"), null),
+    )
+
+    val prisonersMapped = mutableListOf(
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2029-08-30"), null, LocalDate.parse("2029-08-30"), "HDCED"),
+      createPrisonerReleaseEligibilityDateAndType(null, null, null, null),
+      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2037-01-01"), LocalDate.parse("2037-01-01"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2028-11-11"), null, LocalDate.parse("2028-11-11"), "HDCED"),
+      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2024-12-08"), LocalDate.parse("2024-12-08"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2026-07-21"), LocalDate.parse("2026-07-21"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2078-04-03"), LocalDate.parse("2036-04-03"), LocalDate.parse("2036-04-03"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2078-12-03"), LocalDate.parse("2046-12-03"), LocalDate.parse("2046-12-03"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(null, null, null, null),
+      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2026-02-01"), LocalDate.parse("2026-02-01"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2026-07-24"), null, LocalDate.parse("2026-07-24"), "HDCED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2024-12-09"), null, LocalDate.parse("2024-12-09"), "HDCED"),
+    )
+    val actualPrisoners = offenderSearchApiService.objectMapper(prisoners, null, null)
+    Assertions.assertEquals(prisonersMapped, actualPrisoners)
+  }
+
+  @Test
+  fun `sort prisoners by release eligibility date- ascending`() {
     val prisoners = mutableListOf(
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2029-08-30")),
-      createPrisonerParoleEligibilityDate(null),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2037-01-01")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2028-11-11")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-08")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-21")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2078-04-03")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2046-12-03")),
-      createPrisonerParoleEligibilityDate(null),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-02-01")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-24")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-09")),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2029-08-30"), null, LocalDate.parse("2029-08-30"), "HDCED"),
+      createPrisonerReleaseEligibilityDateAndType(null, null, null, null),
+      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2037-01-01"), LocalDate.parse("2037-01-01"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2028-11-11"), null, LocalDate.parse("2028-11-11"), "HDCED"),
+      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2024-12-08"), LocalDate.parse("2024-12-08"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2026-07-21"), LocalDate.parse("2026-07-21"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2078-04-03"), LocalDate.parse("2036-04-03"), LocalDate.parse("2036-04-03"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2078-12-03"), LocalDate.parse("2046-12-03"), LocalDate.parse("2046-12-03"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(null, null, null, null),
+      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2026-02-01"), LocalDate.parse("2026-02-01"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2026-07-24"), null, LocalDate.parse("2026-07-24"), "HDCED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2024-12-09"), null, LocalDate.parse("2024-12-09"), "HDCED"),
     )
 
     val sortedPrisoners = mutableListOf(
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-08")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-09")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-02-01")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-21")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-24")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2028-11-11")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2029-08-30")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2037-01-01")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2046-12-03")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2078-04-03")),
-      createPrisonerParoleEligibilityDate(null),
-      createPrisonerParoleEligibilityDate(null),
+      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2024-12-08"), LocalDate.parse("2024-12-08"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2024-12-09"), null, LocalDate.parse("2024-12-09"), "HDCED"),
+      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2026-02-01"), LocalDate.parse("2026-02-01"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2026-07-21"), LocalDate.parse("2026-07-21"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2026-07-24"), null, LocalDate.parse("2026-07-24"), "HDCED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2028-11-11"), null, LocalDate.parse("2028-11-11"), "HDCED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2029-08-30"), null, LocalDate.parse("2029-08-30"), "HDCED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2078-04-03"), LocalDate.parse("2036-04-03"), LocalDate.parse("2036-04-03"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2037-01-01"), LocalDate.parse("2037-01-01"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2078-12-03"), LocalDate.parse("2046-12-03"), LocalDate.parse("2046-12-03"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(null, null, null, null),
+      createPrisonerReleaseEligibilityDateAndType(null, null, null, null),
     )
-    offenderSearchApiService.sortPrisonersByField("paroleEligibilityDate,ASC", prisoners)
+    offenderSearchApiService.sortPrisoners("releaseEligibilityDate,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
   @Test
-  fun `sort prisoners by parole eligibility date- descending`() {
+  fun `sort prisoners by release eligibility date- descending`() {
     val prisoners = mutableListOf(
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2029-08-30")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2037-01-01")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2028-11-11")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-08")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-21")),
-      createPrisonerParoleEligibilityDate(null),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2078-04-03")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2046-12-03")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-02-01")),
-      createPrisonerParoleEligibilityDate(null),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-24")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-09")),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2029-08-30"), null, LocalDate.parse("2029-08-30"), "HDCED"),
+      createPrisonerReleaseEligibilityDateAndType(null, null, null, null),
+      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2037-01-01"), LocalDate.parse("2037-01-01"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2028-11-11"), null, LocalDate.parse("2028-11-11"), "HDCED"),
+      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2024-12-08"), LocalDate.parse("2024-12-08"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2026-07-21"), LocalDate.parse("2026-07-21"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2078-04-03"), LocalDate.parse("2036-04-03"), LocalDate.parse("2036-04-03"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2078-12-03"), LocalDate.parse("2046-12-03"), LocalDate.parse("2046-12-03"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(null, null, null, null),
+      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2026-02-01"), LocalDate.parse("2026-02-01"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2024-12-09"), null, LocalDate.parse("2024-12-09"), "HDCED"),
     )
 
     val sortedPrisoners = mutableListOf(
-      createPrisonerParoleEligibilityDate(null),
-      createPrisonerParoleEligibilityDate(null),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2078-04-03")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2046-12-03")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2037-01-01")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2029-08-30")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2028-11-11")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-24")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-07-21")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2026-02-01")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-09")),
-      createPrisonerParoleEligibilityDate(LocalDate.parse("2024-12-08")),
+      createPrisonerReleaseEligibilityDateAndType(null, null, null, null),
+      createPrisonerReleaseEligibilityDateAndType(null, null, null, null),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2078-12-03"), LocalDate.parse("2046-12-03"), LocalDate.parse("2046-12-03"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2037-01-01"), LocalDate.parse("2037-01-01"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2078-04-03"), LocalDate.parse("2036-04-03"), LocalDate.parse("2036-04-03"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2029-08-30"), null, LocalDate.parse("2029-08-30"), "HDCED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2028-11-11"), null, LocalDate.parse("2028-11-11"), "HDCED"),
+      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2026-07-21"), LocalDate.parse("2026-07-21"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2026-02-01"), LocalDate.parse("2026-02-01"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2024-12-09"), null, LocalDate.parse("2024-12-09"), "HDCED"),
+      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2024-12-08"), LocalDate.parse("2024-12-08"), "PED"),
     )
-    offenderSearchApiService.sortPrisonersByField("paroleEligibilityDate,DESC", prisoners)
+    offenderSearchApiService.sortPrisoners("releaseEligibilityDate,DESC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -945,7 +1002,6 @@ class OffenderSearchApiServiceTest {
 
   @Test
   fun `test sorts by nomsId by default`() {
-    val prisonId = "MDI"
     val prisoners = mutableListOf(
       createPrisonerNumber("G234098"),
       createPrisonerNumber("A009090"),
@@ -988,12 +1044,27 @@ private fun createPrisonerName(firstName: String, lastName: String) =
 private fun createPrisonerNameAndNumber(prisonerNumber: String, firstName: String, lastName: String) =
   Prisoners(prisonerNumber = prisonerNumber, firstName = firstName, lastName = lastName, pathwayStatus = null)
 
-private fun createPrisonerParoleEligibilityDate(paroleEligibilityDate: LocalDate?) = Prisoners(
+private fun createPrisonerPEDandHDCED(homeDetentionCurfewEligibilityDate: LocalDate?, paroleEligibilityDate: LocalDate?) = PrisonersSearch(
+  prisonerNumber = "A123456",
+  firstName = "SIMON",
+  lastName = "BAMFORD",
+  homeDetentionCurfewEligibilityDate = homeDetentionCurfewEligibilityDate,
+  paroleEligibilityDate = paroleEligibilityDate,
+  youthOffender = true,
+  prisonId = "MDI",
+  prisonName = "Midlands",
+  cellLocation = "2A",
+)
+
+private fun createPrisonerReleaseEligibilityDateAndType(homeDetentionCurfewEligibilityDate: LocalDate?, paroleEligibilityDate: LocalDate?, releaseEligibilityDate: LocalDate?, releaseEligibilityType: String?) = Prisoners(
   prisonerNumber = "A123456",
   firstName = "SIMON",
   lastName = "BAMFORD",
   pathwayStatus = null,
+  homeDetentionCurfewEligibilityDate = homeDetentionCurfewEligibilityDate,
   paroleEligibilityDate = paroleEligibilityDate,
+  releaseEligibilityDate = releaseEligibilityDate,
+  releaseEligibilityType = releaseEligibilityType,
 )
 
 private fun createPrisonerReleaseDate(releaseDate: LocalDate?) = Prisoners(

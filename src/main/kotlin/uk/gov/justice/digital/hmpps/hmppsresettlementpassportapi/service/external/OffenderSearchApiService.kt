@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external
 
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -24,12 +25,17 @@ import java.time.Period
 
 @Service
 class OffenderSearchApiService(
+
   private val prisonerRepository: PrisonerRepository,
   private val offenderSearchWebClientClientCredentials: WebClient,
   private val pathwayAndStatusService: PathwayAndStatusService,
   private val prisonRegisterApiService: PrisonRegisterApiService,
   private val prisonApiService: PrisonApiService,
 ) {
+
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+  }
 
   fun findPrisonersBySearchTerm(prisonId: String, searchTerm: String?): List<PrisonersSearch> {
     val listToReturn = mutableListOf<PrisonersSearch>()
@@ -140,14 +146,14 @@ class OffenderSearchApiService(
   ) {
     when (sort) {
       "releaseDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.releaseDate })
-      "paroleEligibilityDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.paroleEligibilityDate })
+      "releaseEligibilityDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.releaseEligibilityDate })
       "name,ASC" -> offenders.sortWith(compareBy { "${it.lastName}, ${it.firstName}" })
       "lastUpdatedDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.lastUpdatedDate })
       "prisonerNumber,ASC" -> offenders.sortBy { it.prisonerNumber }
       "pathwayStatus,ASC" -> offenders.sortBy { it.pathwayStatus }
       "releaseOnTemporaryLicenceDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.releaseOnTemporaryLicenceDate })
       "releaseDate,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.releaseDate })
-      "paroleEligibilityDate,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.paroleEligibilityDate })
+      "releaseEligibilityDate,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.releaseEligibilityDate })
       "name,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { "${it.lastName}, ${it.firstName}" })
       "lastUpdatedDate,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.lastUpdatedDate })
       "prisonerNumber,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.prisonerNumber })
@@ -172,7 +178,7 @@ class OffenderSearchApiService(
     }
   }
 
-  private fun objectMapper(
+  fun objectMapper(
     searchList: List<PrisonersSearch>,
     pathwayView: Pathway?,
     pathwayStatusToFilter: Status?,
@@ -220,6 +226,8 @@ class OffenderSearchApiService(
           pathwayStatus,
           prisonersSearch.homeDetentionCurfewEligibilityDate,
           prisonersSearch.paroleEligibilityDate,
+          getDisplayedReleaseEligibilityDate(prisonersSearch),
+          getDisplayedReleaseEligibilityType(prisonersSearch),
           prisonersSearch.releaseOnTemporaryLicenceDate,
         )
         prisonersList.add(prisoner)
@@ -368,5 +376,39 @@ class OffenderSearchApiService(
     } else {
       prisoner.displayReleaseDate = null
     }
+  }
+
+  fun getDisplayedReleaseEligibilityDate(prisoner: PrisonersSearch): LocalDate? {
+    var releaseEligibilityDate: LocalDate? = null
+    if (prisoner.paroleEligibilityDate != null && prisoner.homeDetentionCurfewEligibilityDate != null) {
+      log.warn("Parole eligibility date and home detention actual date both set for ${prisoner.prisonerNumber}")
+      if (prisoner.paroleEligibilityDate < prisoner.homeDetentionCurfewEligibilityDate) {
+        releaseEligibilityDate = prisoner.paroleEligibilityDate
+      } else if (prisoner.paroleEligibilityDate > prisoner.homeDetentionCurfewEligibilityDate) {
+        releaseEligibilityDate = prisoner.homeDetentionCurfewEligibilityDate
+      }
+    } else if (prisoner.paroleEligibilityDate != null) {
+      releaseEligibilityDate = prisoner.paroleEligibilityDate
+    } else if (prisoner.homeDetentionCurfewEligibilityDate != null) {
+      releaseEligibilityDate = prisoner.homeDetentionCurfewEligibilityDate
+    }
+    return releaseEligibilityDate
+  }
+
+  fun getDisplayedReleaseEligibilityType(prisoner: PrisonersSearch): String? {
+    var releaseEligibilityType: String? = null
+    if (prisoner.paroleEligibilityDate != null && prisoner.homeDetentionCurfewEligibilityDate != null) {
+      log.warn("Parole eligibility date and home detention actual date both set for ${prisoner.prisonerNumber}")
+      if (prisoner.paroleEligibilityDate < prisoner.homeDetentionCurfewEligibilityDate) {
+        releaseEligibilityType = "PED"
+      } else if (prisoner.paroleEligibilityDate > prisoner.homeDetentionCurfewEligibilityDate) {
+        releaseEligibilityType = "HDCED"
+      }
+    } else if (prisoner.paroleEligibilityDate != null) {
+      releaseEligibilityType = "PED"
+    } else if (prisoner.homeDetentionCurfewEligibilityDate != null) {
+      releaseEligibilityType = "HDCED"
+    }
+    return releaseEligibilityType
   }
 }

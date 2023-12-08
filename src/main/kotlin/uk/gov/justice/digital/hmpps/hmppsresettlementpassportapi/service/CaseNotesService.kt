@@ -11,7 +11,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 @Service
 class CaseNotesService(val offenderCaseNotesApiService: OffenderCaseNotesApiService, val deliusContactService: DeliusContactService) {
   fun getCaseNotesByNomsId(nomsId: String, page: Int, size: Int, sort: String, days: Int, pathwayType: CaseNotePathway, createdByUserId: Int): CaseNotesList {
-
     if (page < 0 || size <= 0) {
       throw NoDataWithCodeFoundException(
         "Data",
@@ -26,7 +25,7 @@ class CaseNotesService(val offenderCaseNotesApiService: OffenderCaseNotesApiServ
     val combinedCaseNotes = mutableListOf<PathwayCaseNote>()
 
     combinedCaseNotes.addAll(offenderCaseNotesApiService.getCaseNotesByNomsId(nomsId, days, pathwayType, createdByUserId))
-    if (createdByUserId != 0) { // RP2-900 For now for can't filter non-NOMIS case notes by the user. In this case just don't show anything from the database/Delius
+    if (createdByUserId == 0) { // RP2-900 For now for can't filter non-NOMIS case notes by the user. In this case just don't show anything from the database/Delius
       combinedCaseNotes.addAll(deliusContactService.getCaseNotesByNomsId(nomsId, pathwayType))
     }
 

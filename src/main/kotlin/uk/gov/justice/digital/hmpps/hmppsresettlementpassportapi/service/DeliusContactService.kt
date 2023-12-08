@@ -35,7 +35,7 @@ class DeliusContactService(private val deliusContactRepository: DeliusContactRep
 
   fun getCaseNotesByNomsId(nomsId: String, pathwayType: CaseNotePathway): List<PathwayCaseNote> {
     val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val deliusContacts: List<DeliusContactEntity> = when(pathwayType) {
+    val deliusContacts: List<DeliusContactEntity> = when (pathwayType) {
       CaseNotePathway.All -> deliusContactRepository.findByPrisoner(prisoner)
       CaseNotePathway.ACCOMMODATION -> deliusContactRepository.findByPrisonerAndCategory(prisoner, Category.ACCOMMODATION)
       CaseNotePathway.ATTITUDES_THINKING_AND_BEHAVIOUR -> deliusContactRepository.findByPrisonerAndCategory(prisoner, Category.ATTITUDES_THINKING_AND_BEHAVIOUR)
@@ -52,7 +52,7 @@ class DeliusContactService(private val deliusContactRepository: DeliusContactRep
   fun mapDeliusContactsToPathwayCaseNotes(deliusContacts: List<DeliusContactEntity>): List<PathwayCaseNote> {
     return deliusContacts.map {
       PathwayCaseNote(
-        caseNoteId = it.id.toString(),
+        caseNoteId = "db-${it.id}",
         pathway = convertCategoryToPathway(it.category),
         creationDateTime = it.createdDate,
         occurenceDateTime = it.createdDate,
@@ -62,7 +62,7 @@ class DeliusContactService(private val deliusContactRepository: DeliusContactRep
     }
   }
 
-  fun convertCategoryToPathway(category: Category) = when(category) {
+  fun convertCategoryToPathway(category: Category) = when (category) {
     Category.ACCOMMODATION -> CaseNotePathway.ACCOMMODATION
     Category.ATTITUDES_THINKING_AND_BEHAVIOUR -> CaseNotePathway.ATTITUDES_THINKING_AND_BEHAVIOUR
     Category.CHILDREN_FAMILIES_AND_COMMUNITY -> CaseNotePathway.CHILDREN_FAMILIES_AND_COMMUNITY

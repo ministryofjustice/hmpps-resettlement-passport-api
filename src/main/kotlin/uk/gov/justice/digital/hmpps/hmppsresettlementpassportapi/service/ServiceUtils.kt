@@ -67,5 +67,5 @@ fun <T> convertEnumSetToStringSet(enumSet: Set<T>?, other: String?): Set<String>
 }
 
 inline fun <reified E : Enum<E>> enumIncludes(name: String): Boolean {
-  return enumValues<E>().any { it.name == name}
+  return enumValues<E>().any { it.name == name }
 }

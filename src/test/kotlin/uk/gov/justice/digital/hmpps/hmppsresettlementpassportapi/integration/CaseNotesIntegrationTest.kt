@@ -8,11 +8,11 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-5.sql")
   fun `Get All CaseNotes for a Prisoner  happy path`() {
-    val expectedOutput = readFile("testdata/expectation/case-notes.json")
+    val expectedOutput = readFile("testdata/expectation/case-notes-all.json")
     caseNotesApiMockServer.stubGetCaseNotesNewList("G4274GN", 500, 0, "RESET", 200)
     caseNotesApiMockServer.stubGetCaseNotesOldList("G4274GN", 500, 0, "GEN", "RESET", 200)
     webTestClient.get()
-      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=15&sort=occurenceDateTime,DESC&days=0&pathwayType=All")
+      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=25&sort=occurenceDateTime,DESC&days=0&pathwayType=All")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -55,11 +55,11 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-5.sql")
   fun `Get All CaseNotes for a Prisoner  happy path sort by Pathway`() {
-    val expectedOutput = readFile("testdata/expectation/case-notes-sort-pathway.json")
+    val expectedOutput = readFile("testdata/expectation/case-notes-sort-pathway-all.json")
     caseNotesApiMockServer.stubGetCaseNotesOldList("G4274GN", 500, 0, "GEN", "RESET", 200)
     caseNotesApiMockServer.stubGetCaseNotesNewList("G4274GN", 500, 0, "RESET", 200)
     webTestClient.get()
-      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=15&sort=pathway,ASC&days=0")
+      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=25&sort=pathway,ASC&days=0")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -172,7 +172,7 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
     caseNotesApiMockServer.stubGetCaseNotesNewSubTypeList("G4274GN", 500, 0, "RESET", 200)
     caseNotesApiMockServer.stubGetCaseNotesOldList("G4274GN", 500, 0, "GEN", "RESET", 200)
     webTestClient.get()
-      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=15&sort=occurenceDateTime,DESC&days=0&pathwayType=All")
+      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=25&sort=occurenceDateTime,DESC&days=0&pathwayType=All")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk

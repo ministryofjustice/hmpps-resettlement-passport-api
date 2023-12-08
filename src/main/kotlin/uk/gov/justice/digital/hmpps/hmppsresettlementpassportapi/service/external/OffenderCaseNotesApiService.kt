@@ -25,7 +25,7 @@ class OffenderCaseNotesApiService(
   private val offenderCaseNotesWebClientCredentials: WebClient,
   private val offenderSearchApiService: OffenderSearchApiService,
 
-  ) {
+) {
 
   fun getCaseNotesByNomsId(
     nomsId: String,
@@ -33,7 +33,6 @@ class OffenderCaseNotesApiService(
     pathwayType: CaseNotePathway,
     createdBy: Int,
   ): List<PathwayCaseNote> {
-
     val caseNotes = mutableListOf<CaseNote>()
     if (pathwayType == CaseNotePathway.All) {
       val caseNotesGEN = fetchCaseNotesByNomsId(CaseNoteType.GEN, CaseNoteSubType.RESET, nomsId, days)
@@ -162,7 +161,6 @@ class OffenderCaseNotesApiService(
       creatorsList.add(caseNoteMeta)
     }
     return creatorsList.distinct()
-
   }
 
   fun postCaseNote(nomsId: String, pathway: Pathway, caseNotesText: String, auth: String): CaseNote? {
@@ -213,8 +211,7 @@ class OffenderCaseNotesApiService(
     CaseNoteSubType.GEN, CaseNoteSubType.RESET -> CaseNotePathway.GENERAL
   }
 
-
-  fun convertPathwayToCaseNoteSubType(pathway: Pathway) = when(pathway) {
+  fun convertPathwayToCaseNoteSubType(pathway: Pathway) = when (pathway) {
     Pathway.ACCOMMODATION -> CaseNoteSubType.ACCOM
     Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR -> CaseNoteSubType.ATB
     Pathway.CHILDREN_FAMILIES_AND_COMMUNITY -> CaseNoteSubType.CHDFAMCOM

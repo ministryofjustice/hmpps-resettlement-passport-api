@@ -1,6 +1,14 @@
 {
   "content": [
     {
+      "caseNoteId": "db-1",
+      "pathway": "ACCOMMODATION",
+      "creationDateTime": "2023-12-05T17:44:30.091",
+      "occurenceDateTime": "2023-12-05T17:44:30.091",
+      "createdBy": "John Williams",
+      "text": "This is some case note text."
+    },
+    {
       "caseNoteId": "47028491",
       "pathway": "ACCOMMODATION",
       "creationDateTime": "2023-09-05T13:54:56.992827119",
@@ -25,9 +33,9 @@
       "text": "This is a 2nd test case note message from Resettlement Passport"
     }
   ],
-  "pageSize": 3,
+  "pageSize": 4,
   "page": 0,
   "sortName": "occurenceDateTime,DESC",
-  "totalElements": 3,
+  "totalElements": 4,
   "last": true
 }

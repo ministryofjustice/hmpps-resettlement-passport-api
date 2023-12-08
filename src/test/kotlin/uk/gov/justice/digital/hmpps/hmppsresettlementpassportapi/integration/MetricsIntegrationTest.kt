@@ -57,7 +57,7 @@ class MetricsIntegrationTest : IntegrationTestBase() {
     seedPathwayStatuses()
 
     prisonRegisterApiMockServer.stubPrisonList(200)
-    offenderSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 200)
+    offenderSearchApiMockServer.stubGetPrisonersList("testdata/offender-search-api/prisoner-offender-search-3.json", prisonId, "", 500, 0, 200)
 
     webTestClient.get()
       .uri("/resettlement-passport/metrics/prisoner-counts?prisonId=$prisonId")
@@ -68,25 +68,25 @@ class MetricsIntegrationTest : IntegrationTestBase() {
       .expectBody().json(expectedOutput)
 
     Assertions.assertEquals(
-      6.0,
+      5.0,
       registry.get("total_prisoners_count")
         .tags("prison", "Moorland (HMP & YOI)", "status", "All", "releaseDate", "Past").gauge()
         .value(),
     )
     Assertions.assertEquals(
-      4.0,
+      5.0,
       registry.get("total_prisoners_count")
         .tags("prison", "Moorland (HMP & YOI)", "status", "All", "releaseDate", "All Future").gauge()
         .value(),
     )
     Assertions.assertEquals(
-      0.0,
+      1.0,
       registry.get("total_prisoners_count")
         .tags("prison", "Moorland (HMP & YOI)", "status", "All", "releaseDate", "12 Weeks").gauge()
         .value(),
     )
     Assertions.assertEquals(
-      0.0,
+      1.0,
       registry.get("total_prisoners_count")
         .tags("prison", "Moorland (HMP & YOI)", "status", "All", "releaseDate", "24 Weeks").gauge()
         .value(),

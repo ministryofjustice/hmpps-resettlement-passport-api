@@ -53,8 +53,8 @@ class MetricsService(
 
         val allPrisonersPastCount = prisoners.filter { it.displayReleaseDate != null && it.displayReleaseDate!! < earliestFutureReleaseDate }.size
         val allPrisonersFutureCount = prisoners.filter { it.displayReleaseDate == null || it.displayReleaseDate!! >= earliestFutureReleaseDate }.size
-        val allPrisoners12WeeksCount = prisoners.filter { it.displayReleaseDate != null && it.displayReleaseDate!! >= earliestFutureReleaseDate && it.displayReleaseDate!! < latestRD12Weeks }.size
-        val allPrisoners24WeeksCount = prisoners.filter { it.displayReleaseDate != null && it.displayReleaseDate!! >= earliestFutureReleaseDate && it.displayReleaseDate!! < latestRD24Weeks }.size
+        val allPrisoners12WeeksCount = prisoners.filter { it.displayReleaseDate != null && it.displayReleaseDate!! >= earliestFutureReleaseDate && it.displayReleaseDate!! <= latestRD12Weeks }.size
+        val allPrisoners24WeeksCount = prisoners.filter { it.displayReleaseDate != null && it.displayReleaseDate!! >= earliestFutureReleaseDate && it.displayReleaseDate!! <= latestRD24Weeks }.size
 
         val notStartedPrisonersPastCount = prisonerService.getNotStartedPrisonersByPrisonId(prison.id, earliestPastReleaseDate, latestPastReleaseDate).filter { it.releaseDate != null }.size
         val notStartedPrisonersFutureCount = prisonerService.getNotStartedPrisonersByPrisonId(prison.id, earliestFutureReleaseDate, latestFutureReleaseDate).size

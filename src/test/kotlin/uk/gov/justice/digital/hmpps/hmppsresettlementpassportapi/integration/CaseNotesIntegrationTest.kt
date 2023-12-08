@@ -1,10 +1,12 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
 import org.junit.jupiter.api.Test
+import org.springframework.test.context.jdbc.Sql
 
 class CaseNotesIntegrationTest : IntegrationTestBase() {
 
   @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-5.sql")
   fun `Get All CaseNotes for a Prisoner  happy path`() {
     val expectedOutput = readFile("testdata/expectation/case-notes.json")
     caseNotesApiMockServer.stubGetCaseNotesNewList("G4274GN", 500, 0, "RESET", 200)
@@ -51,6 +53,7 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-5.sql")
   fun `Get All CaseNotes for a Prisoner  happy path sort by Pathway`() {
     val expectedOutput = readFile("testdata/expectation/case-notes-sort-pathway.json")
     caseNotesApiMockServer.stubGetCaseNotesOldList("G4274GN", 500, 0, "GEN", "RESET", 200)
@@ -66,6 +69,7 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-5.sql")
   fun `Get Pathway specific CaseNotes for a Prisoner happy path`() {
     val expectedOutput = readFile("testdata/expectation/case-notes-specific-pathway.json")
     caseNotesApiMockServer.stubGetCaseNotesSpecificPathway("G4274GN", 500, 0, "RESET", "ACCOM", 200)
@@ -86,10 +90,10 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
       .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=10&sort=occurenceDateTime,DESC&days=0&pathwayType=unknown")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
-      .expectStatus().isEqualTo(404)
+      .expectStatus().isEqualTo(400)
       .expectHeader().contentType("application/json")
       .expectBody()
-      .jsonPath("status").isEqualTo(404)
+      .jsonPath("status").isEqualTo(400)
   }
 
   @Test
@@ -127,10 +131,10 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
       .uri("/resettlement-passport/case-notes/G4274GN/creators/UNKNOWN")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
-      .expectStatus().isEqualTo(404)
+      .expectStatus().isEqualTo(400)
       .expectHeader().contentType("application/json")
       .expectBody()
-      .jsonPath("status").isEqualTo(404)
+      .jsonPath("status").isEqualTo(400)
   }
 
   @Test
@@ -147,6 +151,7 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-5.sql")
   fun `Get Pathway specific and Created By specific CaseNotes for a Prisoner happy path`() {
     val expectedOutput = readFile("testdata/expectation/case-notes-specific-pathway-and-userid.json")
     caseNotesApiMockServer.stubGetCaseNotesSpecificPathway("G4274GN", 500, 0, "RESET", "ACCOM", 200)
@@ -161,6 +166,7 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-5.sql")
   fun `Get All CaseNotes for a Prisoner have new subType  happy path`() {
     val expectedOutput = readFile("testdata/expectation/case-notes-new-subtype.json")
     caseNotesApiMockServer.stubGetCaseNotesNewSubTypeList("G4274GN", 500, 0, "RESET", 200)

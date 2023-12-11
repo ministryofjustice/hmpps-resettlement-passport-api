@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotePathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesMeta
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseNotesService
@@ -57,9 +58,9 @@ class CaseNotesResourceController(
     @Parameter(description = "The size of the page to be returned")
     @RequestParam(value = "size", defaultValue = "10")
     size: Int,
-    @Schema(example = "occurenceDateTime,DESC")
-    @Parameter(description = "Sorting criteria in the format: property,(ASC|DESC) property supported are occurenceDateTime and pathway.")
-    @RequestParam(value = "sort", defaultValue = "occurenceDateTime,DESC")
+    @Schema(example = "occurrenceDateTime,DESC")
+    @Parameter(description = "Sorting criteria in the format: property,(ASC|DESC) property supported are occurrenceDateTime and pathway.")
+    @RequestParam(value = "sort", defaultValue = "occurrenceDateTime,DESC")
     sort: String,
     @Schema(example = "21")
     @Parameter(description = "Get Case notes from created date older than given days and till current date")
@@ -68,7 +69,7 @@ class CaseNotesResourceController(
     @Schema(example = "21")
     @Parameter(description = "Get Case notes for a specific pathway, property supported are ACCOMMODATION, ATTITUDES_THINKING_AND_BEHAVIOUR, CHILDREN_FAMILIES_AND_COMMUNITY, DRUGS_AND_ALCOHOL, EDUCATION_SKILLS_AND_WORK, FINANCE_AND_ID, HEALTH, GENERAL ")
     @RequestParam(value = "pathwayType", defaultValue = "All")
-    pathwayType: String,
+    pathwayType: CaseNotePathway,
     @Schema(example = "12345")
     @Parameter(description = "Get Case notes created by given author UserId for a specific pathway ")
     @RequestParam(value = "createdByUserId", defaultValue = "0")
@@ -113,6 +114,6 @@ class CaseNotesResourceController(
       required = true,
       description = "Get Case notes Creators for a specific pathway, property supported are ACCOMMODATION, ATTITUDES_THINKING_AND_BEHAVIOUR, CHILDREN_FAMILIES_AND_COMMUNITY, DRUGS_AND_ALCOHOL, EDUCATION_SKILLS_AND_WORK, FINANCE_AND_ID, HEALTH, GENERAL ",
     )
-    pathway: String,
+    pathway: CaseNotePathway,
   ): List<CaseNotesMeta> = caseNotesService.getCaseNotesCreatorsByPathway(nomsId, pathway)
 }

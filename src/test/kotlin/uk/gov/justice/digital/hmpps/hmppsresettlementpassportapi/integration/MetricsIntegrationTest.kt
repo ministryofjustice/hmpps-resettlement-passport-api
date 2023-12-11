@@ -68,25 +68,25 @@ class MetricsIntegrationTest : IntegrationTestBase() {
       .expectBody().json(expectedOutput)
 
     Assertions.assertEquals(
-      5.0,
+      3.0,
       registry.get("total_prisoners_count")
         .tags("prison", "Moorland (HMP & YOI)", "status", "All", "releaseDate", "Past").gauge()
         .value(),
     )
     Assertions.assertEquals(
-      5.0,
+      7.0,
       registry.get("total_prisoners_count")
         .tags("prison", "Moorland (HMP & YOI)", "status", "All", "releaseDate", "All Future").gauge()
         .value(),
     )
     Assertions.assertEquals(
-      1.0,
+      2.0,
       registry.get("total_prisoners_count")
         .tags("prison", "Moorland (HMP & YOI)", "status", "All", "releaseDate", "12 Weeks").gauge()
         .value(),
     )
     Assertions.assertEquals(
-      1.0,
+      3.0,
       registry.get("total_prisoners_count")
         .tags("prison", "Moorland (HMP & YOI)", "status", "All", "releaseDate", "24 Weeks").gauge()
         .value(),

@@ -1,18 +1,18 @@
 {
   "twelveWeeks": {
-    "totalPopulation": 1,
+    "totalPopulation": 2,
     "notStarted": 9,
     "inProgress": 6,
     "done": 12
   },
   "twentyFourWeeks": {
-    "totalPopulation": 1,
+    "totalPopulation": 3,
     "notStarted": 21,
     "inProgress": 14,
     "done": 28
   },
   "allFuture": {
-    "totalPopulation": 5,
+    "totalPopulation": 7,
     "notStarted": 42,
     "inProgress": 28,
     "done": 56

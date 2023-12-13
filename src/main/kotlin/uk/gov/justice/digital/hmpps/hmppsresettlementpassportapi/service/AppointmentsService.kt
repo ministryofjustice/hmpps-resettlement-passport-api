@@ -1,15 +1,21 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import jakarta.transaction.Transactional
+import jakarta.validation.ValidationException
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.DuplicateDataFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Address
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Appointment
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AppointmentsList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.*
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.AppointmentDelius
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.BankApplicationEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.BankApplicationStatusLogEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DeliusContactEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.DeliusContactRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -18,8 +24,10 @@ import java.time.format.DateTimeFormatter
 class AppointmentsService(
   private val prisonerRepository: PrisonerRepository,
   private val rpDeliusApiService: ResettlementPassportDeliusApiService,
-) {
+  private val appointmentsRepository: DeliusContactRepository,
 
+) {
+  @Transactional
   fun getAppointmentsByNomsId(
     nomsId: String,
     startDate: LocalDate,
@@ -35,6 +43,27 @@ class AppointmentsService(
       throw NoDataWithCodeFoundException(
         "Data",
         "Page $pageNumber and Size $pageSize",
+      )
+    }
+
+    @Transactional
+    fun createAppointment(appointment: Appointment, nomsId: String): AppointmentResponse? {
+      val now = LocalDateTime.now()
+      val prisoner = prisonerRepository.findByNomsId(nomsId)
+        ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+      val statusText = "Pending"
+
+
+      val appointment = DeliusContactEntity(
+        null,
+        prisoner,
+        category = appointment.category,
+        contactType = appointment.contactType,
+        createdDate = now,
+        appointmentDate = appointment.appointmentDate,
+        appointmentDuration = appointment.appointmentDuration,
+        notes = appointment.notes,
+        createdBy = appointment.createdBy
       )
     }
 

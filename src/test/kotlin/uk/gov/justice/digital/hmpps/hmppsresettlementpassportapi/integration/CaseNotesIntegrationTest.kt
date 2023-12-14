@@ -1,9 +1,15 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
 
 class CaseNotesIntegrationTest : IntegrationTestBase() {
+
+  @AfterEach
+  fun afterEach() {
+    caseNotesApiMockServer.resetMappings()
+  }
 
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-5.sql")
@@ -40,16 +46,51 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `Get CaseNotes  Internal Error`() {
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-5.sql")
+  fun `Get CaseNotes  Internal Error from NOMIS API`() {
+    // RP2-920 If the Case Notes API gives any errors we should return just the results from the database.
+    val expectedOutput = readFile("testdata/expectation/case-notes-db-only.json")
     caseNotesApiMockServer.stubGetCaseNotesOldList("G4274GN", 500, 0, "GEN", "RESET", 500)
     webTestClient.get()
       .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=10&sort=occurenceDateTime,DESC&days=0&pathwayType=All")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
-      .expectStatus().isEqualTo(500)
+      .expectStatus().isEqualTo(200)
       .expectHeader().contentType("application/json")
       .expectBody()
-      .jsonPath("status").isEqualTo(500)
+      .json(expectedOutput)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-5.sql")
+  fun `Get CaseNotes  Not Found from NOMIS API`() {
+    // RP2-920 If the Case Notes API gives any errors we should return just the results from the database.
+    val expectedOutput = readFile("testdata/expectation/case-notes-db-only.json")
+    caseNotesApiMockServer.stubGetCaseNotesOldList("G4274GN", 500, 0, "GEN", "RESET", 404)
+    webTestClient.get()
+      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=10&sort=occurenceDateTime,DESC&days=0&pathwayType=All")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isEqualTo(200)
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-4.sql")
+  fun `Get CaseNotes  No results found`() {
+    // RP2-920 If there are no results we should return an empty list NOT an error
+    val expectedOutput = readFile("testdata/expectation/case-notes-no-results.json")
+    caseNotesApiMockServer.stubGetCaseNotesOldList("G4274GN", 500, 0, "GEN", "RESET", 404)
+    webTestClient.get()
+      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=10&sort=occurenceDateTime,DESC&days=0&pathwayType=All")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isEqualTo(200)
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
   }
 
   @Test
@@ -135,19 +176,6 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody()
       .jsonPath("status").isEqualTo(400)
-  }
-
-  @Test
-  fun `Get All CaseNotes CreatedBy List for a Prisoner when NomsId not found`() {
-    caseNotesApiMockServer.stubGetCaseNotesSpecificPathway("G4274GN", 500, 0, "RESET", "ACCOM", 404)
-    webTestClient.get()
-      .uri("/resettlement-passport/case-notes/G4274GN/creators/ACCOMMODATION")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
-      .expectStatus().isEqualTo(404)
-      .expectHeader().contentType("application/json")
-      .expectBody()
-      .jsonPath("status").isEqualTo(404)
   }
 
   @Test

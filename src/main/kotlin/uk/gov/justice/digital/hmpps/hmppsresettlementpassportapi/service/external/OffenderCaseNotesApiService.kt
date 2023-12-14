@@ -1,10 +1,12 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external
 
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientException
 import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotePathway
@@ -12,6 +14,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteSu
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesMeta
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.allocationapi.AllocationDTO
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.allocationapi.AllocationStaffDTO
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNotes
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
@@ -26,6 +30,10 @@ class OffenderCaseNotesApiService(
   private val offenderSearchApiService: OffenderSearchApiService,
 
 ) {
+
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+  }
 
   fun getCaseNotesByNomsId(
     nomsId: String,
@@ -106,11 +114,12 @@ class OffenderCaseNotesApiService(
           ),
         )
         .retrieve()
-        .onStatus(
-          { it == HttpStatus.NOT_FOUND },
-          { throw ResourceNotFoundException("PrisonerId $nomsId not found and the uri is $uriValue") },
-        )
-      val pageOfData = data.bodyToMono<CaseNotes>().block()
+      val pageOfData = data.bodyToMono<CaseNotes>().onErrorReturn(
+        {
+          log.warn("Unexpected error from Case Notes API - ignoring but NOMIS case notes will be missing from response!", it)
+          it is WebClientException
+        },
+        CaseNotes(number = 0, first = false, last = true, empty = true, numberOfElements = 0, size = 0, totalPages = 0, totalElements = 0)).block()
       if (pageOfData != null) {
         listToReturn.addAll(pageOfData.content!!)
       }

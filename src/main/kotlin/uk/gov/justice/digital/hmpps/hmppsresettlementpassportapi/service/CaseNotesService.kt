@@ -46,7 +46,7 @@ class CaseNotesService(val offenderCaseNotesApiService: OffenderCaseNotesApiServ
     }
 
     val startIndex = page * size
-    if (startIndex >= combinedCaseNotes.size) {
+    if (combinedCaseNotes.size != 0 && startIndex >= combinedCaseNotes.size) {
       throw NoDataWithCodeFoundException(
         "Data",
         "Page $page",

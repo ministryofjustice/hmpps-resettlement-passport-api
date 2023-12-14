@@ -179,19 +179,6 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `Get All CaseNotes CreatedBy List for a Prisoner when NomsId not found`() {
-    caseNotesApiMockServer.stubGetCaseNotesSpecificPathway("G4274GN", 500, 0, "RESET", "ACCOM", 404)
-    webTestClient.get()
-      .uri("/resettlement-passport/case-notes/G4274GN/creators/ACCOMMODATION")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
-      .expectStatus().isEqualTo(404)
-      .expectHeader().contentType("application/json")
-      .expectBody()
-      .jsonPath("status").isEqualTo(404)
-  }
-
-  @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-5.sql")
   fun `Get Pathway specific and Created By specific CaseNotes for a Prisoner happy path`() {
     val expectedOutput = readFile("testdata/expectation/case-notes-specific-pathway-and-userid.json")

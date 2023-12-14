@@ -12,7 +12,7 @@ class ResettlementPassportDeliusApiMockServer : WireMockServerBase(9102) {
     val formattedStartDate = LocalDate.now().toString()
     val formattedEndDate = LocalDate.now().plusDays(365).toString()
     stubFor(
-      get("/appointments/$crn?page=0&size=50&startDate=$formattedStartDate&endDate=$formattedEndDate").willReturn(
+      get("/appointments/$crn?page=0&size=1000&startDate=$formattedStartDate&endDate=$formattedEndDate").willReturn(
         if (status == 200) {
           aResponse()
             .withHeader("Content-Type", "application/json")
@@ -26,6 +26,30 @@ class ResettlementPassportDeliusApiMockServer : WireMockServerBase(9102) {
             .withBody("{\"Error\" : \"$status\"}")
             .withStatus(status)
         },
+      ),
+    )
+  }
+
+  fun stubGetAppointmentsFromCRNNoResults(crn: String) {
+    val appointmentsListJSON = """
+      {
+        "results": [],
+        "totalElements": 0,
+        "totalPages": 0,
+        "page": 0,
+        "size": 1000
+      }
+    """.trimIndent()
+    val formattedStartDate = LocalDate.now().toString()
+    val formattedEndDate = LocalDate.now().plusDays(365).toString()
+    stubFor(
+      get("/appointments/$crn?page=0&size=1000&startDate=$formattedStartDate&endDate=$formattedEndDate").willReturn(
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody(
+              appointmentsListJSON,
+            )
+            .withStatus(200)
       ),
     )
   }

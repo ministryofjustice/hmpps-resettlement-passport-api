@@ -33,37 +33,25 @@ class AppointmentsService(
     nomsId: String,
     startDate: LocalDate,
     endDate: LocalDate,
-    pageNumber: Int,
-    pageSize: Int,
   ): AppointmentsList {
     if (nomsId.isBlank()) {
       throw NoDataWithCodeFoundException("Prisoner", nomsId)
-    }
-
-    if (pageNumber < 0 || pageSize <= 0) {
-      throw NoDataWithCodeFoundException(
-        "Data",
-        "Page $pageNumber and Size $pageSize",
-      )
     }
 
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val crn = prisonerEntity.crn ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in database")
 
-    val deliusAppointments = rpDeliusApiService.fetchAppointments(nomsId, crn, startDate, endDate, pageNumber, pageSize)
-    val appList: List<Appointment> = objectMapper(deliusAppointments.results)
+    val appointments = mutableListOf<Appointment>()
+    appointments.addAll(mapAppointmentsFromDeliusApi(rpDeliusApiService.fetchAppointments(nomsId, crn, startDate, endDate)))
+    appointments.addAll(mapAppointmentsFromDatabase(deliusContactService.getAppointments(nomsId)))
 
-    return AppointmentsList(
-      appList,
-      deliusAppointments.totalElements,
-      deliusAppointments.totalPages,
-      deliusAppointments.page,
-      deliusAppointments.size,
-    )
+    appointments.sortBy { LocalDateTime.of(it.date, it.time) }
+
+    return AppointmentsList(appointments)
   }
 
-  private fun objectMapper(appList: List<AppointmentDelius>): List<Appointment> {
+  private fun mapAppointmentsFromDeliusApi(appList: List<AppointmentDelius>): List<Appointment> {
     val appointmentList = mutableListOf<Appointment>()
     appList.forEach {
       val appointment: Appointment?
@@ -81,6 +69,7 @@ class AppointmentsService(
       } else {
         Address(null, null, null, null, null, null, null, it.location?.description)
       }
+
       var formattedDateVal: LocalDate? = null
       var formattedTimeVal: LocalTime? = null
       if (it.dateTime != null) {
@@ -100,6 +89,26 @@ class AppointmentsService(
     return appointmentList
   }
 
+  fun mapAppointmentsFromDatabase(deliusContacts: List<DeliusContactEntity>) = deliusContacts.map { deliusContact ->
+    val customFieldsFromNotes = getCustomFieldsFromNotes(deliusContact.notes, deliusContact.id)
+    Appointment(
+      title = extractSectionFromNotes(customFieldsFromNotes, "AppointmentTitle", deliusContact.id), // TODO put all sections in constants
+      contact = extractSectionFromNotes(customFieldsFromNotes, "Contact", deliusContact.id),
+      date = deliusContact.appointmentDate?.toLocalDate(),
+      time = deliusContact.appointmentDate?.toLocalTime(),
+      location = Address(
+        buildingName = extractSectionFromNotesTrimToNull(customFieldsFromNotes, "  Building Name", deliusContact.id),
+        buildingNumber = extractSectionFromNotesTrimToNull(customFieldsFromNotes, "  Building Number", deliusContact.id),
+        streetName = extractSectionFromNotesTrimToNull(customFieldsFromNotes, "  Street Name", deliusContact.id),
+        district = extractSectionFromNotesTrimToNull(customFieldsFromNotes, "  District", deliusContact.id),
+        town = extractSectionFromNotesTrimToNull(customFieldsFromNotes, "  Town", deliusContact.id),
+        county = extractSectionFromNotesTrimToNull(customFieldsFromNotes, "  County", deliusContact.id),
+        postcode = extractSectionFromNotesTrimToNull(customFieldsFromNotes, "  Postcode", deliusContact.id),
+        description = null,
+      ),
+    )
+  }
+  
   @Transactional
   fun createAppointment(appointment: CreateAppointment, nomsId: String, auth: String): ResponseEntity<Void> {
     val now = LocalDateTime.now()

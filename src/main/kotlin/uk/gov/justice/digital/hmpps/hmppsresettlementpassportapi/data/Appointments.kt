@@ -47,8 +47,4 @@ data class Address(
 
 data class AppointmentsList(
   val results: List<Appointment> = listOf(),
-  val totalElements: Int,
-  val totalPages: Int,
-  val page: Int,
-  val size: Int,
 )

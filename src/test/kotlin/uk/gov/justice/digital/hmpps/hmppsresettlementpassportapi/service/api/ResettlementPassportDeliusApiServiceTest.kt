@@ -80,8 +80,8 @@ class ResettlementPassportDeliusApiServiceTest {
     val mockedJsonResponse = readFile("testdata/resettlement-passport-delius-api/appointments-list.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
 
-    val appointmentList = rpDeliusApiService.fetchAppointments(nomsId, crn, LocalDate.now().minusDays(1), LocalDate.now().plusDays(365), 0, 10)
-    Assertions.assertEquals(expectedType, appointmentList.results[0].type.description)
+    val appointmentList = rpDeliusApiService.fetchAppointments(nomsId, crn, LocalDate.now().minusDays(1), LocalDate.now().plusDays(365))
+    Assertions.assertEquals(expectedType, appointmentList[0].type.description)
   }
 
   @Test

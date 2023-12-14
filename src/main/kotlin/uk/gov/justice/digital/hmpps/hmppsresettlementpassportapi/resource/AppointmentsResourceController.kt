@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AppointmentsList
@@ -61,15 +60,7 @@ class AppointmentsResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-    @Schema(example = "0", required = true)
-    @Parameter(required = true, description = "Zero-based page index (0..N)")
-    @RequestParam(value = "page", defaultValue = "0")
-    page: Int,
-    @Schema(example = "10", required = true)
-    @Parameter(required = true, description = "The size of the page to be returned")
-    @RequestParam(value = "size", defaultValue = "10")
-    size: Int,
-  ): AppointmentsList = appointmentsService.getAppointmentsByNomsId(nomsId, LocalDate.now(), LocalDate.now().plusDays(365), page, size)
+  ): AppointmentsList = appointmentsService.getAppointmentsByNomsId(nomsId, LocalDate.now(), LocalDate.now().plusDays(365))
 
   @PostMapping("/{nomsId}/appointments", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create appointment", description = "Create appointment")

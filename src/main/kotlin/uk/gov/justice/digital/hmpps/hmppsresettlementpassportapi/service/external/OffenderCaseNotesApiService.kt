@@ -14,8 +14,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteSu
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesMeta
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.allocationapi.AllocationDTO
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.allocationapi.AllocationStaffDTO
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNotes
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
@@ -119,7 +117,8 @@ class OffenderCaseNotesApiService(
           log.warn("Unexpected error from Case Notes API - ignoring but NOMIS case notes will be missing from response!", it)
           it is WebClientException
         },
-        CaseNotes(number = 0, first = false, last = true, empty = true, numberOfElements = 0, size = 0, totalPages = 0, totalElements = 0)).block()
+        CaseNotes(number = 0, first = false, last = true, empty = true, numberOfElements = 0, size = 0, totalPages = 0, totalElements = 0),
+      ).block()
       if (pageOfData != null) {
         listToReturn.addAll(pageOfData.content!!)
       }

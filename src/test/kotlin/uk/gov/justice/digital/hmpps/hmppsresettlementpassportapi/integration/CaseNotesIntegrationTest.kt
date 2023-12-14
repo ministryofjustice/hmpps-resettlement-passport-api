@@ -78,6 +78,22 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-4.sql")
+  fun `Get CaseNotes  No results found`() {
+    // RP2-920 If there are no results we should return an empty list NOT an error
+    val expectedOutput = readFile("testdata/expectation/case-notes-no-results.json")
+    caseNotesApiMockServer.stubGetCaseNotesOldList("G4274GN", 500, 0, "GEN", "RESET", 404)
+    webTestClient.get()
+      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=10&sort=occurenceDateTime,DESC&days=0&pathwayType=All")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isEqualTo(200)
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
+  }
+
+  @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-5.sql")
   fun `Get All CaseNotes for a Prisoner  happy path sort by Pathway`() {
     val expectedOutput = readFile("testdata/expectation/case-notes-sort-pathway-all.json")

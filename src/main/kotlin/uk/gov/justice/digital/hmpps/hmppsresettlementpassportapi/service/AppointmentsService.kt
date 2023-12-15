@@ -104,7 +104,6 @@ class AppointmentsService(
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val statusText = "Pending"
 
-
     val appointmentEntity = DeliusContactEntity(
       null,
       prisoner,
@@ -114,9 +113,15 @@ class AppointmentsService(
       appointmentDate = appointment.dateAndTime,
       appointmentDuration = appointment.appointmentDuration,
       notes = appointment.notes?:"",
-      createdBy = getClaimFromJWTTOken(auth, "name")?: throw ServerWebInputException("Cannot get name from auth token")
+      createdBy = getClaimFromJWTTOken(auth, "name")?: "system_user"
+      //TO DO: System_use is hard coded for testing- needs changing to below
+      //throw ServerWebInputException("Cannot get name from auth token")
     )
     deliusContactService.addAppointmentToDatabase(appointmentEntity)
     return ResponseEntity.ok().build()
+  }
+
+  fun createNotes(appointment: CreateAppointment): String{
+    return ""
   }
 }

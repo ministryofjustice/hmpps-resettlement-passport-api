@@ -11,8 +11,8 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Appointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AppointmentsList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CreateAppointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AppointmentsService
 import java.time.LocalDate
 
@@ -99,7 +99,9 @@ fun postAppointmentsByNomsId(
   @PathVariable("nomsId")
   nomsId: String,
   @RequestBody
-  appointment: Appointment,
-) = appointmentsService.createAppointment(appointment, nomsId)
+  appointment: CreateAppointment,
+  @RequestHeader("Authorization")
+  auth: String,
+) = appointmentsService.createAppointment(appointment, nomsId, auth)
 }
 

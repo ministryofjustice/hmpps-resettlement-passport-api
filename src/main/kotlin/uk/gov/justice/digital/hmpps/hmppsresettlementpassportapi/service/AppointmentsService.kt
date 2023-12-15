@@ -1,17 +1,15 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import jakarta.transaction.Transactional
-import jakarta.validation.ValidationException
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.DuplicateDataFoundException
+import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.*
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.AppointmentDelius
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.BankApplicationEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.BankApplicationStatusLogEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ContactType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DeliusContactEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.DeliusContactRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDate
@@ -24,7 +22,7 @@ import java.time.format.DateTimeFormatter
 class AppointmentsService(
   private val prisonerRepository: PrisonerRepository,
   private val rpDeliusApiService: ResettlementPassportDeliusApiService,
-  private val appointmentsRepository: DeliusContactRepository,
+  private val deliusContactService: DeliusContactService,
 
 ) {
   @Transactional
@@ -43,27 +41,6 @@ class AppointmentsService(
       throw NoDataWithCodeFoundException(
         "Data",
         "Page $pageNumber and Size $pageSize",
-      )
-    }
-
-    @Transactional
-    fun createAppointment(appointment: Appointment, nomsId: String): AppointmentResponse? {
-      val now = LocalDateTime.now()
-      val prisoner = prisonerRepository.findByNomsId(nomsId)
-        ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-      val statusText = "Pending"
-
-
-      val appointment = DeliusContactEntity(
-        null,
-        prisoner,
-        category = appointment.category,
-        contactType = appointment.contactType,
-        createdDate = now,
-        appointmentDate = appointment.appointmentDate,
-        appointmentDuration = appointment.appointmentDuration,
-        notes = appointment.notes,
-        createdBy = appointment.createdBy
       )
     }
 
@@ -118,5 +95,28 @@ class AppointmentsService(
       appointmentList.add(appointment)
     }
     return appointmentList
+  }
+
+  @Transactional
+  fun createAppointment(appointment: CreateAppointment, nomsId: String, auth: String): ResponseEntity<Void> {
+    val now = LocalDateTime.now()
+    val prisoner = prisonerRepository.findByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+    val statusText = "Pending"
+
+
+    val appointmentEntity = DeliusContactEntity(
+      null,
+      prisoner,
+      category = appointment.appointmentType,
+      contactType = ContactType.APPOINTMENT,
+      createdDate = now,
+      appointmentDate = appointment.dateAndTime,
+      appointmentDuration = appointment.appointmentDuration,
+      notes = appointment.notes?:"",
+      createdBy = getClaimFromJWTTOken(auth, "name")?: throw ServerWebInputException("Cannot get name from auth token")
+    )
+    deliusContactService.addAppointmentToDatabase(appointmentEntity)
+    return ResponseEntity.ok().build()
   }
 }

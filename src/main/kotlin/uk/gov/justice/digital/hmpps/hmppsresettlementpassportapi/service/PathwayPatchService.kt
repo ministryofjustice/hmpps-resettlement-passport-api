@@ -28,8 +28,7 @@ class PathwayPatchService(
     )
     // If this is a Nomis user we use the Case Notes API, if this is a Delius user then store in database for now -
     // in the future we will also push them to Delius.
-    val jwtClaimsSet = JWTParser.parse(auth.replaceFirst("Bearer ", "")).jwtClaimsSet
-    val authSource = jwtClaimsSet.getStringClaim("auth_source").lowercase()
+    val authSource = getClaimFromJWTTOken(auth,"auth_source")?.lowercase()
 
     when (authSource) {
       "nomis" -> {
@@ -41,7 +40,7 @@ class PathwayPatchService(
         )
       }
       "delius" -> {
-        val name = jwtClaimsSet.getStringClaim("name") ?: throw ServerWebInputException("JWT token must include a claim for 'name'")
+        val name = getClaimFromJWTTOken(auth, "name")?: throw ServerWebInputException("JWT token must include a claim for 'name'")
         deliusContactService.addDeliusCaseNoteToDatabase(nomsId, pathwayStatusAndCaseNote, name)
       }
       else -> {

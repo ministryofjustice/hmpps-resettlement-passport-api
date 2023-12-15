@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import com.nimbusds.jwt.JWTParser
 import org.apache.commons.text.WordUtils
 import org.slf4j.LoggerFactory
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.PathwayMap
@@ -80,4 +81,9 @@ fun isAllowedSubTypes(subType: String): Boolean {
   )
 
   return (allowedPathwaySubTypes.contains(subType))
+}
+
+fun getClaimFromJWTTOken(token: String, claimName: String): String?{
+  val jwtClaimsSet = JWTParser.parse(token.replaceFirst("Bearer ", "")).jwtClaimsSet
+  return jwtClaimsSet.getStringClaim(claimName)
 }

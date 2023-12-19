@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageConversionException
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.access.AuthorizationServiceException
+import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -46,7 +47,7 @@ class HmppsResettlementPassportApiExceptionHandler {
       )
   }
 
-  @ExceptionHandler(value = [ValidationException::class, ServerWebInputException::class, HttpMessageConversionException::class, MethodArgumentTypeMismatchException::class, MissingServletRequestParameterException::class])
+  @ExceptionHandler(value = [ValidationException::class, ServerWebInputException::class, HttpMessageConversionException::class, MethodArgumentTypeMismatchException::class, MissingServletRequestParameterException::class, HttpMediaTypeNotSupportedException::class])
   fun handleValidationException(e: Exception): ResponseEntity<ErrorResponse> {
     log.info("Validation exception: {}", e.cause?.message)
     return ResponseEntity

@@ -71,7 +71,7 @@ inline fun <reified E : Enum<E>> enumIncludes(name: String): Boolean {
   return enumValues<E>().any { it.name == name }
 }
 
-fun getClaimFromJWTTOken(token: String, claimName: String): String? {
+fun getClaimFromJWTToken(token: String, claimName: String): String? {
   val jwtClaimsSet = JWTParser.parse(token.replaceFirst("Bearer ", "")).jwtClaimsSet
   return jwtClaimsSet.getStringClaim(claimName)
 }

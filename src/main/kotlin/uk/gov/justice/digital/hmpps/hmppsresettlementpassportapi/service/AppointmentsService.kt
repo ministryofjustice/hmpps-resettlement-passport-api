@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import jakarta.transaction.Transactional
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Address
@@ -115,9 +116,7 @@ class AppointmentsService(
       appointmentDate = appointment.dateAndTime,
       appointmentDuration = appointment.appointmentDuration,
       notes = appointment.notes ?: "",
-      createdBy = getClaimFromJWTTOken(auth, "name") ?: "system_user",
-      // TO DO: System_use is hard coded for testing- needs changing to below
-      // throw ServerWebInputException("Cannot get name from auth token")
+      createdBy = getClaimFromJWTToken(auth, "name") ?: throw ServerWebInputException("Cannot get name from auth token")
     )
     deliusContactService.addAppointmentToDatabase(appointmentEntity)
     return ResponseEntity.ok().build()

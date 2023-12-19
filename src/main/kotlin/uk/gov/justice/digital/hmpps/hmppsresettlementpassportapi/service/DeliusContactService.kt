@@ -34,7 +34,7 @@ class DeliusContactService(private val deliusContactRepository: DeliusContactRep
   }
   fun addAppointmentToDatabase(deliusContactEntity: DeliusContactEntity) {
     deliusContactRepository.save(deliusContactEntity)
-    }
+  }
 
   fun getCaseNotesByNomsId(nomsId: String, pathwayType: CaseNotePathway): List<PathwayCaseNote> {
     val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")

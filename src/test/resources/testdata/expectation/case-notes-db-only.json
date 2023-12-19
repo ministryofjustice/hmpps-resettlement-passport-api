@@ -1,0 +1,73 @@
+{
+  "content": [
+    {
+      "caseNoteId": "db-6",
+      "pathway": "FINANCE_AND_ID",
+      "creationDateTime": "2023-12-08T16:33:09.109",
+      "occurenceDateTime": "2023-12-08T16:33:09.109",
+      "createdBy": "Probation User 2",
+      "text": "text text text"
+    },
+    {
+      "caseNoteId": "db-1",
+      "pathway": "ACCOMMODATION",
+      "creationDateTime": "2023-12-05T17:44:30.091",
+      "occurenceDateTime": "2023-12-05T17:44:30.091",
+      "createdBy": "John Williams",
+      "text": "This is some case note text."
+    },
+    {
+      "caseNoteId": "db-2",
+      "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+      "creationDateTime": "2023-11-05T15:02:23.081",
+      "occurenceDateTime": "2023-11-05T15:02:23.081",
+      "createdBy": "Simon Johnson",
+      "text": "Some text related to case note."
+    },
+    {
+      "caseNoteId": "db-3",
+      "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+      "creationDateTime": "2023-10-01T09:53:01.001",
+      "occurenceDateTime": "2023-10-01T09:53:01.001",
+      "createdBy": "Julie Davis",
+      "text": "Random string."
+    },
+    {
+      "caseNoteId": "db-5",
+      "pathway": "EDUCATION_SKILLS_AND_WORK",
+      "creationDateTime": "2022-02-12T21:01:11.234",
+      "occurenceDateTime": "2022-02-12T21:01:11.234",
+      "createdBy": "Probation User 1",
+      "text": "Insert case note information here"
+    },
+    {
+      "caseNoteId": "db-4",
+      "pathway": "DRUGS_AND_ALCOHOL",
+      "creationDateTime": "2021-09-30T11:13:59.673",
+      "occurenceDateTime": "2021-09-30T11:13:59.673",
+      "createdBy": "System User",
+      "text": "Some text. Some text. Some text."
+    },
+    {
+      "caseNoteId": "db-7",
+      "pathway": "HEALTH",
+      "creationDateTime": "2020-01-09T02:09:23.476",
+      "occurenceDateTime": "2020-01-09T02:09:23.476",
+      "createdBy": "Jim White",
+      "text": "string test string"
+    },
+    {
+      "caseNoteId": "db-8",
+      "pathway": "HEALTH",
+      "creationDateTime": "2020-01-09T02:09:23.476",
+      "occurenceDateTime": "2020-01-09T02:09:23.476",
+      "createdBy": "Liz Murphy",
+      "text": "string test string - another health case note"
+    }
+  ],
+  "pageSize": 8,
+  "page": 0,
+  "sortName": "occurenceDateTime,DESC",
+  "totalElements": 8,
+  "last": true
+}

@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 
 data class PathwayCaseNote(
   val caseNoteId: String,
-  val pathway: String,
+  val pathway: CaseNotePathway,
   val creationDateTime: LocalDateTime,
   val occurenceDateTime: LocalDateTime,
   val createdBy: String,
@@ -24,3 +24,32 @@ data class CaseNotesMeta(
   val createdBy: String,
   val userId: String,
 )
+
+enum class CaseNotePathway {
+  All,
+  ACCOMMODATION,
+  ATTITUDES_THINKING_AND_BEHAVIOUR,
+  CHILDREN_FAMILIES_AND_COMMUNITY,
+  DRUGS_AND_ALCOHOL,
+  EDUCATION_SKILLS_AND_WORK,
+  FINANCE_AND_ID,
+  HEALTH,
+  GENERAL,
+}
+
+enum class CaseNoteType {
+  GEN,
+  RESET,
+}
+
+enum class CaseNoteSubType {
+  ACCOM,
+  ATB,
+  CHDFAMCOM,
+  DRUG_ALCOHOL,
+  ED_SKL_WRK,
+  FINANCE_ID,
+  HEALTH,
+  GEN,
+  RESET,
+}

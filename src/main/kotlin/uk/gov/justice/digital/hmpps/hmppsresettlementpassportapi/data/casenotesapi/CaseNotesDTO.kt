@@ -28,6 +28,7 @@ data class CaseNoteAmendment(
   val authorUserId: String?,
   val additionalNoteText: String,
 )
+
 data class CaseNotes(
   val content: List<CaseNote>? = listOf(),
   val last: Boolean,
@@ -39,17 +40,3 @@ data class CaseNotes(
   val numberOfElements: Int?,
   val empty: Boolean,
 )
-
-enum class PathwayMap(val id: String) {
-  ACCOM("ACCOMMODATION"),
-  ATB("ATTITUDES_THINKING_AND_BEHAVIOUR"),
-  CHDFAMCOM("CHILDREN_FAMILIES_AND_COMMUNITY"),
-  DRUG_ALCOHOL("DRUGS_AND_ALCOHOL"),
-  ED_SKL_WRK("EDUCATION_SKILLS_AND_WORK"),
-  FINANCE_ID("FINANCE_AND_ID"),
-  HEALTH("HEALTH"),
-  RESET("GENERAL"),
-  GEN("GENERAL"),
-}
-
-val PATHWAY_PARENT_TYPE: String = "RESET"

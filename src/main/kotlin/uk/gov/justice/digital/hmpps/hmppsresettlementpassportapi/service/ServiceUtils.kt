@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import com.nimbusds.jwt.JWTParser
 import org.apache.commons.text.WordUtils
 import org.slf4j.LoggerFactory
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.PathwayMap
 import kotlin.reflect.KClass
 
 private val log = LoggerFactory.getLogger(object {}::class.java.`package`.name)
@@ -68,19 +67,8 @@ fun <T> convertEnumSetToStringSet(enumSet: Set<T>?, other: String?): Set<String>
   return stringSet
 }
 
-fun isAllowedSubTypes(subType: String): Boolean {
-  val allowedPathwaySubTypes = mutableListOf<String>(
-    PathwayMap.FINANCE_ID.name,
-    PathwayMap.ED_SKL_WRK.name,
-    PathwayMap.DRUG_ALCOHOL.name,
-    PathwayMap.ATB.name,
-    PathwayMap.HEALTH.name,
-    PathwayMap.CHDFAMCOM.name,
-    PathwayMap.ACCOM.name,
-    PathwayMap.GEN.name,
-  )
-
-  return (allowedPathwaySubTypes.contains(subType))
+inline fun <reified E : Enum<E>> enumIncludes(name: String): Boolean {
+  return enumValues<E>().any { it.name == name }
 }
 
 fun getClaimFromJWTTOken(token: String, claimName: String): String? {

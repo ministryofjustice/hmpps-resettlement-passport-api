@@ -98,6 +98,8 @@ class IdApplicationService(
 
   @Transactional
   fun getIdApplicationByNomsIdAndIdApplicationID(nomsId: String, idApplicationId: Long): IdApplicationEntity? {
+    val prisoner = prisonerRepository.findByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     return idApplicationRepository.findByIdAndIsDeleted(idApplicationId, false)
       ?: throw ResourceNotFoundException("No active ID application found for prisoner with id $nomsId and Application Id $idApplicationId")
   }

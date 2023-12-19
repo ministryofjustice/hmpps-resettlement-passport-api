@@ -1,9 +1,9 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.LocalDateTime
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Category
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 
 data class Appointment(
   val title: String,

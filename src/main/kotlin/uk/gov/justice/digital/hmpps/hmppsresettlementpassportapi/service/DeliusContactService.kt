@@ -30,7 +30,7 @@ class DeliusContactService(private val deliusContactRepository: DeliusContactRep
     )
   }
 
-  fun addAppointmentToDatabase(deliusContactEntity: DeliusContactEntity){
+  fun addAppointmentToDatabase(deliusContactEntity: DeliusContactEntity) {
     deliusContactRepository.save(deliusContactEntity)
   }
 }

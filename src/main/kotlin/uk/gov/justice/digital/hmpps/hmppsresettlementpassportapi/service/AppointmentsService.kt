@@ -3,12 +3,13 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import jakarta.transaction.Transactional
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
-import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.*
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Address
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Appointment
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AppointmentsList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CreateAppointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.AppointmentDelius
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Category
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ContactType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DeliusContactEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
@@ -113,20 +114,19 @@ class AppointmentsService(
       createdDate = now,
       appointmentDate = appointment.dateAndTime,
       appointmentDuration = appointment.appointmentDuration,
-      notes = appointment.notes?:"",
-      createdBy = getClaimFromJWTTOken(auth, "name")?: "system_user"
-      //TO DO: System_use is hard coded for testing- needs changing to below
-      //throw ServerWebInputException("Cannot get name from auth token")
+      notes = appointment.notes ?: "",
+      createdBy = getClaimFromJWTTOken(auth, "name") ?: "system_user",
+      // TO DO: System_use is hard coded for testing- needs changing to below
+      // throw ServerWebInputException("Cannot get name from auth token")
     )
     deliusContactService.addAppointmentToDatabase(appointmentEntity)
     return ResponseEntity.ok().build()
   }
 
-  fun createNotes(appointment: CreateAppointment): String{
-    return  "###\nAppointment Title: ${appointment.appointmentTitle}\nContact: ${appointment.contact}\nOrganisation: ${appointment.organisation}\nLocation:\n  Building Name: ${appointment.location.buildingName}\n  " +
+  fun createNotes(appointment: CreateAppointment): String {
+    return "###\nAppointment Title: ${appointment.appointmentTitle}\nContact: ${appointment.contact}\nOrganisation: ${appointment.organisation}\nLocation:\n  Building Name: ${appointment.location.buildingName}\n  " +
       "Building Number: ${appointment.location.buildingNumber}\n  Street Name: ${appointment.location.streetName}\n  " +
       "District: ${appointment.location.district}\n  Town: ${appointment.location.town}\n  " +
       "County: ${appointment.location.county}\n  Postcode: ${appointment.location.postcode}\n###\n${appointment.notes}\n###"
-
   }
 }

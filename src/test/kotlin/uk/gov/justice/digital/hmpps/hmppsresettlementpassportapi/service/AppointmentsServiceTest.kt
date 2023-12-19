@@ -44,8 +44,14 @@ class AppointmentsServiceTest {
       "HD1 4ST",
     )
     val testAppointment = CreateAppointment(
-      Category.DRUGS_AND_ALCOHOL, "rehab", "AA", "Emily", testLocation,
-      LocalDateTime.parse("2023-12-14T18:13:00"), 90, "No notes",
+      Category.DRUGS_AND_ALCOHOL,
+      "rehab",
+      "AA",
+      "Emily",
+      testLocation,
+      LocalDateTime.parse("2023-12-14T18:13:00"),
+      90,
+      "No notes",
     )
     val parsedNotes =
       """
@@ -64,10 +70,8 @@ class AppointmentsServiceTest {
        ###
        No notes
        ###
-    """.trimIndent()
+      """.trimIndent()
     val response = appointmentsService.createNotes(testAppointment)
     Assertions.assertEquals(parsedNotes, response)
-
   }
-
 }

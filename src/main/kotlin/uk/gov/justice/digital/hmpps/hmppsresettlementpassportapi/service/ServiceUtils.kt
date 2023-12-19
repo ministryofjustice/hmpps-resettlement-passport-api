@@ -83,7 +83,7 @@ fun isAllowedSubTypes(subType: String): Boolean {
   return (allowedPathwaySubTypes.contains(subType))
 }
 
-fun getClaimFromJWTTOken(token: String, claimName: String): String?{
+fun getClaimFromJWTTOken(token: String, claimName: String): String? {
   val jwtClaimsSet = JWTParser.parse(token.replaceFirst("Bearer ", "")).jwtClaimsSet
   return jwtClaimsSet.getStringClaim(claimName)
 }

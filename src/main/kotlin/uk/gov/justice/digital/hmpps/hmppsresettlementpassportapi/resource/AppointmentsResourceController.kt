@@ -9,7 +9,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AppointmentsList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CreateAppointment
@@ -64,44 +71,43 @@ class AppointmentsResourceController(
     size: Int,
   ): AppointmentsList = appointmentsService.getAppointmentsByNomsId(nomsId, LocalDate.now(), LocalDate.now().plusDays(365), page, size)
 
-@PostMapping("/{nomsId}/appointments", produces = [MediaType.APPLICATION_JSON_VALUE])
-@Operation(summary = "Create appointment", description = "Create appointment")
-@ApiResponses(
-  value = [
-    ApiResponse(
-      responseCode = "200",
-      description = "Successful Operation",
-    ),
-    ApiResponse(
-      responseCode = "401",
-      description = "Unauthorized to access this endpoint",
-      content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-    ),
-    ApiResponse(
-      responseCode = "403",
-      description = "Forbidden, requires an appropriate role",
-      content = [
-        Content(
-          mediaType = MediaType.APPLICATION_JSON_VALUE,
-          schema = Schema(implementation = ErrorResponse::class),
-        ),
-      ],
-    ),
-    ApiResponse(
-      responseCode = "400",
-      description = "Incorrect information provided",
-      content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-    ),
-  ],
-)
-fun postAppointmentsByNomsId(
-  @Schema(example = "AXXXS", required = true)
-  @PathVariable("nomsId")
-  nomsId: String,
-  @RequestBody
-  appointment: CreateAppointment,
-  @RequestHeader("Authorization")
-  auth: String,
-) = appointmentsService.createAppointment(appointment, nomsId, auth)
+  @PostMapping("/{nomsId}/appointments", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(summary = "Create appointment", description = "Create appointment")
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [
+          Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "400",
+        description = "Incorrect information provided",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  fun postAppointmentsByNomsId(
+    @Schema(example = "AXXXS", required = true)
+    @PathVariable("nomsId")
+    nomsId: String,
+    @RequestBody
+    appointment: CreateAppointment,
+    @RequestHeader("Authorization")
+    auth: String,
+  ) = appointmentsService.createAppointment(appointment, nomsId, auth)
 }
-

@@ -105,7 +105,6 @@ class AppointmentsService(
     val now = LocalDateTime.now()
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val statusText = "Pending"
 
     val appointmentEntity = DeliusContactEntity(
       null,
@@ -116,7 +115,7 @@ class AppointmentsService(
       appointmentDate = appointment.dateAndTime,
       appointmentDuration = appointment.appointmentDuration,
       notes = appointment.notes ?: "",
-      createdBy = getClaimFromJWTToken(auth, "name") ?: throw ServerWebInputException("Cannot get name from auth token")
+      createdBy = getClaimFromJWTToken(auth, "name") ?: throw ServerWebInputException("Cannot get name from auth token"),
     )
     deliusContactService.addAppointmentToDatabase(appointmentEntity)
     return ResponseEntity.ok().build()

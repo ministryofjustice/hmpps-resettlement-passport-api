@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
 import io.mockk.every
 import io.mockk.mockkStatic
+import io.mockk.unmockkAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -157,6 +158,7 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
       .expectStatus().isEqualTo(200)
     val actualDeliusContact = deliusContactRepository.findAll()
     Assertions.assertEquals(expectedDeliusContact, actualDeliusContact)
+    unmockkAll()
   }
 
   @Test

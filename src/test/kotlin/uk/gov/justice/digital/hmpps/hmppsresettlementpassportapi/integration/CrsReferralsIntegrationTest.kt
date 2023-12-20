@@ -2,10 +2,8 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
-import org.springframework.test.web.reactive.server.expectBody
 import java.time.LocalDate
 import java.time.Period
-import java.util.*
 
 class CrsReferralsIntegrationTest : IntegrationTestBase() {
   @Test
@@ -17,7 +15,7 @@ class CrsReferralsIntegrationTest : IntegrationTestBase() {
     expectedOutput = expectedOutput.replace("REPLACE_WITH_AGE", "$age")
     val nomsId = "123"
     val crn = "abc"
-    offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     interventionsServiceApiMockServer.stubGet("/probation-case/$crn/referral", 200, "testdata/interventions-service-api/crs-referrals.json")
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetComByCrn(crn, 200)
@@ -55,7 +53,7 @@ class CrsReferralsIntegrationTest : IntegrationTestBase() {
   fun `Get CRS Referrals when nomsId not found`() {
     val nomsId = "123"
     val crn = "abc"
-    offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     interventionsServiceApiMockServer.stubGet("/probation-case/$crn/referral", 404, null)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetComByCrn(crn, 200)
@@ -78,7 +76,7 @@ class CrsReferralsIntegrationTest : IntegrationTestBase() {
     expectedOutput = expectedOutput.replace("REPLACE_WITH_AGE", "$age")
     val nomsId = "123"
     val crn = "abc"
-    offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     interventionsServiceApiMockServer.stubGet("/probation-case/$crn/referral", 200, "testdata/interventions-service-api/crs-referrals.json")
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetComByCrn(crn, 200)
@@ -101,7 +99,7 @@ class CrsReferralsIntegrationTest : IntegrationTestBase() {
     expectedOutput = expectedOutput.replace("REPLACE_WITH_AGE", "$age")
     val nomsId = "123"
     val crn = "abc"
-    offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     interventionsServiceApiMockServer.stubGet("/probation-case/$crn/referral", 200, "testdata/interventions-service-api/crs-referrals-no-matches.json")
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetComByCrn(crn, 200)
@@ -124,7 +122,7 @@ class CrsReferralsIntegrationTest : IntegrationTestBase() {
     expectedOutput = expectedOutput.replace("REPLACE_WITH_AGE", "$age")
     val nomsId = "123"
     val crn = "abc"
-    offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     interventionsServiceApiMockServer.stubGet("/probation-case/$crn/referral", 404, null)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetComByCrn(crn, 200)

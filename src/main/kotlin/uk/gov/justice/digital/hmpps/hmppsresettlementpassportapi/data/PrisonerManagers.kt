@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 
-data class PrisonOffenderManagers(
+data class PrisonerManagers(
   val primaryPom: String?,
   val secondaryPom: String?,
 )

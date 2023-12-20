@@ -19,7 +19,7 @@ services:
       - RESETTLEMENT_PASSPORT_API_CLIENT_ID=${RESETTLEMENT_PASSPORT_API_CLIENT_ID}
       - RESETTLEMENT_PASSPORT_API_CLIENT_SECRET=${RESETTLEMENT_PASSPORT_API_CLIENT_SECRET}
       - API_BASE_URL_PRISON_REGISTER=http://prison-register-api-stub:8080
-      - API_BASE_URL_OFFENDER_SEARCH=http://prisoner-offender-search-api-stub:8080
+      - API_BASE_URL_PRISONER_SEARCH=http://prisoner-search-api-stub:8080
       - API_BASE_URL_CVL=http://cvl-stub:8080
       - API_BASE_URL_ARN=http://arn-api-stub:8080
       - API_BASE_URL_PRISON=http://prison-api-stub:8080

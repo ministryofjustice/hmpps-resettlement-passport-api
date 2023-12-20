@@ -26,7 +26,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     val age = Period.between(dob, LocalDate.now()).years
     expectedOutput = expectedOutput.replace("REPLACE_WITH_AGE", "$age")
     val nomsId = "123"
-    offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
     prisonRegisterApiMockServer.stubPrisonList(200)
@@ -53,7 +53,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     val age = Period.between(dob, LocalDate.now()).years
     expectedOutput = expectedOutput.replace("REPLACE_WITH_AGE", "$age")
     val nomsId = "123"
-    offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
     prisonRegisterApiMockServer.stubPrisonList(200)
@@ -79,7 +79,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     val age = Period.between(dob, LocalDate.now()).years
     expectedOutput = expectedOutput.replace("REPLACE_WITH_AGE", "$age")
     val nomsId = "123"
-    offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
     deliusApiMockServer.stubGet("/probation-cases/$nomsId/crn", 404, null)
     prisonRegisterApiMockServer.stubPrisonList(200)
@@ -106,7 +106,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     val age = Period.between(dob, LocalDate.now()).years
     expectedOutput = expectedOutput.replace("REPLACE_WITH_AGE", "$age")
     val nomsId = "123"
-    offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
     prisonRegisterApiMockServer.stubPrisonList(200)
@@ -149,7 +149,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
   fun `Get Prisoner Details when nomsId not found`() {
     val nomsId = "abc"
 
-    offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 404)
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 404)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -164,7 +164,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
   fun `Get Prisoner Details - prison not active (RP2-557)`() {
     val nomsId = "123"
-    offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
     prisonRegisterApiMockServer.stubPrisonListNoData(200)

@@ -13,11 +13,11 @@ api:
     url:
       oauth: http://localhost:9091
       prison-register: http://localhost:9093
-      offender-search: http://localhost:9094
+      prisoner-search: http://localhost:9094
       cvl: http://localhost:9095
       arn: http://localhost:9097
       prison: http://localhost:9098
-      offender-case-notes: http://localhost:9099
+      case-notes: http://localhost:9099
       key-worker: http://localhost:9100
       allocation-manager: http://localhost:9101
       resettlement-passport-delius: http://localhost:9102

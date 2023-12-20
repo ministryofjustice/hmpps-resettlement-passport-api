@@ -46,8 +46,8 @@
     "whoIsAtRisk": "X, Y and Z are at risk",
     "natureOfRisk": "The nature of the risk is X",
     "riskImminence": "the risk is imminent and more probably in X situation",
-    "riskIncreaseFactors": "If offender in situation X the risk can be higher",
-    "riskMitigationFactors": "Giving offender therapy in X will reduce the risk",
+    "riskIncreaseFactors": "If prisoner in situation X the risk can be higher",
+    "riskMitigationFactors": "Giving prisoner therapy in X will reduce the risk",
     "riskInCommunity": {
       "HIGH": ["Children", "Public", "Known adult"],
       "MEDIUM": ["Staff"],

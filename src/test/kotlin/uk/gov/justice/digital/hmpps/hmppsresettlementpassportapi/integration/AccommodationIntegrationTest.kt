@@ -10,7 +10,7 @@ class AccommodationIntegrationTest : IntegrationTestBase() {
     val expectedOutput = readFile("testdata/expectation/accommodation-1.json")
     val nomsId = "G1458GV"
     val crn = "CRN1"
-    offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetAccommodationFromCRN(crn, true, 200)
     webTestClient.get()
@@ -28,7 +28,7 @@ class AccommodationIntegrationTest : IntegrationTestBase() {
     val expectedOutput = readFile("testdata/expectation/accommodation-2.json")
     val nomsId = "G1458GV"
     val crn = "CRN1"
-    offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetAccommodationFromCRN(crn, false, 200)
     webTestClient.get()
@@ -65,7 +65,7 @@ class AccommodationIntegrationTest : IntegrationTestBase() {
   fun `Get All Appointments  Internal Error`() {
     val nomsId = "G1458GV"
     val crn = "CRN1"
-    offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetAccommodationFromCRN(crn, false, 500)
     webTestClient.get()
@@ -82,7 +82,7 @@ class AccommodationIntegrationTest : IntegrationTestBase() {
   fun `Get Accommodation when nomsId not found`() {
     val nomsId = "G1458GV"
     val crn = "CRN1"
-    offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 404)
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 404)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetAccommodationFromCRN(crn, true, 404)
     webTestClient.get()

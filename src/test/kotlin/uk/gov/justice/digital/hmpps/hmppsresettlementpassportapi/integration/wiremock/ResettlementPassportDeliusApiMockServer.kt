@@ -44,12 +44,12 @@ class ResettlementPassportDeliusApiMockServer : WireMockServerBase(9102) {
     val formattedEndDate = LocalDate.now().plusDays(365).toString()
     stubFor(
       get("/appointments/$crn?page=0&size=1000&startDate=$formattedStartDate&endDate=$formattedEndDate").willReturn(
-          aResponse()
-            .withHeader("Content-Type", "application/json")
-            .withBody(
-              appointmentsListJSON,
-            )
-            .withStatus(200)
+        aResponse()
+          .withHeader("Content-Type", "application/json")
+          .withBody(
+            appointmentsListJSON,
+          )
+          .withStatus(200),
       ),
     )
   }

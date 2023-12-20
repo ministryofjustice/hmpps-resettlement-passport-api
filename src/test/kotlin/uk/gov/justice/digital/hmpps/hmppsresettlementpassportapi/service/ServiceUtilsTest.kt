@@ -132,7 +132,7 @@ class ServiceUtilsTest {
     Arguments.of(
       """
         ###
-        AppointmentTitle: My appointment title
+        Appointment Title: My appointment title
         Contact: John
         Organisation: Resettlement agency
         Location: 
@@ -148,13 +148,13 @@ class ServiceUtilsTest {
         free text etc
         ###
       """.trimIndent(),
-      listOf("AppointmentTitle: My appointment title", "Contact: John", "Organisation: Resettlement agency", "Location: ", "  Building Name: The office", "  Building Number: 123", "  Street Name: Main Street", "  District:", "  Town: Leeds", "  County: West Yorkshire", "  Postcode: LS1 1AA"),
+      listOf("Appointment Title: My appointment title", "Contact: John", "Organisation: Resettlement agency", "Location: ", "  Building Name: The office", "  Building Number: 123", "  Street Name: Main Street", "  District:", "  Town: Leeds", "  County: West Yorkshire", "  Postcode: LS1 1AA"),
       false,
     ),
     Arguments.of(
       """
         ###
-        AppointmentTitle: ### My appointment title ###
+        Appointment Title: ### My appointment title ###
         Contact: John
         Organisation: Resettlement agency
         Location: 
@@ -171,7 +171,7 @@ class ServiceUtilsTest {
         free ### text etc
         ###
       """.trimIndent(),
-      listOf("AppointmentTitle: ### My appointment title ###", "Contact: John", "Organisation: Resettlement agency", "Location: ", "  Building Name: ###", "  Building Number: 123", "  Street Name: Main ### Street", "  District: !\"£$%^&*()-_=+{}[]@'#~?/><,.`¬±|\\", "  Town: Leeds", "  County:", "  Postcode: LS1 #"),
+      listOf("Appointment Title: ### My appointment title ###", "Contact: John", "Organisation: Resettlement agency", "Location: ", "  Building Name: ###", "  Building Number: 123", "  Street Name: Main ### Street", "  District: !\"£$%^&*()-_=+{}[]@'#~?/><,.`¬±|\\", "  Town: Leeds", "  County:", "  Postcode: LS1 #"),
       false,
     ),
   )
@@ -190,7 +190,7 @@ class ServiceUtilsTest {
     Arguments.of(listOf<String>(), "section", null, true),
     Arguments.of(listOf("section: "), "section", "", false),
     Arguments.of(listOf("section: Test string", "another section: 1234", "section 1: 1234"), "section", "Test string", false),
-    Arguments.of(getTestCustomFields(), "AppointmentTitle", "### My appointment title ###", false),
+    Arguments.of(getTestCustomFields(), "Appointment Title", "### My appointment title ###", false),
     Arguments.of(getTestCustomFields(), "Contact", "John", false),
     Arguments.of(getTestCustomFields(), "Organisation", "Resettlement agency", false),
     Arguments.of(getTestCustomFields(), "  Building Name", "###", false),
@@ -216,7 +216,7 @@ class ServiceUtilsTest {
     Arguments.of(listOf<String>(), "section", null, true),
     Arguments.of(listOf("section: "), "section", null, false),
     Arguments.of(listOf("section: Test string", "another section: 1234", "section 1: 1234"), "section", "Test string", false),
-    Arguments.of(getTestCustomFields(), "AppointmentTitle", "### My appointment title ###", false),
+    Arguments.of(getTestCustomFields(), "Appointment Title", "### My appointment title ###", false),
     Arguments.of(getTestCustomFields(), "Contact", "John", false),
     Arguments.of(getTestCustomFields(), "Organisation", "Resettlement agency", false),
     Arguments.of(getTestCustomFields(), "  Building Name", "###", false),
@@ -229,7 +229,7 @@ class ServiceUtilsTest {
   )
 
   private fun getTestCustomFields() = listOf(
-    "AppointmentTitle: ### My appointment title ###",
+    "Appointment Title: ### My appointment title ###",
     "Contact: John",
     "Organisation: Resettlement agency",
     "Location: ",

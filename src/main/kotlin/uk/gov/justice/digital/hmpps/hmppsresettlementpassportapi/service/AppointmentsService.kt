@@ -1,15 +1,22 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import jakarta.transaction.Transactional
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Address
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Appointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AppointmentsList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CreateAppointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.AppointmentDelius
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ContactType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DeliusContactEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -18,8 +25,10 @@ import java.time.format.DateTimeFormatter
 class AppointmentsService(
   private val prisonerRepository: PrisonerRepository,
   private val rpDeliusApiService: ResettlementPassportDeliusApiService,
-) {
+  private val deliusContactService: DeliusContactService,
 
+) {
+  @Transactional
   fun getAppointmentsByNomsId(
     nomsId: String,
     startDate: LocalDate,
@@ -89,5 +98,33 @@ class AppointmentsService(
       appointmentList.add(appointment)
     }
     return appointmentList
+  }
+
+  @Transactional
+  fun createAppointment(appointment: CreateAppointment, nomsId: String, auth: String): ResponseEntity<Void> {
+    val now = LocalDateTime.now()
+    val prisoner = prisonerRepository.findByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+
+    val appointmentEntity = DeliusContactEntity(
+      null,
+      prisoner,
+      category = appointment.appointmentType,
+      contactType = ContactType.APPOINTMENT,
+      createdDate = now,
+      appointmentDate = appointment.dateAndTime,
+      appointmentDuration = appointment.appointmentDuration,
+      notes = appointment.notes ?: "",
+      createdBy = getClaimFromJWTToken(auth, "name") ?: throw ServerWebInputException("Cannot get name from auth token"),
+    )
+    deliusContactService.addAppointmentToDatabase(appointmentEntity)
+    return ResponseEntity.ok().build()
+  }
+
+  fun createNotes(appointment: CreateAppointment): String {
+    return "###\nAppointment Title: ${appointment.appointmentTitle}\nContact: ${appointment.contact}\nOrganisation: ${appointment.organisation}\nLocation:\n  Building Name: ${appointment.location.buildingName}\n  " +
+      "Building Number: ${appointment.location.buildingNumber}\n  Street Name: ${appointment.location.streetName}\n  " +
+      "District: ${appointment.location.district}\n  Town: ${appointment.location.town}\n  " +
+      "County: ${appointment.location.county}\n  Postcode: ${appointment.location.postcode}\n###\n${appointment.notes}\n###"
   }
 }

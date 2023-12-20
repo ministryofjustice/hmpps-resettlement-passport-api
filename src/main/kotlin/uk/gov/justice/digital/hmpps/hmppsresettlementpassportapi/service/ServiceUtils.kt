@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import com.nimbusds.jwt.JWTParser
 import org.apache.commons.text.WordUtils
 import org.slf4j.LoggerFactory
 import kotlin.reflect.KClass
@@ -68,4 +69,9 @@ fun <T> convertEnumSetToStringSet(enumSet: Set<T>?, other: String?): Set<String>
 
 inline fun <reified E : Enum<E>> enumIncludes(name: String): Boolean {
   return enumValues<E>().any { it.name == name }
+}
+
+fun getClaimFromJWTToken(token: String, claimName: String): String? {
+  val jwtClaimsSet = JWTParser.parse(token.replaceFirst("Bearer ", "")).jwtClaimsSet
+  return jwtClaimsSet.getStringClaim(claimName)
 }

@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import com.nimbusds.jwt.JWTParser
 import jakarta.transaction.Transactional
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
@@ -28,8 +27,7 @@ class PathwayPatchService(
     )
     // If this is a Nomis user we use the Case Notes API, if this is a Delius user then store in database for now -
     // in the future we will also push them to Delius.
-    val jwtClaimsSet = JWTParser.parse(auth.replaceFirst("Bearer ", "")).jwtClaimsSet
-    val authSource = jwtClaimsSet.getStringClaim("auth_source").lowercase()
+    val authSource = getClaimFromJWTToken(auth, "auth_source")?.lowercase()
 
     when (authSource) {
       "nomis" -> {
@@ -41,7 +39,7 @@ class PathwayPatchService(
         )
       }
       "delius" -> {
-        val name = jwtClaimsSet.getStringClaim("name") ?: throw ServerWebInputException("JWT token must include a claim for 'name'")
+        val name = getClaimFromJWTToken(auth, "name") ?: throw ServerWebInputException("JWT token must include a claim for 'name'")
         deliusContactService.addDeliusCaseNoteToDatabase(nomsId, pathwayStatusAndCaseNote, name)
       }
       else -> {

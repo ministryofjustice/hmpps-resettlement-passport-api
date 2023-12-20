@@ -1,9 +1,28 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
+import io.mockk.every
+import io.mockk.mockkStatic
+import io.mockk.unmockkAll
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.MediaType
 import org.springframework.test.context.jdbc.Sql
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CreateAppointment
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CreateAppointmentAddress
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Category
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ContactType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DeliusContactEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.DeliusContactRepository
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 class AppointmentsIntegrationTest : IntegrationTestBase() {
+
+  @Autowired
+  private lateinit var deliusContactRepository: DeliusContactRepository
+
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
   fun `Get All Appointments happy path`() {
@@ -119,5 +138,92 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody()
       .jsonPath("status").isEqualTo(404)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoners-2.sql")
+  fun `Create Appointment happy path`() {
+    val fakeNow = LocalDateTime.parse("2023-12-17T12:00:01")
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+    val nomsId = "G1458GV"
+    val expectedDeliusContact = listOf(DeliusContactEntity(id = 1, prisoner = PrisonerEntity(id = 1, nomsId = "G1458GV", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), category = Category.DRUGS_AND_ALCOHOL, contactType = ContactType.APPOINTMENT, createdBy = "RESETTLEMENTPASSPORT_ADM", createdDate = fakeNow, notes = "Remember to bring ID", appointmentDate = LocalDateTime.parse("2023-08-17T12:00:01"), appointmentDuration = 120))
+    webTestClient.post()
+      .uri("/resettlement-passport/prisoner/$nomsId/appointments?page=0&size=50")
+      .bodyValue(
+        CreateAppointment(appointmentType = Category.DRUGS_AND_ALCOHOL, appointmentTitle = "AA", organisation = "AA", contact = "Hannah Smith", location = CreateAppointmentAddress(buildingName = "Cloth Hall", buildingNumber = "N/A", streetName = "Cloth Hall Street", county = "West Yorkshire", district = "", town = "Huddersfield", postcode = "HD3 5BX"), dateAndTime = LocalDateTime.parse("2023-08-17T12:00:01"), appointmentDuration = 120, notes = "Remember to bring ID"),
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isEqualTo(200)
+    val actualDeliusContact = deliusContactRepository.findAll()
+    Assertions.assertEquals(expectedDeliusContact, actualDeliusContact)
+    unmockkAll()
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoners-2.sql")
+  fun `Create Appointment invalid input`() {
+    val nomsId = "G1458GV"
+    webTestClient.post()
+      .uri("/resettlement-passport/prisoner/$nomsId/appointments?page=0&size=50")
+      .contentType(MediaType.APPLICATION_JSON)
+      .bodyValue(
+        """{
+          "appointmentTyp": "DRUGS_AND_ALCOHOL",
+          "appointmentTitle": "rehab",
+          "organisation": "AA",
+          "contact": "Emily",
+          "location": {
+          "buildingName": "",
+          "buildingNumber": "8",
+          "streetName": "Hayes Court",
+          "district": "",
+          "town": "Huddersfield",
+          "county": "West Yorks",
+          "postcode": "HD1 4ST"
+        },
+          "dateAndTime": "2023-12-14T18:13:00",
+          "appointmentDuration": 2,
+          "notes": "Notes for testing"
+        }""",
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isEqualTo(400)
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(400)
+      .jsonPath("developerMessage").toString().contains("Incorrect information provided")
+  }
+
+  @Test
+  fun `Post appointment- forbidden`() {
+    val nomsId = "G1458GV"
+    webTestClient.post()
+      .uri("/resettlement-passport/prisoner/$nomsId/appointments?page=0&size=50")
+      .bodyValue(
+        CreateAppointment(appointmentType = Category.DRUGS_AND_ALCOHOL, appointmentTitle = "AA", organisation = "AA", contact = "Hannah Smith", location = CreateAppointmentAddress(buildingName = "Cloth Hall", buildingNumber = "N/A", streetName = "Cloth Hall Street", county = "West Yorkshire", district = "", town = "Huddersfield", postcode = "HD3 5BX"), dateAndTime = LocalDateTime.parse("2023-08-17T12:00:01"), appointmentDuration = 120, notes = "Remember to bring ID"),
+      )
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(403)
+      .jsonPath("developerMessage").toString().contains("Forbidden, requires an appropriate role")
+  }
+
+  @Test
+  fun `Post appointment- unauthorized`() {
+    val nomsId = "G1458GV"
+    // Failing to set a valid Authorization header should result in 401 response
+    webTestClient.post()
+      .uri("/resettlement-passport/prisoner/$nomsId/appointments?page=0&size=50")
+      .bodyValue(
+        CreateAppointment(appointmentType = Category.DRUGS_AND_ALCOHOL, appointmentTitle = "AA", organisation = "AA", contact = "Hannah Smith", location = CreateAppointmentAddress(buildingName = "Cloth Hall", buildingNumber = "N/A", streetName = "Cloth Hall Street", county = "West Yorkshire", district = "", town = "Huddersfield", postcode = "HD3 5BX"), dateAndTime = LocalDateTime.parse("2023-08-17T12:00:01"), appointmentDuration = 120, notes = "Remember to bring ID"),
+      )
+      .exchange()
+      .expectStatus().isEqualTo(401)
   }
 }

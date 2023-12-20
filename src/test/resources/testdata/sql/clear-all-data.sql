@@ -1,8 +1,16 @@
 DELETE from pathway_status;
+ALTER SEQUENCE pathway_status_id_seq RESTART WITH 1;
 DELETE from assessment_id_type;
+ALTER SEQUENCE assessment_id_type_id_seq RESTART WITH 1;
 DELETE from assessment;
+ALTER SEQUENCE assessment_id_seq RESTART WITH 1;
 DELETE from bank_application_status_log;
+ALTER SEQUENCE bank_application_status_log_id_seq RESTART WITH 1;
 DELETE from bank_application;
+ALTER SEQUENCE bank_application_id_seq RESTART WITH 1;
 DELETE from id_application;
+ALTER SEQUENCE id_application_id_seq RESTART WITH 1;
 DELETE from delius_contact;
+ALTER SEQUENCE delius_contact_id_seq RESTART WITH 1;
 DELETE from prisoner;
+ALTER SEQUENCE prisoner_id_seq RESTART WITH 1;

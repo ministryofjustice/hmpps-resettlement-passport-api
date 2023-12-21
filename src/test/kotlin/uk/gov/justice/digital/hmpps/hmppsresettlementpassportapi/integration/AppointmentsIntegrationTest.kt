@@ -26,7 +26,7 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
   fun `Get All Appointments happy path`() {
-    val expectedOutput = readFile("testdata/expectation/appointments.json")
+    val expectedOutput = readFile("testdata/expectation/appointments-1.json")
     val nomsId = "G1458GV"
     val crn = "CRN1"
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
@@ -138,6 +138,40 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody()
       .jsonPath("status").isEqualTo(404)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-6.sql")
+  fun `Get All Appointments happy path - including database`() {
+    val expectedOutput = readFile("testdata/expectation/appointments-2.json")
+    val nomsId = "G1458GV"
+    val crn = "CRN1"
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
+    deliusApiMockServer.stubGetAppointmentsFromCRN(crn, 200)
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/appointments?page=0&size=50")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-6.sql")
+  fun `Get All Appointments happy path - only database`() {
+    val expectedOutput = readFile("testdata/expectation/appointments-3.json")
+    val nomsId = "G1458GV"
+    val crn = "CRN1"
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
+    deliusApiMockServer.stubGetAppointmentsFromCRNNoResults(crn)
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/appointments?page=0&size=50")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput)
   }
 
   @Test

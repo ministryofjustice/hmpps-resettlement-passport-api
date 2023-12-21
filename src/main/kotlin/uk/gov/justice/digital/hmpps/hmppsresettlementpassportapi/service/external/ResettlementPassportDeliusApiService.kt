@@ -9,6 +9,7 @@ import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.MappaData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.AccommodationsDelius
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.AppointmentDelius
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.AppointmentsDeliusList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.CaseIdentifiers
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.Manager
@@ -92,14 +93,14 @@ class ResettlementPassportDeliusApiService(
     return "${communityManager.name.forename} ${communityManager.name.surname}".convertNameToTitleCase()
   }
 
-  fun fetchAppointments(nomsId: String, crn: String, startDate: LocalDate, endDate: LocalDate, page: Int, size: Int): AppointmentsDeliusList {
-    return rpDeliusWebClientCredentials.get()
+  fun fetchAppointments(nomsId: String, crn: String, startDate: LocalDate, endDate: LocalDate): List<AppointmentDelius> {
+    val appointments = rpDeliusWebClientCredentials.get()
       .uri(
         "/appointments/{crn}?page={page}&size={size}&startDate={startDate}&endDate={endDate}",
         mapOf(
           "crn" to crn,
-          "size" to size,
-          "page" to page,
+          "size" to 1000, // Assume there will never be more than 1000 appointments
+          "page" to 0,
           "startDate" to startDate.toString(),
           "endDate" to endDate.toString(),
         ),
@@ -107,6 +108,8 @@ class ResettlementPassportDeliusApiService(
       .retrieve().onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("NomsId $nomsId / CRN  $crn not found") })
       .bodyToMono<AppointmentsDeliusList>()
       .block() ?: throw RuntimeException("Unexpected null returned from request.")
+
+    return appointments.results
   }
 
   fun fetchAccommodation(nomsId: String, crn: String): AccommodationsDelius {

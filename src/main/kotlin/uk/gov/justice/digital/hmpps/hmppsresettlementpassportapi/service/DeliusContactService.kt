@@ -38,15 +38,16 @@ class DeliusContactService(private val deliusContactRepository: DeliusContactRep
 
   fun getCaseNotesByNomsId(nomsId: String, pathwayType: CaseNotePathway): List<PathwayCaseNote> {
     val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+    val contactType = ContactType.CASE_NOTE
     val deliusContacts: List<DeliusContactEntity> = when (pathwayType) {
-      CaseNotePathway.All -> deliusContactRepository.findByPrisoner(prisoner)
-      CaseNotePathway.ACCOMMODATION -> deliusContactRepository.findByPrisonerAndCategory(prisoner, Category.ACCOMMODATION)
-      CaseNotePathway.ATTITUDES_THINKING_AND_BEHAVIOUR -> deliusContactRepository.findByPrisonerAndCategory(prisoner, Category.ATTITUDES_THINKING_AND_BEHAVIOUR)
-      CaseNotePathway.CHILDREN_FAMILIES_AND_COMMUNITY -> deliusContactRepository.findByPrisonerAndCategory(prisoner, Category.CHILDREN_FAMILIES_AND_COMMUNITY)
-      CaseNotePathway.DRUGS_AND_ALCOHOL -> deliusContactRepository.findByPrisonerAndCategory(prisoner, Category.DRUGS_AND_ALCOHOL)
-      CaseNotePathway.EDUCATION_SKILLS_AND_WORK -> deliusContactRepository.findByPrisonerAndCategory(prisoner, Category.EDUCATION_SKILLS_AND_WORK)
-      CaseNotePathway.FINANCE_AND_ID -> deliusContactRepository.findByPrisonerAndCategory(prisoner, Category.FINANCE_AND_ID)
-      CaseNotePathway.HEALTH -> deliusContactRepository.findByPrisonerAndCategory(prisoner, Category.HEALTH)
+      CaseNotePathway.All -> deliusContactRepository.findByPrisonerAndContactType(prisoner, contactType)
+      CaseNotePathway.ACCOMMODATION -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.ACCOMMODATION)
+      CaseNotePathway.ATTITUDES_THINKING_AND_BEHAVIOUR -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.ATTITUDES_THINKING_AND_BEHAVIOUR)
+      CaseNotePathway.CHILDREN_FAMILIES_AND_COMMUNITY -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.CHILDREN_FAMILIES_AND_COMMUNITY)
+      CaseNotePathway.DRUGS_AND_ALCOHOL -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.DRUGS_AND_ALCOHOL)
+      CaseNotePathway.EDUCATION_SKILLS_AND_WORK -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.EDUCATION_SKILLS_AND_WORK)
+      CaseNotePathway.FINANCE_AND_ID -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.FINANCE_AND_ID)
+      CaseNotePathway.HEALTH -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.HEALTH)
       CaseNotePathway.GENERAL -> emptyList()
     }
     return mapDeliusContactsToPathwayCaseNotes(deliusContacts)
@@ -74,5 +75,10 @@ class DeliusContactService(private val deliusContactRepository: DeliusContactRep
     Category.FINANCE_AND_ID -> CaseNotePathway.FINANCE_AND_ID
     Category.HEALTH -> CaseNotePathway.HEALTH
     Category.BENEFITS -> throw IllegalArgumentException("Error retrieving case notes - cannot use BENEFITS category with a case note") // should never happen
+  }
+
+  fun getAppointments(nomsId: String): List<DeliusContactEntity> {
+    val prisonerEntity = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+    return deliusContactRepository.findByPrisonerAndContactType(prisonerEntity, ContactType.APPOINTMENT)
   }
 }

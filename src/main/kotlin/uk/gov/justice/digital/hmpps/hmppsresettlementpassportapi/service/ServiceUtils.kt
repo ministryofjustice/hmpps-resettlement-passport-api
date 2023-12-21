@@ -3,6 +3,8 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import com.nimbusds.jwt.JWTParser
 import org.apache.commons.text.WordUtils
 import org.slf4j.LoggerFactory
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AppointmentsService.Companion.SECTION_DELIMITER
+import java.lang.IllegalArgumentException
 import kotlin.reflect.KClass
 
 private val log = LoggerFactory.getLogger(object {}::class.java.`package`.name)
@@ -75,3 +77,18 @@ fun getClaimFromJWTToken(token: String, claimName: String): String? {
   val jwtClaimsSet = JWTParser.parse(token.replaceFirst("Bearer ", "")).jwtClaimsSet
   return jwtClaimsSet.getStringClaim(claimName)
 }
+
+fun getCustomFieldsFromNotes(notes: String, id: Long?): List<String> {
+  try {
+    return notes.split(Regex("(^|\\n)$SECTION_DELIMITER\\n"))[1].split(Regex("\\n"))
+  } catch (e: Exception) {
+    throw IllegalArgumentException("Cannot extract custom fields from notes in database for delius_contact with id [$id]", e)
+  }
+}
+
+fun extractSectionFromNotes(customFields: List<String>, section: String, id: Long?): String {
+  val title = customFields.find { it.startsWith("$section: ") }?.removePrefix("$section: ")
+  return title?.trim() ?: throw IllegalArgumentException("Cannot get $section from notes in database for delius_contact with ID [$id]")
+}
+
+fun extractSectionFromNotesTrimToNull(customFields: List<String>, section: String, id: Long?) = extractSectionFromNotes(customFields, section, id).ifBlank { null }

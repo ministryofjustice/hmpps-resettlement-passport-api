@@ -1,0 +1,836 @@
+{
+  "results": [
+    {
+      "title": "Appointment 2",
+      "contact": "Another person",
+      "date": "2020-06-01",
+      "time": "17:00:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": "200",
+        "streetName": "High Street",
+        "district": "Legal District",
+        "town": "York",
+        "county": "North Yorkshire",
+        "postcode": "YO99 9ZZ",
+        "description": null
+      }
+    },
+    {
+      "title": "Appointment with CRS Staff (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-05-22",
+      "time": "13:42:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": null
+      }
+    },
+    {
+      "title": "Appointment with CRS Staff (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-05-22",
+      "time": "13:47:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": null
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-05-22",
+      "time": "14:13:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-05-22",
+      "time": "14:16:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-05-22",
+      "time": "14:19:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-05-22",
+      "time": "14:28:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-05-22",
+      "time": "14:32:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Staff (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-05-22",
+      "time": "14:40:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": null
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-06-15",
+      "time": "15:00:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-06-25",
+      "time": "15:00:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-06",
+      "time": "01:01:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Staff (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-10",
+      "time": "10:08:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Staff (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-11",
+      "time": "11:20:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Staff (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-11",
+      "time": "11:23:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Staff (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-11",
+      "time": "13:38:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Staff (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-11",
+      "time": "13:58:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-11",
+      "time": "13:58:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Staff (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-11",
+      "time": "14:00:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-11",
+      "time": "14:02:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-11",
+      "time": "14:05:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-11",
+      "time": "15:00:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-11",
+      "time": "15:10:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-12",
+      "time": "13:58:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-12",
+      "time": "15:52:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-13",
+      "time": "14:00:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-16",
+      "time": "13:00:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Staff (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-21",
+      "time": "13:00:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Staff (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-25",
+      "time": "15:40:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Staff (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-26",
+      "time": "13:00:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Staff (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-26",
+      "time": "17:00:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-26",
+      "time": "17:15:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-26",
+      "time": "17:23:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-26",
+      "time": "17:25:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-26",
+      "time": "17:30:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-27",
+      "time": "15:40:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-07-27",
+      "time": "15:47:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Staff (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-08-20",
+      "time": "01:00:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Staff (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-08-31",
+      "time": "01:34:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Staff (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-08-31",
+      "time": "02:32:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-08-31",
+      "time": "03:03:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-08-31",
+      "time": "04:35:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-08-31",
+      "time": "05:01:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-08-31",
+      "time": "07:07:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-08-31",
+      "time": "08:08:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-08-31",
+      "time": "10:09:00",
+      "location": {
+        "buildingName": "Palm Court",
+        "buildingNumber": "10",
+        "streetName": "Palm Street",
+        "district": "PalmPlace",
+        "town": "Palm Town",
+        "county": "London",
+        "postcode": "EC4",
+        "description": null
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-08-31",
+      "time": "11:09:00",
+      "location": {
+        "buildingName": "Palm Court",
+        "buildingNumber": "10",
+        "streetName": "Palm Street",
+        "district": "PalmPlace",
+        "town": "Palm Town",
+        "county": "London",
+        "postcode": "EC4",
+        "description": null
+      }
+    },
+    {
+      "title": "Appointment with CRS Provider (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-09-02",
+      "time": "01:01:00",
+      "location": {
+        "buildingName": "Palm Court",
+        "buildingNumber": "10",
+        "streetName": "Palm Street",
+        "district": "PalmPlace",
+        "town": "Palm Town",
+        "county": "London",
+        "postcode": "EC4",
+        "description": null
+      }
+    },
+    {
+      "title": "Appointment with CRS Staff (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-09-07",
+      "time": "16:35:00",
+      "location": {
+        "buildingName": "New Court",
+        "buildingNumber": "10",
+        "streetName": "New Street",
+        "district": "NewPlace",
+        "town": "New Town",
+        "county": "London",
+        "postcode": "EC2",
+        "description": null
+      }
+    },
+    {
+      "title": "Appointment with CRS Staff (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-10-31",
+      "time": "01:34:00",
+      "location": {
+        "buildingName": "New Court",
+        "buildingNumber": "10",
+        "streetName": "New Street",
+        "district": "NewPlace",
+        "town": "New Town",
+        "county": "London",
+        "postcode": "EC2",
+        "description": null
+      }
+    },
+    {
+      "title": "Appointment with CRS Staff (NS)",
+      "contact": "Unallocated Staff",
+      "date": "2023-11-25",
+      "time": "13:00:00",
+      "location": {
+        "buildingName": null,
+        "buildingNumber": null,
+        "streetName": null,
+        "district": null,
+        "town": null,
+        "county": null,
+        "postcode": null,
+        "description": "CRS Provider Location"
+      }
+    },
+    {
+      "title": "Appointment 1",
+      "contact": "Person",
+      "date": "2024-01-12",
+      "time": "13:05:00",
+      "location": {
+        "buildingName": "Office",
+        "buildingNumber": "100",
+        "streetName": "Main Street",
+        "district": null,
+        "town": "Bradford",
+        "county": "West Yorkshire",
+        "postcode": "BD1 1AA",
+        "description": null
+      }
+    }
+  ]
+}

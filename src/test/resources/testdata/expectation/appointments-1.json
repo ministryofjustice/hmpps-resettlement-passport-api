@@ -800,9 +800,5 @@
         "description": null
       }
     }
-  ],
-  "totalElements": 50,
-  "totalPages": 1,
-  "page": 0,
-  "size": 50
+  ]
 }

@@ -138,7 +138,7 @@ class AppointmentsService(
       createdDate = now,
       appointmentDate = appointment.dateAndTime,
       appointmentDuration = appointment.appointmentDuration,
-      notes = appointment.notes ?: "",
+      notes = createNotes(appointment),
       createdBy = getClaimFromJWTToken(auth, "name") ?: throw ServerWebInputException("Cannot get name from auth token"),
     )
     deliusContactService.addAppointmentToDatabase(appointmentEntity)

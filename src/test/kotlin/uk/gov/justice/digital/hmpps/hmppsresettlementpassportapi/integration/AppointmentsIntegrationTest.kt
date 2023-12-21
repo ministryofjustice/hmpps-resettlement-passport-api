@@ -181,7 +181,23 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val nomsId = "G1458GV"
-    val expectedDeliusContact = listOf(DeliusContactEntity(id = 1, prisoner = PrisonerEntity(id = 1, nomsId = "G1458GV", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), category = Category.DRUGS_AND_ALCOHOL, contactType = ContactType.APPOINTMENT, createdBy = "RESETTLEMENTPASSPORT_ADM", createdDate = fakeNow, notes = "Remember to bring ID", appointmentDate = LocalDateTime.parse("2023-08-17T12:00:01"), appointmentDuration = 120))
+    val expectedDeliusContact = listOf(DeliusContactEntity(id = 1, prisoner = PrisonerEntity(id = 1, nomsId = "G1458GV", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), category = Category.DRUGS_AND_ALCOHOL, contactType = ContactType.APPOINTMENT, createdBy = "RESETTLEMENTPASSPORT_ADM", createdDate = fakeNow, notes = """
+      ###
+      Appointment Title: AA
+      Contact: Hannah Smith
+      Organisation: AA
+      Location:
+        Building Name: Cloth Hall
+        Building Number: N/A
+        Street Name: Cloth Hall Street
+        District: 
+        Town: Huddersfield
+        County: West Yorkshire
+        Postcode: HD3 5BX
+      ###
+      Remember to bring ID
+      ###
+    """.trimIndent(), appointmentDate = LocalDateTime.parse("2023-08-17T12:00:01"), appointmentDuration = 120))
     webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/appointments?page=0&size=50")
       .bodyValue(

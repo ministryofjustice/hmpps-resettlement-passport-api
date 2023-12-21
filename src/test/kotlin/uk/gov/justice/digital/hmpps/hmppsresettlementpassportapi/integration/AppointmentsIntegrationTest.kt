@@ -181,7 +181,10 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val nomsId = "G1458GV"
-    val expectedDeliusContact = listOf(DeliusContactEntity(id = 1, prisoner = PrisonerEntity(id = 1, nomsId = "G1458GV", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), category = Category.DRUGS_AND_ALCOHOL, contactType = ContactType.APPOINTMENT, createdBy = "RESETTLEMENTPASSPORT_ADM", createdDate = fakeNow, notes = """
+    val expectedDeliusContact = listOf(
+      DeliusContactEntity(
+        id = 1, prisoner = PrisonerEntity(id = 1, nomsId = "G1458GV", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), category = Category.DRUGS_AND_ALCOHOL, contactType = ContactType.APPOINTMENT, createdBy = "RESETTLEMENTPASSPORT_ADM", createdDate = fakeNow,
+        notes = """
       ###
       Appointment Title: AA
       Contact: Hannah Smith
@@ -197,7 +200,10 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
       ###
       Remember to bring ID
       ###
-    """.trimIndent(), appointmentDate = LocalDateTime.parse("2023-08-17T12:00:01"), appointmentDuration = 120))
+        """.trimIndent(),
+        appointmentDate = LocalDateTime.parse("2023-08-17T12:00:01"), appointmentDuration = 120,
+      ),
+    )
     webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/appointments?page=0&size=50")
       .bodyValue(

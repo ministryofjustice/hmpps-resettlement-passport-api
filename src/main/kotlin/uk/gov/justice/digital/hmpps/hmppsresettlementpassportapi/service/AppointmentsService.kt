@@ -26,44 +26,47 @@ class AppointmentsService(
   private val prisonerRepository: PrisonerRepository,
   private val rpDeliusApiService: ResettlementPassportDeliusApiService,
   private val deliusContactService: DeliusContactService,
-
 ) {
+
+  companion object {
+    const val SECTION_DELIMITER = "###"
+    private const val APPOINTMENT_TITLE = "Appointment Title"
+    private const val CONTACT = "Contact"
+    private const val ORGANISATION = "Organisation"
+    private const val LOCATION = "Location"
+    private const val BUILDING_NAME = "  Building Name"
+    private const val BUILDING_NUMBER = "  Building Number"
+    private const val STREET_NAME = "  Street Name"
+    private const val DISTRICT = "  District"
+    private const val TOWN = "  Town"
+    private const val COUNTY = "  County"
+    private const val POSTCODE = "  Postcode"
+  }
+
   @Transactional
   fun getAppointmentsByNomsId(
     nomsId: String,
     startDate: LocalDate,
     endDate: LocalDate,
-    pageNumber: Int,
-    pageSize: Int,
   ): AppointmentsList {
     if (nomsId.isBlank()) {
       throw NoDataWithCodeFoundException("Prisoner", nomsId)
-    }
-
-    if (pageNumber < 0 || pageSize <= 0) {
-      throw NoDataWithCodeFoundException(
-        "Data",
-        "Page $pageNumber and Size $pageSize",
-      )
     }
 
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val crn = prisonerEntity.crn ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in database")
 
-    val deliusAppointments = rpDeliusApiService.fetchAppointments(nomsId, crn, startDate, endDate, pageNumber, pageSize)
-    val appList: List<Appointment> = objectMapper(deliusAppointments.results)
+    val appointments = mutableListOf<Appointment>()
+    appointments.addAll(mapAppointmentsFromDeliusApi(rpDeliusApiService.fetchAppointments(nomsId, crn, startDate, endDate)))
+    appointments.addAll(mapAppointmentsFromDatabase(deliusContactService.getAppointments(nomsId)))
 
-    return AppointmentsList(
-      appList,
-      deliusAppointments.totalElements,
-      deliusAppointments.totalPages,
-      deliusAppointments.page,
-      deliusAppointments.size,
-    )
+    appointments.sortBy { LocalDateTime.of(it.date, it.time) }
+
+    return AppointmentsList(appointments)
   }
 
-  private fun objectMapper(appList: List<AppointmentDelius>): List<Appointment> {
+  private fun mapAppointmentsFromDeliusApi(appList: List<AppointmentDelius>): List<Appointment> {
     val appointmentList = mutableListOf<Appointment>()
     appList.forEach {
       val appointment: Appointment?
@@ -81,6 +84,7 @@ class AppointmentsService(
       } else {
         Address(null, null, null, null, null, null, null, it.location?.description)
       }
+
       var formattedDateVal: LocalDate? = null
       var formattedTimeVal: LocalTime? = null
       if (it.dateTime != null) {
@@ -98,6 +102,26 @@ class AppointmentsService(
       appointmentList.add(appointment)
     }
     return appointmentList
+  }
+
+  fun mapAppointmentsFromDatabase(deliusContacts: List<DeliusContactEntity>) = deliusContacts.map { deliusContact ->
+    val customFieldsFromNotes = getCustomFieldsFromNotes(deliusContact.notes, deliusContact.id)
+    Appointment(
+      title = extractSectionFromNotes(customFieldsFromNotes, APPOINTMENT_TITLE, deliusContact.id),
+      contact = extractSectionFromNotes(customFieldsFromNotes, CONTACT, deliusContact.id),
+      date = deliusContact.appointmentDate?.toLocalDate(),
+      time = deliusContact.appointmentDate?.toLocalTime(),
+      location = Address(
+        buildingName = extractSectionFromNotesTrimToNull(customFieldsFromNotes, BUILDING_NAME, deliusContact.id),
+        buildingNumber = extractSectionFromNotesTrimToNull(customFieldsFromNotes, BUILDING_NUMBER, deliusContact.id),
+        streetName = extractSectionFromNotesTrimToNull(customFieldsFromNotes, STREET_NAME, deliusContact.id),
+        district = extractSectionFromNotesTrimToNull(customFieldsFromNotes, DISTRICT, deliusContact.id),
+        town = extractSectionFromNotesTrimToNull(customFieldsFromNotes, TOWN, deliusContact.id),
+        county = extractSectionFromNotesTrimToNull(customFieldsFromNotes, COUNTY, deliusContact.id),
+        postcode = extractSectionFromNotesTrimToNull(customFieldsFromNotes, POSTCODE, deliusContact.id),
+        description = null,
+      ),
+    )
   }
 
   @Transactional
@@ -122,9 +146,22 @@ class AppointmentsService(
   }
 
   fun createNotes(appointment: CreateAppointment): String {
-    return "###\nAppointment Title: ${appointment.appointmentTitle}\nContact: ${appointment.contact}\nOrganisation: ${appointment.organisation}\nLocation:\n  Building Name: ${appointment.location.buildingName}\n  " +
-      "Building Number: ${appointment.location.buildingNumber}\n  Street Name: ${appointment.location.streetName}\n  " +
-      "District: ${appointment.location.district}\n  Town: ${appointment.location.town}\n  " +
-      "County: ${appointment.location.county}\n  Postcode: ${appointment.location.postcode}\n###\n${appointment.notes}\n###"
+    return """
+      $SECTION_DELIMITER
+      $APPOINTMENT_TITLE: ${appointment.appointmentTitle}
+      $CONTACT: ${appointment.contact}
+      $ORGANISATION: ${appointment.organisation}
+      $LOCATION:
+      $BUILDING_NAME: ${appointment.location.buildingName}
+      $BUILDING_NUMBER: ${appointment.location.buildingNumber}
+      $STREET_NAME: ${appointment.location.streetName}
+      $DISTRICT: ${appointment.location.district}
+      $TOWN: ${appointment.location.town}
+      $COUNTY: ${appointment.location.county}
+      $POSTCODE: ${appointment.location.postcode}
+      $SECTION_DELIMITER
+      ${appointment.notes}
+      $SECTION_DELIMITER
+    """.trimIndent()
   }
 }

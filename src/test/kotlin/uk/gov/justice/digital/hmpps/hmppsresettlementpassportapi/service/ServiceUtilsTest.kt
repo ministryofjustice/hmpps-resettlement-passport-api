@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -103,6 +104,143 @@ class ServiceUtilsTest {
     Arguments.of(null, null, null),
     Arguments.of(setOf(TestEnumWithCustomLabels.YES, TestEnumWithCustomLabels.NO, TestEnumWithCustomLabels.OTHER_SENTENCE_OF_WORDS, TestEnumWithCustomLabels.OTHER), "Another thing", setOf("This is a custom label", "No", "Other sentence of words", "Another thing")),
     Arguments.of(setOf(TestEnumWithCustomLabels.YES, TestEnumWithCustomLabels.NO, TestEnumWithCustomLabels.OTHER_SENTENCE_OF_WORDS), null, setOf("This is a custom label", "No", "Other sentence of words")),
+  )
+
+  @ParameterizedTest
+  @MethodSource("test get custom fields from notes data")
+  fun `test get custom fields from notes`(notes: String, expectedCustomFields: List<String>?, exception: Boolean) {
+    if (!exception) {
+      Assertions.assertEquals(expectedCustomFields, getCustomFieldsFromNotes(notes, 0))
+    } else {
+      assertThrows<IllegalArgumentException> { getCustomFieldsFromNotes(notes, 0) }
+    }
+  }
+
+  private fun `test get custom fields from notes data`() = Stream.of(
+    Arguments.of("", null, true),
+    Arguments.of(
+      """
+        ###
+        some text
+        ###
+        notes
+        ###
+      """.trimIndent(),
+      listOf("some text"),
+      false,
+    ),
+    Arguments.of(
+      """
+        ###
+        Appointment Title: My appointment title
+        Contact: John
+        Organisation: Resettlement agency
+        Location: 
+          Building Name: The office
+          Building Number: 123
+          Street Name: Main Street
+          District:
+          Town: Leeds
+          County: West Yorkshire
+          Postcode: LS1 1AA
+        ###
+        custom notes
+        free text etc
+        ###
+      """.trimIndent(),
+      listOf("Appointment Title: My appointment title", "Contact: John", "Organisation: Resettlement agency", "Location: ", "  Building Name: The office", "  Building Number: 123", "  Street Name: Main Street", "  District:", "  Town: Leeds", "  County: West Yorkshire", "  Postcode: LS1 1AA"),
+      false,
+    ),
+    Arguments.of(
+      """
+        ###
+        Appointment Title: ### My appointment title ###
+        Contact: John
+        Organisation: Resettlement agency
+        Location: 
+          Building Name: ###
+          Building Number: 123
+          Street Name: Main ### Street
+          District: !"£$%^&*()-_=+{}[]@'#~?/><,.`¬±|\
+          Town: Leeds
+          County:
+          Postcode: LS1 #
+        ###
+        custom notes ###
+        ###
+        free ### text etc
+        ###
+      """.trimIndent(),
+      listOf("Appointment Title: ### My appointment title ###", "Contact: John", "Organisation: Resettlement agency", "Location: ", "  Building Name: ###", "  Building Number: 123", "  Street Name: Main ### Street", "  District: !\"£$%^&*()-_=+{}[]@'#~?/><,.`¬±|\\", "  Town: Leeds", "  County:", "  Postcode: LS1 #"),
+      false,
+    ),
+  )
+
+  @ParameterizedTest
+  @MethodSource("test extract section from notes data")
+  fun `test extract section from notes`(customFields: List<String>, section: String, expectedString: String?, exception: Boolean) {
+    if (!exception) {
+      Assertions.assertEquals(expectedString, extractSectionFromNotes(customFields, section, 0))
+    } else {
+      assertThrows<IllegalArgumentException> { extractSectionFromNotes(customFields, section, 0) }
+    }
+  }
+
+  private fun `test extract section from notes data`() = Stream.of(
+    Arguments.of(listOf<String>(), "section", null, true),
+    Arguments.of(listOf("section: "), "section", "", false),
+    Arguments.of(listOf("section: Test string", "another section: 1234", "section 1: 1234"), "section", "Test string", false),
+    Arguments.of(getTestCustomFields(), "Appointment Title", "### My appointment title ###", false),
+    Arguments.of(getTestCustomFields(), "Contact", "John", false),
+    Arguments.of(getTestCustomFields(), "Organisation", "Resettlement agency", false),
+    Arguments.of(getTestCustomFields(), "  Building Name", "###", false),
+    Arguments.of(getTestCustomFields(), "  Building Number", "123", false),
+    Arguments.of(getTestCustomFields(), "  Street Name", "Main ### Street", false),
+    Arguments.of(getTestCustomFields(), "  District", "!\"£\$%^&*()-_=+{}[]@'#~?/><,.`¬±|\\", false),
+    Arguments.of(getTestCustomFields(), "  Town", "Leeds", false),
+    Arguments.of(getTestCustomFields(), "  County", "", false),
+    Arguments.of(getTestCustomFields(), "  Postcode", "LS1 #", false),
+  )
+
+  @ParameterizedTest
+  @MethodSource("test extract section from notes data trim to null")
+  fun `test extract section from notes trim to null`(customFields: List<String>, section: String, expectedString: String?, exception: Boolean) {
+    if (!exception) {
+      Assertions.assertEquals(expectedString, extractSectionFromNotesTrimToNull(customFields, section, 0))
+    } else {
+      assertThrows<IllegalArgumentException> { extractSectionFromNotesTrimToNull(customFields, section, 0) }
+    }
+  }
+
+  private fun `test extract section from notes data trim to null`() = Stream.of(
+    Arguments.of(listOf<String>(), "section", null, true),
+    Arguments.of(listOf("section: "), "section", null, false),
+    Arguments.of(listOf("section: Test string", "another section: 1234", "section 1: 1234"), "section", "Test string", false),
+    Arguments.of(getTestCustomFields(), "Appointment Title", "### My appointment title ###", false),
+    Arguments.of(getTestCustomFields(), "Contact", "John", false),
+    Arguments.of(getTestCustomFields(), "Organisation", "Resettlement agency", false),
+    Arguments.of(getTestCustomFields(), "  Building Name", "###", false),
+    Arguments.of(getTestCustomFields(), "  Building Number", "123", false),
+    Arguments.of(getTestCustomFields(), "  Street Name", "Main ### Street", false),
+    Arguments.of(getTestCustomFields(), "  District", "!\"£\$%^&*()-_=+{}[]@'#~?/><,.`¬±|\\", false),
+    Arguments.of(getTestCustomFields(), "  Town", "Leeds", false),
+    Arguments.of(getTestCustomFields(), "  County", null, false),
+    Arguments.of(getTestCustomFields(), "  Postcode", "LS1 #", false),
+  )
+
+  private fun getTestCustomFields() = listOf(
+    "Appointment Title: ### My appointment title ###",
+    "Contact: John",
+    "Organisation: Resettlement agency",
+    "Location: ",
+    "  Building Name: ###",
+    "  Building Number: 123",
+    "  Street Name: Main ### Street",
+    "  District: !\"£$%^&*()-_=+{}[]@'#~?/><,.`¬±|\\",
+    "  Town: Leeds",
+    "  County: ",
+    "  Postcode: LS1 #",
+    "section 1: 1234",
   )
 }
 

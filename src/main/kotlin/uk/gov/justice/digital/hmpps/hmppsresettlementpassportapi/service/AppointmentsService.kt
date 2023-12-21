@@ -29,7 +29,7 @@ class AppointmentsService(
 ) {
 
   companion object {
-    private const val SECTION_DELIMITER = "###"
+    const val SECTION_DELIMITER = "###"
     private const val APPOINTMENT_TITLE = "Appointment Title"
     private const val CONTACT = "Contact"
     private const val ORGANISATION = "Organisation"
@@ -107,7 +107,7 @@ class AppointmentsService(
   fun mapAppointmentsFromDatabase(deliusContacts: List<DeliusContactEntity>) = deliusContacts.map { deliusContact ->
     val customFieldsFromNotes = getCustomFieldsFromNotes(deliusContact.notes, deliusContact.id)
     Appointment(
-      title = extractSectionFromNotes(customFieldsFromNotes, APPOINTMENT_TITLE, deliusContact.id), // TODO put all sections in constants
+      title = extractSectionFromNotes(customFieldsFromNotes, APPOINTMENT_TITLE, deliusContact.id),
       contact = extractSectionFromNotes(customFieldsFromNotes, CONTACT, deliusContact.id),
       date = deliusContact.appointmentDate?.toLocalDate(),
       time = deliusContact.appointmentDate?.toLocalTime(),

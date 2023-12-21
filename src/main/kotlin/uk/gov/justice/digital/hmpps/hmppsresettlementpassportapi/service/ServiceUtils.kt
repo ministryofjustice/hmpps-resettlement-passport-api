@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import com.nimbusds.jwt.JWTParser
 import org.apache.commons.text.WordUtils
 import org.slf4j.LoggerFactory
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AppointmentsService.Companion.SECTION_DELIMITER
 import java.lang.IllegalArgumentException
 import kotlin.reflect.KClass
 
@@ -79,7 +80,7 @@ fun getClaimFromJWTToken(token: String, claimName: String): String? {
 
 fun getCustomFieldsFromNotes(notes: String, id: Long?): List<String> {
   try {
-    return notes.split(Regex("(^|\\n)###\\n"))[1].split(Regex("\\n")) // TODO put ### in constant
+    return notes.split(Regex("(^|\\n)$SECTION_DELIMITER\\n"))[1].split(Regex("\\n"))
   } catch (e: Exception) {
     throw IllegalArgumentException("Cannot extract custom fields from notes in database for delius_contact with id [$id]", e)
   }

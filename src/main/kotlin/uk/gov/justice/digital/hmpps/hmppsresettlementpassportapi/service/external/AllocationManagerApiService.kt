@@ -4,7 +4,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonOffenderManagers
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Poms
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.allocationapi.AllocationDTO
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.allocationapi.AllocationStaffDTO
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.convertNameToTitleCase
@@ -16,7 +16,7 @@ class AllocationManagerApiService(val allocationManagerWebClientCredentials: Web
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun getPomsByNomsId(nomsId: String): PrisonOffenderManagers {
+  fun getPomsByNomsId(nomsId: String): Poms {
     val allocations = allocationManagerWebClientCredentials.get()
       .uri("/api/allocation/$nomsId")
       .retrieve()
@@ -44,7 +44,7 @@ class AllocationManagerApiService(val allocationManagerWebClientCredentials: Web
       secondaryPomName = convertName(allocations.secondaryPom.name)
     }
 
-    return PrisonOffenderManagers(primaryPomName, secondaryPomName)
+    return Poms(primaryPomName, secondaryPomName)
   }
 
   fun convertName(name: String) = name.trim().split(", ").reversed().joinToString(" ").convertNameToTitleCase()

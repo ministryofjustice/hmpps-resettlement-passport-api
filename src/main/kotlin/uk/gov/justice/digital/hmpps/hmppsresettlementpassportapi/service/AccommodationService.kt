@@ -6,7 +6,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.Resource
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Accommodation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.OfficerInfo
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderSearchApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -15,7 +15,7 @@ import java.time.ZoneId
 class AccommodationService(
   private val prisonerRepository: PrisonerRepository,
   private val rpDeliusApiService: ResettlementPassportDeliusApiService,
-  private val offenderSearchApiService: OffenderSearchApiService,
+  private val prisonerSearchApiService: PrisonerSearchApiService,
 ) {
 
   fun getAccommodationMainAddressByNomsId(
@@ -34,7 +34,7 @@ class AccommodationService(
 
     var msg: String? = null
     if (accommodation.mainAddress?.noFixedAbode == true) {
-      val prisonerDetails = offenderSearchApiService.findPrisonerPersonalDetails(nomsId)
+      val prisonerDetails = prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)
       msg =
         prisonerDetails.firstName.convertNameToTitleCase() + " " + prisonerDetails.lastName.convertNameToTitleCase() + " is currently of no fixed abode. They may require assistance finding accommodation. If a CRS referral or duty to refer have been made, details will be shown above."
     }

@@ -11,7 +11,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.interventi
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.InterventionsApiService
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderSearchApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.lang.IllegalArgumentException
 import java.time.LocalDateTime
@@ -21,7 +21,7 @@ import java.time.ZoneId
 class CRSReferralService(
   private val prisonerRepository: PrisonerRepository,
   private val interventionsApiService: InterventionsApiService,
-  private val offenderSearchApiService: OffenderSearchApiService,
+  private val prisonerSearchApiService: PrisonerSearchApiService,
   private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
 ) {
 
@@ -121,7 +121,7 @@ class CRSReferralService(
   private fun getAlternateMessage(nomsId: String, pathway: Pathway, crsReferralList: List<CRSReferral>): String {
     var message = ""
     if (crsReferralList.isEmpty()) {
-      val prisoner = offenderSearchApiService.findPrisonerPersonalDetails(nomsId)
+      val prisoner = prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)
       val prisonerName: String = "${prisoner.firstName} ${prisoner.lastName}".convertNameToTitleCase()
       val comName = resettlementPassportDeliusApiService.getComByNomsId(nomsId) ?: "NO DATA"
       message =

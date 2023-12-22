@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/probation-cases/U328968/community-manager"
+    "urlPath": "/probation-cases/A8731DY/crn"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "getOffenderManagersByCrn-A8731DY-200-response.json",
+    "bodyFileName": "getPrisonerByNomsNumber-A8731DY-200-response.json",
     "headers": {
       "Content-Type": "application/json;charset=UTF-8",
       "Server": "wiremock"

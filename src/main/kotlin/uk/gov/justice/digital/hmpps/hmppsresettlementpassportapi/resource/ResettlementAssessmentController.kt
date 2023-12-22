@@ -10,6 +10,4 @@ import org.springframework.web.bind.annotation.RestController
 @Validated
 @RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
-class ResettlementAssessmentController {
-
-}
+class ResettlementAssessmentController

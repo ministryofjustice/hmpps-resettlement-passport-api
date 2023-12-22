@@ -1,6 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettelmentAssessmentQuestions
 
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.*
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AccommodationAssessmentPage
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AssessmentPage
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentNode
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentQuestions
 
 class AttitudeQuestions {
   companion object {
@@ -15,28 +19,28 @@ class AttitudeQuestions {
             return AccommodationAssessmentPage.WHO_WILL_THEY_LIVE_WITH
           }
           return AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE
-        }
+        },
       ),
       ResettlementAssessmentNode(
         AccommodationAssessmentPage.WHO_WILL_THEY_LIVE_WITH,
         nextPage =
         fun(currentPage: AssessmentPage, _: List<ResettlementAssessmentQuestionAndAnswer<*>>): AssessmentPage {
           return AccommodationAssessmentPage.CHECK_ANSWERS
-        }
+        },
       ),
       ResettlementAssessmentNode(
         AccommodationAssessmentPage.CONSENT_FOR_CRS,
         nextPage =
         fun(currentPage: AssessmentPage, _: List<ResettlementAssessmentQuestionAndAnswer<*>>): AssessmentPage {
           return AccommodationAssessmentPage.WHAT_COUNCIL_AREA
-        }
+        },
       ),
       ResettlementAssessmentNode(
         AccommodationAssessmentPage.WHAT_COUNCIL_AREA,
         nextPage =
         fun(currentPage: AssessmentPage, _: List<ResettlementAssessmentQuestionAndAnswer<*>>): AssessmentPage {
           return AccommodationAssessmentPage.CHECK_ANSWERS
-        }
+        },
       ),
     )
   }

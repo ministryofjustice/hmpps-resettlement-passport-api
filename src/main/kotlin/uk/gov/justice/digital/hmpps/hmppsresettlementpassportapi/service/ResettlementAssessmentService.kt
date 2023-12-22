@@ -1,7 +1,9 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.*
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AssessmentPage
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessment
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettelmentAssessmentQuestions.AccommodationQuestions
 
@@ -12,9 +14,7 @@ class ResettlementAssessmentService {
     // Get pathway decision tree
     // identify current location in decision tree
     // find next questions in tree
-
   }
-
 }
 
 interface ResettlementAssessmentInterface {
@@ -28,7 +28,7 @@ class AccommodationResettlementAssessment : ResettlementAssessmentInterface {
   }
 
   override fun nextQuestions(currentPage: AssessmentPage, questions: List<ResettlementAssessmentQuestionAndAnswer<*>>): AssessmentPage {
-    val questionLambda = AccommodationQuestions.accommodationQuestions.first { it.assessmentPage == currentPage}
+    val questionLambda = AccommodationQuestions.accommodationQuestions.first { it.assessmentPage == currentPage }
     val nextPage = questionLambda.nextPage(currentPage, questions)
     return nextPage
   }
@@ -40,7 +40,7 @@ class AttitudesResettlementAssessment : ResettlementAssessmentInterface {
   }
 
   override fun nextQuestions(currentPage: AssessmentPage, questions: List<ResettlementAssessmentQuestionAndAnswer<*>>): AssessmentPage {
-    val questionLambda = AccommodationQuestions.accommodationQuestions.first { it.assessmentPage == currentPage}
+    val questionLambda = AccommodationQuestions.accommodationQuestions.first { it.assessmentPage == currentPage }
     val nextPage = questionLambda.nextPage(currentPage, questions)
     return nextPage
   }

@@ -4,7 +4,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Accommodat
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AssessmentPage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentNode
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentQuestionAndAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentQuestions
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentQuestionsAndAnswers
 
 class AttitudeQuestions {
   companion object {
@@ -13,9 +13,9 @@ class AttitudeQuestions {
         AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE,
         nextPage =
         fun(currentPage: AssessmentPage, questions: List<ResettlementAssessmentQuestionAndAnswer<*>>): AssessmentPage {
-          if (questions.any { it.question == ResettlementAssessmentQuestions.WHERE_WILL_THEY_LIVE && it.answer == "NO_PLACE_TO_LIVE" }) {
+          if (questions.any { it.question == ResettlementAssessmentQuestionsAndAnswers.WHERE_WILL_THEY_LIVE && it.answer == "NO_PLACE_TO_LIVE" }) {
             return AccommodationAssessmentPage.CONSENT_FOR_CRS
-          } else if (questions.any { it.question == ResettlementAssessmentQuestions.WHERE_WILL_THEY_LIVE && (it.answer == "PREVIOUS_ADDRESS" || it.answer == "NEW_ADDRESS") }) {
+          } else if (questions.any { it.question == ResettlementAssessmentQuestionsAndAnswers.WHERE_WILL_THEY_LIVE && (it.answer == "PREVIOUS_ADDRESS" || it.answer == "NEW_ADDRESS") }) {
             return AccommodationAssessmentPage.WHO_WILL_THEY_LIVE_WITH
           }
           return AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE

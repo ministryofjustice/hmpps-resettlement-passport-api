@@ -7,7 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AccommodationAssessmentPage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentQuestionAndAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentQuestions
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentQuestionsAndAnswers
 
 @ExtendWith(MockitoExtension::class)
 class ResettlementAssessmentServiceTest {
@@ -22,14 +22,14 @@ class ResettlementAssessmentServiceTest {
   @Test
   fun `test update pathway status`() {
     var questions = mutableListOf<ResettlementAssessmentQuestionAndAnswer<*>>(
-      ResettlementAssessmentQuestionAndAnswer(ResettlementAssessmentQuestions.WHERE_WILL_THEY_LIVE, answer = "NEW_ADDRESS"),
+      ResettlementAssessmentQuestionAndAnswer(ResettlementAssessmentQuestionsAndAnswers.WHERE_WILL_THEY_LIVE, answer = "NEW_ADDRESS"),
     )
     var nextPage = resettlementAssessmentService.nextQuestions(AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE, questions)
     Assertions.assertEquals(nextPage, AccommodationAssessmentPage.WHO_WILL_THEY_LIVE_WITH)
 
     questions.add(
       ResettlementAssessmentQuestionAndAnswer(
-        ResettlementAssessmentQuestions.WHO_WILL_THEY_LIVE_WITH,
+        ResettlementAssessmentQuestionsAndAnswers.WHO_WILL_THEY_LIVE_WITH,
         answer = listOf("Joe Blogs, 47", "Jane Doe, 46"),
       ),
     )

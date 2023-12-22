@@ -1,15 +1,33 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 
-data class ResettlementAssessmentQuestionAndAnswer<T> (
-  val question: ResettlementAssessmentQuestions,
-  val answer: T,
-)
+//data class ResettlementAssessmentQuestionAndAnswer<T> (
+//  val question: ResettlementAssessmentQuestionsAndAnswers,
+//  val answer: T,
+//)
 
-interface ResettlementAssessmentQuestions {
+
+//data class Answer(val stringAnswer: String?, val listAnswer: List<String>?) // FIXME
+
+interface Answer<T> {
+  var answer: T?
+}
+
+data class StringAnswer(override var answer: String? = null) : Answer<String>
+
+data class ListAnswer(override var answer: List<String>? = null) : Answer<List<String>>
+
+data class MapAnswer(override var answer: Map<String, String>? = null) : Answer<Map<String, String>>
+
+interface ResettlementAssessmentQuestion {
   val title: String
   val subTitle: String?
   val type: TypeOfQuestion
   val options: List<Option>?
+}
+
+interface ResettlementAssessmentQuestionAndAnswer {
+  val question: AccommodationResettlementAssessmentQuestion
+  val answer: Answer<*>
 }
 
 data class Option(
@@ -17,12 +35,17 @@ data class Option(
   val displayText: String,
 )
 
-enum class AccommodationResettlementAssessmentQuestions(
+data class AccommodationResettlementAssessmentQuestionAndAnswer(
+  override val question: AccommodationResettlementAssessmentQuestion,
+  override val answer: Answer<*>,
+) : ResettlementAssessmentQuestionAndAnswer
+
+enum class AccommodationResettlementAssessmentQuestion(
   override val title: String,
   override val subTitle: String? = null,
   override val type: TypeOfQuestion,
   override val options: List<Option>? = null,
-) : ResettlementAssessmentQuestions {
+) : ResettlementAssessmentQuestion {
   WHERE_WILL_THEY_LIVE(title = "", type = TypeOfQuestion.RADIO_WITH_ADDRESS, options = listOf(
     Option(id = "PREVIOUS_ADDRESS", displayText = "Returning to a previous address"),
     Option(id = "NEW_ADDRESS", displayText = "Moving to new address"),
@@ -31,7 +54,7 @@ enum class AccommodationResettlementAssessmentQuestions(
   WHO_WILL_THEY_LIVE_WITH(title = "", type = TypeOfQuestion.LIST_OF_PEOPLE),
   WHAT_IS_THE_ADDRESS(title = "", type = TypeOfQuestion.ADDRESS),
   ACCOM_CRS(title = "", type = TypeOfQuestion.RADIO, options = yesNoOptions),
-  CHECK_ANSWERS(title = "", type = TypeOfQuestion.LONG_TEXT),
+  CHECK_ANSWERS(title = "", type = TypeOfQuestion.LONG_TEXT), // TODO how to do this?
   COUNCIL_AREA(title = "", type = TypeOfQuestion.DROPDOWN, options = councilOptions),
   COUNCIL_AREA_REASON(title = "", type = TypeOfQuestion.LONG_TEXT),
 }
@@ -49,43 +72,43 @@ enum class TypeOfQuestion {
 
 interface AssessmentPage {
   val title: String
-  val questions: List<ResettlementAssessmentQuestions>
+  val questionsAndAnswers: List<ResettlementAssessmentQuestion>
 }
 
-enum class AttitudeAssessmentPage(override val title: String, override val questions: List<ResettlementAssessmentQuestions>) : AssessmentPage {
-  ANGER_MANAGEMENT(title = "", questions = listOf()),
-  ARE_THEY_INFLUENCED(title = "", questions = listOf()),
-  ISSUES_WITH_GAMBLING(title = "", questions = listOf()),
-  GANG_INVOLVEMENT(title = "", questions = listOf()),
-  GANG_INVOLVEMENT_UNDER_THREAT(title = "", questions = listOf()),
-  VICTIM_OF_SEXUAL_VIOLENCE(title = "", questions = listOf()),
-  SEXUAL_VIOLENCE_DETAILS(title = "", questions = listOf()),
-  VICTIM_OF_DOMESTIC_VIOLENCE(title = "", questions = listOf()),
-  DOMESTIC_VIOLENCE_DETAILS(title = "", questions = listOf()),
+//enum class AttitudeAssessmentPage(override val title: String, override val questionsAndAnswers: List<ResettlementAssessmentQuestionsAndAnswer>) : AssessmentPage {
+//  ANGER_MANAGEMENT(title = "", questionsAndAnswers = listOf()),
+//  ARE_THEY_INFLUENCED(title = "", questionsAndAnswers = listOf()),
+//  ISSUES_WITH_GAMBLING(title = "", questionsAndAnswers = listOf()),
+//  GANG_INVOLVEMENT(title = "", questionsAndAnswers = listOf()),
+//  GANG_INVOLVEMENT_UNDER_THREAT(title = "", questionsAndAnswers = listOf()),
+//  VICTIM_OF_SEXUAL_VIOLENCE(title = "", questionsAndAnswers = listOf()),
+//  SEXUAL_VIOLENCE_DETAILS(title = "", questionsAndAnswers = listOf()),
+//  VICTIM_OF_DOMESTIC_VIOLENCE(title = "", questionsAndAnswers = listOf()),
+//  DOMESTIC_VIOLENCE_DETAILS(title = "", questionsAndAnswers = listOf()),
+//}
+
+//enum class SharedPage (override val title: String, override val questionsAndAnswers: List<ResettlementAssessmentQuestionsAndAnswers>) : AssessmentPage {
+//  ASSESSMENT_SUMMARY(title = "[Pathway] assessment summary", questionsAndAnswers = listOf())
+//}
+//
+enum class AccommodationAssessmentPage(override val title: String, override val questionsAndAnswers: List<ResettlementAssessmentQuestion>) : AssessmentPage {
+  WHERE_WILL_THEY_LIVE(title = "Where will they live when released from custody?", questionsAndAnswers = listOf(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE, AccommodationResettlementAssessmentQuestion.WHAT_IS_THE_ADDRESS)),
+  WHO_WILL_THEY_LIVE_WITH(title = "What are the names and ages of all residents at this property and the prisoner's relationship to them?", questionsAndAnswers = listOf(AccommodationResettlementAssessmentQuestion.WHO_WILL_THEY_LIVE_WITH)),
+  CONSENT_FOR_CRS(title = "Do they give consent for a Commissioned Rehabilitative Service (CRS)?", questionsAndAnswers = listOf(AccommodationResettlementAssessmentQuestion.ACCOM_CRS)),
+  WHAT_COUNCIL_AREA(title = "Which council area are they intending to move to on release?", questionsAndAnswers = listOf(AccommodationResettlementAssessmentQuestion.COUNCIL_AREA, AccommodationResettlementAssessmentQuestion.COUNCIL_AREA_REASON)),
+  CHECK_ANSWERS(title = "", questionsAndAnswers = listOf()),
 }
 
-enum class SharedPage (override val title: String, override val questions: List<ResettlementAssessmentQuestions>) : AssessmentPage {
-  ASSESSMENT_SUMMARY(title = "[Pathway] assessment summary", questions = listOf())
-}
-
-enum class AccommodationAssessmentPage(override val title: String, override val questions: List<ResettlementAssessmentQuestions>) : AssessmentPage {
-  WHERE_WILL_THEY_LIVE(title = "Where will they live when released from custody?", questions = listOf(AccommodationResettlementAssessmentQuestions.WHERE_WILL_THEY_LIVE, AccommodationResettlementAssessmentQuestions.WHAT_IS_THE_ADDRESS)),
-  WHO_WILL_THEY_LIVE_WITH(title = "What are the names and ages of all residents at this property and the prisoner's relationship to them?", questions = listOf(AccommodationResettlementAssessmentQuestions.WHO_WILL_THEY_LIVE_WITH)),
-  CONSENT_FOR_CRS(title = "Do they give consent for a Commissioned Rehabilitative Service (CRS)?", questions = listOf(AccommodationResettlementAssessmentQuestions.ACCOM_CRS)),
-  WHAT_COUNCIL_AREA(title = "Which council area are they intending to move to on release?", questions = listOf(AccommodationResettlementAssessmentQuestions.COUNCIL_AREA, AccommodationResettlementAssessmentQuestions.COUNCIL_AREA_REASON)),
-  CHECK_ANSWERS(title = "", questions = listOf()),
-}
-
-data class ResettlementAssessmentQuestion(
-  val id: ResettlementAssessmentQuestions,
-  val title: String,
-  val type: TypeOfQuestion,
-  val nextPage: (currentPage: AssessmentPage, questions: List<ResettlementAssessmentQuestionAndAnswer<*>>) -> AssessmentPage,
-)
+//data class ResettlementAssessmentQuestion(
+//  val id: ResettlementAssessmentQuestionsAndAnswers,
+//  val title: String,
+//  val type: TypeOfQuestion,
+//  val nextPage: (currentPage: AssessmentPage) -> AssessmentPage,
+//)
 
 data class ResettlementAssessmentNode(
   val assessmentPage: AssessmentPage,
-  val nextPage: (currentPage: AssessmentPage, questions: List<ResettlementAssessmentQuestionAndAnswer<*>>) -> AssessmentPage,
+  val nextPage: (currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>) -> AssessmentPage,
 )
 
 val yesNoOptions = listOf(

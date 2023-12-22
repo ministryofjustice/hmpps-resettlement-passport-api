@@ -33,7 +33,7 @@ class ResettlementPassportDeliusApiService(
   }
 
   fun getCrn(nomsId: String): String? {
-    val offenderDetails = rpDeliusWebClientCredentials.get()
+    val prisonersDetails = rpDeliusWebClientCredentials.get()
       .uri("/probation-cases/$nomsId/crn")
       .retrieve()
       .bodyToMono<CaseIdentifiers>()
@@ -46,7 +46,7 @@ class ResettlementPassportDeliusApiService(
       )
       .block()
 
-    return offenderDetails?.crn
+    return prisonersDetails?.crn
   }
 
   fun getMappaDataByNomsId(nomsId: String): MappaData? {

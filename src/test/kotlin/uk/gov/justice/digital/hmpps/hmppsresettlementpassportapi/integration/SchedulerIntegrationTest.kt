@@ -21,7 +21,7 @@ class SchedulerIntegrationTest : IntegrationTestBase() {
 
   @AfterEach
   fun afterEach() {
-    offenderSearchApiMockServer.resetMappings()
+    prisonerSearchApiMockServer.resetMappings()
   }
 
   @Test
@@ -39,25 +39,25 @@ class SchedulerIntegrationTest : IntegrationTestBase() {
     expectedPrisonerEntities[2].releaseDate = LocalDate.parse("2023-08-20")
     expectedPrisonerEntities[3].releaseDate = LocalDate.parse("2023-08-20")
 
-    offenderSearchApiMockServer.stubGet(
+    prisonerSearchApiMockServer.stubGet(
       "/prisoner/G1458GV",
       200,
-      "testdata/offender-search-api/release-dates-cron/prisoner-details.json",
+      "testdata/prisoner-search-api/release-dates-cron/prisoner-details.json",
     )
-    offenderSearchApiMockServer.stubGet(
+    prisonerSearchApiMockServer.stubGet(
       "/prisoner/G6628UE",
       200,
-      "testdata/offender-search-api/release-dates-cron/prisoner-details.json",
+      "testdata/prisoner-search-api/release-dates-cron/prisoner-details.json",
     )
-    offenderSearchApiMockServer.stubGet(
+    prisonerSearchApiMockServer.stubGet(
       "/prisoner/G6335VX",
       200,
-      "testdata/offender-search-api/release-dates-cron/prisoner-details.json",
+      "testdata/prisoner-search-api/release-dates-cron/prisoner-details.json",
     )
-    offenderSearchApiMockServer.stubGet(
+    prisonerSearchApiMockServer.stubGet(
       "/prisoner/G6933GF",
       200,
-      "testdata/offender-search-api/release-dates-cron/prisoner-details.json",
+      "testdata/prisoner-search-api/release-dates-cron/prisoner-details.json",
     )
 
     schedulerService.reconcileReleaseDatesInDatabase()

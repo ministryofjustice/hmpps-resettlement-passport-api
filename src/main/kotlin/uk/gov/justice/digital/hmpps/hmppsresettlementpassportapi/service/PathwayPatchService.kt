@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayAndStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatusAndCaseNote
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderCaseNotesApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CaseNotesApiService
 
 @Service
 class PathwayPatchService(
-  private val offenderCaseNotesApiService: OffenderCaseNotesApiService,
+  private val caseNotesApiService: CaseNotesApiService,
   private val pathwayAndStatusService: PathwayAndStatusService,
   private val deliusContactService: DeliusContactService,
 ) {
@@ -31,7 +31,7 @@ class PathwayPatchService(
 
     when (authSource) {
       "nomis" -> {
-        offenderCaseNotesApiService.postCaseNote(
+        caseNotesApiService.postCaseNote(
           nomsId,
           pathwayStatusAndCaseNote.pathway,
           pathwayStatusAndCaseNote.caseNoteText,

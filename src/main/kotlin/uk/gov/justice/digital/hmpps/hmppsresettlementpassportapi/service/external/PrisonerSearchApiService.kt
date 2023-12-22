@@ -24,10 +24,10 @@ import java.time.LocalDate
 import java.time.Period
 
 @Service
-class OffenderSearchApiService(
+class PrisonerSearchApiService(
 
   private val prisonerRepository: PrisonerRepository,
-  private val offenderSearchWebClientClientCredentials: WebClient,
+  private val prisonerSearchWebClientClientCredentials: WebClient,
   private val pathwayAndStatusService: PathwayAndStatusService,
   private val prisonRegisterApiService: PrisonRegisterApiService,
   private val prisonApiService: PrisonApiService,
@@ -42,7 +42,7 @@ class OffenderSearchApiService(
 
     var page = 0
     do {
-      val data = offenderSearchWebClientClientCredentials.get()
+      val data = prisonerSearchWebClientClientCredentials.get()
         .uri(
           "/prison/{prisonId}/prisoners?term={term}&size={size}&page={page}&sort={sort}",
           mapOf(
@@ -66,7 +66,7 @@ class OffenderSearchApiService(
   }
 
   /**
-   * Searches for offenders in a prison using prison ID  (e.g. MDI)
+   * Searches for prisoners in a prison using prison ID  (e.g. MDI)
    * returning a complete list.
    * Requires role PRISONER_IN_PRISON_SEARCH or PRISONER_SEARCH
    */
@@ -80,7 +80,7 @@ class OffenderSearchApiService(
     pageSize: Int,
     sort: String?,
   ): PrisonersList {
-    val offenders = mutableListOf<PrisonersSearch>()
+    val prisoners = mutableListOf<PrisonersSearch>()
     if (prisonId.isBlank() || prisonId.isEmpty()) {
       throw NoDataWithCodeFoundException("Prisoners", prisonId)
     }
@@ -93,30 +93,30 @@ class OffenderSearchApiService(
     }
     findPrisonersBySearchTerm(prisonId, searchTerm).forEach {
       setDisplayedReleaseDate(it)
-      offenders.add(it)
+      prisoners.add(it)
     }
     if (days > 0) {
       val earliestReleaseDate = LocalDate.now().minusDays(1)
       val latestReleaseDate = LocalDate.now().plusDays(days.toLong())
-      offenders.removeAll { it.displayReleaseDate == null || it.displayReleaseDate!! <= earliestReleaseDate || it.displayReleaseDate!! > latestReleaseDate }
+      prisoners.removeAll { it.displayReleaseDate == null || it.displayReleaseDate!! <= earliestReleaseDate || it.displayReleaseDate!! > latestReleaseDate }
     } else {
       val earliestReleaseDate = LocalDate.now().minusDays(1)
-      offenders.removeAll { (it.displayReleaseDate != null && it.displayReleaseDate!! <= earliestReleaseDate) }
+      prisoners.removeAll { (it.displayReleaseDate != null && it.displayReleaseDate!! <= earliestReleaseDate) }
     }
 
-    if (offenders.isEmpty()) {
+    if (prisoners.isEmpty()) {
       return PrisonersList(emptyList(), pageSize, pageNumber, sort, 0, true)
     }
 
     val startIndex = (pageNumber * pageSize)
-    if (startIndex >= offenders.size) {
+    if (startIndex >= prisoners.size) {
       throw NoDataWithCodeFoundException(
         "Data",
         "Page $pageNumber",
       )
     }
 
-    val fullList = objectMapper(offenders, pathwayView, pathwayStatus)
+    val fullList = objectMapper(prisoners, pathwayView, pathwayStatus)
 
     sortPrisoners(sort, fullList)
 
@@ -131,34 +131,34 @@ class OffenderSearchApiService(
     return PrisonersList(emptyList(), 0, 0, sort, 0, false)
   }
 
-  fun sortPrisoners(sort: String?, offenders: MutableList<Prisoners>) {
+  fun sortPrisoners(sort: String?, prisoners: MutableList<Prisoners>) {
     if (sort == null) {
-      sortPrisonersByNomsId("ASC", offenders)
+      sortPrisonersByNomsId("ASC", prisoners)
     } else {
-      sortPrisonersByNomsId(sort, offenders)
-      sortPrisonersByField(sort, offenders)
+      sortPrisonersByNomsId(sort, prisoners)
+      sortPrisonersByField(sort, prisoners)
     }
   }
 
   fun sortPrisonersByField(
     sort: String,
-    offenders: MutableList<Prisoners>,
+    prisoners: MutableList<Prisoners>,
   ) {
     when (sort) {
-      "releaseDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.releaseDate })
-      "releaseEligibilityDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.releaseEligibilityDate })
-      "name,ASC" -> offenders.sortWith(compareBy { "${it.lastName}, ${it.firstName}" })
-      "lastUpdatedDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.lastUpdatedDate })
-      "prisonerNumber,ASC" -> offenders.sortBy { it.prisonerNumber }
-      "pathwayStatus,ASC" -> offenders.sortBy { it.pathwayStatus }
-      "releaseOnTemporaryLicenceDate,ASC" -> offenders.sortWith(compareBy(nullsLast()) { it.releaseOnTemporaryLicenceDate })
-      "releaseDate,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.releaseDate })
-      "releaseEligibilityDate,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.releaseEligibilityDate })
-      "name,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { "${it.lastName}, ${it.firstName}" })
-      "lastUpdatedDate,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.lastUpdatedDate })
-      "prisonerNumber,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.prisonerNumber })
-      "pathwayStatus,DESC" -> offenders.sortByDescending { it.pathwayStatus }
-      "releaseOnTemporaryLicenceDate,DESC" -> offenders.sortWith(compareByDescending(nullsLast()) { it.releaseOnTemporaryLicenceDate })
+      "releaseDate,ASC" -> prisoners.sortWith(compareBy(nullsLast()) { it.releaseDate })
+      "releaseEligibilityDate,ASC" -> prisoners.sortWith(compareBy(nullsLast()) { it.releaseEligibilityDate })
+      "name,ASC" -> prisoners.sortWith(compareBy { "${it.lastName}, ${it.firstName}" })
+      "lastUpdatedDate,ASC" -> prisoners.sortWith(compareBy(nullsLast()) { it.lastUpdatedDate })
+      "prisonerNumber,ASC" -> prisoners.sortBy { it.prisonerNumber }
+      "pathwayStatus,ASC" -> prisoners.sortBy { it.pathwayStatus }
+      "releaseOnTemporaryLicenceDate,ASC" -> prisoners.sortWith(compareBy(nullsLast()) { it.releaseOnTemporaryLicenceDate })
+      "releaseDate,DESC" -> prisoners.sortWith(compareByDescending(nullsLast()) { it.releaseDate })
+      "releaseEligibilityDate,DESC" -> prisoners.sortWith(compareByDescending(nullsLast()) { it.releaseEligibilityDate })
+      "name,DESC" -> prisoners.sortWith(compareByDescending(nullsLast()) { "${it.lastName}, ${it.firstName}" })
+      "lastUpdatedDate,DESC" -> prisoners.sortWith(compareByDescending(nullsLast()) { it.lastUpdatedDate })
+      "prisonerNumber,DESC" -> prisoners.sortWith(compareByDescending(nullsLast()) { it.prisonerNumber })
+      "pathwayStatus,DESC" -> prisoners.sortByDescending { it.pathwayStatus }
+      "releaseOnTemporaryLicenceDate,DESC" -> prisoners.sortWith(compareByDescending(nullsLast()) { it.releaseOnTemporaryLicenceDate })
 
       else -> throw NoDataWithCodeFoundException(
         "Data",
@@ -169,12 +169,12 @@ class OffenderSearchApiService(
 
   fun sortPrisonersByNomsId(
     sort: String,
-    offenders: MutableList<Prisoners>,
+    prisoners: MutableList<Prisoners>,
   ) {
     val sortNoms = sort.split(",").last()
     when (sortNoms) {
-      "ASC" -> offenders.sortBy { it.prisonerNumber }
-      "DESC" -> offenders.sortByDescending { it.prisonerNumber }
+      "ASC" -> prisoners.sortBy { it.prisonerNumber }
+      "DESC" -> prisoners.sortByDescending { it.prisonerNumber }
     }
   }
 
@@ -237,7 +237,7 @@ class OffenderSearchApiService(
   }
 
   fun findPrisonerPersonalDetails(nomsId: String): PrisonersSearch {
-    return offenderSearchWebClientClientCredentials
+    return prisonerSearchWebClientClientCredentials
       .get()
       .uri(
         "/prisoner/{nomsId}",
@@ -248,7 +248,7 @@ class OffenderSearchApiService(
       .retrieve()
       .onStatus(
         { it == HttpStatus.NOT_FOUND },
-        { throw ResourceNotFoundException("Prisoner $nomsId not found in offender search api") },
+        { throw ResourceNotFoundException("Prisoner $nomsId not found in prisoner search api") },
       )
       .bodyToMono<PrisonersSearch>()
       .block() ?: throw RuntimeException("Unexpected null returned from request.")

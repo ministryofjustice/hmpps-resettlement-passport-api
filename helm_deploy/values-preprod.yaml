@@ -11,11 +11,11 @@ generic-service:
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
     API_BASE_URL_OAUTH: https://sign-in-preprod.hmpps.service.justice.gov.uk/auth
     API_BASE_URL_PRISON-REGISTER: https://prison-register-preprod.hmpps.service.justice.gov.uk
-    API_BASE_URL_OFFENDER-SEARCH: https://prisoner-search-preprod.prison.service.justice.gov.uk
+    API_BASE_URL_PRISONER-SEARCH: https://prisoner-search-preprod.prison.service.justice.gov.uk
     API_BASE_URL_CVL: https://create-and-vary-a-licence-api-preprod.hmpps.service.justice.gov.uk
     API_BASE_URL_ARN: https://assess-risks-and-needs-preprod.hmpps.service.justice.gov.uk
     API_BASE_URL_PRISON: https://api-preprod.prison.service.justice.gov.uk
-    API_BASE_URL_OFFENDER-CASE-NOTES: https://preprod.offender-case-notes.service.justice.gov.uk
+    API_BASE_URL_CASE-NOTES: https://preprod.offender-case-notes.service.justice.gov.uk
     API_BASE_URL_KEY-WORKER: https://keyworker-api-preprod.prison.service.justice.gov.uk
     API_BASE_URL_ALLOCATION-MANAGER: https://allocation-manager-preprod.apps.live.cloud-platform.service.justice.gov.uk
     API_BASE_URL_RESETTLEMENT-PASSPORT-DELIUS: https://resettlement-passport-and-delius-preprod.hmpps.service.justice.gov.uk

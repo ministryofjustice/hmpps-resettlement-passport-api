@@ -22,10 +22,10 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Service
-class OffenderCaseNotesApiService(
-  private val offenderCaseNotesWebClientUserCredentials: WebClient,
-  private val offenderCaseNotesWebClientCredentials: WebClient,
-  private val offenderSearchApiService: OffenderSearchApiService,
+class CaseNotesApiService(
+  private val caseNotesWebClientUserCredentials: WebClient,
+  private val caseNotesWebClientCredentials: WebClient,
+  private val prisonerSearchApiService: PrisonerSearchApiService,
 
 ) {
 
@@ -98,7 +98,7 @@ class OffenderCaseNotesApiService(
     }
 
     do {
-      val data = offenderCaseNotesWebClientCredentials.get()
+      val data = caseNotesWebClientCredentials.get()
         .uri(
           uriValue,
           mapOf(
@@ -174,9 +174,9 @@ class OffenderCaseNotesApiService(
   fun postCaseNote(nomsId: String, pathway: Pathway, caseNotesText: String, auth: String): CaseNote? {
     val type = CaseNoteType.RESET
     val subType = convertPathwayToCaseNoteSubType(pathway)
-    val prisonCode = offenderSearchApiService.findPrisonerPersonalDetails(nomsId).prisonId
+    val prisonCode = prisonerSearchApiService.findPrisonerPersonalDetails(nomsId).prisonId
 
-    return offenderCaseNotesWebClientUserCredentials.post()
+    return caseNotesWebClientUserCredentials.post()
       .uri(
         "/case-notes/{nomsId}",
         nomsId,

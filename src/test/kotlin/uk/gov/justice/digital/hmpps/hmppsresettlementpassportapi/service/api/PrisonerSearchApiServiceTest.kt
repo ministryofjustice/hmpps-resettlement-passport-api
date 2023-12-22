@@ -30,18 +30,18 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Stat
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PathwayAndStatusService
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @ExtendWith(MockitoExtension::class)
-class OffenderSearchApiServiceTest {
+class PrisonerSearchApiServiceTest {
 
   private val mockWebServer: MockWebServer = MockWebServer()
-  private lateinit var offenderSearchApiService: OffenderSearchApiService
+  private lateinit var prisonerSearchApiService: PrisonerSearchApiService
 
   @Mock
   private lateinit var prisonerRepository: PrisonerRepository
@@ -59,7 +59,7 @@ class OffenderSearchApiServiceTest {
   fun beforeEach() {
     mockWebServer.start()
     val webClient = WebClient.create(mockWebServer.url("/").toUrl().toString())
-    offenderSearchApiService = OffenderSearchApiService(
+    prisonerSearchApiService = PrisonerSearchApiService(
       prisonerRepository,
       webClient,
       pathwayAndStatusService,
@@ -80,10 +80,10 @@ class OffenderSearchApiServiceTest {
     val prisonId = "MDI"
     val expectedPrisonerId = "A8339DY"
 
-    val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
+    val mockedJsonResponse = readFile("testdata/prisoner-search-api/prisoner-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisonersList =
-      offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "releaseDate,DESC")
+      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "releaseDate,DESC")
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
 
@@ -93,10 +93,10 @@ class OffenderSearchApiServiceTest {
 
     val prisonId = "MDI"
 
-    val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-2.json")
+    val mockedJsonResponse = readFile("testdata/prisoner-search-api/prisoner-search-2.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisoners =
-      offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "releaseDate,DESC")
+      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "releaseDate,DESC")
 
     Assertions.assertEquals(getExpectedPrisonersListReleaseDateDesc(), prisoners)
   }
@@ -108,10 +108,10 @@ class OffenderSearchApiServiceTest {
     val prisonId = "MDI"
     val expectedPrisonerId = "A8339DY"
 
-    val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
+    val mockedJsonResponse = readFile("testdata/prisoner-search-api/prisoner-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisonersList =
-      offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 20, "releaseDate,ASC")
+      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 20, "releaseDate,ASC")
     Assertions.assertEquals(
       expectedPrisonerId,
       prisonersList.content?.get((prisonersList.content!!.toList().size - 1))?.prisonerNumber
@@ -126,10 +126,10 @@ class OffenderSearchApiServiceTest {
     val prisonId = "MDI"
     val expectedPrisonerId = "G1458GV"
 
-    val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
+    val mockedJsonResponse = readFile("testdata/prisoner-search-api/prisoner-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisonersList =
-      offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "name,ASC")
+      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "name,ASC")
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
 
@@ -140,10 +140,10 @@ class OffenderSearchApiServiceTest {
     val prisonId = "MDI"
     val expectedPageSize = 3
 
-    val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
+    val mockedJsonResponse = readFile("testdata/prisoner-search-api/prisoner-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisonersList =
-      offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 5, "name,ASC")
+      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 5, "name,ASC")
     Assertions.assertEquals(expectedPageSize, prisonersList.pageSize)
     prisonersList.content?.toList()?.let { Assertions.assertEquals(expectedPageSize, it.size) }
   }
@@ -157,14 +157,14 @@ class OffenderSearchApiServiceTest {
     val days = 84
     val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val releaseDate = LocalDate.now().minusDays(days.toLong())
-    var mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-1.json")
+    var mockedJsonResponse = readFile("testdata/prisoner-search-api/prisoner-search-1.json")
     mockedJsonResponse = mockedJsonResponse.replace(
       "\"releaseDate\": \"2024-07-31\",",
       "\"releaseDate\": \"" + releaseDate.format(pattern) + "\",",
     )
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisonersList =
-      offenderSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "name,ASC")
+      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "name,ASC")
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
 
@@ -174,9 +174,9 @@ class OffenderSearchApiServiceTest {
 
     val prisonId = "MDI"
 
-    val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-2.json")
+    val mockedJsonResponse = readFile("testdata/prisoner-search-api/prisoner-search-2.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisoners = offenderSearchApiService.getPrisonersByPrisonId(
+    val prisoners = prisonerSearchApiService.getPrisonersByPrisonId(
       "",
       prisonId,
       0,
@@ -196,9 +196,9 @@ class OffenderSearchApiServiceTest {
 
     val prisonId = "MDI"
 
-    val mockedJsonResponse = readFile("testdata/offender-search-api/prisoner-offender-search-2.json")
+    val mockedJsonResponse = readFile("testdata/prisoner-search-api/prisoner-search-2.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisoners = offenderSearchApiService.getPrisonersByPrisonId(
+    val prisoners = prisonerSearchApiService.getPrisonersByPrisonId(
       "",
       prisonId,
       0,
@@ -462,9 +462,9 @@ class OffenderSearchApiServiceTest {
       ),
     )
     assertDoesNotThrow {
-      offenderSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("ABC"))
-      offenderSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("DEF"))
-      offenderSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("GHI"))
+      prisonerSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("ABC"))
+      prisonerSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("DEF"))
+      prisonerSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("GHI"))
     }
   }
 
@@ -472,9 +472,9 @@ class OffenderSearchApiServiceTest {
   fun `test check prisoner is in active prison - not found`() {
     `when`(prisonRegisterApiService.getActivePrisonsList()).thenReturn(mutableListOf())
     assertThrows<ResourceNotFoundException> {
-      offenderSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("ABC"))
-      offenderSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("DEF"))
-      offenderSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("GHI"))
+      prisonerSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("ABC"))
+      prisonerSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("DEF"))
+      prisonerSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("GHI"))
     }
   }
 
@@ -506,7 +506,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerName("ZACHARY", "SMITH"),
       createPrisonerName("TOM", "WILLIAMSON"),
     )
-    offenderSearchApiService.sortPrisonersByField("name,ASC", prisoners)
+    prisonerSearchApiService.sortPrisonersByField("name,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -534,7 +534,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerName("BERTRAND", "ANDERSON"),
       createPrisonerName("ANDY", "ANDERSON"),
     )
-    offenderSearchApiService.sortPrisonersByField("name,DESC", prisoners)
+    prisonerSearchApiService.sortPrisonersByField("name,DESC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -543,7 +543,7 @@ class OffenderSearchApiServiceTest {
     val prisoner = (
       createPrisonerPEDandHDCED(LocalDate.parse("2029-08-30"), null)
       )
-    val releaseEligibilityDate = offenderSearchApiService.getDisplayedReleaseEligibilityDate(prisoner)
+    val releaseEligibilityDate = prisonerSearchApiService.getDisplayedReleaseEligibilityDate(prisoner)
     Assertions.assertEquals(LocalDate.parse("2029-08-30"), releaseEligibilityDate)
   }
 
@@ -578,7 +578,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2026-07-24"), null, LocalDate.parse("2026-07-24"), "HDCED"),
       createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2024-12-09"), null, LocalDate.parse("2024-12-09"), "HDCED"),
     )
-    val actualPrisoners = offenderSearchApiService.objectMapper(prisoners, null, null)
+    val actualPrisoners = prisonerSearchApiService.objectMapper(prisoners, null, null)
     Assertions.assertEquals(prisonersMapped, actualPrisoners)
   }
 
@@ -613,7 +613,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerReleaseEligibilityDateAndType(null, null, null, null),
       createPrisonerReleaseEligibilityDateAndType(null, null, null, null),
     )
-    offenderSearchApiService.sortPrisoners("releaseEligibilityDate,ASC", prisoners)
+    prisonerSearchApiService.sortPrisoners("releaseEligibilityDate,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -646,7 +646,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2024-12-09"), null, LocalDate.parse("2024-12-09"), "HDCED"),
       createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2024-12-08"), LocalDate.parse("2024-12-08"), "PED"),
     )
-    offenderSearchApiService.sortPrisoners("releaseEligibilityDate,DESC", prisoners)
+    prisonerSearchApiService.sortPrisoners("releaseEligibilityDate,DESC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -681,7 +681,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerReleaseDate(LocalDate.parse("2024-12-09")),
       createPrisonerReleaseDate(LocalDate.parse("2024-12-08")),
     )
-    offenderSearchApiService.sortPrisonersByField("releaseDate,DESC", prisoners)
+    prisonerSearchApiService.sortPrisonersByField("releaseDate,DESC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -716,7 +716,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerReleaseDate(null),
       createPrisonerReleaseDate(null),
     )
-    offenderSearchApiService.sortPrisonersByField("releaseDate,ASC", prisoners)
+    prisonerSearchApiService.sortPrisonersByField("releaseDate,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -751,7 +751,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerReleaseOnTempLicenceDate(null),
       createPrisonerReleaseOnTempLicenceDate(null),
     )
-    offenderSearchApiService.sortPrisoners("releaseOnTemporaryLicenceDate,ASC", prisoners)
+    prisonerSearchApiService.sortPrisoners("releaseOnTemporaryLicenceDate,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -786,7 +786,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2024-12-09")),
       createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2024-12-08")),
     )
-    offenderSearchApiService.sortPrisoners("releaseOnTemporaryLicenceDate,DESC", prisoners)
+    prisonerSearchApiService.sortPrisoners("releaseOnTemporaryLicenceDate,DESC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -807,7 +807,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerPathwayStatus(Status.SUPPORT_DECLINED),
       createPrisonerPathwayStatus(Status.DONE),
     )
-    offenderSearchApiService.sortPrisonersByField("pathwayStatus,ASC", prisoners)
+    prisonerSearchApiService.sortPrisonersByField("pathwayStatus,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -828,7 +828,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerPathwayStatus(Status.IN_PROGRESS),
       createPrisonerPathwayStatus(Status.NOT_STARTED),
     )
-    offenderSearchApiService.sortPrisonersByField("pathwayStatus,DESC", prisoners)
+    prisonerSearchApiService.sortPrisonersByField("pathwayStatus,DESC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -858,7 +858,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerLastUpdatedDate(Status.SUPPORT_NOT_REQUIRED, LocalDate.parse("2023-08-03")),
       createPrisonerLastUpdatedDate(Status.IN_PROGRESS, LocalDate.parse("2023-05-08")),
     )
-    offenderSearchApiService.sortPrisonersByField("lastUpdatedDate,DESC", prisoners)
+    prisonerSearchApiService.sortPrisonersByField("lastUpdatedDate,DESC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -887,7 +887,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerLastUpdatedDate(Status.NOT_STARTED, null),
       createPrisonerLastUpdatedDate(Status.NOT_STARTED, null),
     )
-    offenderSearchApiService.sortPrisonersByField("lastUpdatedDate,ASC", prisoners)
+    prisonerSearchApiService.sortPrisonersByField("lastUpdatedDate,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -920,7 +920,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerNumber("Y945849"),
 
     )
-    offenderSearchApiService.sortPrisoners("prisonerNumber,ASC", prisoners)
+    prisonerSearchApiService.sortPrisoners("prisonerNumber,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -958,7 +958,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerNameAndNumber("Y945849", "ZACHARY", "SMITH"),
       createPrisonerNameAndNumber("E394839", "TOM", "WILLIAMSON"),
     )
-    offenderSearchApiService.sortPrisoners("name,ASC", prisoners)
+    prisonerSearchApiService.sortPrisoners("name,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -996,7 +996,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerNameAndNumber("A123456", "BERTRAND", "ANDERSON"),
       createPrisonerNameAndNumber("G394839", "ANDY", "ANDERSON"),
     )
-    offenderSearchApiService.sortPrisoners("name,DESC", prisoners)
+    prisonerSearchApiService.sortPrisoners("name,DESC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -1020,7 +1020,7 @@ class OffenderSearchApiServiceTest {
       createPrisonerNumber("G567809"),
       createPrisonerNumber("G678952"),
     )
-    offenderSearchApiService.sortPrisoners(null, prisoners)
+    prisonerSearchApiService.sortPrisoners(null, prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 

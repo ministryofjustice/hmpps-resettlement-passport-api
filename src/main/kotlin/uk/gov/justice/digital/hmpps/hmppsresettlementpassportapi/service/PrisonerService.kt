@@ -13,14 +13,14 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import java.time.LocalDate
 import java.util.stream.Stream
 
 @Service
 class PrisonerService(
-  val offenderSearchApiService: OffenderSearchApiService,
+  val prisonerSearchApiService: PrisonerSearchApiService,
   val prisonApiService: PrisonApiService,
   val prisonerRepository: PrisonerRepository,
   private val pathwayStatusRepository: PathwayStatusRepository,
@@ -41,14 +41,14 @@ class PrisonerService(
     if (pathwayView == null && (sort == "pathwayStatus,ASC" || sort == "pathwayStatus,DESC")) {
       throw ServerWebInputException("Pathway must be selected to sort by pathway status")
     }
-    return offenderSearchApiService.getPrisonersByPrisonId(term, prisonId, days, pathwayView, pathwayStatus, page, size, sort)
+    return prisonerSearchApiService.getPrisonersByPrisonId(term, prisonId, days, pathwayView, pathwayStatus, page, size, sort)
   }
 
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun getPrisonerDetailsByNomsId(nomsId: String) = offenderSearchApiService.getPrisonerDetailsByNomsId(nomsId)
+  fun getPrisonerDetailsByNomsId(nomsId: String) = prisonerSearchApiService.getPrisonerDetailsByNomsId(nomsId)
 
   fun getPrisonerImageData(nomsId: String, imageId: Int): ByteArray? = prisonApiService.getPrisonerImageData(nomsId, imageId)
 
@@ -74,8 +74,8 @@ class PrisonerService(
   fun updateAndSaveNewReleaseDates(prisonerEntities: Stream<PrisonerEntity>) {
     for (prisonerEntity in prisonerEntities) {
       try {
-        val prisoner = offenderSearchApiService.findPrisonerPersonalDetails(prisonerEntity.nomsId)
-        offenderSearchApiService.setDisplayedReleaseDate(prisoner)
+        val prisoner = prisonerSearchApiService.findPrisonerPersonalDetails(prisonerEntity.nomsId)
+        prisonerSearchApiService.setDisplayedReleaseDate(prisoner)
         prisonerEntity.releaseDate = prisoner.confirmedReleaseDate
         prisonerRepository.save(prisonerEntity)
       } catch (e: ResourceNotFoundException) {

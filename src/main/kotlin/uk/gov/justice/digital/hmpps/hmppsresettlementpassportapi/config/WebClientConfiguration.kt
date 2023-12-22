@@ -21,11 +21,11 @@ import java.time.Duration
 class WebClientConfiguration(
   @Value("\${api.base.url.oauth}") val authBaseUri: String,
   @Value("\${api.base.url.prison-register}") private val prisonRegisterRootUri: String,
-  @Value("\${api.base.url.offender-search}") private val offenderSearchRootUri: String,
+  @Value("\${api.base.url.prisoner-search}") private val prisonerSearchRootUri: String,
   @Value("\${api.base.url.cvl}") private val cvlRootUri: String,
   @Value("\${api.base.url.arn}") private val arnRootUri: String,
   @Value("\${api.base.url.prison}") private val prisonRootUri: String,
-  @Value("\${api.base.url.offender-case-notes}") private val offenderCaseNotesRootUri: String,
+  @Value("\${api.base.url.case-notes}") private val caseNotesRootUri: String,
   @Value("\${api.base.url.key-worker}") private val keyWorkerRootUri: String,
   @Value("\${api.base.url.allocation-manager}") private val allocationManagerRootUri: String,
   @Value("\${api.base.url.resettlement-passport-delius}") private val rpDeliusRootUri: String,
@@ -62,8 +62,8 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun offenderSearchWebClientClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, offenderSearchRootUri)
+  fun prisonerSearchWebClientClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
+    return getWebClientCredentials(authorizedClientManager, prisonerSearchRootUri)
   }
 
   @Bean
@@ -82,17 +82,17 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun offenderCaseNotesWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, offenderCaseNotesRootUri)
+  fun caseNotesWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
+    return getWebClientCredentials(authorizedClientManager, caseNotesRootUri)
   }
 
   @Bean
-  fun offenderCaseNotesWebClientUserCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
+  fun caseNotesWebClientUserCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
     val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
     val oauth2Client = ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
     oauth2Client.setDefaultClientRegistrationId(SYSTEM_USERNAME)
     return WebClient.builder()
-      .baseUrl(offenderCaseNotesRootUri)
+      .baseUrl(caseNotesRootUri)
       .clientConnector(ReactorClientHttpConnector(httpClient))
       .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }
       .build()

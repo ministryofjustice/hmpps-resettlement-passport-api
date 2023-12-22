@@ -12,7 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CRSReferral
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.InterventionsApiService
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderSearchApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDateTime
 import java.util.stream.Stream
@@ -30,7 +30,7 @@ class CRSReferralServiceTest {
   private lateinit var interventionsApiService: InterventionsApiService
 
   @Mock
-  private lateinit var offenderSearchApiService: OffenderSearchApiService
+  private lateinit var prisonerSearchApiService: PrisonerSearchApiService
 
   @Mock
   private lateinit var resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService
@@ -40,7 +40,7 @@ class CRSReferralServiceTest {
     crsReferralService = CRSReferralService(
       prisonerRepository,
       interventionsApiService,
-      offenderSearchApiService,
+      prisonerSearchApiService,
       resettlementPassportDeliusApiService,
     )
   }

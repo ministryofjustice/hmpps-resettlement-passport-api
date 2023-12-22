@@ -22,9 +22,9 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wir
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.InterventionsServiceApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.KeyWorkerApiMockServer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.OffenderSearchApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonRegisterApiMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonerSearchApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ResettlementPassportDeliusApiMockServer
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -53,7 +53,7 @@ abstract class IntegrationTestBase : TestBase() {
     val arnApiMockServer = ArnApiMockServer()
 
     @JvmField
-    val offenderSearchApiMockServer = OffenderSearchApiMockServer()
+    val prisonerSearchApiMockServer = PrisonerSearchApiMockServer()
 
     @JvmField
     val prisonApiMockServer = PrisonApiMockServer()
@@ -87,7 +87,7 @@ abstract class IntegrationTestBase : TestBase() {
       prisonRegisterApiMockServer.start()
       cvlApiMockServer.start()
       arnApiMockServer.start()
-      offenderSearchApiMockServer.start()
+      prisonerSearchApiMockServer.start()
       prisonApiMockServer.start()
       caseNotesApiMockServer.start()
       keyWorkerApiMockServer.start()
@@ -105,7 +105,7 @@ abstract class IntegrationTestBase : TestBase() {
       hmppsAuthMockServer.stop()
       cvlApiMockServer.stop()
       arnApiMockServer.stop()
-      offenderSearchApiMockServer.stop()
+      prisonerSearchApiMockServer.stop()
       prisonApiMockServer.stop()
       caseNotesApiMockServer.stop()
       keyWorkerApiMockServer.stop()

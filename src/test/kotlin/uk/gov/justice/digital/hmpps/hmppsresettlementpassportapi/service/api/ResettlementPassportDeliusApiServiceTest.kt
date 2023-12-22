@@ -38,7 +38,7 @@ class ResettlementPassportDeliusApiServiceTest {
     val nomsId = "ABC1234"
     val expectedCrn = "D345678"
 
-    val mockedJsonResponse = readFile("testdata/resettlement-passport-delius-api/offender-details-valid-1.json")
+    val mockedJsonResponse = readFile("testdata/resettlement-passport-delius-api/prisoner-details-valid-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
 
     Assertions.assertEquals(expectedCrn, rpDeliusApiService.getCrn(nomsId))
@@ -49,7 +49,7 @@ class ResettlementPassportDeliusApiServiceTest {
     val nomsId = "ABC1234"
     val expectedCrn = "D345678"
 
-    val mockedJsonResponse = readFile("testdata/resettlement-passport-delius-api/offender-details-valid-2.json")
+    val mockedJsonResponse = readFile("testdata/resettlement-passport-delius-api/prisoner-details-valid-2.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
 
     Assertions.assertEquals(expectedCrn, rpDeliusApiService.getCrn(nomsId))

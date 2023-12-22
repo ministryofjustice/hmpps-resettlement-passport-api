@@ -9,15 +9,15 @@ api:
       #oauth: http://localhost:9090/auth
       prison-register: http://localhost:8083
       #prison-register: https://prison-register-dev.hmpps.service.justice.gov.uk
-      offender-search: http://localhost:8085
-      #offender-search: https://prisoner-search-dev.prison.service.justice.gov.uk
+      prisoner-search: http://localhost:8085
+      #prisoner-search: https://prisoner-search-dev.prison.service.justice.gov.uk
       cvl: http://localhost:8081
       #cvl: https://create-and-vary-a-licence-api-dev.hmpps.service.justice.gov.uk
       arn: http://localhost:8084
       #arn: https://assess-risks-and-needs-dev.hmpps.service.justice.gov.uk
       prison: http://localhost:8086
       #prison: https://prison-api-dev.prison.service.justice.gov.uk
-      offender-case-notes: https://dev.offender-case-notes.service.justice.gov.uk
+      case-notes: https://dev.offender-case-notes.service.justice.gov.uk
       key-worker: http://localhost:8087
       #key-worker: https://keyworker-api-dev.prison.service.justice.gov.uk
       allocation-manager: http://localhost:8088

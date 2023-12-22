@@ -129,7 +129,7 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
   fun `Get Appointments when nomsId not found`() {
     val prisonId = "abc"
 
-    offenderSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 404)
+    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 404)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?page=0&size=10&sort=xxxxx")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))

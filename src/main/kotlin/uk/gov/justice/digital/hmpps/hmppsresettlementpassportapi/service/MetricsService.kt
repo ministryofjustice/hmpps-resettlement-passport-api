@@ -11,13 +11,13 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerCo
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerCounts
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ReleaseDateTag
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.StatusTag
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.OffenderSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import java.time.LocalDate
 
 @Service
 class MetricsService(
-  private val offenderSearchApiService: OffenderSearchApiService,
+  private val prisonerSearchApiService: PrisonerSearchApiService,
   private val prisonRegisterApiService: PrisonRegisterApiService,
   private val prisonerService: PrisonerService,
   private val registry: MeterRegistry,
@@ -48,8 +48,8 @@ class MetricsService(
 
     for (prison in prisonList) {
       try {
-        val prisoners = offenderSearchApiService.findPrisonersBySearchTerm(prison.id, "")
-        prisoners.forEach { offenderSearchApiService.setDisplayedReleaseDate(it) }
+        val prisoners = prisonerSearchApiService.findPrisonersBySearchTerm(prison.id, "")
+        prisoners.forEach { prisonerSearchApiService.setDisplayedReleaseDate(it) }
 
         val allPrisonersPastCount = prisoners.filter { it.displayReleaseDate != null && it.displayReleaseDate!! < earliestFutureReleaseDate }.size
         val allPrisonersFutureCount = prisoners.filter { it.displayReleaseDate == null || it.displayReleaseDate!! >= earliestFutureReleaseDate }.size

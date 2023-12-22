@@ -31,7 +31,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
   @Sql("classpath:testdata/sql/seed-pathway-statuses-4.sql")
   fun `Patch pathway status and case notes happy path - NOMIS user`() {
     val nomsId = "G4274GN"
-    offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "ACCOM", "This is a case note", "MDI", 200)
 
     webTestClient.patch()
@@ -82,7 +82,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
   @Sql("classpath:testdata/sql/seed-pathway-statuses-4.sql")
   fun `Patch pathway status and case notes happy path - Delius user`() {
     val nomsId = "G4274GN"
-    offenderSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
 
     webTestClient.patch()
       .uri("/resettlement-passport/prisoner/$nomsId/pathway-with-case-note")

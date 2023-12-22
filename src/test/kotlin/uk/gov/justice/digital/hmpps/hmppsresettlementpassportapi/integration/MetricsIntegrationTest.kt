@@ -18,7 +18,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.MetricsService
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
 class MetricsIntegrationTest : IntegrationTestBase() {
@@ -40,7 +39,7 @@ class MetricsIntegrationTest : IntegrationTestBase() {
   @Test
   fun `test collect metrics - blank database and no results from prisoner search api`() {
     prisonRegisterApiMockServer.stubPrisonList(200)
-    offenderSearchApiMockServer.stubGetPrisonersList("MDI", "", 500, 0, 404)
+    prisonerSearchApiMockServer.stubGetPrisonersList("MDI", "", 500, 0, 404)
 
     metricsService.recordCustomMetrics()
     assertThrows<MeterNotFoundException> { registry.get("total_prisoners_count").gauges() }
@@ -57,7 +56,7 @@ class MetricsIntegrationTest : IntegrationTestBase() {
     seedPathwayStatuses()
 
     prisonRegisterApiMockServer.stubPrisonList(200)
-    offenderSearchApiMockServer.stubGetPrisonersList("testdata/offender-search-api/prisoner-offender-search-3.json", prisonId, "", 500, 0, 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-3.json", prisonId, "", 500, 0, 200)
 
     webTestClient.get()
       .uri("/resettlement-passport/metrics/prisoner-counts?prisonId=$prisonId")

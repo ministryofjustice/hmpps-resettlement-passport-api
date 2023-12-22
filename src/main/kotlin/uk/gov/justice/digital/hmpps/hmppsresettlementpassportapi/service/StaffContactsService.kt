@@ -25,14 +25,14 @@ class StaffContactsService(val resettlementPassportDeliusApiService: Resettlemen
     }
 
     // Get POM details from Allocation Manager API
-    val prisonOffenderManagers = allocationManagerApiService.getPomsByNomsId(nomsId)
+    val poms = allocationManagerApiService.getPomsByNomsId(nomsId)
     var primaryPom: Contact? = null
-    if (prisonOffenderManagers.primaryPom != null) {
-      primaryPom = Contact(prisonOffenderManagers.primaryPom)
+    if (poms.primaryPom != null) {
+      primaryPom = Contact(poms.primaryPom)
     }
     var secondaryPom: Contact? = null
-    if (prisonOffenderManagers.secondaryPom != null) {
-      secondaryPom = Contact(prisonOffenderManagers.secondaryPom)
+    if (poms.secondaryPom != null) {
+      secondaryPom = Contact(poms.secondaryPom)
     }
 
     return StaffContacts(primaryPom = primaryPom, secondaryPom = secondaryPom, com = com, keyWorker = keyWorker)

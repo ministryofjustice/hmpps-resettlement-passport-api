@@ -11,11 +11,11 @@ generic-service:
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
     API_BASE_URL_OAUTH: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
     API_BASE_URL_PRISON-REGISTER: http://prison-register-api-stub
-    API_BASE_URL_OFFENDER-SEARCH: http://prisoner-offender-search-api-stub
+    API_BASE_URL_PRISONER-SEARCH: http://prisoner-search-api-stub
     API_BASE_URL_CVL: http://cvl-api-stub
     API_BASE_URL_ARN: http://arn-api-stub
     API_BASE_URL_PRISON: http://prison-api-stub
-    API_BASE_URL_OFFENDER-CASE-NOTES: https://dev.offender-case-notes.service.justice.gov.uk
+    API_BASE_URL_CASE-NOTES: https://dev.offender-case-notes.service.justice.gov.uk
     API_BASE_URL_KEY-WORKER: http://key-worker-api-stub
     API_BASE_URL_ALLOCATION-MANAGER: http://allocation-manager-api-stub
     API_BASE_URL_RESETTLEMENT-PASSPORT-DELIUS: http://resettlement-passport-and-delius-api-stub
@@ -33,7 +33,7 @@ deploy_stubs:
   - cvl-api
   - prison-register-api
   - arn-api
-  - prisoner-offender-search-api
+  - prisoner-search-api
   - prison-api
   - key-worker-api
   - allocation-manager-api

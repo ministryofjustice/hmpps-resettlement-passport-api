@@ -4,10 +4,10 @@ import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 
-class OffenderSearchApiMockServer : WireMockServerBase(9094) {
+class PrisonerSearchApiMockServer : WireMockServerBase(9094) {
 
   fun stubGetPrisonersList(prisonId: String, term: String, size: Int, page: Int, status: Int) {
-    stubGetPrisonersList("testdata/offender-search-api/prisoner-offender-search-1.json", prisonId, term, size, page, status)
+    stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-1.json", prisonId, term, size, page, status)
   }
 
   fun stubGetPrisonersList(jsonResponseFile: String, prisonId: String, term: String, size: Int, page: Int, status: Int) {
@@ -32,7 +32,7 @@ class OffenderSearchApiMockServer : WireMockServerBase(9094) {
   }
 
   fun stubGetPrisonerDetails(nomsId: String, status: Int) {
-    val prisonerDataJSON = readFile("testdata/offender-search-api/prisoner-offender-details.json")
+    val prisonerDataJSON = readFile("testdata/prisoner-search-api/prisoner-details.json")
     stubFor(
       get("/prisoner/$nomsId").willReturn(
         if (status == 200) {

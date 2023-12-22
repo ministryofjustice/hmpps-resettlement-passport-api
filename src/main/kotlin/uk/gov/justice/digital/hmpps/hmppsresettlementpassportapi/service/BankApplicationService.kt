@@ -67,7 +67,7 @@ class BankApplicationService(
       throw DuplicateDataFoundException("Bank application for prisoner with id $nomsId already exists in database")
     }
 
-    val bankApplication = BankApplicationEntity(
+    val bankApplicationEntity = BankApplicationEntity(
       null,
       prisoner,
       emptySet(),
@@ -76,7 +76,12 @@ class BankApplicationService(
       applicationSubmittedDate = bankApplication.applicationSubmittedDate!!,
       status = statusText,
     )
-    val newStatus = BankApplicationStatusLogEntity(null, bankApplication, statusChangedTo = statusText, bankApplication.applicationSubmittedDate!!)
+    val newStatus = BankApplicationStatusLogEntity(
+      null,
+      bankApplicationEntity,
+      statusChangedTo = statusText,
+      bankApplicationEntity.applicationSubmittedDate,
+    )
     bankApplicationStatusLogRepository.save(newStatus)
     return getBankApplicationByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Bank application for prisoner with id $nomsId not found in database ")

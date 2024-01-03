@@ -1,0 +1,54 @@
+{
+  "id": "CHECK_ANSWERS",
+  "title": "",
+  "questionsAndAnswers": [
+    {
+      "question": {
+        "id": "WHERE_WILL_THEY_LIVE",
+        "title": "",
+        "subTitle": null,
+        "type": "RADIO_WITH_ADDRESS",
+        "options": [
+          {
+            "id": "PREVIOUS_ADDRESS",
+            "displayText": "Returning to a previous address"
+          },
+          {
+            "id": "NEW_ADDRESS",
+            "displayText": "Moving to new address"
+          },
+          {
+            "id": "NO_PLACE_TO_LIVE",
+            "displayText": "No place to live"
+          }
+        ]
+      },
+      "answer": {
+        "@class": "StringAnswer",
+        "answer": "NEW_ADDRESS"
+      }
+    },
+    {
+      "question": {
+        "id": "WHO_WILL_THEY_LIVE_WITH",
+        "title": "",
+        "subTitle": null,
+        "type": "LIST_OF_PEOPLE",
+        "options": null
+      },
+      "answer": {
+        "@class": "MapAnswer",
+        "answer": [
+          {
+            "age": "47",
+            "name": "person1"
+          },
+          {
+            "age": "53",
+            "name": "person2"
+          }
+        ]
+      }
+    }
+  ]
+}

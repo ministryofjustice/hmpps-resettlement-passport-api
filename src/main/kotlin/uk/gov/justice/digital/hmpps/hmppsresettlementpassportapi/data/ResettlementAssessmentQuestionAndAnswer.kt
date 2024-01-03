@@ -1,13 +1,94 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 
-//data class ResettlementAssessmentQuestionAndAnswer<T> (
-//  val question: ResettlementAssessmentQuestionsAndAnswers,
-//  val answer: T,
-//)
+import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.google.gson.JsonArray
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
+import com.google.gson.JsonSerializationContext
+import com.google.gson.JsonSerializer
+import java.lang.reflect.Type
+
+data class ResettlementAssessmentRequestQuestionAndAnswer<T> (
+  val question: String,
+  val answer: Answer<T>,
+)
 
 
-//data class Answer(val stringAnswer: String?, val listAnswer: List<String>?) // FIXME
+class AnswerDeserializer : JsonDeserializer<Answer<*>> {
+  override fun deserialize(json: JsonElement?, typeOfT: Type?, context: JsonDeserializationContext?): Answer<*>? {
+    if (json?.isJsonArray == true) {
+      if (json.asJsonArray[0].isJsonObject) {
+        val listOfMaps: MutableList<Map<String, String>> = mutableListOf()
+        for (jsonObj in json.asJsonArray) {
+          val map: MutableMap<String, String> = linkedMapOf()
+          for (key in jsonObj.asJsonObject.keySet()) {
+            map[key] = jsonObj.asJsonObject[key].asString
+          }
+          listOfMaps.add(map)
+        }
+        return MapAnswer(listOfMaps)
+      }
+      return ListAnswer(json.asJsonArray.map { it.asString })
+    }
 
+    return StringAnswer(json?.asString?.replace("\"\"", ""))
+  }
+}
+class ResettlementAssessmentRequestQuestionAndAnswerSerialize : JsonSerializer<ResettlementAssessmentRequestQuestionAndAnswer<*>> {
+  override fun serialize(src: ResettlementAssessmentRequestQuestionAndAnswer<*>?, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement {
+    val jsonObj = JsonObject()
+    jsonObj.addProperty("question", src?.question)
+    if (src?.answer is StringAnswer) {
+      jsonObj.addProperty("answer", src?.answer.answer as String)
+      jsonObj.addProperty("type", "string")
+    }
+    else if (src?.answer is ListAnswer) {
+      val arr = JsonArray()
+      for(ans in src.answer.answer as List<String>)
+      {
+        arr.add(ans)
+      }
+      jsonObj.add("answer", arr)
+      jsonObj.addProperty("type", "list")
+    }
+    else if (src?.answer is MapAnswer) {
+      val arr = JsonArray()
+      for(ans in src.answer.answer as List<Map<String,String>>) {
+        val nestedObj = JsonObject()
+        ans.forEach { (k, v) -> nestedObj.addProperty(k,v) }
+        arr.add(nestedObj)
+        jsonObj.add("answer", arr)
+        jsonObj.addProperty("type", "map")
+      }
+    }
+    return jsonObj
+  }
+
+}
+
+//class StringAnswerSerialize : JsonSerializer<StringAnswer> {
+//  override fun serialize(src: StringAnswer?, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement {
+//    val jsonObj = JsonObject()
+//    jsonObj.addProperty("answer", src?.answer)
+//    return jsonObj
+//  }
+//
+//}
+
+@JsonTypeInfo(
+  use = JsonTypeInfo.Id.NAME,
+  include = JsonTypeInfo.As.PROPERTY,
+  property = "@class",
+)
+@JsonSubTypes(
+  JsonSubTypes.Type(value = StringAnswer::class),
+  JsonSubTypes.Type(value = ListAnswer::class),
+  JsonSubTypes.Type(value = MapAnswer::class),
+)
 interface Answer<T> {
   var answer: T?
 }
@@ -16,18 +97,27 @@ data class StringAnswer(override var answer: String? = null) : Answer<String>
 
 data class ListAnswer(override var answer: List<String>? = null) : Answer<List<String>>
 
-data class MapAnswer(override var answer: Map<String, String>? = null) : Answer<Map<String, String>>
+data class MapAnswer(override var answer: List<Map<String, String>>? = null) : Answer<List<Map<String, String>>>
 
-interface ResettlementAssessmentQuestion {
+//@JsonTypeInfo(
+//  use = JsonTypeInfo.Id.NAME,
+//  visible = true
+//  )
+//@JsonSubTypes(
+//  JsonSubTypes.Type(value = AccommodationResettlementAssessmentQuestion::class, name = "ACCOMMODATION"),
+//)
+
+interface IResettlementAssessmentQuestion {
+  val id: String
   val title: String
   val subTitle: String?
   val type: TypeOfQuestion
   val options: List<Option>?
 }
 
-interface ResettlementAssessmentQuestionAndAnswer {
-  val question: AccommodationResettlementAssessmentQuestion
-  val answer: Answer<*>
+interface IResettlementAssessmentQuestionAndAnswer {
+  val question: IResettlementAssessmentQuestion
+  val answer: Answer<*>?
 }
 
 data class Option(
@@ -35,28 +125,35 @@ data class Option(
   val displayText: String,
 )
 
-data class AccommodationResettlementAssessmentQuestionAndAnswer(
-  override val question: AccommodationResettlementAssessmentQuestion,
-  override val answer: Answer<*>,
-) : ResettlementAssessmentQuestionAndAnswer
+data class ResettlementAssessmentQuestionAndAnswer(
+  override val question: IResettlementAssessmentQuestion,
+  override val answer: Answer<*>? = null,
+) : IResettlementAssessmentQuestionAndAnswer
 
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 enum class AccommodationResettlementAssessmentQuestion(
+  override val id: String,
   override val title: String,
   override val subTitle: String? = null,
   override val type: TypeOfQuestion,
   override val options: List<Option>? = null,
-) : ResettlementAssessmentQuestion {
-  WHERE_WILL_THEY_LIVE(title = "", type = TypeOfQuestion.RADIO_WITH_ADDRESS, options = listOf(
-    Option(id = "PREVIOUS_ADDRESS", displayText = "Returning to a previous address"),
-    Option(id = "NEW_ADDRESS", displayText = "Moving to new address"),
-    Option(id = "NO_PLACE_TO_LIVE", displayText = "No place to live"),
-    )),
-  WHO_WILL_THEY_LIVE_WITH(title = "", type = TypeOfQuestion.LIST_OF_PEOPLE),
-  WHAT_IS_THE_ADDRESS(title = "", type = TypeOfQuestion.ADDRESS),
-  ACCOM_CRS(title = "", type = TypeOfQuestion.RADIO, options = yesNoOptions),
-  CHECK_ANSWERS(title = "", type = TypeOfQuestion.LONG_TEXT), // TODO how to do this?
-  COUNCIL_AREA(title = "", type = TypeOfQuestion.DROPDOWN, options = councilOptions),
-  COUNCIL_AREA_REASON(title = "", type = TypeOfQuestion.LONG_TEXT),
+) : IResettlementAssessmentQuestion {
+  WHERE_WILL_THEY_LIVE(
+    id = "WHERE_WILL_THEY_LIVE",
+    title = "",
+    type = TypeOfQuestion.RADIO_WITH_ADDRESS,
+    options = listOf(
+      Option(id = "PREVIOUS_ADDRESS", displayText = "Returning to a previous address"),
+      Option(id = "NEW_ADDRESS", displayText = "Moving to new address"),
+      Option(id = "NO_PLACE_TO_LIVE", displayText = "No place to live"),
+    ),
+  ),
+  WHO_WILL_THEY_LIVE_WITH(id = "WHO_WILL_THEY_LIVE_WITH", title = "", type = TypeOfQuestion.LIST_OF_PEOPLE),
+  WHAT_IS_THE_ADDRESS(id = "WHAT_IS_THE_ADDRESS", title = "", type = TypeOfQuestion.ADDRESS),
+  ACCOM_CRS(id = "ACCOM_CRS", title = "", type = TypeOfQuestion.RADIO, options = yesNoOptions),
+  CHECK_ANSWERS(id = "CHECK_ANSWERS", title = "", type = TypeOfQuestion.LONG_TEXT), // TODO how to do this?
+  COUNCIL_AREA(id = "COUNCIL_AREA", title = "", type = TypeOfQuestion.DROPDOWN, options = councilOptions),
+  COUNCIL_AREA_REASON(id = "COUNCIL_AREA_REASON", title = "", type = TypeOfQuestion.LONG_TEXT),
 }
 
 enum class TypeOfQuestion {
@@ -71,8 +168,9 @@ enum class TypeOfQuestion {
 }
 
 interface AssessmentPage {
+  val id: String
   val title: String
-  val questionsAndAnswers: List<ResettlementAssessmentQuestion>
+  val questionsAndAnswers: MutableList<ResettlementAssessmentQuestionAndAnswer>
 }
 
 //enum class AttitudeAssessmentPage(override val title: String, override val questionsAndAnswers: List<ResettlementAssessmentQuestionsAndAnswer>) : AssessmentPage {
@@ -91,12 +189,14 @@ interface AssessmentPage {
 //  ASSESSMENT_SUMMARY(title = "[Pathway] assessment summary", questionsAndAnswers = listOf())
 //}
 //
-enum class AccommodationAssessmentPage(override val title: String, override val questionsAndAnswers: List<ResettlementAssessmentQuestion>) : AssessmentPage {
-  WHERE_WILL_THEY_LIVE(title = "Where will they live when released from custody?", questionsAndAnswers = listOf(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE, AccommodationResettlementAssessmentQuestion.WHAT_IS_THE_ADDRESS)),
-  WHO_WILL_THEY_LIVE_WITH(title = "What are the names and ages of all residents at this property and the prisoner's relationship to them?", questionsAndAnswers = listOf(AccommodationResettlementAssessmentQuestion.WHO_WILL_THEY_LIVE_WITH)),
-  CONSENT_FOR_CRS(title = "Do they give consent for a Commissioned Rehabilitative Service (CRS)?", questionsAndAnswers = listOf(AccommodationResettlementAssessmentQuestion.ACCOM_CRS)),
-  WHAT_COUNCIL_AREA(title = "Which council area are they intending to move to on release?", questionsAndAnswers = listOf(AccommodationResettlementAssessmentQuestion.COUNCIL_AREA, AccommodationResettlementAssessmentQuestion.COUNCIL_AREA_REASON)),
-  CHECK_ANSWERS(title = "", questionsAndAnswers = listOf()),
+
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+enum class AccommodationAssessmentPage(override val id: String, override val title: String, override val questionsAndAnswers: MutableList<ResettlementAssessmentQuestionAndAnswer>) : AssessmentPage {
+  WHERE_WILL_THEY_LIVE(id = "WHERE_WILL_THEY_LIVE", title = "Where will they live when released from custody?", questionsAndAnswers = mutableListOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE), ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHAT_IS_THE_ADDRESS))),
+  WHO_WILL_THEY_LIVE_WITH(id = "WHO_WILL_THEY_LIVE_WITH", title = "What are the names and ages of all residents at this property and the prisoner's relationship to them?", questionsAndAnswers = mutableListOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHO_WILL_THEY_LIVE_WITH))),
+  CONSENT_FOR_CRS(id = "CONSENT_FOR_CRS", title = "Do they give consent for a Commissioned Rehabilitative Service (CRS)?", questionsAndAnswers = mutableListOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.ACCOM_CRS))),
+  WHAT_COUNCIL_AREA(id = "WHAT_COUNCIL_AREA", title = "Which council area are they intending to move to on release?", questionsAndAnswers = mutableListOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.COUNCIL_AREA), ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.COUNCIL_AREA_REASON))),
+  CHECK_ANSWERS(id = "CHECK_ANSWERS", title = "", questionsAndAnswers = mutableListOf()),
 }
 
 //data class ResettlementAssessmentQuestion(

@@ -8,6 +8,17 @@ data class ResettlementAssessment(
   val pathway: Pathway,
   val nomsID: String,
   val type: ResettlementAssessmentType,
-  val questions: List<ResettlementAssessmentQuestionAndAnswer<*>>,
+  val currentPage: String,
+  val questions: List<ResettlementAssessmentQuestionAndAnswer>,
+  val newStatus: Status,
+)
+
+
+data class ResettlementAssessmentRequest(
+  val pathway: Pathway,
+  val nomsID: String,
+  val type: ResettlementAssessmentType,
+  val currentPage: String,
+  val questions: List<ResettlementAssessmentRequestQuestionAndAnswer<*>>,
   val newStatus: Status,
 )

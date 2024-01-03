@@ -5,6 +5,7 @@ plugins {
   id("org.sonarqube") version "4.0.0.2929"
   kotlin("plugin.spring") version "1.8.22"
   kotlin("plugin.jpa") version "1.8.22"
+  kotlin("plugin.serialization") version "1.9.22"
 }
 
 dependencyCheck {
@@ -33,6 +34,7 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
   implementation("org.projectlombok:lombok:1.18.26")
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 
   runtimeOnly("org.flywaydb:flyway-core")
   runtimeOnly("org.springframework.boot:spring-boot-starter-jdbc")
@@ -50,6 +52,7 @@ dependencies {
   implementation("org.apache.commons:commons-text:1.10.0")
   implementation("commons-codec:commons-codec")
   implementation("com.google.code.gson:gson")
+  implementation("org.json:json:20231013")
 
   implementation("com.pauldijou:jwt-core_2.11:5.0.0")
 

@@ -24,10 +24,14 @@ class ResettlementAssessmentRepositoryTest : TestBase() {
   @Autowired
   lateinit var resettlementAssessmentRepository: ResettlementAssessmentRepository
 
+  @Autowired
+  lateinit var resettlementAssessmentStatusRepository: ResettlementAssessmentStatusRepository
+
   @BeforeEach
   @AfterEach
   fun beforeEach() {
     resettlementAssessmentRepository.deleteAll()
+    resettlementAssessmentStatusRepository.deleteAll()
     prisonerRepository.deleteAll()
     pathwayRepository.deleteAll()
   }
@@ -49,7 +53,7 @@ class ResettlementAssessmentRepositoryTest : TestBase() {
       creationDate = LocalDateTime.parse("2023-01-01T12:00:00"),
       createdBy = "Human, A",
       assessment = """{"question1": true, "question2": "some text", "question3": 1234}""",
-      assessmentStatus = ResettlementAssessmentStatusEntity(ResettlementAssessmentStatus.DONE.id, "Done", true, LocalDateTime.now()),
+      assessmentStatus = ResettlementAssessmentStatusEntity(3, "Complete", true, LocalDateTime.now()),
     )
     resettlementAssessmentRepository.save(resettlementAssessment)
 
@@ -74,7 +78,7 @@ class ResettlementAssessmentRepositoryTest : TestBase() {
       creationDate = LocalDateTime.parse("2023-01-01T12:00:00"),
       createdBy = "Human, A",
       assessment = """{"question1": true, "question2": "some text", "question3": 1234}""",
-      assessmentStatus = ResettlementAssessmentStatusEntity(ResettlementAssessmentStatus.DONE.id, "Done", true, LocalDateTime.now()),
+      assessmentStatus = ResettlementAssessmentStatusEntity(ResettlementAssessmentStatus.COMPLETE.id, "Complete", true, LocalDateTime.now()),
     )
     val resettlementAssessment2 = ResettlementAssessmentEntity(
       id = null,

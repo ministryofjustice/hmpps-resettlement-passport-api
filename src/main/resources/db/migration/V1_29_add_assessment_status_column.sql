@@ -1,1 +1,0 @@
-alter table resettlement_assessment add assessment_status numeric not null references assessment_status (id);

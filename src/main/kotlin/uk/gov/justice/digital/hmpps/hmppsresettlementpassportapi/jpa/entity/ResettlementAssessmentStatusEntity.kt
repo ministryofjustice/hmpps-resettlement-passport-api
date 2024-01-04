@@ -25,7 +25,7 @@ data class ResettlementAssessmentStatusEntity(
 enum class ResettlementAssessmentStatus(val id: Long) {
   NOT_STARTED(1),
   IN_PROGRESS(2),
-  DONE(3),
+  COMPLETE(3),
   ;
 
   companion object {

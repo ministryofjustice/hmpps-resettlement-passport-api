@@ -49,7 +49,7 @@ data class ResettlementAssessmentEntity(
   val createdBy: String,
 
   @ManyToOne(cascade = [CascadeType.MERGE])
-  @JoinColumn(name = "assessment_status", referencedColumnName = "id")
+  @JoinColumn(name = "assessment_status_id", referencedColumnName = "id")
   val assessmentStatus: ResettlementAssessmentStatusEntity,
 
 )

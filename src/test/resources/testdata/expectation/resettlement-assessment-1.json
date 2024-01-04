@@ -1,0 +1,16 @@
+{
+  "id": "WHO_WILL_THEY_LIVE_WITH",
+  "title": "What are the names and ages of all residents at this property and the prisoner's relationship to them?",
+  "questionsAndAnswers": [
+    {
+      "question": {
+        "id": "WHO_WILL_THEY_LIVE_WITH",
+        "title": "",
+        "subTitle": null,
+        "type": "LIST_OF_PEOPLE",
+        "options": null
+      },
+      "answer": null
+    }
+  ]
+}

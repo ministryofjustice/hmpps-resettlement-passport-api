@@ -47,6 +47,11 @@ data class ResettlementAssessmentEntity(
 
   @Column(name = "created_by")
   val createdBy: String,
+
+  @ManyToOne(cascade = [CascadeType.MERGE])
+  @JoinColumn(name = "assessment_status", referencedColumnName = "id")
+  val assessmentStatus: ResettlementAssessmentStatusEntity,
+
 )
 
 enum class ResettlementAssessmentType {

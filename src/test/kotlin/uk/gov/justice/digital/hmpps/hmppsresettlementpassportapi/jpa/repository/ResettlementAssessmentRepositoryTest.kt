@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBase
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -52,6 +49,7 @@ class ResettlementAssessmentRepositoryTest : TestBase() {
       creationDate = LocalDateTime.parse("2023-01-01T12:00:00"),
       createdBy = "Human, A",
       assessment = """{"question1": true, "question2": "some text", "question3": 1234}""",
+      assessmentStatus = ResettlementAssessmentStatusEntity(ResettlementAssessmentStatus.DONE.id, "Done", true, LocalDateTime.now()),
     )
     resettlementAssessmentRepository.save(resettlementAssessment)
 
@@ -76,6 +74,7 @@ class ResettlementAssessmentRepositoryTest : TestBase() {
       creationDate = LocalDateTime.parse("2023-01-01T12:00:00"),
       createdBy = "Human, A",
       assessment = """{"question1": true, "question2": "some text", "question3": 1234}""",
+      assessmentStatus = ResettlementAssessmentStatusEntity(ResettlementAssessmentStatus.DONE.id, "Done", true, LocalDateTime.now()),
     )
     val resettlementAssessment2 = ResettlementAssessmentEntity(
       id = null,
@@ -86,6 +85,7 @@ class ResettlementAssessmentRepositoryTest : TestBase() {
       creationDate = LocalDateTime.parse("2022-01-01T12:00:00"),
       createdBy = "Human, A",
       assessment = """{"question1": false, "question2": "some other text", "question3": 4321}""",
+      assessmentStatus = ResettlementAssessmentStatusEntity(ResettlementAssessmentStatus.IN_PROGRESS.id, "In Progress", true, LocalDateTime.now()),
     )
     resettlementAssessmentRepository.save(resettlementAssessment)
     resettlementAssessmentRepository.save(resettlementAssessment2)

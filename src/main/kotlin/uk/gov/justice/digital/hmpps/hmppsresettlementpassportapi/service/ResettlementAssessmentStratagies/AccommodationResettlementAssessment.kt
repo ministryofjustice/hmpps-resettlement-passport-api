@@ -1,47 +1,28 @@
-package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
+package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettlementAssessmentStratagies
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AccommodationAssessmentPage
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AccommodationResettlementAssessmentQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Answer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AnswerDeserializer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AssessmentPage
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessment
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequestQuestionAndAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequestQuestionAndAnswerSerialize
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.AnswerDeserializer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IAssessmentPage
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswerSerialize
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.StatusRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettelmentAssessmentQuestions.accommodationQuestions
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettelmentAssessmentPages.AccommodationAssessmentPage
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettelmentAssessmentPages.AccommodationResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettelmentAssessmentPages.accommodationPages
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClaimFromJWTToken
 import java.time.LocalDateTime
-
-
-//@Service
-//class ResettlementAssessmentService (private val resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy>) {
-//
-//  fun getNextQuestions(resettlementAssessment: ResettlementAssessment) {
-//    val assessmentStrategy = resettlementAssessmentStrategies.first { it.appliesTo(resettlementAssessment.pathway) }
-//    return
-//    // Get pathway decision tree
-//    // identify current location in decision tree
-//    // find next questions in tree
-//  }
-//}
-
-interface IResettlementAssessmentStrategy {
-  fun appliesTo(pathway: Pathway): Boolean
-  fun storeAssessment(assessment: ResettlementAssessmentRequest, auth: String)
-  fun nextQuestions(assessment: ResettlementAssessmentRequest): AssessmentPage
-}
 
 @Service
 class AccommodationResettlementAssessment(
@@ -49,7 +30,7 @@ class AccommodationResettlementAssessment(
   private val prisonerRepository: PrisonerRepository,
   private val statusRepository: StatusRepository,
   private val pathwayRepository: PathwayRepository,
-  ) : IResettlementAssessmentStrategy {
+) : IResettlementAssessmentStrategy {
   override fun appliesTo(pathway: Pathway): Boolean {
     return pathway == Pathway.ACCOMMODATION
   }
@@ -76,9 +57,9 @@ class AccommodationResettlementAssessment(
     resettlementAssessmentRepository.save(entity)
   }
 
-  override fun nextQuestions(assessment: ResettlementAssessmentRequest): AssessmentPage {
+  override fun nextQuestions(assessment: ResettlementAssessmentRequest): IAssessmentPage {
     val currentPageEnum = AccommodationAssessmentPage.valueOf(assessment.currentPage)
-    val questionLambda = accommodationQuestions.first { it.assessmentPage == currentPageEnum }
+    val questionLambda = accommodationPages.first { it.assessmentPage == currentPageEnum }
     val questions: List<ResettlementAssessmentQuestionAndAnswer> = assessment.questions.map {
       ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.valueOf(it.question), it.answer as Answer<*>)
     }
@@ -98,15 +79,3 @@ class AccommodationResettlementAssessment(
     return nextPage
   }
 }
-
-//class AttitudesResettlementAssessment : ResettlementAssessmentInterface {
-//  override fun appliesTo(pathway: Pathway): Boolean {
-//    return pathway == Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR
-//  }
-//
-//  override fun nextQuestions(currentPage: AssessmentPage, questions: List<ResettlementAssessmentQuestionAndAnswer<*>>): AssessmentPage {
-//    val questionLambda = AccommodationQuestions.accommodationQuestions.first { it.assessmentPage == currentPage }
-//    val nextPage = questionLambda.nextPage(currentPage, questions)
-//    return nextPage
-//  }
-//}

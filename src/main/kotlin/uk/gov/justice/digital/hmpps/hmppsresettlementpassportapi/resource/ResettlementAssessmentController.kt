@@ -15,11 +15,9 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Assessment
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AssessmentPage
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.IResettlementAssessmentStrategy
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IAssessmentPage
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettlementAssessmentStratagies.IResettlementAssessmentStrategy
 
 @RestController
 @Validated
@@ -64,7 +62,7 @@ class ResettlementAssessmentController (private val resettlementAssessmentStrate
     resettlementAssessment: ResettlementAssessmentRequest,
     @RequestHeader("Authorization")
     auth: String,
-  ) : AssessmentPage {
+  ) : IAssessmentPage {
     val assessmentStrategy = resettlementAssessmentStrategies.first { it.appliesTo(resettlementAssessment.pathway) }
     assessmentStrategy.storeAssessment(resettlementAssessment, auth)
     val result = assessmentStrategy.nextQuestions(resettlementAssessment)

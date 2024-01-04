@@ -69,7 +69,5 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
       .expectBody().json(expectedOutput2)
-    val test = resettlementAssessmentRepository.findAll()
-    1 + 1
   }
 }

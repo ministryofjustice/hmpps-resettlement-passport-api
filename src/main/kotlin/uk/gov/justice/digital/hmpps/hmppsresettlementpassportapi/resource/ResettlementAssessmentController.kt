@@ -25,7 +25,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettl
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class ResettlementAssessmentController(private val resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy>) {
   @PostMapping("/{nomsId}/resettlement-assessment/next-page", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Create assessment", description = "Create assessment")
+  @Operation(summary = "Returns next page of resettlement assessment", description = "Returns next page of resettlement assessment")
   @ApiResponses(
     value = [
       ApiResponse(
@@ -54,7 +54,7 @@ class ResettlementAssessmentController(private val resettlementAssessmentStrateg
       ),
     ],
   )
-  fun postAssessmentByNomsId(
+  fun postGetNextAssessmentPageByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     nomsId: String,

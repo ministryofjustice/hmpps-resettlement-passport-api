@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettelmentassessmentpages
+package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentpages
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IAssessmentPage

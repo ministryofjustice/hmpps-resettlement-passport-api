@@ -29,21 +29,18 @@ class ResettlementAssessmentRequestQuestionAndAnswerSerialize : JsonSerializer<R
     if (src?.answer is StringAnswer) {
       jsonObj.addProperty("answer", src?.answer.answer as String)
       jsonObj.addProperty("type", "string")
-    }
-    else if (src?.answer is ListAnswer) {
+    } else if (src?.answer is ListAnswer) {
       val arr = JsonArray()
-      for(ans in src?.answer.answer as List<String>)
-      {
+      for (ans in src?.answer.answer as List<String>) {
         arr.add(ans)
       }
       jsonObj.add("answer", arr)
       jsonObj.addProperty("type", "list")
-    }
-    else if (src?.answer is MapAnswer) {
+    } else if (src?.answer is MapAnswer) {
       val arr = JsonArray()
-      for(ans in src?.answer.answer as List<Map<String,String>>) {
+      for (ans in src?.answer.answer as List<Map<String, String>>) {
         val nestedObj = JsonObject()
-        ans.forEach { (k, v) -> nestedObj.addProperty(k,v) }
+        ans.forEach { (k, v) -> nestedObj.addProperty(k, v) }
         arr.add(nestedObj)
         jsonObj.add("answer", arr)
         jsonObj.addProperty("type", "map")
@@ -51,5 +48,4 @@ class ResettlementAssessmentRequestQuestionAndAnswerSerialize : JsonSerializer<R
     }
     return jsonObj
   }
-
 }

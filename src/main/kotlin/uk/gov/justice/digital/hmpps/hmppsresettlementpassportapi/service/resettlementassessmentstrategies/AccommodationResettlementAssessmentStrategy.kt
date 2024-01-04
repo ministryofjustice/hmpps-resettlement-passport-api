@@ -1,10 +1,11 @@
-package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstratagies
+package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.AnswerDeserializer
@@ -18,10 +19,10 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.StatusRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettelmentassessmentpages.AccommodationAssessmentPage
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettelmentassessmentpages.AccommodationResettlementAssessmentQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettelmentassessmentpages.accommodationPages
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClaimFromJWTToken
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentpages.AccommodationAssessmentPage
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentpages.AccommodationResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentpages.accommodationPages
 import java.time.LocalDateTime
 
 @Service
@@ -36,11 +37,15 @@ class AccommodationResettlementAssessmentStrategy(
   }
 
   override fun storeAssessment(assessment: ResettlementAssessmentRequest, auth: String) {
-    val prisonerEntity = prisonerRepository.findByNomsId(assessment.nomsID) ?: throw ServerWebInputException("Cannot get name from auth token") // TODO: figure out exception
+    val prisonerEntity = prisonerRepository.findByNomsId(assessment.nomsID)
+      ?: throw ResourceNotFoundException("Prisoner with id ${assessment.nomsID} not found in database") // TODO: figure out exception
     val statusEntity = statusRepository.findById(assessment.newStatus.id).get()
     val pathwayEntity = pathwayRepository.findById(assessment.pathway.id).get()
     val now = LocalDateTime.now()
-    val gson: Gson = GsonBuilder().registerTypeAdapter(ResettlementAssessmentRequestQuestionAndAnswer::class.java, ResettlementAssessmentRequestQuestionAndAnswerSerialize()).setPrettyPrinting().create()
+    val gson: Gson = GsonBuilder()
+      .registerTypeAdapter(ResettlementAssessmentRequestQuestionAndAnswer::class.java, ResettlementAssessmentRequestQuestionAndAnswerSerialize())
+      .setPrettyPrinting()
+      .create()
 
     val jsonAssessment = gson.toJson(assessment.questions)
     val entity = ResettlementAssessmentEntity(
@@ -66,7 +71,8 @@ class AccommodationResettlementAssessmentStrategy(
     var nextPage = questionLambda.nextPage(questions)
 
     if (nextPage == AccommodationAssessmentPage.CHECK_ANSWERS) {
-      val prisonerEntity = prisonerRepository.findByNomsId(assessment.nomsID) ?: throw ServerWebInputException("Cannot get name from auth token") // TODO: figure out exception
+      val prisonerEntity = prisonerRepository.findByNomsId(assessment.nomsID)
+        ?: throw ResourceNotFoundException("Prisoner with id ${assessment.nomsID} not found in database")
       val pathwayEntity = pathwayRepository.findById(assessment.pathway.id).get()
       val latestAssessment = resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, pathwayEntity, assessment.type)
       val gson = GsonBuilder().registerTypeAdapter(Answer::class.java, AnswerDeserializer()).create()

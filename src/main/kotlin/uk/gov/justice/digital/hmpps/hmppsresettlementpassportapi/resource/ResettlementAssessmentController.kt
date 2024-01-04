@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IAssessmentPage
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettlementAssessmentStratagies.IResettlementAssessmentStrategy
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.IResettlementAssessmentStrategy
 
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
-class ResettlementAssessmentController (private val resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy>) {
+class ResettlementAssessmentController(private val resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy>) {
   @PostMapping("/{nomsId}/resettlement-assessment/next-page", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create assessment", description = "Create assessment")
   @ApiResponses(
@@ -62,7 +62,7 @@ class ResettlementAssessmentController (private val resettlementAssessmentStrate
     resettlementAssessment: ResettlementAssessmentRequest,
     @RequestHeader("Authorization")
     auth: String,
-  ) : IAssessmentPage {
+  ): IAssessmentPage {
     val assessmentStrategy = resettlementAssessmentStrategies.first { it.appliesTo(resettlementAssessment.pathway) }
     assessmentStrategy.storeAssessment(resettlementAssessment, auth)
     val result = assessmentStrategy.nextQuestions(resettlementAssessment)

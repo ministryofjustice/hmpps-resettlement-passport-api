@@ -15,7 +15,6 @@ data class ResettlementAssessment(
   val newStatus: Status,
 )
 
-
 data class ResettlementAssessmentRequest(
   val pathway: Pathway,
   val nomsID: String,

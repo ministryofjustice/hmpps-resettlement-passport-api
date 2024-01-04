@@ -8,7 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBase
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.*
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -31,7 +35,6 @@ class ResettlementAssessmentRepositoryTest : TestBase() {
   @AfterEach
   fun beforeEach() {
     resettlementAssessmentRepository.deleteAll()
-    resettlementAssessmentStatusRepository.deleteAll()
     prisonerRepository.deleteAll()
     pathwayRepository.deleteAll()
   }
@@ -44,6 +47,8 @@ class ResettlementAssessmentRepositoryTest : TestBase() {
     val pathway = PathwayEntity(-1, "Accommodation", true, LocalDateTime.parse("2022-12-20T10:13:03"))
     pathwayRepository.save(pathway)
 
+    val assessmentStatus = resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.NOT_STARTED.id).get()
+
     val resettlementAssessment = ResettlementAssessmentEntity(
       id = null,
       prisoner = prisoner,
@@ -53,7 +58,7 @@ class ResettlementAssessmentRepositoryTest : TestBase() {
       creationDate = LocalDateTime.parse("2023-01-01T12:00:00"),
       createdBy = "Human, A",
       assessment = """{"question1": true, "question2": "some text", "question3": 1234}""",
-      assessmentStatus = ResettlementAssessmentStatusEntity(3, "Complete", true, LocalDateTime.now()),
+      assessmentStatus = assessmentStatus,
     )
     resettlementAssessmentRepository.save(resettlementAssessment)
 
@@ -69,6 +74,8 @@ class ResettlementAssessmentRepositoryTest : TestBase() {
     val pathway = PathwayEntity(-1, "Accommodation", true, LocalDateTime.parse("2022-12-20T10:13:03"))
     pathwayRepository.save(pathway)
 
+    val assessmentStatus = resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.NOT_STARTED.id).get()
+
     val resettlementAssessment = ResettlementAssessmentEntity(
       id = null,
       prisoner = prisoner,
@@ -78,7 +85,7 @@ class ResettlementAssessmentRepositoryTest : TestBase() {
       creationDate = LocalDateTime.parse("2023-01-01T12:00:00"),
       createdBy = "Human, A",
       assessment = """{"question1": true, "question2": "some text", "question3": 1234}""",
-      assessmentStatus = ResettlementAssessmentStatusEntity(ResettlementAssessmentStatus.COMPLETE.id, "Complete", true, LocalDateTime.now()),
+      assessmentStatus = assessmentStatus,
     )
     val resettlementAssessment2 = ResettlementAssessmentEntity(
       id = null,
@@ -89,7 +96,7 @@ class ResettlementAssessmentRepositoryTest : TestBase() {
       creationDate = LocalDateTime.parse("2022-01-01T12:00:00"),
       createdBy = "Human, A",
       assessment = """{"question1": false, "question2": "some other text", "question3": 4321}""",
-      assessmentStatus = ResettlementAssessmentStatusEntity(ResettlementAssessmentStatus.IN_PROGRESS.id, "In Progress", true, LocalDateTime.now()),
+      assessmentStatus = assessmentStatus,
     )
     resettlementAssessmentRepository.save(resettlementAssessment)
     resettlementAssessmentRepository.save(resettlementAssessment2)

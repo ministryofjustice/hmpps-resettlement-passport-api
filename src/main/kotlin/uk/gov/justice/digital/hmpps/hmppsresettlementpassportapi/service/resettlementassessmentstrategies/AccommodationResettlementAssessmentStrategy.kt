@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettlementAssessmentStratagies
+package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstratagies
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -18,14 +18,14 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.StatusRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettelmentAssessmentPages.AccommodationAssessmentPage
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettelmentAssessmentPages.AccommodationResettlementAssessmentQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettelmentAssessmentPages.accommodationPages
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettelmentassessmentpages.AccommodationAssessmentPage
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettelmentassessmentpages.AccommodationResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettelmentassessmentpages.accommodationPages
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClaimFromJWTToken
 import java.time.LocalDateTime
 
 @Service
-class AccommodationResettlementAssessment(
+class AccommodationResettlementAssessmentStrategy(
   private val resettlementAssessmentRepository: ResettlementAssessmentRepository,
   private val prisonerRepository: PrisonerRepository,
   private val statusRepository: StatusRepository,
@@ -63,7 +63,7 @@ class AccommodationResettlementAssessment(
     val questions: List<ResettlementAssessmentQuestionAndAnswer> = assessment.questions.map {
       ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.valueOf(it.question), it.answer as Answer<*>)
     }
-    var nextPage =  questionLambda.nextPage(questions)
+    var nextPage = questionLambda.nextPage(questions)
 
     if (nextPage == AccommodationAssessmentPage.CHECK_ANSWERS) {
       val prisonerEntity = prisonerRepository.findByNomsId(assessment.nomsID) ?: throw ServerWebInputException("Cannot get name from auth token") // TODO: figure out exception

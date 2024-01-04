@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettelmentAssessmentPages
+package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettelmentassessmentpages
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IAssessmentPage
@@ -17,10 +17,10 @@ val accommodationPages: List<ResettlementAssessmentNode> = listOf(
     fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
       if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE && it.answer?.answer is String && (it.answer?.answer as String) == "NO_PLACE_TO_LIVE" }) {
         return AccommodationAssessmentPage.CONSENT_FOR_CRS
-      } else if (currentQuestionsAndAnswers.any {it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE && (it.answer?.answer as String == "PREVIOUS_ADDRESS" || it.answer?.answer as String == "NEW_ADDRESS") }) {
+      } else if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE && (it.answer?.answer as String == "PREVIOUS_ADDRESS" || it.answer?.answer as String == "NEW_ADDRESS") }) {
         return AccommodationAssessmentPage.WHO_WILL_THEY_LIVE_WITH
       }
-      return AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE //TODO figoue out error case
+      return AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE // TODO figoue out error case
     },
   ),
   ResettlementAssessmentNode(

@@ -1,3 +1,5 @@
+DELETE from resettlement_assessment;
+ALTER SEQUENCE resettlement_assessment_id_seq RESTART WITH 1;
 DELETE from pathway_status;
 ALTER SEQUENCE pathway_status_id_seq RESTART WITH 1;
 DELETE from assessment_id_type;

@@ -23,7 +23,8 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val expectedOutput2 = readFile("testdata/expectation/resettlement-assessment-2.json")
     val nomsId = "G1458GV"
     var questions = mutableListOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
-      ResettlementAssessmentRequestQuestionAndAnswer("WHERE_WILL_THEY_LIVE", answer = StringAnswer("NEW_ADDRESS"))
+      ResettlementAssessmentRequestQuestionAndAnswer("WHERE_WILL_THEY_LIVE", answer = StringAnswer("NEW_ADDRESS")),
+      ResettlementAssessmentRequestQuestionAndAnswer("WHAT_IS_THE_ADDRESS", answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123"))))
     )
     val body = ResettlementAssessmentRequest(
       pathway = Pathway.ACCOMMODATION,
@@ -48,6 +49,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
     var questions2 = mutableListOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
       ResettlementAssessmentRequestQuestionAndAnswer("WHERE_WILL_THEY_LIVE", answer = StringAnswer("NEW_ADDRESS")),
+      ResettlementAssessmentRequestQuestionAndAnswer("WHAT_IS_THE_ADDRESS", answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
       ResettlementAssessmentRequestQuestionAndAnswer("WHO_WILL_THEY_LIVE_WITH",
         answer = MapAnswer(listOf(mapOf("name" to "person1", "age" to "47"), mapOf("name" to "person2", "age" to "53")))
       )

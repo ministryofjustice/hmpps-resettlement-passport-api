@@ -30,6 +30,25 @@
     },
     {
       "question": {
+        "id": "WHAT_IS_THE_ADDRESS",
+        "title": "",
+        "subTitle": null,
+        "type": "ADDRESS",
+        "options": null
+      },
+      "answer": {
+        "@class": "MapAnswer",
+        "answer": [
+          {
+            "city": "Leeds",
+            "postcode": "LS1 123",
+            "addressLine1": "123 fake street"
+          }
+        ]
+      }
+    },
+    {
+      "question": {
         "id": "WHO_WILL_THEY_LIVE_WITH",
         "title": "",
         "subTitle": null,

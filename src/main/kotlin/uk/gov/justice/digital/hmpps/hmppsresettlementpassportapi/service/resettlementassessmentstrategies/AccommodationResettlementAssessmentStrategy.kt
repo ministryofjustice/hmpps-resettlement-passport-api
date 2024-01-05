@@ -15,9 +15,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswerSerialize
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.StatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClaimFromJWTToken
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentpages.AccommodationAssessmentPage
@@ -31,6 +33,7 @@ class AccommodationResettlementAssessmentStrategy(
   private val prisonerRepository: PrisonerRepository,
   private val statusRepository: StatusRepository,
   private val pathwayRepository: PathwayRepository,
+  private val resettlementAssessmentStatusRepository: ResettlementAssessmentStatusRepository,
 ) : IResettlementAssessmentStrategy {
   override fun appliesTo(pathway: Pathway): Boolean {
     return pathway == Pathway.ACCOMMODATION
@@ -48,6 +51,7 @@ class AccommodationResettlementAssessmentStrategy(
       .create()
 
     val jsonAssessment = gson.toJson(assessment.questions)
+    val assessmentStatus = resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.NOT_STARTED.id).get()
     val entity = ResettlementAssessmentEntity(
       id = null,
       pathway = pathwayEntity,
@@ -58,6 +62,7 @@ class AccommodationResettlementAssessmentStrategy(
         ?: throw ServerWebInputException("Cannot get name from auth token"),
       creationDate = now,
       assessment = jsonAssessment,
+      assessmentStatus = assessmentStatus,
     )
     resettlementAssessmentRepository.save(entity)
   }

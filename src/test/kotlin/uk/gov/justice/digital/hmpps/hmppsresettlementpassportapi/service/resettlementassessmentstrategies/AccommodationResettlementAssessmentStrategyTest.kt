@@ -17,12 +17,14 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Path
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.StatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentpages.AccommodationAssessmentPage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentpages.AccommodationResettlementAssessmentQuestion
@@ -46,11 +48,14 @@ class AccommodationResettlementAssessmentStrategyTest {
   @Mock
   private lateinit var statusRepository: StatusRepository
 
+  @Mock
+  private lateinit var resettlementAssessmentStatusRepository: ResettlementAssessmentStatusRepository
+
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
 
   @BeforeEach
   fun beforeEach() {
-    resettlementAssessmentService = AccommodationResettlementAssessmentStrategy(resettlementAssessmentRepository, prisonerRepository, statusRepository, pathwayRepository)
+    resettlementAssessmentService = AccommodationResettlementAssessmentStrategy(resettlementAssessmentRepository, prisonerRepository, statusRepository, pathwayRepository, resettlementAssessmentStatusRepository)
   }
 
   @Test
@@ -79,8 +84,9 @@ class AccommodationResettlementAssessmentStrategyTest {
     val pathwayEntity = PathwayEntity(1, "Accommodation", true, testDate)
     val statusEntity = StatusEntity(2, "In Progress", true, testDate)
     val prisonerEntity = PrisonerEntity(1, nomsId, testDate, crn, prisonId, LocalDate.parse("2025-01-23"))
+    val resettlementAssessmentStatusEntity = ResettlementAssessmentStatusEntity(1, "Not Started", true, LocalDateTime.now())
     val assessmentJsonString = "[{\"type\": \"string\", \"answer\": \"NEW_ADDRESS\", \"question\": \"WHERE_WILL_THEY_LIVE\"}, {\"type\": \"map\", \"answer\": [{\"addressLine1\": \"123 fake street\", \"city\": \"Leeds\", \"postcode\": \"LS1 123\"}], \"question\": \"WHAT_IS_THE_ADDRESS\"}, {\"type\": \"map\", \"answer\": [{\"name\": \"person1\", \"age\": \"47\"}, { \"name\": \"person2\", \"age\": \"53\"}], \"question\": \"WHO_WILL_THEY_LIVE_WITH\"}]"
-    val resettlementAssessmentEntity = ResettlementAssessmentEntity(1, prisonerEntity, pathwayEntity, statusEntity, ResettlementAssessmentType.BCST2, assessmentJsonString, testDate, "")
+    val resettlementAssessmentEntity = ResettlementAssessmentEntity(1, prisonerEntity, pathwayEntity, statusEntity, ResettlementAssessmentType.BCST2, assessmentJsonString, testDate, "", resettlementAssessmentStatusEntity)
     Mockito.`when`(pathwayRepository.findById(any())).thenReturn(Optional.of(pathwayEntity))
     Mockito.`when`(prisonerRepository.findByNomsId(any())).thenReturn(prisonerEntity)
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(any(), any(), any())).thenReturn(resettlementAssessmentEntity)

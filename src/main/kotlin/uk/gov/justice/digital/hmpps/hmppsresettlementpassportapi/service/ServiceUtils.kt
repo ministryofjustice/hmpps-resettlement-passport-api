@@ -17,6 +17,9 @@ fun <T : Enum<*>> convertStringToEnum(enumClass: KClass<T>, stringValue: String?
   return enum
 }
 
+fun <T : Enum<*>> convertEnumStringToEnum(enumClass: KClass<T>, stringValue: String?): T = enumClass.java.enumConstants.firstOrNull { it.name == stringValue }
+  ?: throw IllegalArgumentException("String $stringValue does not exist in enum ${enumClass::class.java.name}")
+
 fun String.fuzzyMatch(string2: String?): Boolean {
   return this == string2?.trim()?.replace(Regex("[^A-Za-z0-9_ ]"), "")?.replace(Regex("\\s+"), "_")?.uppercase()
 }

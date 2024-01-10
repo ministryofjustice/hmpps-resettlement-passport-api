@@ -32,7 +32,7 @@ data class ResettlementAssessmentEntity(
 
   @ManyToOne(cascade = [CascadeType.MERGE])
   @JoinColumn(name = "status_changed_to_status_id", referencedColumnName = "id")
-  val statusChangedTo: StatusEntity?,
+  var statusChangedTo: StatusEntity?,
 
   @Column(name = "assessment_type")
   @Enumerated(EnumType.STRING)
@@ -50,7 +50,10 @@ data class ResettlementAssessmentEntity(
 
   @ManyToOne(cascade = [CascadeType.MERGE])
   @JoinColumn(name = "assessment_status_id", referencedColumnName = "id")
-  val assessmentStatus: ResettlementAssessmentStatusEntity,
+  var assessmentStatus: ResettlementAssessmentStatusEntity,
+
+  @Column(name = "case_note_text")
+  var caseNoteText: String? = null,
 
 )
 

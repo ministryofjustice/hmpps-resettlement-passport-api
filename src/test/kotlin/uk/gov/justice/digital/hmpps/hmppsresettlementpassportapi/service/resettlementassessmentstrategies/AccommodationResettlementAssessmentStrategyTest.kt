@@ -26,8 +26,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.StatusRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentpages.AccommodationAssessmentPage
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentpages.AccommodationResettlementAssessmentQuestion
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -60,7 +58,7 @@ class AccommodationResettlementAssessmentStrategyTest {
 
   @Test
   fun `test next page returns WHO_WILL_THEY_LIVE_WITH when current page is WHERE_WILL_THEY_LIVE and answer is NEW_ADDRESS`() {
-    var questions = mutableListOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
+    val questions = mutableListOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
       ResettlementAssessmentRequestQuestionAndAnswer("WHERE_WILL_THEY_LIVE", answer = StringAnswer("NEW_ADDRESS")),
       ResettlementAssessmentRequestQuestionAndAnswer("WHAT_IS_THE_ADDRESS", answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
     )
@@ -72,7 +70,7 @@ class AccommodationResettlementAssessmentStrategyTest {
       questions = questions,
       newStatus = Status.NOT_STARTED,
     )
-    var nextPage = resettlementAssessmentService.nextQuestions(assessment)
+    val nextPage = resettlementAssessmentService.nextQuestions(assessment)
     Assertions.assertEquals(nextPage, AccommodationAssessmentPage.WHO_WILL_THEY_LIVE_WITH)
   }
 
@@ -91,7 +89,7 @@ class AccommodationResettlementAssessmentStrategyTest {
     Mockito.`when`(prisonerRepository.findByNomsId(any())).thenReturn(prisonerEntity)
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(any(), any(), any())).thenReturn(resettlementAssessmentEntity)
 
-    var questions = mutableListOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
+    val questions = mutableListOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
       ResettlementAssessmentRequestQuestionAndAnswer("WHERE_WILL_THEY_LIVE", answer = StringAnswer("NEW_ADDRESS")),
       ResettlementAssessmentRequestQuestionAndAnswer("WHAT_IS_THE_ADDRESS", answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
       ResettlementAssessmentRequestQuestionAndAnswer(
@@ -116,7 +114,7 @@ class AccommodationResettlementAssessmentStrategyTest {
       questions = questions,
       newStatus = Status.NOT_STARTED,
     )
-    var nextPage = resettlementAssessmentService.nextQuestions(assessment)
+    val nextPage = resettlementAssessmentService.nextQuestions(assessment)
     Assertions.assertEquals(nextPage, AccommodationAssessmentPage.CHECK_ANSWERS)
     Assertions.assertEquals(nextPage.questionsAndAnswers.first { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE }.answer, expectedQuestions.first { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE }.answer)
     Assertions.assertEquals(nextPage.questionsAndAnswers.first { it.question == AccommodationResettlementAssessmentQuestion.WHAT_IS_THE_ADDRESS }.answer, expectedQuestions.first { it.question == AccommodationResettlementAssessmentQuestion.WHAT_IS_THE_ADDRESS }.answer)

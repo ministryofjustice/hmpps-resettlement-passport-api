@@ -27,8 +27,6 @@ data class ResettlementAssessmentRequest(
 data class ResettlementAssessmentSubmitRequest(
   val pathway: Pathway,
   val assessmentType: ResettlementAssessmentType,
-  val supportNeed: SupportNeed,
-  val caseNoteSummary: String,
 )
 
 enum class SupportNeed(val relatedStatus: Status) {

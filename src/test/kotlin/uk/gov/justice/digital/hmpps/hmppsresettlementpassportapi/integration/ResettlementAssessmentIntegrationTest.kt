@@ -16,7 +16,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -109,7 +108,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       ResettlementAssessmentEntity(id = 6, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 4, name = "Drugs and alcohol", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = null, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = "{}", creationDate = LocalDateTime.parse("2023-01-13T16:09:01"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatusEntity(id = 1, name = "Not Started", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:06:00.219308")), caseNoteText = null),
       ResettlementAssessmentEntity(id = 7, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 5, name = "Education, skills and work", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = null, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = "{}", creationDate = LocalDateTime.parse("2023-01-12T04:32:12"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatusEntity(id = 3, name = "Complete", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:06:00.219308")), caseNoteText = null),
       ResettlementAssessmentEntity(id = 8, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 7, name = "Health", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = null, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = "{}", creationDate = LocalDateTime.parse("2023-01-17T16:43:49"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatusEntity(id = 3, name = "Complete", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:06:00.219308")), caseNoteText = null),
-      ResettlementAssessmentEntity(id = 2, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 1, name = "Accommodation", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = StatusEntity(id = 1, name = "Not Started", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.999407")), assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = "{}", creationDate = LocalDateTime.parse("2023-02-09T10:01:23"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatusEntity(id = 3, name = "Complete", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:06:00.219308")), caseNoteText = "Testing 123"),
+      ResettlementAssessmentEntity(id = 2, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 1, name = "Accommodation", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = null, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = "{}", creationDate = LocalDateTime.parse("2023-02-09T10:01:23"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatusEntity(id = 3, name = "Complete", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:06:00.219308")), caseNoteText = null),
     )
     val actualResettlementAssessments = resettlementAssessmentRepository.findAll()
     assertThat(actualResettlementAssessments).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedResettlementAssessments)
@@ -125,9 +124,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
         """
         {
           "pathway": "ACCOMMODATION",
-          "assessmentType": "RESETTLEMENT_PLAN",
-          "supportNeed": "SUPPORT_REQUIRED",
-          "caseNoteSummary": "Testing 123"
+          "assessmentType": "RESETTLEMENT_PLAN"
         }
         """.trimIndent(),
       )
@@ -145,9 +142,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
         """
         {
           "pathway": "ACCOMMODATION",
-          "assessmentType": "RESETTLEMENT_PLAN",
-          "supportNeed": "SUPPORT_REQUIRED",
-          "caseNoteSummary": "Testing 123"
+          "assessmentType": "RESETTLEMENT_PLAN"
         }
         """.trimIndent(),
       )
@@ -168,9 +163,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
         """
         {
           "pathway": "ACCOMMODATION",
-          "assessmentType": "RESETTLEMENT_PLAN",
-          "supportNeed": "SUPPORT_REQUIRED",
-          "caseNoteSummary": "Testing 123"
+          "assessmentType": "RESETTLEMENT_PLAN"
         }
         """.trimIndent(),
       )
@@ -191,9 +184,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
         """
         {
           "pathway": "FINANCE_AND_ID",
-          "assessmentType": "RESETTLEMENT_PLAN",
-          "supportNeed": "SUPPORT_NOT_REQUIRED",
-          "caseNoteSummary": "Testing 123"
+          "assessmentType": "RESETTLEMENT_PLAN"
         }
         """.trimIndent(),
       )

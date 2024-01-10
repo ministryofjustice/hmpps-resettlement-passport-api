@@ -111,16 +111,11 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     val resettlementAssessmentEntity = resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, pathwayEntity, assessment.assessmentType)
       ?: throw ResourceNotFoundException("Assessment of type ${assessment.assessmentType} for prisoner with nomsId $nomsId and pathway ${assessment.pathway} not found in database")
 
-    // Obtain status entity from database
-    val statusEntity = statusRepository.findById(assessment.supportNeed.relatedStatus.id).get()
-
     // Obtain COMPLETE resettlement status entity from database
     val resettlementAssessmentStatusEntity = resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.COMPLETE.id).get()
 
     // Update assessment status, status changed to and case note text
     resettlementAssessmentEntity.assessmentStatus = resettlementAssessmentStatusEntity
-    resettlementAssessmentEntity.statusChangedTo = statusEntity
-    resettlementAssessmentEntity.caseNoteText = assessment.caseNoteSummary
 
     resettlementAssessmentRepository.save(resettlementAssessmentEntity)
   }

@@ -12,12 +12,12 @@ import java.util.stream.Stream
 class ServiceUtilsTest {
 
   @ParameterizedTest
-  @MethodSource("test enum conversion data")
-  fun `test enum conversion`(inputString: String, expectedEnum: TestEnum?) {
+  @MethodSource("test convert string to enum data")
+  fun `test convert string to enum`(inputString: String, expectedEnum: TestEnum?) {
     Assertions.assertEquals(expectedEnum, convertStringToEnum(TestEnum::class, inputString))
   }
 
-  private fun `test enum conversion data`(): Stream<Arguments> = Stream.of(
+  private fun `test convert string to enum data`(): Stream<Arguments> = Stream.of(
     Arguments.of("", null),
     Arguments.of(" ", null),
     Arguments.of("    ", null),
@@ -45,6 +45,36 @@ class ServiceUtilsTest {
     Arguments.of("N/A", TestEnum.NA),
     Arguments.of("na", TestEnum.NA),
     Arguments.of("n/a", TestEnum.NA),
+  )
+
+  @ParameterizedTest
+  @MethodSource("test convert enum string to enum data")
+  fun `test convert enum string to enum`(inputString: String, expectedEnum: TestEnum?) {
+    if (expectedEnum != null) {
+      Assertions.assertEquals(expectedEnum, convertEnumStringToEnum(TestEnum::class, inputString))
+    } else {
+      assertThrows<IllegalArgumentException> { convertEnumStringToEnum(TestEnum::class, inputString) }
+    }
+  }
+
+  private fun `test convert enum string to enum data`(): Stream<Arguments> = Stream.of(
+    Arguments.of("", null),
+    Arguments.of(" ", null),
+    Arguments.of("some random string", null),
+    Arguments.of("yes", null),
+    Arguments.of("Yes", null),
+    Arguments.of("YES", TestEnum.YES),
+    Arguments.of("No", null),
+    Arguments.of("  no  ", null),
+    Arguments.of("!\"£$%^&*()-+={}[]@~'#<>?,.no`¬±", null),
+    Arguments.of("NO", TestEnum.NO),
+    Arguments.of("DONT_KNOW", TestEnum.DONT_KNOW),
+    Arguments.of("dont_know", null),
+    Arguments.of("dont know", null),
+    Arguments.of("Dont Know", null),
+    Arguments.of("NA", TestEnum.NA),
+    Arguments.of("N/A", null),
+    Arguments.of("n/a", null),
   )
 
   @ParameterizedTest

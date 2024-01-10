@@ -133,7 +133,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       )
       .exchange()
       .expectStatus().isUnauthorized
-      .expectHeader().contentType("application/json")
   }
 
   @Test

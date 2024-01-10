@@ -12,14 +12,12 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.MapAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -33,56 +31,96 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
-  fun `Get Next assessment page happy path - Accommodation - New address to check answers`() {
-    val expectedOutput = readFile("testdata/expectation/resettlement-assessment-1.json")
-    val expectedOutput2 = readFile("testdata/expectation/resettlement-assessment-2.json")
+  fun `Post get next assessment page happy path`() {
     val nomsId = "G1458GV"
+    val pathway = "ACCOMMODATION"
+    val assessmentType = "BCST2"
+    val currentPage = "WHERE_WILL_THEY_LIVE"
     val questions = mutableListOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
       ResettlementAssessmentRequestQuestionAndAnswer("WHERE_WILL_THEY_LIVE", answer = StringAnswer("NEW_ADDRESS")),
       ResettlementAssessmentRequestQuestionAndAnswer("WHAT_IS_THE_ADDRESS", answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
     )
     val body = ResettlementAssessmentRequest(
-      pathway = Pathway.ACCOMMODATION,
-      nomsID = nomsId,
-      type = ResettlementAssessmentType.BCST2,
-      currentPage = "WHERE_WILL_THEY_LIVE",
-      questions = questions,
-      newStatus = Status.NOT_STARTED,
+      questionsAndAnswers = questions,
     )
 
     webTestClient.post()
-      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/next-page")
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/next-page?assessmentType=$assessmentType&currentPage=$currentPage")
       .bodyValue(body)
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput)
+      .expectBody().json(
+        """
+        {
+          "nextPageId": "WHO_WILL_THEY_LIVE_WITH"
+        }
+        """.trimIndent(),
+      )
+  }
 
-    val questions2 = mutableListOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
+  @Test
+  fun `Post get next assessment page unauthorized`() {
+    val nomsId = "G1458GV"
+    val pathway = "ACCOMMODATION"
+    val assessmentType = "BCST2"
+    val currentPage = "WHERE_WILL_THEY_LIVE"
+    val questions = mutableListOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
       ResettlementAssessmentRequestQuestionAndAnswer("WHERE_WILL_THEY_LIVE", answer = StringAnswer("NEW_ADDRESS")),
       ResettlementAssessmentRequestQuestionAndAnswer("WHAT_IS_THE_ADDRESS", answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
-      ResettlementAssessmentRequestQuestionAndAnswer(
-        "WHO_WILL_THEY_LIVE_WITH",
-        answer = MapAnswer(listOf(mapOf("name" to "person1", "age" to "47"), mapOf("name" to "person2", "age" to "53"))),
-      ),
     )
-    val body2 = ResettlementAssessmentRequest(
-      pathway = Pathway.ACCOMMODATION,
-      nomsID = nomsId,
-      type = ResettlementAssessmentType.BCST2,
-      currentPage = "WHO_WILL_THEY_LIVE_WITH",
-      questions = questions2,
-      newStatus = Status.NOT_STARTED,
+    val body = ResettlementAssessmentRequest(
+      questionsAndAnswers = questions,
     )
+
     webTestClient.post()
-      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/next-page")
-      .bodyValue(body2)
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/next-page?assessmentType=$assessmentType&currentPage=$currentPage")
+      .bodyValue(body)
+      .exchange()
+      .expectStatus().isUnauthorized
+  }
+
+  @Test
+  fun `Post get next assessment page forbidden`() {
+    val nomsId = "G1458GV"
+    val pathway = "ACCOMMODATION"
+    val assessmentType = "BCST2"
+    val currentPage = "WHERE_WILL_THEY_LIVE"
+    val questions = mutableListOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
+      ResettlementAssessmentRequestQuestionAndAnswer("WHERE_WILL_THEY_LIVE", answer = StringAnswer("NEW_ADDRESS")),
+      ResettlementAssessmentRequestQuestionAndAnswer("WHAT_IS_THE_ADDRESS", answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
+    )
+    val body = ResettlementAssessmentRequest(
+      questionsAndAnswers = questions,
+    )
+
+    webTestClient.post()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/next-page?assessmentType=$assessmentType&currentPage=$currentPage")
+      .bodyValue(body)
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
+      .expectHeader().contentType("application/json")
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
+  fun `Get assessment page happy path`() {
+    val nomsId = "G1458GV"
+    val pathway = "ACCOMMODATION"
+    val assessmentType = "BCST2"
+    val page = "WHERE_WILL_THEY_LIVE"
+
+    val expectedOutput = readFile("testdata/expectation/resettlement-assessment-1.json")
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/page/$page?assessmentType=$assessmentType")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput2)
+      .expectBody().json(expectedOutput)
   }
 
   @Test
@@ -178,15 +216,17 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
 
+    val sampleAssessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf())
+
     val expectedResettlementAssessments = listOf(
-      ResettlementAssessmentEntity(id = 1, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 1, name = "Accommodation", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = null, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = "{}", creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatusEntity(id = 1, name = "Not Started", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:06:00.219308")), caseNoteText = null),
-      ResettlementAssessmentEntity(id = 3, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 1, name = "Accommodation", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = null, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = "{}", creationDate = LocalDateTime.parse("2023-01-28T09:56:42"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatusEntity(id = 1, name = "Not Started", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:06:00.219308")), caseNoteText = null),
-      ResettlementAssessmentEntity(id = 4, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 2, name = "Attitudes, thinking and behaviour", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = null, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = "{}", creationDate = LocalDateTime.parse("2023-01-10T23:34"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatusEntity(id = 2, name = "In Progress", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:06:00.219308")), caseNoteText = null),
-      ResettlementAssessmentEntity(id = 5, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 3, name = "Children, families and communities", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = null, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = "{}", creationDate = LocalDateTime.parse("2023-01-11T21:12:23"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatusEntity(id = 2, name = "In Progress", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:06:00.219308")), caseNoteText = null),
-      ResettlementAssessmentEntity(id = 6, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 4, name = "Drugs and alcohol", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = null, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = "{}", creationDate = LocalDateTime.parse("2023-01-13T16:09:01"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatusEntity(id = 1, name = "Not Started", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:06:00.219308")), caseNoteText = null),
-      ResettlementAssessmentEntity(id = 7, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 5, name = "Education, skills and work", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = null, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = "{}", creationDate = LocalDateTime.parse("2023-01-12T04:32:12"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatusEntity(id = 3, name = "Complete", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:06:00.219308")), caseNoteText = null),
-      ResettlementAssessmentEntity(id = 8, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 7, name = "Health", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = null, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = "{}", creationDate = LocalDateTime.parse("2023-01-17T16:43:49"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatusEntity(id = 3, name = "Complete", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:06:00.219308")), caseNoteText = null),
-      ResettlementAssessmentEntity(id = 2, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 1, name = "Accommodation", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = StatusEntity(id = 1, name = "Not Started", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.999407")), assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = "{}", creationDate = LocalDateTime.parse("2023-02-09T10:01:23"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatusEntity(id = 3, name = "Complete", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:06:00.219308")), caseNoteText = "Testing 123"),
+      ResettlementAssessmentEntity(id = 1, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 1, name = "Accommodation", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = null, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = sampleAssessment, creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatusEntity(id = 1, name = "Not Started", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:06:00.219308")), caseNoteText = null),
+      ResettlementAssessmentEntity(id = 3, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 1, name = "Accommodation", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = null, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = sampleAssessment, creationDate = LocalDateTime.parse("2023-01-28T09:56:42"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatusEntity(id = 1, name = "Not Started", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:06:00.219308")), caseNoteText = null),
+      ResettlementAssessmentEntity(id = 4, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 2, name = "Attitudes, thinking and behaviour", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = null, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = sampleAssessment, creationDate = LocalDateTime.parse("2023-01-10T23:34"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatusEntity(id = 2, name = "In Progress", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:06:00.219308")), caseNoteText = null),
+      ResettlementAssessmentEntity(id = 5, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 3, name = "Children, families and communities", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = null, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = sampleAssessment, creationDate = LocalDateTime.parse("2023-01-11T21:12:23"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatusEntity(id = 2, name = "In Progress", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:06:00.219308")), caseNoteText = null),
+      ResettlementAssessmentEntity(id = 6, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 4, name = "Drugs and alcohol", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = null, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = sampleAssessment, creationDate = LocalDateTime.parse("2023-01-13T16:09:01"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatusEntity(id = 1, name = "Not Started", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:06:00.219308")), caseNoteText = null),
+      ResettlementAssessmentEntity(id = 7, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 5, name = "Education, skills and work", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = null, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = sampleAssessment, creationDate = LocalDateTime.parse("2023-01-12T04:32:12"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatusEntity(id = 3, name = "Complete", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:06:00.219308")), caseNoteText = null),
+      ResettlementAssessmentEntity(id = 8, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 7, name = "Health", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = null, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = sampleAssessment, creationDate = LocalDateTime.parse("2023-01-17T16:43:49"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatusEntity(id = 3, name = "Complete", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:06:00.219308")), caseNoteText = null),
+      ResettlementAssessmentEntity(id = 2, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 1, name = "Accommodation", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = null, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = sampleAssessment, creationDate = LocalDateTime.parse("2023-02-09T10:01:23"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatusEntity(id = 3, name = "Complete", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:06:00.219308")), caseNoteText = null),
     )
     val actualResettlementAssessments = resettlementAssessmentRepository.findAll()
     assertThat(actualResettlementAssessments).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedResettlementAssessments)
@@ -202,9 +242,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
         """
         {
           "pathway": "ACCOMMODATION",
-          "assessmentType": "RESETTLEMENT_PLAN",
-          "supportNeed": "SUPPORT_REQUIRED",
-          "caseNoteSummary": "Testing 123"
+          "assessmentType": "RESETTLEMENT_PLAN"
         }
         """.trimIndent(),
       )
@@ -222,9 +260,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
         """
         {
           "pathway": "ACCOMMODATION",
-          "assessmentType": "RESETTLEMENT_PLAN",
-          "supportNeed": "SUPPORT_REQUIRED",
-          "caseNoteSummary": "Testing 123"
+          "assessmentType": "RESETTLEMENT_PLAN"
         }
         """.trimIndent(),
       )
@@ -245,9 +281,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
         """
         {
           "pathway": "ACCOMMODATION",
-          "assessmentType": "RESETTLEMENT_PLAN",
-          "supportNeed": "SUPPORT_REQUIRED",
-          "caseNoteSummary": "Testing 123"
+          "assessmentType": "RESETTLEMENT_PLAN"
         }
         """.trimIndent(),
       )
@@ -268,9 +302,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
         """
         {
           "pathway": "FINANCE_AND_ID",
-          "assessmentType": "RESETTLEMENT_PLAN",
-          "supportNeed": "SUPPORT_NOT_REQUIRED",
-          "caseNoteSummary": "Testing 123"
+          "assessmentType": "RESETTLEMENT_PLAN"
         }
         """.trimIndent(),
       )

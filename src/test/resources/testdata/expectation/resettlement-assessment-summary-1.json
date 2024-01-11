@@ -1,0 +1,23 @@
+[
+  {
+   "Pathway":  "ACCOMMODATION",
+  "Status":  "NOT_STARTED"},
+  {
+    "Pathway":  "ATTITUDES_THINKING_AND_BEHAVIOUR",
+    "Status":  "NOT_STARTED"},
+  {
+    "Pathway":  "CHILDREN_FAMILIES_AND_COMMUNITY",
+    "Status":  "COMPLETE"},
+  {
+    "Pathway":  "DRUGS_AND_ALCOHOL",
+    "Status":  "NOT_STARTED"},
+  {
+    "Pathway":  "EDUCATION_SKILLS_AND_WORK(",
+    "Status":  "NOT_STARTED"},
+  {
+    "Pathway":  "FINANCE_AND_ID",
+    "Status":  "NOT_STARTED"},
+  {
+    "Pathway":  "HEALTH",
+    "Status":  "NOT_STARTED"}
+]

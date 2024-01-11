@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
+import io.mockk.every
+import io.mockk.mockkStatic
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
@@ -11,8 +13,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Path
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
+import java.time.LocalDateTime
 
 class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
+
+  private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
   @Autowired
   private lateinit var resettlementAssessmentRepository: ResettlementAssessmentRepository
@@ -69,5 +74,24 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
       .expectBody().json(expectedOutput2)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-1.sql")
+  fun `Get assessment by noms ID - happy path`() {
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+    val expectedOutput = readFile("testdata/expectation/resettlement-assessment-summary-1.json")
+
+    val nomsId = "G4161UF"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/summary")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
   }
 }

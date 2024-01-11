@@ -82,7 +82,7 @@ class AccommodationResettlementAssessmentStrategy(
       val latestAssessment = resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, pathwayEntity, assessment.type)
       val gson = GsonBuilder().registerTypeAdapter(Answer::class.java, AnswerDeserializer()).create()
       val typeToken = object : TypeToken<List<ResettlementAssessmentRequestQuestionAndAnswer<*>>>() {}.type
-      val answers = gson.fromJson<List<ResettlementAssessmentRequestQuestionAndAnswer<*>>>(latestAssessment.assessment, typeToken)
+      val answers = gson.fromJson<List<ResettlementAssessmentRequestQuestionAndAnswer<*>>>(latestAssessment!!.assessment, typeToken)
       val questionsAndAnswers = answers.map { ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.valueOf(it.question), it.answer) }
       questionsAndAnswers.forEach { nextPage.questionsAndAnswers.add(it) }
     }

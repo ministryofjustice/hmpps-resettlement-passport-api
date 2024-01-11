@@ -78,10 +78,29 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-resettlement-assessment-1.sql")
-  fun `Get assessment by noms ID - happy path`() {
+  fun `Get resettlement assessment summary by noms ID - happy path`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val expectedOutput = readFile("testdata/expectation/resettlement-assessment-summary-1.json")
+
+    val nomsId = "G4161UF"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/summary")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+     .exchange()
+    .expectStatus().isOk
+    .expectHeader().contentType("application/json")
+    .expectBody()
+    .json(expectedOutput)
+   }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-2.sql")
+  fun `Get resettlement assessment summary by noms ID- no assessments in DB - happy path`() {
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+    val expectedOutput = readFile("testdata/expectation/resettlement-assessment-summary-2.json")
 
     val nomsId = "G4161UF"
 
@@ -93,5 +112,37 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody()
       .json(expectedOutput)
+  }
+
+  @Test
+  fun `Get resettlement assessment summary- unauthorized`() {
+    val nomsId = "G4161UF"
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/summary")
+      .exchange()
+      .expectStatus().isEqualTo(401)
+  }
+
+  @Test
+  fun `Get resettlement assessment summary-  forbidden`() {
+    val nomsId = "G4161UF"
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/summary")
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isEqualTo(403)
+  }
+
+  @Test
+  fun `Get resettlement assessment summary- nomsId not found`() {
+    val nomsId = "!--G4161UF"
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/summary")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isEqualTo(404)
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(404)
   }
 }

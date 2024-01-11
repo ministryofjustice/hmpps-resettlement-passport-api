@@ -115,6 +115,6 @@ class ResettlementAssessmentController(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     @Parameter(required = true)
-    nomsId: Long,
+    nomsId: String,
   ) = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId)
 }

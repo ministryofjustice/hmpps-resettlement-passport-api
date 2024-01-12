@@ -83,7 +83,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
       .expectBody().json(expectedOutput2)
-    unmockkAll()
   }
 
   @Test

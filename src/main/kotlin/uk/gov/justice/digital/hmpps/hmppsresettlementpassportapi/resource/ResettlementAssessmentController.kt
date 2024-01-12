@@ -157,11 +157,6 @@ class ResettlementAssessmentController(
         description = "Incorrect information provided",
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
-      ApiResponse(
-        responseCode = "404",
-        description = "Cannot find prisoner or pathway status entry to update",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
     ],
   )
   fun postSubmitAssessmentByNomsId(

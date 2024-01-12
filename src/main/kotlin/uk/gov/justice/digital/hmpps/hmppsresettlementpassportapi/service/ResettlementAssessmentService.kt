@@ -23,9 +23,8 @@ class ResettlementAssessmentService(
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val pathways = Pathway.entries.toTypedArray()
-    val pathwayEntities = pathwayRepository.findAll()
     return pathways.map {
-      val pathwayEntity = pathwayEntities.first { pe -> pe.id == it.id }
+      val pathwayEntity = pathwayRepository.findById(it.id).get()
       val resettlementAssessmentForPathway =
         resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(
           prisonerEntity,

@@ -1,8 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -10,11 +7,14 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.kotlin.any
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Assessment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.PrisonerResettlementAssessment
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.*
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.IdTypeRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatusEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
@@ -71,7 +71,7 @@ class ResettlementAssessmentServiceTest {
       PrisonerResettlementAssessment(Pathway.DRUGS_AND_ALCOHOL, ResettlementAssessmentStatus.NOT_STARTED),
       PrisonerResettlementAssessment(Pathway.EDUCATION_SKILLS_AND_WORK, ResettlementAssessmentStatus.NOT_STARTED),
       PrisonerResettlementAssessment(Pathway.FINANCE_AND_ID, ResettlementAssessmentStatus.NOT_STARTED),
-      PrisonerResettlementAssessment(Pathway.HEALTH, ResettlementAssessmentStatus.COMPLETE)
+      PrisonerResettlementAssessment(Pathway.HEALTH, ResettlementAssessmentStatus.COMPLETE),
     )
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
@@ -92,7 +92,6 @@ class ResettlementAssessmentServiceTest {
 
     val response = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId)
     Assertions.assertEquals(prisonerResettlementAssessmentSummary, response)
-
   }
 
   @Test
@@ -120,7 +119,7 @@ class ResettlementAssessmentServiceTest {
       PrisonerResettlementAssessment(Pathway.DRUGS_AND_ALCOHOL, ResettlementAssessmentStatus.NOT_STARTED),
       PrisonerResettlementAssessment(Pathway.EDUCATION_SKILLS_AND_WORK, ResettlementAssessmentStatus.NOT_STARTED),
       PrisonerResettlementAssessment(Pathway.FINANCE_AND_ID, ResettlementAssessmentStatus.NOT_STARTED),
-      PrisonerResettlementAssessment(Pathway.HEALTH, ResettlementAssessmentStatus.COMPLETE)
+      PrisonerResettlementAssessment(Pathway.HEALTH, ResettlementAssessmentStatus.COMPLETE),
     )
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
@@ -141,29 +140,29 @@ class ResettlementAssessmentServiceTest {
 
     val response = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId)
     Assertions.assertEquals(prisonerResettlementAssessmentSummary, response)
-
   }
 
   private fun createNotStartedResettlementAssessmentEntity(id: Long, name: String) = ResettlementAssessmentEntity(
-    id= id,
+    id = id,
     prisoner = PrisonerEntity(1, "GY3245", testDate, "crn", "xyz1", LocalDate.parse("2025-01-23")),
-    pathway = PathwayEntity(id = id, name = name, active=true, fakeNow),
+    pathway = PathwayEntity(id = id, name = name, active = true, fakeNow),
     assessmentType = ResettlementAssessmentType.BCST2,
     assessmentStatus = ResettlementAssessmentStatusEntity(id = 1, name = "Not Started", true, fakeNow),
     assessment = "assessment",
     creationDate = fakeNow,
     createdBy = "PO",
-    statusChangedTo = null )
+    statusChangedTo = null,
+  )
 
   private fun createCompleteResettlementAssessmentEntity(id: Long, name: String) = ResettlementAssessmentEntity(
-    id= id,
+    id = id,
     prisoner = PrisonerEntity(1, "GY3245", testDate, "crn", "xyz1", LocalDate.parse("2025-01-23")),
-    pathway = PathwayEntity(id = id, name = name, active=true, fakeNow),
+    pathway = PathwayEntity(id = id, name = name, active = true, fakeNow),
     assessmentType = ResettlementAssessmentType.BCST2,
     assessmentStatus = ResettlementAssessmentStatusEntity(id = 3, name = "Complete", true, fakeNow),
     assessment = "assessment",
     creationDate = fakeNow,
     createdBy = "PO",
-    statusChangedTo = null )
-
+    statusChangedTo = null,
+  )
 }

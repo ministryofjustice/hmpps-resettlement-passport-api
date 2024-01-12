@@ -88,12 +88,12 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/summary")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-     .exchange()
-    .expectStatus().isOk
-    .expectHeader().contentType("application/json")
-    .expectBody()
-    .json(expectedOutput)
-   }
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
+  }
 
   @Test
   @Sql("classpath:testdata/sql/seed-resettlement-assessment-2.sql")

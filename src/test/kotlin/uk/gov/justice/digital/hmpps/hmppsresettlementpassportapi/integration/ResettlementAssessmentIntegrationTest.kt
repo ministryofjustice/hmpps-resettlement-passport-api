@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
 import io.mockk.every
 import io.mockk.mockkStatic
+import io.mockk.unmockkAll
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
@@ -74,6 +75,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
       .expectBody().json(expectedOutput2)
+    unmockkAll()
   }
 
   @Test
@@ -93,6 +95,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody()
       .json(expectedOutput)
+    unmockkAll()
   }
 
   @Test
@@ -112,6 +115,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody()
       .json(expectedOutput)
+    unmockkAll()
   }
 
   @Test

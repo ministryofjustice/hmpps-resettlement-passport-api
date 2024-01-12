@@ -23,3 +23,16 @@ data class ResettlementAssessmentRequest(
   val questions: List<ResettlementAssessmentRequestQuestionAndAnswer<*>>,
   val newStatus: Status,
 )
+
+data class ResettlementAssessmentSubmitRequest(
+  val pathway: Pathway,
+  val assessmentType: ResettlementAssessmentType,
+  val supportNeed: SupportNeed,
+  val caseNoteSummary: String,
+)
+
+enum class SupportNeed(val relatedStatus: Status) {
+  SUPPORT_REQUIRED(Status.NOT_STARTED),
+  SUPPORT_NOT_REQUIRED(Status.SUPPORT_NOT_REQUIRED),
+  SUPPORT_DECLINED(Status.SUPPORT_DECLINED),
+}

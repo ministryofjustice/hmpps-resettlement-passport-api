@@ -33,7 +33,10 @@ class ResettlementAssessmentController(
   private val resettlementAssessmentService: ResettlementAssessmentService,
 ) {
   @PostMapping("/{nomsId}/resettlement-assessment/next-page", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Returns next page of resettlement assessment", description = "Returns next page of resettlement assessment")
+  @Operation(
+    summary = "Returns next page of resettlement assessment",
+    description = "Returns next page of resettlement assessment",
+  )
   @ApiResponses(
     value = [
       ApiResponse(
@@ -76,9 +79,12 @@ class ResettlementAssessmentController(
     val result = assessmentStrategy.nextQuestions(resettlementAssessment)
     return result
   }
-  
+
   @GetMapping("/{nomsId}/resettlement-assessment/summary", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Returns summary of prisoner's resettlement assessment", description = "Returns summary of prisoner's resettlement assessment")
+  @Operation(
+    summary = "Returns summary of prisoner's resettlement assessment",
+    description = "Returns summary of prisoner's resettlement assessment",
+  )
   @ApiResponses(
     value = [
       ApiResponse(
@@ -119,11 +125,12 @@ class ResettlementAssessmentController(
     @Parameter(required = true)
     nomsId: String,
   ) = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId)
-}
 
   @PostMapping("/{nomsId}/resettlement-assessment/submit", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Submits a resettlement assessment for the given nomsId and pathway", description = "Submits a resettlement assessment for the given nomsId and pathway")
-
+  @Operation(
+    summary = "Submits a resettlement assessment for the given nomsId and pathway",
+    description = "Submits a resettlement assessment for the given nomsId and pathway",
+  )
   @ApiResponses(
     value = [
       ApiResponse(
@@ -150,16 +157,11 @@ class ResettlementAssessmentController(
         description = "Incorrect information provided",
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
-
-
       ApiResponse(
         responseCode = "404",
         description = "Cannot find prisoner or pathway status entry to update",
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
-    ],
-  )
-  
     ],
   )
   fun postSubmitAssessmentByNomsId(
@@ -169,7 +171,8 @@ class ResettlementAssessmentController(
     @RequestBody
     resettlementAssessmentSubmit: ResettlementAssessmentSubmitRequest,
   ): ResponseEntity<Void> {
-    resettlementAssessmentStrategies.first { it.appliesTo(resettlementAssessmentSubmit.pathway) }.submitAssessment(nomsId, resettlementAssessmentSubmit)
+    resettlementAssessmentStrategies.first { it.appliesTo(resettlementAssessmentSubmit.pathway) }
+      .submitAssessment(nomsId, resettlementAssessmentSubmit)
     return ResponseEntity.ok().build()
   }
 }

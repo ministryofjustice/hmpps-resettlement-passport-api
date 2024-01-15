@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -23,13 +24,17 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentSubmitRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettlementAssessmentService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.IResettlementAssessmentStrategy
 
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
-class ResettlementAssessmentController(private val resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy>) {
+class ResettlementAssessmentController(
+  private val resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy>,
+  private val resettlementAssessmentService: ResettlementAssessmentService,
+) {
   @PostMapping("/{nomsId}/resettlement-assessment/{pathway}/next-page", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Returns next page of resettlement assessment", description = "Returns next page of resettlement assessment")
   @ApiResponses(
@@ -121,6 +126,52 @@ class ResettlementAssessmentController(private val resettlementAssessmentStrateg
     val assessmentStrategy = resettlementAssessmentStrategies.first { it.appliesTo(pathway) }
     return assessmentStrategy.getPageFromId(nomsId, pathway, pageId, assessmentType)
   }
+
+  @GetMapping("/{nomsId}/resettlement-assessment/summary", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(
+    summary = "Returns summary of prisoner's resettlement assessment",
+    description = "Returns summary of prisoner's resettlement assessment",
+  )
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [
+          Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "400",
+        description = "Incorrect information provided",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+
+      ApiResponse(
+        responseCode = "404",
+        description = "Cannot find prisoner or pathway status entry to update",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  fun getResettlementAssessmentSummaryByNomsId(
+    @Schema(example = "AXXXS", required = true)
+    @PathVariable("nomsId")
+    @Parameter(required = true)
+    nomsId: String,
+  ) = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId)
 
   @PostMapping("/{nomsId}/resettlement-assessment/submit", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Submits a resettlement assessment for the given nomsId and pathway", description = "Submits a resettlement assessment for the given nomsId and pathway")

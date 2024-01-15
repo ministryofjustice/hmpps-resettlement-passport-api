@@ -196,7 +196,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  @Sql("classpath:testdata/sql/seed-resettlement-assessments-1.sql")
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-3.sql")
   fun `Post resettlement assessment submit - happy path`() {
     val nomsId = "ABC1234"
     webTestClient.post()
@@ -271,7 +271,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  @Sql("classpath:testdata/sql/seed-resettlement-assessments-1.sql")
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-3.sql")
   fun `Post resettlement assessment submit - nomsId not found in database`() {
     val nomsId = "DEF1234"
     webTestClient.post()
@@ -292,7 +292,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  @Sql("classpath:testdata/sql/seed-resettlement-assessments-1.sql")
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-3.sql")
   fun `Post resettlement assessment submit - no assessment for nomsId found in database`() {
     val nomsId = "ABC1234"
     webTestClient.post()
@@ -313,7 +313,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  @Sql("classpath:testdata/sql/seed-resettlement-assessments-1.sql")
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-3.sql")
   fun `Post resettlement assessment submit - invalid input json`() {
     val nomsId = "DEF1234"
     webTestClient.post()

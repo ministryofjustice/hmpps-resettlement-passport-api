@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Path
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
@@ -148,7 +149,7 @@ class ResettlementAssessmentServiceTest {
     pathway = PathwayEntity(id = id, name = name, active = true, fakeNow),
     assessmentType = ResettlementAssessmentType.BCST2,
     assessmentStatus = ResettlementAssessmentStatusEntity(id = 1, name = "Not Started", true, fakeNow),
-    assessment = "assessment",
+    assessment = ResettlementAssessmentQuestionAndAnswerList(listOf()),
     creationDate = fakeNow,
     createdBy = "PO",
     statusChangedTo = null,
@@ -160,7 +161,7 @@ class ResettlementAssessmentServiceTest {
     pathway = PathwayEntity(id = id, name = name, active = true, fakeNow),
     assessmentType = ResettlementAssessmentType.BCST2,
     assessmentStatus = ResettlementAssessmentStatusEntity(id = 3, name = "Complete", true, fakeNow),
-    assessment = "assessment",
+    assessment = ResettlementAssessmentQuestionAndAnswerList(listOf()),
     creationDate = fakeNow,
     createdBy = "PO",
     statusChangedTo = null,

@@ -1,38 +1,43 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IAssessmentPage
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
-
-data class ResettlementAssessment(
-  val pathway: Pathway,
-  val nomsID: String,
-  val type: ResettlementAssessmentType,
-  val currentPage: String,
-  val questions: List<ResettlementAssessmentQuestionAndAnswer>,
-  val newStatus: Status,
-)
 
 data class ResettlementAssessmentRequest(
-  val pathway: Pathway,
-  val nomsID: String,
-  val type: ResettlementAssessmentType,
-  val currentPage: String,
-  val questions: List<ResettlementAssessmentRequestQuestionAndAnswer<*>>,
-  val newStatus: Status,
+  val questionsAndAnswers: List<ResettlementAssessmentRequestQuestionAndAnswer<*>>?,
 )
 
 data class ResettlementAssessmentSubmitRequest(
   val pathway: Pathway,
   val assessmentType: ResettlementAssessmentType,
-  val supportNeed: SupportNeed,
-  val caseNoteSummary: String,
 )
 
-enum class SupportNeed(val relatedStatus: Status) {
-  SUPPORT_REQUIRED(Status.NOT_STARTED),
-  SUPPORT_NOT_REQUIRED(Status.SUPPORT_NOT_REQUIRED),
-  SUPPORT_DECLINED(Status.SUPPORT_DECLINED),
-}
+data class ResettlementAssessmentNextPage(
+  val nextPageId: String,
+)
+
+data class ResettlementAssessmentResponsePage(
+  override val id: String,
+  override val title: String,
+  override val questionsAndAnswers: List<ResettlementAssessmentResponseQuestionAndAnswer>,
+) : IAssessmentPage
+
+data class ResettlementAssessmentResponseQuestionAndAnswer(
+  override val question: IResettlementAssessmentQuestion,
+  override var answer: Answer<*>? = null,
+) : IResettlementAssessmentQuestionAndAnswer
+
+data class ResettlementAssessmentResponseQuestion(
+  override val id: String,
+  override val title: String,
+  override val subTitle: String? = null,
+  override val type: TypeOfQuestion,
+  override val options: MutableList<Option>? = null,
+) : IResettlementAssessmentQuestion

@@ -1,13 +1,41 @@
 {
-  "id": "WHO_WILL_THEY_LIVE_WITH",
-  "title": "What are the names and ages of all residents at this property and the prisoner's relationship to them?",
+  "id": "WHERE_WILL_THEY_LIVE",
+  "title": "Where will they live when released from custody?",
   "questionsAndAnswers": [
     {
       "question": {
-        "id": "WHO_WILL_THEY_LIVE_WITH",
+        "@class": "ResettlementAssessmentResponseQuestion",
+        "id": "WHERE_WILL_THEY_LIVE",
         "title": "",
         "subTitle": null,
-        "type": "LIST_OF_PEOPLE",
+        "type": "RADIO_WITH_ADDRESS",
+        "options": [
+          {
+            "id": "PREVIOUS_ADDRESS",
+            "displayText": "Returning to a previous address",
+            "description": null
+          },
+          {
+            "id": "NEW_ADDRESS",
+            "displayText": "Moving to new address",
+            "description": null
+          },
+          {
+            "id": "NO_PLACE_TO_LIVE",
+            "displayText": "No place to live",
+            "description": null
+          }
+        ]
+      },
+      "answer": null
+    },
+    {
+      "question": {
+        "@class": "ResettlementAssessmentResponseQuestion",
+        "id": "WHAT_IS_THE_ADDRESS",
+        "title": "",
+        "subTitle": null,
+        "type": "ADDRESS",
         "options": null
       },
       "answer": null

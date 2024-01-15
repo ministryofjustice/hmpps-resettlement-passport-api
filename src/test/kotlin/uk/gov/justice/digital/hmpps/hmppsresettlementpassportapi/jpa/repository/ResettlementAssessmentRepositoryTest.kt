@@ -7,10 +7,15 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.MapAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBase
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentSimpleQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import java.time.LocalDate
@@ -49,7 +54,7 @@ class ResettlementAssessmentRepositoryTest : TestBase() {
 
     val assessmentStatus = resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.NOT_STARTED.id).get()
 
-    val resettlementAssessment = ResettlementAssessmentEntity(
+    val resettlementAssessmentQuestionAndAnswerList = ResettlementAssessmentEntity(
       id = null,
       prisoner = prisoner,
       pathway = pathway,
@@ -57,13 +62,13 @@ class ResettlementAssessmentRepositoryTest : TestBase() {
       assessmentType = ResettlementAssessmentType.BCST2,
       creationDate = LocalDateTime.parse("2023-01-01T12:00:00"),
       createdBy = "Human, A",
-      assessment = """{"question1": true, "question2": "some text", "question3": 1234}""",
+      assessment = ResettlementAssessmentQuestionAndAnswerList(listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_1", answer = StringAnswer("Test Answer 1")))),
       assessmentStatus = assessmentStatus,
     )
-    resettlementAssessmentRepository.save(resettlementAssessment)
+    resettlementAssessmentRepository.save(resettlementAssessmentQuestionAndAnswerList)
 
     val resettlementAssessmentsFromDB = resettlementAssessmentRepository.findAll()
-    assertThat(resettlementAssessmentsFromDB).usingRecursiveComparison().isEqualTo(listOf(resettlementAssessment))
+    assertThat(resettlementAssessmentsFromDB).usingRecursiveComparison().isEqualTo(listOf(resettlementAssessmentQuestionAndAnswerList))
   }
 
   @Test
@@ -84,7 +89,12 @@ class ResettlementAssessmentRepositoryTest : TestBase() {
       assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN,
       creationDate = LocalDateTime.parse("2023-01-01T12:00:00"),
       createdBy = "Human, A",
-      assessment = """{"question1": true, "question2": "some text", "question3": 1234}""",
+      assessment = ResettlementAssessmentQuestionAndAnswerList(
+        listOf(
+          ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_2", answer = StringAnswer("My answer")),
+          ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_3", answer = ListAnswer(listOf("Answer 1", "Answer 2", "Answer 3"))),
+        ),
+      ),
       assessmentStatus = assessmentStatus,
     )
     val resettlementAssessment2 = ResettlementAssessmentEntity(
@@ -95,7 +105,12 @@ class ResettlementAssessmentRepositoryTest : TestBase() {
       assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN,
       creationDate = LocalDateTime.parse("2022-01-01T12:00:00"),
       createdBy = "Human, A",
-      assessment = """{"question1": false, "question2": "some other text", "question3": 4321}""",
+      assessment = ResettlementAssessmentQuestionAndAnswerList(
+        listOf(
+          ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_4", answer = MapAnswer(listOf(mapOf(Pair("key1", "value1"), Pair("key2", "value2"))))),
+          ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_5", answer = ListAnswer(listOf("Answer 1", "Answer 2", "Answer 3"))),
+        ),
+      ),
       assessmentStatus = assessmentStatus,
     )
     resettlementAssessmentRepository.save(resettlementAssessment)

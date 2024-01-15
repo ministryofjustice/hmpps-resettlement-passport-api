@@ -49,11 +49,21 @@ class ServiceUtilsTest {
 
   @ParameterizedTest
   @MethodSource("test convert enum string to enum data")
-  fun `test convert enum string to enum`(inputString: String, expectedEnum: TestEnum?) {
+  fun `test convert enum string to enum`(inputString: String, expectedEnum: Enum<*>?) {
     if (expectedEnum != null) {
-      Assertions.assertEquals(expectedEnum, convertEnumStringToEnum(TestEnum::class, inputString))
+      Assertions.assertEquals(expectedEnum, convertEnumStringToEnum(enumClass = TestEnum::class, stringValue = inputString))
     } else {
-      assertThrows<IllegalArgumentException> { convertEnumStringToEnum(TestEnum::class, inputString) }
+      assertThrows<IllegalArgumentException> { convertEnumStringToEnum(enumClass = TestEnum::class, stringValue = inputString) }
+    }
+  }
+
+  @ParameterizedTest
+  @MethodSource("test convert enum string to enum with secondary enum data")
+  fun `test convert enum string to enum with secondary enum`(inputString: String, expectedEnum: Enum<*>?) {
+    if (expectedEnum != null) {
+      Assertions.assertEquals(expectedEnum, convertEnumStringToEnum(enumClass = TestEnum::class, secondaryEnumClass = TestEnum2::class, stringValue = inputString))
+    } else {
+      assertThrows<IllegalArgumentException> { convertEnumStringToEnum(enumClass = TestEnum::class, secondaryEnumClass = TestEnum2::class, stringValue = inputString) }
     }
   }
 
@@ -75,6 +85,29 @@ class ServiceUtilsTest {
     Arguments.of("NA", TestEnum.NA),
     Arguments.of("N/A", null),
     Arguments.of("n/a", null),
+  )
+
+  private fun `test convert enum string to enum with secondary enum data`(): Stream<Arguments> = Stream.of(
+    Arguments.of("", null),
+    Arguments.of(" ", null),
+    Arguments.of("some random string", null),
+    Arguments.of("yes", null),
+    Arguments.of("Yes", null),
+    Arguments.of("YES", TestEnum.YES),
+    Arguments.of("No", null),
+    Arguments.of("  no  ", null),
+    Arguments.of("!\"£$%^&*()-+={}[]@~'#<>?,.no`¬±", null),
+    Arguments.of("NO", TestEnum.NO),
+    Arguments.of("DONT_KNOW", TestEnum.DONT_KNOW),
+    Arguments.of("dont_know", null),
+    Arguments.of("dont know", null),
+    Arguments.of("Dont Know", null),
+    Arguments.of("NA", TestEnum.NA),
+    Arguments.of("N/A", null),
+    Arguments.of("n/a", null),
+    Arguments.of("OPTION_1", TestEnum2.OPTION_1),
+    Arguments.of("OPTION_2", TestEnum2.OPTION_2),
+    Arguments.of("OPTION_3", TestEnum2.OPTION_3),
   )
 
   @ParameterizedTest
@@ -276,6 +309,10 @@ class ServiceUtilsTest {
 
 enum class TestEnum {
   YES, NO, DONT_KNOW, NA
+}
+
+enum class TestEnum2 {
+  OPTION_1, OPTION_2, OPTION_3
 }
 
 enum class TestEnumWithCustomLabels : EnumWithLabel {

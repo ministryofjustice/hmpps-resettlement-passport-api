@@ -10,11 +10,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmentEntity, Long> {
   fun findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisoner: PrisonerEntity, pathwayEntity: PathwayEntity, assessmentType: ResettlementAssessmentType): ResettlementAssessmentEntity?
 
-  fun findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusOrderByCreationDateDesc(
+  fun findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
     prisoner: PrisonerEntity,
     pathway: PathwayEntity,
     assessmentType: ResettlementAssessmentType,
-    assessmentStatus: ResettlementAssessmentStatusEntity,
+    assessmentStatus: List<ResettlementAssessmentStatusEntity>,
   ): ResettlementAssessmentEntity?
 
   fun findByPrisoner(prisoner: PrisonerEntity): ResettlementAssessmentEntity?

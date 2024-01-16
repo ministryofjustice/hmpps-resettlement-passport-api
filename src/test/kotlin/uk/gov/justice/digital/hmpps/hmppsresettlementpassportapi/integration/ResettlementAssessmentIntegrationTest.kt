@@ -200,7 +200,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
   fun `Post resettlement assessment submit - happy path`() {
     val nomsId = "ABC1234"
     webTestClient.post()
-      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/submit")
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/complete")
       .contentType(MediaType.APPLICATION_JSON)
       .bodyValue(
         """
@@ -236,7 +236,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
   fun `Post resettlement assessment submit - unauthorized`() {
     val nomsId = "ABC1234"
     webTestClient.post()
-      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/submit")
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/complete")
       .contentType(MediaType.APPLICATION_JSON)
       .bodyValue(
         """
@@ -254,7 +254,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
   fun `Post resettlement assessment submit - forbidden`() {
     val nomsId = "ABC1234"
     webTestClient.post()
-      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/submit")
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/complete")
       .contentType(MediaType.APPLICATION_JSON)
       .bodyValue(
         """
@@ -275,7 +275,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
   fun `Post resettlement assessment submit - nomsId not found in database`() {
     val nomsId = "DEF1234"
     webTestClient.post()
-      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/submit")
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/complete")
       .contentType(MediaType.APPLICATION_JSON)
       .bodyValue(
         """
@@ -296,7 +296,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
   fun `Post resettlement assessment submit - no assessment for nomsId found in database`() {
     val nomsId = "ABC1234"
     webTestClient.post()
-      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/submit")
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/complete")
       .contentType(MediaType.APPLICATION_JSON)
       .bodyValue(
         """
@@ -317,7 +317,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
   fun `Post resettlement assessment submit - invalid input json`() {
     val nomsId = "DEF1234"
     webTestClient.post()
-      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/submit")
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/complete")
       .contentType(MediaType.APPLICATION_JSON)
       .bodyValue(
         """

@@ -173,7 +173,7 @@ class ResettlementAssessmentController(
     nomsId: String,
   ) = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId)
 
-  @PostMapping("/{nomsId}/resettlement-assessment/submit", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @PostMapping("/{nomsId}/resettlement-assessment/complete", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Submits a resettlement assessment for the given nomsId and pathway", description = "Submits a resettlement assessment for the given nomsId and pathway")
   @ApiResponses(
     value = [

@@ -22,6 +22,7 @@ class ResettlementAssessmentStatusRepositoryTest : TestBase() {
       ResettlementAssessmentStatusEntity(1, "Not Started", true, LocalDateTime.now()),
       ResettlementAssessmentStatusEntity(2, "In Progress", true, LocalDateTime.now()),
       ResettlementAssessmentStatusEntity(3, "Complete", true, LocalDateTime.now()),
+      ResettlementAssessmentStatusEntity(4, "Submitted", true, LocalDateTime.now()),
     )
 
     val statusesFromDatabase = statusRepository.findAll()

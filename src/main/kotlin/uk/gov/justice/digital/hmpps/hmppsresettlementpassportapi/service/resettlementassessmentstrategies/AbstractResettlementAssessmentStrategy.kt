@@ -109,15 +109,14 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     // Obtain pathway entity from database
     val pathwayEntity = pathwayRepository.findById(pathway.id).get()
 
-    // Obtain COMPLETE resettlement status entity from database
-    val resettlementAssessmentStatusEntity =
-      resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.COMPLETE.id).get()
+    // Obtain COMPLETE and SUBMITTED resettlement status entity from database
+    val resettlementAssessmentStatusEntities = resettlementAssessmentStatusRepository.findAll().filter { it.id in listOf(ResettlementAssessmentStatus.COMPLETE.id, ResettlementAssessmentStatus.SUBMITTED.id) }
 
-    return resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusOrderByCreationDateDesc(
+    return resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
       prisonerEntity,
       pathwayEntity,
       assessmentType,
-      resettlementAssessmentStatusEntity,
+      resettlementAssessmentStatusEntities,
     )
   }
 

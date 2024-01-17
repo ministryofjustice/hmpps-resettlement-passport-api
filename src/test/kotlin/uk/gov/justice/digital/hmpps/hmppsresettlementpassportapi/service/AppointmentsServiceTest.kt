@@ -74,4 +74,47 @@ class AppointmentsServiceTest {
     val response = appointmentsService.createNotes(testAppointment)
     Assertions.assertEquals(parsedNotes, response)
   }
+
+  @Test
+  fun `test createFieldsFromNotes - null case`() {
+    val testLocation = CreateAppointmentAddress(
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+    )
+    val testAppointment = CreateAppointment(
+      Category.DRUGS_AND_ALCOHOL,
+      "rehab",
+      "AA",
+      "Emily",
+      testLocation,
+      LocalDateTime.parse("2023-12-14T18:13:00"),
+      90,
+      null,
+    )
+    val expectedNotes =
+      """
+       ###
+       Appointment Title: rehab
+       Contact: Emily
+       Organisation: AA
+       Location:
+         Building Name: 
+         Building Number: 
+         Street Name: 
+         District: 
+         Town: 
+         County: 
+         Postcode: 
+       ###
+       
+       ###
+      """.trimIndent()
+    val actualNotes = appointmentsService.createNotes(testAppointment)
+    Assertions.assertEquals(expectedNotes, actualNotes)
+  }
 }

@@ -175,6 +175,31 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `Get appointment by id - forbidden`() {
+    val nomsId = "G1458GV"
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/appointments/2")
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(403)
+      .jsonPath("developerMessage").toString().contains("Forbidden, requires an appropriate role")
+  }
+
+  @Test
+  fun `Get appointment by id - unauthorized`() {
+    val nomsId = "G1458GV"
+    // Failing to set a valid Authorization header should result in 401 response
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/appointments/2")
+      .exchange()
+      .expectStatus().isEqualTo(401)
+  }
+
+
+  @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-6.sql")
   fun `Get All Appointments happy path - only database`() {
     val expectedOutput = readFile("testdata/expectation/appointments-3.json")

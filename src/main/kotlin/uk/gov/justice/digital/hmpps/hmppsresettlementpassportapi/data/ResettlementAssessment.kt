@@ -7,16 +7,13 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 
 data class ResettlementAssessmentRequest(
   val questionsAndAnswers: List<ResettlementAssessmentRequestQuestionAndAnswer<*>>?,
 )
 
-data class ResettlementAssessmentSubmitRequest(
-  val pathway: Pathway,
-  val assessmentType: ResettlementAssessmentType,
+data class ResettlementAssessmentCompleteRequest(
+  val questionsAndAnswers: List<ResettlementAssessmentRequestQuestionAndAnswer<*>>,
 )
 
 data class ResettlementAssessmentNextPage(

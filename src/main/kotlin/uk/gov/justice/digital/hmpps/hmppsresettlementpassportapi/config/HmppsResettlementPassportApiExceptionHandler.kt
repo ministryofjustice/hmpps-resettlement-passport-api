@@ -49,14 +49,15 @@ class HmppsResettlementPassportApiExceptionHandler {
 
   @ExceptionHandler(value = [ValidationException::class, ServerWebInputException::class, HttpMessageConversionException::class, MethodArgumentTypeMismatchException::class, MissingServletRequestParameterException::class, HttpMediaTypeNotSupportedException::class])
   fun handleValidationException(e: Exception): ResponseEntity<ErrorResponse> {
-    log.info("Validation exception: {}", e.cause?.message)
+    val exceptionMessage = if (e.cause != null) e.cause?.message else e.message
+    log.info("Validation exception: {}", exceptionMessage)
     return ResponseEntity
       .status(BAD_REQUEST)
       .body(
         ErrorResponse(
           status = BAD_REQUEST,
           userMessage = "Validation failure - please check request parameters and try again",
-          developerMessage = e.cause?.message,
+          developerMessage = exceptionMessage,
         ),
       )
   }

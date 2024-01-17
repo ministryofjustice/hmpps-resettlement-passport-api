@@ -1,5 +1,8 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies
 
+import io.mockk.every
+import io.mockk.mockkStatic
+import io.mockk.unmockkAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -13,10 +16,12 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.web.server.ServerWebInputException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentCompleteRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponseQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponseQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.MapAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
@@ -30,13 +35,17 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentSimpleQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.StatusRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClaimFromJWTToken
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -399,6 +408,163 @@ class AccommodationResettlementAssessmentStrategyTest {
     )
     Assertions.assertEquals(expectedPage, page)
   }
+
+  @ParameterizedTest
+  @MethodSource("test complete assessment data")
+  fun `test complete assessment`(assessment: ResettlementAssessmentCompleteRequest, expectedEntity: ResettlementAssessmentEntity?, expectedException: Throwable?) {
+    mockkStatic(::getClaimFromJWTToken)
+    every { getClaimFromJWTToken("string", "name") } returns "System user"
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns testDate
+
+    val nomsId = "abc"
+    val pathway = Pathway.ACCOMMODATION
+    val assessmentType = ResettlementAssessmentType.BCST2
+
+    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23"))
+    val pathwayEntity = PathwayEntity(1, "Accommodation", true, testDate)
+    val resettlementAssessmentStatusEntity = ResettlementAssessmentStatusEntity(3, "Complete", true, testDate)
+    val statusEntity = StatusEntity(1, "Not started", true, testDate)
+
+    Mockito.`when`(pathwayRepository.findById(Pathway.ACCOMMODATION.id)).thenReturn(Optional.of(pathwayEntity))
+    Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
+    Mockito.`when`(resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.COMPLETE.id))
+      .thenReturn(Optional.of(resettlementAssessmentStatusEntity))
+    Mockito.lenient().`when`(statusRepository.findById(Status.NOT_STARTED.id)).thenReturn(Optional.of(statusEntity))
+
+    if (expectedException == null) {
+      resettlementAssessmentService.completeAssessment(nomsId, pathway, assessmentType, assessment, "string")
+      Mockito.verify(resettlementAssessmentRepository).save(expectedEntity!!)
+    } else {
+      val actualException = assertThrows<Throwable> {
+        resettlementAssessmentService.completeAssessment(nomsId, pathway, assessmentType, assessment, "string")
+      }
+      Assertions.assertEquals(expectedException::class, actualException::class)
+      Assertions.assertEquals(expectedException.message, actualException.message)
+    }
+
+    unmockkAll()
+  }
+
+  private fun `test complete assessment data`() = Stream.of(
+    // Throw exception if SUPPORT_NEEDS question not answered
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(questionsAndAnswers = listOf()),
+      null,
+      ServerWebInputException("Answer to question SUPPORT_NEEDS must be provided."),
+    ),
+    // Throw exception if SUPPORT_NEEDS answer in wrong format
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "SUPPORT_NEEDS",
+            answer = ListAnswer(listOf("SUPPORT_REQUIRED", "SUPPORT_DECLINED")),
+          ),
+        ),
+      ),
+      null,
+      ServerWebInputException("Support need [ListAnswer(answer=[SUPPORT_REQUIRED, SUPPORT_DECLINED])] must be a StringAnswer"),
+    ),
+    // Throw exception if SUPPORT_NEEDS answer is null
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "SUPPORT_NEEDS",
+            answer = StringAnswer(null),
+          ),
+        ),
+      ),
+      null,
+      ServerWebInputException("Support need [StringAnswer(answer=null)] is not a valid option"),
+    ),
+    // Throw exception if SUPPORT_NEEDS answer is not a valid option
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "SUPPORT_NEEDS",
+            answer = StringAnswer("SUPPORT_WANTED"),
+          ),
+        ),
+      ),
+      null,
+      ServerWebInputException("Support need [StringAnswer(answer=SUPPORT_WANTED)] is not a valid option"),
+    ),
+    // Throw exception if CASE_NOTE_SUMMARY question not answered
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "SUPPORT_NEEDS",
+            answer = StringAnswer("SUPPORT_REQUIRED"),
+          ),
+        ),
+      ),
+      null,
+      ServerWebInputException("Answer to question CASE_NOTE_SUMMARY must be provided."),
+    ),
+    // Throw exception if CASE_NOTE_SUMMARY answer in wrong format
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "SUPPORT_NEEDS",
+            answer = StringAnswer("SUPPORT_REQUIRED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "CASE_NOTE_SUMMARY",
+            answer = ListAnswer(listOf("hello", "world")),
+          ),
+        ),
+      ),
+      null,
+      ServerWebInputException("Answer [ListAnswer(answer=[hello, world])] must be a StringAnswer"),
+    ),
+    // Throw exception if CASE_NOTE_SUMMARY is null
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "SUPPORT_NEEDS",
+            answer = StringAnswer("SUPPORT_REQUIRED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "CASE_NOTE_SUMMARY",
+            answer = StringAnswer(null),
+          ),
+        ),
+      ),
+      null,
+      ServerWebInputException("Answer [StringAnswer(answer=null)] must not be null"),
+    ),
+    // Happy path
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "QUESTION_1",
+            answer = ListAnswer(listOf("Part 1", "Part 2", "Part 3")),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "QUESTION_2",
+            answer = MapAnswer(answer = listOf(mapOf("Key 1" to "Value 1", "Key 2" to "Value 2"), mapOf("Something" to "Something else"))),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "SUPPORT_NEEDS",
+            answer = StringAnswer("SUPPORT_REQUIRED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "CASE_NOTE_SUMMARY",
+            answer = StringAnswer("My case note summary..."),
+          ),
+        ),
+      ),
+      ResettlementAssessmentEntity(id = null, prisoner = PrisonerEntity(id = 1, nomsId = "abc", creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000"), crn = "abc", prisonId = "ABC", releaseDate = LocalDate.parse("2025-01-23")), pathway = PathwayEntity(id = 1, name = "Accommodation", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), statusChangedTo = StatusEntity(id = 1, name = "Not started", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "QUESTION_1", answer = ListAnswer(answer = listOf("Part 1", "Part 2", "Part 3"))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "QUESTION_2", answer = MapAnswer(answer = listOf(mapOf("Key 1" to "Value 1", "Key 2" to "Value 2"), mapOf("Something" to "Something else")))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "CASE_NOTE_SUMMARY", answer = StringAnswer(answer = "My case note summary...")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatusEntity(id = 3, name = "Complete", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), caseNoteText = "My case note summary..."),
+      null,
+    ),
+  )
 
   private fun setUpMocks(nomsId: String, returnResettlementAssessmentEntity: Boolean, assessment: ResettlementAssessmentQuestionAndAnswerList = ResettlementAssessmentQuestionAndAnswerList(listOf())) {
     val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23"))

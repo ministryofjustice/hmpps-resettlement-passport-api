@@ -71,25 +71,22 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     // Get the next page
     val nextPage: IAssessmentPage
 
-    // Option 1 - If the current page is null then send back the first page unless there is already an assessment completed, in which case go straight to CHECK_ANSWERS
     if (currentPageEnum == null) {
+      // Option 1 - If the current page is null then send back the first page unless there is already an assessment completed, in which case go straight to CHECK_ANSWERS
       val existingAssessment = getExistingAssessment(nomsId, pathway, assessmentType)
       nextPage = if (existingAssessment == null) {
         assessmentPageClass.java.enumConstants[0] as IAssessmentPage
       } else {
         GenericAssessmentPage.CHECK_ANSWERS
       }
-    }
-    // Option 2 - If the current page is CHECK_ANSWERS then something has gone wrong as this is the end of the flow, and we should be called the submit endpoint instead
-    else if (currentPageEnum.id == "CHECK_ANSWERS") {
+    } else if (currentPageEnum.id == "CHECK_ANSWERS") {
+      // Option 2 - If the current page is CHECK_ANSWERS then something has gone wrong as this is the end of the flow, and we should be called the submit endpoint instead
       throw ServerWebInputException("Cannot get the next question from CHECK_ANSWERS as this is the end of the flow for this pathway.")
-    }
-    // Option 3 - If the current page is ASSESSMENT_SUMMARY then always go to CHECK_ANSWERS and fill out the questions and answers from the database
-    else if (currentPageEnum.id == "ASSESSMENT_SUMMARY") {
+    } else if (currentPageEnum.id == "ASSESSMENT_SUMMARY") {
+      // Option 3 - If the current page is ASSESSMENT_SUMMARY then always go to CHECK_ANSWERS and fill out the questions and answers from the database
       nextPage = GenericAssessmentPage.CHECK_ANSWERS
-    }
-    // Option 4 - If none of the above use the next page function in the question lambda to calculate the next page
-    else {
+    } else {
+      // Option 4 - If none of the above use the next page function in the question lambda to calculate the next page
       val questionLambda = getPageList().first { it.assessmentPage == currentPageEnum }
       val questions: List<ResettlementAssessmentQuestionAndAnswer> = assessment.questionsAndAnswers!!.map {
         ResettlementAssessmentQuestionAndAnswer(

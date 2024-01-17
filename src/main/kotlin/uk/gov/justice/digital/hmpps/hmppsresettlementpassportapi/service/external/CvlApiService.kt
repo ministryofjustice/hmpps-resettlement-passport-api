@@ -60,7 +60,7 @@ class CvlApiService(
     }
     return if (licences.isEmpty()) {
       null
-    }; else {
+    } else {
       licences[0]
     }
   }

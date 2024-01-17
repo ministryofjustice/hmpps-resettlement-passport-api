@@ -99,7 +99,8 @@ class ResettlementPassportDeliusApiService(
         "/appointments/{crn}?page={page}&size={size}&startDate={startDate}&endDate={endDate}",
         mapOf(
           "crn" to crn,
-          "size" to 1000, // Assume there will never be more than 1000 appointments
+          // Assume there will never be more than 1000 appointments
+          "size" to 1000,
           "page" to 0,
           "startDate" to startDate.toString(),
           "endDate" to endDate.toString(),

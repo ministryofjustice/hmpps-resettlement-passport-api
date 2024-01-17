@@ -5,7 +5,7 @@ interface IResettlementAssessmentQuestionAndAnswer {
   val answer: Answer<*>?
 }
 
-data class ResettlementAssessmentRequestQuestionAndAnswer<T> (
+data class ResettlementAssessmentRequestQuestionAndAnswer<T>(
   val question: String,
   val answer: Answer<T>,
 )

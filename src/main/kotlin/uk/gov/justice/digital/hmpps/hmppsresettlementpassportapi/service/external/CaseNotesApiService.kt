@@ -103,7 +103,8 @@ class CaseNotesApiService(
           uriValue,
           mapOf(
             "nomsId" to nomsId,
-            "size" to 500, // NB: API allows up 3,000 results per page
+            // NB: API allows up 3,000 results per page
+            "size" to 500,
             "page" to page,
             "type" to type,
             "subType" to subType,

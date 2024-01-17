@@ -164,15 +164,15 @@ class AppointmentsService(
       $CONTACT: ${appointment.contact}
       $ORGANISATION: ${appointment.organisation}
       $LOCATION:
-      $BUILDING_NAME: ${appointment.location.buildingName}
-      $BUILDING_NUMBER: ${appointment.location.buildingNumber}
-      $STREET_NAME: ${appointment.location.streetName}
-      $DISTRICT: ${appointment.location.district}
-      $TOWN: ${appointment.location.town}
-      $COUNTY: ${appointment.location.county}
-      $POSTCODE: ${appointment.location.postcode}
+      $BUILDING_NAME: ${appointment.location.buildingName ?: ""}
+      $BUILDING_NUMBER: ${appointment.location.buildingNumber ?: ""}
+      $STREET_NAME: ${appointment.location.streetName ?: ""}
+      $DISTRICT: ${appointment.location.district ?: ""}
+      $TOWN: ${appointment.location.town ?: ""}
+      $COUNTY: ${appointment.location.county ?: ""}
+      $POSTCODE: ${appointment.location.postcode ?: ""}
       $SECTION_DELIMITER
-      ${appointment.notes}
+      ${appointment.notes ?: ""}
       $SECTION_DELIMITER
     """.trimIndent()
   }

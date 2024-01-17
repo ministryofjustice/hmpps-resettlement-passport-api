@@ -198,7 +198,6 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
       .expectStatus().isEqualTo(401)
   }
 
-
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-6.sql")
   fun `Get All Appointments happy path - only database`() {

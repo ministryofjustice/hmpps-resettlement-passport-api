@@ -1,0 +1,32 @@
+{
+  "results": [
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2023-11-25T13:00:00Z",
+      "duration": "PT1H",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "RSSR",
+        "description": "Rescheduled - Service Request"
+      }
+    }
+  ],
+  "totalElements": 1,
+  "totalPages": 1,
+  "page": 0,
+  "size": 1
+}

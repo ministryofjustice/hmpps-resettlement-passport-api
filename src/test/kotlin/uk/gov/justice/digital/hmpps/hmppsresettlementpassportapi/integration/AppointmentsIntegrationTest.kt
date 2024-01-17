@@ -159,6 +159,23 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-6.sql")
+  fun `Get appointment by id`() {
+    val expectedOutput = readFile("testdata/expectation/appointments-4.json")
+    val nomsId = "G1458GV"
+    val crn = "CRN1"
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
+    deliusApiMockServer.stubGetAppointmentsFromCRN(crn, 200)
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/appointments/2")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-6.sql")
   fun `Get All Appointments happy path - only database`() {
     val expectedOutput = readFile("testdata/expectation/appointments-3.json")
     val nomsId = "G1458GV"

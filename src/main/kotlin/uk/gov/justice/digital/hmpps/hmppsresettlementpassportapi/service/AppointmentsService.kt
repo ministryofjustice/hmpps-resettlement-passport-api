@@ -44,6 +44,14 @@ class AppointmentsService(
   }
 
   @Transactional
+  fun getAppointmentsById(
+    nomsId: String,
+    id: Long,
+  ): Appointment {
+    return mapAppointmentFromDatabase(deliusContactService.getAppointmentById(id, nomsId))
+  }
+
+  @Transactional
   fun getAppointmentsByNomsId(
     nomsId: String,
     startDate: LocalDate,
@@ -105,8 +113,12 @@ class AppointmentsService(
   }
 
   fun mapAppointmentsFromDatabase(deliusContacts: List<DeliusContactEntity>) = deliusContacts.map { deliusContact ->
+    mapAppointmentFromDatabase(deliusContact)
+  }
+
+  fun mapAppointmentFromDatabase(deliusContact: DeliusContactEntity): Appointment {
     val customFieldsFromNotes = getCustomFieldsFromNotes(deliusContact.notes, deliusContact.id)
-    Appointment(
+    return Appointment(
       title = extractSectionFromNotes(customFieldsFromNotes, APPOINTMENT_TITLE, deliusContact.id),
       contact = extractSectionFromNotes(customFieldsFromNotes, CONTACT, deliusContact.id),
       date = deliusContact.appointmentDate?.toLocalDate(),

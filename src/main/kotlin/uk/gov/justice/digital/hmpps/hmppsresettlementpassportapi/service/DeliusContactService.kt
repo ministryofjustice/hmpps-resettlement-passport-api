@@ -81,4 +81,12 @@ class DeliusContactService(private val deliusContactRepository: DeliusContactRep
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     return deliusContactRepository.findByPrisonerAndContactType(prisonerEntity, ContactType.APPOINTMENT)
   }
+
+  fun getAppointmentById(id: Long, nomsId: String): DeliusContactEntity {
+    val contactEntity = deliusContactRepository.findById(id) ?: throw ResourceNotFoundException("Contact with id $id and nomis id $nomsId not found in database")
+    if (contactEntity.get().prisoner.nomsId != nomsId) {
+      throw ResourceNotFoundException("Contact with id $id and nomis id $nomsId not found in database")
+    }
+    return contactEntity.get()
+  }
 }

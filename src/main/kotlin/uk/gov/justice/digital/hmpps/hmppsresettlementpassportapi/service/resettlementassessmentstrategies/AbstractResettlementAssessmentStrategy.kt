@@ -4,28 +4,34 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import jakarta.transaction.Transactional
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentCompleteRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponseQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponseQuestionAndAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentSubmitRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IAssessmentPage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentNode
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentSimpleQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.StatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.convertEnumStringToEnum
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClaimFromJWTToken
+import java.time.LocalDateTime
 import kotlin.reflect.KClass
 
 abstract class AbstractResettlementAssessmentStrategy<T, Q>(
@@ -173,33 +179,91 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
   abstract fun getPageList(): List<ResettlementAssessmentNode>
 
   @Transactional
-  override fun submitAssessment(nomsId: String, assessment: ResettlementAssessmentSubmitRequest) {
-    // TODO - re-write this to take in the complete set of questions and answers and store a new row in database.
+  override fun completeAssessment(
+    nomsId: String,
+    pathway: Pathway,
+    assessmentType: ResettlementAssessmentType,
+    assessment: ResettlementAssessmentCompleteRequest,
+    auth: String,
+  ) {
+    // Get name from auth
+    val name = getClaimFromJWTToken(auth, "name") ?: throw ServerWebInputException("Cannot get name from auth token")
 
     // Obtain prisoner from database, if exists
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
 
     // Obtain pathway entity from database
-    val pathwayEntity = pathwayRepository.findById(assessment.pathway.id).get()
-
-    // Obtain resettlement assessment if exists
-    val resettlementAssessmentEntity =
-      resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(
-        prisonerEntity,
-        pathwayEntity,
-        assessment.assessmentType,
-      )
-        ?: throw ResourceNotFoundException("Assessment of type ${assessment.assessmentType} for prisoner with nomsId $nomsId and pathway ${assessment.pathway} not found in database")
+    val pathwayEntity = pathwayRepository.findById(pathway.id).get()
 
     // Obtain COMPLETE resettlement status entity from database
     val resettlementAssessmentStatusEntity =
       resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.COMPLETE.id).get()
 
-    // Update assessment status, status changed to and case note text
-    resettlementAssessmentEntity.assessmentStatus = resettlementAssessmentStatusEntity
+    // Get statusChangedTo out of SUPPORT_NEEDS question and convert to a Status
+    val supportNeedsQuestionAndAnswer = assessment.questionsAndAnswers.find { it.question == GenericResettlementAssessmentQuestion.SUPPORT_NEEDS.id }
+
+    if (supportNeedsQuestionAndAnswer == null) {
+      throw ServerWebInputException("Answer to question ${GenericResettlementAssessmentQuestion.SUPPORT_NEEDS} must be provided.")
+    }
+
+    val statusChangedTo = convertFromSupportNeedAnswerToStatus(supportNeedsQuestionAndAnswer.answer)
+    val statusEntity = statusRepository.findById(statusChangedTo.id).get()
+
+    // Get caseNoteText out of CASE_NOTE_SUMMARY question as String
+    val caseNoteQuestionAndAnswer = assessment.questionsAndAnswers.find { it.question == GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY.id }
+
+    if (caseNoteQuestionAndAnswer == null) {
+      throw ServerWebInputException("Answer to question ${GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY} must be provided.")
+    }
+    val caseNoteText = convertFromStringAnswer(caseNoteQuestionAndAnswer.answer)
+
+    // Map assessment into correct format to be added into database
+    val resettlementAssessmentQuestionAndAnswerList = ResettlementAssessmentQuestionAndAnswerList(
+      assessment = assessment.questionsAndAnswers.map {
+        ResettlementAssessmentSimpleQuestionAndAnswer(
+          it.question,
+          it.answer,
+        )
+      },
+    )
+
+    // Create new resettlement assessment entity and save to database
+    val resettlementAssessmentEntity = ResettlementAssessmentEntity(
+      id = null,
+      prisoner = prisonerEntity,
+      pathway = pathwayEntity,
+      statusChangedTo = statusEntity,
+      assessmentType = assessmentType,
+      assessment = resettlementAssessmentQuestionAndAnswerList,
+      creationDate = LocalDateTime.now(),
+      createdBy = name,
+      assessmentStatus = resettlementAssessmentStatusEntity,
+      caseNoteText = caseNoteText,
+    )
 
     resettlementAssessmentRepository.save(resettlementAssessmentEntity)
+  }
+
+  private fun convertFromSupportNeedAnswerToStatus(supportNeed: Answer<*>?): Status {
+    if (supportNeed is StringAnswer) {
+      return when (supportNeed.answer) {
+        "SUPPORT_REQUIRED" -> Status.NOT_STARTED
+        "SUPPORT_NOT_REQUIRED" -> Status.SUPPORT_NOT_REQUIRED
+        "SUPPORT_DECLINED" -> Status.SUPPORT_DECLINED
+        else -> throw ServerWebInputException("Support need [$supportNeed] is not a valid option")
+      }
+    } else {
+      throw ServerWebInputException("Support need [$supportNeed] must be a StringAnswer")
+    }
+  }
+
+  private fun convertFromStringAnswer(answer: Answer<*>?): String {
+    if (answer is StringAnswer) {
+      return answer.answer ?: throw ServerWebInputException("Answer [$answer] must not be null")
+    } else {
+      throw ServerWebInputException("Answer [$answer] must be a StringAnswer")
+    }
   }
 }
 

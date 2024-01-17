@@ -14,14 +14,15 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentCompleteRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentNextPage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponsePage
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentSubmitRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettlementAssessmentService
@@ -173,8 +174,8 @@ class ResettlementAssessmentController(
     nomsId: String,
   ) = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId)
 
-  @PostMapping("/{nomsId}/resettlement-assessment/complete", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Submits a resettlement assessment for the given nomsId and pathway", description = "Submits a resettlement assessment for the given nomsId and pathway")
+  @PostMapping("/{nomsId}/resettlement-assessment/{pathway}/complete", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(summary = "Completes a resettlement assessment for the given nomsId and pathway", description = "Completes a resettlement assessment for the given nomsId and pathway")
   @ApiResponses(
     value = [
       ApiResponse(
@@ -203,14 +204,20 @@ class ResettlementAssessmentController(
       ),
     ],
   )
-  fun postSubmitAssessmentByNomsId(
+  fun postCompleteAssessmentByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     nomsId: String,
+    @PathVariable("pathway")
+    pathway: Pathway,
     @RequestBody
-    resettlementAssessmentSubmit: ResettlementAssessmentSubmitRequest,
+    resettlementAssessmentCompleteRequest: ResettlementAssessmentCompleteRequest,
+    @RequestParam("assessmentType")
+    assessmentType: ResettlementAssessmentType,
+    @RequestHeader("Authorization")
+    auth: String,
   ): ResponseEntity<Void> {
-    resettlementAssessmentStrategies.first { it.appliesTo(resettlementAssessmentSubmit.pathway) }.submitAssessment(nomsId, resettlementAssessmentSubmit)
+    resettlementAssessmentStrategies.first { it.appliesTo(pathway) }.completeAssessment(nomsId, pathway, assessmentType, resettlementAssessmentCompleteRequest, auth)
     return ResponseEntity.ok().build()
   }
 }

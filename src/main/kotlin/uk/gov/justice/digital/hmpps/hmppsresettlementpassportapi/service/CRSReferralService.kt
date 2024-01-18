@@ -84,15 +84,15 @@ class CRSReferralService(
       } else if (it.contractType.startsWith("Mentoring")) {
         pathwayToCrsReferralMap[Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR]?.add(crsReferral)
       } else if (it.contractType.startsWith("Personal Wellbeing") && (
-        it.serviceCategories.contains("Family and Significant Others") ||
-          it.serviceCategories.contains("Family and Significant Others (GM)")
-        )
+          it.serviceCategories.contains("Family and Significant Others") ||
+            it.serviceCategories.contains("Family and Significant Others (GM)")
+          )
       ) {
         pathwayToCrsReferralMap[Pathway.CHILDREN_FAMILIES_AND_COMMUNITY]?.add(crsReferral)
       } else if (it.contractType.startsWith("Personal Wellbeing") && (
-        !it.serviceCategories.contains("Family and Significant Others") ||
-          !it.serviceCategories.contains("Family and Significant Others (GM)")
-        )
+          !it.serviceCategories.contains("Family and Significant Others") ||
+            !it.serviceCategories.contains("Family and Significant Others (GM)")
+          )
       ) {
         pathwayToCrsReferralMap[Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR]?.add(crsReferral)
       } else if (it.contractType.startsWith("Women's Support Services (GM)") || it.contractType.startsWith("Women's Services")) {

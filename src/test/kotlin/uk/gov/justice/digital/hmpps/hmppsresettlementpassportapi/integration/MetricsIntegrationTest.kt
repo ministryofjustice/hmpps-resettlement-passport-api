@@ -216,7 +216,8 @@ class MetricsIntegrationTest : IntegrationTestBase() {
       LocalDate.parse("2022-12-23"),
 
       // Within 12 weeks
-      LocalDate.parse("2023-01-01"), // Today should be included in the future
+      // Today should be included in the future
+      LocalDate.parse("2023-01-01"),
       LocalDate.parse("2023-03-20"),
       LocalDate.parse("2023-02-28"),
 

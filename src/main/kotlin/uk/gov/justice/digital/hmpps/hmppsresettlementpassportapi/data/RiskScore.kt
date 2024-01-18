@@ -51,5 +51,9 @@ class OspScore(
 )
 
 enum class ScoreLevel {
-  LOW, MEDIUM, HIGH, VERY_HIGH, NOT_APPLICABLE;
+  LOW,
+  MEDIUM,
+  HIGH,
+  VERY_HIGH,
+  NOT_APPLICABLE,
 }

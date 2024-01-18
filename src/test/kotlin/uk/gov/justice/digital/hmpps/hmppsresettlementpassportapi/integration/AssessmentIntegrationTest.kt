@@ -102,7 +102,7 @@ class AssessmentIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$nomsId/assessment/")
+      .uri("/resettlement-passport/prisoner/$nomsId/assessment")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound

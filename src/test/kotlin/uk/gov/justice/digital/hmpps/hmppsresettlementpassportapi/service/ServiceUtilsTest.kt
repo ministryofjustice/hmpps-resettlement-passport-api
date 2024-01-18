@@ -308,11 +308,16 @@ class ServiceUtilsTest {
 }
 
 enum class TestEnum {
-  YES, NO, DONT_KNOW, NA
+  YES,
+  NO,
+  DONT_KNOW,
+  NA,
 }
 
 enum class TestEnum2 {
-  OPTION_1, OPTION_2, OPTION_3
+  OPTION_1,
+  OPTION_2,
+  OPTION_3,
 }
 
 enum class TestEnumWithCustomLabels : EnumWithLabel {

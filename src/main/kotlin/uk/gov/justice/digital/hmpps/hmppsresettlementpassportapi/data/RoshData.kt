@@ -9,9 +9,16 @@ data class RoshData(
 )
 
 enum class RiskLevel {
-  VERY_HIGH, HIGH, MEDIUM, LOW;
+  VERY_HIGH,
+  HIGH,
+  MEDIUM,
+  LOW,
 }
 
 enum class Category {
-  CHILDREN, PUBLIC, KNOWN_ADULT, STAFF, PRISONERS;
+  CHILDREN,
+  PUBLIC,
+  KNOWN_ADULT,
+  STAFF,
+  PRISONERS,
 }

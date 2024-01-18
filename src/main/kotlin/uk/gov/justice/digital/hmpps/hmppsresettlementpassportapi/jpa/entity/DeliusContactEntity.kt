@@ -37,8 +37,9 @@ data class DeliusContactEntity(
   @Column(name = "appointment_date")
   val appointmentDate: LocalDateTime? = null,
 
+  // appointmentDuration in minutes
   @Column(name = "appointment_duration")
-  val appointmentDuration: Int? = null, // in minutes
+  val appointmentDuration: Int? = null,
 
   @Column(name = "notes")
   val notes: String,

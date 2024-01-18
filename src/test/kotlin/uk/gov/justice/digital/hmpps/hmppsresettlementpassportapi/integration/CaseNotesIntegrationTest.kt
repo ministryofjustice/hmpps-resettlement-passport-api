@@ -208,4 +208,20 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .json(expectedOutput)
   }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-7.sql")
+  fun `Get All CaseNotes for a Prisoner  happy path sort by Pathway - with duplicates`() {
+    val expectedOutput = readFile("testdata/expectation/case-notes-sort-pathway-all.json")
+    caseNotesApiMockServer.stubGetCaseNotesOldList("G4274GN", 500, 0, "GEN", "RESET", 200)
+    caseNotesApiMockServer.stubGetCaseNotesNewList("G4274GN", 500, 0, "RESET", 200)
+    webTestClient.get()
+      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=25&sort=pathway,ASC&days=0")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
+  }
 }

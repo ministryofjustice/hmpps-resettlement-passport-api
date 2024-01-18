@@ -48,7 +48,8 @@ class PrisonerSearchApiService(
           mapOf(
             "prisonId" to prisonId,
             "term" to searchTerm,
-            "size" to 500, // NB: API allows up 3,000 results per page
+            // NB: API allows up 3,000 results per page
+            "size" to 500,
             "page" to page,
             "sort" to "prisonerNumber",
           ),
@@ -308,7 +309,6 @@ class PrisonerSearchApiService(
   }
 
   protected fun getPathwayStatuses(
-
     prisonerEntity: PrisonerEntity,
   ): ArrayList<PathwayStatus> {
     val pathwayStatuses = ArrayList<PathwayStatus>()

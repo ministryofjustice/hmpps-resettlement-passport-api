@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesL
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesMeta
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CaseNotesApiService
+import java.util.Objects
 
 @Service
 class CaseNotesService(val caseNotesApiService: CaseNotesApiService, val deliusContactService: DeliusContactService) {
@@ -22,12 +23,15 @@ class CaseNotesService(val caseNotesApiService: CaseNotesApiService, val deliusC
       throw NoDataWithCodeFoundException("Prisoner", nomsId)
     }
 
-    val combinedCaseNotes = mutableListOf<PathwayCaseNote>()
+    var combinedCaseNotes = mutableListOf<PathwayCaseNote>()
 
     combinedCaseNotes.addAll(caseNotesApiService.getCaseNotesByNomsId(nomsId, days, pathwayType, createdByUserId))
     if (createdByUserId == 0) { // RP2-900 For now for can't filter non-NOMIS case notes by the user. In this case just don't show anything from the database/Delius
       combinedCaseNotes.addAll(deliusContactService.getCaseNotesByNomsId(nomsId, pathwayType))
     }
+
+    // Remove duplicates
+    combinedCaseNotes = removeDuplicates(combinedCaseNotes)
 
     val sortValue = sort.ifBlank {
       "occurrenceDateTime,DESC"
@@ -75,4 +79,7 @@ class CaseNotesService(val caseNotesApiService: CaseNotesApiService, val deliusC
   fun getCaseNotesCreatorsByPathway(nomsId: String, pathwayType: CaseNotePathway): List<CaseNotesMeta> {
     return caseNotesApiService.getCaseNotesCreatorsByPathway(nomsId, pathwayType)
   }
+
+  // Remove duplicates based on the createdBy + text + creationDate + occurrenceDate + pathway
+  fun removeDuplicates(caseNotes: List<PathwayCaseNote>) = caseNotes.distinctBy { Objects.hash(it.createdBy, it.text, it.creationDateTime.toLocalDate(), it.occurenceDateTime.toLocalDate(), it.pathway) }.toMutableList()
 }

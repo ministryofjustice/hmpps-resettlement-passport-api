@@ -12,5 +12,6 @@
     "county": "West Yorkshire",
     "postcode": "BD1 1AA",
     "description": null
-  }
+  },
+  "note": "###\nAppointment Title: Appointment 1\nContact: Person\nOrganisation: Org ABC\nLocation:\n  Building Name: Office\n  Building Number: 100\n  Street Name: Main Street\n  District: \n  Town: Bradford\n  County: West Yorkshire\n  Postcode: BD1 1AA\n###\nNo notes\n###"
 }

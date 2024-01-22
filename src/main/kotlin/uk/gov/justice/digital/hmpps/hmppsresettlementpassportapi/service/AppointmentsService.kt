@@ -133,6 +133,7 @@ class AppointmentsService(
         postcode = extractSectionFromNotesTrimToNull(customFieldsFromNotes, POSTCODE, deliusContact.id),
         description = null,
       ),
+      note = deliusContact.notes,
     )
   }
 

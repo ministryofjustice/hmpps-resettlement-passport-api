@@ -11,6 +11,7 @@ data class Appointment(
   val date: LocalDate?,
   val time: LocalTime?,
   val location: Address?,
+  val note: String? = null,
 )
 
 data class CreateAppointmentAddress(

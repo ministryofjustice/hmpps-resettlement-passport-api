@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.MapAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.IntegrationTestBase
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
@@ -16,10 +14,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentSimpleQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class ResettlementAssessmentRepositoryTest : IntegrationTestBase() {
+class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
   @Autowired
   lateinit var prisonerRepository: PrisonerRepository
 
@@ -46,12 +45,14 @@ class ResettlementAssessmentRepositoryTest : IntegrationTestBase() {
       id = null,
       prisoner = prisoner,
       pathway = pathway,
-      statusChangedTo = null,
+      statusChangedTo = statusRepository.getReferenceById(Status.SUPPORT_DECLINED.id),
       assessmentType = ResettlementAssessmentType.BCST2,
       creationDate = LocalDateTime.parse("2023-01-01T12:00:00"),
       createdBy = "Human, A",
       assessment = ResettlementAssessmentQuestionAndAnswerList(listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_1", answer = StringAnswer("Test Answer 1")))),
       assessmentStatus = assessmentStatus,
+      caseNoteText = "Some case note text",
+      createdByUserId = "JSMITH_GEN",
     )
     resettlementAssessmentRepository.save(resettlementAssessmentQuestionAndAnswerList)
 
@@ -73,7 +74,7 @@ class ResettlementAssessmentRepositoryTest : IntegrationTestBase() {
       id = null,
       prisoner = prisoner,
       pathway = pathway,
-      statusChangedTo = null,
+      statusChangedTo = statusRepository.getReferenceById(Status.SUPPORT_NOT_REQUIRED.id),
       assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN,
       creationDate = LocalDateTime.parse("2023-01-01T12:00:00"),
       createdBy = "Human, A",
@@ -84,12 +85,14 @@ class ResettlementAssessmentRepositoryTest : IntegrationTestBase() {
         ),
       ),
       assessmentStatus = assessmentStatus,
+      caseNoteText = "some case note text",
+      createdByUserId = "JWILLIAMS_GEN",
     )
     val resettlementAssessment2 = ResettlementAssessmentEntity(
       id = null,
       prisoner = prisoner,
       pathway = pathway,
-      statusChangedTo = null,
+      statusChangedTo = statusRepository.getReferenceById(Status.NOT_STARTED.id),
       assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN,
       creationDate = LocalDateTime.parse("2022-01-01T12:00:00"),
       createdBy = "Human, A",
@@ -100,6 +103,8 @@ class ResettlementAssessmentRepositoryTest : IntegrationTestBase() {
         ),
       ),
       assessmentStatus = assessmentStatus,
+      caseNoteText = "Some case notes",
+      createdByUserId = "ABC1234",
     )
     resettlementAssessmentRepository.save(resettlementAssessment)
     resettlementAssessmentRepository.save(resettlementAssessment2)

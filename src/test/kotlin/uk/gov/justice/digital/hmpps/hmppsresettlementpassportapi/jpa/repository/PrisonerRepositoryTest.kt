@@ -5,16 +5,11 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBase
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@SpringBootTest
-@ActiveProfiles("test")
-class PrisonerRepositoryTest : TestBase() {
+class PrisonerRepositoryTest : RepositoryTestBase() {
   @Autowired
   lateinit var prisonerRepository: PrisonerRepository
 

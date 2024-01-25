@@ -3,10 +3,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.jdbc.Sql
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBase
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
@@ -16,10 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Stat
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Sql(scripts = ["classpath:testdata/sql/clear-all-data.sql"], executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-class PathwayStatusRepositoryTest : TestBase() {
+class PathwayStatusRepositoryTest : RepositoryTestBase() {
   @Autowired
   lateinit var pathwayStatusRepository: PathwayStatusRepository
 

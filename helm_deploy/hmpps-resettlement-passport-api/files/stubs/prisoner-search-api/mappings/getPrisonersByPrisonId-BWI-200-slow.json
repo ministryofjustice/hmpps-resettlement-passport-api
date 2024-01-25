@@ -1,0 +1,15 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/prison/BWI/prisoners"
+  },
+  "response": {
+    "status": 200,
+    "fixedDelayMilliseconds": 26000,
+    "bodyFileName": "getPrisonersByPrisonId-BWI-200-slow-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

@@ -7,6 +7,4 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 @Repository
 interface PrisonerRepository : JpaRepository<PrisonerEntity, Long> {
   fun findByNomsId(nomsId: String): PrisonerEntity?
-
-  fun findAllByReleaseDateIsNull(): List<PrisonerEntity>
 }

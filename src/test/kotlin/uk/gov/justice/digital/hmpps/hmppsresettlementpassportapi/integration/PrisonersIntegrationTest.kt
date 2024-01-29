@@ -209,4 +209,22 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .jsonPath("status").isEqualTo(400)
   }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
+  fun `Get All Prisoners happy path - volume test`() {
+    val prisonId = "MDI"
+    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-volume-test-1.json", prisonId, "", 500, 0, 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-volume-test-2.json", prisonId, "", 500, 1, 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-volume-test-3.json", prisonId, "", 500, 2, 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-volume-test-4.json", prisonId, "", 500, 3, 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-volume-test-5.json", prisonId, "", 500, 4, 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-volume-test-6.json", prisonId, "", 500, 5, 200)
+    webTestClient.get()
+      .uri("/resettlement-passport/prison/$prisonId/prisoners?term=&page=0&size=10&sort=releaseDate,DESC")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+  }
 }

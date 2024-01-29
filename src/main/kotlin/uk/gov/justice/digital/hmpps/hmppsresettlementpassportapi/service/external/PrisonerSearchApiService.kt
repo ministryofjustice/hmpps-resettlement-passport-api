@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PathwayAndStatusService
 import java.time.LocalDate
@@ -31,6 +32,7 @@ class PrisonerSearchApiService(
   private val pathwayAndStatusService: PathwayAndStatusService,
   private val prisonRegisterApiService: PrisonRegisterApiService,
   private val prisonApiService: PrisonApiService,
+  private val pathwayStatusRepository: PathwayStatusRepository,
 ) {
 
   companion object {
@@ -185,9 +187,12 @@ class PrisonerSearchApiService(
     pathwayStatusToFilter: Status?,
   ): MutableList<Prisoners> {
     val prisonersList = mutableListOf<Prisoners>()
+    val prisonerPathwayStatusesFromDatabase = pathwayStatusRepository.findByNomsIdIn(searchList.map { it.prisonerNumber })
+    val defaultPathwayStatuses = getDefaultPathwayStatuses()
     searchList.forEach { prisonersSearch ->
 
-      val prisonerEntity = prisonerRepository.findByNomsId(prisonersSearch.prisonerNumber)
+      val pathwayStatusesEntities = prisonerPathwayStatusesFromDatabase.filter { it.prisoner.nomsId == prisonersSearch.prisonerNumber }
+      val prisonerEntity = pathwayStatusesEntities.map { it.prisoner }.firstOrNull()
 
       val pathwayStatuses: List<PathwayStatus>?
       val sortedPathwayStatuses: List<PathwayStatus>?
@@ -195,21 +200,18 @@ class PrisonerSearchApiService(
       val lastUpdatedDate: LocalDate?
 
       if (prisonerEntity != null) {
-        pathwayStatuses = if (pathwayView == null) getPathwayStatuses(prisonerEntity) else null
+        pathwayStatuses = if (pathwayView == null) pathwayStatusesEntities.map { PathwayStatus(pathway = Pathway.getById(it.pathway.id), status = Status.getById(it.status.id), lastDateChange = it.updatedDate?.toLocalDate()) } else null
         sortedPathwayStatuses = pathwayStatuses?.sortedWith(compareBy(nullsLast()) { it.lastDateChange })
         lastUpdatedDate =
           if (pathwayView == null) {
             sortedPathwayStatuses?.first()?.lastDateChange
           } else {
-            getPathwayStatusLastUpdated(
-              prisonerEntity,
-              pathwayView,
-            )
+            pathwayStatusesEntities.find { Pathway.getById(it.pathway.id) == pathwayView }?.updatedDate?.toLocalDate()
           }
-        pathwayStatus = if (pathwayView != null) getPathwayStatus(prisonerEntity, pathwayView) else null
+        pathwayStatus = if (pathwayView != null) Status.getById(pathwayStatusesEntities.first { Pathway.getById(it.pathway.id) == pathwayView }.status.id) else null
       } else {
         // We don't know about this prisoner yet so just set all the statuses to NOT_STARTED.
-        pathwayStatuses = if (pathwayView == null) getDefaultPathwayStatuses() else null
+        pathwayStatuses = if (pathwayView == null) defaultPathwayStatuses else null
         pathwayStatus = if (pathwayView != null) Status.NOT_STARTED else null
         lastUpdatedDate = null
       }
@@ -327,22 +329,6 @@ class PrisonerSearchApiService(
       }
     }
     return pathwayStatuses
-  }
-
-  private fun getPathwayStatus(prisonerEntity: PrisonerEntity, pathwayView: Pathway): Status {
-    val pathwayStatusEntity = pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(
-      pathwayAndStatusService.getPathwayEntity(pathwayView),
-      prisonerEntity,
-    )
-    return Status.getById(pathwayStatusEntity.status.id)
-  }
-
-  private fun getPathwayStatusLastUpdated(prisonerEntity: PrisonerEntity, pathwayView: Pathway): LocalDate? {
-    val pathwayStatusEntity = pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(
-      pathwayAndStatusService.getPathwayEntity(pathwayView),
-      prisonerEntity,
-    )
-    return pathwayStatusEntity.updatedDate?.toLocalDate()
   }
 
   fun getDefaultPathwayStatuses(): List<PathwayStatus> {

@@ -28,6 +28,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Path
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PathwayAndStatusService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonApiService
@@ -53,6 +54,9 @@ class PrisonerSearchApiServiceTest {
   private lateinit var prisonRegisterApiService: PrisonRegisterApiService
 
   @Mock
+  private lateinit var pathwayStatusRepository: PathwayStatusRepository
+
+  @Mock
   private lateinit var prisonApiService: PrisonApiService
 
   @BeforeEach
@@ -65,6 +69,7 @@ class PrisonerSearchApiServiceTest {
       pathwayAndStatusService,
       prisonRegisterApiService,
       prisonApiService,
+      pathwayStatusRepository,
     )
   }
 
@@ -213,25 +218,36 @@ class PrisonerSearchApiServiceTest {
   }
 
   private fun mockDatabaseCalls() {
-    val mockPrisonerEntity =
-      PrisonerEntity(1, "TEST", LocalDateTime.now(), "test", "xyz", LocalDate.parse("2025-01-23"))
+    val mockPrisonerEntity1 =
+      PrisonerEntity(1, "G1458GV", LocalDateTime.now(), "test", "xyz", LocalDate.parse("2025-01-23"))
+    val mockPrisonerEntity2 =
+      PrisonerEntity(2, "A8339DY", LocalDateTime.now(), "test", "xyz", LocalDate.parse("2025-01-23"))
+    val mockPrisonerEntity3 =
+      PrisonerEntity(3, "A8229DY", LocalDateTime.now(), "test", "xyz", LocalDate.parse("2025-01-23"))
+
     val mockPathwayEntity1 = PathwayEntity(1, "Accommodation", true, LocalDateTime.now())
     val mockPathwayEntity2 = PathwayEntity(2, "Attitudes, thinking and behaviour", true, LocalDateTime.now())
     val mockPathwayEntity3 = PathwayEntity(3, "Children, families and communities", false, LocalDateTime.now())
 
     val mockStatusEntity = StatusEntity(1, "Not Started", true, LocalDateTime.now())
 
-    `when`(prisonerRepository.findByNomsId(any())).thenReturn(mockPrisonerEntity)
+    val mockPathwayStatusEntities = listOf(
+      PathwayStatusEntity(1, mockPrisonerEntity2, mockPathwayEntity1, mockStatusEntity, LocalDateTime.now()),
+      PathwayStatusEntity(2, mockPrisonerEntity2, mockPathwayEntity2, mockStatusEntity, LocalDateTime.now()),
+      PathwayStatusEntity(3, mockPrisonerEntity3, mockPathwayEntity2, mockStatusEntity, LocalDateTime.now()),
+      PathwayStatusEntity(4, mockPrisonerEntity3, mockPathwayEntity3, mockStatusEntity, LocalDateTime.now()),
+      PathwayStatusEntity(5, mockPrisonerEntity1, mockPathwayEntity3, mockStatusEntity, LocalDateTime.now()),
+      PathwayStatusEntity(5, mockPrisonerEntity1, mockPathwayEntity1, mockStatusEntity, LocalDateTime.now()),
+    )
+
+    `when`(pathwayStatusRepository.findByNomsIdIn(any())).thenReturn(mockPathwayStatusEntities)
+
     `when`(pathwayAndStatusService.findAllPathways()).thenReturn(
       listOf(
         mockPathwayEntity1,
         mockPathwayEntity2,
         mockPathwayEntity3,
       ),
-    )
-
-    `when`(pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(any(), any())).thenReturn(
-      PathwayStatusEntity(1, mockPrisonerEntity, mockPathwayEntity1, mockStatusEntity, LocalDateTime.now()),
     )
   }
 
@@ -249,35 +265,18 @@ class PrisonerSearchApiServiceTest {
     val mockStatusEntity4 = StatusEntity(4, "Support declined", true, LocalDateTime.now())
     val mockStatusEntity5 = StatusEntity(5, "Done", true, LocalDateTime.now())
 
-    `when`(pathwayAndStatusService.getPathwayEntity(Pathway.ACCOMMODATION)).thenReturn(mockPathwayEntity1)
-
-    `when`(prisonerRepository.findByNomsId("A8229DY")).thenReturn(mockPrisonerEntity1)
-    `when`(prisonerRepository.findByNomsId("G1458GV")).thenReturn(mockPrisonerEntity2)
-    `when`(prisonerRepository.findByNomsId("A8339DY")).thenReturn(mockPrisonerEntity3)
-
-    `when`(
-      pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(
-        mockPathwayEntity1,
-        mockPrisonerEntity1,
+    `when`(pathwayStatusRepository.findByNomsIdIn(listOf("G1458GV", "A8339DY", "A8229DY"))).thenReturn(
+      listOf(
+        PathwayStatusEntity(1, mockPrisonerEntity1, mockPathwayEntity1, mockStatusEntity1, LocalDateTime.now()),
+        PathwayStatusEntity(8, mockPrisonerEntity2, mockPathwayEntity1, mockStatusEntity4, LocalDateTime.now()),
+        PathwayStatusEntity(15, mockPrisonerEntity3, mockPathwayEntity1, mockStatusEntity5, LocalDateTime.now()),
       ),
-    ).thenReturn(
-      PathwayStatusEntity(1, mockPrisonerEntity1, mockPathwayEntity1, mockStatusEntity1, LocalDateTime.now()),
     )
-    `when`(
-      pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(
+
+    `when`(pathwayAndStatusService.findAllPathways()).thenReturn(
+      listOf(
         mockPathwayEntity1,
-        mockPrisonerEntity2,
       ),
-    ).thenReturn(
-      PathwayStatusEntity(8, mockPrisonerEntity2, mockPathwayEntity1, mockStatusEntity4, LocalDateTime.now()),
-    )
-    `when`(
-      pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(
-        mockPathwayEntity1,
-        mockPrisonerEntity3,
-      ),
-    ).thenReturn(
-      PathwayStatusEntity(15, mockPrisonerEntity3, mockPathwayEntity1, mockStatusEntity5, LocalDateTime.now()),
     )
   }
 
@@ -320,12 +319,12 @@ class PrisonerSearchApiServiceTest {
         lastUpdatedDate = LocalDate.now(),
         status = listOf(
           PathwayStatus(
-            pathway = Pathway.ACCOMMODATION,
+            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
             status = Status.NOT_STARTED,
             lastDateChange = LocalDate.now(),
           ),
           PathwayStatus(
-            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+            pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
             status = Status.NOT_STARTED,
             lastDateChange = LocalDate.now(),
           ),
@@ -346,12 +345,12 @@ class PrisonerSearchApiServiceTest {
         lastUpdatedDate = LocalDate.now(),
         status = listOf(
           PathwayStatus(
-            pathway = Pathway.ACCOMMODATION,
+            pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
             status = Status.NOT_STARTED,
             lastDateChange = LocalDate.now(),
           ),
           PathwayStatus(
-            pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+            pathway = Pathway.ACCOMMODATION,
             status = Status.NOT_STARTED,
             lastDateChange = LocalDate.now(),
           ),

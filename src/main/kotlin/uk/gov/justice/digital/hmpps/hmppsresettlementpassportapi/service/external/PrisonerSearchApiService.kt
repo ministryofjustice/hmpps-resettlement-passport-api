@@ -415,8 +415,8 @@ class PrisonerSearchApiService(
   }
 
   fun isAssessmentRequired(prisonerEntity: PrisonerEntity): Boolean {
-    // Assessment required if no pathways in Submitted
-    val prisonerResettlementStatus = resettlementAssessmentRepository.countByNomsIdAndAssessmentTypeAndAssessmentStatus(prisonerEntity.nomsId, ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED.id)
-    return (prisonerResettlementStatus == 0)
+    // Assessment required we don't have all pathways in submitted
+    val pathwaysInSubmittedCount = resettlementAssessmentRepository.countByNomsIdAndAssessmentTypeAndAssessmentStatus(prisonerEntity.nomsId, ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED.id)
+    return (pathwaysInSubmittedCount != Pathway.entries.size)
   }
 }

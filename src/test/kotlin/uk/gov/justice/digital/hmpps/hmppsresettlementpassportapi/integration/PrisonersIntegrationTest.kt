@@ -5,7 +5,7 @@ import org.springframework.test.context.jdbc.Sql
 
 class PrisonersIntegrationTest : IntegrationTestBase() {
   @Test
-  @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-9.sql")
   fun `Get All Prisoners happy path`() {
     val expectedOutput = readFile("testdata/expectation/prisoners.json")
     val prisonId = "MDI"
@@ -16,11 +16,11 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput)
+      .expectBody().json(expectedOutput, true)
   }
 
   @Test
-  @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-9.sql")
   fun `Get All Prisoners sort by releaseDate ascending happy path`() {
     val expectedOutput = readFile("testdata/expectation/prisoners-ascending.json")
     val prisonId = "MDI"
@@ -31,7 +31,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput)
+      .expectBody().json(expectedOutput, true)
   }
 
   @Test

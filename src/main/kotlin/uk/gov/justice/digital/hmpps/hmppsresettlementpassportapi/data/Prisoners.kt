@@ -19,6 +19,7 @@ data class Prisoners(
   val releaseEligibilityDate: LocalDate? = null,
   val releaseEligibilityType: String? = null,
   val releaseOnTemporaryLicenceDate: LocalDate? = null,
+  val assessmentRequired: Boolean,
 )
 
 data class PrisonerPersonal(
@@ -57,5 +58,5 @@ data class PrisonersList(
 data class Prisoner(
   val personalDetails: PrisonerPersonal?,
   var pathways: List<PathwayStatus>? = ArrayList(),
-
+  val assessmentRequired: Boolean,
 )

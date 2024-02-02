@@ -26,10 +26,13 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Path
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PathwayAndStatusService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
@@ -59,6 +62,9 @@ class PrisonerSearchApiServiceTest {
   @Mock
   private lateinit var prisonApiService: PrisonApiService
 
+  @Mock
+  private lateinit var resettlementAssessmentRepository: ResettlementAssessmentRepository
+
   @BeforeEach
   fun beforeEach() {
     mockWebServer.start()
@@ -70,6 +76,7 @@ class PrisonerSearchApiServiceTest {
       prisonRegisterApiService,
       prisonApiService,
       pathwayStatusRepository,
+      resettlementAssessmentRepository,
     )
   }
 
@@ -240,7 +247,7 @@ class PrisonerSearchApiServiceTest {
       PathwayStatusEntity(5, mockPrisonerEntity1, mockPathwayEntity1, mockStatusEntity, LocalDateTime.now()),
     )
 
-    `when`(pathwayStatusRepository.findByNomsIdIn(any())).thenReturn(mockPathwayStatusEntities)
+    `when`(pathwayStatusRepository.findByPrisonerIn(any())).thenReturn(mockPathwayStatusEntities)
 
     `when`(pathwayAndStatusService.findAllPathways()).thenReturn(
       listOf(
@@ -253,11 +260,11 @@ class PrisonerSearchApiServiceTest {
 
   private fun mockDatabaseCallsForPathwayView() {
     val mockPrisonerEntity1 =
-      PrisonerEntity(1, "A8229DY", LocalDateTime.now(), "1", "xyz", LocalDate.parse("2025-01-23"))
+      PrisonerEntity(1, "A8229DY", LocalDateTime.now(), "1", "MDI", LocalDate.parse("2025-01-23"))
     val mockPrisonerEntity2 =
-      PrisonerEntity(2, "G1458GV", LocalDateTime.now(), "2", "xyz", LocalDate.parse("2025-01-23"))
+      PrisonerEntity(2, "G1458GV", LocalDateTime.now(), "2", "MDI", LocalDate.parse("2025-01-23"))
     val mockPrisonerEntity3 =
-      PrisonerEntity(3, "A8339DY", LocalDateTime.now(), "3", "xyz", LocalDate.parse("2025-01-23"))
+      PrisonerEntity(3, "A8339DY", LocalDateTime.now(), "3", "MDI", LocalDate.parse("2025-01-23"))
 
     val mockPathwayEntity1 = PathwayEntity(1, "Accommodation", true, LocalDateTime.now())
 
@@ -265,7 +272,10 @@ class PrisonerSearchApiServiceTest {
     val mockStatusEntity4 = StatusEntity(4, "Support declined", true, LocalDateTime.now())
     val mockStatusEntity5 = StatusEntity(5, "Done", true, LocalDateTime.now())
 
-    `when`(pathwayStatusRepository.findByNomsIdIn(listOf("G1458GV", "A8339DY", "A8229DY"))).thenReturn(
+    `when`(resettlementAssessmentRepository.findPrisonersWithAllAssessmentsInStatus("MDI", ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED.id, Pathway.entries.size))
+      .thenReturn(listOf(mockPrisonerEntity1, mockPrisonerEntity2, mockPrisonerEntity3))
+
+    `when`(pathwayStatusRepository.findByPrisonerIn(listOf(mockPrisonerEntity1, mockPrisonerEntity2, mockPrisonerEntity3))).thenReturn(
       listOf(
         PathwayStatusEntity(1, mockPrisonerEntity1, mockPathwayEntity1, mockStatusEntity1, LocalDateTime.now()),
         PathwayStatusEntity(8, mockPrisonerEntity2, mockPathwayEntity1, mockStatusEntity4, LocalDateTime.now()),
@@ -308,6 +318,7 @@ class PrisonerSearchApiServiceTest {
         paroleEligibilityDate = null,
         releaseEligibilityDate = null,
         releaseEligibilityType = null,
+        assessmentRequired = true,
       ),
       Prisoners(
         prisonerNumber = "A8229DY",
@@ -334,6 +345,7 @@ class PrisonerSearchApiServiceTest {
         paroleEligibilityDate = null,
         releaseEligibilityDate = LocalDate.parse("2021-02-03"),
         releaseEligibilityType = "HDCED",
+        assessmentRequired = true,
       ),
       Prisoners(
         prisonerNumber = "G1458GV",
@@ -360,6 +372,7 @@ class PrisonerSearchApiServiceTest {
         paroleEligibilityDate = null,
         releaseEligibilityDate = LocalDate.parse("2018-10-16"),
         releaseEligibilityType = "HDCED",
+        assessmentRequired = true,
       ),
     ),
     pageSize = 3,
@@ -386,6 +399,7 @@ class PrisonerSearchApiServiceTest {
         paroleEligibilityDate = null,
         releaseEligibilityDate = null,
         releaseEligibilityType = null,
+        assessmentRequired = false,
       ),
       Prisoners(
         prisonerNumber = "A8229DY",
@@ -401,6 +415,7 @@ class PrisonerSearchApiServiceTest {
         paroleEligibilityDate = null,
         releaseEligibilityDate = LocalDate.parse("2021-02-03"),
         releaseEligibilityType = "HDCED",
+        assessmentRequired = false,
       ),
       Prisoners(
         prisonerNumber = "G1458GV",
@@ -416,6 +431,7 @@ class PrisonerSearchApiServiceTest {
         paroleEligibilityDate = null,
         releaseEligibilityDate = LocalDate.parse("2018-10-16"),
         releaseEligibilityType = "HDCED",
+        assessmentRequired = false,
       ),
     ),
     pageSize = 3,
@@ -442,6 +458,7 @@ class PrisonerSearchApiServiceTest {
         paroleEligibilityDate = null,
         releaseEligibilityDate = LocalDate.parse("2018-10-16"),
         releaseEligibilityType = "HDCED",
+        assessmentRequired = false,
       ),
     ),
     pageSize = 1,
@@ -577,7 +594,7 @@ class PrisonerSearchApiServiceTest {
       createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2026-07-24"), null, LocalDate.parse("2026-07-24"), "HDCED"),
       createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2024-12-09"), null, LocalDate.parse("2024-12-09"), "HDCED"),
     )
-    val actualPrisoners = prisonerSearchApiService.objectMapper(prisoners, null, null)
+    val actualPrisoners = prisonerSearchApiService.objectMapper(prisoners, null, null, "MDI")
     Assertions.assertEquals(prisonersMapped, actualPrisoners)
   }
 
@@ -1035,13 +1052,13 @@ class PrisonerSearchApiServiceTest {
 }
 
 private fun createPrisonerNumber(prisonerNumber: String) =
-  Prisoners(prisonerNumber = prisonerNumber, firstName = "firstName", lastName = "lastName", pathwayStatus = null)
+  Prisoners(prisonerNumber = prisonerNumber, firstName = "firstName", lastName = "lastName", pathwayStatus = null, assessmentRequired = true)
 
 private fun createPrisonerName(firstName: String, lastName: String) =
-  Prisoners(prisonerNumber = "A123456", firstName = firstName, lastName = lastName, pathwayStatus = null)
+  Prisoners(prisonerNumber = "A123456", firstName = firstName, lastName = lastName, pathwayStatus = null, assessmentRequired = true)
 
 private fun createPrisonerNameAndNumber(prisonerNumber: String, firstName: String, lastName: String) =
-  Prisoners(prisonerNumber = prisonerNumber, firstName = firstName, lastName = lastName, pathwayStatus = null)
+  Prisoners(prisonerNumber = prisonerNumber, firstName = firstName, lastName = lastName, pathwayStatus = null, assessmentRequired = true)
 
 private fun createPrisonerPEDandHDCED(homeDetentionCurfewEligibilityDate: LocalDate?, paroleEligibilityDate: LocalDate?) = PrisonersSearch(
   prisonerNumber = "A123456",
@@ -1064,6 +1081,7 @@ private fun createPrisonerReleaseEligibilityDateAndType(homeDetentionCurfewEligi
   paroleEligibilityDate = paroleEligibilityDate,
   releaseEligibilityDate = releaseEligibilityDate,
   releaseEligibilityType = releaseEligibilityType,
+  assessmentRequired = true,
 )
 
 private fun createPrisonerReleaseDate(releaseDate: LocalDate?) = Prisoners(
@@ -1072,6 +1090,7 @@ private fun createPrisonerReleaseDate(releaseDate: LocalDate?) = Prisoners(
   lastName = "WICKENDEN",
   pathwayStatus = null,
   releaseDate = releaseDate,
+  assessmentRequired = true,
 )
 
 private fun createPrisonerReleaseOnTempLicenceDate(releaseOnTempLicenceDate: LocalDate?) = Prisoners(
@@ -1080,10 +1099,11 @@ private fun createPrisonerReleaseOnTempLicenceDate(releaseOnTempLicenceDate: Loc
   lastName = "WICKENDEN",
   pathwayStatus = null,
   releaseOnTemporaryLicenceDate = releaseOnTempLicenceDate,
+  assessmentRequired = true,
 )
 
 private fun createPrisonerPathwayStatus(pathwayStatus: Status) =
-  Prisoners(prisonerNumber = "A123456", firstName = "BORIS", lastName = "FRANKLIN", pathwayStatus = pathwayStatus)
+  Prisoners(prisonerNumber = "A123456", firstName = "BORIS", lastName = "FRANKLIN", pathwayStatus = pathwayStatus, assessmentRequired = true)
 
 private fun createPrisonerLastUpdatedDate(pathwayStatus: Status, lastUpdatedDate: LocalDate?) = Prisoners(
   prisonerNumber = "A123456",
@@ -1091,4 +1111,5 @@ private fun createPrisonerLastUpdatedDate(pathwayStatus: Status, lastUpdatedDate
   lastName = "HAYES",
   pathwayStatus = pathwayStatus,
   lastUpdatedDate = lastUpdatedDate,
+  assessmentRequired = true,
 )

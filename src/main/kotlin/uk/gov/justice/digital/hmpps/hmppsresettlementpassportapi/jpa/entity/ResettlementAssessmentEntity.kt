@@ -34,11 +34,11 @@ data class ResettlementAssessmentEntity(
   @JoinColumn(name = "prisoner_id", referencedColumnName = "id")
   val prisoner: PrisonerEntity,
 
-  @ManyToOne(cascade = [CascadeType.MERGE])
+  @ManyToOne
   @JoinColumn(name = "pathway_id", referencedColumnName = "id")
   val pathway: PathwayEntity,
 
-  @ManyToOne(cascade = [CascadeType.MERGE])
+  @ManyToOne
   @JoinColumn(name = "status_changed_to_status_id", referencedColumnName = "id")
   var statusChangedTo: StatusEntity? = null,
 
@@ -57,7 +57,7 @@ data class ResettlementAssessmentEntity(
   @Column(name = "created_by")
   val createdBy: String,
 
-  @ManyToOne(cascade = [CascadeType.MERGE])
+  @ManyToOne
   @JoinColumn(name = "assessment_status_id", referencedColumnName = "id")
   var assessmentStatus: ResettlementAssessmentStatusEntity,
 

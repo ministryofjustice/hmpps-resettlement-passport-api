@@ -48,5 +48,6 @@
       "status": "SUPPORT_NOT_REQUIRED",
       "lastDateChange": "2023-08-17"
     }
-  ]
+  ],
+  "assessmentRequired": true
 }

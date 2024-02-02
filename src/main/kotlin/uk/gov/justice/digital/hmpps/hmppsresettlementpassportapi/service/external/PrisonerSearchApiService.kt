@@ -17,9 +17,12 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PathwayAndStatusService
 import java.time.LocalDate
 import java.time.Period
@@ -33,6 +36,7 @@ class PrisonerSearchApiService(
   private val prisonRegisterApiService: PrisonRegisterApiService,
   private val prisonApiService: PrisonApiService,
   private val pathwayStatusRepository: PathwayStatusRepository,
+  private val resettlementAssessmentRepository: ResettlementAssessmentRepository,
 ) {
 
   companion object {
@@ -119,7 +123,7 @@ class PrisonerSearchApiService(
       )
     }
 
-    val fullList = objectMapper(prisoners, pathwayView, pathwayStatus)
+    val fullList = objectMapper(prisoners, pathwayView, pathwayStatus, prisonId)
 
     sortPrisoners(sort, fullList)
 
@@ -185,9 +189,16 @@ class PrisonerSearchApiService(
     searchList: List<PrisonersSearch>,
     pathwayView: Pathway?,
     pathwayStatusToFilter: Status?,
+    prisonId: String,
   ): MutableList<Prisoners> {
     val prisonersList = mutableListOf<Prisoners>()
-    val prisonerPathwayStatusesFromDatabase = pathwayStatusRepository.findByNomsIdIn(searchList.map { it.prisonerNumber })
+
+    // Find prisoners in prison that do not require an assessment
+    val prisonersWithSubmittedAssessment = resettlementAssessmentRepository.findPrisonersWithAllAssessmentsInStatus(prisonId, ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED.id, Pathway.entries.size)
+
+    // Only get the pathway statuses for those prisoners who do not need an assessment as we can default the others to be NOT_STARTED
+    val prisonerPathwayStatusesFromDatabase = pathwayStatusRepository.findByPrisonerIn(prisonersWithSubmittedAssessment)
+
     val defaultPathwayStatuses = getDefaultPathwayStatuses()
     searchList.forEach { prisonersSearch ->
 
@@ -216,6 +227,9 @@ class PrisonerSearchApiService(
         lastUpdatedDate = null
       }
 
+      // Find out if resettlement assessment is required
+      val assessmentRequired = !prisonersWithSubmittedAssessment.contains(prisonerEntity)
+
       if (pathwayStatusToFilter == null || pathwayStatusToFilter == pathwayStatus) {
         val prisoner = Prisoners(
           prisonersSearch.prisonerNumber.trim(),
@@ -232,6 +246,7 @@ class PrisonerSearchApiService(
           getDisplayedReleaseEligibilityDate(prisonersSearch),
           getDisplayedReleaseEligibilityType(prisonersSearch),
           prisonersSearch.releaseOnTemporaryLicenceDate,
+          assessmentRequired,
         )
         prisonersList.add(prisoner)
       }
@@ -300,7 +315,9 @@ class PrisonerSearchApiService(
 
     val pathwayStatuses = getPathwayStatuses(prisonerEntity)
 
-    return Prisoner(prisonerPersonal, pathwayStatuses)
+    val assessmentRequired = isAssessmentRequired(prisonerEntity)
+
+    return Prisoner(prisonerPersonal, pathwayStatuses, assessmentRequired)
   }
 
   fun checkPrisonerIsInActivePrison(prisoner: PrisonersSearch) {
@@ -395,5 +412,11 @@ class PrisonerSearchApiService(
       releaseEligibilityType = "HDCED"
     }
     return releaseEligibilityType
+  }
+
+  fun isAssessmentRequired(prisonerEntity: PrisonerEntity): Boolean {
+    // Assessment required we don't have all pathways in submitted
+    val pathwaysInSubmittedCount = resettlementAssessmentRepository.countByNomsIdAndAssessmentTypeAndAssessmentStatus(prisonerEntity.nomsId, ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED.id)
+    return (pathwaysInSubmittedCount != Pathway.entries.size)
   }
 }

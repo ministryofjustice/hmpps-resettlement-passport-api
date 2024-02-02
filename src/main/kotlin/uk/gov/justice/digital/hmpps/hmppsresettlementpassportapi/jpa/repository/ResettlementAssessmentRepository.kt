@@ -24,5 +24,5 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
   fun countByNomsIdAndAssessmentTypeAndAssessmentStatus(nomsId: String, assessmentType: ResettlementAssessmentType, assessmentStatus: Long): Int
 
   @Query("select ra.prisoner from ResettlementAssessmentEntity ra inner join PrisonerEntity p on ra.prisoner = p where p.prisonId = :prisonId and ra.assessmentType = :assessmentType and ra.assessmentStatus.id = :assessmentStatus group by ra.prisoner having count(distinct (ra.pathway)) = :numOfPathways")
-  fun findPrisonersByPrisonIdAndAssessmentTypeAndAssessmentStatus(prisonId: String, assessmentType: ResettlementAssessmentType, assessmentStatus: Long, numOfPathways: Int): List<PrisonerEntity>
+  fun findPrisonersWithAllAssessmentsInStatus(prisonId: String, assessmentType: ResettlementAssessmentType, assessmentStatus: Long, numOfPathways: Int): List<PrisonerEntity>
 }

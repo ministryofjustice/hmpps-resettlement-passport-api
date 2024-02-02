@@ -272,7 +272,7 @@ class PrisonerSearchApiServiceTest {
     val mockStatusEntity4 = StatusEntity(4, "Support declined", true, LocalDateTime.now())
     val mockStatusEntity5 = StatusEntity(5, "Done", true, LocalDateTime.now())
 
-    `when`(resettlementAssessmentRepository.findPrisonersByPrisonIdAndAssessmentTypeAndAssessmentStatus("MDI", ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED.id, Pathway.entries.size))
+    `when`(resettlementAssessmentRepository.findPrisonersWithAllAssessmentsInStatus("MDI", ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED.id, Pathway.entries.size))
       .thenReturn(listOf(mockPrisonerEntity1, mockPrisonerEntity2, mockPrisonerEntity3))
 
     `when`(pathwayStatusRepository.findByPrisonerIn(listOf(mockPrisonerEntity1, mockPrisonerEntity2, mockPrisonerEntity3))).thenReturn(

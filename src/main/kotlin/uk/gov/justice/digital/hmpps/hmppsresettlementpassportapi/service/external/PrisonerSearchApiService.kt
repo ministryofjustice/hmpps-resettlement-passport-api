@@ -194,7 +194,7 @@ class PrisonerSearchApiService(
     val prisonersList = mutableListOf<Prisoners>()
 
     // Find prisoners in prison that do not require an assessment
-    val prisonersWithSubmittedAssessment = resettlementAssessmentRepository.findPrisonersByPrisonIdAndAssessmentTypeAndAssessmentStatus(prisonId, ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED.id, Pathway.entries.size)
+    val prisonersWithSubmittedAssessment = resettlementAssessmentRepository.findPrisonersWithAllAssessmentsInStatus(prisonId, ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED.id, Pathway.entries.size)
 
     // Only get the pathway statuses for those prisoners who do not need an assessment as we can default the others to be NOT_STARTED
     val prisonerPathwayStatusesFromDatabase = pathwayStatusRepository.findByPrisonerIn(prisonersWithSubmittedAssessment)

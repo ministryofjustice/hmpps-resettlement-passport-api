@@ -48,5 +48,6 @@
       "status": "NOT_STARTED",
       "lastDateChange": null
     }
-  ]
+  ],
+  "assessmentRequired": true
 }

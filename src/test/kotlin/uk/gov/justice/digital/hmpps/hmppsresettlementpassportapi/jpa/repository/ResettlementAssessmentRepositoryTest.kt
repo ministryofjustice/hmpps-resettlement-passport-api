@@ -1,17 +1,13 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository
 
 import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.MapAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBase
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
@@ -19,14 +15,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentSimpleQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatus
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@SpringBootTest
-@ActiveProfiles("test")
-class ResettlementAssessmentRepositoryTest : TestBase() {
+class ResettlementAssessmentRepositoryTest : IntegrationTestBase() {
   @Autowired
   lateinit var prisonerRepository: PrisonerRepository
 
@@ -38,14 +31,6 @@ class ResettlementAssessmentRepositoryTest : TestBase() {
 
   @Autowired
   lateinit var resettlementAssessmentStatusRepository: ResettlementAssessmentStatusRepository
-
-  @BeforeEach
-  @AfterEach
-  fun beforeEach() {
-    resettlementAssessmentRepository.deleteAll()
-    prisonerRepository.deleteAll()
-    pathwayRepository.deleteAll()
-  }
 
   @Test
   fun `test persist new resettlement assessment`() {
@@ -194,6 +179,6 @@ class ResettlementAssessmentRepositoryTest : TestBase() {
       caseNoteText = "test",
     )
 
-  fun getPathwayEntity(pathway: Pathway): PathwayEntity = pathwayRepository.save(PathwayEntity(pathway.id, pathway.name, true, LocalDateTime.now()))
-  fun getStatusEntity(resettlementAssessmentStatus: ResettlementAssessmentStatus) = resettlementAssessmentStatusRepository.save(ResettlementAssessmentStatusEntity(resettlementAssessmentStatus.id, resettlementAssessmentStatus.name, true, LocalDateTime.now()))
+  fun getPathwayEntity(pathway: Pathway): PathwayEntity = pathwayRepository.getReferenceById(pathway.id)
+  fun getStatusEntity(resettlementAssessmentStatus: ResettlementAssessmentStatus) = resettlementAssessmentStatusRepository.getReferenceById(resettlementAssessmentStatus.id)
 }

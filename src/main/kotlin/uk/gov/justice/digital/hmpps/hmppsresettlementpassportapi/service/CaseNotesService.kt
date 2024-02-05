@@ -137,8 +137,6 @@ class CaseNotesService(
         userId = userId,
       )
     }
-
-    // TODO post to case notes.
   }
 
   fun getDpsCaseNotesFromDatabase(nomsId: String, pathwayType: CaseNotePathway): List<PathwayCaseNote> {

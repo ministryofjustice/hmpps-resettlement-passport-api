@@ -31,7 +31,7 @@ class PathwayPatchService(
     val userId = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get sub from auth token")
 
     when (authSource) {
-      "nomis", "none" -> {
+      "nomis" -> {
         caseNotesApiService.postCaseNote(
           nomsId,
           pathwayStatusAndCaseNote.pathway,

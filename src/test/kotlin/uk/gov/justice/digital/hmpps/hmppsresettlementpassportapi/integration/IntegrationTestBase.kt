@@ -154,11 +154,10 @@ abstract class IntegrationTestBase : TestBase() {
   }
   protected fun setAuthorisation(
     user: String = "RESETTLEMENTPASSPORT_ADM",
-    userId: String = "RESETTLEMENT_PASSPORT",
     roles: List<String> = listOf(),
     scopes: List<String> = listOf(),
     authSource: String = "none",
-  ): (HttpHeaders) -> Unit = jwtAuthHelper.setAuthorisation(user, roles, scopes, authSource, userId)
+  ): (HttpHeaders) -> Unit = jwtAuthHelper.setAuthorisation(user, roles, scopes, authSource)
 }
 
 fun readFile(file: String): String = Resources.getResource(file).readText()

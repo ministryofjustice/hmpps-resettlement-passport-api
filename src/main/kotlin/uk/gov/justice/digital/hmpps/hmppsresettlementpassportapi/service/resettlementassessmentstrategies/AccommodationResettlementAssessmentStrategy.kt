@@ -94,7 +94,7 @@ enum class AccommodationResettlementAssessmentQuestion(
     ),
   ),
   WHO_WILL_THEY_LIVE_WITH(id = "WHO_WILL_THEY_LIVE_WITH", title = "What are the names and ages of all residents at this property and the prisoner's relationship to them?", type = TypeOfQuestion.LIST_OF_PEOPLE),
-  WHAT_IS_THE_ADDRESS(id = "WHAT_IS_THE_ADDRESS", title = "", type = TypeOfQuestion.ADDRESS),
+  WHAT_IS_THE_ADDRESS(id = "WHAT_IS_THE_ADDRESS", title = "What is the address of the property?", type = TypeOfQuestion.ADDRESS),
   ACCOM_CRS(id = "ACCOM_CRS", title = "Do they give consent for a Commissioned Rehabilitative Service (CRS)?", type = TypeOfQuestion.RADIO, options = yesNoOptions),
   COUNCIL_AREA(id = "COUNCIL_AREA", title = "Which council area are they intending to move to on release?", type = TypeOfQuestion.DROPDOWN, options = councilOptions),
   COUNCIL_AREA_REASON(id = "COUNCIL_AREA_REASON", title = "Why do they intend to move to this council area on release?", type = TypeOfQuestion.LONG_TEXT),

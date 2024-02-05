@@ -282,7 +282,7 @@ class AccommodationResettlementAssessmentStrategyTest {
               ),
             ),
           ),
-          ResettlementAssessmentResponseQuestionAndAnswer(ResettlementAssessmentResponseQuestion(id = "WHAT_IS_THE_ADDRESS", title = "", type = TypeOfQuestion.ADDRESS)),
+          ResettlementAssessmentResponseQuestionAndAnswer(ResettlementAssessmentResponseQuestion(id = "WHAT_IS_THE_ADDRESS", title = "What is the address of the property?", type = TypeOfQuestion.ADDRESS)),
         ),
       ),
     ),

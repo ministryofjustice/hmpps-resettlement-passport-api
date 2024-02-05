@@ -1,12 +1,12 @@
 {
   "id": "WHERE_WILL_THEY_LIVE",
-  "title": "Where will they live when released from custody?",
+
   "questionsAndAnswers": [
     {
       "question": {
         "@class": "ResettlementAssessmentResponseQuestion",
         "id": "WHERE_WILL_THEY_LIVE",
-        "title": "",
+        "title": "Where will they live when released from custody?",
         "subTitle": null,
         "type": "RADIO_WITH_ADDRESS",
         "options": [
@@ -33,7 +33,7 @@
       "question": {
         "@class": "ResettlementAssessmentResponseQuestion",
         "id": "WHAT_IS_THE_ADDRESS",
-        "title": "",
+        "title": "What is the address of the property?",
         "subTitle": null,
         "type": "ADDRESS",
         "options": null

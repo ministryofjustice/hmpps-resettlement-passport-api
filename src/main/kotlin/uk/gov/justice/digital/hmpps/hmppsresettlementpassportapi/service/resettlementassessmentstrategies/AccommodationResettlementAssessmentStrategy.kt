@@ -68,11 +68,11 @@ class AccommodationResettlementAssessmentStrategy(
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-enum class AccommodationAssessmentPage(override val id: String, override val title: String, override val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>) : IAssessmentPage {
-  WHERE_WILL_THEY_LIVE(id = "WHERE_WILL_THEY_LIVE", title = "Where will they live when released from custody?", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE), ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHAT_IS_THE_ADDRESS))),
-  WHO_WILL_THEY_LIVE_WITH(id = "WHO_WILL_THEY_LIVE_WITH", title = "What are the names and ages of all residents at this property and the prisoner's relationship to them?", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHO_WILL_THEY_LIVE_WITH))),
-  CONSENT_FOR_CRS(id = "CONSENT_FOR_CRS", title = "Do they give consent for a Commissioned Rehabilitative Service (CRS)?", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.ACCOM_CRS))),
-  WHAT_COUNCIL_AREA(id = "WHAT_COUNCIL_AREA", title = "Which council area are they intending to move to on release?", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.COUNCIL_AREA), ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.COUNCIL_AREA_REASON))),
+enum class AccommodationAssessmentPage(override val id: String, override val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>) : IAssessmentPage {
+  WHERE_WILL_THEY_LIVE(id = "WHERE_WILL_THEY_LIVE", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE), ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHAT_IS_THE_ADDRESS))),
+  WHO_WILL_THEY_LIVE_WITH(id = "WHO_WILL_THEY_LIVE_WITH", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHO_WILL_THEY_LIVE_WITH))),
+  CONSENT_FOR_CRS(id = "CONSENT_FOR_CRS", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.ACCOM_CRS))),
+  WHAT_COUNCIL_AREA(id = "WHAT_COUNCIL_AREA", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.COUNCIL_AREA), ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.COUNCIL_AREA_REASON))),
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
@@ -85,7 +85,7 @@ enum class AccommodationResettlementAssessmentQuestion(
 ) : IResettlementAssessmentQuestion {
   WHERE_WILL_THEY_LIVE(
     id = "WHERE_WILL_THEY_LIVE",
-    title = "",
+    title = "Where will they live when released from custody?",
     type = TypeOfQuestion.RADIO_WITH_ADDRESS,
     options = listOf(
       Option(id = "PREVIOUS_ADDRESS", displayText = "Returning to a previous address"),
@@ -93,9 +93,9 @@ enum class AccommodationResettlementAssessmentQuestion(
       Option(id = "NO_PLACE_TO_LIVE", displayText = "No place to live"),
     ),
   ),
-  WHO_WILL_THEY_LIVE_WITH(id = "WHO_WILL_THEY_LIVE_WITH", title = "", type = TypeOfQuestion.LIST_OF_PEOPLE),
+  WHO_WILL_THEY_LIVE_WITH(id = "WHO_WILL_THEY_LIVE_WITH", title = "What are the names and ages of all residents at this property and the prisoner's relationship to them?", type = TypeOfQuestion.LIST_OF_PEOPLE),
   WHAT_IS_THE_ADDRESS(id = "WHAT_IS_THE_ADDRESS", title = "", type = TypeOfQuestion.ADDRESS),
-  ACCOM_CRS(id = "ACCOM_CRS", title = "", type = TypeOfQuestion.RADIO, options = yesNoOptions),
-  COUNCIL_AREA(id = "COUNCIL_AREA", title = "", type = TypeOfQuestion.DROPDOWN, options = councilOptions),
-  COUNCIL_AREA_REASON(id = "COUNCIL_AREA_REASON", title = "", type = TypeOfQuestion.LONG_TEXT),
+  ACCOM_CRS(id = "ACCOM_CRS", title = "Do they give consent for a Commissioned Rehabilitative Service (CRS)?", type = TypeOfQuestion.RADIO, options = yesNoOptions),
+  COUNCIL_AREA(id = "COUNCIL_AREA", title = "Which council area are they intending to move to on release?", type = TypeOfQuestion.DROPDOWN, options = councilOptions),
+  COUNCIL_AREA_REASON(id = "COUNCIL_AREA_REASON", title = "Why do they intend to move to this council area on release?", type = TypeOfQuestion.LONG_TEXT),
 }

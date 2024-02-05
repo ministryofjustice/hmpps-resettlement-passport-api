@@ -269,7 +269,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
         }
         """.trimIndent(),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), authSource = "nomis"))
       .exchange()
       .expectStatus().isOk
 
@@ -361,7 +361,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
         }
         """.trimIndent(),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), user = "System User"))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), user = "System User", authSource = "nomis"))
       .exchange()
       .expectStatus().isNotFound
       .expectHeader().contentType("application/json")

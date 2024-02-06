@@ -28,6 +28,7 @@ class PathwayPatchService(
     // If this is a Nomis user we use the Case Notes API, if this is a Delius user then store in database for now -
     // in the future we will also push them to Delius.
     val authSource = getClaimFromJWTToken(auth, "auth_source")?.lowercase()
+    val userId = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get sub from auth token")
 
     when (authSource) {
       "nomis" -> {
@@ -35,7 +36,7 @@ class PathwayPatchService(
           nomsId,
           pathwayStatusAndCaseNote.pathway,
           pathwayStatusAndCaseNote.caseNoteText,
-          auth,
+          userId,
         )
       }
       "delius" -> {

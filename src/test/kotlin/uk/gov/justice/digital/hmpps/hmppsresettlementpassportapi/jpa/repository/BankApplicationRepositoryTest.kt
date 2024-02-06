@@ -1,24 +1,17 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository
 
-import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBase
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.BankApplicationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.BankApplicationStatusLogEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@Transactional
-@SpringBootTest
-@ActiveProfiles("test")
-class BankApplicationRepositoryTest : TestBase() {
+class BankApplicationRepositoryTest : RepositoryTestBase() {
   @Autowired
   lateinit var bankApplicationRepository: BankApplicationRepository
 

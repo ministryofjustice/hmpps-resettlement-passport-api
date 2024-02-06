@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external
 
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
@@ -17,15 +16,16 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCas
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNotes
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseNotesClientCredentialsService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.enumIncludes
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Service
 class CaseNotesApiService(
-  private val caseNotesWebClientUserCredentials: WebClient,
   private val caseNotesWebClientCredentials: WebClient,
   private val prisonerSearchApiService: PrisonerSearchApiService,
+  private val caseNotesClientCredentialsService: CaseNotesClientCredentialsService,
 
 ) {
 
@@ -172,17 +172,16 @@ class CaseNotesApiService(
     return creatorsList.distinct()
   }
 
-  fun postCaseNote(nomsId: String, pathway: Pathway, caseNotesText: String, auth: String): CaseNote? {
+  fun postCaseNote(nomsId: String, pathway: Pathway, caseNotesText: String, userId: String): CaseNote? {
     val type = CaseNoteType.RESET
     val subType = convertPathwayToCaseNoteSubType(pathway)
     val prisonCode = prisonerSearchApiService.findPrisonerPersonalDetails(nomsId).prisonId
 
-    return caseNotesWebClientUserCredentials.post()
+    return caseNotesClientCredentialsService.getAuthorizedClient(userId).post()
       .uri(
         "/case-notes/{nomsId}",
         nomsId,
       ).contentType(MediaType.APPLICATION_JSON)
-      .header(HttpHeaders.AUTHORIZATION, auth)
       .bodyValue(
         mapOf(
           "locationId" to prisonCode,
@@ -192,7 +191,7 @@ class CaseNotesApiService(
         ),
       )
       .retrieve()
-      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found") })
+      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found when posting case note") })
       .bodyToMono<CaseNote>()
       .block()
   }

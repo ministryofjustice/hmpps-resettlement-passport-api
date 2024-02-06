@@ -64,3 +64,6 @@ spring:
 
   feature-toggles:
     afine: true
+
+aws:
+  case-notes-queue-name: test-case-notes-queue

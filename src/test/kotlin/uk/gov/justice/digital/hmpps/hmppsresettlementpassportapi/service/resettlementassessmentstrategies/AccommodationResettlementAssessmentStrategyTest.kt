@@ -260,7 +260,6 @@ class AccommodationResettlementAssessmentStrategyTest {
       pageId = pageIdInput,
     )
     Assertions.assertEquals(expectedPage.id, page.id)
-    Assertions.assertEquals(expectedPage.title, page.title)
     Assertions.assertEquals(expectedPage.questionsAndAnswers, page.questionsAndAnswers)
   }
 
@@ -269,12 +268,11 @@ class AccommodationResettlementAssessmentStrategyTest {
       "WHERE_WILL_THEY_LIVE",
       ResettlementAssessmentResponsePage(
         id = "WHERE_WILL_THEY_LIVE",
-        title = "Where will they live when released from custody?",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
             ResettlementAssessmentResponseQuestion(
               id = "WHERE_WILL_THEY_LIVE",
-              title = "",
+              title = "Where will they live when released from custody?",
               subTitle = null,
               type = TypeOfQuestion.RADIO_WITH_ADDRESS,
               options = mutableListOf(
@@ -284,7 +282,7 @@ class AccommodationResettlementAssessmentStrategyTest {
               ),
             ),
           ),
-          ResettlementAssessmentResponseQuestionAndAnswer(ResettlementAssessmentResponseQuestion(id = "WHAT_IS_THE_ADDRESS", title = "", type = TypeOfQuestion.ADDRESS)),
+          ResettlementAssessmentResponseQuestionAndAnswer(ResettlementAssessmentResponseQuestion(id = "WHAT_IS_THE_ADDRESS", title = "What is the address of the property?", type = TypeOfQuestion.ADDRESS)),
         ),
       ),
     ),
@@ -292,9 +290,8 @@ class AccommodationResettlementAssessmentStrategyTest {
       "WHO_WILL_THEY_LIVE_WITH",
       ResettlementAssessmentResponsePage(
         id = "WHO_WILL_THEY_LIVE_WITH",
-        title = "What are the names and ages of all residents at this property and the prisoner's relationship to them?",
         questionsAndAnswers = mutableListOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(ResettlementAssessmentResponseQuestion(id = "WHO_WILL_THEY_LIVE_WITH", title = "", type = TypeOfQuestion.LIST_OF_PEOPLE)),
+          ResettlementAssessmentResponseQuestionAndAnswer(ResettlementAssessmentResponseQuestion(id = "WHO_WILL_THEY_LIVE_WITH", title = "What are the names and ages of all residents at this property and the prisoner's relationship to them?", type = TypeOfQuestion.LIST_OF_PEOPLE)),
         ),
       ),
     ),
@@ -302,9 +299,8 @@ class AccommodationResettlementAssessmentStrategyTest {
       "CONSENT_FOR_CRS",
       ResettlementAssessmentResponsePage(
         id = "CONSENT_FOR_CRS",
-        title = "Do they give consent for a Commissioned Rehabilitative Service (CRS)?",
         questionsAndAnswers = mutableListOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(ResettlementAssessmentResponseQuestion(id = "ACCOM_CRS", title = "", type = TypeOfQuestion.RADIO, options = yesNoOptions.toMutableList())),
+          ResettlementAssessmentResponseQuestionAndAnswer(ResettlementAssessmentResponseQuestion(id = "ACCOM_CRS", title = "Do they give consent for a Commissioned Rehabilitative Service (CRS)?", type = TypeOfQuestion.RADIO, options = yesNoOptions.toMutableList())),
         ),
       ),
     ),
@@ -312,10 +308,9 @@ class AccommodationResettlementAssessmentStrategyTest {
       "WHAT_COUNCIL_AREA",
       ResettlementAssessmentResponsePage(
         id = "WHAT_COUNCIL_AREA",
-        title = "Which council area are they intending to move to on release?",
         questionsAndAnswers = mutableListOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(ResettlementAssessmentResponseQuestion(id = "COUNCIL_AREA", title = "", type = TypeOfQuestion.DROPDOWN, options = councilOptions.toMutableList())),
-          ResettlementAssessmentResponseQuestionAndAnswer(ResettlementAssessmentResponseQuestion(id = "COUNCIL_AREA_REASON", title = "", type = TypeOfQuestion.LONG_TEXT)),
+          ResettlementAssessmentResponseQuestionAndAnswer(ResettlementAssessmentResponseQuestion(id = "COUNCIL_AREA", title = "Which council area are they intending to move to on release?", type = TypeOfQuestion.DROPDOWN, options = councilOptions.toMutableList())),
+          ResettlementAssessmentResponseQuestionAndAnswer(ResettlementAssessmentResponseQuestion(id = "COUNCIL_AREA_REASON", title = "Why do they intend to move to this council area on release?", type = TypeOfQuestion.LONG_TEXT)),
         ),
       ),
     ),
@@ -323,7 +318,6 @@ class AccommodationResettlementAssessmentStrategyTest {
       "ASSESSMENT_SUMMARY",
       ResettlementAssessmentResponsePage(
         id = "ASSESSMENT_SUMMARY",
-        title = "",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
             ResettlementAssessmentResponseQuestion(
@@ -360,7 +354,6 @@ class AccommodationResettlementAssessmentStrategyTest {
       "CHECK_ANSWERS",
       ResettlementAssessmentResponsePage(
         id = "CHECK_ANSWERS",
-        title = "",
         questionsAndAnswers = mutableListOf(),
       ),
     ),
@@ -380,12 +373,11 @@ class AccommodationResettlementAssessmentStrategyTest {
 
     val expectedPage = ResettlementAssessmentResponsePage(
       id = "WHERE_WILL_THEY_LIVE",
-      title = "Where will they live when released from custody?",
       questionsAndAnswers = mutableListOf(
         ResettlementAssessmentResponseQuestionAndAnswer(
           ResettlementAssessmentResponseQuestion(
             id = "WHERE_WILL_THEY_LIVE",
-            title = "",
+            title = "Where will they live when released from custody?",
             subTitle = null,
             type = TypeOfQuestion.RADIO_WITH_ADDRESS,
             options = mutableListOf(
@@ -396,7 +388,7 @@ class AccommodationResettlementAssessmentStrategyTest {
           ),
           answer = StringAnswer("NO_PLACE_TO_LIVE"),
         ),
-        ResettlementAssessmentResponseQuestionAndAnswer(ResettlementAssessmentResponseQuestion(id = "WHAT_IS_THE_ADDRESS", title = "", type = TypeOfQuestion.ADDRESS)),
+        ResettlementAssessmentResponseQuestionAndAnswer(ResettlementAssessmentResponseQuestion(id = "WHAT_IS_THE_ADDRESS", title = "What is the address of the property?", type = TypeOfQuestion.ADDRESS)),
       ),
     )
 

@@ -29,7 +29,7 @@ class FinanceAndIdResettlementAssessmentStrategy(
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-enum class FinanceAndIdAssessmentPage(override val id: String, override val title: String, override val questionsAndAnswers: MutableList<ResettlementAssessmentQuestionAndAnswer>) :
+enum class FinanceAndIdAssessmentPage(override val id: String, override val questionsAndAnswers: MutableList<ResettlementAssessmentQuestionAndAnswer>) :
   IAssessmentPage // TODO Add pages
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)

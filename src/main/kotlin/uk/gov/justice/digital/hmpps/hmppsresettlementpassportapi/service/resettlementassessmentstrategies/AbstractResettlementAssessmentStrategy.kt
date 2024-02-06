@@ -143,7 +143,6 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     // Convert to ResettlementAssessmentPage DTO
     val resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(
       id = page.id,
-      title = page.title,
       questionsAndAnswers = page.questionsAndAnswers.map {
         ResettlementAssessmentResponseQuestionAndAnswer(
           ResettlementAssessmentResponseQuestion(
@@ -275,17 +274,14 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 enum class GenericAssessmentPage(
   override val id: String,
-  override val title: String,
   override val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>,
 ) : IAssessmentPage {
   CHECK_ANSWERS(
     id = "CHECK_ANSWERS",
-    title = "",
     questionsAndAnswers = listOf(),
   ), // in this case questionsAndAnswers will be dynamically populated later by the UI cache
   ASSESSMENT_SUMMARY(
     id = "ASSESSMENT_SUMMARY",
-    title = "",
     questionsAndAnswers = listOf(
       ResettlementAssessmentQuestionAndAnswer(GenericResettlementAssessmentQuestion.SUPPORT_NEEDS),
       ResettlementAssessmentQuestionAndAnswer(GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY),

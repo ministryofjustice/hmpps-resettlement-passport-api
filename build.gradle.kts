@@ -56,6 +56,8 @@ dependencies {
 
   implementation("com.pauldijou:jwt-core_2.11:5.0.0")
 
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:2.2.1")
+
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 
   testImplementation("org.awaitility:awaitility-kotlin")

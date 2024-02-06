@@ -45,3 +45,14 @@ feature:
 cron:
   release-dates:
     batch-size: 3
+
+hmpps.sqs:
+  provider: localstack
+  queues:
+    casenotes:
+      queueName: case_notes_queue
+      dlqName: case_notes_dlq
+
+case-notes:
+  async:
+    enabled: true

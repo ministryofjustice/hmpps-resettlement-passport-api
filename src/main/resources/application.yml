@@ -112,3 +112,7 @@ management:
         time-to-live: 2000ms
     prometheus:
       enabled: true
+
+hmpps:
+  sqs:
+    queueAdminRole: RESETTLEMENT_PASSPORT_EDIT

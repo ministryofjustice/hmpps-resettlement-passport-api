@@ -220,4 +220,47 @@ class ResettlementAssessmentController(
     resettlementAssessmentStrategies.first { it.appliesTo(pathway) }.completeAssessment(nomsId, pathway, assessmentType, resettlementAssessmentCompleteRequest, auth)
     return ResponseEntity.ok().build()
   }
+
+  @PostMapping("/{nomsId}/resettlement-assessment/submit", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(summary = "Submit a completed resettlement assessment for the given nomsId", description = "Submit a completed resettlement assessment for the given nomsId")
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [
+          Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "400",
+        description = "Incorrect information provided",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  fun postSubmitAssessmentByNomsId(
+    @Schema(example = "AXXXS", required = true)
+    @PathVariable("nomsId")
+    nomsId: String,
+    @RequestParam("assessmentType")
+    assessmentType: ResettlementAssessmentType,
+    @RequestHeader("Authorization")
+    auth: String,
+  ): ResponseEntity<Void> {
+    resettlementAssessmentService.submitResettlementAssessmentByNomsId(nomsId, assessmentType, auth)
+    return ResponseEntity.ok().build()
+  }
 }

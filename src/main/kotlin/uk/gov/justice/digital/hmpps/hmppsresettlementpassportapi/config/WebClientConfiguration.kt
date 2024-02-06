@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction
+import org.springframework.web.reactive.function.client.ExchangeFilterFunctions
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.SYSTEM_USERNAME
@@ -32,6 +33,7 @@ class WebClientConfiguration(
   @Value("\${api.base.url.education-employment}") private val educationEmploymentRootUri: String,
   @Value("\${api.base.url.ciag}") private val ciagRootUri: String,
   @Value("\${api.base.url.interventions-service}") private val interventionsRootUri: String,
+  val clientRegistrationRepo: ClientRegistrationRepository,
 ) {
 
   @Bean
@@ -87,18 +89,6 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun caseNotesWebClientUserCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
-    val oauth2Client = ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
-    oauth2Client.setDefaultClientRegistrationId(SYSTEM_USERNAME)
-    return WebClient.builder()
-      .baseUrl(caseNotesRootUri)
-      .clientConnector(ReactorClientHttpConnector(httpClient))
-      .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }
-      .build()
-  }
-
-  @Bean
   fun allocationManagerWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
     return getWebClientCredentials(authorizedClientManager, allocationManagerRootUri)
   }
@@ -133,6 +123,16 @@ class WebClientConfiguration(
       .clientConnector(ReactorClientHttpConnector(httpClient))
       .filter(oauth2Client)
       .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }
+      .build()
+  }
+
+  @Bean
+  fun tokenWebClient(): WebClient {
+    val clientRegistration = clientRegistrationRepo.findByRegistrationId("RESETTLEMENT_PASSPORT_API")
+
+    return WebClient.builder()
+      .baseUrl(clientRegistration.providerDetails.tokenUri)
+      .filter(ExchangeFilterFunctions.basicAuthentication(clientRegistration.clientId, clientRegistration.clientSecret))
       .build()
   }
 }

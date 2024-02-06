@@ -1,0 +1,10 @@
+hmpps.sqs:
+  provider: localstack
+  localstackUrl: http://localhost:4567
+  queues:
+    casenotes:
+      queueName: case_notes_queue
+      dlqName: case_notes_dlq
+case-notes:
+  async:
+    enabled: true

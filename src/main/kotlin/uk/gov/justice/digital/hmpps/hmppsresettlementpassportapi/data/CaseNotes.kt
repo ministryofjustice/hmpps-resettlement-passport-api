@@ -53,3 +53,8 @@ enum class CaseNoteSubType {
   GEN,
   RESET,
 }
+
+data class DpsCaseNotesSqsMessage(
+  val caseNoteId: Long,
+  val userId: String,
+)

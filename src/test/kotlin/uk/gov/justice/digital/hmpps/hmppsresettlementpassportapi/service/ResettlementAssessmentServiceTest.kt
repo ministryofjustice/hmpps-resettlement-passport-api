@@ -16,9 +16,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentStatusRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Optional
@@ -37,12 +39,24 @@ class ResettlementAssessmentServiceTest {
   private lateinit var resettlementAssessmentRepository: ResettlementAssessmentRepository
 
   @Mock
+  private lateinit var resettlementAssessmentStatusRepository: ResettlementAssessmentStatusRepository
+
+  @Mock
+  private lateinit var deliusContactService: DeliusContactService
+
+  @Mock
+  private lateinit var caseNotesService: CaseNotesService
+
+  @Mock
+  private lateinit var pathwayAndStatusService: PathwayAndStatusService
+
+  @Mock
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
   @BeforeEach
   fun beforeEach() {
-    resettlementAssessmentService = ResettlementAssessmentService(resettlementAssessmentRepository, prisonerRepository, pathwayRepository)
+    resettlementAssessmentService = ResettlementAssessmentService(resettlementAssessmentRepository, resettlementAssessmentStatusRepository, prisonerRepository, pathwayRepository, deliusContactService, caseNotesService, pathwayAndStatusService)
   }
 
   @Test
@@ -152,7 +166,9 @@ class ResettlementAssessmentServiceTest {
     assessment = ResettlementAssessmentQuestionAndAnswerList(listOf()),
     creationDate = fakeNow,
     createdBy = "PO",
-    statusChangedTo = null,
+    statusChangedTo = StatusEntity(id = 1, name = "Not Started", active = true, creationDate = fakeNow),
+    caseNoteText = "some case note text",
+    createdByUserId = "USER_1",
   )
 
   private fun createCompleteResettlementAssessmentEntity(id: Long, name: String) = ResettlementAssessmentEntity(
@@ -164,6 +180,8 @@ class ResettlementAssessmentServiceTest {
     assessment = ResettlementAssessmentQuestionAndAnswerList(listOf()),
     creationDate = fakeNow,
     createdBy = "PO",
-    statusChangedTo = null,
+    statusChangedTo = StatusEntity(id = 4, name = "Support Declined", active = true, creationDate = fakeNow),
+    caseNoteText = "some case note text",
+    createdByUserId = "USER_1",
   )
 }

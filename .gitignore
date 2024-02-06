@@ -73,3 +73,5 @@ sonar-project.properties
 **/Chart.lock
 .DS_Store
 **/*.tgz
+
+volume

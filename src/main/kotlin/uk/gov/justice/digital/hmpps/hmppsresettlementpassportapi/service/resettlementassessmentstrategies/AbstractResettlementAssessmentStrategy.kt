@@ -183,8 +183,15 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     assessment: ResettlementAssessmentCompleteRequest,
     auth: String,
   ) {
-    // Get name from auth
+    // Check auth - must be NOMIS
+    val authSource = getClaimFromJWTToken(auth, "auth_source")?.lowercase()
+    if (authSource != "nomis") {
+      throw ServerWebInputException("Endpoint must be called with a user token with authSource of NOMIS")
+    }
+
+    // Get name and sub (userId) from auth
     val name = getClaimFromJWTToken(auth, "name") ?: throw ServerWebInputException("Cannot get name from auth token")
+    val userId = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get sub from auth token")
 
     // Obtain prisoner from database, if exists
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
@@ -237,6 +244,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
       createdBy = name,
       assessmentStatus = resettlementAssessmentStatusEntity,
       caseNoteText = caseNoteText,
+      createdByUserId = userId,
     )
 
     resettlementAssessmentRepository.save(resettlementAssessmentEntity)

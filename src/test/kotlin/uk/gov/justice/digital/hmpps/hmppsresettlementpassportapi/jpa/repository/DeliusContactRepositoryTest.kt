@@ -5,9 +5,6 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBase
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Category
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ContactType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DeliusContactEntity
@@ -15,9 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@SpringBootTest
-@ActiveProfiles("test")
-class DeliusContactRepositoryTest : TestBase() {
+class DeliusContactRepositoryTest : RepositoryTestBase() {
   @Autowired
   lateinit var deliusContactRepository: DeliusContactRepository
 

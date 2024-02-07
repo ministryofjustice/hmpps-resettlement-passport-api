@@ -7,42 +7,42 @@
       "lastName": "MCVEIGH",
       "releaseDate": "2099-08-01",
       "releaseType": "CRD",
-      "lastUpdatedDate": null,
+      "lastUpdatedDate": "2023-07-19",
       "status": [
         {
           "pathway": "ACCOMMODATION",
-          "status": "NOT_STARTED",
-          "lastDateChange": null
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-07-19"
         },
         {
           "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-          "status": "NOT_STARTED",
-          "lastDateChange": null
+          "status": "DONE",
+          "lastDateChange": "2023-07-20"
         },
         {
           "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
           "status": "NOT_STARTED",
-          "lastDateChange": null
+          "lastDateChange": "2023-07-21"
         },
         {
           "pathway": "DRUGS_AND_ALCOHOL",
-          "status": "NOT_STARTED",
-          "lastDateChange": null
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-07-22"
         },
         {
           "pathway": "EDUCATION_SKILLS_AND_WORK",
-          "status": "NOT_STARTED",
-          "lastDateChange": null
+          "status": "SUPPORT_NOT_REQUIRED",
+          "lastDateChange": "2023-07-23"
         },
         {
           "pathway": "FINANCE_AND_ID",
-          "status": "NOT_STARTED",
-          "lastDateChange": null
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-07-24"
         },
         {
           "pathway": "HEALTH",
-          "status": "NOT_STARTED",
-          "lastDateChange": null
+          "status": "DONE",
+          "lastDateChange": "2023-07-25"
         }
       ],
       "pathwayStatus": null,
@@ -60,42 +60,42 @@
       "lastName": "CRAWFIS",
       "releaseDate": "2099-09-12",
       "releaseType": "CRD",
-      "lastUpdatedDate": null,
+      "lastUpdatedDate": "2023-05-17",
       "status": [
         {
           "pathway": "ACCOMMODATION",
           "status": "NOT_STARTED",
-          "lastDateChange": null
+          "lastDateChange": "2023-05-17"
         },
         {
           "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-          "status": "NOT_STARTED",
-          "lastDateChange": null
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-05-18"
         },
         {
           "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
-          "status": "NOT_STARTED",
-          "lastDateChange": null
+          "status": "SUPPORT_NOT_REQUIRED",
+          "lastDateChange": "2023-05-19"
         },
         {
           "pathway": "DRUGS_AND_ALCOHOL",
-          "status": "NOT_STARTED",
-          "lastDateChange": null
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-05-20"
         },
         {
           "pathway": "EDUCATION_SKILLS_AND_WORK",
-          "status": "NOT_STARTED",
-          "lastDateChange": null
+          "status": "DONE",
+          "lastDateChange": "2023-05-21"
         },
         {
           "pathway": "FINANCE_AND_ID",
           "status": "NOT_STARTED",
-          "lastDateChange": null
+          "lastDateChange": "2023-05-22"
         },
         {
           "pathway": "HEALTH",
-          "status": "NOT_STARTED",
-          "lastDateChange": null
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-05-23"
         }
       ],
       "pathwayStatus": null,

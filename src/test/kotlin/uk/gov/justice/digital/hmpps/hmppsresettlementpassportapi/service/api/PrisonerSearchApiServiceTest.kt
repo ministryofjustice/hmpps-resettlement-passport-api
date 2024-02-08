@@ -247,7 +247,7 @@ class PrisonerSearchApiServiceTest {
       PathwayStatusEntity(5, mockPrisonerEntity1, mockPathwayEntity1, mockStatusEntity, LocalDateTime.now()),
     )
 
-    `when`(pathwayStatusRepository.findByPrisonerIn(any())).thenReturn(mockPathwayStatusEntities)
+    `when`(pathwayStatusRepository.findByPrison(any())).thenReturn(mockPathwayStatusEntities)
 
     `when`(pathwayAndStatusService.findAllPathways()).thenReturn(
       listOf(
@@ -275,7 +275,7 @@ class PrisonerSearchApiServiceTest {
     `when`(resettlementAssessmentRepository.findPrisonersWithAllAssessmentsInStatus("MDI", ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED.id, Pathway.entries.size))
       .thenReturn(listOf(mockPrisonerEntity1, mockPrisonerEntity2, mockPrisonerEntity3))
 
-    `when`(pathwayStatusRepository.findByPrisonerIn(listOf(mockPrisonerEntity1, mockPrisonerEntity2, mockPrisonerEntity3))).thenReturn(
+    `when`(pathwayStatusRepository.findByPrison("MDI")).thenReturn(
       listOf(
         PathwayStatusEntity(1, mockPrisonerEntity1, mockPathwayEntity1, mockStatusEntity1, LocalDateTime.now()),
         PathwayStatusEntity(8, mockPrisonerEntity2, mockPathwayEntity1, mockStatusEntity4, LocalDateTime.now()),

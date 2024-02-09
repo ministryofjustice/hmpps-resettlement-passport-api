@@ -94,7 +94,10 @@ class PrisonerResourceController(
     @Parameter(description = "Status to filter the results on. This can only be used if pathwayView is provided.")
     @RequestParam(value = "pathwayStatus")
     pathwayStatus: Status?,
-  ): PrisonersList = prisonerService.getPrisonersByPrisonId(term, prisonId, days, pathwayView, pathwayStatus, page, size, sort)
+    @Parameter(description = "Filter on assessmentRequired. Cannot be used if pathwayView is provided.")
+    @RequestParam(value = "assessmentRequired")
+    assessmentRequired: Boolean?,
+  ): PrisonersList = prisonerService.getPrisonersByPrisonId(term, prisonId, days, pathwayView, pathwayStatus, assessmentRequired, page, size, sort)
 
   @GetMapping("/prisoner/{nomsId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get prisoner by noms Id", description = "Prisoner Details based on noms Id")

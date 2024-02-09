@@ -95,7 +95,7 @@ class PrisonerSearchApiServiceTest {
     val mockedJsonResponse = readFile("testdata/prisoner-search-api/prisoner-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisonersList =
-      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "releaseDate,DESC")
+      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 10, "releaseDate,DESC")
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
 
@@ -108,7 +108,7 @@ class PrisonerSearchApiServiceTest {
     val mockedJsonResponse = readFile("testdata/prisoner-search-api/prisoner-search-2.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisoners =
-      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "releaseDate,DESC")
+      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 10, "releaseDate,DESC")
 
     Assertions.assertEquals(getExpectedPrisonersListReleaseDateDesc(), prisoners)
   }
@@ -123,7 +123,7 @@ class PrisonerSearchApiServiceTest {
     val mockedJsonResponse = readFile("testdata/prisoner-search-api/prisoner-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisonersList =
-      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 20, "releaseDate,ASC")
+      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 20, "releaseDate,ASC")
     Assertions.assertEquals(
       expectedPrisonerId,
       prisonersList.content?.get((prisonersList.content!!.toList().size - 1))?.prisonerNumber
@@ -141,7 +141,7 @@ class PrisonerSearchApiServiceTest {
     val mockedJsonResponse = readFile("testdata/prisoner-search-api/prisoner-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisonersList =
-      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "name,ASC")
+      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 10, "name,ASC")
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
 
@@ -155,7 +155,7 @@ class PrisonerSearchApiServiceTest {
     val mockedJsonResponse = readFile("testdata/prisoner-search-api/prisoner-search-1.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisonersList =
-      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 5, "name,ASC")
+      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 5, "name,ASC")
     Assertions.assertEquals(expectedPageSize, prisonersList.pageSize)
     prisonersList.content?.toList()?.let { Assertions.assertEquals(expectedPageSize, it.size) }
   }
@@ -176,7 +176,7 @@ class PrisonerSearchApiServiceTest {
     )
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
     val prisonersList =
-      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, 0, 10, "name,ASC")
+      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 10, "name,ASC")
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
 
@@ -193,6 +193,7 @@ class PrisonerSearchApiServiceTest {
       prisonId,
       0,
       Pathway.ACCOMMODATION,
+      null,
       null,
       0,
       10,
@@ -216,6 +217,7 @@ class PrisonerSearchApiServiceTest {
       0,
       Pathway.ACCOMMODATION,
       Status.SUPPORT_DECLINED,
+      null,
       0,
       10,
       "releaseDate,DESC",
@@ -594,7 +596,7 @@ class PrisonerSearchApiServiceTest {
       createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2026-07-24"), null, LocalDate.parse("2026-07-24"), "HDCED"),
       createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2024-12-09"), null, LocalDate.parse("2024-12-09"), "HDCED"),
     )
-    val actualPrisoners = prisonerSearchApiService.objectMapper(prisoners, null, null, "MDI")
+    val actualPrisoners = prisonerSearchApiService.objectMapper(prisoners, null, null, "MDI", null)
     Assertions.assertEquals(prisonersMapped, actualPrisoners)
   }
 

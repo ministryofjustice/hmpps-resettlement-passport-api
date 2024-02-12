@@ -1,0 +1,115 @@
+{
+  "content": [
+    {
+      "prisonerNumber": "G1458GV",
+      "firstName": "FINN",
+      "middleNames": "CHANDLEVIEVE",
+      "lastName": "CRAWFIS",
+      "releaseDate": "2099-09-12",
+      "releaseType": "CRD",
+      "lastUpdatedDate": "2023-05-17",
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "NOT_STARTED",
+          "lastDateChange": "2023-05-17"
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-05-18"
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "SUPPORT_NOT_REQUIRED",
+          "lastDateChange": "2023-05-19"
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-05-20"
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "DONE",
+          "lastDateChange": "2023-05-21"
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "NOT_STARTED",
+          "lastDateChange": "2023-05-22"
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-05-23"
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": "2018-10-16",
+      "paroleEligibilityDate": null,
+      "releaseEligibilityDate": "2018-10-16",
+      "releaseEligibilityType": "HDCED",
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": true
+    },
+    {
+      "prisonerNumber": "A8229DY",
+      "firstName": "STEPHEN",
+      "middleNames": null,
+      "lastName": "MCVEIGH",
+      "releaseDate": "2099-08-01",
+      "releaseType": "CRD",
+      "lastUpdatedDate": "2023-07-19",
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-07-19"
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "DONE",
+          "lastDateChange": "2023-07-20"
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "NOT_STARTED",
+          "lastDateChange": "2023-07-21"
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-07-22"
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "SUPPORT_NOT_REQUIRED",
+          "lastDateChange": "2023-07-23"
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-07-24"
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "DONE",
+          "lastDateChange": "2023-07-25"
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": "2021-02-03",
+      "paroleEligibilityDate": null,
+      "releaseEligibilityDate": "2021-02-03",
+      "releaseEligibilityType": "HDCED",
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": true
+    }
+  ],
+  "pageSize": 2,
+  "page": 0,
+  "sortName": "releaseDate,DESC",
+  "totalElements": 2,
+  "last": true
+}

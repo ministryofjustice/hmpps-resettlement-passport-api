@@ -1,0 +1,62 @@
+{
+  "content": [
+    {
+      "prisonerNumber": "A8339DY",
+      "firstName": "MR",
+      "middleNames": "BRIDGILLA",
+      "lastName": "CRD-LR-TEST",
+      "releaseDate": null,
+      "releaseType": "PRRD",
+      "lastUpdatedDate": "2023-06-14",
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-06-14"
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "DONE",
+          "lastDateChange": "2023-06-15"
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "NOT_STARTED",
+          "lastDateChange": "2023-06-16"
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-06-17"
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "SUPPORT_NOT_REQUIRED",
+          "lastDateChange": "2023-06-18"
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-06-19"
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "DONE",
+          "lastDateChange": "2023-06-20"
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": null,
+      "paroleEligibilityDate": null,
+      "releaseEligibilityDate": null,
+      "releaseEligibilityType": null,
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": false
+    }
+  ],
+  "pageSize": 1,
+  "page": 0,
+  "sortName": "releaseDate,DESC",
+  "totalElements": 1,
+  "last": true
+}

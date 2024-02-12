@@ -31,6 +31,7 @@ class PrisonerService(
     days: Int,
     pathwayView: Pathway?,
     pathwayStatus: Status?,
+    assessmentRequired: Boolean?,
     page: Int,
     size: Int,
     sort: String,
@@ -41,7 +42,10 @@ class PrisonerService(
     if (pathwayView == null && (sort == "pathwayStatus,ASC" || sort == "pathwayStatus,DESC")) {
       throw ServerWebInputException("Pathway must be selected to sort by pathway status")
     }
-    return prisonerSearchApiService.getPrisonersByPrisonId(term, prisonId, days, pathwayView, pathwayStatus, page, size, sort)
+    if (assessmentRequired != null && pathwayView != null) {
+      throw ServerWebInputException("pathwayView cannot be used in conjunction with assessmentRequired")
+    }
+    return prisonerSearchApiService.getPrisonersByPrisonId(term, prisonId, days, pathwayView, pathwayStatus, assessmentRequired, page, size, sort)
   }
 
   companion object {

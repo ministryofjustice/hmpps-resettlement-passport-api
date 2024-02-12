@@ -83,6 +83,7 @@ class PrisonerSearchApiService(
     days: Int,
     pathwayView: Pathway?,
     pathwayStatus: Status?,
+    assessmentRequired: Boolean?,
     pageNumber: Int,
     pageSize: Int,
     sort: String?,
@@ -123,7 +124,7 @@ class PrisonerSearchApiService(
       )
     }
 
-    val fullList = objectMapper(prisoners, pathwayView, pathwayStatus, prisonId)
+    val fullList = objectMapper(prisoners, pathwayView, pathwayStatus, prisonId, assessmentRequired)
 
     sortPrisoners(sort, fullList)
 
@@ -190,6 +191,7 @@ class PrisonerSearchApiService(
     pathwayView: Pathway?,
     pathwayStatusToFilter: Status?,
     prisonId: String,
+    assessmentRequiredFilter: Boolean?,
   ): MutableList<Prisoners> {
     val prisonersList = mutableListOf<Prisoners>()
 
@@ -229,6 +231,13 @@ class PrisonerSearchApiService(
 
       // Find out if resettlement assessment is required
       val assessmentRequired = !prisonersWithSubmittedAssessment.contains(prisonerEntity)
+
+      // If assessmentRequired filter is defined, skip over any that don't match
+      if (assessmentRequiredFilter != null) {
+        if (assessmentRequired != assessmentRequiredFilter) {
+          return@forEach
+        }
+      }
 
       if (pathwayStatusToFilter == null || pathwayStatusToFilter == pathwayStatus) {
         val prisoner = Prisoners(

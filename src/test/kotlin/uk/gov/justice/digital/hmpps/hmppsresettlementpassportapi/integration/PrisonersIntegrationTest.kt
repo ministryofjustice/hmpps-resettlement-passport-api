@@ -227,4 +227,60 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
   }
+
+  @Test
+  fun `Get All Prisoners - 400 pathwayView given with assessmentRequired`() {
+    val prisonId = "MDI"
+    webTestClient.get()
+      .uri("/resettlement-passport/prison/$prisonId/prisoners?term=&page=0&size=10&sort=releaseDate,DESC&pathwayView=ACCOMMODATION&assessmentRequired=true")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isBadRequest
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(400)
+  }
+
+  @Test
+  fun `Get All Prisoners - 400 assessmentRequired not a boolean`() {
+    val prisonId = "MDI"
+    webTestClient.get()
+      .uri("/resettlement-passport/prison/$prisonId/prisoners?term=&page=0&size=10&sort=releaseDate,DESC&assessmentRequired=string")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isBadRequest
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(400)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-9.sql")
+  fun `Get All Prisoners happy path - assessmentRequired true`() {
+    val expectedOutput = readFile("testdata/expectation/prisoners-assessment-required.json")
+    val prisonId = "MDI"
+    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 200)
+    webTestClient.get()
+      .uri("/resettlement-passport/prison/$prisonId/prisoners?term=&assessmentRequired=true&page=0&size=10&sort=releaseDate,DESC")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput, true)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-9.sql")
+  fun `Get All Prisoners happy path - assessmentRequired false`() {
+    val expectedOutput = readFile("testdata/expectation/prisoners-assessment-not-required.json")
+    val prisonId = "MDI"
+    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 200)
+    webTestClient.get()
+      .uri("/resettlement-passport/prison/$prisonId/prisoners?term=&assessmentRequired=false&page=0&size=10&sort=releaseDate,DESC")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput, true)
+  }
 }

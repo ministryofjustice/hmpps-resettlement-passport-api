@@ -56,10 +56,10 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val nomsId = "G1458GV"
     val pathway = "ACCOMMODATION"
     val assessmentType = "BCST2"
-    val currentPage = "WHERE_WILL_THEY_LIVE"
+    val currentPage = "WHERE_DID_THEY_LIVE"
     val questions = mutableListOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
-      ResettlementAssessmentRequestQuestionAndAnswer("WHERE_WILL_THEY_LIVE", answer = StringAnswer("NEW_ADDRESS")),
-      ResettlementAssessmentRequestQuestionAndAnswer("WHAT_IS_THE_ADDRESS", answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
+      ResettlementAssessmentRequestQuestionAndAnswer("WHERE_DID_THEY_LIVE", answer = StringAnswer("PRIVATE_RENTED_HOUSING")),
+      ResettlementAssessmentRequestQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
     )
     val body = ResettlementAssessmentRequest(
       questionsAndAnswers = questions,
@@ -75,7 +75,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectBody().json(
         """
         {
-          "nextPageId": "WHO_WILL_THEY_LIVE_WITH"
+          "nextPageId": "HELP_TO_KEEP_HOME"
         }
         """.trimIndent(),
       )
@@ -131,7 +131,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val nomsId = "G1458GV"
     val pathway = "ACCOMMODATION"
     val assessmentType = "BCST2"
-    val page = "WHERE_WILL_THEY_LIVE"
+    val page = "WHERE_DID_THEY_LIVE"
 
     val expectedOutput = readFile("testdata/expectation/resettlement-assessment-1.json")
 

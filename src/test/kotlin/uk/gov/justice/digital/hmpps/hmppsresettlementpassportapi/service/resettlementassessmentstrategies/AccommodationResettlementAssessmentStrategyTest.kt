@@ -27,7 +27,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.councilOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
@@ -115,71 +114,86 @@ class AccommodationResettlementAssessmentStrategyTest {
     Arguments.of(
       listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(),
       null,
-      "WHERE_WILL_THEY_LIVE",
+      "WHERE_DID_THEY_LIVE",
     ),
-    // If the answer to WHERE_WILL_THEY_LIVE is NO_PLACE_TO_LIVE, go to CONSENT_FOR_CRS
+    // If the answer to WHERE_DID_THEY_LIVE is PRIVATE_RENTED_HOUSING, go to HELP_TO_KEEP_HOME
     Arguments.of(
       listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
-        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_WILL_THEY_LIVE", answer = StringAnswer("NO_PLACE_TO_LIVE")),
+        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_DID_THEY_LIVE", answer = StringAnswer("PRIVATE_RENTED_HOUSING")),
+        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", answer = MapAnswer(listOf(mapOf("ADDRESS_LINE_1" to "12 High Street", "CITY" to "Leeds", "POSTCODE" to "LS1 1AA")))),
       ),
-      "WHERE_WILL_THEY_LIVE",
-      "CONSENT_FOR_CRS",
+      "WHERE_DID_THEY_LIVE",
+      "HELP_TO_KEEP_HOME",
     ),
-    // If the answer to WHERE_WILL_THEY_LIVE is PREVIOUS_ADDRESS, go to WHO_WILL_THEY_LIVE_WITH
+    // If the answer to WHERE_DID_THEY_LIVE is SOCIAL_HOUSING, go to HELP_TO_KEEP_HOME
     Arguments.of(
       listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
-        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_WILL_THEY_LIVE", answer = StringAnswer("PREVIOUS_ADDRESS")),
-        ResettlementAssessmentRequestQuestionAndAnswer("WHAT_IS_THE_ADDRESS", answer = MapAnswer(listOf(mapOf(Pair("ADDRESS_LINE_1", "12 High Street"), Pair("CITY", "Leeds"), Pair("POSTCODE", "LS1 1AA"))))),
+        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_DID_THEY_LIVE", answer = StringAnswer("SOCIAL_HOUSING")),
+        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", answer = MapAnswer(listOf(mapOf("ADDRESS_LINE_1" to "12 High Street", "CITY" to "Leeds", "POSTCODE" to "LS1 1AA")))),
       ),
-      "WHERE_WILL_THEY_LIVE",
-      "WHO_WILL_THEY_LIVE_WITH",
+      "WHERE_DID_THEY_LIVE",
+      "HELP_TO_KEEP_HOME",
     ),
-    // If the answer to WHERE_WILL_THEY_LIVE is NEW_ADDRESS, go to WHO_WILL_THEY_LIVE_WITH
+    // If the answer to WHERE_DID_THEY_LIVE is HOMEOWNER, go to HELP_TO_KEEP_HOME
     Arguments.of(
       listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
-        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_WILL_THEY_LIVE", answer = StringAnswer("NEW_ADDRESS")),
-        ResettlementAssessmentRequestQuestionAndAnswer("WHAT_IS_THE_ADDRESS", answer = MapAnswer(listOf(mapOf(Pair("ADDRESS_LINE_1", "12 High Street"), Pair("CITY", "Leeds"), Pair("POSTCODE", "LS1 1AA"))))),
+        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_DID_THEY_LIVE", answer = StringAnswer("HOMEOWNER")),
+        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", answer = MapAnswer(listOf(mapOf("ADDRESS_LINE_1" to "12 High Street", "CITY" to "Leeds", "POSTCODE" to "LS1 1AA")))),
       ),
-      "WHERE_WILL_THEY_LIVE",
-      "WHO_WILL_THEY_LIVE_WITH",
+      "WHERE_DID_THEY_LIVE",
+      "HELP_TO_KEEP_HOME",
     ),
-    // Any answer to WHO_WILL_THEY_LIVE_WITH, go to ASSESSMENT_SUMMARY
+    // If the answer to WHERE_DID_THEY_LIVE is NO_PERMANENT_OR_FIXED, go to WHERE_WILL_THEY_LIVE_2
     Arguments.of(
       listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
-        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_WILL_THEY_LIVE", answer = StringAnswer("NEW_ADDRESS")),
-        ResettlementAssessmentRequestQuestionAndAnswer("WHAT_IS_THE_ADDRESS", answer = MapAnswer(listOf(mapOf(Pair("ADDRESS_LINE_1", "12 High Street"), Pair("CITY", "Leeds"), Pair("POSTCODE", "LS1 1AA"))))),
-        ResettlementAssessmentRequestQuestionAndAnswer("WHO_WILL_THEY_LIVE_WITH", answer = StringAnswer("Something")),
+        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_DID_THEY_LIVE", answer = StringAnswer("NO_PERMANENT_OR_FIXED")),
       ),
-      "WHO_WILL_THEY_LIVE_WITH",
+      "WHERE_DID_THEY_LIVE",
+      "WHERE_WILL_THEY_LIVE_2",
+    ),
+    // If the answer to WHERE_DID_THEY_LIVE is NO_ANSWER, go to WHERE_WILL_THEY_LIVE_2
+    Arguments.of(
+      listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
+        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_DID_THEY_LIVE", answer = StringAnswer("NO_ANSWER")),
+      ),
+      "WHERE_DID_THEY_LIVE",
+      "WHERE_WILL_THEY_LIVE_2",
+    ),
+    // Any answer to HELP_TO_KEEP_HOME, go to WHERE_WILL_THEY_LIVE_1
+    Arguments.of(
+      listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
+        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_DID_THEY_LIVE", answer = StringAnswer("HOMEOWNER")),
+        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", answer = MapAnswer(listOf(mapOf("ADDRESS_LINE_1" to "12 High Street", "CITY" to "Leeds", "POSTCODE" to "LS1 1AA")))),
+        ResettlementAssessmentRequestQuestionAndAnswer("HELP_TO_KEEP_HOME", answer = StringAnswer("YES")),
+      ),
+      "HELP_TO_KEEP_HOME",
+      "WHERE_WILL_THEY_LIVE_1",
+    ),
+    // Any answer to WHERE_WILL_THEY_LIVE_1, go to ASSESSMENT_SUMMARY
+    Arguments.of(
+      listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
+        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_DID_THEY_LIVE", answer = StringAnswer("HOMEOWNER")),
+        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", answer = MapAnswer(listOf(mapOf("ADDRESS_LINE_1" to "12 High Street", "CITY" to "Leeds", "POSTCODE" to "LS1 1AA")))),
+        ResettlementAssessmentRequestQuestionAndAnswer("HELP_TO_KEEP_HOME", answer = StringAnswer("YES")),
+        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_WILL_THEY_LIVE_1", answer = StringAnswer("RETURN_TO_PREVIOUS_ADDRESS")),
+      ),
+      "WHERE_WILL_THEY_LIVE_1",
       "ASSESSMENT_SUMMARY",
     ),
-    // Any answer to CONSENT_FOR_CRS, go to WHAT_COUNCIL_AREA
+    // Any answer to WHERE_WILL_THEY_LIVE_2, go to ASSESSMENT_SUMMARY
     Arguments.of(
       listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
-        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_WILL_THEY_LIVE", answer = StringAnswer("NO_PLACE_TO_LIVE")),
-        ResettlementAssessmentRequestQuestionAndAnswer("ACCOM_CRS", answer = StringAnswer("Yes")),
+        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_DID_THEY_LIVE", answer = StringAnswer("NO_ANSWER")),
+        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_WILL_THEY_LIVE_2", answer = StringAnswer("DOES_NOT_HAVE_ANYWHERE")),
       ),
-      "CONSENT_FOR_CRS",
-      "WHAT_COUNCIL_AREA",
-    ),
-    // Any answer to WHAT_COUNCIL_AREA, go to ASSESSMENT_SUMMARY
-    Arguments.of(
-      listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
-        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_WILL_THEY_LIVE", answer = StringAnswer("NO_PLACE_TO_LIVE")),
-        ResettlementAssessmentRequestQuestionAndAnswer("ACCOM_CRS", answer = StringAnswer("Yes")),
-        ResettlementAssessmentRequestQuestionAndAnswer("COUNCIL_AREA", answer = StringAnswer("Leeds City Council")),
-        ResettlementAssessmentRequestQuestionAndAnswer("COUNCIL_AREA_REASON", answer = StringAnswer("Some additional long text")),
-      ),
-      "WHAT_COUNCIL_AREA",
+      "WHERE_WILL_THEY_LIVE_2",
       "ASSESSMENT_SUMMARY",
     ),
     // Any answer to ASSESSMENT_SUMMARY, go to CHECK_ANSWERS
     Arguments.of(
       listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
-        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_WILL_THEY_LIVE", answer = StringAnswer("NO_PLACE_TO_LIVE")),
-        ResettlementAssessmentRequestQuestionAndAnswer("ACCOM_CRS", answer = StringAnswer("Yes")),
-        ResettlementAssessmentRequestQuestionAndAnswer("COUNCIL_AREA", answer = StringAnswer("Leeds City Council")),
-        ResettlementAssessmentRequestQuestionAndAnswer("COUNCIL_AREA_REASON", answer = StringAnswer("Some additional long text")),
+        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_DID_THEY_LIVE", answer = StringAnswer("NO_ANSWER")),
+        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_WILL_THEY_LIVE_2", answer = StringAnswer("DOES_NOT_HAVE_ANYWHERE")),
         ResettlementAssessmentRequestQuestionAndAnswer("SUPPORT_NEEDS", answer = StringAnswer("SUPPORT_REQUIRED")),
         ResettlementAssessmentRequestQuestionAndAnswer("CASE_NOTE_SUMMARY", answer = StringAnswer("My case note summary.")),
       ),
@@ -265,96 +279,141 @@ class AccommodationResettlementAssessmentStrategyTest {
 
   private fun `test get page from Id - no existing assessment data`() = Stream.of(
     Arguments.of(
-      "WHERE_WILL_THEY_LIVE",
+      "WHERE_DID_THEY_LIVE",
       ResettlementAssessmentResponsePage(
-        id = "WHERE_WILL_THEY_LIVE",
+        id = "WHERE_DID_THEY_LIVE",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
             ResettlementAssessmentResponseQuestion(
-              id = "WHERE_WILL_THEY_LIVE",
-              title = "Where will they live when released from custody?",
+              id = "WHERE_DID_THEY_LIVE",
+              title = "Where did the person in prison live before custody?",
               subTitle = null,
               type = TypeOfQuestion.RADIO_WITH_ADDRESS,
               options = mutableListOf(
-                Option(id = "PREVIOUS_ADDRESS", displayText = "Returning to a previous address"),
-                Option(id = "NEW_ADDRESS", displayText = "Moving to new address"),
-                Option(id = "NO_PLACE_TO_LIVE", displayText = "No place to live"),
+                Option(id = "PRIVATE_RENTED_HOUSING", displayText = "Private rented housing", withAddress = true),
+                Option(id = "SOCIAL_HOUSING", displayText = "Social housing", withAddress = true),
+                Option(id = "HOMEOWNER", displayText = "Homeowner", withAddress = true),
+                Option(id = "NO_PERMANENT_OR_FIXED", displayText = "No permanent or fixed address"),
+                Option(id = "NO_ANSWER", displayText = "No answer provided"),
               ),
             ),
           ),
-          ResettlementAssessmentResponseQuestionAndAnswer(ResettlementAssessmentResponseQuestion(id = "WHAT_IS_THE_ADDRESS", title = "What is the address of the property?", type = TypeOfQuestion.ADDRESS)),
+          ResettlementAssessmentResponseQuestionAndAnswer(ResettlementAssessmentResponseQuestion(id = "WHERE_DID_THEY_LIVE_ADDRESS", title = "Enter the address", type = TypeOfQuestion.ADDRESS)),
         ),
       ),
     ),
     Arguments.of(
-      "WHO_WILL_THEY_LIVE_WITH",
+      "HELP_TO_KEEP_HOME",
       ResettlementAssessmentResponsePage(
-        id = "WHO_WILL_THEY_LIVE_WITH",
-        questionsAndAnswers = mutableListOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(ResettlementAssessmentResponseQuestion(id = "WHO_WILL_THEY_LIVE_WITH", title = "What are the names and ages of all residents at this property and the prisoner's relationship to them?", type = TypeOfQuestion.LIST_OF_PEOPLE)),
-        ),
-      ),
-    ),
-    Arguments.of(
-      "CONSENT_FOR_CRS",
-      ResettlementAssessmentResponsePage(
-        id = "CONSENT_FOR_CRS",
-        questionsAndAnswers = mutableListOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(ResettlementAssessmentResponseQuestion(id = "ACCOM_CRS", title = "Do they give consent for a Commissioned Rehabilitative Service (CRS)?", type = TypeOfQuestion.RADIO, options = yesNoOptions.toMutableList())),
-        ),
-      ),
-    ),
-    Arguments.of(
-      "WHAT_COUNCIL_AREA",
-      ResettlementAssessmentResponsePage(
-        id = "WHAT_COUNCIL_AREA",
-        questionsAndAnswers = mutableListOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(ResettlementAssessmentResponseQuestion(id = "COUNCIL_AREA", title = "Which council area are they intending to move to on release?", type = TypeOfQuestion.DROPDOWN, options = councilOptions.toMutableList())),
-          ResettlementAssessmentResponseQuestionAndAnswer(ResettlementAssessmentResponseQuestion(id = "COUNCIL_AREA_REASON", title = "Why do they intend to move to this council area on release?", type = TypeOfQuestion.LONG_TEXT)),
-        ),
-      ),
-    ),
-    Arguments.of(
-      "ASSESSMENT_SUMMARY",
-      ResettlementAssessmentResponsePage(
-        id = "ASSESSMENT_SUMMARY",
+        id = "HELP_TO_KEEP_HOME",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
             ResettlementAssessmentResponseQuestion(
-              id = "SUPPORT_NEEDS",
-              title = "",
+              id = "HELP_TO_KEEP_HOME",
+              title = "Does the person in prison or their family need help to keep their home while they are in prison?",
               type = TypeOfQuestion.RADIO,
-              options = mutableListOf(
-                Option(
-                  id = "SUPPORT_REQUIRED",
-                  displayText = "Support required",
-                  description = "a need for support has been identified and is accepted",
-                ),
-                Option(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
-                Option(
-                  id = "SUPPORT_DECLINED",
-                  displayText = "Support declined",
-                  description = "a need has been identified but support is declined",
-                ),
-              ),
-            ),
-          ),
-          ResettlementAssessmentResponseQuestionAndAnswer(
-            ResettlementAssessmentResponseQuestion(
-              id = "CASE_NOTE_SUMMARY",
-              title = "Add a case note summary",
-              subTitle = "This will be displayed as a case note in both DPS and nDelius",
-              type = TypeOfQuestion.LONG_TEXT,
+              options = yesNoOptions.toMutableList(),
             ),
           ),
         ),
       ),
-    ),
-    Arguments.of(
-      "CHECK_ANSWERS",
-      ResettlementAssessmentResponsePage(
-        id = "CHECK_ANSWERS",
-        questionsAndAnswers = mutableListOf(),
+      Arguments.of(
+        "WHERE_WILL_THEY_LIVE_1",
+        ResettlementAssessmentResponsePage(
+          id = "WHERE_WILL_THEY_LIVE_1",
+          questionsAndAnswers = mutableListOf(
+            ResettlementAssessmentResponseQuestionAndAnswer(
+              ResettlementAssessmentResponseQuestion(
+                id = "WHERE_WILL_THEY_LIVE_1",
+                title = "Where will the person in prison live when they are released?",
+                type = TypeOfQuestion.RADIO_WITH_ADDRESS,
+                options = mutableListOf(
+                  Option(id = "RETURN_TO_PREVIOUS_ADDRESS", displayText = "Return to their previous address"),
+                  Option(id = "MOVE_TO_NEW_ADDRESS", displayText = "Move to a new address", withAddress = true),
+                  Option(id = "DOES_NOT_HAVE_ANYWHERE", displayText = "Does not have anywhere to live"),
+                  Option(id = "NO_ANSWER", displayText = "No answer provided"),
+                ),
+              ),
+            ),
+            ResettlementAssessmentResponseQuestionAndAnswer(
+              ResettlementAssessmentResponseQuestion(
+                id = "WHERE_WILL_THEY_LIVE_ADDRESS",
+                title = "Enter the address",
+                type = TypeOfQuestion.ADDRESS,
+              ),
+            ),
+          ),
+        ),
+      ),
+      Arguments.of(
+        "WHERE_WILL_THEY_LIVE_2",
+        ResettlementAssessmentResponsePage(
+          id = "WHERE_WILL_THEY_LIVE_2",
+          questionsAndAnswers = mutableListOf(
+            ResettlementAssessmentResponseQuestionAndAnswer(
+              ResettlementAssessmentResponseQuestion(
+                id = "WHERE_WILL_THEY_LIVE_2",
+                title = "Where will the person in prison live when they are released?",
+                type = TypeOfQuestion.RADIO_WITH_ADDRESS,
+                options = mutableListOf(
+                  Option(id = "MOVE_TO_NEW_ADDRESS", displayText = "Move to a new address", withAddress = true),
+                  Option(id = "DOES_NOT_HAVE_ANYWHERE", displayText = "Does not have anywhere to live"),
+                  Option(id = "NO_ANSWER", displayText = "No answer provided"),
+                ),
+              ),
+            ),
+            ResettlementAssessmentResponseQuestionAndAnswer(
+              ResettlementAssessmentResponseQuestion(
+                id = "WHERE_WILL_THEY_LIVE_ADDRESS",
+                title = "Enter the address",
+                type = TypeOfQuestion.ADDRESS,
+              ),
+            ),
+          ),
+        ),
+      ),
+      Arguments.of(
+        "ASSESSMENT_SUMMARY",
+        ResettlementAssessmentResponsePage(
+          id = "ASSESSMENT_SUMMARY",
+          questionsAndAnswers = mutableListOf(
+            ResettlementAssessmentResponseQuestionAndAnswer(
+              ResettlementAssessmentResponseQuestion(
+                id = "SUPPORT_NEEDS",
+                title = "",
+                type = TypeOfQuestion.RADIO,
+                options = mutableListOf(
+                  Option(
+                    id = "SUPPORT_REQUIRED",
+                    displayText = "Support required",
+                    description = "a need for support has been identified and is accepted",
+                  ),
+                  Option(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
+                  Option(
+                    id = "SUPPORT_DECLINED",
+                    displayText = "Support declined",
+                    description = "a need has been identified but support is declined",
+                  ),
+                ),
+              ),
+            ),
+            ResettlementAssessmentResponseQuestionAndAnswer(
+              ResettlementAssessmentResponseQuestion(
+                id = "CASE_NOTE_SUMMARY",
+                title = "Add a case note summary",
+                subTitle = "This will be displayed as a case note in both DPS and nDelius",
+                type = TypeOfQuestion.LONG_TEXT,
+              ),
+            ),
+          ),
+        ),
+      ),
+      Arguments.of(
+        "CHECK_ANSWERS",
+        ResettlementAssessmentResponsePage(
+          id = "CHECK_ANSWERS",
+          questionsAndAnswers = mutableListOf(),
+        ),
       ),
     ),
   )
@@ -365,30 +424,40 @@ class AccommodationResettlementAssessmentStrategyTest {
 
     val existingAssessment = ResettlementAssessmentQuestionAndAnswerList(
       listOf(
-        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_WILL_THEY_LIVE", StringAnswer("NO_PLACE_TO_LIVE")),
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE", StringAnswer("SOCIAL_HOUSING")),
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
       ),
     )
 
     setUpMocks("123", true, existingAssessment)
 
     val expectedPage = ResettlementAssessmentResponsePage(
-      id = "WHERE_WILL_THEY_LIVE",
+      id = "WHERE_DID_THEY_LIVE",
       questionsAndAnswers = mutableListOf(
         ResettlementAssessmentResponseQuestionAndAnswer(
           ResettlementAssessmentResponseQuestion(
-            id = "WHERE_WILL_THEY_LIVE",
-            title = "Where will they live when released from custody?",
+            id = "WHERE_DID_THEY_LIVE",
+            title = "Where did the person in prison live before custody?",
             subTitle = null,
             type = TypeOfQuestion.RADIO_WITH_ADDRESS,
             options = mutableListOf(
-              Option(id = "PREVIOUS_ADDRESS", displayText = "Returning to a previous address"),
-              Option(id = "NEW_ADDRESS", displayText = "Moving to new address"),
-              Option(id = "NO_PLACE_TO_LIVE", displayText = "No place to live"),
+              Option(id = "PRIVATE_RENTED_HOUSING", displayText = "Private rented housing", withAddress = true),
+              Option(id = "SOCIAL_HOUSING", displayText = "Social housing", withAddress = true),
+              Option(id = "HOMEOWNER", displayText = "Homeowner", withAddress = true),
+              Option(id = "NO_PERMANENT_OR_FIXED", displayText = "No permanent or fixed address"),
+              Option(id = "NO_ANSWER", displayText = "No answer provided"),
             ),
           ),
-          answer = StringAnswer("NO_PLACE_TO_LIVE"),
+          answer = StringAnswer("SOCIAL_HOUSING"),
         ),
-        ResettlementAssessmentResponseQuestionAndAnswer(ResettlementAssessmentResponseQuestion(id = "WHAT_IS_THE_ADDRESS", title = "What is the address of the property?", type = TypeOfQuestion.ADDRESS)),
+        ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentResponseQuestion(
+            id = "WHERE_DID_THEY_LIVE_ADDRESS",
+            title = "Enter the address",
+            type = TypeOfQuestion.ADDRESS,
+          ),
+          answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123"))),
+        ),
       ),
     )
 
@@ -396,7 +465,7 @@ class AccommodationResettlementAssessmentStrategyTest {
       nomsId = nomsId,
       pathway = Pathway.ACCOMMODATION,
       assessmentType = ResettlementAssessmentType.BCST2,
-      pageId = "WHERE_WILL_THEY_LIVE",
+      pageId = "WHERE_DID_THEY_LIVE",
     )
     Assertions.assertEquals(expectedPage, page)
   }

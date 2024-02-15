@@ -252,7 +252,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
   private fun convertFromSupportNeedAnswerToStatus(supportNeed: Answer<*>?): Status {
     if (supportNeed is StringAnswer) {
       return when (supportNeed.answer) {
-        "SUPPORT_REQUIRED" -> Status.NOT_STARTED
+        "SUPPORT_REQUIRED" -> Status.SUPPORT_REQUIRED
         "SUPPORT_NOT_REQUIRED" -> Status.SUPPORT_NOT_REQUIRED
         "SUPPORT_DECLINED" -> Status.SUPPORT_DECLINED
         else -> throw ServerWebInputException("Support need [$supportNeed] is not a valid option")

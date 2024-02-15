@@ -20,6 +20,7 @@ class StatusRepositoryTest : RepositoryTestBase() {
       StatusEntity(Status.SUPPORT_NOT_REQUIRED.id, "Support Not Required", true, LocalDateTime.now()),
       StatusEntity(Status.SUPPORT_DECLINED.id, "Support Declined", true, LocalDateTime.now()),
       StatusEntity(Status.DONE.id, "Done", true, LocalDateTime.now()),
+      StatusEntity(Status.SUPPORT_REQUIRED.id, "Support Required", true, LocalDateTime.now()),
     )
 
     val statusesFromDatabase = statusRepository.findAll()

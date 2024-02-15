@@ -75,7 +75,11 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
       // Option 1 - If the current page is null then send back the first page unless there is already an assessment completed, in which case go straight to CHECK_ANSWERS
       val existingAssessment = getExistingAssessment(nomsId, pathway, assessmentType)
       nextPage = if (existingAssessment == null) {
-        assessmentPageClass.java.enumConstants[0] as IAssessmentPage
+        if (assessmentPageClass.java.enumConstants.isNotEmpty()) {
+          assessmentPageClass.java.enumConstants[0] as IAssessmentPage
+        } else {
+          GenericAssessmentPage.ASSESSMENT_SUMMARY
+        }
       } else {
         GenericAssessmentPage.CHECK_ANSWERS
       }

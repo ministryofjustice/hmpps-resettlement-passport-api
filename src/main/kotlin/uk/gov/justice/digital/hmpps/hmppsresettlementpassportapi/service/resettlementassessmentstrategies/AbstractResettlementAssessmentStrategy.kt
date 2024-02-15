@@ -43,7 +43,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
   private val assessmentPageClass: KClass<T>,
   private val questionClass: KClass<Q>,
 ) :
-  IResettlementAssessmentStrategy where T : Enum<*>, T : IAssessmentPage, Q : Enum<*>, Q : IResettlementAssessmentQuestion {
+  IResettlementAssessmentStrategy<Q> where T : Enum<*>, T : IAssessmentPage, Q : Enum<*>, Q : IResettlementAssessmentQuestion {
 
   override fun getNextPageId(
     assessment: ResettlementAssessmentRequest,
@@ -119,10 +119,10 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     // Obtain COMPLETE and SUBMITTED resettlement status entity from database
     val resettlementAssessmentStatusEntities = resettlementAssessmentStatusRepository.findAll().filter { it.id in listOf(ResettlementAssessmentStatus.COMPLETE.id, ResettlementAssessmentStatus.SUBMITTED.id) }
 
-    return resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
+    return resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeInAndAssessmentStatusInOrderByCreationDateDesc(
       prisonerEntity,
       pathwayEntity,
-      assessmentType,
+      listOf(assessmentType),
       resettlementAssessmentStatusEntities,
     )
   }
@@ -273,6 +273,8 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
       throw ServerWebInputException("Answer [$answer] must be a StringAnswer")
     }
   }
+
+  override fun getQuestionClass(): KClass<Q> = questionClass
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)

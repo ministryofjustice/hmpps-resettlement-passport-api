@@ -145,7 +145,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  @Sql("classpath:testdata/sql/seed-resettlement-assessment-5.sql")
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-6.sql")
   fun `Get assessment check answers page happy path`() {
     val nomsId = "G1458GV"
     val pathway = "ACCOMMODATION"
@@ -540,6 +540,76 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     webTestClient.post()
       .uri("resettlement-passport/prisoner/$nomsId/resettlement-assessment/submit?assessmentType=$assessmentType")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), authSource = "nomis"))
+      .exchange()
+      .expectStatus().isNotFound
+      .expectHeader().contentType("application/json")
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-5.sql")
+  fun `Get latest resettlement assessment summary - happy path`() {
+    val expectedOutput = readFile("testdata/expectation/latest-resettlement-assessment-1.json")
+
+    val nomsId = "G4161UF"
+    val pathway = "ACCOMMODATION"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/latest")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput, true)
+    unmockkAll()
+  }
+
+  @Test
+  fun `Get latest resettlement assessment summary - unauthorized`() {
+    val nomsId = "G4161UF"
+    val pathway = "ACCOMMODATION"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/latest")
+      .exchange()
+      .expectStatus().isUnauthorized
+  }
+
+  @Test
+  fun `Get latest resettlement assessment summary - forbidden`() {
+    val nomsId = "G4161UF"
+    val pathway = "ACCOMMODATION"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/latest")
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
+      .expectHeader().contentType("application/json")
+  }
+
+  @Test
+  fun `Get latest resettlement assessment summary - prisoner not found`() {
+    val nomsId = "G4161UF"
+    val pathway = "ACCOMMODATION"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/latest")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isNotFound
+      .expectHeader().contentType("application/json")
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-2.sql")
+  fun `Get latest resettlement assessment summary - no assessments found`() {
+    val nomsId = "G4161UF"
+    val pathway = "ACCOMMODATION"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/latest")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
       .expectHeader().contentType("application/json")

@@ -4,9 +4,18 @@ import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LatestResettlementAssessmentResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LatestResettlementAssessmentResponseQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayAndStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatusAndCaseNote
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.MapAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.PrisonerResettlementAssessment
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatus
@@ -16,6 +25,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentStatusRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.GenericResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.IResettlementAssessmentStrategy
 import java.time.LocalDateTime
 
 @Service
@@ -122,4 +133,75 @@ class ResettlementAssessmentService(
       resettlementAssessmentRepository.save(assessment)
     }
   }
+
+  fun getLatestResettlementAssessmentByNomsIdAndPathway(nomsId: String, pathway: Pathway, resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy<*>>): LatestResettlementAssessmentResponse {
+    val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+
+    val pathwayEntity = pathwayRepository.findById(pathway.id).get()
+    val resettlementStatusEntity = resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.SUBMITTED.id).get()
+
+    val resettlementAssessment = resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentStatusOrderByCreationDateDesc(prisonerEntity, pathwayEntity, resettlementStatusEntity)
+      ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway")
+
+    val questionClass = resettlementAssessmentStrategies.first { it.appliesTo(Pathway.getById(resettlementAssessment.pathway.id)) }.getQuestionClass()
+    val questionsAndAnswers = resettlementAssessment.assessment.assessment.mapNotNull {
+      val question = convertEnumStringToEnum(questionClass, GenericResettlementAssessmentQuestion::class, it.questionId) as IResettlementAssessmentQuestion
+      if (question !in listOf(GenericResettlementAssessmentQuestion.SUPPORT_NEEDS, GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY)) {
+        LatestResettlementAssessmentResponseQuestionAndAnswer(question.title, convertAnswerToString(question.type, question.options, it.answer))
+      } else {
+        null
+      }
+    }
+
+    return LatestResettlementAssessmentResponse(
+      lastUpdated = resettlementAssessment.creationDate,
+      questionsAndAnswers = questionsAndAnswers,
+    )
+  }
+
+  fun convertAnswerToString(type: TypeOfQuestion, options: List<Option>?, answer: Answer<*>): String? {
+    val answerAsString = when (answer) {
+      is StringAnswer -> answer.answer as String
+      is ListAnswer -> {
+        val listAnswer = answer.answer
+        if (listAnswer != null) {
+          convertFromListToStringWithLineBreaks(listAnswer)
+        } else {
+          null
+        }
+      }
+      is MapAnswer -> {
+        val listOfMapsAnswer = answer.answer
+        if (listOfMapsAnswer != null) {
+          convertFromListOfMapsToStringWithLineBreaks(listOfMapsAnswer)
+        } else {
+          null
+        }
+      }
+
+      else -> {
+        throw RuntimeException("Unknown answer type ${answer::class.qualifiedName}")
+      }
+    }
+
+    return if (type in listOf(TypeOfQuestion.RADIO_WITH_ADDRESS, TypeOfQuestion.RADIO)) {
+      options?.find { it.id == answerAsString }?.displayText ?: answerAsString
+    } else {
+      answerAsString
+    }
+  }
+
+  fun convertFromListToStringWithLineBreaks(stringElements: List<String>) =
+    stringElements
+      .filter { it.isNotBlank() }
+      .map { it.trim() }
+      .reduce { acc, value -> "$acc\n$value" }
+
+  private fun convertFromListOfMapsToStringWithLineBreaks(listOfMaps: List<Map<String, String>>) =
+    listOfMaps
+      .flatMap { it.values }
+      .filter { it.isNotBlank() }
+      .map { it.trim() }
+      .reduce { acc, value -> "$acc\n$value" }
 }

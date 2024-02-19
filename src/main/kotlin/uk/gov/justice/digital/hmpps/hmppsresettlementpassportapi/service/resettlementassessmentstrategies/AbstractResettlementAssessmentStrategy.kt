@@ -43,7 +43,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
   private val assessmentPageClass: KClass<T>,
   private val questionClass: KClass<Q>,
 ) :
-  IResettlementAssessmentStrategy where T : Enum<*>, T : IAssessmentPage, Q : Enum<*>, Q : IResettlementAssessmentQuestion {
+  IResettlementAssessmentStrategy<Q> where T : Enum<*>, T : IAssessmentPage, Q : Enum<*>, Q : IResettlementAssessmentQuestion {
 
   override fun getNextPageId(
     assessment: ResettlementAssessmentRequest,
@@ -280,6 +280,8 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
       throw ServerWebInputException("Answer [$answer] must be a StringAnswer")
     }
   }
+
+  override fun getQuestionClass(): KClass<Q> = questionClass
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)

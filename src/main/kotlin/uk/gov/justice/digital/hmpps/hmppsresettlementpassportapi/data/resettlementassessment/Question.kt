@@ -37,6 +37,7 @@ enum class TypeOfQuestion {
   SHORT_TEXT,
   LONG_TEXT,
   ADDRESS,
+  CHECKBOX,
 }
 
 val yesNoOptions = listOf(

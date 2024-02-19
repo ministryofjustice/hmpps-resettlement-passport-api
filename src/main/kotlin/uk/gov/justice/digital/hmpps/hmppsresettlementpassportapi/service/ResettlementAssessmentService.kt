@@ -5,13 +5,18 @@ import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LatestResettlementAssessmentResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LatestResettlementAssessmentResponseQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayAndStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatusAndCaseNote
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponseQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.MapAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.PrisonerResettlementAssessment
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
@@ -20,7 +25,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentStatusRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.GenericAssessmentPage
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.GenericResettlementAssessmentQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.IResettlementAssessmentStrategy
 import java.time.LocalDateTime
 
@@ -68,9 +73,28 @@ class ResettlementAssessmentService(
 
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+    val resettlementAssessmentStatusCompleteEntity = resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.COMPLETE.id).get()
     val resettlementAssessmentStatusSubmittedEntity = resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.SUBMITTED.id).get()
 
-    val assessmentList = getLatestAssessments(prisonerEntity, listOf(assessmentType), ResettlementAssessmentStatus.COMPLETE)
+    val assessmentList = mutableListOf<ResettlementAssessmentEntity>()
+
+    // For each pathway, get the latest complete assessment
+    Pathway.entries.forEach { pathway ->
+      val pathwayEntity = pathwayRepository.findById(pathway.id).get()
+      val resettlementAssessment = resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
+        prisoner = prisonerEntity,
+        pathway = pathwayEntity,
+        assessmentType = assessmentType,
+        assessmentStatus = listOf(resettlementAssessmentStatusCompleteEntity),
+      )
+      if (resettlementAssessment != null) {
+        assessmentList.add(resettlementAssessment)
+      }
+    }
+
+    if (assessmentList.size != Pathway.entries.size) {
+      throw RuntimeException("Found [${assessmentList.size}] assessments for prisoner [$nomsId]. This should be all ${Pathway.entries.size} pathways!")
+    }
 
     assessmentList.forEach { assessment ->
 
@@ -110,51 +134,77 @@ class ResettlementAssessmentService(
     }
   }
 
-  fun getLatestAssessments(prisonerEntity: PrisonerEntity, types: List<ResettlementAssessmentType>, status: ResettlementAssessmentStatus): List<ResettlementAssessmentEntity> {
-    val assessmentList = mutableListOf<ResettlementAssessmentEntity>()
-
-    val resettlementAssessmentStatusEntity = resettlementAssessmentStatusRepository.findById(status.id).get()
-
-    // For each pathway, get the latest complete assessment
-    Pathway.entries.forEach { pathway ->
-      val pathwayEntity = pathwayRepository.findById(pathway.id).get()
-      val resettlementAssessment = resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeInAndAssessmentStatusInOrderByCreationDateDesc(
-        prisoner = prisonerEntity,
-        pathway = pathwayEntity,
-        assessmentType = types,
-        assessmentStatus = listOf(resettlementAssessmentStatusEntity),
-      )
-      if (resettlementAssessment != null) {
-        assessmentList.add(resettlementAssessment)
-      }
-    }
-
-    if (assessmentList.size != Pathway.entries.size) {
-      throw RuntimeException("Found [${assessmentList.size}] assessments for prisoner [${prisonerEntity.nomsId}]. This should be all ${Pathway.entries.size} pathways!")
-    }
-
-    return assessmentList
-  }
-
-  fun getLatestResettlementAssessmentByNomsId(nomsId: String, resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy<*>>): LatestResettlementAssessmentResponse {
+  fun getLatestResettlementAssessmentByNomsIdAndPathway(nomsId: String, pathway: Pathway, resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy<*>>): LatestResettlementAssessmentResponse {
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
 
-    val assessmentList = getLatestAssessments(prisonerEntity, ResettlementAssessmentType.entries, ResettlementAssessmentStatus.SUBMITTED)
+    val pathwayEntity = pathwayRepository.findById(pathway.id).get()
+    val resettlementStatusEntity = resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.SUBMITTED.id).get()
 
-    val questionsAndAnswers = mutableListOf<ResettlementAssessmentResponseQuestionAndAnswer>()
-    assessmentList.forEach { resettlementAssessment ->
-      val questionClass = resettlementAssessmentStrategies.first { it.appliesTo(Pathway.getById(resettlementAssessment.pathway.id)) }.getQuestionClass()
-      questionsAndAnswers.addAll(
-        resettlementAssessment.assessment.assessment.map {
-          ResettlementAssessmentResponseQuestionAndAnswer(convertEnumStringToEnum(questionClass, GenericAssessmentPage::class, it.questionId) as IResettlementAssessmentQuestion, it.answer)
-        }
-      )
+    val resettlementAssessment = resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentStatusOrderByCreationDateDesc(prisonerEntity, pathwayEntity, resettlementStatusEntity)
+      ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway")
+
+    val questionClass = resettlementAssessmentStrategies.first { it.appliesTo(Pathway.getById(resettlementAssessment.pathway.id)) }.getQuestionClass()
+    val questionsAndAnswers = resettlementAssessment.assessment.assessment.mapNotNull {
+      val question = convertEnumStringToEnum(questionClass, GenericResettlementAssessmentQuestion::class, it.questionId) as IResettlementAssessmentQuestion
+      if (question !in listOf(GenericResettlementAssessmentQuestion.SUPPORT_NEEDS, GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY)) {
+        LatestResettlementAssessmentResponseQuestionAndAnswer(question.title, convertAnswerToString(question.type, question.options, it.answer))
+      } else {
+        null
+      }
     }
 
     return LatestResettlementAssessmentResponse(
-      lastUpdated = assessmentList.map { it.creationDate }.maxOf { it },
+      lastUpdated = resettlementAssessment.creationDate,
       questionsAndAnswers = questionsAndAnswers,
     )
+  }
+
+  fun convertAnswerToString(type: TypeOfQuestion, options: List<Option>?, answer: Answer<*>): String? {
+    val answerAsString = if (answer is StringAnswer) {
+      answer.answer as String
+    } else if (answer is ListAnswer) {
+      val listAnswer = answer.answer
+      if (listAnswer != null) {
+        convertFromListToStringWithLineBreaks(listAnswer)
+      } else {
+        null
+      }
+    } else if (answer is MapAnswer) {
+      val listOfMapsAnswer = answer.answer
+      if (listOfMapsAnswer != null) {
+        convertFromListOfMapsToStringWithLineBreaks(listOfMapsAnswer)
+      } else {
+        null
+      }
+    } else {
+      throw RuntimeException("Unknown answer type ${answer::class.qualifiedName}")
+    }
+
+    return if (type in listOf(TypeOfQuestion.RADIO_WITH_ADDRESS, TypeOfQuestion.RADIO)) {
+      options?.find { it.id == answerAsString }?.displayText ?: answerAsString
+    } else {
+      answerAsString
+    }
+  }
+
+  fun convertFromListToStringWithLineBreaks(stringElements: List<String>): String {
+    var string = ""
+    stringElements.forEach {
+      if (it.isNotBlank()) {
+        string += "${it.trim()}\n"
+      }
+    }
+    return string.removeSuffix("\n")
+  }
+
+  private fun convertFromListOfMapsToStringWithLineBreaks(listOfMaps: List<Map<String, String>>): String {
+    var string = ""
+    listOfMaps.flatMap { it.values }.forEach {
+      if (it.isNotBlank()) {
+        string += "${it.trim()}\n"
+      }
+    }
+    return string.removeSuffix("\n")
   }
 }

@@ -119,10 +119,10 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     // Obtain COMPLETE and SUBMITTED resettlement status entity from database
     val resettlementAssessmentStatusEntities = resettlementAssessmentStatusRepository.findAll().filter { it.id in listOf(ResettlementAssessmentStatus.COMPLETE.id, ResettlementAssessmentStatus.SUBMITTED.id) }
 
-    return resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeInAndAssessmentStatusInOrderByCreationDateDesc(
+    return resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
       prisonerEntity,
       pathwayEntity,
-      listOf(assessmentType),
+      assessmentType,
       resettlementAssessmentStatusEntities,
     )
   }

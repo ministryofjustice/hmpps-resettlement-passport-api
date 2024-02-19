@@ -264,7 +264,7 @@ class ResettlementAssessmentController(
     return ResponseEntity.ok().build()
   }
 
-  @GetMapping("/{nomsId}/resettlement-assessment/latest", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @GetMapping("/{nomsId}/resettlement-assessment/{pathway}/latest", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
     summary = "Returns the latest submitted version of prisoner's resettlement assessment",
     description = "Returns the latest submitted version of prisoner's resettlement assessment",
@@ -295,7 +295,6 @@ class ResettlementAssessmentController(
         description = "Incorrect information provided",
         content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
       ),
-
       ApiResponse(
         responseCode = "404",
         description = "Cannot find prisoner or pathway status entry to update",
@@ -308,5 +307,8 @@ class ResettlementAssessmentController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-  ) = resettlementAssessmentService.getLatestResettlementAssessmentByNomsId(nomsId, resettlementAssessmentStrategies)
+    @PathVariable("pathway")
+    @Parameter(required = true)
+    pathway: Pathway,
+  ) = resettlementAssessmentService.getLatestResettlementAssessmentByNomsIdAndPathway(nomsId, pathway, resettlementAssessmentStrategies)
 }

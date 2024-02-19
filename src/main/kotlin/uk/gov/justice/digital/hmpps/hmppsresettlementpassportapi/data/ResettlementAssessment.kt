@@ -41,6 +41,7 @@ data class ResettlementAssessmentResponseQuestion(
 
 data class LatestResettlementAssessmentResponse(
   val lastUpdated: LocalDateTime,
+  val updatedBy: String,
   val questionsAndAnswers: List<LatestResettlementAssessmentResponseQuestionAndAnswer>,
 )
 

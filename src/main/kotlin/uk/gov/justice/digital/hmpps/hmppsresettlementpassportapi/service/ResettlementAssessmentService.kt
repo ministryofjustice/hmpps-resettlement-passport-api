@@ -161,24 +161,28 @@ class ResettlementAssessmentService(
   }
 
   fun convertAnswerToString(type: TypeOfQuestion, options: List<Option>?, answer: Answer<*>): String? {
-    val answerAsString = if (answer is StringAnswer) {
-      answer.answer as String
-    } else if (answer is ListAnswer) {
-      val listAnswer = answer.answer
-      if (listAnswer != null) {
-        convertFromListToStringWithLineBreaks(listAnswer)
-      } else {
-        null
+    val answerAsString = when (answer) {
+      is StringAnswer -> answer.answer as String
+      is ListAnswer -> {
+        val listAnswer = answer.answer
+        if (listAnswer != null) {
+          convertFromListToStringWithLineBreaks(listAnswer)
+        } else {
+          null
+        }
       }
-    } else if (answer is MapAnswer) {
-      val listOfMapsAnswer = answer.answer
-      if (listOfMapsAnswer != null) {
-        convertFromListOfMapsToStringWithLineBreaks(listOfMapsAnswer)
-      } else {
-        null
+      is MapAnswer -> {
+        val listOfMapsAnswer = answer.answer
+        if (listOfMapsAnswer != null) {
+          convertFromListOfMapsToStringWithLineBreaks(listOfMapsAnswer)
+        } else {
+          null
+        }
       }
-    } else {
-      throw RuntimeException("Unknown answer type ${answer::class.qualifiedName}")
+
+      else -> {
+        throw RuntimeException("Unknown answer type ${answer::class.qualifiedName}")
+      }
     }
 
     return if (type in listOf(TypeOfQuestion.RADIO_WITH_ADDRESS, TypeOfQuestion.RADIO)) {
@@ -188,23 +192,16 @@ class ResettlementAssessmentService(
     }
   }
 
-  fun convertFromListToStringWithLineBreaks(stringElements: List<String>): String {
-    var string = ""
-    stringElements.forEach {
-      if (it.isNotBlank()) {
-        string += "${it.trim()}\n"
-      }
-    }
-    return string.removeSuffix("\n")
-  }
+  fun convertFromListToStringWithLineBreaks(stringElements: List<String>) =
+    stringElements
+      .filter { it.isNotBlank() }
+      .map { it.trim() }
+      .reduce { acc, value -> "$acc\n$value" }
 
-  private fun convertFromListOfMapsToStringWithLineBreaks(listOfMaps: List<Map<String, String>>): String {
-    var string = ""
-    listOfMaps.flatMap { it.values }.forEach {
-      if (it.isNotBlank()) {
-        string += "${it.trim()}\n"
-      }
-    }
-    return string.removeSuffix("\n")
-  }
+  private fun convertFromListOfMapsToStringWithLineBreaks(listOfMaps: List<Map<String, String>>) =
+    listOfMaps
+      .flatMap { it.values }
+      .filter { it.isNotBlank() }
+      .map { it.trim() }
+      .reduce { acc, value -> "$acc\n$value" }
 }

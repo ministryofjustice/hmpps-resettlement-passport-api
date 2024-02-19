@@ -317,103 +317,103 @@ class AccommodationResettlementAssessmentStrategyTest {
           ),
         ),
       ),
-      Arguments.of(
-        "WHERE_WILL_THEY_LIVE_1",
-        ResettlementAssessmentResponsePage(
-          id = "WHERE_WILL_THEY_LIVE_1",
-          questionsAndAnswers = mutableListOf(
-            ResettlementAssessmentResponseQuestionAndAnswer(
-              ResettlementAssessmentResponseQuestion(
-                id = "WHERE_WILL_THEY_LIVE_1",
-                title = "Where will the person in prison live when they are released?",
-                type = TypeOfQuestion.RADIO_WITH_ADDRESS,
-                options = mutableListOf(
-                  Option(id = "RETURN_TO_PREVIOUS_ADDRESS", displayText = "Return to their previous address"),
-                  Option(id = "MOVE_TO_NEW_ADDRESS", displayText = "Move to a new address", withAddress = true),
-                  Option(id = "DOES_NOT_HAVE_ANYWHERE", displayText = "Does not have anywhere to live"),
-                  Option(id = "NO_ANSWER", displayText = "No answer provided"),
-                ),
+    ),
+    Arguments.of(
+      "WHERE_WILL_THEY_LIVE_1",
+      ResettlementAssessmentResponsePage(
+        id = "WHERE_WILL_THEY_LIVE_1",
+        questionsAndAnswers = mutableListOf(
+          ResettlementAssessmentResponseQuestionAndAnswer(
+            ResettlementAssessmentResponseQuestion(
+              id = "WHERE_WILL_THEY_LIVE_1",
+              title = "Where will the person in prison live when they are released?",
+              type = TypeOfQuestion.RADIO_WITH_ADDRESS,
+              options = mutableListOf(
+                Option(id = "RETURN_TO_PREVIOUS_ADDRESS", displayText = "Return to their previous address"),
+                Option(id = "MOVE_TO_NEW_ADDRESS", displayText = "Move to a new address", withAddress = true),
+                Option(id = "DOES_NOT_HAVE_ANYWHERE", displayText = "Does not have anywhere to live"),
+                Option(id = "NO_ANSWER", displayText = "No answer provided"),
               ),
             ),
-            ResettlementAssessmentResponseQuestionAndAnswer(
-              ResettlementAssessmentResponseQuestion(
-                id = "WHERE_WILL_THEY_LIVE_ADDRESS",
-                title = "Enter the address",
-                type = TypeOfQuestion.ADDRESS,
-              ),
+          ),
+          ResettlementAssessmentResponseQuestionAndAnswer(
+            ResettlementAssessmentResponseQuestion(
+              id = "WHERE_WILL_THEY_LIVE_ADDRESS",
+              title = "Enter the address",
+              type = TypeOfQuestion.ADDRESS,
             ),
           ),
         ),
       ),
-      Arguments.of(
-        "WHERE_WILL_THEY_LIVE_2",
-        ResettlementAssessmentResponsePage(
-          id = "WHERE_WILL_THEY_LIVE_2",
-          questionsAndAnswers = mutableListOf(
-            ResettlementAssessmentResponseQuestionAndAnswer(
-              ResettlementAssessmentResponseQuestion(
-                id = "WHERE_WILL_THEY_LIVE_2",
-                title = "Where will the person in prison live when they are released?",
-                type = TypeOfQuestion.RADIO_WITH_ADDRESS,
-                options = mutableListOf(
-                  Option(id = "MOVE_TO_NEW_ADDRESS", displayText = "Move to a new address", withAddress = true),
-                  Option(id = "DOES_NOT_HAVE_ANYWHERE", displayText = "Does not have anywhere to live"),
-                  Option(id = "NO_ANSWER", displayText = "No answer provided"),
-                ),
+    ),
+    Arguments.of(
+      "WHERE_WILL_THEY_LIVE_2",
+      ResettlementAssessmentResponsePage(
+        id = "WHERE_WILL_THEY_LIVE_2",
+        questionsAndAnswers = mutableListOf(
+          ResettlementAssessmentResponseQuestionAndAnswer(
+            ResettlementAssessmentResponseQuestion(
+              id = "WHERE_WILL_THEY_LIVE_2",
+              title = "Where will the person in prison live when they are released?",
+              type = TypeOfQuestion.RADIO_WITH_ADDRESS,
+              options = mutableListOf(
+                Option(id = "MOVE_TO_NEW_ADDRESS", displayText = "Move to a new address", withAddress = true),
+                Option(id = "DOES_NOT_HAVE_ANYWHERE", displayText = "Does not have anywhere to live"),
+                Option(id = "NO_ANSWER", displayText = "No answer provided"),
               ),
             ),
-            ResettlementAssessmentResponseQuestionAndAnswer(
-              ResettlementAssessmentResponseQuestion(
-                id = "WHERE_WILL_THEY_LIVE_ADDRESS",
-                title = "Enter the address",
-                type = TypeOfQuestion.ADDRESS,
-              ),
+          ),
+          ResettlementAssessmentResponseQuestionAndAnswer(
+            ResettlementAssessmentResponseQuestion(
+              id = "WHERE_WILL_THEY_LIVE_ADDRESS",
+              title = "Enter the address",
+              type = TypeOfQuestion.ADDRESS,
             ),
           ),
         ),
       ),
-      Arguments.of(
-        "ASSESSMENT_SUMMARY",
-        ResettlementAssessmentResponsePage(
-          id = "ASSESSMENT_SUMMARY",
-          questionsAndAnswers = mutableListOf(
-            ResettlementAssessmentResponseQuestionAndAnswer(
-              ResettlementAssessmentResponseQuestion(
-                id = "SUPPORT_NEEDS",
-                title = "",
-                type = TypeOfQuestion.RADIO,
-                options = mutableListOf(
-                  Option(
-                    id = "SUPPORT_REQUIRED",
-                    displayText = "Support required",
-                    description = "a need for support has been identified and is accepted",
-                  ),
-                  Option(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
-                  Option(
-                    id = "SUPPORT_DECLINED",
-                    displayText = "Support declined",
-                    description = "a need has been identified but support is declined",
-                  ),
+    ),
+    Arguments.of(
+      "ASSESSMENT_SUMMARY",
+      ResettlementAssessmentResponsePage(
+        id = "ASSESSMENT_SUMMARY",
+        questionsAndAnswers = mutableListOf(
+          ResettlementAssessmentResponseQuestionAndAnswer(
+            ResettlementAssessmentResponseQuestion(
+              id = "SUPPORT_NEEDS",
+              title = "",
+              type = TypeOfQuestion.RADIO,
+              options = mutableListOf(
+                Option(
+                  id = "SUPPORT_REQUIRED",
+                  displayText = "Support required",
+                  description = "a need for support has been identified and is accepted",
+                ),
+                Option(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
+                Option(
+                  id = "SUPPORT_DECLINED",
+                  displayText = "Support declined",
+                  description = "a need has been identified but support is declined",
                 ),
               ),
             ),
-            ResettlementAssessmentResponseQuestionAndAnswer(
-              ResettlementAssessmentResponseQuestion(
-                id = "CASE_NOTE_SUMMARY",
-                title = "Add a case note summary",
-                subTitle = "This will be displayed as a case note in both DPS and nDelius",
-                type = TypeOfQuestion.LONG_TEXT,
-              ),
+          ),
+          ResettlementAssessmentResponseQuestionAndAnswer(
+            ResettlementAssessmentResponseQuestion(
+              id = "CASE_NOTE_SUMMARY",
+              title = "Add a case note summary",
+              subTitle = "This will be displayed as a case note in both DPS and nDelius",
+              type = TypeOfQuestion.LONG_TEXT,
             ),
           ),
         ),
       ),
-      Arguments.of(
-        "CHECK_ANSWERS",
-        ResettlementAssessmentResponsePage(
-          id = "CHECK_ANSWERS",
-          questionsAndAnswers = mutableListOf(),
-        ),
+    ),
+    Arguments.of(
+      "CHECK_ANSWERS",
+      ResettlementAssessmentResponsePage(
+        id = "CHECK_ANSWERS",
+        questionsAndAnswers = mutableListOf(),
       ),
     ),
   )

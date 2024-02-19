@@ -156,6 +156,7 @@ class ResettlementAssessmentService(
 
     return LatestResettlementAssessmentResponse(
       lastUpdated = resettlementAssessment.creationDate,
+      updatedBy = resettlementAssessment.createdBy,
       questionsAndAnswers = questionsAndAnswers,
     )
   }

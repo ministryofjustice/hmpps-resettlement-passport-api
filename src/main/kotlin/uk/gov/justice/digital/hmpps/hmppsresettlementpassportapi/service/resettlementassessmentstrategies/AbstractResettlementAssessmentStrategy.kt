@@ -145,7 +145,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     val page = convertEnumStringToEnum(enumClass = assessmentPageClass, secondaryEnumClass = GenericAssessmentPage::class, stringValue = pageId)
 
     // Convert to ResettlementAssessmentPage DTO
-    val resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(
+    var resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(
       id = page.id,
       questionsAndAnswers = page.questionsAndAnswers.map {
         ResettlementAssessmentResponseQuestionAndAnswer(
@@ -164,6 +164,11 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     // If there is an existing assessment, add the answer into the question
     // Do not populate the case notes
     if (existingAssessment != null) {
+      if (resettlementAssessmentResponsePage.id == GenericAssessmentPage.CHECK_ANSWERS.id) {
+        val questionsAndAnswers: List<ResettlementAssessmentResponseQuestionAndAnswer> =
+          existingAssessment.assessment.assessment.map { ResettlementAssessmentResponseQuestionAndAnswer(question = getQuestionList().first { q -> q.id == it.questionId }, answer = it.answer) }
+        resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(resettlementAssessmentResponsePage.id, questionsAndAnswers = questionsAndAnswers)
+      }
       resettlementAssessmentResponsePage.questionsAndAnswers.forEach { q ->
         val existingAnswer = existingAssessment.assessment.assessment.find { it.questionId == q.question.id }
         if (existingAnswer != null && q.question != GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY) {
@@ -177,6 +182,8 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
   }
 
   abstract fun getPageList(): List<ResettlementAssessmentNode>
+
+  abstract fun getQuestionList(): List<IResettlementAssessmentQuestion>
 
   @Transactional
   override fun completeAssessment(

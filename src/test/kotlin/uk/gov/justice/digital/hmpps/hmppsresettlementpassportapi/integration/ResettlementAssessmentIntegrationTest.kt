@@ -145,6 +145,25 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-5.sql")
+  fun `Get assessment check answers page happy path`() {
+    val nomsId = "G1458GV"
+    val pathway = "ACCOMMODATION"
+    val assessmentType = "BCST2"
+    val page = "CHECK_ANSWERS"
+
+    val expectedOutput = readFile("testdata/expectation/resettlement-assessment-check-answers-1.json")
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/page/$page?assessmentType=$assessmentType")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput)
+  }
+
+  @Test
   @Sql("classpath:testdata/sql/seed-resettlement-assessment-1.sql")
   fun `Get resettlement assessment summary by noms ID - happy path`() {
     mockkStatic(LocalDateTime::class)

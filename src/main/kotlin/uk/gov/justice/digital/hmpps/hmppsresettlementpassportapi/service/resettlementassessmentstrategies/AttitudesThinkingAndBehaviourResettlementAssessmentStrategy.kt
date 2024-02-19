@@ -26,6 +26,9 @@ class AttitudesThinkingAndBehaviourResettlementAssessmentStrategy(
   override fun appliesTo(pathway: Pathway) = pathway == Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR
 
   override fun getPageList(): List<ResettlementAssessmentNode> = emptyList() // TODO Add page list
+  override fun getQuestionList(): List<IResettlementAssessmentQuestion> {
+    return AttitudesThinkingAndBehaviourResettlementAssessmentQuestion.values().asList()
+  }
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)

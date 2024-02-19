@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
+import java.time.LocalDateTime
 
 data class ResettlementAssessmentRequest(
   val questionsAndAnswers: List<ResettlementAssessmentRequestQuestionAndAnswer<*>>?,
@@ -37,3 +38,13 @@ data class ResettlementAssessmentResponseQuestion(
   override val type: TypeOfQuestion,
   override val options: MutableList<Option>? = null,
 ) : IResettlementAssessmentQuestion
+
+data class LatestResettlementAssessmentResponse(
+  val lastUpdated: LocalDateTime,
+  val questionsAndAnswers: List<LatestResettlementAssessmentResponseQuestionAndAnswer>,
+)
+
+data class LatestResettlementAssessmentResponseQuestionAndAnswer(
+  val questionTitle: String,
+  val answer: String?,
+)

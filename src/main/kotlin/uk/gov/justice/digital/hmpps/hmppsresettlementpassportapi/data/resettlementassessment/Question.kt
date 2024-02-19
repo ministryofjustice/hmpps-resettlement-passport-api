@@ -33,12 +33,9 @@ data class Option(
 
 enum class TypeOfQuestion {
   RADIO_WITH_ADDRESS,
-  LIST_OF_PEOPLE,
   RADIO,
   SHORT_TEXT,
   LONG_TEXT,
-  DATE,
-  DROPDOWN,
   ADDRESS,
 }
 

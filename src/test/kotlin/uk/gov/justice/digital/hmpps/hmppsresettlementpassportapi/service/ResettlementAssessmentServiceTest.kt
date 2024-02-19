@@ -3,11 +3,21 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.MapAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.PrisonerResettlementAssessment
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
@@ -24,7 +34,9 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Optional
+import java.util.stream.Stream
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension::class)
 class ResettlementAssessmentServiceTest {
   private lateinit var resettlementAssessmentService: ResettlementAssessmentService
@@ -156,6 +168,24 @@ class ResettlementAssessmentServiceTest {
     val response = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId)
     Assertions.assertEquals(prisonerResettlementAssessmentSummary, response)
   }
+
+  @ParameterizedTest
+  @MethodSource("test convertAnswerToString data")
+  fun `test convertAnswerToString`(type: TypeOfQuestion, options: List<Option>?, answer: Answer<*>, expectedString: String) {
+    Assertions.assertEquals(expectedString, resettlementAssessmentService.convertAnswerToString(type, options, answer))
+  }
+
+  private fun `test convertAnswerToString data`() = Stream.of(
+    Arguments.of(TypeOfQuestion.LONG_TEXT, null, StringAnswer("My answer"), "My answer"),
+    Arguments.of(TypeOfQuestion.SHORT_TEXT, null, StringAnswer("My answer"), "My answer"),
+    Arguments.of(TypeOfQuestion.RADIO, listOf(Option("MY_ANSWER", "My answer"), Option("OTHER_OPTION", "Other option")), StringAnswer("MY_ANSWER"), "My answer"),
+    Arguments.of(TypeOfQuestion.RADIO, null, StringAnswer("MY_ANSWER"), "MY_ANSWER"),
+    Arguments.of(TypeOfQuestion.RADIO_WITH_ADDRESS, listOf(Option("MY_ANSWER", "My answer"), Option("OTHER_OPTION", "Other option", "desc", true)), StringAnswer("MY_ANSWER"), "My answer"),
+    Arguments.of(TypeOfQuestion.RADIO_WITH_ADDRESS, null, StringAnswer("MY_ANSWER"), "MY_ANSWER"),
+    Arguments.of(TypeOfQuestion.ADDRESS, null, MapAnswer(listOf(mapOf("Address line 1" to "123 Main Street"), mapOf("Address line 2" to "Leeds"), mapOf("County" to "West Yorkshire"), mapOf("Postcode" to "LS1 1AB", "Country" to "United Kingdom"))), "123 Main Street\nLeeds\nWest Yorkshire\nLS1 1AB\nUnited Kingdom"),
+    // TODO - change this to CHECKBOXES when this type has been implemented.
+    Arguments.of(TypeOfQuestion.SHORT_TEXT, null, ListAnswer(listOf("ANSWER_1", "ANSWER_2", "ANSWER_3")), "ANSWER_1\nANSWER_2\nANSWER_3"),
+  )
 
   private fun createNotStartedResettlementAssessmentEntity(id: Long, name: String) = ResettlementAssessmentEntity(
     id = id,

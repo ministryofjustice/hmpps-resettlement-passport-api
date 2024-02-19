@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resett
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import org.springframework.stereotype.Service
-import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IAssessmentPage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option

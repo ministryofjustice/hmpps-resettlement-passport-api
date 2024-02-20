@@ -64,6 +64,10 @@ class AccommodationResettlementAssessmentStrategy(
       },
     ),
   )
+
+  override fun getQuestionList(): List<IResettlementAssessmentQuestion> {
+    return AccommodationResettlementAssessmentQuestion.values().asList()
+  }
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)

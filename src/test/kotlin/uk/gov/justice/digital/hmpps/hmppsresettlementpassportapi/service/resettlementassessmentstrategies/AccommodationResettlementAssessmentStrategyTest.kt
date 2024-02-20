@@ -470,6 +470,42 @@ class AccommodationResettlementAssessmentStrategyTest {
     Assertions.assertEquals(expectedPage, page)
   }
 
+  @Test
+  fun `test get page from Id check answers - existing assessment`() {
+    val nomsId = "123"
+
+    val existingAssessment = ResettlementAssessmentQuestionAndAnswerList(
+      listOf(
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE", StringAnswer("SOCIAL_HOUSING")),
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
+      ),
+    )
+
+    setUpMocks("123", true, existingAssessment)
+
+    val expectedPage = ResettlementAssessmentResponsePage(
+      id = "CHECK_ANSWERS",
+      questionsAndAnswers = mutableListOf(
+        ResettlementAssessmentResponseQuestionAndAnswer(
+          AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE,
+          answer = StringAnswer("SOCIAL_HOUSING"),
+        ),
+        ResettlementAssessmentResponseQuestionAndAnswer(
+          AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE_ADDRESS,
+          answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123"))),
+        ),
+      ),
+    )
+
+    val page = resettlementAssessmentService.getPageFromId(
+      nomsId = nomsId,
+      pathway = Pathway.ACCOMMODATION,
+      assessmentType = ResettlementAssessmentType.BCST2,
+      pageId = "CHECK_ANSWERS",
+    )
+    Assertions.assertEquals(expectedPage, page)
+  }
+
   @ParameterizedTest
   @MethodSource("test complete assessment data")
   fun `test complete assessment`(assessment: ResettlementAssessmentCompleteRequest, expectedEntity: ResettlementAssessmentEntity?, expectedException: Throwable?) {

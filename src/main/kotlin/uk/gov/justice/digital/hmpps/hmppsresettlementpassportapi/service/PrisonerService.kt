@@ -87,4 +87,8 @@ class PrisonerService(
       }
     }
   }
+
+  fun getPrisonerEntity(nomsId: String): PrisonerEntity {
+    return prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Unable to find prisoner $nomsId in database.")
+  }
 }

@@ -50,6 +50,7 @@ class PoPUserOTPServiceTest {
     Assertions.assertEquals(popUserOTPEntity, result)
   }
   
+
   @Test
   fun `test delete PoPUserOTP - hard delete`() {
     mockkStatic(LocalDateTime::class)

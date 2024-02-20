@@ -49,31 +49,7 @@ class PoPUserOTPServiceTest {
     val result = popUserOTPService.getOTPByPrisoner(prisonerEntity)
     Assertions.assertEquals(popUserOTPEntity, result)
   }
-
-  /*@Test
-  fun `test create Pop User OTP - creates and returns PoP User OTP`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
-    val prisonerEntity = PrisonerEntity(1, "acb", fakeNow, "crn", "xyz", null)
-    val popUserOTPEntity = PoPUserOTPEntity(
-      null,
-      prisonerEntity,
-      fakeNow,
-      fakeNow.plusDays(7).withHour(11).withMinute(59).withSecond(59),
-      123456
-    )
-
-    Mockito.`when`(popUserOTPRepository.findByPrisoner(any())).thenReturn(null)
-    // Mockito.`when`(popUserOTPRepository.delete(any())).thenReturn(false)
-    Mockito.`when`(popUserOTPRepository.save(any())).thenReturn(popUserOTPEntity)
-    val result = popUserOTPService.createPoPUserOTP(prisonerEntity)
-    Mockito.verify(popUserOTPRepository).save(popUserOTPEntity)
-    Assertions.assertEquals(popUserOTPEntity, result)
-    unmockkStatic(LocalDateTime::class)
-  }
-
-   */
-
+  
   @Test
   fun `test delete PoPUserOTP - hard delete`() {
     mockkStatic(LocalDateTime::class)

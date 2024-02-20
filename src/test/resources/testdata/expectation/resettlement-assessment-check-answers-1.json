@@ -1,0 +1,50 @@
+{
+  "id": "CHECK_ANSWERS",
+  "questionsAndAnswers": [
+    {
+      "question": {
+        "@class": "AccommodationResettlementAssessmentQuestion",
+        "id": "WHERE_DID_THEY_LIVE",
+        "title": "Where did the person in prison live before custody?",
+        "subTitle": null,
+        "type": "RADIO_WITH_ADDRESS",
+        "options": [
+          {
+            "id": "PRIVATE_RENTED_HOUSING",
+            "displayText": "Private rented housing",
+            "description": null,
+            "withAddress": true
+          },
+          {
+            "id": "SOCIAL_HOUSING",
+            "displayText": "Social housing",
+            "description": null,
+            "withAddress": true
+          },
+          {
+            "id": "HOMEOWNER",
+            "displayText": "Homeowner",
+            "description": null,
+            "withAddress": true
+          },
+          {
+            "id": "NO_PERMANENT_OR_FIXED",
+            "displayText": "No permanent or fixed address",
+            "description": null,
+            "withAddress": false
+          },
+          {
+            "id": "NO_ANSWER",
+            "displayText": "No answer provided",
+            "description": null,
+            "withAddress": false
+          }
+        ]
+      },
+      "answer": {
+        "@class": "StringAnswer",
+        "answer": "NO_ANSWER"
+      }
+    }
+  ]
+}

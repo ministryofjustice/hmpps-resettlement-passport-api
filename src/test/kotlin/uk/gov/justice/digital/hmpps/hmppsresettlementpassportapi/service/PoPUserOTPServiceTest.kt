@@ -49,7 +49,6 @@ class PoPUserOTPServiceTest {
     val result = popUserOTPService.getOTPByPrisoner(prisonerEntity)
     Assertions.assertEquals(popUserOTPEntity, result)
   }
-  
 
   @Test
   fun `test delete PoPUserOTP - hard delete`() {

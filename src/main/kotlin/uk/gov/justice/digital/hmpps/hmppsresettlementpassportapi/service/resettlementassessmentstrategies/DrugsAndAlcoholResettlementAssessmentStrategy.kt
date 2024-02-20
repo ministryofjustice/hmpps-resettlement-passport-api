@@ -26,6 +26,9 @@ class DrugsAndAlcoholResettlementAssessmentStrategy(
   override fun appliesTo(pathway: Pathway) = pathway == Pathway.DRUGS_AND_ALCOHOL
 
   override fun getPageList(): List<ResettlementAssessmentNode> = emptyList() // TODO Add page list
+  override fun getQuestionList(): List<IResettlementAssessmentQuestion> {
+    return DrugsAndAlcoholResettlementAssessmentQuestion.values().asList()
+  }
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)

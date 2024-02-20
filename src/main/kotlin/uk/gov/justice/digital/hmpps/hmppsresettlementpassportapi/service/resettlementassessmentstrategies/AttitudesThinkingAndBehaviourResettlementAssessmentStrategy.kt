@@ -26,6 +26,10 @@ class AttitudesThinkingAndBehaviourResettlementAssessmentStrategy(
 ) : AbstractResettlementAssessmentStrategy<AttitudesThinkingAndBehaviourAssessmentPage, AttitudesThinkingAndBehaviourResettlementAssessmentQuestion>(resettlementAssessmentRepository, prisonerRepository, statusRepository, pathwayRepository, resettlementAssessmentStatusRepository, AttitudesThinkingAndBehaviourAssessmentPage::class, AttitudesThinkingAndBehaviourResettlementAssessmentQuestion::class) {
   override fun appliesTo(pathway: Pathway) = pathway == Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR
 
+  override fun getQuestionList(): List<IResettlementAssessmentQuestion> {
+    return AttitudesThinkingAndBehaviourResettlementAssessmentQuestion.values().asList()
+  }
+
   override fun getPageList(): List<ResettlementAssessmentNode> = listOf(
     ResettlementAssessmentNode(
       AttitudesThinkingAndBehaviourAssessmentPage.HELP_TO_MANAGE_ANGER,

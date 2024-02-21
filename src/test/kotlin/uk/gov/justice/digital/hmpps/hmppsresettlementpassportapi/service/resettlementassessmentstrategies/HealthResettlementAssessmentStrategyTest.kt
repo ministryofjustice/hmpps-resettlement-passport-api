@@ -197,13 +197,14 @@ class HealthResettlementAssessmentStrategyTest {
         id = "REGISTERED_WITH_GP",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentResponseQuestion(
               id = "REGISTERED_WITH_GP",
               title = "Is the person in prison registered with a GP surgery outside of prison?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
               options = yesNoOptions.toMutableList(),
             ),
+            originalPageId = "REGISTERED_WITH_GP",
           ),
         ),
       ),
@@ -214,13 +215,14 @@ class HealthResettlementAssessmentStrategyTest {
         id = "HELP_REGISTERING_GP",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentResponseQuestion(
               id = "HELP_REGISTERING_GP",
               title = "Does the person in prison want help registering with a  GP surgery?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
               options = yesNoOptions.toMutableList(),
             ),
+            originalPageId = "HELP_REGISTERING_GP",
           ),
         ),
       ),
@@ -231,13 +233,14 @@ class HealthResettlementAssessmentStrategyTest {
         id = "MEET_HEALTHCARE_TEAM",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentResponseQuestion(
               id = "MEET_HEALTHCARE_TEAM",
               title = "Does the person in prison want to meet with a prison healthcare team?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
               options = yesNoOptions.toMutableList(),
             ),
+            originalPageId = "MEET_HEALTHCARE_TEAM",
           ),
         ),
       ),
@@ -248,7 +251,7 @@ class HealthResettlementAssessmentStrategyTest {
         id = "WHAT_HEALTH_NEED",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentResponseQuestion(
               id = "WHAT_HEALTH_NEED",
               title = "What health need is this related to?",
               subTitle = null,
@@ -260,6 +263,7 @@ class HealthResettlementAssessmentStrategyTest {
                 Option(id = "NO_ANSWER", displayText = "No answer provided", exclusive = true),
               ),
             ),
+            originalPageId = "WHAT_HEALTH_NEED",
           ),
         ),
       ),
@@ -270,7 +274,7 @@ class HealthResettlementAssessmentStrategyTest {
         id = "ASSESSMENT_SUMMARY",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentResponseQuestion(
               id = "SUPPORT_NEEDS",
               title = "",
               type = TypeOfQuestion.RADIO,
@@ -288,14 +292,16 @@ class HealthResettlementAssessmentStrategyTest {
                 ),
               ),
             ),
+            originalPageId = "ASSESSMENT_SUMMARY",
           ),
           ResettlementAssessmentResponseQuestionAndAnswer(
-            ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentResponseQuestion(
               id = "CASE_NOTE_SUMMARY",
               title = "Add a case note summary",
               subTitle = "This will be displayed as a case note in both DPS and nDelius",
               type = TypeOfQuestion.LONG_TEXT,
             ),
+            originalPageId = "ASSESSMENT_SUMMARY",
           ),
         ),
       ),

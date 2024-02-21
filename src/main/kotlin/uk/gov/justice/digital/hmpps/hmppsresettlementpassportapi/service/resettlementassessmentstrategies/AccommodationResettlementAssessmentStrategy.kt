@@ -64,18 +64,14 @@ class AccommodationResettlementAssessmentStrategy(
       },
     ),
   )
-
-  override fun getQuestionList(): List<IResettlementAssessmentQuestion> {
-    return AccommodationResettlementAssessmentQuestion.values().asList()
-  }
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 enum class AccommodationAssessmentPage(override val id: String, override val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>) : IAssessmentPage {
   WHERE_DID_THEY_LIVE(id = "WHERE_DID_THEY_LIVE", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE), ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE_ADDRESS))),
   HELP_TO_KEEP_HOME(id = "HELP_TO_KEEP_HOME", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.HELP_TO_KEEP_HOME))),
-  WHERE_WILL_THEY_LIVE_1(id = "WHERE_WILL_THEY_LIVE_1", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_1), ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_ADDRESS))),
-  WHERE_WILL_THEY_LIVE_2(id = "WHERE_WILL_THEY_LIVE_2", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_2), ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_ADDRESS))),
+  WHERE_WILL_THEY_LIVE_1(id = "WHERE_WILL_THEY_LIVE_1", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_1), ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_ADDRESS_1))),
+  WHERE_WILL_THEY_LIVE_2(id = "WHERE_WILL_THEY_LIVE_2", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_2), ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_ADDRESS_2))),
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
@@ -130,8 +126,13 @@ enum class AccommodationResettlementAssessmentQuestion(
       Option(id = "NO_ANSWER", displayText = "No answer provided"),
     ),
   ),
-  WHERE_WILL_THEY_LIVE_ADDRESS(
-    id = "WHERE_WILL_THEY_LIVE_ADDRESS",
+  WHERE_WILL_THEY_LIVE_ADDRESS_1(
+    id = "WHERE_WILL_THEY_LIVE_ADDRESS_1",
+    title = "Enter the address",
+    type = TypeOfQuestion.ADDRESS,
+  ),
+  WHERE_WILL_THEY_LIVE_ADDRESS_2(
+    id = "WHERE_WILL_THEY_LIVE_ADDRESS_2",
     title = "Enter the address",
     type = TypeOfQuestion.ADDRESS,
   ),

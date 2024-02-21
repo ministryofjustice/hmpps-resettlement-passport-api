@@ -29,6 +29,7 @@ data class Option(
   val displayText: String,
   val description: String? = null,
   val withAddress: Boolean = false,
+  val exclusive: Boolean = false,
 )
 
 enum class TypeOfQuestion {
@@ -37,6 +38,7 @@ enum class TypeOfQuestion {
   SHORT_TEXT,
   LONG_TEXT,
   ADDRESS,
+  CHECKBOX,
 }
 
 val yesNoOptions = listOf(

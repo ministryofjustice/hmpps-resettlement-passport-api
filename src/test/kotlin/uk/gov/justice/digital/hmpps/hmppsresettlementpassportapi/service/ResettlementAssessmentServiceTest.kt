@@ -183,8 +183,11 @@ class ResettlementAssessmentServiceTest {
     Arguments.of(TypeOfQuestion.RADIO_WITH_ADDRESS, listOf(Option("MY_ANSWER", "My answer"), Option("OTHER_OPTION", "Other option", "desc", true)), StringAnswer("MY_ANSWER"), "My answer"),
     Arguments.of(TypeOfQuestion.RADIO_WITH_ADDRESS, null, StringAnswer("MY_ANSWER"), "MY_ANSWER"),
     Arguments.of(TypeOfQuestion.ADDRESS, null, MapAnswer(listOf(mapOf("Address line 1" to "123 Main Street"), mapOf("Address line 2" to "Leeds"), mapOf("County" to "West Yorkshire"), mapOf("Postcode" to "LS1 1AB", "Country" to "United Kingdom"))), "123 Main Street\nLeeds\nWest Yorkshire\nLS1 1AB\nUnited Kingdom"),
+    Arguments.of(TypeOfQuestion.ADDRESS, null, MapAnswer(listOf(mapOf(), mapOf(), mapOf(), mapOf())), ""),
+    Arguments.of(TypeOfQuestion.ADDRESS, null, MapAnswer(listOf()), ""),
     // TODO - change this to CHECKBOXES when this type has been implemented.
     Arguments.of(TypeOfQuestion.SHORT_TEXT, null, ListAnswer(listOf("ANSWER_1", "ANSWER_2", "ANSWER_3")), "ANSWER_1\nANSWER_2\nANSWER_3"),
+    Arguments.of(TypeOfQuestion.SHORT_TEXT, null, ListAnswer(listOf()), ""),
   )
 
   private fun createNotStartedResettlementAssessmentEntity(id: Long, name: String) = ResettlementAssessmentEntity(

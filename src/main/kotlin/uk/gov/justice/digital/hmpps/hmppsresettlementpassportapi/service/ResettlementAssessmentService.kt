@@ -197,12 +197,12 @@ class ResettlementAssessmentService(
     stringElements
       .filter { it.isNotBlank() }
       .map { it.trim() }
-      .reduce { acc, value -> "$acc\n$value" }
+      .reduceOrNull { acc, value -> "$acc\n$value" } ?: ""
 
   private fun convertFromListOfMapsToStringWithLineBreaks(listOfMaps: List<Map<String, String>>) =
     listOfMaps
       .flatMap { it.values }
       .filter { it.isNotBlank() }
       .map { it.trim() }
-      .reduce { acc, value -> "$acc\n$value" }
+      .reduceOrNull { acc, value -> "$acc\n$value" } ?: ""
 }

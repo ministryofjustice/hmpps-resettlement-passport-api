@@ -2,12 +2,14 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resett
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IAssessmentPage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentNode
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
@@ -25,15 +27,62 @@ class HealthResettlementAssessmentStrategy(
 ) : AbstractResettlementAssessmentStrategy<HealthAssessmentPage, HealthResettlementAssessmentQuestion>(resettlementAssessmentRepository, prisonerRepository, statusRepository, pathwayRepository, resettlementAssessmentStatusRepository, HealthAssessmentPage::class, HealthResettlementAssessmentQuestion::class) {
   override fun appliesTo(pathway: Pathway) = pathway == Pathway.HEALTH
 
-  override fun getPageList(): List<ResettlementAssessmentNode> = emptyList() // TODO Add page list
+  override fun getPageList(): List<ResettlementAssessmentNode> = listOf(
+    ResettlementAssessmentNode(
+      HealthAssessmentPage.REGISTERED_WITH_GP,
+      nextPage =
+      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+        return if (currentQuestionsAndAnswers.any { it.question == HealthResettlementAssessmentQuestion.REGISTERED_WITH_GP && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
+          HealthAssessmentPage.MEET_HEALTHCARE_TEAM
+        } else if (currentQuestionsAndAnswers.any { it.question == HealthResettlementAssessmentQuestion.REGISTERED_WITH_GP && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
+          HealthAssessmentPage.HELP_REGISTERING_GP
+        } else {
+          // Bad request if the question isn't answered
+          throw ServerWebInputException("No valid answer found to mandatory question ${HealthResettlementAssessmentQuestion.HELP_REGISTERING_GP}.")
+        }
+      },
+    ),
+    ResettlementAssessmentNode(
+      HealthAssessmentPage.HELP_REGISTERING_GP,
+      nextPage =
+      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+        return HealthAssessmentPage.MEET_HEALTHCARE_TEAM
+      },
+    ),
+    ResettlementAssessmentNode(
+      HealthAssessmentPage.MEET_HEALTHCARE_TEAM,
+      nextPage =
+      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+        return if (currentQuestionsAndAnswers.any { it.question == HealthResettlementAssessmentQuestion.MEET_HEALTHCARE_TEAM && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
+          HealthAssessmentPage.WHAT_HEALTH_NEED
+        } else if (currentQuestionsAndAnswers.any { it.question == HealthResettlementAssessmentQuestion.MEET_HEALTHCARE_TEAM && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
+          GenericAssessmentPage.ASSESSMENT_SUMMARY
+        } else {
+          // Bad request if the question isn't answered
+          throw ServerWebInputException("No valid answer found to mandatory question ${HealthResettlementAssessmentQuestion.MEET_HEALTHCARE_TEAM}.")
+        }
+      },
+    ),
+    ResettlementAssessmentNode(
+      HealthAssessmentPage.WHAT_HEALTH_NEED,
+      nextPage =
+      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+        return GenericAssessmentPage.ASSESSMENT_SUMMARY
+      },
+    ),
+  )
   override fun getQuestionList(): List<IResettlementAssessmentQuestion> {
     return HealthResettlementAssessmentQuestion.values().asList()
   }
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-enum class HealthAssessmentPage(override val id: String, override val questionsAndAnswers: MutableList<ResettlementAssessmentQuestionAndAnswer>) :
-  IAssessmentPage // TODO Add pages
+enum class HealthAssessmentPage(override val id: String, override val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>) : IAssessmentPage {
+  REGISTERED_WITH_GP(id = "REGISTERED_WITH_GP", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(HealthResettlementAssessmentQuestion.REGISTERED_WITH_GP))),
+  HELP_REGISTERING_GP(id = "HELP_REGISTERING_GP", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(HealthResettlementAssessmentQuestion.HELP_REGISTERING_GP))),
+  MEET_HEALTHCARE_TEAM(id = "MEET_HEALTHCARE_TEAM", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(HealthResettlementAssessmentQuestion.MEET_HEALTHCARE_TEAM))),
+  WHAT_HEALTH_NEED(id = "WHAT_HEALTH_NEED", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(HealthResettlementAssessmentQuestion.WHAT_HEALTH_NEED))),
+}
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 enum class HealthResettlementAssessmentQuestion(
@@ -42,4 +91,34 @@ enum class HealthResettlementAssessmentQuestion(
   override val subTitle: String? = null,
   override val type: TypeOfQuestion,
   override val options: List<Option>? = null,
-) : IResettlementAssessmentQuestion // TODO Add questions
+) : IResettlementAssessmentQuestion {
+  REGISTERED_WITH_GP(
+    id = "REGISTERED_WITH_GP",
+    title = "Is the person in prison registered with a GP surgery outside of prison?",
+    type = TypeOfQuestion.RADIO,
+    options = yesNoOptions,
+  ),
+  HELP_REGISTERING_GP(
+    id = "HELP_REGISTERING_GP",
+    title = "Does the person in prison want help registering with a  GP surgery?",
+    type = TypeOfQuestion.RADIO,
+    options = yesNoOptions,
+  ),
+  MEET_HEALTHCARE_TEAM(
+    id = "MEET_HEALTHCARE_TEAM",
+    title = "Does the person in prison want to meet with a prison healthcare team?",
+    type = TypeOfQuestion.RADIO,
+    options = yesNoOptions,
+  ),
+  WHAT_HEALTH_NEED(
+    id = "WHAT_HEALTH_NEED",
+    title = "What health need is this related to?",
+    type = TypeOfQuestion.CHECKBOX,
+    options = listOf(
+      Option(id = "PHYSICAL_HEALTH", displayText = "Physical health"),
+      Option(id = "MENTAL_HEALTH", displayText = "Mental health"),
+      Option(id = "PERINATAL_MENTAL_HEALTH", displayText = "Perinatal mental health"),
+      Option(id = "NO_ANSWER", displayText = "No answer provided", exclusive = true),
+    ),
+  ),
+}

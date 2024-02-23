@@ -718,7 +718,7 @@ class AccommodationResettlementAssessmentStrategyTest {
   )
 
   @Test
-  fun `test getQuestionList()`() {
+  fun `test getQuestionList`() {
     Assertions.assertEquals(AccommodationResettlementAssessmentQuestion.entries + GenericResettlementAssessmentQuestion.entries, resettlementAssessmentService.getQuestionList())
   }
 }

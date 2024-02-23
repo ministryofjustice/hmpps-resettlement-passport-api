@@ -24,6 +24,7 @@ api:
       education-employment: http://localhost:9103
       ciag: http://localhost:9104
       interventions-service: http://localhost:9105
+      pop-user-service: http://localhost:9106
 
 spring:
   devtools:

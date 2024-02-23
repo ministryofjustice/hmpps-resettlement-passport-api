@@ -8,4 +8,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 @Repository
 interface PoPUserOTPRepository : JpaRepository<PoPUserOTPEntity, Long> {
   fun findByPrisoner(prisoner: PrisonerEntity): PoPUserOTPEntity?
+
+  fun findByOtp(otp: Long): PoPUserOTPEntity?
 }

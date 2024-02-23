@@ -33,6 +33,7 @@ class WebClientConfiguration(
   @Value("\${api.base.url.education-employment}") private val educationEmploymentRootUri: String,
   @Value("\${api.base.url.ciag}") private val ciagRootUri: String,
   @Value("\${api.base.url.interventions-service}") private val interventionsRootUri: String,
+  @Value("\${api.base.url.pop-user-service}") private val popUserRootUri: String,
   val clientRegistrationRepo: ClientRegistrationRepository,
 ) {
 
@@ -134,5 +135,10 @@ class WebClientConfiguration(
       .baseUrl(clientRegistration.providerDetails.tokenUri)
       .filter(ExchangeFilterFunctions.basicAuthentication(clientRegistration.clientId, clientRegistration.clientSecret))
       .build()
+  }
+
+  @Bean
+  fun popUserWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
+    return getWebClientCredentials(authorizedClientManager, popUserRootUri)
   }
 }

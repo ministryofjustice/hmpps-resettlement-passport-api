@@ -182,7 +182,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     return resettlementAssessmentResponsePage
   }
 
-  private fun findPageIdFromQuestionId(questionId: String): String {
+  fun findPageIdFromQuestionId(questionId: String): String {
     val pageList = getPageList().map { it.assessmentPage } + GenericAssessmentPage.entries
     return pageList.firstOrNull { p -> (p.questionsAndAnswers.any { q -> q.question.id == questionId }) }?.id ?: throw RuntimeException("Cannot find page for question [$questionId] - check that the question is used in a page!")
   }

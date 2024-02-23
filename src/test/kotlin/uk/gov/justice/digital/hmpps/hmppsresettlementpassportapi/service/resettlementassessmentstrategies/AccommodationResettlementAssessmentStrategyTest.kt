@@ -698,4 +698,27 @@ class AccommodationResettlementAssessmentStrategyTest {
       ),
     ).thenReturn(resettlementAssessmentEntity)
   }
+
+  @ParameterizedTest
+  @MethodSource("test findPageIdFromQuestionId data")
+  fun `test findPageIdFromQuestionId`(questionId: String, expectedPageId: String) {
+    Assertions.assertEquals(expectedPageId, resettlementAssessmentService.findPageIdFromQuestionId(questionId))
+  }
+
+  private fun `test findPageIdFromQuestionId data`() = Stream.of(
+    Arguments.of(AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE.id, AccommodationAssessmentPage.WHERE_DID_THEY_LIVE.id),
+    Arguments.of(AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE_ADDRESS.id, AccommodationAssessmentPage.WHERE_DID_THEY_LIVE.id),
+    Arguments.of(AccommodationResettlementAssessmentQuestion.HELP_TO_KEEP_HOME.id, AccommodationAssessmentPage.HELP_TO_KEEP_HOME.id),
+    Arguments.of(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_1.id, AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_1.id),
+    Arguments.of(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_ADDRESS_1.id, AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_1.id),
+    Arguments.of(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_2.id, AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_2.id),
+    Arguments.of(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_ADDRESS_2.id, AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_2.id),
+    Arguments.of(GenericResettlementAssessmentQuestion.SUPPORT_NEEDS.id, GenericAssessmentPage.ASSESSMENT_SUMMARY.id),
+    Arguments.of(GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY.id, GenericAssessmentPage.ASSESSMENT_SUMMARY.id),
+  )
+
+  @Test
+  fun `test getQuestionList()`() {
+    Assertions.assertEquals(AccommodationResettlementAssessmentQuestion.entries + GenericResettlementAssessmentQuestion.entries, resettlementAssessmentService.getQuestionList())
+  }
 }

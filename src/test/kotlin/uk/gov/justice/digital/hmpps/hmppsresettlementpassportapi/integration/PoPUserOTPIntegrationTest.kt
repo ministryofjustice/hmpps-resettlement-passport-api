@@ -118,6 +118,10 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .json(expectedOutput)
 
+    every {
+      SecureRandom.getInstanceStrong().nextLong(999999)
+    } returns 567890
+
     webTestClient.post()
       .uri("/resettlement-passport/popUser/$nomsId/otp")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))

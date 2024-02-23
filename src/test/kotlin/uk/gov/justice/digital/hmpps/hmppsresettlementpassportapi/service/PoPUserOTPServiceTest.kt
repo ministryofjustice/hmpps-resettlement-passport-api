@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PoPU
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PoPUserOTPRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PoPUserApiService
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -27,27 +28,15 @@ class PoPUserOTPServiceTest {
   @Mock
   private lateinit var prisonerRepository: PrisonerRepository
 
+  @Mock
+  private lateinit var popUserApiService: PoPUserApiService
+
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
   @BeforeEach
   fun beforeEach() {
-    popUserOTPService = PoPUserOTPService(popUserOTPRepository)
-  }
-
-  @Test
-  fun `test getOTPByPrisoner - returns PoP User OTP`() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
-    val popUserOTPEntity = PoPUserOTPEntity(
-      null,
-      prisonerEntity,
-      fakeNow,
-      fakeNow.plusDays(7).withHour(11).withMinute(59).withSecond(59),
-      123456,
-    )
-    Mockito.`when`(popUserOTPRepository.findByPrisoner(prisonerEntity)).thenReturn(popUserOTPEntity)
-    val result = popUserOTPService.getOTPByPrisoner(prisonerEntity)
-    Assertions.assertEquals(popUserOTPEntity, result)
+    popUserOTPService = PoPUserOTPService(popUserOTPRepository, prisonerRepository, popUserApiService)
   }
 
   @Test

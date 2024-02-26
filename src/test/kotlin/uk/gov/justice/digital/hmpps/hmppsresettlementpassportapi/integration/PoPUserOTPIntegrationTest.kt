@@ -121,7 +121,7 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
 
     every {
       SecureRandom.getInstanceStrong().nextLong(999999)
-    } returns 567890
+    } returns 567891
 
     webTestClient.post()
       .uri("/resettlement-passport/popUser/$nomsId/otp")
@@ -210,7 +210,7 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
       .bodyValue(
         OneLoginUserData(
           urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
-          otp = "123456",
+          otp = "654321",
           email = "chrisy.clemence@gmail.com",
 
         ),

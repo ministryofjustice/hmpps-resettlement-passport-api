@@ -30,7 +30,7 @@ class ChildrenFamilyAndCommunitiesResettlementAssessmentStrategy(
   override fun getPageList(): List<ResettlementAssessmentNode> = listOf(
     ResettlementAssessmentNode(
       ChildrenFamilyAndCommunitiesAssessmentPage.PARTNER_OR_SPOUSE,
-      nextPage = fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage{
+      nextPage = fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
         return ChildrenFamilyAndCommunitiesAssessmentPage.PRIMARY_CAREGIVER_FOR_CHILDREN
       },
     ),
@@ -38,9 +38,9 @@ class ChildrenFamilyAndCommunitiesResettlementAssessmentStrategy(
       ChildrenFamilyAndCommunitiesAssessmentPage.PRIMARY_CAREGIVER_FOR_CHILDREN,
       nextPage =
       fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
-        return if (currentQuestionsAndAnswers.any { it.question == ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.PRIMARY_CAREGIVER_FOR_CHILDREN && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }){
+        return if (currentQuestionsAndAnswers.any { it.question == ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.PRIMARY_CAREGIVER_FOR_CHILDREN && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           ChildrenFamilyAndCommunitiesAssessmentPage.CHILDREN_SERVICES_INVOLVED
-        } else if (currentQuestionsAndAnswers.any { it.question == ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.PRIMARY_CAREGIVER_FOR_CHILDREN && (it.answer?.answer as String in listOf("NO", "NO_ANSWER"))}) {
+        } else if (currentQuestionsAndAnswers.any { it.question == ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.PRIMARY_CAREGIVER_FOR_CHILDREN && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
           ChildrenFamilyAndCommunitiesAssessmentPage.CARING_FOR_ADULT
         } else {
           // Bad request if the question isn't answered
@@ -52,9 +52,9 @@ class ChildrenFamilyAndCommunitiesResettlementAssessmentStrategy(
       ChildrenFamilyAndCommunitiesAssessmentPage.CHILDREN_SERVICES_INVOLVED,
       nextPage =
       fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
-        return if (currentQuestionsAndAnswers.any { it.question == ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.CHILDREN_SERVICES_INVOLVED && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }){
+        return if (currentQuestionsAndAnswers.any { it.question == ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.CHILDREN_SERVICES_INVOLVED && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           ChildrenFamilyAndCommunitiesAssessmentPage.SUPPORT_MEETING_CHILDREN_SERVICES
-        } else if (currentQuestionsAndAnswers.any { it.question == ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.CHILDREN_SERVICES_INVOLVED && (it.answer?.answer as String in listOf("NO", "NO_ANSWER"))}) {
+        } else if (currentQuestionsAndAnswers.any { it.question == ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.CHILDREN_SERVICES_INVOLVED && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
           ChildrenFamilyAndCommunitiesAssessmentPage.CARING_FOR_ADULT
         } else {
           // Bad request if the question isn't answered
@@ -64,7 +64,7 @@ class ChildrenFamilyAndCommunitiesResettlementAssessmentStrategy(
     ),
     ResettlementAssessmentNode(
       ChildrenFamilyAndCommunitiesAssessmentPage.SUPPORT_MEETING_CHILDREN_SERVICES,
-      nextPage = fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage{
+      nextPage = fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
         return ChildrenFamilyAndCommunitiesAssessmentPage.CARING_FOR_ADULT
       },
     ),
@@ -72,9 +72,9 @@ class ChildrenFamilyAndCommunitiesResettlementAssessmentStrategy(
       ChildrenFamilyAndCommunitiesAssessmentPage.CARING_FOR_ADULT,
       nextPage =
       fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
-        return if (currentQuestionsAndAnswers.any { it.question == ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.CARING_FOR_ADULT && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }){
+        return if (currentQuestionsAndAnswers.any { it.question == ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.CARING_FOR_ADULT && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           ChildrenFamilyAndCommunitiesAssessmentPage.SOCIAL_SERVICES_INVOLVED_FOR_ADULT
-        } else if (currentQuestionsAndAnswers.any { it.question == ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.CARING_FOR_ADULT && (it.answer?.answer as String in listOf("NO", "NO_ANSWER"))}) {
+        } else if (currentQuestionsAndAnswers.any { it.question == ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.CARING_FOR_ADULT && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
           ChildrenFamilyAndCommunitiesAssessmentPage.SUPPORT_FROM_SOCIAL_SERVICES
         } else {
           // Bad request if the question isn't answered
@@ -84,31 +84,31 @@ class ChildrenFamilyAndCommunitiesResettlementAssessmentStrategy(
     ),
     ResettlementAssessmentNode(
       ChildrenFamilyAndCommunitiesAssessmentPage.SOCIAL_SERVICES_INVOLVED_FOR_ADULT,
-      nextPage = fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage{
+      nextPage = fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
         return ChildrenFamilyAndCommunitiesAssessmentPage.SUPPORT_FROM_SOCIAL_SERVICES
       },
     ),
     ResettlementAssessmentNode(
       ChildrenFamilyAndCommunitiesAssessmentPage.SUPPORT_FROM_SOCIAL_SERVICES,
-      nextPage = fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage{
+      nextPage = fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
         return ChildrenFamilyAndCommunitiesAssessmentPage.FRIEND_FAMILY_COMMUNITY_SUPPORT
       },
     ),
     ResettlementAssessmentNode(
       ChildrenFamilyAndCommunitiesAssessmentPage.FRIEND_FAMILY_COMMUNITY_SUPPORT,
-      nextPage = fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage{
+      nextPage = fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
         return ChildrenFamilyAndCommunitiesAssessmentPage.INVOLVEMENT_IN_GANG_ACTIVITY
       },
     ),
     ResettlementAssessmentNode(
       ChildrenFamilyAndCommunitiesAssessmentPage.INVOLVEMENT_IN_GANG_ACTIVITY,
-      nextPage = fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage{
+      nextPage = fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
         return ChildrenFamilyAndCommunitiesAssessmentPage.UNDER_THREAT_OUTSIDE
       },
     ),
     ResettlementAssessmentNode(
       ChildrenFamilyAndCommunitiesAssessmentPage.UNDER_THREAT_OUTSIDE,
-      nextPage = fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage{
+      nextPage = fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
         return ChildrenFamilyAndCommunitiesAssessmentPage.COMMUNITY_ORGANISATION_SUPPORT
       },
     ),

@@ -188,13 +188,14 @@ class AttitudesThinkingAndBehaviourResettlementAssessmentStrategyTest {
         id = "HELP_TO_MANAGE_ANGER",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentResponseQuestion(
               id = "HELP_TO_MANAGE_ANGER",
               title = "Does the person in prison need support managing their anger?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
               options = yesNoOptions.toMutableList(),
             ),
+            originalPageId = "HELP_TO_MANAGE_ANGER",
           ),
         ),
       ),
@@ -205,13 +206,14 @@ class AttitudesThinkingAndBehaviourResettlementAssessmentStrategyTest {
         id = "INFLUENCED_BY_OTHERS",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentResponseQuestion(
               id = "INFLUENCED_BY_OTHERS",
               title = "Is the person in prison influenced by others to do things they don’t want to do?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
               options = yesNoOptions.toMutableList(),
             ),
+            originalPageId = "INFLUENCED_BY_OTHERS",
           ),
         ),
       ),
@@ -222,13 +224,14 @@ class AttitudesThinkingAndBehaviourResettlementAssessmentStrategyTest {
         id = "ISSUES_WITH_GAMBLING",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentResponseQuestion(
               id = "ISSUES_WITH_GAMBLING",
               title = "Does the person in prison have any issues with gambling?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
               options = yesNoOptions.toMutableList(),
             ),
+            originalPageId = "ISSUES_WITH_GAMBLING",
           ),
         ),
       ),
@@ -239,7 +242,7 @@ class AttitudesThinkingAndBehaviourResettlementAssessmentStrategyTest {
         id = "ASSESSMENT_SUMMARY",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentResponseQuestion(
               id = "SUPPORT_NEEDS",
               title = "",
               type = TypeOfQuestion.RADIO,
@@ -257,14 +260,16 @@ class AttitudesThinkingAndBehaviourResettlementAssessmentStrategyTest {
                 ),
               ),
             ),
+            originalPageId = "ASSESSMENT_SUMMARY",
           ),
           ResettlementAssessmentResponseQuestionAndAnswer(
-            ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentResponseQuestion(
               id = "CASE_NOTE_SUMMARY",
               title = "Add a case note summary",
               subTitle = "This will be displayed as a case note in both DPS and nDelius",
               type = TypeOfQuestion.LONG_TEXT,
             ),
+            originalPageId = "ASSESSMENT_SUMMARY",
           ),
         ),
       ),

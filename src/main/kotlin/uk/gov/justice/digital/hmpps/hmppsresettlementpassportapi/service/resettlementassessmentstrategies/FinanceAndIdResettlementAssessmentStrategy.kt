@@ -26,9 +26,6 @@ class FinanceAndIdResettlementAssessmentStrategy(
   override fun appliesTo(pathway: Pathway) = pathway == Pathway.FINANCE_AND_ID
 
   override fun getPageList(): List<ResettlementAssessmentNode> = emptyList() // TODO Add page list
-  override fun getQuestionList(): List<IResettlementAssessmentQuestion> {
-    return FinanceAndIdResettlementAssessmentQuestion.values().asList()
-  }
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)

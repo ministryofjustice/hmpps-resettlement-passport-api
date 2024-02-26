@@ -284,7 +284,7 @@ class AccommodationResettlementAssessmentStrategyTest {
         id = "WHERE_DID_THEY_LIVE",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentResponseQuestion(
               id = "WHERE_DID_THEY_LIVE",
               title = "Where did the person in prison live before custody?",
               subTitle = null,
@@ -297,8 +297,12 @@ class AccommodationResettlementAssessmentStrategyTest {
                 Option(id = "NO_ANSWER", displayText = "No answer provided"),
               ),
             ),
+            originalPageId = "WHERE_DID_THEY_LIVE",
           ),
-          ResettlementAssessmentResponseQuestionAndAnswer(ResettlementAssessmentResponseQuestion(id = "WHERE_DID_THEY_LIVE_ADDRESS", title = "Enter the address", type = TypeOfQuestion.ADDRESS)),
+          ResettlementAssessmentResponseQuestionAndAnswer(
+            question = ResettlementAssessmentResponseQuestion(id = "WHERE_DID_THEY_LIVE_ADDRESS", title = "Enter the address", type = TypeOfQuestion.ADDRESS),
+            originalPageId = "WHERE_DID_THEY_LIVE",
+          ),
         ),
       ),
     ),
@@ -308,12 +312,13 @@ class AccommodationResettlementAssessmentStrategyTest {
         id = "HELP_TO_KEEP_HOME",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentResponseQuestion(
               id = "HELP_TO_KEEP_HOME",
               title = "Does the person in prison or their family need help to keep their home while they are in prison?",
               type = TypeOfQuestion.RADIO,
               options = yesNoOptions.toMutableList(),
             ),
+            originalPageId = "HELP_TO_KEEP_HOME",
           ),
         ),
       ),
@@ -324,7 +329,7 @@ class AccommodationResettlementAssessmentStrategyTest {
         id = "WHERE_WILL_THEY_LIVE_1",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentResponseQuestion(
               id = "WHERE_WILL_THEY_LIVE_1",
               title = "Where will the person in prison live when they are released?",
               type = TypeOfQuestion.RADIO_WITH_ADDRESS,
@@ -335,13 +340,15 @@ class AccommodationResettlementAssessmentStrategyTest {
                 Option(id = "NO_ANSWER", displayText = "No answer provided"),
               ),
             ),
+            originalPageId = "WHERE_WILL_THEY_LIVE_1",
           ),
           ResettlementAssessmentResponseQuestionAndAnswer(
-            ResettlementAssessmentResponseQuestion(
-              id = "WHERE_WILL_THEY_LIVE_ADDRESS",
+            question = ResettlementAssessmentResponseQuestion(
+              id = "WHERE_WILL_THEY_LIVE_ADDRESS_1",
               title = "Enter the address",
               type = TypeOfQuestion.ADDRESS,
             ),
+            originalPageId = "WHERE_WILL_THEY_LIVE_1",
           ),
         ),
       ),
@@ -352,7 +359,7 @@ class AccommodationResettlementAssessmentStrategyTest {
         id = "WHERE_WILL_THEY_LIVE_2",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentResponseQuestion(
               id = "WHERE_WILL_THEY_LIVE_2",
               title = "Where will the person in prison live when they are released?",
               type = TypeOfQuestion.RADIO_WITH_ADDRESS,
@@ -362,13 +369,15 @@ class AccommodationResettlementAssessmentStrategyTest {
                 Option(id = "NO_ANSWER", displayText = "No answer provided"),
               ),
             ),
+            originalPageId = "WHERE_WILL_THEY_LIVE_2",
           ),
           ResettlementAssessmentResponseQuestionAndAnswer(
-            ResettlementAssessmentResponseQuestion(
-              id = "WHERE_WILL_THEY_LIVE_ADDRESS",
+            question = ResettlementAssessmentResponseQuestion(
+              id = "WHERE_WILL_THEY_LIVE_ADDRESS_2",
               title = "Enter the address",
               type = TypeOfQuestion.ADDRESS,
             ),
+            originalPageId = "WHERE_WILL_THEY_LIVE_2",
           ),
         ),
       ),
@@ -379,7 +388,7 @@ class AccommodationResettlementAssessmentStrategyTest {
         id = "ASSESSMENT_SUMMARY",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentResponseQuestion(
               id = "SUPPORT_NEEDS",
               title = "",
               type = TypeOfQuestion.RADIO,
@@ -397,14 +406,16 @@ class AccommodationResettlementAssessmentStrategyTest {
                 ),
               ),
             ),
+            originalPageId = "ASSESSMENT_SUMMARY",
           ),
           ResettlementAssessmentResponseQuestionAndAnswer(
-            ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentResponseQuestion(
               id = "CASE_NOTE_SUMMARY",
               title = "Add a case note summary",
               subTitle = "This will be displayed as a case note in both DPS and nDelius",
               type = TypeOfQuestion.LONG_TEXT,
             ),
+            originalPageId = "ASSESSMENT_SUMMARY",
           ),
         ),
       ),
@@ -449,6 +460,7 @@ class AccommodationResettlementAssessmentStrategyTest {
             ),
           ),
           answer = StringAnswer("SOCIAL_HOUSING"),
+          originalPageId = "WHERE_DID_THEY_LIVE",
         ),
         ResettlementAssessmentResponseQuestionAndAnswer(
           ResettlementAssessmentResponseQuestion(
@@ -457,6 +469,7 @@ class AccommodationResettlementAssessmentStrategyTest {
             type = TypeOfQuestion.ADDRESS,
           ),
           answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123"))),
+          originalPageId = "WHERE_DID_THEY_LIVE",
         ),
       ),
     )
@@ -489,10 +502,12 @@ class AccommodationResettlementAssessmentStrategyTest {
         ResettlementAssessmentResponseQuestionAndAnswer(
           AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE,
           answer = StringAnswer("SOCIAL_HOUSING"),
+          originalPageId = "WHERE_DID_THEY_LIVE",
         ),
         ResettlementAssessmentResponseQuestionAndAnswer(
           AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE_ADDRESS,
           answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123"))),
+          originalPageId = "WHERE_DID_THEY_LIVE",
         ),
       ),
     )
@@ -682,5 +697,28 @@ class AccommodationResettlementAssessmentStrategyTest {
         resettlementAssessmentStatusEntities,
       ),
     ).thenReturn(resettlementAssessmentEntity)
+  }
+
+  @ParameterizedTest
+  @MethodSource("test findPageIdFromQuestionId data")
+  fun `test findPageIdFromQuestionId`(questionId: String, expectedPageId: String) {
+    Assertions.assertEquals(expectedPageId, resettlementAssessmentService.findPageIdFromQuestionId(questionId))
+  }
+
+  private fun `test findPageIdFromQuestionId data`() = Stream.of(
+    Arguments.of(AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE.id, AccommodationAssessmentPage.WHERE_DID_THEY_LIVE.id),
+    Arguments.of(AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE_ADDRESS.id, AccommodationAssessmentPage.WHERE_DID_THEY_LIVE.id),
+    Arguments.of(AccommodationResettlementAssessmentQuestion.HELP_TO_KEEP_HOME.id, AccommodationAssessmentPage.HELP_TO_KEEP_HOME.id),
+    Arguments.of(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_1.id, AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_1.id),
+    Arguments.of(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_ADDRESS_1.id, AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_1.id),
+    Arguments.of(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_2.id, AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_2.id),
+    Arguments.of(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_ADDRESS_2.id, AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_2.id),
+    Arguments.of(GenericResettlementAssessmentQuestion.SUPPORT_NEEDS.id, GenericAssessmentPage.ASSESSMENT_SUMMARY.id),
+    Arguments.of(GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY.id, GenericAssessmentPage.ASSESSMENT_SUMMARY.id),
+  )
+
+  @Test
+  fun `test getQuestionList`() {
+    Assertions.assertEquals(AccommodationResettlementAssessmentQuestion.entries + GenericResettlementAssessmentQuestion.entries, resettlementAssessmentService.getQuestionList())
   }
 }

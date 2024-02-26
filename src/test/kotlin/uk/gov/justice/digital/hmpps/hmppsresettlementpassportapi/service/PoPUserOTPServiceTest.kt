@@ -6,11 +6,15 @@ import io.mockk.unmockkStatic
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.OneLoginUserData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PoPUserOTPEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PoPUserOTPRepository
@@ -45,7 +49,6 @@ class PoPUserOTPServiceTest {
   @Test
   fun `test get PoP User OTP - returns PoP User OTP `() {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
-    // Mockito.`when`(prisonerRepository.findByNomsId(prisonerEntity.nomsId)).thenReturn(prisonerEntity)
     val popUserOTPEntity = PoPUserOTPEntity(
       null,
       prisonerEntity,
@@ -119,9 +122,39 @@ class PoPUserOTPServiceTest {
     Mockito.`when`(popUserOTPRepository.save(any())).thenReturn(popUserOTPEntity)
 
     val result = popUserOTPService.createPoPUserOTP(prisonerEntity)
-    //    Mockito.verify(popUserOTPRepository).save(popUserOTPEntity)
-
     Assertions.assertEquals(popUserOTPEntity, result)
+    unmockkStatic(LocalDateTime::class)
+  }
+
+  @Test
+  fun `test create Pop User Verified - Fails OTP Invalid`() {
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+    val oneLoginUserData = OneLoginUserData("urn1", "123457", "email@test.com")
+    Mockito.`when`(popUserOTPRepository.findByOtp(oneLoginUserData.otp?.toLong() ?: 0)).thenReturn(null)
+    assertThrows<ResourceNotFoundException> { popUserOTPService.getPoPUserVerified(oneLoginUserData) }
+    unmockkStatic(LocalDateTime::class)
+  }
+
+  @Test
+  fun `test create Pop User Verified -  valid OTP`() {
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+    val oneLoginUserData = OneLoginUserData("urn1", "123457", "email@test.com")
+    val prisoner = PrisonerEntity(1, "acb", fakeNow, "crn", "xyz", null)
+    val popUserResponse = PoPUserResponse(1, "crn1", "NA", "email@test.com", true, fakeNow, fakeNow, "GU1234", "urn1")
+    val popUserOTPEntity = PoPUserOTPEntity(
+      1,
+      prisoner,
+      fakeNow,
+      fakeNow.plusDays(7).withHour(23).withMinute(59).withSecond(59),
+      123457,
+    )
+    Mockito.`when`(prisoner.id?.let { prisonerRepository.findById(it) }).thenReturn(Optional.of(prisoner))
+    Mockito.lenient().`when`(popUserOTPRepository.findByOtp(oneLoginUserData.otp?.toLong() ?: 0)).thenReturn(popUserOTPEntity)
+    Mockito.`when`(popUserApiService.postPoPUserVerification(oneLoginUserData, Optional.of(prisoner))).thenReturn(popUserResponse)
+    val result = popUserOTPService.getPoPUserVerified(oneLoginUserData)
+    Assertions.assertEquals(popUserResponse, result)
     unmockkStatic(LocalDateTime::class)
   }
 }

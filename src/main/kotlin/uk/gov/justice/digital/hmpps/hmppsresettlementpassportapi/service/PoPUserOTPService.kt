@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PoPUserApiService
 import java.security.SecureRandom
 import java.time.LocalDateTime
+import java.util.*
 
 @Service
 class PoPUserOTPService(
@@ -63,14 +64,15 @@ class PoPUserOTPService(
   }
 
   fun getPoPUserVerified(oneLoginUserData: OneLoginUserData): PoPUserResponse? {
-    if (oneLoginUserData.otp != null && oneLoginUserData.urn != null && oneLoginUserData.email != null) {
+    return if (oneLoginUserData.otp != null && oneLoginUserData.urn != null && oneLoginUserData.email != null) {
       val popUserOTPEntityExists = popUserOTPRepository.findByOtp(oneLoginUserData.otp.toLong())
         ?: throw ResourceNotFoundException("Person On Probation User otp  ${oneLoginUserData.otp}  not found in database")
 
-      val prisoner = popUserOTPEntityExists.prisoner.id?.let { prisonerRepository.findById(it) } ?: throw ResourceNotFoundException("Prisoner with id ${popUserOTPEntityExists.prisoner.id}.prisoner.id}  not found in database")
-      return popUserApiService.postPoPUserVerification(
+      var prisonerEntity: Optional<PrisonerEntity>? = popUserOTPEntityExists.id?.let { prisonerRepository.findById(it) }
+        ?: throw ResourceNotFoundException("Prisoner with id ${popUserOTPEntityExists.prisoner.id}  not found in database")
+      popUserApiService.postPoPUserVerification(
         oneLoginUserData,
-        prisoner,
+        prisonerEntity,
       )
     } else {
       throw ValidationException("required data otp, urn or email is missing")

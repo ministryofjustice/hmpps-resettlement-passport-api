@@ -114,7 +114,7 @@ class PoPUserOTPServiceTest {
       prisonerEntity,
       fakeNow,
       fakeNow.plusDays(7).withHour(23).withMinute(59).withSecond(59),
-      123456,
+      654321,
     )
 
     Mockito.`when`(popUserOTPRepository.findByPrisoner(prisonerEntity)).thenReturn(null)
@@ -155,5 +155,12 @@ class PoPUserOTPServiceTest {
     val result = popUserOTPService.getPoPUserVerified(oneLoginUserData)
     Assertions.assertEquals(popUserResponse, result)
     unmockkStatic(LocalDateTime::class)
+  }
+
+  @Test
+  fun `test generate otp is 6 digits`() {
+    val otp = SecureRandom.getInstanceStrong().nextLong(999999)
+    val otpValue = String.format("%06d", otp).reversed().toLong()
+    Assertions.assertEquals(otpValue.toString().length, 6)
   }
 }

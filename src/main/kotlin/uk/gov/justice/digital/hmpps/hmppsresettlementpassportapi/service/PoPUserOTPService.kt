@@ -47,8 +47,7 @@ class PoPUserOTPService(
     // val secureRandom = SecureRandom()
     // For now OTP generated is in 6 digits, for 8 digits the below value should be 99999999
     val otp = SecureRandom.getInstanceStrong().nextLong(999999)
-    val otpValue = String.format("%06d", otp).toLong()
-    SecureRandom.getInstanceStrong()
+    val otpValue = String.format("%06d", otp).reversed().toLong()
     if (popUserOTPExists != null) {
       popUserOTPRepository.delete(popUserOTPExists)
     }

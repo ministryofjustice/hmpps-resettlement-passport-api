@@ -26,9 +26,6 @@ class ChildrenFamilyAndCommunitiesResettlementAssessmentStrategy(
   override fun appliesTo(pathway: Pathway) = pathway == Pathway.CHILDREN_FAMILIES_AND_COMMUNITY
 
   override fun getPageList(): List<ResettlementAssessmentNode> = emptyList() // TODO Add page list
-  override fun getQuestionList(): List<IResettlementAssessmentQuestion> {
-    return ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.values().asList()
-  }
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)

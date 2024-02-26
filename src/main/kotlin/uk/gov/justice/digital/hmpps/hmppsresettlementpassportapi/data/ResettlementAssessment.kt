@@ -29,6 +29,7 @@ data class ResettlementAssessmentResponsePage(
 data class ResettlementAssessmentResponseQuestionAndAnswer(
   override val question: IResettlementAssessmentQuestion,
   override var answer: Answer<*>? = null,
+  val originalPageId: String,
 ) : IResettlementAssessmentQuestionAndAnswer
 
 data class ResettlementAssessmentResponseQuestion(

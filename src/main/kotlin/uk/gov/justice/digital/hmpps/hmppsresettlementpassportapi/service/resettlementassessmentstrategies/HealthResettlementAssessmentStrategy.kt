@@ -71,9 +71,6 @@ class HealthResettlementAssessmentStrategy(
       },
     ),
   )
-  override fun getQuestionList(): List<IResettlementAssessmentQuestion> {
-    return HealthResettlementAssessmentQuestion.values().asList()
-  }
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)

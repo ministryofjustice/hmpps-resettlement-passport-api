@@ -157,6 +157,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
             it.question.options?.toMutableList(),
           ),
           it.answer,
+          page.id,
         )
       },
     )
@@ -166,7 +167,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     if (existingAssessment != null) {
       if (resettlementAssessmentResponsePage.id == GenericAssessmentPage.CHECK_ANSWERS.id) {
         val questionsAndAnswers: List<ResettlementAssessmentResponseQuestionAndAnswer> =
-          existingAssessment.assessment.assessment.map { ResettlementAssessmentResponseQuestionAndAnswer(question = getQuestionList().first { q -> q.id == it.questionId }, answer = it.answer) }
+          existingAssessment.assessment.assessment.map { ResettlementAssessmentResponseQuestionAndAnswer(question = getQuestionList().first { q -> q.id == it.questionId }, answer = it.answer, originalPageId = findPageIdFromQuestionId(it.questionId)) }
         resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(resettlementAssessmentResponsePage.id, questionsAndAnswers = questionsAndAnswers)
       }
       resettlementAssessmentResponsePage.questionsAndAnswers.forEach { q ->
@@ -181,9 +182,14 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     return resettlementAssessmentResponsePage
   }
 
+  fun findPageIdFromQuestionId(questionId: String): String {
+    val pageList = getPageList().map { it.assessmentPage } + GenericAssessmentPage.entries
+    return pageList.firstOrNull { p -> (p.questionsAndAnswers.any { q -> q.question.id == questionId }) }?.id ?: throw RuntimeException("Cannot find page for question [$questionId] - check that the question is used in a page!")
+  }
+
   abstract fun getPageList(): List<ResettlementAssessmentNode>
 
-  abstract fun getQuestionList(): List<IResettlementAssessmentQuestion>
+  fun getQuestionList(): List<IResettlementAssessmentQuestion> = questionClass.java.enumConstants.asList() + GenericResettlementAssessmentQuestion.entries
 
   @Transactional
   override fun completeAssessment(

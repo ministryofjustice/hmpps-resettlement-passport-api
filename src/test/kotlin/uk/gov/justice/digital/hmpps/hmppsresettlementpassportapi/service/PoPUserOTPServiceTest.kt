@@ -38,7 +38,7 @@ class PoPUserOTPServiceTest {
   @Mock
   private lateinit var popUserApiService: PoPUserApiService
 
-  private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
+  private val testDate = LocalDateTime.parse("2023-08-25T12:00:00")
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
   @BeforeEach
@@ -130,7 +130,7 @@ class PoPUserOTPServiceTest {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val oneLoginUserData = OneLoginUserData("urn1", "123457", "email@test.com")
-    Mockito.`when`(popUserOTPRepository.findByOtp(oneLoginUserData.otp?.toLong() ?: 0)).thenReturn(null)
+    Mockito.`when`(popUserOTPRepository.findByOtpAndExpiryDateIsGreaterThan(oneLoginUserData.otp?.toLong() ?: 0, LocalDateTime.now())).thenReturn(null)
     assertThrows<ResourceNotFoundException> { popUserOTPService.getPoPUserVerified(oneLoginUserData) }
     unmockkStatic(LocalDateTime::class)
   }
@@ -150,7 +150,7 @@ class PoPUserOTPServiceTest {
       123457,
     )
     Mockito.`when`(prisoner.id?.let { prisonerRepository.findById(it) }).thenReturn(Optional.of(prisoner))
-    Mockito.lenient().`when`(popUserOTPRepository.findByOtp(oneLoginUserData.otp?.toLong() ?: 0)).thenReturn(popUserOTPEntity)
+    Mockito.lenient().`when`(popUserOTPRepository.findByOtpAndExpiryDateIsGreaterThan(oneLoginUserData.otp?.toLong() ?: 0, LocalDateTime.now())).thenReturn(popUserOTPEntity)
     Mockito.`when`(popUserApiService.postPoPUserVerification(oneLoginUserData, Optional.of(prisoner))).thenReturn(popUserResponse)
     val result = popUserOTPService.getPoPUserVerified(oneLoginUserData)
     Assertions.assertEquals(popUserResponse, result)
@@ -162,5 +162,15 @@ class PoPUserOTPServiceTest {
     val otp = SecureRandom.getInstanceStrong().nextLong(999999)
     val otpValue = String.format("%06d", otp).reversed().toLong()
     Assertions.assertEquals(otpValue.toString().length, 6)
+  }
+
+  @Test
+  fun `test create Pop User Verified - Fails OTP Expired`() {
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+    val oneLoginUserData = OneLoginUserData("urn1", "123457", "email@test.com")
+    Mockito.lenient().`when`(popUserOTPRepository.findByOtpAndExpiryDateIsGreaterThan(oneLoginUserData.otp?.toLong() ?: 0, testDate)).thenReturn(null)
+    assertThrows<ResourceNotFoundException> { popUserOTPService.getPoPUserVerified(oneLoginUserData) }
+    unmockkStatic(LocalDateTime::class)
   }
 }

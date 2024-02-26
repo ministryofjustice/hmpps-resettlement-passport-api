@@ -84,7 +84,6 @@ class PoPUserOTPServiceTest {
   @Test
   fun `test getAll PoP User OTP - returns PoP User OTP List`() {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
-    // Mockito.`when`(prisonerRepository.findByNomsId(prisonerEntity.nomsId)).thenReturn(prisonerEntity)
     val popUserOTPEntity = PoPUserOTPEntity(
       null,
       prisonerEntity,

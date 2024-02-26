@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import jakarta.transaction.Transactional
 import jakarta.validation.ValidationException
-import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserResponse
@@ -64,7 +63,6 @@ class PoPUserOTPService(
   }
 
   fun getPoPUserVerified(oneLoginUserData: OneLoginUserData): PoPUserResponse? {
-    log.debug("In getPoPUserVerified()")
     if (oneLoginUserData.otp != null && oneLoginUserData.urn != null && oneLoginUserData.email != null) {
       val popUserOTPEntityExists = popUserOTPRepository.findByOtp(oneLoginUserData.otp.toLong())
         ?: throw ResourceNotFoundException("Person On Probation User otp  ${oneLoginUserData.otp}  not found in database")

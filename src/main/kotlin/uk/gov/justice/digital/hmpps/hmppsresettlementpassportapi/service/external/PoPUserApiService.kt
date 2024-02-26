@@ -22,23 +22,26 @@ class PoPUserApiService(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun postPoPUserVerification(oneLoginUserData: OneLoginUserData, prisoner: Optional<PrisonerEntity>): PoPUserResponse? {
-    return popUserWebClientCredentials.post()
-      .uri(
-        "/person-on-probation-user/user",
-      ).contentType(MediaType.APPLICATION_JSON)
-      .bodyValue(
-        mapOf(
-          "crn" to prisoner.get().crn,
-          "email" to oneLoginUserData.email,
-          "cprId" to "NA",
-          "verified" to true,
-          "nomsId" to prisoner.get().nomsId,
-          "oneLoginUrn" to oneLoginUserData.urn,
-        ),
-      )
-      .retrieve()
-      .bodyToMono<PoPUserResponse>()
-      .block()
+  fun postPoPUserVerification(oneLoginUserData: OneLoginUserData, prisoner: Optional<PrisonerEntity>?): PoPUserResponse? {
+    if (prisoner != null) {
+      return popUserWebClientCredentials.post()
+        .uri(
+          "/person-on-probation-user/user",
+        ).contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(
+          mapOf(
+            "crn" to prisoner.get().crn,
+            "email" to oneLoginUserData.email,
+            "cprId" to "NA",
+            "verified" to true,
+            "nomsId" to prisoner.get().nomsId,
+            "oneLoginUrn" to oneLoginUserData.urn,
+          ),
+        )
+        .retrieve()
+        .bodyToMono<PoPUserResponse>()
+        .block()
+    }
+    return null
   }
 }

@@ -27,7 +27,7 @@ services:
       - API_BASE_URL_EDUCATION-EMPLOYMENT=http://education-employment-api-stub:8080
       - API_BASE_URL_CIAG=http://ciag-api-stub:8080
       - API_BASE_URL_INTERVENTIONS-SERVICE=http://interventions-service-api-stub:8080
-      - API_BASE_URL_pop-user-service=https://person-on-probation-user-api-dev.hmpps.service.justice.gov.uk
+      - API_BASE_URL_pop-user-service=https://pop-user-api-stub:8080
 
 networks:
   hmpps:

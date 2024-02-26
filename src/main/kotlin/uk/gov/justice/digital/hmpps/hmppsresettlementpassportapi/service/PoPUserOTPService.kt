@@ -64,15 +64,19 @@ class PoPUserOTPService(
 
   fun getPoPUserVerified(oneLoginUserData: OneLoginUserData): PoPUserResponse? {
     return if (oneLoginUserData.otp != null && oneLoginUserData.urn != null && oneLoginUserData.email != null) {
-      val popUserOTPEntityExists = popUserOTPRepository.findByOtp(oneLoginUserData.otp.toLong())
-        ?: throw ResourceNotFoundException("Person On Probation User otp  ${oneLoginUserData.otp}  not found in database")
+      val popUserOTPEntityExists = popUserOTPRepository.findByOtpAndExpiryDateIsGreaterThan(oneLoginUserData.otp.toLong(), LocalDateTime.now())
+        ?: throw ResourceNotFoundException("Person On Probation User otp  ${oneLoginUserData.otp}  not found in database or expired.")
 
-      var prisonerEntity: Optional<PrisonerEntity>? = popUserOTPEntityExists.id?.let { prisonerRepository.findById(it) }
-        ?: throw ResourceNotFoundException("Prisoner with id ${popUserOTPEntityExists.prisoner.id}  not found in database")
-      popUserApiService.postPoPUserVerification(
-        oneLoginUserData,
-        prisonerEntity,
-      )
+      val prisonerEntity: Optional<PrisonerEntity>? = popUserOTPEntityExists.prisoner.id?.let { prisonerRepository.findById(it) }
+
+      if (prisonerEntity != null && !prisonerEntity.isEmpty) {
+        popUserApiService.postPoPUserVerification(
+          oneLoginUserData,
+          prisonerEntity,
+        )
+      } else {
+        throw ResourceNotFoundException("Prisoner with id ${popUserOTPEntityExists.prisoner.id}  not found in database")
+      }
     } else {
       throw ValidationException("required data otp, urn or email is missing")
     }

@@ -44,7 +44,6 @@ class PoPUserOTPService(
   fun createPoPUserOTP(prisoner: PrisonerEntity): PoPUserOTPEntity {
     val now = LocalDateTime.now()
     val popUserOTPExists = popUserOTPRepository.findByPrisoner(prisoner)
-    // val secureRandom = SecureRandom()
     // For now OTP generated is in 6 digits, for 8 digits the below value should be 99999999
     val otp = SecureRandom.getInstanceStrong().nextLong(999999)
     val otpValue = String.format("%06d", otp)

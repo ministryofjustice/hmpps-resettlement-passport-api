@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import jakarta.transaction.Transactional
 import jakarta.validation.ValidationException
-import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserResponse
@@ -14,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PoPUserApiService
 import java.security.SecureRandom
 import java.time.LocalDateTime
+import java.util.*
 
 @Service
 class PoPUserOTPService(
@@ -44,11 +44,9 @@ class PoPUserOTPService(
   fun createPoPUserOTP(prisoner: PrisonerEntity): PoPUserOTPEntity {
     val now = LocalDateTime.now()
     val popUserOTPExists = popUserOTPRepository.findByPrisoner(prisoner)
-    // val secureRandom = SecureRandom()
     // For now OTP generated is in 6 digits, for 8 digits the below value should be 99999999
     val otp = SecureRandom.getInstanceStrong().nextLong(999999)
-    val otpValue = String.format("%06d", otp).toLong()
-    SecureRandom.getInstanceStrong()
+    val otpValue = String.format("%06d", otp)
     if (popUserOTPExists != null) {
       popUserOTPRepository.delete(popUserOTPExists)
     }
@@ -64,16 +62,20 @@ class PoPUserOTPService(
   }
 
   fun getPoPUserVerified(oneLoginUserData: OneLoginUserData): PoPUserResponse? {
-    log.debug("In getPoPUserVerified()")
-    if (oneLoginUserData.otp != null && oneLoginUserData.urn != null && oneLoginUserData.email != null) {
-      val popUserOTPEntityExists = popUserOTPRepository.findByOtp(oneLoginUserData.otp.toLong())
-        ?: throw ResourceNotFoundException("Person On Probation User otp  ${oneLoginUserData.otp}  not found in database")
+    return if (oneLoginUserData.otp != null && oneLoginUserData.urn != null && oneLoginUserData.email != null) {
+      val popUserOTPEntityExists = popUserOTPRepository.findByOtpAndExpiryDateIsGreaterThan(oneLoginUserData.otp, LocalDateTime.now())
+        ?: throw ResourceNotFoundException("Person On Probation User otp  ${oneLoginUserData.otp}  not found in database or expired.")
 
-      val prisoner = popUserOTPEntityExists.prisoner.id?.let { prisonerRepository.findById(it) } ?: throw ResourceNotFoundException("Prisoner with id ${popUserOTPEntityExists.prisoner.id}.prisoner.id}  not found in database")
-      return popUserApiService.postPoPUserVerification(
-        oneLoginUserData,
-        prisoner,
-      )
+      val prisonerEntity: Optional<PrisonerEntity>? = popUserOTPEntityExists.prisoner.id?.let { prisonerRepository.findById(it) }
+
+      if (prisonerEntity != null && !prisonerEntity.isEmpty) {
+        popUserApiService.postPoPUserVerification(
+          oneLoginUserData,
+          prisonerEntity,
+        )
+      } else {
+        throw ResourceNotFoundException("Prisoner with id ${popUserOTPEntityExists.prisoner.id}  not found in database")
+      }
     } else {
       throw ValidationException("required data otp, urn or email is missing")
     }

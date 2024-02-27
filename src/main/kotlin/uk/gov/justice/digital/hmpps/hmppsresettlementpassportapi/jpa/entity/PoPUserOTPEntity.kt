@@ -29,6 +29,6 @@ data class PoPUserOTPEntity(
   val expiryDate: LocalDateTime,
 
   @Column(name = "otp")
-  val otp: Long,
+  val otp: String,
 
 )

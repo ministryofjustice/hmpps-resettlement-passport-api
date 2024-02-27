@@ -146,5 +146,16 @@ services:
     volumes:
       - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/interventions-service-api:/home/wiremock:ro"
 
+  pop-user-api-stub:
+    image: wiremock/wiremock
+    command: "--no-request-journal --global-response-templating --verbose"
+    networks:
+      - hmpps
+    container_name: pop-user-api-stub
+    ports:
+      - "8092:8080"
+    volumes:
+      - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs/pop-user-api:/home/wiremock:ro"
+
 networks:
   hmpps:

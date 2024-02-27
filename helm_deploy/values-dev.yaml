@@ -22,7 +22,8 @@ generic-service:
     API_BASE_URL_EDUCATION-EMPLOYMENT:  http://education-employment-api-stub
     API_BASE_URL_CIAG: http://ciag-api-stub
     API_BASE_URL_INTERVENTIONS-SERVICE: http://interventions-service-api-stub
-    API_BASE_URL_POP-USER-SERVICE: https://person-on-probation-user-api-dev.hmpps.service.justice.gov.uk
+    API_BASE_URL_POP-USER-SERVICE: http://pop-user-api-stub
+  
 
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
@@ -42,3 +43,4 @@ deploy_stubs:
   - education-employment-api
   - ciag-api
   - interventions-service-api
+  - pop-user-api

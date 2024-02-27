@@ -34,7 +34,7 @@ class PoPUserOTPRepositoryTest : RepositoryTestBase() {
       prisoner,
       LocalDateTime.now(),
       LocalDateTime.now().plusDays(7).withHour(11).withMinute(59).withSecond(59),
-      123456,
+      "123456",
     )
     popUserOTPRepository.save(popUserOTPEntity)
 
@@ -53,7 +53,7 @@ class PoPUserOTPRepositoryTest : RepositoryTestBase() {
       prisoner,
       LocalDateTime.now(),
       LocalDateTime.now().plusDays(7).withHour(11).withMinute(59).withSecond(59),
-      123456,
+      "123456",
     )
 
     val popUserOTPResult = popUserOTPRepository.save(popUserOTPEntity)

@@ -10,5 +10,5 @@ import java.time.LocalDateTime
 interface PoPUserOTPRepository : JpaRepository<PoPUserOTPEntity, Long> {
   fun findByPrisoner(prisoner: PrisonerEntity): PoPUserOTPEntity?
 
-  fun findByOtpAndExpiryDateIsGreaterThan(otp: Long, expiryDate: LocalDateTime): PoPUserOTPEntity?
+  fun findByOtpAndExpiryDateIsGreaterThan(otp: String?, expiryDate: LocalDateTime): PoPUserOTPEntity?
 }

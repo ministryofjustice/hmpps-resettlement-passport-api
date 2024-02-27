@@ -78,6 +78,13 @@ class FinanceAndIdResettlementAssessmentStrategy(
       },
     ),
     ResettlementAssessmentNode(
+      FinanceAndIdAssessmentPage.SELECT_BENEFITS,
+      nextPage =
+      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+        return FinanceAndIdAssessmentPage.DEBTS_OR_ARREARS
+      },
+    ),
+    ResettlementAssessmentNode(
       FinanceAndIdAssessmentPage.DEBTS_OR_ARREARS,
       nextPage =
       fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {

@@ -25,7 +25,7 @@ class PoPUserApiService(
   }
 
   fun postPoPUserVerification(oneLoginUserData: OneLoginUserData, prisoner: Optional<PrisonerEntity>?): PoPUserResponse? {
-    if (prisoner != null && !prisoner.isEmpty) {
+    if (prisoner != null) {
       return popUserWebClientCredentials.post()
         .uri(
           "/person-on-probation-user/user",

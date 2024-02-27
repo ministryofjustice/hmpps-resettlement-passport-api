@@ -4,6 +4,7 @@ import io.mockk.every
 import io.mockk.mockkStatic
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.OneLoginUserData
 import java.security.SecureRandom
 import java.time.LocalDateTime
 
@@ -120,7 +121,7 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
 
     every {
       SecureRandom.getInstanceStrong().nextLong(999999)
-    } returns 567890
+    } returns 567891
 
     webTestClient.post()
       .uri("/resettlement-passport/popUser/$nomsId/otp")
@@ -171,10 +172,119 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Create  Person on Probation User OTP - Forbidden`() {
     val nomsId = "G4161UF"
+
     webTestClient.post()
       .uri("/resettlement-passport/popUser/$nomsId/otp")
       .headers(setAuthorisation())
       .exchange()
       .expectStatus().isForbidden
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
+  fun `Verify Person on Probation User OTP - happy path`() {
+    popUserApiMockServer.resetMappings()
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+    mockkStatic(SecureRandom::class)
+    every {
+      SecureRandom.getInstanceStrong().nextLong(999999)
+    } returns 123456
+
+    val expectedOutput1 = readFile("testdata/expectation/pop-user-otp-post-result.json")
+    val nomsId = "G4161UF"
+
+    webTestClient.post()
+      .uri("/resettlement-passport/popUser/$nomsId/otp")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput1)
+
+    val expectedOutput2 = readFile("testdata/expectation/pop-user-verify-post-result.json")
+    popUserApiMockServer.stubPostPoPUserVerification(200)
+    webTestClient.post()
+      .uri("/resettlement-passport/popUser/onelogin/verify")
+      .bodyValue(
+        OneLoginUserData(
+          urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
+          otp = "123456",
+          email = "chrisy.clemence@gmail.com",
+
+        ),
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput2)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
+  fun `Verify Person on Probation User OTP - Invalid OTP`() {
+    popUserApiMockServer.resetMappings()
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+    mockkStatic(SecureRandom::class)
+    every {
+      SecureRandom.getInstanceStrong().nextLong(999999)
+    } returns 123456
+
+    val expectedOutput1 = readFile("testdata/expectation/pop-user-otp-post-result.json")
+    val nomsId = "G4161UF"
+    webTestClient.post()
+      .uri("/resettlement-passport/popUser/$nomsId/otp")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput1)
+
+    popUserApiMockServer.stubPostPoPUserVerification(200)
+    webTestClient.post()
+      .uri("/resettlement-passport/popUser/onelogin/verify")
+      .bodyValue(
+        OneLoginUserData(
+          urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
+          otp = "123457",
+          email = "chrisy.clemence@gmail.com",
+
+        ),
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pop-user-otp-2.sql")
+  fun `Verify Person on Probation User OTP - Expired OTP`() {
+    popUserApiMockServer.resetMappings()
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow.plusDays(9)
+    mockkStatic(SecureRandom::class)
+    every {
+      SecureRandom.getInstanceStrong().nextLong(999999)
+    } returns 123456
+
+    popUserApiMockServer.stubPostPoPUserVerification(200)
+    webTestClient.post()
+      .uri("/resettlement-passport/popUser/onelogin/verify")
+      .bodyValue(
+        OneLoginUserData(
+          urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
+          otp = "123456",
+          email = "chrisy.clemence@gmail.com",
+
+        ),
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isNotFound
   }
 }

@@ -46,7 +46,7 @@ class PoPUserOTPService(
     val popUserOTPExists = popUserOTPRepository.findByPrisoner(prisoner)
     // For now OTP generated is in 6 digits, for 8 digits the below value should be 99999999
     val otp = SecureRandom.getInstanceStrong().nextLong(999999)
-    val otpValue = String.format("%06d", otp).reversed().toLong()
+    val otpValue = String.format("%06d", otp)
     if (popUserOTPExists != null) {
       popUserOTPRepository.delete(popUserOTPExists)
     }
@@ -63,7 +63,7 @@ class PoPUserOTPService(
 
   fun getPoPUserVerified(oneLoginUserData: OneLoginUserData): PoPUserResponse? {
     return if (oneLoginUserData.otp != null && oneLoginUserData.urn != null && oneLoginUserData.email != null) {
-      val popUserOTPEntityExists = popUserOTPRepository.findByOtpAndExpiryDateIsGreaterThan(oneLoginUserData.otp.toLong(), LocalDateTime.now())
+      val popUserOTPEntityExists = popUserOTPRepository.findByOtpAndExpiryDateIsGreaterThan(oneLoginUserData.otp, LocalDateTime.now())
         ?: throw ResourceNotFoundException("Person On Probation User otp  ${oneLoginUserData.otp}  not found in database or expired.")
 
       val prisonerEntity: Optional<PrisonerEntity>? = popUserOTPEntityExists.prisoner.id?.let { prisonerRepository.findById(it) }

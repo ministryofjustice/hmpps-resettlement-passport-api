@@ -210,7 +210,7 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
       .bodyValue(
         OneLoginUserData(
           urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
-          otp = "654321",
+          otp = "123456",
           email = "chrisy.clemence@gmail.com",
 
         ),

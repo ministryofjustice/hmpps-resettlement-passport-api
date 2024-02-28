@@ -30,7 +30,8 @@ api:
       #https://ciag-induction-api-dev.hmpps.service.justice.gov.uk
       interventions-service: http://localhost:8082
       #https://hmpps-interventions-service-dev.apps.live-1.cloud-platform.service.justice.gov.uk
-      pop-user-service: https://person-on-probation-user-api-dev.hmpps.service.justice.gov.uk
+      pop-user-service: http://localhost:8092
+      #https://person-on-probation-user-api-dev.hmpps.service.justice.gov.uk
 
 management.endpoint:
   health.cache.time-to-live: 0

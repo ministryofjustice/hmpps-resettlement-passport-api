@@ -40,14 +40,14 @@ class EducationSkillsAndWorkResettlementAssessmentStrategy(
           // Bad request if the question isn't answered
           throw ServerWebInputException("No valid answer found to mandatory question ${EducationSkillsAndWorkResettlementAssessmentQuestion.JOB_BEFORE_CUSTODY}.")
         }
-      }
+      },
     ),
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.TYPE_OF_EMPLOYMENT_CONTRACT,
       nextPage =
       fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
         return EducationSkillsAndWorkAssessmentPage.RETURN_TO_JOB_AFTER_RELEASE
-      }
+      },
     ),
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.RETURN_TO_JOB_AFTER_RELEASE,
@@ -61,7 +61,7 @@ class EducationSkillsAndWorkResettlementAssessmentStrategy(
           // Bad request if the question isn't answered
           throw ServerWebInputException("No valid answer found to mandatory question ${EducationSkillsAndWorkResettlementAssessmentQuestion.RETURN_TO_JOB_AFTER_RELEASE}.")
         }
-      }
+      },
     ),
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.HAVE_A_JOB_AFTER_RELEASE,
@@ -75,7 +75,7 @@ class EducationSkillsAndWorkResettlementAssessmentStrategy(
           // Bad request if the question isn't answered
           throw ServerWebInputException("No valid answer found to mandatory question ${EducationSkillsAndWorkResettlementAssessmentQuestion.HAVE_A_JOB_AFTER_RELEASE}.")
         }
-      }
+      },
     ),
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.HELP_CONTACTING_EMPLOYER,
@@ -89,21 +89,21 @@ class EducationSkillsAndWorkResettlementAssessmentStrategy(
           // Bad request if the question isn't answered
           throw ServerWebInputException("No valid answer found to mandatory question ${EducationSkillsAndWorkResettlementAssessmentQuestion.HELP_CONTACTING_EMPLOYER}.")
         }
-      }
+      },
     ),
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.EMPLOYMENT_DETAILS_BEFORE_CUSTODY,
       nextPage =
       fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
         return EducationSkillsAndWorkAssessmentPage.IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY
-      }
+      },
     ),
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.SUPPORT_TO_FIND_JOB,
       nextPage =
       fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
         return EducationSkillsAndWorkAssessmentPage.IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY
-      }
+      },
     ),
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY,
@@ -117,7 +117,7 @@ class EducationSkillsAndWorkResettlementAssessmentStrategy(
           // Bad request if the question isn't answered
           throw ServerWebInputException("No valid answer found to mandatory question ${EducationSkillsAndWorkResettlementAssessmentQuestion.IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY}.")
         }
-      }
+      },
     ),
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.RETURN_TO_EDUCATION_OR_TRAINING_AFTER_RELEASE,
@@ -131,7 +131,7 @@ class EducationSkillsAndWorkResettlementAssessmentStrategy(
           // Bad request if the question isn't answered
           throw ServerWebInputException("No valid answer found to mandatory question ${EducationSkillsAndWorkResettlementAssessmentQuestion.RETURN_TO_EDUCATION_OR_TRAINING_AFTER_RELEASE}.")
         }
-      }
+      },
     ),
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE,
@@ -145,7 +145,7 @@ class EducationSkillsAndWorkResettlementAssessmentStrategy(
           // Bad request if the question isn't answered
           throw ServerWebInputException("No valid answer found to mandatory question ${EducationSkillsAndWorkResettlementAssessmentQuestion.WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE}.")
         }
-      }
+      },
     ),
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.HELP_CONTACTING_EDUCATION_PROVIDER,
@@ -154,26 +154,26 @@ class EducationSkillsAndWorkResettlementAssessmentStrategy(
         return if (currentQuestionsAndAnswers.any { it.question == EducationSkillsAndWorkResettlementAssessmentQuestion.HELP_CONTACTING_EDUCATION_PROVIDER && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           EducationSkillsAndWorkAssessmentPage.TRAINING_PROVIDER_DETAILS
         } else if (currentQuestionsAndAnswers.any { it.question == EducationSkillsAndWorkResettlementAssessmentQuestion.HELP_CONTACTING_EDUCATION_PROVIDER && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
-          EducationSkillsAndWorkAssessmentPage.WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE
+          EducationSkillsAndWorkAssessmentPage.BURSARIES_AND_GRANTS
         } else {
           // Bad request if the question isn't answered
           throw ServerWebInputException("No valid answer found to mandatory question ${EducationSkillsAndWorkResettlementAssessmentQuestion.HELP_CONTACTING_EDUCATION_PROVIDER}.")
         }
-      }
+      },
     ),
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.TRAINING_PROVIDER_DETAILS,
       nextPage =
       fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
         return EducationSkillsAndWorkAssessmentPage.BURSARIES_AND_GRANTS
-      }
+      },
     ),
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.BURSARIES_AND_GRANTS,
       nextPage =
       fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
         return GenericAssessmentPage.ASSESSMENT_SUMMARY
-      }
+      },
     ),
   )
 }
@@ -181,19 +181,19 @@ class EducationSkillsAndWorkResettlementAssessmentStrategy(
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 enum class EducationSkillsAndWorkAssessmentPage(override val id: String, override val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, override val title: String? = null) :
   IAssessmentPage {
-    JOB_BEFORE_CUSTODY(id = "JOB_BEFORE_CUSTODY", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.JOB_BEFORE_CUSTODY))),
-    TYPE_OF_EMPLOYMENT_CONTRACT(id = "TYPE_OF_EMPLOYMENT_CONTRACT", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.TYPE_OF_EMPLOYMENT_CONTRACT))),
-    RETURN_TO_JOB_AFTER_RELEASE(id = "RETURN_TO_JOB_AFTER_RELEASE", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.RETURN_TO_JOB_AFTER_RELEASE))),
-    HAVE_A_JOB_AFTER_RELEASE(id = "HAVE_A_JOB_AFTER_RELEASE", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.HAVE_A_JOB_AFTER_RELEASE))),
-    HELP_CONTACTING_EMPLOYER(id = "HELP_CONTACTING_EMPLOYER", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.HELP_CONTACTING_EMPLOYER))),
-    EMPLOYMENT_DETAILS_BEFORE_CUSTODY(id = "EMPLOYMENT_DETAILS_BEFORE_CUSTODY", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.EMPLOYMENT_TITLE_BEFORE_CUSTODY), ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.NAME_OF_EMPLOYER), ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.ADDRESS_OF_EMPLOYER)), title = "Enter name and address of the employer and job title"),
-    SUPPORT_TO_FIND_JOB(id = "SUPPORT_TO_FIND_JOB", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.SUPPORT_TO_FIND_JOB))),
-    IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY(id = "IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY))),
-    RETURN_TO_EDUCATION_OR_TRAINING_AFTER_RELEASE(id = "RETURN_TO_EDUCATION_OR_TRAINING_AFTER_RELEASE", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.RETURN_TO_EDUCATION_OR_TRAINING_AFTER_RELEASE))),
-    WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE(id = "WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE))),
-    HELP_CONTACTING_EDUCATION_PROVIDER(id = "HELP_CONTACTING_EDUCATION_PROVIDER", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.HELP_CONTACTING_EDUCATION_PROVIDER))),
-    TRAINING_PROVIDER_DETAILS(id = "TRAINING_PROVIDER_DETAILS", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.NAME_OF_TRAINING_PROVIDER), ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.ADDRESS_OF_TRAINING_PROVIDER))),
-    BURSARIES_AND_GRANTS(id = "BURSARIES_AND_GRANTS", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.BURSARIES_AND_GRANTS))),
+  JOB_BEFORE_CUSTODY(id = "JOB_BEFORE_CUSTODY", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.JOB_BEFORE_CUSTODY))),
+  TYPE_OF_EMPLOYMENT_CONTRACT(id = "TYPE_OF_EMPLOYMENT_CONTRACT", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.TYPE_OF_EMPLOYMENT_CONTRACT))),
+  RETURN_TO_JOB_AFTER_RELEASE(id = "RETURN_TO_JOB_AFTER_RELEASE", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.RETURN_TO_JOB_AFTER_RELEASE))),
+  HAVE_A_JOB_AFTER_RELEASE(id = "HAVE_A_JOB_AFTER_RELEASE", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.HAVE_A_JOB_AFTER_RELEASE))),
+  HELP_CONTACTING_EMPLOYER(id = "HELP_CONTACTING_EMPLOYER", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.HELP_CONTACTING_EMPLOYER))),
+  EMPLOYMENT_DETAILS_BEFORE_CUSTODY(id = "EMPLOYMENT_DETAILS_BEFORE_CUSTODY", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.EMPLOYMENT_TITLE_BEFORE_CUSTODY), ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.NAME_OF_EMPLOYER), ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.ADDRESS_OF_EMPLOYER)), title = "Enter name and address of the employer and job title"),
+  SUPPORT_TO_FIND_JOB(id = "SUPPORT_TO_FIND_JOB", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.SUPPORT_TO_FIND_JOB))),
+  IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY(id = "IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY))),
+  RETURN_TO_EDUCATION_OR_TRAINING_AFTER_RELEASE(id = "RETURN_TO_EDUCATION_OR_TRAINING_AFTER_RELEASE", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.RETURN_TO_EDUCATION_OR_TRAINING_AFTER_RELEASE))),
+  WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE(id = "WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE))),
+  HELP_CONTACTING_EDUCATION_PROVIDER(id = "HELP_CONTACTING_EDUCATION_PROVIDER", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.HELP_CONTACTING_EDUCATION_PROVIDER))),
+  TRAINING_PROVIDER_DETAILS(id = "TRAINING_PROVIDER_DETAILS", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.NAME_OF_TRAINING_PROVIDER), ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.ADDRESS_OF_TRAINING_PROVIDER)), title = "Enter name and address of the training or education provider"),
+  BURSARIES_AND_GRANTS(id = "BURSARIES_AND_GRANTS", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.BURSARIES_AND_GRANTS))),
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
@@ -241,7 +241,7 @@ enum class EducationSkillsAndWorkResettlementAssessmentQuestion(
     title = "Does the person in prison need help contacting the employer?",
     type = TypeOfQuestion.RADIO,
     options = listOf(
-      Option(id = "YES", displayText = "Yes", withAddress = true),
+      Option(id = "YES", displayText = "Yes"),
       Option(id = "NO", displayText = "No"),
       Option(id = "NO_ANSWER", displayText = "No answer provided"),
     ),

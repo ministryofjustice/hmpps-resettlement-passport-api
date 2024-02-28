@@ -23,6 +23,7 @@ data class ResettlementAssessmentNextPage(
 
 data class ResettlementAssessmentResponsePage(
   override val id: String,
+  override val title: String? = null,
   override val questionsAndAnswers: List<ResettlementAssessmentResponseQuestionAndAnswer>,
 ) : IAssessmentPage
 

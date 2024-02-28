@@ -74,7 +74,7 @@ class HealthResettlementAssessmentStrategy(
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-enum class HealthAssessmentPage(override val id: String, override val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>) : IAssessmentPage {
+enum class HealthAssessmentPage(override val id: String, override val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, override val title: String? = null) : IAssessmentPage {
   REGISTERED_WITH_GP(id = "REGISTERED_WITH_GP", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(HealthResettlementAssessmentQuestion.REGISTERED_WITH_GP))),
   HELP_REGISTERING_GP(id = "HELP_REGISTERING_GP", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(HealthResettlementAssessmentQuestion.HELP_REGISTERING_GP))),
   MEET_HEALTHCARE_TEAM(id = "MEET_HEALTHCARE_TEAM", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(HealthResettlementAssessmentQuestion.MEET_HEALTHCARE_TEAM))),

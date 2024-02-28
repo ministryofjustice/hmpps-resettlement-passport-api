@@ -31,16 +31,16 @@ class ChildrenFamilyAndCommunitiesResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       ChildrenFamilyAndCommunitiesAssessmentPage.PARTNER_OR_SPOUSE,
       nextPage = fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
-        return ChildrenFamilyAndCommunitiesAssessmentPage.PRIMARY_CAREGIVER_FOR_CHILDREN
+        return ChildrenFamilyAndCommunitiesAssessmentPage.PRIMARY_CARER_FOR_CHILDREN
       },
     ),
     ResettlementAssessmentNode(
-      ChildrenFamilyAndCommunitiesAssessmentPage.PRIMARY_CAREGIVER_FOR_CHILDREN,
+      ChildrenFamilyAndCommunitiesAssessmentPage.PRIMARY_CARER_FOR_CHILDREN,
       nextPage =
       fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
-        return if (currentQuestionsAndAnswers.any { it.question == ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.PRIMARY_CAREGIVER_FOR_CHILDREN && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
+        return if (currentQuestionsAndAnswers.any { it.question == ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.PRIMARY_CARER_FOR_CHILDREN && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           ChildrenFamilyAndCommunitiesAssessmentPage.CHILDREN_SERVICES_INVOLVED
-        } else if (currentQuestionsAndAnswers.any { it.question == ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.PRIMARY_CAREGIVER_FOR_CHILDREN && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
+        } else if (currentQuestionsAndAnswers.any { it.question == ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.PRIMARY_CARER_FOR_CHILDREN && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
           ChildrenFamilyAndCommunitiesAssessmentPage.CARING_FOR_ADULT
         } else {
           // Bad request if the question isn't answered
@@ -112,6 +112,13 @@ class ChildrenFamilyAndCommunitiesResettlementAssessmentStrategy(
         return ChildrenFamilyAndCommunitiesAssessmentPage.COMMUNITY_ORGANISATION_SUPPORT
       },
     ),
+    ResettlementAssessmentNode(
+      ChildrenFamilyAndCommunitiesAssessmentPage.COMMUNITY_ORGANISATION_SUPPORT,
+      nextPage =
+      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+        return GenericAssessmentPage.ASSESSMENT_SUMMARY
+      },
+    ),
   )
 }
 
@@ -119,7 +126,7 @@ class ChildrenFamilyAndCommunitiesResettlementAssessmentStrategy(
 enum class ChildrenFamilyAndCommunitiesAssessmentPage(override val id: String, override val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>) :
   IAssessmentPage {
   PARTNER_OR_SPOUSE(id = "PARTNER_OR_SPOUSE", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.PARTNER_OR_SPOUSE))),
-  PRIMARY_CAREGIVER_FOR_CHILDREN(id = "PRIMARY_CAREGIVER_FOR_CHILDREN", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.PRIMARY_CAREGIVER_FOR_CHILDREN))),
+  PRIMARY_CARER_FOR_CHILDREN(id = "PRIMARY_CARER_FOR_CHILDREN", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.PRIMARY_CARER_FOR_CHILDREN))),
   CHILDREN_SERVICES_INVOLVED(id = "CHILDREN_SERVICES_INVOLVED", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.CHILDREN_SERVICES_INVOLVED))),
   SUPPORT_MEETING_CHILDREN_SERVICES(id = "SUPPORT_MEETING_CHILDREN_SERVICES", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.SUPPORT_MEETING_CHILDREN_SERVICES))),
   CARING_FOR_ADULT(id = "CARING_FOR_ADULT", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.CARING_FOR_ADULT))),
@@ -145,8 +152,8 @@ enum class ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion(
     type = TypeOfQuestion.RADIO,
     options = yesNoOptions,
   ),
-  PRIMARY_CAREGIVER_FOR_CHILDREN(
-    id = "PRIMARY_CAREGIVER_FOR_CHILDREN",
+  PRIMARY_CARER_FOR_CHILDREN(
+    id = "PRIMARY_CARER_FOR_CHILDREN",
     title = "Is the person in prison the primary carer for any children?",
     type = TypeOfQuestion.RADIO,
     options = yesNoOptions,

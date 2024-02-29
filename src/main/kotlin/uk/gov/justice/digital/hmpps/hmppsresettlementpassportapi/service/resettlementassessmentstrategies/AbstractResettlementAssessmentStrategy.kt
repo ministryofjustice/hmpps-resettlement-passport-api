@@ -160,6 +160,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
           page.id,
         )
       },
+      title = page.title,
     )
 
     // If there is an existing assessment, add the answer into the question
@@ -294,6 +295,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
 enum class GenericAssessmentPage(
   override val id: String,
   override val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>,
+  override val title: String? = null,
 ) : IAssessmentPage {
   CHECK_ANSWERS(
     id = "CHECK_ANSWERS",

@@ -109,7 +109,7 @@ class FinanceAndIdResettlementAssessmentStrategy(
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-enum class FinanceAndIdAssessmentPage(override val id: String, override val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>) : IAssessmentPage {
+enum class FinanceAndIdAssessmentPage(override val id: String, override val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, override val title: String? = null) : IAssessmentPage {
   HAS_BANK_ACCOUNT(id = "HAS_BANK_ACCOUNT", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(FinanceAndIdResettlementAssessmentQuestion.HAS_BANK_ACCOUNT))),
   HELP_WITH_BANK_ACCOUNT(id = "HELP_WITH_BANK_ACCOUNT", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(FinanceAndIdResettlementAssessmentQuestion.HELP_WITH_BANK_ACCOUNT))),
   WHAT_ID_DOCUMENTS(id = "WHAT_ID_DOCUMENTS", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(FinanceAndIdResettlementAssessmentQuestion.WHAT_ID_DOCUMENTS))),

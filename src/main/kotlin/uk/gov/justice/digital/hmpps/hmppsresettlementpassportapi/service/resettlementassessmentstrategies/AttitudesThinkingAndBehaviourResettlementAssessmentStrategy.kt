@@ -66,7 +66,7 @@ class AttitudesThinkingAndBehaviourResettlementAssessmentStrategy(
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-enum class AttitudesThinkingAndBehaviourAssessmentPage(override val id: String, override val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>) : IAssessmentPage {
+enum class AttitudesThinkingAndBehaviourAssessmentPage(override val id: String, override val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, override val title: String? = null) : IAssessmentPage {
   HELP_TO_MANAGE_ANGER(id = "HELP_TO_MANAGE_ANGER", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AttitudesThinkingAndBehaviourResettlementAssessmentQuestion.HELP_TO_MANAGE_ANGER))),
   INFLUENCED_BY_OTHERS(id = "INFLUENCED_BY_OTHERS", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AttitudesThinkingAndBehaviourResettlementAssessmentQuestion.INFLUENCED_BY_OTHERS))),
   ISSUES_WITH_GAMBLING(id = "ISSUES_WITH_GAMBLING", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AttitudesThinkingAndBehaviourResettlementAssessmentQuestion.ISSUES_WITH_GAMBLING))),

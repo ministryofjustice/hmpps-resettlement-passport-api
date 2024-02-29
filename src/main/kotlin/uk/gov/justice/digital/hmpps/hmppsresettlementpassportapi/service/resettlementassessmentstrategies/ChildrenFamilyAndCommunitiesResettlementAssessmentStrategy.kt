@@ -123,7 +123,7 @@ class ChildrenFamilyAndCommunitiesResettlementAssessmentStrategy(
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-enum class ChildrenFamilyAndCommunitiesAssessmentPage(override val id: String, override val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>) :
+enum class ChildrenFamilyAndCommunitiesAssessmentPage(override val id: String, override val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, override val title: String? = null) :
   IAssessmentPage {
   PARTNER_OR_SPOUSE(id = "PARTNER_OR_SPOUSE", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.PARTNER_OR_SPOUSE))),
   PRIMARY_CARER_FOR_CHILDREN(id = "PRIMARY_CARER_FOR_CHILDREN", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion.PRIMARY_CARER_FOR_CHILDREN))),

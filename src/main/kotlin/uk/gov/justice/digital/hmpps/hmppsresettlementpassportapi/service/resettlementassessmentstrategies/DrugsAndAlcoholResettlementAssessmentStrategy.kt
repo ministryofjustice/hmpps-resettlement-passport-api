@@ -74,7 +74,7 @@ class DrugsAndAlcoholResettlementAssessmentStrategy(
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-enum class DrugsAndAlcoholAssessmentPage(override val id: String, override val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>) : IAssessmentPage {
+enum class DrugsAndAlcoholAssessmentPage(override val id: String, override val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, override val title: String? = null) : IAssessmentPage {
   DRUG_ISSUES(id = "DRUG_ISSUES", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(DrugsAndAlcoholResettlementAssessmentQuestion.DRUG_ISSUES))),
   SUPPORT_WITH_DRUG_ISSUES(id = "SUPPORT_WITH_DRUG_ISSUES", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(DrugsAndAlcoholResettlementAssessmentQuestion.SUPPORT_WITH_DRUG_ISSUES))),
   ALCOHOL_ISSUES(id = "ALCOHOL_ISSUES", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(DrugsAndAlcoholResettlementAssessmentQuestion.ALCOHOL_ISSUES))),

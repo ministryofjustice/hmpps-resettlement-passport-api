@@ -60,7 +60,7 @@ class AccommodationResettlementAssessmentStrategy(
       AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_1,
       nextPage =
       fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
-        return if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_1 && it.answer?.answer is String && (it.answer!!.answer as String  == "MOVE_TO_NEW_ADDRESS") }) {
+        return if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_1 && it.answer?.answer is String && (it.answer!!.answer as String == "MOVE_TO_NEW_ADDRESS") }) {
           AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_ADDRESS
         } else if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_1 && (it.answer?.answer as String in listOf("RETURN_TO_PREVIOUS_ADDRESS", "DOES_NOT_HAVE_ANYWHERE", "NO_ANSWER")) }) {
           GenericAssessmentPage.ASSESSMENT_SUMMARY

@@ -41,7 +41,6 @@ class PoPUserApiService(
           ),
         )
         .retrieve()
-        .onStatus({ it != HttpStatus.OK }, { throw ResourceNotFoundException("Person On Probation User for email ${oneLoginUserData.email} already verified or unable to complete the verification") })
         .bodyToMono<PoPUserResponse>()
         .block()
     } else {

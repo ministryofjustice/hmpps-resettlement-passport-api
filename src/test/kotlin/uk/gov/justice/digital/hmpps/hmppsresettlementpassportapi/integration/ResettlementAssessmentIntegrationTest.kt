@@ -75,7 +75,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectBody().json(
         """
         {
-          "nextPageId": "HELP_TO_KEEP_HOME"
+          "nextPageId": "WHERE_DID_THEY_LIVE_ADDRESS"
         }
         """.trimIndent(),
       )

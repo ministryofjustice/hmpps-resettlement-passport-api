@@ -1,5 +1,6 @@
 {
   "id": "WHERE_DID_THEY_LIVE",
+  "title": null,
   "questionsAndAnswers": [
     {
       "question": {
@@ -7,52 +8,42 @@
         "id": "WHERE_DID_THEY_LIVE",
         "title": "Where did the person in prison live before custody?",
         "subTitle": null,
-        "type": "RADIO_WITH_ADDRESS",
+        "type": "RADIO",
         "options": [
           {
             "id": "PRIVATE_RENTED_HOUSING",
             "displayText": "Private rented housing",
             "description": null,
-            "withAddress": true
+            "exclusive": false
           },
           {
             "id": "SOCIAL_HOUSING",
             "displayText": "Social housing",
             "description": null,
-            "withAddress": true
+            "exclusive": false
           },
           {
             "id": "HOMEOWNER",
             "displayText": "Homeowner",
             "description": null,
-            "withAddress": true
+            "exclusive": false
           },
           {
             "id": "NO_PERMANENT_OR_FIXED",
             "displayText": "No permanent or fixed address",
             "description": null,
-            "withAddress": false
+            "exclusive": false
           },
           {
             "id": "NO_ANSWER",
             "displayText": "No answer provided",
             "description": null,
-            "withAddress": false
+            "exclusive": false
           }
         ]
       },
-      "answer": null
-    },
-    {
-      "question": {
-        "@class": "ResettlementAssessmentResponseQuestion",
-        "id": "WHERE_DID_THEY_LIVE_ADDRESS",
-        "title": "Enter the address",
-        "subTitle": null,
-        "type": "ADDRESS",
-        "options": null
-      },
-      "answer": null
+      "answer": null,
+      "originalPageId": "WHERE_DID_THEY_LIVE"
     }
   ]
 }

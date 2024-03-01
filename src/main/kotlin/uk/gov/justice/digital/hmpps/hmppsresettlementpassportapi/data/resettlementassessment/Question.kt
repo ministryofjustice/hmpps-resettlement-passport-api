@@ -28,12 +28,10 @@ data class Option(
   val id: String,
   val displayText: String,
   val description: String? = null,
-  val withAddress: Boolean = false,
   val exclusive: Boolean = false,
 )
 
 enum class TypeOfQuestion {
-  RADIO_WITH_ADDRESS,
   RADIO,
   SHORT_TEXT,
   LONG_TEXT,

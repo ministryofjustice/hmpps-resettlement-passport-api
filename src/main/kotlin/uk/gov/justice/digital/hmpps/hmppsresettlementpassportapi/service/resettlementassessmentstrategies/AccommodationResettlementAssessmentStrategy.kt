@@ -33,13 +33,20 @@ class AccommodationResettlementAssessmentStrategy(
       nextPage =
       fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
         return if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE && it.answer?.answer is String && (it.answer!!.answer as String in listOf("PRIVATE_RENTED_HOUSING", "SOCIAL_HOUSING", "HOMEOWNER")) }) {
-          AccommodationAssessmentPage.HELP_TO_KEEP_HOME
+          AccommodationAssessmentPage.WHERE_DID_THEY_LIVE_ADDRESS
         } else if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE && (it.answer?.answer as String in listOf("NO_PERMANENT_OR_FIXED", "NO_ANSWER")) }) {
           AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_2
         } else {
           // Bad request if the question isn't answered
           throw ServerWebInputException("No valid answer found to mandatory question ${AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE}.")
         }
+      },
+    ),
+    ResettlementAssessmentNode(
+      AccommodationAssessmentPage.WHERE_DID_THEY_LIVE_ADDRESS,
+      nextPage =
+      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+        return AccommodationAssessmentPage.HELP_TO_KEEP_HOME
       },
     ),
     ResettlementAssessmentNode(
@@ -52,12 +59,33 @@ class AccommodationResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_1,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
-        return GenericAssessmentPage.ASSESSMENT_SUMMARY
+      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+        return if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_1 && it.answer?.answer is String && (it.answer!!.answer as String == "MOVE_TO_NEW_ADDRESS") }) {
+          AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_ADDRESS
+        } else if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_1 && (it.answer?.answer as String in listOf("RETURN_TO_PREVIOUS_ADDRESS", "DOES_NOT_HAVE_ANYWHERE", "NO_ANSWER")) }) {
+          GenericAssessmentPage.ASSESSMENT_SUMMARY
+        } else {
+          // Bad request if the question isn't answered
+          throw ServerWebInputException("No valid answer found to mandatory question ${AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_1}.")
+        }
       },
     ),
     ResettlementAssessmentNode(
       AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_2,
+      nextPage =
+      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+        return if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_2 && it.answer?.answer is String && (it.answer!!.answer as String == "MOVE_TO_NEW_ADDRESS") }) {
+          AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_ADDRESS
+        } else if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_2 && (it.answer?.answer as String in listOf("DOES_NOT_HAVE_ANYWHERE", "NO_ANSWER")) }) {
+          GenericAssessmentPage.ASSESSMENT_SUMMARY
+        } else {
+          // Bad request if the question isn't answered
+          throw ServerWebInputException("No valid answer found to mandatory question ${AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_2}.")
+        }
+      },
+    ),
+    ResettlementAssessmentNode(
+      AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_ADDRESS,
       nextPage =
       fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
         return GenericAssessmentPage.ASSESSMENT_SUMMARY
@@ -68,10 +96,12 @@ class AccommodationResettlementAssessmentStrategy(
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 enum class AccommodationAssessmentPage(override val id: String, override val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, override val title: String? = null) : IAssessmentPage {
-  WHERE_DID_THEY_LIVE(id = "WHERE_DID_THEY_LIVE", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE), ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE_ADDRESS))),
+  WHERE_DID_THEY_LIVE(id = "WHERE_DID_THEY_LIVE", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE))),
+  WHERE_DID_THEY_LIVE_ADDRESS(id = "WHERE_DID_THEY_LIVE_ADDRESS", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE_ADDRESS)), title = "Where did the person in prison live before custody?"),
   HELP_TO_KEEP_HOME(id = "HELP_TO_KEEP_HOME", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.HELP_TO_KEEP_HOME))),
-  WHERE_WILL_THEY_LIVE_1(id = "WHERE_WILL_THEY_LIVE_1", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_1), ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_ADDRESS_1))),
-  WHERE_WILL_THEY_LIVE_2(id = "WHERE_WILL_THEY_LIVE_2", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_2), ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_ADDRESS_2))),
+  WHERE_WILL_THEY_LIVE_1(id = "WHERE_WILL_THEY_LIVE_1", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_1))),
+  WHERE_WILL_THEY_LIVE_2(id = "WHERE_WILL_THEY_LIVE_2", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_2))),
+  WHERE_WILL_THEY_LIVE_ADDRESS(id = "WHERE_WILL_THEY_LIVE_ADDRESS", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_ADDRESS)), title = "Where will the person in prison live when they are released?"),
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
@@ -85,11 +115,11 @@ enum class AccommodationResettlementAssessmentQuestion(
   WHERE_DID_THEY_LIVE(
     id = "WHERE_DID_THEY_LIVE",
     title = "Where did the person in prison live before custody?",
-    type = TypeOfQuestion.RADIO_WITH_ADDRESS,
+    type = TypeOfQuestion.RADIO,
     options = listOf(
-      Option(id = "PRIVATE_RENTED_HOUSING", displayText = "Private rented housing", withAddress = true),
-      Option(id = "SOCIAL_HOUSING", displayText = "Social housing", withAddress = true),
-      Option(id = "HOMEOWNER", displayText = "Homeowner", withAddress = true),
+      Option(id = "PRIVATE_RENTED_HOUSING", displayText = "Private rented housing"),
+      Option(id = "SOCIAL_HOUSING", displayText = "Social housing"),
+      Option(id = "HOMEOWNER", displayText = "Homeowner"),
       Option(id = "NO_PERMANENT_OR_FIXED", displayText = "No permanent or fixed address"),
       Option(id = "NO_ANSWER", displayText = "No answer provided"),
     ),
@@ -108,10 +138,10 @@ enum class AccommodationResettlementAssessmentQuestion(
   WHERE_WILL_THEY_LIVE_1(
     id = "WHERE_WILL_THEY_LIVE_1",
     title = "Where will the person in prison live when they are released?",
-    type = TypeOfQuestion.RADIO_WITH_ADDRESS,
+    type = TypeOfQuestion.RADIO,
     options = listOf(
       Option(id = "RETURN_TO_PREVIOUS_ADDRESS", displayText = "Return to their previous address"),
-      Option(id = "MOVE_TO_NEW_ADDRESS", displayText = "Move to a new address", withAddress = true),
+      Option(id = "MOVE_TO_NEW_ADDRESS", displayText = "Move to a new address"),
       Option(id = "DOES_NOT_HAVE_ANYWHERE", displayText = "Does not have anywhere to live"),
       Option(id = "NO_ANSWER", displayText = "No answer provided"),
     ),
@@ -119,20 +149,15 @@ enum class AccommodationResettlementAssessmentQuestion(
   WHERE_WILL_THEY_LIVE_2(
     id = "WHERE_WILL_THEY_LIVE_2",
     title = "Where will the person in prison live when they are released?",
-    type = TypeOfQuestion.RADIO_WITH_ADDRESS,
+    type = TypeOfQuestion.RADIO,
     options = listOf(
-      Option(id = "MOVE_TO_NEW_ADDRESS", displayText = "Move to a new address", withAddress = true),
+      Option(id = "MOVE_TO_NEW_ADDRESS", displayText = "Move to a new address"),
       Option(id = "DOES_NOT_HAVE_ANYWHERE", displayText = "Does not have anywhere to live"),
       Option(id = "NO_ANSWER", displayText = "No answer provided"),
     ),
   ),
-  WHERE_WILL_THEY_LIVE_ADDRESS_1(
-    id = "WHERE_WILL_THEY_LIVE_ADDRESS_1",
-    title = "Enter the address",
-    type = TypeOfQuestion.ADDRESS,
-  ),
-  WHERE_WILL_THEY_LIVE_ADDRESS_2(
-    id = "WHERE_WILL_THEY_LIVE_ADDRESS_2",
+  WHERE_WILL_THEY_LIVE_ADDRESS(
+    id = "WHERE_WILL_THEY_LIVE_ADDRESS",
     title = "Enter the address",
     type = TypeOfQuestion.ADDRESS,
   ),

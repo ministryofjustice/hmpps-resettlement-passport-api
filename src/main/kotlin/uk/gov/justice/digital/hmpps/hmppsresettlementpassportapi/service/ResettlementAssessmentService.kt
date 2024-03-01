@@ -186,7 +186,7 @@ class ResettlementAssessmentService(
       }
     }
 
-    return if (type in listOf(TypeOfQuestion.RADIO_WITH_ADDRESS, TypeOfQuestion.RADIO)) {
+    return if (type == TypeOfQuestion.RADIO) {
       options?.find { it.id == answerAsString }?.displayText ?: answerAsString
     } else {
       answerAsString

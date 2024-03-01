@@ -5,7 +5,7 @@
   },
   "response": {
     "status": 200,
-    "bodyFileName": "postPoPUserOTPVerified-G4161UF-200-response.json",
+    "bodyFileName": "postPoPUserOTPVerified-A8731DY-200-response.json",
     "headers": {
       "Content-Type": "application/json;charset=UTF-8",
       "Server": "wiremock"

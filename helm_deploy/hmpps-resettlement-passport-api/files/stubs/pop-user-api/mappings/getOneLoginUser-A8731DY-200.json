@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/person-on-probation-user/onelogin/user/fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj9"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "getOneLoginUser-A8731DY-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

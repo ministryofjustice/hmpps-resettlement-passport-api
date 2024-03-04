@@ -11,6 +11,8 @@ data class Appointment(
   val date: LocalDate?,
   val time: LocalTime?,
   val location: Address?,
+  val contactEmail: String,
+  val duration: Long?,
   val note: String? = null,
 )
 

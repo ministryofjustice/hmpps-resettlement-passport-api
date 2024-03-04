@@ -137,7 +137,7 @@ class AppointmentsService(
         description = null,
       ),
       contactEmail = null.toString(),
-      duration = 0,
+      duration = deliusContact.appointmentDuration?.toLong(),
       note = deliusContact.notes,
     )
   }

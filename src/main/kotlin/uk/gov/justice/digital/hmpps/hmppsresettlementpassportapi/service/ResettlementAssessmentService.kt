@@ -148,7 +148,7 @@ class ResettlementAssessmentService(
     val questionsAndAnswers = resettlementAssessment.assessment.assessment.mapNotNull {
       val question = convertEnumStringToEnum(questionClass, GenericResettlementAssessmentQuestion::class, it.questionId) as IResettlementAssessmentQuestion
       if (question !in listOf(GenericResettlementAssessmentQuestion.SUPPORT_NEEDS, GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY)) {
-        LatestResettlementAssessmentResponseQuestionAndAnswer(question.title, convertAnswerToString(question.type, question.options, it.answer))
+        LatestResettlementAssessmentResponseQuestionAndAnswer(question.title, convertAnswerToString(question.type, question.options, it.answer), convertCheckboxIdToString(it.answer))
       } else {
         null
       }
@@ -191,6 +191,16 @@ class ResettlementAssessmentService(
     } else {
       answerAsString
     }
+  }
+
+  fun convertCheckboxIdToString(answer: Answer<*>): String? {
+     return if (answer is StringAnswer)
+         answer.answer?.split("\\n")
+         ?.map { s -> s.lowercase() }
+         ?.map { s -> s.replaceFirstChar(Char::titlecase) }
+         ?.joinToString("\\n") { s -> s.replace("_", " ") }
+     else
+      null
   }
 
   fun convertFromListToStringWithLineBreaks(stringElements: List<String>) =

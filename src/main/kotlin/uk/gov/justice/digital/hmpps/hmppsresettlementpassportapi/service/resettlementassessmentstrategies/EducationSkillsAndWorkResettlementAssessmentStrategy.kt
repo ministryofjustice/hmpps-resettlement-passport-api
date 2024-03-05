@@ -3,13 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resett
 import com.fasterxml.jackson.annotation.JsonFormat
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IAssessmentPage
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentNode
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.*
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
@@ -203,7 +197,8 @@ enum class EducationSkillsAndWorkResettlementAssessmentQuestion(
   override val subTitle: String? = null,
   override val type: TypeOfQuestion,
   override val options: List<Option>? = null,
-) : IResettlementAssessmentQuestion {
+  override val validationType: ValidationType = ValidationType.MANDATORY,
+  ) : IResettlementAssessmentQuestion {
   JOB_BEFORE_CUSTODY(
     id = "JOB_BEFORE_CUSTODY",
     title = "Did the person in prison have a job before custody?",

@@ -1,13 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IAssessmentPage
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestionAndAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
 import java.time.LocalDateTime
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.*
 
 data class ResettlementAssessmentRequest(
   val questionsAndAnswers: List<ResettlementAssessmentRequestQuestionAndAnswer<*>>?,
@@ -39,6 +33,7 @@ data class ResettlementAssessmentResponseQuestion(
   override val subTitle: String? = null,
   override val type: TypeOfQuestion,
   override val options: MutableList<Option>? = null,
+  override val validationType: ValidationType = ValidationType.MANDATORY,
 ) : IResettlementAssessmentQuestion
 
 data class LatestResettlementAssessmentResponse(

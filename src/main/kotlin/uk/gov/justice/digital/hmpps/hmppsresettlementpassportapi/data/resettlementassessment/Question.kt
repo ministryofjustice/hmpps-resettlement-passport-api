@@ -22,6 +22,7 @@ interface IResettlementAssessmentQuestion {
   val subTitle: String?
   val type: TypeOfQuestion
   val options: List<Option>?
+  val validationType: ValidationType
 }
 
 data class Option(
@@ -44,3 +45,8 @@ val yesNoOptions = listOf(
   Option(id = "NO", displayText = "No"),
   Option(id = "NO_ANSWER", displayText = "No answer provided"),
 )
+
+enum class ValidationType {
+  MANDATORY,
+  OPTIONAL,
+}

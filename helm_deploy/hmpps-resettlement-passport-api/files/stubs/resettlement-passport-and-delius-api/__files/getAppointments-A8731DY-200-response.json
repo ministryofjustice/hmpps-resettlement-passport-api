@@ -3,7 +3,50 @@
     {
       "type": {
         "code": "CRSSAA",
-        "description": "Appointment with CRS Staff (NS)"
+        "description": "Community Work"
+      },
+      "dateTime": "2024-09-18T09:00:00+01:00",
+      "duration": {
+        "seconds": 0,
+        "zero": true,
+        "nano": 0,
+        "negative": true,
+        "positive": true,
+        "units": [
+          {
+            "durationEstimated": true,
+            "timeBased": true,
+            "dateBased": true
+          }
+        ]
+      },
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Bob",
+          "surname": "Example"
+        },
+        "email": "charity@test.com"
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "Swansea town centre",
+        "address": {
+          "buildingName": "",
+          "buildingNumber": "",
+          "streetName": "",
+          "district": "",
+          "town": "",
+          "county": "Swansea",
+          "postcode": "SA1 1JG"
+        }
+      },
+      "description": "Appointment with Charity ABC"
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Jobs centre plus"
       },
       "dateTime": "2024-09-18T14:46:00+01:00",
       "duration": {
@@ -30,18 +73,18 @@
       },
       "location": {
         "code": "CRSEXTL",
-        "description": "CRS Provider Location",
-        "Address": {
-          "buildingName": "New Court  ",
-          "buildingNumber": "10",
-          "streetName": "New Street",
-          "district": "NewPlace",
-          "town": "New Town",
-          "county": "London",
-          "postcode": "EC2"
+        "description": "Swansea Parc Tawe Jobcentre",
+        "address": {
+          "buildingName": "",
+          "buildingNumber": "Unit 7",
+          "streetName": "Parc Tawe North",
+          "district": "",
+          "town": "Swansea",
+          "county": "Swansea",
+          "postcode": "SA1 2AA"
         }
       },
-      "description": "Appointment with CRS Staff (NS)"
+      "description": "Appointment with Jobs centre plus"
     },
     {
       "type": {
@@ -74,14 +117,14 @@
       "location": {
         "code": "CRSEXTL",
         "description": "CRS Provider Location",
-        "Address": {
-          "buildingName": "Old Court  ",
-          "buildingNumber": "11",
-          "streetName": "Old Street",
-          "district": "OldPlace",
-          "town": "Old Town",
-          "county": "London",
-          "postcode": "EC3"
+        "address": {
+          "buildingName": "",
+          "buildingNumber": "77",
+          "streetName": "High Street",
+          "district": "",
+          "town": "EDINBURGH",
+          "county": "",
+          "postcode": "EH50 2GR"
         }
       },
       "description": "Appointment with CRS Staff (NS)",

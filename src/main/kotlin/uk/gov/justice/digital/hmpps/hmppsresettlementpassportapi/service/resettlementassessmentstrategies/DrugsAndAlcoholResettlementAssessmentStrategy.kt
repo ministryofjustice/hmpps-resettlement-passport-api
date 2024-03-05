@@ -3,7 +3,14 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resett
 import com.fasterxml.jackson.annotation.JsonFormat
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.*
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IAssessmentPage
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentNode
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
@@ -83,7 +90,7 @@ enum class DrugsAndAlcoholResettlementAssessmentQuestion(
   override val type: TypeOfQuestion,
   override val options: List<Option>? = null,
   override val validationType: ValidationType = ValidationType.MANDATORY,
-  ) : IResettlementAssessmentQuestion {
+) : IResettlementAssessmentQuestion {
   DRUG_ISSUES(
     id = "DRUG_ISSUES",
     title = "Does the person in prison have any previous or current drug misuse issues?",

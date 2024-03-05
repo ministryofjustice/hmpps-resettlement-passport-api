@@ -210,6 +210,9 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     val name = getClaimFromJWTToken(auth, "name") ?: throw ServerWebInputException("Cannot get name from auth token")
     val userId = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get sub from auth token")
 
+    // Check that question and answer set is valid
+    validateQuestionAndAnswerSet(assessment)
+
     // Obtain prisoner from database, if exists
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
@@ -289,6 +292,60 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
   }
 
   override fun getQuestionClass(): KClass<Q> = questionClass
+
+  fun validateQuestionAndAnswerSet(assessment: ResettlementAssessmentCompleteRequest) {
+    val nodeList = getPageList() + ResettlementAssessmentNode(GenericAssessmentPage.ASSESSMENT_SUMMARY, fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      return GenericAssessmentPage.CHECK_ANSWERS
+    })
+
+    // Convert to Map of pages to List of questionsAndAnswers
+    val nodeToQuestionMap = assessment.questionsAndAnswers
+      .groupByTo(LinkedHashMap()) { qa ->
+        nodeList
+          .firstOrNull { n ->
+            qa.question in n.assessmentPage.questionsAndAnswers
+              .map { q -> q.question.id }
+          } ?: throw ServerWebInputException("Error validating questions and answers - cannot find a node with question [${qa.question}]")
+      }
+      .mapValues { entry ->
+        entry.value.map {
+          ResettlementAssessmentQuestionAndAnswer(getQuestionList().firstOrNull { q -> q.id == it.question } ?: throw ServerWebInputException("Error validating questions and answers - cannot find a question with id [${it.question}]"), it.answer)
+        }
+      }
+
+    // Ensure the correct number of questions are answered in each page
+    nodeToQuestionMap.forEach { entry ->
+      val expectedQuestions = entry.key.assessmentPage.questionsAndAnswers.map { it.question }
+      val actualQuestions = entry.value.map { it.question }
+      if (expectedQuestions != actualQuestions) {
+        throw ServerWebInputException("Error validating questions and answers - wrong questions answered on page [${entry.key.assessmentPage.id}]. Expected [$expectedQuestions] but found [$actualQuestions]")
+      }
+    }
+
+    // Go through the expected page flow and check that actual pages match up
+    var currentNode: ResettlementAssessmentNode? = null
+    var pageNumber = 0
+
+    while (currentNode?.assessmentPage != GenericAssessmentPage.ASSESSMENT_SUMMARY) {
+      try {
+        val actualPage: IAssessmentPage? = nodeToQuestionMap.keys.elementAtOrNull(pageNumber)?.assessmentPage
+        val expectedPage: IAssessmentPage =
+          currentNode?.nextPage?.invoke(nodeToQuestionMap[currentNode]!!) ?: getPageList()[0].assessmentPage
+        if (expectedPage != actualPage) {
+          throw ServerWebInputException("Error validating questions and answers - expected page [$expectedPage] is different to actual page [$actualPage] at index [$pageNumber]")
+        }
+        currentNode = nodeToQuestionMap.keys.elementAt(pageNumber)
+        pageNumber++
+      } catch (e: Exception) {
+        throw ServerWebInputException("Error validating questions and answers - error validating page flow [${e.message}]")
+      }
+    }
+
+    // Ensure the actual and expected pages are the same size (i.e. no extra pages are present)
+    if (pageNumber != nodeToQuestionMap.size) {
+      throw ServerWebInputException("Error validating questions and answers - incorrect number of pages found - expected [$pageNumber] but found [${nodeToQuestionMap.size}]")
+    }
+  }
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)

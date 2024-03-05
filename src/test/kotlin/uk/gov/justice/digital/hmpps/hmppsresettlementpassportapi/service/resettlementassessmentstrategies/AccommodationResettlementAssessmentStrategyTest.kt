@@ -782,4 +782,320 @@ class AccommodationResettlementAssessmentStrategyTest {
   fun `test getQuestionList`() {
     Assertions.assertEquals(AccommodationResettlementAssessmentQuestion.entries + GenericResettlementAssessmentQuestion.entries, resettlementAssessmentService.getQuestionList())
   }
+
+  @ParameterizedTest
+  @MethodSource("test validateQuestionAndAnswerSet data")
+  fun `test validateQuestionAndAnswerSet`(assessment: ResettlementAssessmentCompleteRequest, valid: Boolean) {
+    if (valid) {
+      resettlementAssessmentService.validateQuestionAndAnswerSet(assessment)
+    } else {
+      assertThrows<ServerWebInputException> { resettlementAssessmentService.validateQuestionAndAnswerSet(assessment) }
+    }
+  }
+
+  private fun `test validateQuestionAndAnswerSet data`() = Stream.of(
+    // Happy path 1 - correct set of questions asked in single path through tree
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE",
+            answer = StringAnswer("PRIVATE_RENTED_HOUSING"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE_ADDRESS",
+            answer = MapAnswer(answer = listOf(mapOf("Key 1" to "Value 1", "Key 2" to "Value 2"), mapOf("Something" to "Something else"))),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "HELP_TO_KEEP_HOME",
+            answer = StringAnswer("YES"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_1",
+            answer = StringAnswer("RETURN_TO_PREVIOUS_ADDRESS"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "SUPPORT_NEEDS",
+            answer = StringAnswer("SUPPORT_REQUIRED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "CASE_NOTE_SUMMARY",
+            answer = StringAnswer("My case note summary..."),
+          ),
+        ),
+      ),
+      true,
+    ),
+    // Happy path 2 - correct set of questions asked in single path through tree
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE",
+            answer = StringAnswer("NO_PERMANENT_OR_FIXED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_2",
+            answer = StringAnswer("DOES_NOT_HAVE_ANYWHERE"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "SUPPORT_NEEDS",
+            answer = StringAnswer("SUPPORT_REQUIRED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "CASE_NOTE_SUMMARY",
+            answer = StringAnswer("My case note summary..."),
+          ),
+        ),
+      ),
+      true,
+    ),
+    // Happy path 3 - correct set of questions asked in single path through tree
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE",
+            answer = StringAnswer("NO_PERMANENT_OR_FIXED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_2",
+            answer = StringAnswer("MOVE_TO_NEW_ADDRESS"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_ADDRESS",
+            answer = MapAnswer(answer = listOf(mapOf("Key 1" to "Value 1", "Key 2" to "Value 2"), mapOf("Something" to "Something else"))),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "SUPPORT_NEEDS",
+            answer = StringAnswer("SUPPORT_REQUIRED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "CASE_NOTE_SUMMARY",
+            answer = StringAnswer("My case note summary..."),
+          ),
+        ),
+      ),
+      true,
+    ),
+    // Error case - not all questions answered on ASSESSMENT_SUMMARY page
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE",
+            answer = StringAnswer("NO_PERMANENT_OR_FIXED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_2",
+            answer = StringAnswer("MOVE_TO_NEW_ADDRESS"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_ADDRESS",
+            answer = MapAnswer(answer = listOf(mapOf("Key 1" to "Value 1", "Key 2" to "Value 2"), mapOf("Something" to "Something else"))),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "SUPPORT_NEEDS",
+            answer = StringAnswer("SUPPORT_REQUIRED"),
+          ),
+        ),
+      ),
+      false,
+    ),
+    // Error case - questions not starting on first page
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_2",
+            answer = StringAnswer("MOVE_TO_NEW_ADDRESS"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_ADDRESS",
+            answer = MapAnswer(answer = listOf(mapOf("Key 1" to "Value 1", "Key 2" to "Value 2"), mapOf("Something" to "Something else"))),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "SUPPORT_NEEDS",
+            answer = StringAnswer("SUPPORT_REQUIRED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "CASE_NOTE_SUMMARY",
+            answer = StringAnswer("My case note summary..."),
+          ),
+        ),
+      ),
+      false,
+    ),
+    // Error case - same question answered multiple times
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE",
+            answer = StringAnswer("NO_PERMANENT_OR_FIXED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_2",
+            answer = StringAnswer("MOVE_TO_NEW_ADDRESS"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_2",
+            answer = StringAnswer("DOES_NOT_HAVE_ANYWHERE"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_2",
+            answer = StringAnswer("NO_ANSWER"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_ADDRESS",
+            answer = MapAnswer(answer = listOf(mapOf("Key 1" to "Value 1", "Key 2" to "Value 2"), mapOf("Something" to "Something else"))),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "SUPPORT_NEEDS",
+            answer = StringAnswer("SUPPORT_REQUIRED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "CASE_NOTE_SUMMARY",
+            answer = StringAnswer("My case note summary..."),
+          ),
+        ),
+      ),
+      false,
+    ),
+    // Error case - questions answered from multiple logical branches
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE",
+            answer = StringAnswer("NO_PERMANENT_OR_FIXED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_1",
+            answer = StringAnswer("RETURN_TO_PREVIOUS_ADDRESS"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_2",
+            answer = StringAnswer("MOVE_TO_NEW_ADDRESS"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_ADDRESS",
+            answer = MapAnswer(answer = listOf(mapOf("Key 1" to "Value 1", "Key 2" to "Value 2"), mapOf("Something" to "Something else"))),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "SUPPORT_NEEDS",
+            answer = StringAnswer("SUPPORT_REQUIRED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "CASE_NOTE_SUMMARY",
+            answer = StringAnswer("My case note summary..."),
+          ),
+        ),
+      ),
+      false,
+    ),
+    // Error case - logic not followed correctly
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE",
+            answer = StringAnswer("NO_PERMANENT_OR_FIXED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE_ADDRESS",
+            answer = MapAnswer(answer = listOf(mapOf("Key 1" to "Value 1", "Key 2" to "Value 2"), mapOf("Something" to "Something else"))),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_1",
+            answer = StringAnswer("RETURN_TO_PREVIOUS_ADDRESS"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "SUPPORT_NEEDS",
+            answer = StringAnswer("SUPPORT_REQUIRED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "CASE_NOTE_SUMMARY",
+            answer = StringAnswer("My case note summary..."),
+          ),
+        ),
+      ),
+      false,
+    ),
+    // Error case - unknown questions answered
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE",
+            answer = StringAnswer("NO_PERMANENT_OR_FIXED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_2",
+            answer = StringAnswer("DOES_NOT_HAVE_ANYWHERE"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "RANDOM_QUESTION",
+            answer = StringAnswer("RANDOM_ANSWER"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "SUPPORT_NEEDS",
+            answer = StringAnswer("SUPPORT_REQUIRED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "CASE_NOTE_SUMMARY",
+            answer = StringAnswer("My case note summary..."),
+          ),
+        ),
+      ),
+      false,
+    ),
+    // Error case - answered no questions
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(
+        questionsAndAnswers = listOf(),
+      ),
+      false,
+    ),
+    // Error case - bad answers to questions
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE",
+            answer = StringAnswer("NOT_A_VALID_ANSWER"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_2",
+            answer = StringAnswer("DOES_NOT_HAVE_ANYWHERE"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "SUPPORT_NEEDS",
+            answer = StringAnswer("SUPPORT_REQUIRED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "CASE_NOTE_SUMMARY",
+            answer = StringAnswer("My case note summary..."),
+          ),
+        ),
+      ),
+      false,
+    ),
+    // Error case - missing assessment summary
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE",
+            answer = StringAnswer("NO_PERMANENT_OR_FIXED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_2",
+            answer = StringAnswer("DOES_NOT_HAVE_ANYWHERE"),
+          ),
+        ),
+      ),
+      false,
+    ),
+  )
 }

@@ -602,9 +602,9 @@ class AccommodationResettlementAssessmentStrategyTest {
     val resettlementAssessmentStatusEntity = ResettlementAssessmentStatusEntity(3, "Complete", true, testDate)
     val statusEntity = StatusEntity(6, "Support Required", true, testDate)
 
-    Mockito.`when`(pathwayRepository.findById(Pathway.ACCOMMODATION.id)).thenReturn(Optional.of(pathwayEntity))
-    Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
-    Mockito.`when`(resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.COMPLETE.id))
+    Mockito.lenient().`when`(pathwayRepository.findById(Pathway.ACCOMMODATION.id)).thenReturn(Optional.of(pathwayEntity))
+    Mockito.lenient().`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
+    Mockito.lenient().`when`(resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.COMPLETE.id))
       .thenReturn(Optional.of(resettlementAssessmentStatusEntity))
     Mockito.lenient().`when`(statusRepository.findById(Status.SUPPORT_REQUIRED.id)).thenReturn(Optional.of(statusEntity))
 
@@ -627,15 +627,27 @@ class AccommodationResettlementAssessmentStrategyTest {
     Arguments.of(
       ResettlementAssessmentCompleteRequest(questionsAndAnswers = listOf()),
       null,
-      ServerWebInputException("Answer to question SUPPORT_NEEDS must be provided."),
+      ServerWebInputException("Error validating questions and answers - error validating page flow [400 BAD_REQUEST \"Error validating questions and answers - expected page [WHERE_DID_THEY_LIVE] is different to actual page [null] at index [0]\"]"),
     ),
     // Throw exception if SUPPORT_NEEDS answer in wrong format
     Arguments.of(
       ResettlementAssessmentCompleteRequest(
         questionsAndAnswers = listOf(
           ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE",
+            answer = StringAnswer("NO_PERMANENT_OR_FIXED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_2",
+            answer = StringAnswer("DOES_NOT_HAVE_ANYWHERE"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
             question = "SUPPORT_NEEDS",
             answer = ListAnswer(listOf("SUPPORT_REQUIRED", "SUPPORT_DECLINED")),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "CASE_NOTE_SUMMARY",
+            answer = StringAnswer("Some text"),
           ),
         ),
       ),
@@ -647,8 +659,20 @@ class AccommodationResettlementAssessmentStrategyTest {
       ResettlementAssessmentCompleteRequest(
         questionsAndAnswers = listOf(
           ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE",
+            answer = StringAnswer("NO_PERMANENT_OR_FIXED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_2",
+            answer = StringAnswer("DOES_NOT_HAVE_ANYWHERE"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
             question = "SUPPORT_NEEDS",
             answer = StringAnswer(null),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "CASE_NOTE_SUMMARY",
+            answer = StringAnswer("Some text"),
           ),
         ),
       ),
@@ -660,8 +684,20 @@ class AccommodationResettlementAssessmentStrategyTest {
       ResettlementAssessmentCompleteRequest(
         questionsAndAnswers = listOf(
           ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE",
+            answer = StringAnswer("NO_PERMANENT_OR_FIXED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_2",
+            answer = StringAnswer("DOES_NOT_HAVE_ANYWHERE"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
             question = "SUPPORT_NEEDS",
             answer = StringAnswer("SUPPORT_WANTED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "CASE_NOTE_SUMMARY",
+            answer = StringAnswer("Some text"),
           ),
         ),
       ),
@@ -673,18 +709,34 @@ class AccommodationResettlementAssessmentStrategyTest {
       ResettlementAssessmentCompleteRequest(
         questionsAndAnswers = listOf(
           ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE",
+            answer = StringAnswer("NO_PERMANENT_OR_FIXED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_2",
+            answer = StringAnswer("DOES_NOT_HAVE_ANYWHERE"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
             question = "SUPPORT_NEEDS",
             answer = StringAnswer("SUPPORT_REQUIRED"),
           ),
         ),
       ),
       null,
-      ServerWebInputException("Answer to question CASE_NOTE_SUMMARY must be provided."),
+      ServerWebInputException("Error validating questions and answers - wrong questions answered on page [ASSESSMENT_SUMMARY]. Expected [[SUPPORT_NEEDS, CASE_NOTE_SUMMARY]] but found [[SUPPORT_NEEDS]]"),
     ),
     // Throw exception if CASE_NOTE_SUMMARY answer in wrong format
     Arguments.of(
       ResettlementAssessmentCompleteRequest(
         questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE",
+            answer = StringAnswer("NO_PERMANENT_OR_FIXED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_2",
+            answer = StringAnswer("DOES_NOT_HAVE_ANYWHERE"),
+          ),
           ResettlementAssessmentRequestQuestionAndAnswer(
             question = "SUPPORT_NEEDS",
             answer = StringAnswer("SUPPORT_REQUIRED"),
@@ -703,6 +755,14 @@ class AccommodationResettlementAssessmentStrategyTest {
       ResettlementAssessmentCompleteRequest(
         questionsAndAnswers = listOf(
           ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE",
+            answer = StringAnswer("NO_PERMANENT_OR_FIXED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_2",
+            answer = StringAnswer("DOES_NOT_HAVE_ANYWHERE"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
             question = "SUPPORT_NEEDS",
             answer = StringAnswer("SUPPORT_REQUIRED"),
           ),
@@ -720,12 +780,12 @@ class AccommodationResettlementAssessmentStrategyTest {
       ResettlementAssessmentCompleteRequest(
         questionsAndAnswers = listOf(
           ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "QUESTION_1",
-            answer = ListAnswer(listOf("Part 1", "Part 2", "Part 3")),
+            question = "WHERE_DID_THEY_LIVE",
+            answer = StringAnswer("NO_PERMANENT_OR_FIXED"),
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "QUESTION_2",
-            answer = MapAnswer(answer = listOf(mapOf("Key 1" to "Value 1", "Key 2" to "Value 2"), mapOf("Something" to "Something else"))),
+            question = "WHERE_WILL_THEY_LIVE_2",
+            answer = StringAnswer("DOES_NOT_HAVE_ANYWHERE"),
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
             question = "SUPPORT_NEEDS",
@@ -737,7 +797,7 @@ class AccommodationResettlementAssessmentStrategyTest {
           ),
         ),
       ),
-      ResettlementAssessmentEntity(id = null, prisoner = PrisonerEntity(id = 1, nomsId = "abc", creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000"), crn = "abc", prisonId = "ABC", releaseDate = LocalDate.parse("2025-01-23")), pathway = PathwayEntity(id = 1, name = "Accommodation", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), statusChangedTo = StatusEntity(id = 6, name = "Support Required", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "QUESTION_1", answer = ListAnswer(answer = listOf("Part 1", "Part 2", "Part 3"))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "QUESTION_2", answer = MapAnswer(answer = listOf(mapOf("Key 1" to "Value 1", "Key 2" to "Value 2"), mapOf("Something" to "Something else")))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "CASE_NOTE_SUMMARY", answer = StringAnswer(answer = "My case note summary...")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatusEntity(id = 3, name = "Complete", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), caseNoteText = "My case note summary...", createdByUserId = "USER_1"),
+      ResettlementAssessmentEntity(id = null, prisoner = PrisonerEntity(id = 1, nomsId = "abc", creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000"), crn = "abc", prisonId = "ABC", releaseDate = LocalDate.parse("2025-01-23")), pathway = PathwayEntity(id = 1, name = "Accommodation", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), statusChangedTo = StatusEntity(id = 6, name = "Support Required", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "NO_PERMANENT_OR_FIXED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_2", answer = StringAnswer(answer = "DOES_NOT_HAVE_ANYWHERE")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "CASE_NOTE_SUMMARY", answer = StringAnswer(answer = "My case note summary...")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatusEntity(id = 3, name = "Complete", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), caseNoteText = "My case note summary...", createdByUserId = "USER_1"),
       null,
     ),
   )

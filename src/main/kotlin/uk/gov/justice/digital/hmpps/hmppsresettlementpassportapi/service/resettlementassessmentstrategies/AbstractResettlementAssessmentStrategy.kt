@@ -225,21 +225,14 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
       resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.COMPLETE.id).get()
 
     // Get statusChangedTo out of SUPPORT_NEEDS question and convert to a Status
-    val supportNeedsQuestionAndAnswer = assessment.questionsAndAnswers.find { it.question == GenericResettlementAssessmentQuestion.SUPPORT_NEEDS.id }
-
-    if (supportNeedsQuestionAndAnswer == null) {
-      throw ServerWebInputException("Answer to question ${GenericResettlementAssessmentQuestion.SUPPORT_NEEDS} must be provided.")
-    }
+    val supportNeedsQuestionAndAnswer = assessment.questionsAndAnswers.first { it.question == GenericResettlementAssessmentQuestion.SUPPORT_NEEDS.id }
 
     val statusChangedTo = convertFromSupportNeedAnswerToStatus(supportNeedsQuestionAndAnswer.answer)
     val statusEntity = statusRepository.findById(statusChangedTo.id).get()
 
     // Get caseNoteText out of CASE_NOTE_SUMMARY question as String
-    val caseNoteQuestionAndAnswer = assessment.questionsAndAnswers.find { it.question == GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY.id }
+    val caseNoteQuestionAndAnswer = assessment.questionsAndAnswers.first { it.question == GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY.id }
 
-    if (caseNoteQuestionAndAnswer == null) {
-      throw ServerWebInputException("Answer to question ${GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY} must be provided.")
-    }
     val caseNoteText = convertFromStringAnswer(caseNoteQuestionAndAnswer.answer)
 
     // Map assessment into correct format to be added into database

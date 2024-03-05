@@ -129,7 +129,7 @@ class PoPUserOTPServiceTest {
   fun `test create Pop User Verified - Fails OTP Invalid`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    val oneLoginUserData = OneLoginUserData("urn1", "123457", "email@test.com")
+    val oneLoginUserData = OneLoginUserData("urn1", "123457", "email@test.com", "MDI", LocalDate.parse("2024-12-31"))
     Mockito.`when`(popUserOTPRepository.findByOtpAndExpiryDateIsGreaterThan(oneLoginUserData.otp, LocalDateTime.now())).thenReturn(null)
     assertThrows<ResourceNotFoundException> { popUserOTPService.getPoPUserVerified(oneLoginUserData) }
     unmockkStatic(LocalDateTime::class)
@@ -139,9 +139,9 @@ class PoPUserOTPServiceTest {
   fun `test create Pop User Verified -  valid OTP`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    val oneLoginUserData = OneLoginUserData("urn1", "123457", "email@test.com")
+    val oneLoginUserData = OneLoginUserData("urn1", "123457", "email@test.com", "MDI", LocalDate.parse("2024-12-31"))
     val prisoner = PrisonerEntity(1, "acb", fakeNow, "crn", "xyz", null)
-    val popUserResponse = PoPUserResponse(1, "crn1", "NA", "email@test.com", true, fakeNow, fakeNow, "GU1234", "urn1")
+    val popUserResponse = PoPUserResponse(1, "crn1", "NA", "email@test.com", true, fakeNow, fakeNow, "GU1234", "urn1", "MDI", LocalDate.parse("2024-12-31"))
     val popUserOTPEntity = PoPUserOTPEntity(
       1,
       prisoner,
@@ -170,7 +170,7 @@ class PoPUserOTPServiceTest {
   fun `test create Pop User Verified - Fails OTP Expired`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    val oneLoginUserData = OneLoginUserData("urn1", "123457", "email@test.com")
+    val oneLoginUserData = OneLoginUserData("urn1", "123457", "email@test.com", "MDI", LocalDate.parse("2024-12-31"))
     Mockito.lenient().`when`(popUserOTPRepository.findByOtpAndExpiryDateIsGreaterThan(oneLoginUserData.otp ?: "0", testDate)).thenReturn(null)
     assertThrows<ResourceNotFoundException> { popUserOTPService.getPoPUserVerified(oneLoginUserData) }
     unmockkStatic(LocalDateTime::class)

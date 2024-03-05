@@ -37,6 +37,8 @@ class PoPUserApiService(
             "verified" to true,
             "nomsId" to prisoner.get().nomsId,
             "oneLoginUrn" to oneLoginUserData.urn,
+            "prisonId" to prisoner.get().prisonId,
+            "releaseDate" to prisoner.get().releaseDate,
           ),
         )
         .retrieve()

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.OneLoginUserData
 import java.security.SecureRandom
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 class PoPUserOTPIntegrationTest : IntegrationTestBase() {
@@ -212,6 +213,8 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
           urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
           otp = "123456",
           email = "chrisy.clemence@gmail.com",
+          prisonId = "MDI",
+          releaseDate = LocalDate.parse("2024-12-31"),
 
         ),
       )
@@ -253,6 +256,8 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
           urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
           otp = "123457",
           email = "chrisy.clemence@gmail.com",
+          prisonId = "MDI",
+          releaseDate = LocalDate.parse("2024-12-31"),
 
         ),
       )
@@ -280,6 +285,8 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
           urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
           otp = "123456",
           email = "chrisy.clemence@gmail.com",
+          prisonId = "MDI",
+          releaseDate = LocalDate.parse("2024-12-31"),
 
         ),
       )

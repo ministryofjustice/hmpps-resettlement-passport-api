@@ -7,7 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.OneLoginUserData
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.OneLoginData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PoPUserOTPRepository
 import java.util.*
@@ -23,7 +23,7 @@ class PoPUserApiService(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun postPoPUserVerification(oneLoginUserData: OneLoginUserData, prisoner: Optional<PrisonerEntity>?): PoPUserResponse? {
+  fun postPoPUserVerification(oneLoginData: OneLoginData, prisoner: Optional<PrisonerEntity>?): PoPUserResponse? {
     if (prisoner != null) {
       return popUserWebClientCredentials.post()
         .uri(
@@ -32,11 +32,13 @@ class PoPUserApiService(
         .bodyValue(
           mapOf(
             "crn" to prisoner.get().crn,
-            "email" to oneLoginUserData.email,
+            "email" to oneLoginData.email,
             "cprId" to "NA",
             "verified" to true,
             "nomsId" to prisoner.get().nomsId,
-            "oneLoginUrn" to oneLoginUserData.urn,
+            "oneLoginUrn" to oneLoginData.urn,
+            "prisonId" to prisoner.get().prisonId,
+            "releaseDate" to prisoner.get().releaseDate,
           ),
         )
         .retrieve()

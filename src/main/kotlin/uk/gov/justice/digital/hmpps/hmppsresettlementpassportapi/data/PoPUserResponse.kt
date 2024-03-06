@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class PoPUserResponse(
@@ -12,4 +13,6 @@ data class PoPUserResponse(
   val modifiedDate: LocalDateTime? = null,
   val nomsId: String,
   val oneLoginUrn: String? = null,
+  val prisonId: String? = null,
+  val releaseDate: LocalDate? = null,
 )

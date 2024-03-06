@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.OneLoginUserData
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.OneLoginData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PoPUserOTPEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PoPUserOTPService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PrisonerService
@@ -226,7 +226,7 @@ class PoPUserOTPResourceController(private val popUserOTPService: PoPUserOTPServ
   )
   fun verifyOTPByOneLoginURN(
     @RequestBody
-    oneLoginUserData: OneLoginUserData,
+    oneLoginUserData: OneLoginData,
   ): PoPUserResponse? {
     log.debug("In verifyOTPByOneLoginURN")
     return popUserOTPService.getPoPUserVerified(oneLoginUserData)

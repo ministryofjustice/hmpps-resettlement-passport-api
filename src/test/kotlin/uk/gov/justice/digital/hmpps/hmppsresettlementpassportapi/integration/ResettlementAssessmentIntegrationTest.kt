@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.context.jdbc.Sql
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.MapAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
@@ -249,25 +248,17 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
         {
           "questionsAndAnswers": [
             {
-              "question": "QUESTION_1",
+              "question": "WHERE_DID_THEY_LIVE",
               "answer": {
-                "answer": ["Part 1", "Part 2", "Part 3"],
-                "@class": "ListAnswer"
+                "answer": "NO_PERMANENT_OR_FIXED",
+                "@class": "StringAnswer"
               }
             },
             {
-              "question": "QUESTION_2",
+              "question": "WHERE_WILL_THEY_LIVE_2",
               "answer": {
-                "answer": [
-                  {
-                    "Key 1": "Value 1",
-                    "Key 2": "Value 2"
-                  },
-                  {
-                    "Something": "Something else"
-                  }
-                ],
-                "@class": "MapAnswer"
+                "answer": "DOES_NOT_HAVE_ANYWHERE",
+                "@class": "StringAnswer"
               }
             },
             {
@@ -296,7 +287,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
     val expectedResettlementAssessments = listOf(
       ResettlementAssessmentEntity(id = 2, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 1, name = "Accommodation", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = StatusEntity(id = 4, name = "Support Declined", active = true, creationDate = LocalDateTime.parse("2024-01-16T14:42:22.867169")), assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = sampleAssessment, creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatusEntity(id = 3, name = "Complete", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:06:00.219308")), caseNoteText = "Some case notes", createdByUserId = "JSMITH_GEN"),
-      ResettlementAssessmentEntity(id = 1, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-17T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 1, name = "Accommodation", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = StatusEntity(id = 6, name = "Support Required", active = true, creationDate = LocalDateTime.parse("2024-01-16T14:42:22.867169")), assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "QUESTION_1", answer = ListAnswer(answer = listOf("Part 1", "Part 2", "Part 3"))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "QUESTION_2", answer = MapAnswer(answer = listOf(mapOf("Key 1" to "Value 1", "Key 2" to "Value 2"), mapOf("Something" to "Something else")))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "CASE_NOTE_SUMMARY", answer = StringAnswer(answer = "My case note summary...")))), creationDate = LocalDateTime.parse("2024-01-16T14:42:27.905483"), createdBy = "RESETTLEMENTPASSPORT_ADM", assessmentStatus = ResettlementAssessmentStatusEntity(id = 3, name = "Complete", active = true, creationDate = LocalDateTime.parse("2024-01-16T14:42:23.057474")), caseNoteText = "My case note summary...", createdByUserId = "RESETTLEMENTPASSPORT_ADM"),
+      ResettlementAssessmentEntity(id = 1, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-17T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 1, name = "Accommodation", active = true, creationDate = LocalDateTime.parse("2024-01-09T14:05:59.930557")), statusChangedTo = StatusEntity(id = 6, name = "Support Required", active = true, creationDate = LocalDateTime.parse("2024-01-16T14:42:22.867169")), assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "NO_PERMANENT_OR_FIXED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_2", answer = StringAnswer(answer = "DOES_NOT_HAVE_ANYWHERE")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "CASE_NOTE_SUMMARY", answer = StringAnswer(answer = "My case note summary...")))), creationDate = LocalDateTime.parse("2024-01-16T14:42:27.905483"), createdBy = "RESETTLEMENTPASSPORT_ADM", assessmentStatus = ResettlementAssessmentStatusEntity(id = 3, name = "Complete", active = true, creationDate = LocalDateTime.parse("2024-01-16T14:42:23.057474")), caseNoteText = "My case note summary...", createdByUserId = "RESETTLEMENTPASSPORT_ADM"),
     )
     val actualResettlementAssessments = resettlementAssessmentRepository.findAll()
     assertThat(actualResettlementAssessments).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedResettlementAssessments)
@@ -376,7 +367,36 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .bodyValue(
         """
         {
-          "questionsAndAnswers": []
+          "questionsAndAnswers": [
+            {
+              "question": "WHERE_DID_THEY_LIVE",
+              "answer": {
+                "answer": "NO_PERMANENT_OR_FIXED",
+                "@class": "StringAnswer"
+              }
+            },
+            {
+              "question": "WHERE_WILL_THEY_LIVE_2",
+              "answer": {
+                "answer": "DOES_NOT_HAVE_ANYWHERE",
+                "@class": "StringAnswer"
+              }
+            },
+            {
+              "question": "SUPPORT_NEEDS",
+              "answer": {
+                "answer": "SUPPORT_REQUIRED",
+                "@class": "StringAnswer"
+              }
+            },
+            {
+              "question": "CASE_NOTE_SUMMARY",
+              "answer": {
+                "answer": "My case note summary...",
+                "@class": "StringAnswer"
+              }
+            }
+          ]
         }
         """.trimIndent(),
       )

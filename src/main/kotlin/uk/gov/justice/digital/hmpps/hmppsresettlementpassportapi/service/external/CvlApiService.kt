@@ -79,26 +79,27 @@ class CvlApiService(
 
   fun getLicenceConditionsByLicenceId(licenceId: Long): LicenceConditions {
     val licence = fetchLicenceConditionsByLicenceId(licenceId)
-    val licenceConditions = LicenceConditions(licenceId, "", emptyList(), emptyList())
+    val licenceConditions = LicenceConditions(licenceId, "", licence.licenceStartDate, licence.licenceExpiryDate, emptyList(), emptyList())
     licenceConditions.status = licence.statusCode
+
     val standardConditionList = mutableListOf<Conditions>()
     val otherConditionList = mutableListOf<Conditions>()
 
     val standardLicenceConditions = licence.standardLicenceConditions
     if (standardLicenceConditions != null) {
       for (item in standardLicenceConditions) {
-        standardConditionList.add(Conditions(item.id, false, item.text))
+        standardConditionList.add(Conditions(item.id, false, item.text, item.sequence))
       }
     }
 
     val additionalLicenceConditions = licence.additionalLicenceConditions
     for (item in additionalLicenceConditions) {
-      otherConditionList.add(Conditions(item.id, item.uploadSummary.isNotEmpty(), item.expandedText))
+      otherConditionList.add(Conditions(item.id, item.uploadSummary.isNotEmpty(), item.text, item.sequence))
     }
 
     val beSpokeConditions = licence.bespokeConditions
     for (item in beSpokeConditions) {
-      otherConditionList.add(Conditions(item.id, false, item.text))
+      otherConditionList.add(Conditions(item.id, false, item.text, item.sequence))
     }
 
     licenceConditions.standardLicenceConditions = standardConditionList

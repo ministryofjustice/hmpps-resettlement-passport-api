@@ -4,9 +4,8 @@ import io.mockk.every
 import io.mockk.mockkStatic
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.OneLoginUserData
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.OneLoginData
 import java.security.SecureRandom
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 class PoPUserOTPIntegrationTest : IntegrationTestBase() {
@@ -209,13 +208,10 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
     webTestClient.post()
       .uri("/resettlement-passport/popUser/onelogin/verify")
       .bodyValue(
-        OneLoginUserData(
+        OneLoginData(
           urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
           otp = "123456",
           email = "chrisy.clemence@gmail.com",
-          prisonId = "MDI",
-          releaseDate = LocalDate.parse("2024-12-31"),
-
         ),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -252,13 +248,10 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
     webTestClient.post()
       .uri("/resettlement-passport/popUser/onelogin/verify")
       .bodyValue(
-        OneLoginUserData(
+        OneLoginData(
           urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
           otp = "123457",
           email = "chrisy.clemence@gmail.com",
-          prisonId = "MDI",
-          releaseDate = LocalDate.parse("2024-12-31"),
-
         ),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -281,13 +274,10 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
     webTestClient.post()
       .uri("/resettlement-passport/popUser/onelogin/verify")
       .bodyValue(
-        OneLoginUserData(
+        OneLoginData(
           urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
           otp = "123456",
           email = "chrisy.clemence@gmail.com",
-          prisonId = "MDI",
-          releaseDate = LocalDate.parse("2024-12-31"),
-
         ),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))

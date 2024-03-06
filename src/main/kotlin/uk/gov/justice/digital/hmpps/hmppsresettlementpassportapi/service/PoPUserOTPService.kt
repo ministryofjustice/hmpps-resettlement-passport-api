@@ -5,7 +5,7 @@ import jakarta.validation.ValidationException
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.OneLoginUserData
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.OneLoginData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PoPUserOTPEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PoPUserOTPRepository
@@ -61,16 +61,16 @@ class PoPUserOTPService(
     return popUserOTPEntity
   }
 
-  fun getPoPUserVerified(oneLoginUserData: OneLoginUserData): PoPUserResponse? {
-    return if (oneLoginUserData.otp != null && oneLoginUserData.urn != null && oneLoginUserData.email != null) {
-      val popUserOTPEntityExists = popUserOTPRepository.findByOtpAndExpiryDateIsGreaterThan(oneLoginUserData.otp, LocalDateTime.now())
-        ?: throw ResourceNotFoundException("Person On Probation User otp  ${oneLoginUserData.otp}  not found in database or expired.")
+  fun getPoPUserVerified(oneLoginData: OneLoginData): PoPUserResponse? {
+    return if (oneLoginData.otp != null && oneLoginData.urn != null && oneLoginData.email != null) {
+      val popUserOTPEntityExists = popUserOTPRepository.findByOtpAndExpiryDateIsGreaterThan(oneLoginData.otp, LocalDateTime.now())
+        ?: throw ResourceNotFoundException("Person On Probation User otp  ${oneLoginData.otp}  not found in database or expired.")
 
       val prisonerEntity: Optional<PrisonerEntity>? = popUserOTPEntityExists.prisoner.id?.let { prisonerRepository.findById(it) }
 
       if (prisonerEntity != null && !prisonerEntity.isEmpty) {
         popUserApiService.postPoPUserVerification(
-          oneLoginUserData,
+          oneLoginData,
           prisonerEntity,
         )
       } else {

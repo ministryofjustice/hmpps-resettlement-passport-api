@@ -1,8 +1,8 @@
-package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment
+package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi
 
 import java.time.LocalDate
 
-data class OneLoginUserData(
+data class OneLoginPrisonerData(
 
   val urn: String? = null,
   val otp: String? = null,

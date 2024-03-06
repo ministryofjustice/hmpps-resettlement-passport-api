@@ -52,8 +52,8 @@ class CvlApiServiceTest {
       StandardCondition(1002, "222", 2, "Condition 2"),
     )
     val additionalLicenceConditions = listOf(
-      AdditionalCondition(1007, "333", "1", "cat11", 3, "Additional Condition 1"),
-      AdditionalCondition(1008, "444", "1", "cat13", 4, "Additional Condition 2"),
+      AdditionalCondition(1007, "333", "1", "cat11", 3, "", "Additional Condition 1"),
+      AdditionalCondition(1008, "444", "1", "cat13", 4, "", "Additional Condition 2"),
     )
     return Licence(
       123,

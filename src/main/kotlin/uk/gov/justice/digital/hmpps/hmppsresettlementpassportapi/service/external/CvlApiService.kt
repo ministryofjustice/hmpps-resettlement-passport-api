@@ -94,7 +94,7 @@ class CvlApiService(
 
     val additionalLicenceConditions = licence.additionalLicenceConditions
     for (item in additionalLicenceConditions) {
-      otherConditionList.add(Conditions(item.id, item.uploadSummary.isNotEmpty(), item.text, item.sequence))
+      otherConditionList.add(Conditions(item.id, item.uploadSummary.isNotEmpty(), item.expandedText, item.sequence))
     }
 
     val beSpokeConditions = licence.bespokeConditions

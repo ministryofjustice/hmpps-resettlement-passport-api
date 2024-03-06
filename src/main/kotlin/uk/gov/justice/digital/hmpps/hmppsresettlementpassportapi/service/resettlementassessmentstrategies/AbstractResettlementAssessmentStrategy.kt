@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
@@ -155,6 +156,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
             it.question.subTitle,
             it.question.type,
             it.question.options?.toMutableList(),
+            it.question.validationType,
           ),
           it.answer,
           page.id,
@@ -367,6 +369,7 @@ enum class GenericResettlementAssessmentQuestion(
   override val subTitle: String? = null,
   override val type: TypeOfQuestion,
   override val options: List<Option>? = null,
+  override val validationType: ValidationType = ValidationType.MANDATORY,
 ) : IResettlementAssessmentQuestion {
   SUPPORT_NEEDS(
     id = "SUPPORT_NEEDS",

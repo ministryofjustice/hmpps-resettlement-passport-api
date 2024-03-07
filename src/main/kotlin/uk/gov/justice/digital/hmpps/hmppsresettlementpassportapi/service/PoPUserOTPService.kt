@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PoPUserOTPRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PoPUserApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import java.security.SecureRandom
 import java.time.LocalDateTime
 import java.util.*
@@ -20,6 +21,7 @@ class PoPUserOTPService(
   private val popUserOTPRepository: PoPUserOTPRepository,
   private val prisonerRepository: PrisonerRepository,
   private val popUserApiService: PoPUserApiService,
+  private val prisonerSearchApiService: PrisonerSearchApiService,
 ) {
 
   @Transactional
@@ -44,6 +46,9 @@ class PoPUserOTPService(
   fun createPoPUserOTP(prisoner: PrisonerEntity): PoPUserOTPEntity {
     val now = LocalDateTime.now()
     val popUserOTPExists = popUserOTPRepository.findByPrisoner(prisoner)
+    val prisonerDOB = prisonerSearchApiService.findPrisonerPersonalDetails(prisoner.nomsId).dateOfBirth
+      ?: throw ValidationException("Person On Probation User DOB not found in Prisoner Search Service.")
+
     // For now OTP generated is in 6 digits, for 8 digits the below value should be 99999999
     val otp = SecureRandom.getInstanceStrong().nextLong(999999)
     val otpValue = String.format("%06d", otp)
@@ -56,28 +61,34 @@ class PoPUserOTPService(
       creationDate = now,
       expiryDate = now.plusDays(7).withHour(23).withMinute(59).withSecond(59),
       otp = otpValue,
+      dob = prisonerDOB,
     )
     popUserOTPRepository.save(popUserOTPEntity)
     return popUserOTPEntity
   }
 
   fun getPoPUserVerified(oneLoginData: OneLoginData): PoPUserResponse? {
-    return if (oneLoginData.otp != null && oneLoginData.urn != null && oneLoginData.email != null) {
-      val popUserOTPEntityExists = popUserOTPRepository.findByOtpAndExpiryDateIsGreaterThan(oneLoginData.otp, LocalDateTime.now())
+    return if (oneLoginData.otp != null && oneLoginData.dob != null && oneLoginData.urn != null && oneLoginData.email != null) {
+      val popUserOTPEntityExists = popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(
+        oneLoginData.otp,
+        oneLoginData.dob, LocalDateTime.now(),
+      )
         ?: throw ResourceNotFoundException("Person On Probation User otp  ${oneLoginData.otp}  not found in database or expired.")
 
       val prisonerEntity: Optional<PrisonerEntity>? = popUserOTPEntityExists.prisoner.id?.let { prisonerRepository.findById(it) }
+      val prisoner = prisonerSearchApiService.findPrisonerPersonalDetails(prisonerEntity!!.get().nomsId)
 
-      if (prisonerEntity != null && !prisonerEntity.isEmpty) {
+      if (!prisonerEntity.isEmpty) {
         popUserApiService.postPoPUserVerification(
           oneLoginData,
           prisonerEntity,
+          prisoner,
         )
       } else {
         throw ResourceNotFoundException("Prisoner with id ${popUserOTPEntityExists.prisoner.id}  not found in database")
       }
     } else {
-      throw ValidationException("required data otp, urn or email is missing")
+      throw ValidationException("required data otp, urn, email or dob  is missing")
     }
   }
 }

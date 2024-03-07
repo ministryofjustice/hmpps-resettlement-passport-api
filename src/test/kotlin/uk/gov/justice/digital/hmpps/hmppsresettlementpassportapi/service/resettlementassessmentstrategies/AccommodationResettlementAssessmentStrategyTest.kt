@@ -91,10 +91,7 @@ class AccommodationResettlementAssessmentStrategyTest {
     expectedPage: String,
   ) {
     val nomsId = "123"
-
-    if (currentPage == null) {
-      setUpMocks(nomsId, false)
-    }
+    setUpMocks(nomsId, false)
 
     val assessment = ResettlementAssessmentRequest(
       questionsAndAnswers = questionsAndAnswers,
@@ -266,8 +263,8 @@ class AccommodationResettlementAssessmentStrategyTest {
   )
 
   @Test
-  fun `test next page function start - existing assessment`() {
-    // If there is an existing assessment we should go to CHECK_ANSWERS at the start
+  fun `test next page function start - existing COMPLETE assessment`() {
+    // If there is an existing COMPLETE assessment we should go to CHECK_ANSWERS at the start
     val nomsId = "123456"
     setUpMocks(nomsId, true)
 
@@ -285,12 +282,36 @@ class AccommodationResettlementAssessmentStrategyTest {
   }
 
   @Test
+  fun `test next page function - when SUBMITTED assessment skip over ASSESSMENT_SUMMARY`() {
+    // If there is an existing COMPLETE assessment we should go to CHECK_ANSWERS at the start
+    val nomsId = "123456"
+    setUpMocks(nomsId, true, assessmentStatus = ResettlementAssessmentStatus.SUBMITTED)
+
+    val assessment = ResettlementAssessmentRequest(
+      questionsAndAnswers = listOf(
+        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_DID_THEY_LIVE", answer = StringAnswer("NO_ANSWER")),
+        ResettlementAssessmentRequestQuestionAndAnswer("WHERE_WILL_THEY_LIVE_2", answer = StringAnswer("DOES_NOT_HAVE_ANYWHERE")),
+      ),
+    )
+    val nextPage = resettlementAssessmentService.getNextPageId(
+      assessment = assessment,
+      nomsId = nomsId,
+      pathway = Pathway.ACCOMMODATION,
+      assessmentType = ResettlementAssessmentType.BCST2,
+      currentPage = "WHERE_WILL_THEY_LIVE_2",
+    )
+    Assertions.assertEquals("CHECK_ANSWERS", nextPage)
+  }
+
+  @Test
   fun `test next page function - error case from CHECK_ANSWERS`() {
     // We should send back an error if CHECK_ANSWERS is the current page as there is no next page to get
     val nomsId = "123456"
     val assessment = ResettlementAssessmentRequest(
       questionsAndAnswers = listOf(ResettlementAssessmentRequestQuestionAndAnswer("ANY_QUESTION", StringAnswer("Any answer"))),
     )
+
+    setUpMocks(nomsId, true)
 
     val exception = assertThrows<ServerWebInputException> {
       resettlementAssessmentService.getNextPageId(
@@ -583,9 +604,49 @@ class AccommodationResettlementAssessmentStrategyTest {
     Assertions.assertEquals(expectedPage, page)
   }
 
+  @Test
+  fun `test get page from Id check answers - existing submitted assessment`() {
+    val nomsId = "123"
+
+    val existingAssessment = ResettlementAssessmentQuestionAndAnswerList(
+      listOf(
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE", StringAnswer("SOCIAL_HOUSING")),
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
+        ResettlementAssessmentSimpleQuestionAndAnswer("SUPPORT_NEEDS", StringAnswer("SUPPORT_NOT_REQUIRED")),
+        ResettlementAssessmentSimpleQuestionAndAnswer("CASE_NOTE_SUMMARY", StringAnswer("Some case notes text...")),
+      ),
+    )
+
+    setUpMocks("123", true, existingAssessment, ResettlementAssessmentStatus.SUBMITTED)
+
+    val expectedPage = ResettlementAssessmentResponsePage(
+      id = "CHECK_ANSWERS",
+      questionsAndAnswers = mutableListOf(
+        ResettlementAssessmentResponseQuestionAndAnswer(
+          AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE,
+          answer = StringAnswer("SOCIAL_HOUSING"),
+          originalPageId = "WHERE_DID_THEY_LIVE",
+        ),
+        ResettlementAssessmentResponseQuestionAndAnswer(
+          AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE_ADDRESS,
+          answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123"))),
+          originalPageId = "WHERE_DID_THEY_LIVE_ADDRESS",
+        ),
+      ),
+    )
+
+    val page = resettlementAssessmentService.getPageFromId(
+      nomsId = nomsId,
+      pathway = Pathway.ACCOMMODATION,
+      assessmentType = ResettlementAssessmentType.BCST2,
+      pageId = "CHECK_ANSWERS",
+    )
+    Assertions.assertEquals(expectedPage, page)
+  }
+
   @ParameterizedTest
   @MethodSource("test complete assessment data")
-  fun `test complete assessment`(assessment: ResettlementAssessmentCompleteRequest, expectedEntity: ResettlementAssessmentEntity?, expectedException: Throwable?) {
+  fun `test complete assessment`(assessment: ResettlementAssessmentCompleteRequest, expectedEntity: ResettlementAssessmentEntity?, expectedException: Throwable?, existingAssessment: ResettlementAssessmentEntity?) {
     mockkStatic(::getClaimFromJWTToken)
     every { getClaimFromJWTToken("string", "name") } returns "System user"
     every { getClaimFromJWTToken("string", "auth_source") } returns "nomis"
@@ -599,14 +660,23 @@ class AccommodationResettlementAssessmentStrategyTest {
 
     val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23"))
     val pathwayEntity = PathwayEntity(1, "Accommodation", true, testDate)
-    val resettlementAssessmentStatusEntity = ResettlementAssessmentStatusEntity(3, "Complete", true, testDate)
+    val completeResettlementAssessmentStatusEntity = ResettlementAssessmentStatusEntity(3, "Complete", true, testDate)
+    val submittedResettlementAssessmentStatusEntity = ResettlementAssessmentStatusEntity(4, "Submitted", true, testDate)
     val statusEntity = StatusEntity(6, "Support Required", true, testDate)
 
     Mockito.lenient().`when`(pathwayRepository.findById(Pathway.ACCOMMODATION.id)).thenReturn(Optional.of(pathwayEntity))
     Mockito.lenient().`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
     Mockito.lenient().`when`(resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.COMPLETE.id))
-      .thenReturn(Optional.of(resettlementAssessmentStatusEntity))
+      .thenReturn(Optional.of(completeResettlementAssessmentStatusEntity))
+    Mockito.lenient().`when`(resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.SUBMITTED.id))
+      .thenReturn(Optional.of(submittedResettlementAssessmentStatusEntity))
     Mockito.lenient().`when`(statusRepository.findById(Status.SUPPORT_REQUIRED.id)).thenReturn(Optional.of(statusEntity))
+
+    if (existingAssessment != null) {
+      val resettlementAssessmentStatusEntities = listOf(ResettlementAssessmentStatusEntity(3, "Complete", true, testDate), ResettlementAssessmentStatusEntity(4, "Submitted", true, testDate))
+      Mockito.`when`(resettlementAssessmentStatusRepository.findAll()).thenReturn(resettlementAssessmentStatusEntities)
+      Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(prisonerEntity, pathwayEntity, assessmentType, resettlementAssessmentStatusEntities)).thenReturn(existingAssessment)
+    }
 
     if (expectedException == null) {
       resettlementAssessmentService.completeAssessment(nomsId, pathway, assessmentType, assessment, "string")
@@ -628,6 +698,7 @@ class AccommodationResettlementAssessmentStrategyTest {
       ResettlementAssessmentCompleteRequest(questionsAndAnswers = listOf()),
       null,
       ServerWebInputException("Error validating questions and answers - error validating page flow [400 BAD_REQUEST \"Error validating questions and answers - expected page [WHERE_DID_THEY_LIVE] is different to actual page [null] at index [0]\"]"),
+      null,
     ),
     // Throw exception if SUPPORT_NEEDS answer in wrong format
     Arguments.of(
@@ -653,6 +724,7 @@ class AccommodationResettlementAssessmentStrategyTest {
       ),
       null,
       ServerWebInputException("Support need [ListAnswer(answer=[SUPPORT_REQUIRED, SUPPORT_DECLINED])] must be a StringAnswer"),
+      null,
     ),
     // Throw exception if SUPPORT_NEEDS answer is null
     Arguments.of(
@@ -678,6 +750,7 @@ class AccommodationResettlementAssessmentStrategyTest {
       ),
       null,
       ServerWebInputException("Support need [StringAnswer(answer=null)] is not a valid option"),
+      null,
     ),
     // Throw exception if SUPPORT_NEEDS answer is not a valid option
     Arguments.of(
@@ -703,6 +776,7 @@ class AccommodationResettlementAssessmentStrategyTest {
       ),
       null,
       ServerWebInputException("Support need [StringAnswer(answer=SUPPORT_WANTED)] is not a valid option"),
+      null,
     ),
     // Throw exception if CASE_NOTE_SUMMARY question not answered
     Arguments.of(
@@ -724,6 +798,7 @@ class AccommodationResettlementAssessmentStrategyTest {
       ),
       null,
       ServerWebInputException("Error validating questions and answers - wrong questions answered on page [ASSESSMENT_SUMMARY]. Expected [[SUPPORT_NEEDS, CASE_NOTE_SUMMARY]] but found [[SUPPORT_NEEDS]]"),
+      null,
     ),
     // Throw exception if CASE_NOTE_SUMMARY answer in wrong format
     Arguments.of(
@@ -749,6 +824,7 @@ class AccommodationResettlementAssessmentStrategyTest {
       ),
       null,
       ServerWebInputException("Answer [ListAnswer(answer=[hello, world])] must be a StringAnswer"),
+      null,
     ),
     // Throw exception if CASE_NOTE_SUMMARY is null
     Arguments.of(
@@ -774,8 +850,9 @@ class AccommodationResettlementAssessmentStrategyTest {
       ),
       null,
       ServerWebInputException("Answer [StringAnswer(answer=null)] must not be null"),
+      null,
     ),
-    // Happy path
+    // Happy path - no existing assessment
     Arguments.of(
       ResettlementAssessmentCompleteRequest(
         questionsAndAnswers = listOf(
@@ -799,14 +876,59 @@ class AccommodationResettlementAssessmentStrategyTest {
       ),
       ResettlementAssessmentEntity(id = null, prisoner = PrisonerEntity(id = 1, nomsId = "abc", creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000"), crn = "abc", prisonId = "ABC", releaseDate = LocalDate.parse("2025-01-23")), pathway = PathwayEntity(id = 1, name = "Accommodation", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), statusChangedTo = StatusEntity(id = 6, name = "Support Required", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "NO_PERMANENT_OR_FIXED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_2", answer = StringAnswer(answer = "DOES_NOT_HAVE_ANYWHERE")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "CASE_NOTE_SUMMARY", answer = StringAnswer(answer = "My case note summary...")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatusEntity(id = 3, name = "Complete", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), caseNoteText = "My case note summary...", createdByUserId = "USER_1"),
       null,
+      null,
+    ),
+    // Happy path - existing COMPLETE assessment
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE",
+            answer = StringAnswer("NO_PERMANENT_OR_FIXED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_2",
+            answer = StringAnswer("DOES_NOT_HAVE_ANYWHERE"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "SUPPORT_NEEDS",
+            answer = StringAnswer("SUPPORT_REQUIRED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "CASE_NOTE_SUMMARY",
+            answer = StringAnswer("My case note summary..."),
+          ),
+        ),
+      ),
+      ResettlementAssessmentEntity(id = null, prisoner = PrisonerEntity(id = 1, nomsId = "abc", creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000"), crn = "abc", prisonId = "ABC", releaseDate = LocalDate.parse("2025-01-23")), pathway = PathwayEntity(id = 1, name = "Accommodation", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), statusChangedTo = StatusEntity(id = 6, name = "Support Required", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "NO_PERMANENT_OR_FIXED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_2", answer = StringAnswer(answer = "DOES_NOT_HAVE_ANYWHERE")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "CASE_NOTE_SUMMARY", answer = StringAnswer(answer = "My case note summary...")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatusEntity(id = 3, name = "Complete", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), caseNoteText = "My case note summary...", createdByUserId = "USER_1"),
+      null,
+      ResettlementAssessmentEntity(id = 12, prisoner = PrisonerEntity(id = 1, nomsId = "abc", creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000"), crn = "abc", prisonId = "ABC", releaseDate = LocalDate.parse("2025-01-23")), pathway = PathwayEntity(id = 1, name = "Accommodation", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), statusChangedTo = StatusEntity(id = 3, name = "Support Not Required", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "NO_ANSWER")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_2", answer = StringAnswer(answer = "NO_ANSWER")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_NOT_REQUIRED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "CASE_NOTE_SUMMARY", answer = StringAnswer(answer = "My case note summary...")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatusEntity(id = 3, name = "Complete", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), caseNoteText = "My case note summary...", createdByUserId = "USER_1"),
+    ),
+    // Happy path - existing SUBMITTED assessment
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE",
+            answer = StringAnswer("NO_PERMANENT_OR_FIXED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_2",
+            answer = StringAnswer("DOES_NOT_HAVE_ANYWHERE"),
+          ),
+        ),
+      ),
+      ResettlementAssessmentEntity(id = null, prisoner = PrisonerEntity(id = 1, nomsId = "abc", creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000"), crn = "abc", prisonId = "ABC", releaseDate = LocalDate.parse("2025-01-23")), pathway = PathwayEntity(id = 1, name = "Accommodation", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), statusChangedTo = null, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "NO_PERMANENT_OR_FIXED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_2", answer = StringAnswer(answer = "DOES_NOT_HAVE_ANYWHERE")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatusEntity(id = 4, name = "Submitted", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), caseNoteText = null, createdByUserId = "USER_1"),
+      null,
+      ResettlementAssessmentEntity(id = 12, prisoner = PrisonerEntity(id = 1, nomsId = "abc", creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000"), crn = "abc", prisonId = "ABC", releaseDate = LocalDate.parse("2025-01-23")), pathway = PathwayEntity(id = 1, name = "Accommodation", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), statusChangedTo = StatusEntity(id = 3, name = "Support Not Required", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "NO_ANSWER")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_2", answer = StringAnswer(answer = "NO_ANSWER")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_NOT_REQUIRED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "CASE_NOTE_SUMMARY", answer = StringAnswer(answer = "My case note summary...")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatusEntity(id = 4, name = "Submitted", active = true, creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000")), caseNoteText = "My case note summary...", createdByUserId = "USER_1"),
     ),
   )
 
-  private fun setUpMocks(nomsId: String, returnResettlementAssessmentEntity: Boolean, assessment: ResettlementAssessmentQuestionAndAnswerList = ResettlementAssessmentQuestionAndAnswerList(listOf())) {
+  private fun setUpMocks(nomsId: String, returnResettlementAssessmentEntity: Boolean, assessment: ResettlementAssessmentQuestionAndAnswerList = ResettlementAssessmentQuestionAndAnswerList(listOf()), assessmentStatus: ResettlementAssessmentStatus = ResettlementAssessmentStatus.COMPLETE) {
     val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23"))
     val pathwayEntity = PathwayEntity(1, "Accommodation", true, testDate)
     val resettlementAssessmentStatusEntities = listOf(ResettlementAssessmentStatusEntity(3, "Complete", true, testDate), ResettlementAssessmentStatusEntity(4, "Submitted", true, testDate))
-    val resettlementAssessmentEntity = if (returnResettlementAssessmentEntity) ResettlementAssessmentEntity(1, prisonerEntity, pathwayEntity, StatusEntity(1, "Not Started", true, testDate), ResettlementAssessmentType.BCST2, assessment, testDate, "", resettlementAssessmentStatusEntities[0], "some text", "USER_1") else null
+    val resettlementAssessmentEntity = if (returnResettlementAssessmentEntity) ResettlementAssessmentEntity(1, prisonerEntity, pathwayEntity, StatusEntity(1, "Not Started", true, testDate), ResettlementAssessmentType.BCST2, assessment, testDate, "", resettlementAssessmentStatusEntities.first { it.id == assessmentStatus.id }, "some text", "USER_1") else null
     Mockito.`when`(pathwayRepository.findById(Pathway.ACCOMMODATION.id)).thenReturn(Optional.of(pathwayEntity))
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
     Mockito.`when`(resettlementAssessmentStatusRepository.findAll())
@@ -847,9 +969,9 @@ class AccommodationResettlementAssessmentStrategyTest {
   @MethodSource("test validateQuestionAndAnswerSet data")
   fun `test validateQuestionAndAnswerSet`(assessment: ResettlementAssessmentCompleteRequest, valid: Boolean) {
     if (valid) {
-      resettlementAssessmentService.validateQuestionAndAnswerSet(assessment)
+      resettlementAssessmentService.validateQuestionAndAnswerSet(assessment, false)
     } else {
-      assertThrows<ServerWebInputException> { resettlementAssessmentService.validateQuestionAndAnswerSet(assessment) }
+      assertThrows<ServerWebInputException> { resettlementAssessmentService.validateQuestionAndAnswerSet(assessment, false) }
     }
   }
 

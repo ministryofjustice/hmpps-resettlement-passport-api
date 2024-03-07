@@ -50,4 +50,5 @@ data class LatestResettlementAssessmentResponse(
 data class LatestResettlementAssessmentResponseQuestionAndAnswer(
   val questionTitle: String,
   val answer: String?,
+  val originalPageId: String,
 )

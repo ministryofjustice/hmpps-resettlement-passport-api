@@ -40,7 +40,7 @@ data class ResettlementAssessmentEntity(
 
   @ManyToOne
   @JoinColumn(name = "status_changed_to_status_id", referencedColumnName = "id")
-  var statusChangedTo: StatusEntity,
+  var statusChangedTo: StatusEntity?,
 
   @Column(name = "assessment_type")
   @Enumerated(EnumType.STRING)
@@ -62,7 +62,7 @@ data class ResettlementAssessmentEntity(
   var assessmentStatus: ResettlementAssessmentStatusEntity,
 
   @Column(name = "case_note_text")
-  var caseNoteText: String,
+  var caseNoteText: String?,
 
   @Column(name = "created_by_user_id")
   val createdByUserId: String,

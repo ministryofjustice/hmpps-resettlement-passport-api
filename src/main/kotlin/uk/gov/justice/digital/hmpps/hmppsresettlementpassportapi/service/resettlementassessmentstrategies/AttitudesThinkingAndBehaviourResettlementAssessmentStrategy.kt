@@ -30,38 +30,36 @@ class AttitudesThinkingAndBehaviourResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       AttitudesThinkingAndBehaviourAssessmentPage.HELP_TO_MANAGE_ANGER,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
         return AttitudesThinkingAndBehaviourAssessmentPage.INFLUENCED_BY_OTHERS
       },
     ),
     ResettlementAssessmentNode(
       AttitudesThinkingAndBehaviourAssessmentPage.INFLUENCED_BY_OTHERS,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
         return AttitudesThinkingAndBehaviourAssessmentPage.ISSUES_WITH_GAMBLING
       },
     ),
     ResettlementAssessmentNode(
       AttitudesThinkingAndBehaviourAssessmentPage.ISSUES_WITH_GAMBLING,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
         return AttitudesThinkingAndBehaviourAssessmentPage.INVOLVED_IN_GANG_ACTIVITY
       },
     ),
     ResettlementAssessmentNode(
       AttitudesThinkingAndBehaviourAssessmentPage.INVOLVED_IN_GANG_ACTIVITY,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
         return AttitudesThinkingAndBehaviourAssessmentPage.UNDER_THREAT_OUTSIDE_PRISON
       },
     ),
     ResettlementAssessmentNode(
       AttitudesThinkingAndBehaviourAssessmentPage.UNDER_THREAT_OUTSIDE_PRISON,
-      nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
-        return GenericAssessmentPage.ASSESSMENT_SUMMARY
-      },
+      nextPage = ::finalQuestionNextPage,
     ),
+    assessmentSummaryNode,
   )
 }
 

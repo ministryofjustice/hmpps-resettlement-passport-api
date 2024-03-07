@@ -4,23 +4,28 @@
   "questionsAndAnswers": [
     {
       "questionTitle": "Where did the person in prison live before custody?",
-      "answer": "Social housing"
+      "answer": "Social housing",
+      "originalPageId": "WHERE_DID_THEY_LIVE"
     },
     {
       "questionTitle": "Enter the address",
-      "answer": "12 Street Lane\nLeeds\nLS1 2AB"
+      "answer": "12 Street Lane\nLeeds\nLS1 2AB",
+      "originalPageId": "WHERE_DID_THEY_LIVE_ADDRESS"
     },
     {
       "questionTitle": "Does the person in prison or their family need help to keep their home while they are in prison?",
-      "answer": "No"
+      "answer": "No",
+      "originalPageId": "HELP_TO_KEEP_HOME"
     },
     {
       "questionTitle": "Where will the person in prison live when they are released?",
-      "answer": "Move to a new address"
+      "answer": "Move to a new address",
+      "originalPageId": "WHERE_WILL_THEY_LIVE_1"
     },
     {
       "questionTitle": "Enter the address",
-      "answer": "12 New address Street\nabcd\nBradford\nWest Yorkshire\nBD1 1AB"
+      "answer": "12 New address Street\nabcd\nBradford\nWest Yorkshire\nBD1 1AB",
+      "originalPageId": "WHERE_WILL_THEY_LIVE_ADDRESS"
     }
   ]
 }

@@ -2,10 +2,12 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
 import io.mockk.every
 import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.OneLoginData
 import java.security.SecureRandom
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 class PoPUserOTPIntegrationTest : IntegrationTestBase() {
@@ -24,6 +26,7 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
 
     val expectedOutput = readFile("testdata/expectation/pop-user-otp-post-result.json")
     val nomsId = "G4161UF"
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
 
     webTestClient.get()
       .uri("/resettlement-passport/popUser/otp")
@@ -66,6 +69,7 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
+    unmockkStatic(LocalDateTime::class)
   }
 
   @Test
@@ -139,6 +143,7 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectBody()
       .json(expectedOutput2)
+    unmockkStatic(LocalDateTime::class)
   }
 
   @Test
@@ -193,7 +198,7 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
 
     val expectedOutput1 = readFile("testdata/expectation/pop-user-otp-post-result.json")
     val nomsId = "G4161UF"
-
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     webTestClient.post()
       .uri("/resettlement-passport/popUser/$nomsId/otp")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -212,6 +217,7 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
           urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
           otp = "123456",
           email = "chrisy.clemence@gmail.com",
+          dob = LocalDate.parse("1982-10-24"),
         ),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -235,6 +241,7 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
 
     val expectedOutput1 = readFile("testdata/expectation/pop-user-otp-post-result.json")
     val nomsId = "G4161UF"
+
     webTestClient.post()
       .uri("/resettlement-passport/popUser/$nomsId/otp")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -244,6 +251,7 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .json(expectedOutput1)
 
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     popUserApiMockServer.stubPostPoPUserVerification(200)
     webTestClient.post()
       .uri("/resettlement-passport/popUser/onelogin/verify")
@@ -252,11 +260,13 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
           urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
           otp = "123457",
           email = "chrisy.clemence@gmail.com",
+          dob = LocalDate.parse("1982-10-24"),
         ),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
+    unmockkStatic(LocalDateTime::class)
   }
 
   @Test
@@ -269,8 +279,11 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
     every {
       SecureRandom.getInstanceStrong().nextLong(999999)
     } returns 123456
+    val nomsId = "G4161UF"
 
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     popUserApiMockServer.stubPostPoPUserVerification(200)
+
     webTestClient.post()
       .uri("/resettlement-passport/popUser/onelogin/verify")
       .bodyValue(
@@ -278,10 +291,43 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
           urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
           otp = "123456",
           email = "chrisy.clemence@gmail.com",
+          dob = LocalDate.parse("1982-10-24"),
         ),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
+    unmockkStatic(LocalDateTime::class)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pop-user-otp-2.sql")
+  fun `Verify Person on Probation User OTP - DOB no match`() {
+    popUserApiMockServer.resetMappings()
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+    mockkStatic(SecureRandom::class)
+    every {
+      SecureRandom.getInstanceStrong().nextLong(999999)
+    } returns 123456
+    val nomsId = "G4161UF"
+
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    popUserApiMockServer.stubPostPoPUserVerification(200)
+
+    webTestClient.post()
+      .uri("/resettlement-passport/popUser/onelogin/verify")
+      .bodyValue(
+        OneLoginData(
+          urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
+          otp = "123456",
+          email = "chrisy.clemence@gmail.com",
+          dob = LocalDate.parse("2000-01-01"),
+        ),
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isNotFound
+    unmockkStatic(LocalDateTime::class)
   }
 }

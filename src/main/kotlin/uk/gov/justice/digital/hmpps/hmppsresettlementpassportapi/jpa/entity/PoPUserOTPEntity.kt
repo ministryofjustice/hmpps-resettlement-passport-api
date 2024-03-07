@@ -9,6 +9,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Entity
@@ -30,5 +31,8 @@ data class PoPUserOTPEntity(
 
   @Column(name = "otp")
   val otp: String,
+
+  @Column(name = "dob")
+  var dob: LocalDate,
 
 )

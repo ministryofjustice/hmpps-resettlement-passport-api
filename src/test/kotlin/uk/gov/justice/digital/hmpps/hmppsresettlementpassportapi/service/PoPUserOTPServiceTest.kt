@@ -14,12 +14,16 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoner
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerPersonal
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.OneLoginData
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PoPUserOTPEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PoPUserOTPRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PoPUserApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import java.security.SecureRandom
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -38,12 +42,15 @@ class PoPUserOTPServiceTest {
   @Mock
   private lateinit var popUserApiService: PoPUserApiService
 
+  @Mock
+  private lateinit var prisonerSearchApiService: PrisonerSearchApiService
+
   private val testDate = LocalDateTime.parse("2023-08-25T12:00:00")
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
   @BeforeEach
   fun beforeEach() {
-    popUserOTPService = PoPUserOTPService(popUserOTPRepository, prisonerRepository, popUserApiService)
+    popUserOTPService = PoPUserOTPService(popUserOTPRepository, prisonerRepository, popUserApiService, prisonerSearchApiService)
   }
 
   @Test
@@ -55,6 +62,7 @@ class PoPUserOTPServiceTest {
       fakeNow,
       fakeNow.plusDays(7).withHour(11).withMinute(59).withSecond(59),
       "123456",
+      LocalDate.parse("1982-10-24"),
     )
 
     Mockito.`when`(popUserOTPRepository.findByPrisoner(any())).thenReturn(popUserOTPEntity)
@@ -73,6 +81,7 @@ class PoPUserOTPServiceTest {
       fakeNow,
       fakeNow.plusDays(7).withHour(11).withMinute(59).withSecond(59),
       "123456",
+      LocalDate.parse("1982-10-24"),
     )
 
     popUserOTPService.deletePoPUserOTP(popUserOTPEntity)
@@ -90,6 +99,7 @@ class PoPUserOTPServiceTest {
       fakeNow,
       fakeNow.plusDays(7).withHour(11).withMinute(59).withSecond(59),
       "123456",
+      LocalDate.parse("1982-10-24"),
     )
 
     val popUserOTPList = emptyList<PoPUserOTPEntity>().toMutableList()
@@ -115,11 +125,24 @@ class PoPUserOTPServiceTest {
       fakeNow,
       fakeNow.plusDays(7).withHour(23).withMinute(59).withSecond(59),
       "123456",
+      LocalDate.parse("1982-10-24"),
+    )
+
+    val prisonerResponse = PrisonersSearch(
+      prisonerNumber = "A123456",
+      firstName = "firstName",
+      lastName = "lastName",
+      prisonId = "MDI",
+      prisonName = "prisonName",
+      cellLocation = null,
+      youthOffender = false,
+      dateOfBirth = LocalDate.parse("1982-10-24"),
+      releaseDate = testDate.toLocalDate().plusMonths(6),
     )
 
     Mockito.`when`(popUserOTPRepository.findByPrisoner(prisonerEntity)).thenReturn(null)
     Mockito.`when`(popUserOTPRepository.save(any())).thenReturn(popUserOTPEntity)
-
+    Mockito.`when`(prisonerSearchApiService.findPrisonerPersonalDetails(prisonerEntity.nomsId)).thenReturn(prisonerResponse)
     val result = popUserOTPService.createPoPUserOTP(prisonerEntity)
     Assertions.assertEquals(popUserOTPEntity, result)
     unmockkStatic(LocalDateTime::class)
@@ -129,8 +152,8 @@ class PoPUserOTPServiceTest {
   fun `test create Pop User Verified - Fails OTP Invalid`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    val oneLoginData = OneLoginData("urn1", "123457", "email@test.com")
-    Mockito.`when`(popUserOTPRepository.findByOtpAndExpiryDateIsGreaterThan(oneLoginData.otp, LocalDateTime.now())).thenReturn(null)
+    val oneLoginData = OneLoginData("urn1", "123457", "email@test.com", LocalDate.parse("1982-10-24"))
+    Mockito.`when`(popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(oneLoginData.otp, LocalDate.parse("1982-10-24"), LocalDateTime.now())).thenReturn(null)
     assertThrows<ResourceNotFoundException> { popUserOTPService.getPoPUserVerified(oneLoginData) }
     unmockkStatic(LocalDateTime::class)
   }
@@ -139,19 +162,44 @@ class PoPUserOTPServiceTest {
   fun `test create Pop User Verified -  valid OTP`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    val oneLoginUserData = OneLoginData("urn1", "123457", "email@test.com")
+    val oneLoginUserData = OneLoginData("urn1", "123457", "email@test.com", LocalDate.parse("1982-10-24"))
     val prisoner = PrisonerEntity(1, "acb", fakeNow, "crn", "xyz", null)
     val popUserResponse = PoPUserResponse(1, "crn1", "NA", "email@test.com", true, fakeNow, fakeNow, "GU1234", "urn1", "MDI", LocalDate.parse("2024-12-31"))
+    val prisonerResponse = PrisonersSearch(
+      prisonerNumber = "A123456",
+      firstName = "firstName",
+      lastName = "lastName",
+      prisonId = "MDI",
+      prisonName = "prisonName",
+      cellLocation = null,
+      youthOffender = false,
+      dateOfBirth = LocalDate.parse("1982-10-24"),
+      releaseDate = testDate.toLocalDate().plusMonths(6),
+    )
     val popUserOTPEntity = PoPUserOTPEntity(
       1,
       prisoner,
       fakeNow,
       fakeNow.plusDays(7).withHour(23).withMinute(59).withSecond(59),
       "123457",
+      LocalDate.parse("1982-10-24"),
     )
+    var prisonerPersonal = PrisonerPersonal(
+      prisonerNumber = "A123456",
+      firstName = "firstName",
+      lastName = "lastName",
+      prisonId = "MDI",
+      age = 20,
+      dateOfBirth = LocalDate.parse("1982-10-24"),
+      releaseDate = testDate.toLocalDate().plusMonths(6),
+    )
+    val prisonerSearch = Prisoner(prisonerPersonal, null, false)
+
     Mockito.`when`(prisoner.id?.let { prisonerRepository.findById(it) }).thenReturn(Optional.of(prisoner))
-    Mockito.lenient().`when`(popUserOTPRepository.findByOtpAndExpiryDateIsGreaterThan(oneLoginUserData.otp, LocalDateTime.now())).thenReturn(popUserOTPEntity)
-    Mockito.`when`(popUserApiService.postPoPUserVerification(oneLoginUserData, Optional.of(prisoner))).thenReturn(popUserResponse)
+    Mockito.lenient().`when`(popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(oneLoginUserData.otp, LocalDate.parse("1982-10-24"), LocalDateTime.now())).thenReturn(popUserOTPEntity)
+    Mockito.`when`(prisonerSearchApiService.findPrisonerPersonalDetails(prisoner.nomsId)).thenReturn(prisonerResponse)
+    Mockito.lenient().`when`(prisonerSearchApiService.getPrisonerDetailsByNomsId(prisoner.nomsId)).thenReturn(prisonerSearch)
+    Mockito.`when`(popUserApiService.postPoPUserVerification(oneLoginUserData, Optional.of(prisoner), prisonerResponse)).thenReturn(popUserResponse)
     val result = popUserOTPService.getPoPUserVerified(oneLoginUserData)
     Assertions.assertEquals(popUserResponse, result)
     unmockkStatic(LocalDateTime::class)
@@ -170,8 +218,18 @@ class PoPUserOTPServiceTest {
   fun `test create Pop User Verified - Fails OTP Expired`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    val oneLoginData = OneLoginData("urn1", "123457", "email@test.com")
-    Mockito.lenient().`when`(popUserOTPRepository.findByOtpAndExpiryDateIsGreaterThan(oneLoginData.otp ?: "0", testDate)).thenReturn(null)
+    val oneLoginData = OneLoginData("urn1", "123457", "email@test.com", LocalDate.parse("1982-10-24"))
+    Mockito.lenient().`when`(popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(oneLoginData.otp ?: "0", testDate.toLocalDate(), testDate)).thenReturn(null)
+    assertThrows<ResourceNotFoundException> { popUserOTPService.getPoPUserVerified(oneLoginData) }
+    unmockkStatic(LocalDateTime::class)
+  }
+
+  @Test
+  fun `test create Pop User Verified - Fails DOB not match`() {
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+    val oneLoginData = OneLoginData("urn1", "123457", "email@test.com", LocalDate.parse("1982-10-24"))
+    Mockito.lenient().`when`(popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(oneLoginData.otp ?: "0", testDate.toLocalDate(), testDate)).thenReturn(null)
     assertThrows<ResourceNotFoundException> { popUserOTPService.getPoPUserVerified(oneLoginData) }
     unmockkStatic(LocalDateTime::class)
   }

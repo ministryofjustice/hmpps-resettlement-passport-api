@@ -32,7 +32,7 @@ class AccommodationResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       AccommodationAssessmentPage.WHERE_DID_THEY_LIVE,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
         return if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE && it.answer?.answer is String && (it.answer!!.answer as String in listOf("PRIVATE_RENTED_HOUSING", "SOCIAL_HOUSING", "HOMEOWNER")) }) {
           AccommodationAssessmentPage.WHERE_DID_THEY_LIVE_ADDRESS
         } else if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE && (it.answer?.answer as String in listOf("NO_PERMANENT_OR_FIXED", "NO_ANSWER")) }) {
@@ -46,25 +46,25 @@ class AccommodationResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       AccommodationAssessmentPage.WHERE_DID_THEY_LIVE_ADDRESS,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
         return AccommodationAssessmentPage.HELP_TO_KEEP_HOME
       },
     ),
     ResettlementAssessmentNode(
       AccommodationAssessmentPage.HELP_TO_KEEP_HOME,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
         return AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_1
       },
     ),
     ResettlementAssessmentNode(
       AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_1,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, edit: Boolean): IAssessmentPage {
         return if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_1 && it.answer?.answer is String && (it.answer!!.answer as String == "MOVE_TO_NEW_ADDRESS") }) {
           AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_ADDRESS
         } else if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_1 && (it.answer?.answer as String in listOf("RETURN_TO_PREVIOUS_ADDRESS", "DOES_NOT_HAVE_ANYWHERE", "NO_ANSWER")) }) {
-          GenericAssessmentPage.ASSESSMENT_SUMMARY
+          finalQuestionNextPage(currentQuestionsAndAnswers, edit)
         } else {
           // Bad request if the question isn't answered
           throw ServerWebInputException("No valid answer found to mandatory question ${AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_1}.")
@@ -74,11 +74,11 @@ class AccommodationResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_2,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, edit: Boolean): IAssessmentPage {
         return if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_2 && it.answer?.answer is String && (it.answer!!.answer as String == "MOVE_TO_NEW_ADDRESS") }) {
           AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_ADDRESS
         } else if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_2 && (it.answer?.answer as String in listOf("DOES_NOT_HAVE_ANYWHERE", "NO_ANSWER")) }) {
-          GenericAssessmentPage.ASSESSMENT_SUMMARY
+          finalQuestionNextPage(currentQuestionsAndAnswers, edit)
         } else {
           // Bad request if the question isn't answered
           throw ServerWebInputException("No valid answer found to mandatory question ${AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_2}.")
@@ -87,11 +87,9 @@ class AccommodationResettlementAssessmentStrategy(
     ),
     ResettlementAssessmentNode(
       AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_ADDRESS,
-      nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
-        return GenericAssessmentPage.ASSESSMENT_SUMMARY
-      },
+      nextPage = ::finalQuestionNextPage,
     ),
+    assessmentSummaryNode,
   )
 }
 

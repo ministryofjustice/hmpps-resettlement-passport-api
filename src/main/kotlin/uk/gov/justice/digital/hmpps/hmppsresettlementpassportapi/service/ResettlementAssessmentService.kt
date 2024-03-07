@@ -97,14 +97,21 @@ class ResettlementAssessmentService(
     }
 
     assessmentList.forEach { assessment ->
+      if (assessment.statusChangedTo == null) {
+        throw RuntimeException("Can't submit assessment with id ${assessment.id} as statusChangedTo is null")
+      }
+
+      if (assessment.caseNoteText == null) {
+        throw RuntimeException("Can't submit assessment with id ${assessment.id} as caseNoteText is null")
+      }
 
       // Add case note to delius_contact table
       deliusContactService.addDeliusCaseNoteToDatabase(
         nomsId = nomsId,
         pathwayStatusAndCaseNote = PathwayStatusAndCaseNote(
           pathway = Pathway.getById(assessment.pathway.id),
-          status = Status.getById(assessment.statusChangedTo.id),
-          caseNoteText = assessment.caseNoteText,
+          status = Status.getById(assessment.statusChangedTo!!.id),
+          caseNoteText = assessment.caseNoteText!!,
         ),
         username = assessment.createdBy,
       )
@@ -117,7 +124,7 @@ class ResettlementAssessmentService(
         prisonerEntity = prisonerEntity,
         pathwayEntity = assessment.pathway,
         createdDate = LocalDateTime.now(),
-        notes = assessment.caseNoteText,
+        notes = assessment.caseNoteText!!,
         name = assessment.createdBy,
         userId = assessment.createdByUserId,
       )
@@ -125,7 +132,7 @@ class ResettlementAssessmentService(
       // Update pathway status
       pathwayAndStatusService.updatePathwayStatus(
         nomsId = nomsId,
-        pathwayAndStatus = PathwayAndStatus(Pathway.getById(assessment.pathway.id), Status.getById(assessment.statusChangedTo.id)),
+        pathwayAndStatus = PathwayAndStatus(Pathway.getById(assessment.pathway.id), Status.getById(assessment.statusChangedTo!!.id)),
       )
 
       // Update assessment status to SUBMITTED
@@ -144,11 +151,17 @@ class ResettlementAssessmentService(
     val resettlementAssessment = resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentStatusOrderByCreationDateDesc(prisonerEntity, pathwayEntity, resettlementStatusEntity)
       ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway")
 
-    val questionClass = resettlementAssessmentStrategies.first { it.appliesTo(Pathway.getById(resettlementAssessment.pathway.id)) }.getQuestionClass()
+    val resettlementStrategy = resettlementAssessmentStrategies.first { it.appliesTo(Pathway.getById(resettlementAssessment.pathway.id)) }
+
+    val questionClass = resettlementStrategy.getQuestionClass()
     val questionsAndAnswers = resettlementAssessment.assessment.assessment.mapNotNull {
       val question = convertEnumStringToEnum(questionClass, GenericResettlementAssessmentQuestion::class, it.questionId) as IResettlementAssessmentQuestion
       if (question !in listOf(GenericResettlementAssessmentQuestion.SUPPORT_NEEDS, GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY)) {
-        LatestResettlementAssessmentResponseQuestionAndAnswer(question.title, convertAnswerToString(question.type, question.options, it.answer))
+        LatestResettlementAssessmentResponseQuestionAndAnswer(
+          questionTitle = question.title,
+          answer = convertAnswerToString(question.type, question.options, it.answer),
+          originalPageId = resettlementStrategy.findPageIdFromQuestionId(it.questionId),
+        )
       } else {
         null
       }

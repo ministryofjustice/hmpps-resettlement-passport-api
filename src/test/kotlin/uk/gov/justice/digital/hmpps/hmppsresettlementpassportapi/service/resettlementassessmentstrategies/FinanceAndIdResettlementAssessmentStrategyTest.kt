@@ -79,10 +79,7 @@ class FinanceAndIdResettlementAssessmentStrategyTest {
     expectedPage: String,
   ) {
     val nomsId = "123"
-
-    if (currentPage == null) {
-      setUpMocks(nomsId, false)
-    }
+    setUpMocks(nomsId, false)
 
     val assessment = ResettlementAssessmentRequest(
       questionsAndAnswers = questionsAndAnswers,

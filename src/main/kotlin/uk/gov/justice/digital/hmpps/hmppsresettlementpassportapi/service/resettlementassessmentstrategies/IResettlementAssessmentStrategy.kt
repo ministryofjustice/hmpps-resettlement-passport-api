@@ -27,4 +27,5 @@ interface IResettlementAssessmentStrategy<Q> where Q : Enum<*>, Q : IResettlemen
   fun getPageFromId(nomsId: String, pathway: Pathway, pageId: String, assessmentType: ResettlementAssessmentType): ResettlementAssessmentResponsePage
 
   fun getQuestionClass(): KClass<Q>
+  fun findPageIdFromQuestionId(questionId: String): String
 }

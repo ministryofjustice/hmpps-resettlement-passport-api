@@ -81,10 +81,7 @@ class ChildrenFamiliesAndCommunitiesStrategyTest {
     expectedPage: String,
   ) {
     val nomsId = "123"
-
-    if (currentPage == null) {
-      setUpMocks(nomsId, false)
-    }
+    setUpMocks(nomsId, false)
 
     val assessment = ResettlementAssessmentRequest(
       questionsAndAnswers = questionsAndAnswers,
@@ -583,6 +580,8 @@ class ChildrenFamiliesAndCommunitiesStrategyTest {
     val assessment = ResettlementAssessmentRequest(
       questionsAndAnswers = listOf(ResettlementAssessmentRequestQuestionAndAnswer("ANY_QUESTION", StringAnswer("Any answer"))),
     )
+
+    setUpMocks(nomsId, false)
 
     val exception = assertThrows<ServerWebInputException> {
       resettlementAssessmentService.getNextPageId(

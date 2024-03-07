@@ -80,10 +80,7 @@ class EducationSkillsAndWorkResettlementStrategyTest {
     expectedPage: String,
   ) {
     val nomsId = "123"
-
-    if (currentPage == null) {
-      setUpMocks(nomsId, false)
-    }
+    setUpMocks(nomsId, false)
 
     val assessment = ResettlementAssessmentRequest(
       questionsAndAnswers = questionsAndAnswers,
@@ -481,7 +478,7 @@ class EducationSkillsAndWorkResettlementStrategyTest {
         ResettlementAssessmentRequestQuestionAndAnswer("ADDRESS_OF_TRAINING_PROVIDER", answer = MapAnswer(listOf(mapOf("address_line1" to "456 The Street")))),
         ResettlementAssessmentRequestQuestionAndAnswer("BURSARIES_AND_GRANTS", answer = StringAnswer("YES")),
         ResettlementAssessmentRequestQuestionAndAnswer("SUPPORT_NEEDS", answer = StringAnswer("SUPPORT_REQUIRED")),
-        ResettlementAssessmentRequestQuestionAndAnswer("CASE_NOT_SUMMARY", answer = StringAnswer("Some text here...")),
+        ResettlementAssessmentRequestQuestionAndAnswer("CASE_NOTE_SUMMARY", answer = StringAnswer("Some text here...")),
       ),
       "ASSESSMENT_SUMMARY",
       "CHECK_ANSWERS",

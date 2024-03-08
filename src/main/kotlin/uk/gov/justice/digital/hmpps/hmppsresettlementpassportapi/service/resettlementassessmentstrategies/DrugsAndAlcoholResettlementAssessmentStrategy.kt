@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentNode
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
@@ -31,7 +32,7 @@ class DrugsAndAlcoholResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       DrugsAndAlcoholAssessmentPage.DRUG_ISSUES,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
         return if (currentQuestionsAndAnswers.any { it.question == DrugsAndAlcoholResettlementAssessmentQuestion.DRUG_ISSUES && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           DrugsAndAlcoholAssessmentPage.SUPPORT_WITH_DRUG_ISSUES
         } else if (currentQuestionsAndAnswers.any { it.question == DrugsAndAlcoholResettlementAssessmentQuestion.DRUG_ISSUES && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
@@ -45,18 +46,18 @@ class DrugsAndAlcoholResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       DrugsAndAlcoholAssessmentPage.SUPPORT_WITH_DRUG_ISSUES,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
         return DrugsAndAlcoholAssessmentPage.ALCOHOL_ISSUES
       },
     ),
     ResettlementAssessmentNode(
       DrugsAndAlcoholAssessmentPage.ALCOHOL_ISSUES,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, edit: Boolean): IAssessmentPage {
         return if (currentQuestionsAndAnswers.any { it.question == DrugsAndAlcoholResettlementAssessmentQuestion.ALCOHOL_ISSUES && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           DrugsAndAlcoholAssessmentPage.SUPPORT_WITH_ALCOHOL_ISSUES
         } else if (currentQuestionsAndAnswers.any { it.question == DrugsAndAlcoholResettlementAssessmentQuestion.ALCOHOL_ISSUES && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
-          GenericAssessmentPage.ASSESSMENT_SUMMARY
+          finalQuestionNextPage(currentQuestionsAndAnswers, edit)
         } else {
           // Bad request if the question isn't answered
           throw ServerWebInputException("No valid answer found to mandatory question ${DrugsAndAlcoholResettlementAssessmentQuestion.ALCOHOL_ISSUES}.")
@@ -65,11 +66,9 @@ class DrugsAndAlcoholResettlementAssessmentStrategy(
     ),
     ResettlementAssessmentNode(
       DrugsAndAlcoholAssessmentPage.SUPPORT_WITH_ALCOHOL_ISSUES,
-      nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
-        return GenericAssessmentPage.ASSESSMENT_SUMMARY
-      },
+      nextPage = ::finalQuestionNextPage,
     ),
+    assessmentSummaryNode,
   )
 }
 
@@ -88,6 +87,7 @@ enum class DrugsAndAlcoholResettlementAssessmentQuestion(
   override val subTitle: String? = null,
   override val type: TypeOfQuestion,
   override val options: List<Option>? = null,
+  override val validationType: ValidationType = ValidationType.MANDATORY,
 ) : IResettlementAssessmentQuestion {
   DRUG_ISSUES(
     id = "DRUG_ISSUES",

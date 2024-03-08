@@ -97,14 +97,21 @@ class ResettlementAssessmentService(
     }
 
     assessmentList.forEach { assessment ->
+      if (assessment.statusChangedTo == null) {
+        throw RuntimeException("Can't submit assessment with id ${assessment.id} as statusChangedTo is null")
+      }
+
+      if (assessment.caseNoteText == null) {
+        throw RuntimeException("Can't submit assessment with id ${assessment.id} as caseNoteText is null")
+      }
 
       // Add case note to delius_contact table
       deliusContactService.addDeliusCaseNoteToDatabase(
         nomsId = nomsId,
         pathwayStatusAndCaseNote = PathwayStatusAndCaseNote(
           pathway = Pathway.getById(assessment.pathway.id),
-          status = Status.getById(assessment.statusChangedTo.id),
-          caseNoteText = assessment.caseNoteText,
+          status = Status.getById(assessment.statusChangedTo!!.id),
+          caseNoteText = assessment.caseNoteText!!,
         ),
         username = assessment.createdBy,
       )
@@ -117,7 +124,7 @@ class ResettlementAssessmentService(
         prisonerEntity = prisonerEntity,
         pathwayEntity = assessment.pathway,
         createdDate = LocalDateTime.now(),
-        notes = assessment.caseNoteText,
+        notes = assessment.caseNoteText!!,
         name = assessment.createdBy,
         userId = assessment.createdByUserId,
       )
@@ -125,7 +132,7 @@ class ResettlementAssessmentService(
       // Update pathway status
       pathwayAndStatusService.updatePathwayStatus(
         nomsId = nomsId,
-        pathwayAndStatus = PathwayAndStatus(Pathway.getById(assessment.pathway.id), Status.getById(assessment.statusChangedTo.id)),
+        pathwayAndStatus = PathwayAndStatus(Pathway.getById(assessment.pathway.id), Status.getById(assessment.statusChangedTo!!.id)),
       )
 
       // Update assessment status to SUBMITTED
@@ -144,11 +151,17 @@ class ResettlementAssessmentService(
     val resettlementAssessment = resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentStatusOrderByCreationDateDesc(prisonerEntity, pathwayEntity, resettlementStatusEntity)
       ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway")
 
-    val questionClass = resettlementAssessmentStrategies.first { it.appliesTo(Pathway.getById(resettlementAssessment.pathway.id)) }.getQuestionClass()
+    val resettlementStrategy = resettlementAssessmentStrategies.first { it.appliesTo(Pathway.getById(resettlementAssessment.pathway.id)) }
+
+    val questionClass = resettlementStrategy.getQuestionClass()
     val questionsAndAnswers = resettlementAssessment.assessment.assessment.mapNotNull {
       val question = convertEnumStringToEnum(questionClass, GenericResettlementAssessmentQuestion::class, it.questionId) as IResettlementAssessmentQuestion
       if (question !in listOf(GenericResettlementAssessmentQuestion.SUPPORT_NEEDS, GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY)) {
-        LatestResettlementAssessmentResponseQuestionAndAnswer(question.title, convertAnswerToString(question.options, it.answer))
+        LatestResettlementAssessmentResponseQuestionAndAnswer(
+          questionTitle = question.title,
+          answer = convertAnswerToString(question.type, question.options, it.answer),
+          originalPageId = resettlementStrategy.findPageIdFromQuestionId(it.questionId),
+        )
       } else {
         null
       }
@@ -161,32 +174,42 @@ class ResettlementAssessmentService(
     )
   }
 
-  fun convertAnswerToString(options: List<Option>?, answer: Answer<*>): String? {
-    val answerComponents: List<String>? = when (answer) {
-      is StringAnswer -> listOf(answer.answer as String)
+  fun convertAnswerToString(type: TypeOfQuestion, options: List<Option>?, answer: Answer<*>): String? {
+    val answerAsString = when (answer) {
+      is StringAnswer -> answer.answer as String
       is ListAnswer -> {
-        answer.answer?.filter { it.isNotBlank() }?.map { it.trim() }
-      }
-      is MapAnswer -> {
-        if (answer.answer != null) {
-          answer.answer!!.flatMap { it.values }.filter { it.isNotBlank() }.map { it.trim() }
+        val listAnswer = answer.answer
+        if (listAnswer != null) {
+          convertFromListToStringWithLineBreaks(listAnswer)
         } else {
           null
         }
       }
+      is MapAnswer -> {
+        val listOfMapsAnswer = answer.answer
+        if (listOfMapsAnswer != null) {
+          convertFromListOfMapsToStringWithLineBreaks(listOfMapsAnswer)
+        } else {
+          null
+        }
+      }
+
       else -> {
         throw RuntimeException("Unknown answer type ${answer::class.qualifiedName}")
       }
     }
 
-    return if (answerComponents != null) convertFromListToStringWithLineBreaks(answerComponents, options) else null
+    return if (type == TypeOfQuestion.RADIO) {
+      options?.find { it.id == answerAsString }?.displayText ?: answerAsString
+    } else {
+      answerAsString
+    }
   }
 
-  fun convertFromListToStringWithLineBreaks(stringElements: List<String>, options: List<Option>?) =
+  fun convertFromListToStringWithLineBreaks(stringElements: List<String>) =
     stringElements
       .filter { it.isNotBlank() }
       .map { it.trim() }
-      .map { element -> options?.find { it.id == element }?.displayText ?: element }
       .reduceOrNull { acc, value -> "$acc\n$value" } ?: ""
 
   private fun convertFromListOfMapsToStringWithLineBreaks(listOfMaps: List<Map<String, String>>) =

@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentNode
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
@@ -31,7 +32,7 @@ class HealthResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       HealthAssessmentPage.REGISTERED_WITH_GP,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
         return if (currentQuestionsAndAnswers.any { it.question == HealthResettlementAssessmentQuestion.REGISTERED_WITH_GP && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           HealthAssessmentPage.MEET_HEALTHCARE_TEAM
         } else if (currentQuestionsAndAnswers.any { it.question == HealthResettlementAssessmentQuestion.REGISTERED_WITH_GP && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
@@ -45,18 +46,18 @@ class HealthResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       HealthAssessmentPage.HELP_REGISTERING_GP,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
         return HealthAssessmentPage.MEET_HEALTHCARE_TEAM
       },
     ),
     ResettlementAssessmentNode(
       HealthAssessmentPage.MEET_HEALTHCARE_TEAM,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, edit: Boolean): IAssessmentPage {
         return if (currentQuestionsAndAnswers.any { it.question == HealthResettlementAssessmentQuestion.MEET_HEALTHCARE_TEAM && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           HealthAssessmentPage.WHAT_HEALTH_NEED
         } else if (currentQuestionsAndAnswers.any { it.question == HealthResettlementAssessmentQuestion.MEET_HEALTHCARE_TEAM && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
-          GenericAssessmentPage.ASSESSMENT_SUMMARY
+          finalQuestionNextPage(currentQuestionsAndAnswers, edit)
         } else {
           // Bad request if the question isn't answered
           throw ServerWebInputException("No valid answer found to mandatory question ${HealthResettlementAssessmentQuestion.MEET_HEALTHCARE_TEAM}.")
@@ -65,11 +66,9 @@ class HealthResettlementAssessmentStrategy(
     ),
     ResettlementAssessmentNode(
       HealthAssessmentPage.WHAT_HEALTH_NEED,
-      nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
-        return GenericAssessmentPage.ASSESSMENT_SUMMARY
-      },
+      nextPage = ::finalQuestionNextPage,
     ),
+    assessmentSummaryNode,
   )
 }
 
@@ -88,6 +87,7 @@ enum class HealthResettlementAssessmentQuestion(
   override val subTitle: String? = null,
   override val type: TypeOfQuestion,
   override val options: List<Option>? = null,
+  override val validationType: ValidationType = ValidationType.MANDATORY,
 ) : IResettlementAssessmentQuestion {
   REGISTERED_WITH_GP(
     id = "REGISTERED_WITH_GP",

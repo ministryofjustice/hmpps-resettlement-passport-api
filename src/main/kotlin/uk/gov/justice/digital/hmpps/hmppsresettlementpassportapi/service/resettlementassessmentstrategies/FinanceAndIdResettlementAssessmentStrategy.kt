@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentNode
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
@@ -31,7 +32,7 @@ class FinanceAndIdResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       FinanceAndIdAssessmentPage.HAS_BANK_ACCOUNT,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
         return if (currentQuestionsAndAnswers.any { it.question == FinanceAndIdResettlementAssessmentQuestion.HAS_BANK_ACCOUNT && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           FinanceAndIdAssessmentPage.WHAT_ID_DOCUMENTS
         } else if (currentQuestionsAndAnswers.any { it.question == FinanceAndIdResettlementAssessmentQuestion.HAS_BANK_ACCOUNT && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
@@ -45,28 +46,28 @@ class FinanceAndIdResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       FinanceAndIdAssessmentPage.HELP_WITH_BANK_ACCOUNT,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
         return FinanceAndIdAssessmentPage.WHAT_ID_DOCUMENTS
       },
     ),
     ResettlementAssessmentNode(
       FinanceAndIdAssessmentPage.WHAT_ID_DOCUMENTS,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
         return FinanceAndIdAssessmentPage.HELP_APPLY_FOR_ID
       },
     ),
     ResettlementAssessmentNode(
       FinanceAndIdAssessmentPage.HELP_APPLY_FOR_ID,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
         return FinanceAndIdAssessmentPage.RECEIVING_BENEFITS
       },
     ),
     ResettlementAssessmentNode(
       FinanceAndIdAssessmentPage.RECEIVING_BENEFITS,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
         return if (currentQuestionsAndAnswers.any { it.question == FinanceAndIdResettlementAssessmentQuestion.RECEIVING_BENEFITS && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           FinanceAndIdAssessmentPage.SELECT_BENEFITS
         } else if (currentQuestionsAndAnswers.any { it.question == FinanceAndIdResettlementAssessmentQuestion.RECEIVING_BENEFITS && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
@@ -80,18 +81,18 @@ class FinanceAndIdResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       FinanceAndIdAssessmentPage.SELECT_BENEFITS,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
         return FinanceAndIdAssessmentPage.DEBTS_OR_ARREARS
       },
     ),
     ResettlementAssessmentNode(
       FinanceAndIdAssessmentPage.DEBTS_OR_ARREARS,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, edit: Boolean): IAssessmentPage {
         return if (currentQuestionsAndAnswers.any { it.question == FinanceAndIdResettlementAssessmentQuestion.DEBTS_OR_ARREARS && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           FinanceAndIdAssessmentPage.HELP_MANAGE_DEBTS
         } else if (currentQuestionsAndAnswers.any { it.question == FinanceAndIdResettlementAssessmentQuestion.DEBTS_OR_ARREARS && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
-          GenericAssessmentPage.ASSESSMENT_SUMMARY
+          finalQuestionNextPage(currentQuestionsAndAnswers, edit)
         } else {
           // Bad request if the question isn't answered
           throw ServerWebInputException("No valid answer found to mandatory question ${FinanceAndIdResettlementAssessmentQuestion.DEBTS_OR_ARREARS}.")
@@ -100,11 +101,9 @@ class FinanceAndIdResettlementAssessmentStrategy(
     ),
     ResettlementAssessmentNode(
       FinanceAndIdAssessmentPage.HELP_MANAGE_DEBTS,
-      nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
-        return GenericAssessmentPage.ASSESSMENT_SUMMARY
-      },
+      nextPage = ::finalQuestionNextPage,
     ),
+    assessmentSummaryNode,
   )
 }
 
@@ -127,6 +126,7 @@ enum class FinanceAndIdResettlementAssessmentQuestion(
   override val subTitle: String? = null,
   override val type: TypeOfQuestion,
   override val options: List<Option>? = null,
+  override val validationType: ValidationType = ValidationType.MANDATORY,
 ) : IResettlementAssessmentQuestion {
   HAS_BANK_ACCOUNT(
     id = "HAS_BANK_ACCOUNT",

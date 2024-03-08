@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentNode
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
@@ -30,38 +31,36 @@ class AttitudesThinkingAndBehaviourResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       AttitudesThinkingAndBehaviourAssessmentPage.HELP_TO_MANAGE_ANGER,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
         return AttitudesThinkingAndBehaviourAssessmentPage.INFLUENCED_BY_OTHERS
       },
     ),
     ResettlementAssessmentNode(
       AttitudesThinkingAndBehaviourAssessmentPage.INFLUENCED_BY_OTHERS,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
         return AttitudesThinkingAndBehaviourAssessmentPage.ISSUES_WITH_GAMBLING
       },
     ),
     ResettlementAssessmentNode(
       AttitudesThinkingAndBehaviourAssessmentPage.ISSUES_WITH_GAMBLING,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
         return AttitudesThinkingAndBehaviourAssessmentPage.INVOLVED_IN_GANG_ACTIVITY
       },
     ),
     ResettlementAssessmentNode(
       AttitudesThinkingAndBehaviourAssessmentPage.INVOLVED_IN_GANG_ACTIVITY,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
+      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
         return AttitudesThinkingAndBehaviourAssessmentPage.UNDER_THREAT_OUTSIDE_PRISON
       },
     ),
     ResettlementAssessmentNode(
       AttitudesThinkingAndBehaviourAssessmentPage.UNDER_THREAT_OUTSIDE_PRISON,
-      nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>): IAssessmentPage {
-        return GenericAssessmentPage.ASSESSMENT_SUMMARY
-      },
+      nextPage = ::finalQuestionNextPage,
     ),
+    assessmentSummaryNode,
   )
 }
 
@@ -81,6 +80,7 @@ enum class AttitudesThinkingAndBehaviourResettlementAssessmentQuestion(
   override val subTitle: String? = null,
   override val type: TypeOfQuestion,
   override val options: List<Option>? = null,
+  override val validationType: ValidationType = ValidationType.MANDATORY,
 ) : IResettlementAssessmentQuestion {
   HELP_TO_MANAGE_ANGER(
     id = "HELP_TO_MANAGE_ANGER",

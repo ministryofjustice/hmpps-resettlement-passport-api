@@ -157,11 +157,8 @@ class ResettlementAssessmentService(
     val questionsAndAnswers = resettlementAssessment.assessment.assessment.mapNotNull {
       val question = convertEnumStringToEnum(questionClass, GenericResettlementAssessmentQuestion::class, it.questionId) as IResettlementAssessmentQuestion
       if (question !in listOf(GenericResettlementAssessmentQuestion.SUPPORT_NEEDS, GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY)) {
-        LatestResettlementAssessmentResponseQuestionAndAnswer(
-          questionTitle = question.title,
-          answer = convertAnswerToString(question.type, question.options, it.answer),
-          originalPageId = resettlementStrategy.findPageIdFromQuestionId(it.questionId),
-        )
+        LatestResettlementAssessmentResponseQuestionAndAnswer(question.title, convertAnswerToString(question.options, it.answer))
+
       } else {
         null
       }
@@ -174,48 +171,31 @@ class ResettlementAssessmentService(
     )
   }
 
-  fun convertAnswerToString(type: TypeOfQuestion, options: List<Option>?, answer: Answer<*>): String? {
-    val answerAsString = when (answer) {
-      is StringAnswer -> answer.answer as String
+  fun convertAnswerToString(options: List<Option>?, answer: Answer<*>): String? {
+    val answerComponents: List<String>? = when (answer) {
+      is StringAnswer -> listOf(answer.answer as String)
       is ListAnswer -> {
-        val listAnswer = answer.answer
-        if (listAnswer != null) {
-          convertFromListToStringWithLineBreaks(listAnswer)
-        } else {
-          null
-        }
+        answer.answer?.filter { it.isNotBlank() }?.map { it.trim() }
       }
       is MapAnswer -> {
-        val listOfMapsAnswer = answer.answer
-        if (listOfMapsAnswer != null) {
-          convertFromListOfMapsToStringWithLineBreaks(listOfMapsAnswer)
+        if (answer.answer != null) {
+          answer.answer!!.flatMap { it.values }.filter { it.isNotBlank() }.map { it.trim() }
         } else {
           null
         }
       }
-
       else -> {
         throw RuntimeException("Unknown answer type ${answer::class.qualifiedName}")
       }
     }
 
-    return if (type == TypeOfQuestion.RADIO) {
-      options?.find { it.id == answerAsString }?.displayText ?: answerAsString
-    } else {
-      answerAsString
-    }
+    return if (answerComponents != null) convertFromListToStringWithLineBreaks(answerComponents, options) else null
   }
 
-  fun convertFromListToStringWithLineBreaks(stringElements: List<String>) =
+  fun convertFromListToStringWithLineBreaks(stringElements: List<String>, options: List<Option>?) =
     stringElements
       .filter { it.isNotBlank() }
       .map { it.trim() }
-      .reduceOrNull { acc, value -> "$acc\n$value" } ?: ""
-
-  private fun convertFromListOfMapsToStringWithLineBreaks(listOfMaps: List<Map<String, String>>) =
-    listOfMaps
-      .flatMap { it.values }
-      .filter { it.isNotBlank() }
-      .map { it.trim() }
+      .map { element -> options?.find { it.id == element }?.displayText ?: element }
       .reduceOrNull { acc, value -> "$acc\n$value" } ?: ""
 }

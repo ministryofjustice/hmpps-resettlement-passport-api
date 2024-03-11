@@ -8,6 +8,7 @@ import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.OneLoginData
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PoPUserOTPRepository
 import java.util.*
@@ -23,7 +24,7 @@ class PoPUserApiService(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun postPoPUserVerification(oneLoginData: OneLoginData, prisoner: Optional<PrisonerEntity>?): PoPUserResponse? {
+  fun postPoPUserVerification(oneLoginData: OneLoginData, prisoner: Optional<PrisonerEntity>?, prisonerSearch: PrisonersSearch): PoPUserResponse? {
     if (prisoner != null) {
       return popUserWebClientCredentials.post()
         .uri(
@@ -37,8 +38,8 @@ class PoPUserApiService(
             "verified" to true,
             "nomsId" to prisoner.get().nomsId,
             "oneLoginUrn" to oneLoginData.urn,
-            "prisonId" to prisoner.get().prisonId,
-            "releaseDate" to prisoner.get().releaseDate,
+            "prisonId" to prisonerSearch.prisonId,
+            "releaseDate" to prisonerSearch.releaseDate,
           ),
         )
         .retrieve()

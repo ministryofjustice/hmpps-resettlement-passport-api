@@ -112,4 +112,27 @@ class ResettlementPassportDeliusApiMockServer : WireMockServerBase(9102) {
       ),
     )
   }
+
+  fun stubGetAllAppointmentsFromCRN(crn: String, status: Int) {
+    val appointmentsListJSON = readFile("testdata/resettlement-passport-delius-api/appointments-list.json")
+    val formattedStartDate = LocalDate.now().minusDays(365).toString()
+    val formattedEndDate = LocalDate.now().plusDays(365).toString()
+    stubFor(
+      get("/appointments/$crn?page=0&size=1000&startDate=$formattedStartDate&endDate=$formattedEndDate").willReturn(
+        if (status == 200) {
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody(
+              appointmentsListJSON,
+            )
+            .withStatus(status)
+        } else {
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody("{\"Error\" : \"$status\"}")
+            .withStatus(status)
+        },
+      ),
+    )
+  }
 }

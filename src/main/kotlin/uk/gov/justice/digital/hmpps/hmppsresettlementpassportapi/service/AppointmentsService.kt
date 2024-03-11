@@ -108,7 +108,7 @@ class AppointmentsService(
         formattedTimeVal,
         addressInfo,
         it.staff.email,
-        it.duration?.seconds,
+        (it.duration?.seconds?.div(60)),
       )
       appointmentList.add(appointment)
     }

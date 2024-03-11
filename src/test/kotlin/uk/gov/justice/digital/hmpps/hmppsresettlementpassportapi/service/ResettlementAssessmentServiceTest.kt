@@ -183,7 +183,7 @@ class ResettlementAssessmentServiceTest {
     Arguments.of(TypeOfQuestion.ADDRESS, null, MapAnswer(listOf(mapOf("Address line 1" to "123 Main Street"), mapOf("Address line 2" to "Leeds"), mapOf("County" to "West Yorkshire"), mapOf("Postcode" to "LS1 1AB", "Country" to "United Kingdom"))), "123 Main Street\nLeeds\nWest Yorkshire\nLS1 1AB\nUnited Kingdom"),
     Arguments.of(TypeOfQuestion.ADDRESS, null, MapAnswer(listOf(mapOf(), mapOf(), mapOf(), mapOf())), ""),
     Arguments.of(TypeOfQuestion.ADDRESS, null, MapAnswer(listOf()), ""),
-    Arguments.of(TypeOfQuestion.CHECKBOX, listOf(Option("ANSWER_1", "Answer 1"),Option("ANSWER_2", "Answer 2")), ListAnswer(listOf("ANSWER_1", "ANSWER_2", "ANSWER_3")), "Answer 1\nAnswer 2\nANSWER_3"),
+    Arguments.of(TypeOfQuestion.CHECKBOX, listOf(Option("ANSWER_1", "Answer 1"), Option("ANSWER_2", "Answer 2")), ListAnswer(listOf("ANSWER_1", "ANSWER_2", "ANSWER_3")), "Answer 1\nAnswer 2\nANSWER_3"),
     Arguments.of(TypeOfQuestion.CHECKBOX, null, ListAnswer(listOf()), ""),
   )
 
@@ -214,5 +214,4 @@ class ResettlementAssessmentServiceTest {
     caseNoteText = "some case note text",
     createdByUserId = "USER_1",
   )
-
 }

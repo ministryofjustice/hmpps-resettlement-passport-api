@@ -157,8 +157,11 @@ class ResettlementAssessmentService(
     val questionsAndAnswers = resettlementAssessment.assessment.assessment.mapNotNull {
       val question = convertEnumStringToEnum(questionClass, GenericResettlementAssessmentQuestion::class, it.questionId) as IResettlementAssessmentQuestion
       if (question !in listOf(GenericResettlementAssessmentQuestion.SUPPORT_NEEDS, GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY)) {
-        LatestResettlementAssessmentResponseQuestionAndAnswer(question.title, convertAnswerToString(question.options, it.answer))
-
+        LatestResettlementAssessmentResponseQuestionAndAnswer(
+          questionTitle = question.title,
+          answer = convertAnswerToString(question.options, it.answer),
+          originalPageId = resettlementStrategy.findPageIdFromQuestionId(it.questionId),
+        )
       } else {
         null
       }

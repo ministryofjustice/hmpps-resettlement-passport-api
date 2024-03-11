@@ -5,9 +5,14 @@ import org.apache.commons.text.WordUtils
 import org.slf4j.LoggerFactory
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AppointmentsService.Companion.SECTION_DELIMITER
 import java.lang.IllegalArgumentException
+import java.util.concurrent.ThreadLocalRandom
 import kotlin.reflect.KClass
+import kotlin.streams.asSequence
 
 private val log = LoggerFactory.getLogger(object {}::class.java.`package`.name)
+
+val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+const val STRING_LENGTH = 6
 
 fun <T : Enum<*>> convertStringToEnum(enumClass: KClass<T>, stringValue: String?): T? {
   val enum = enumClass.java.enumConstants.firstOrNull { it.name.fuzzyMatch(stringValue) }
@@ -101,3 +106,11 @@ fun extractSectionFromNotes(customFields: List<String>, section: String, id: Lon
 }
 
 fun extractSectionFromNotesTrimToNull(customFields: List<String>, section: String, id: Long?) = extractSectionFromNotes(customFields, section, id).ifBlank { null }
+
+fun randomStringByJavaRandom(): String {
+  return ThreadLocalRandom.current()
+    .ints(STRING_LENGTH.toLong(), 0, charPool.size)
+    .asSequence()
+    .map(charPool::get)
+    .joinToString("")
+}

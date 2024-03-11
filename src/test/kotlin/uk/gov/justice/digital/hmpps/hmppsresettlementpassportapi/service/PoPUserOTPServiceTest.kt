@@ -24,7 +24,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PoPUserApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
-import java.security.SecureRandom
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -61,7 +60,7 @@ class PoPUserOTPServiceTest {
       prisonerEntity,
       fakeNow,
       fakeNow.plusDays(7).withHour(11).withMinute(59).withSecond(59),
-      "123456",
+      "1X3456",
       LocalDate.parse("1982-10-24"),
     )
 
@@ -80,7 +79,7 @@ class PoPUserOTPServiceTest {
       prisonerEntity,
       fakeNow,
       fakeNow.plusDays(7).withHour(11).withMinute(59).withSecond(59),
-      "123456",
+      "1X3456",
       LocalDate.parse("1982-10-24"),
     )
 
@@ -98,7 +97,7 @@ class PoPUserOTPServiceTest {
       prisonerEntity,
       fakeNow,
       fakeNow.plusDays(7).withHour(11).withMinute(59).withSecond(59),
-      "123456",
+      "1X3456",
       LocalDate.parse("1982-10-24"),
     )
 
@@ -114,17 +113,17 @@ class PoPUserOTPServiceTest {
   fun `test create Pop User OTP - creates and returns PoP User OTP`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    mockkStatic(SecureRandom::class)
+    mockkStatic(::randomStringByJavaRandom)
     every {
-      SecureRandom.getInstanceStrong().nextLong(999999)
-    } returns 123456
+      randomStringByJavaRandom()
+    } returns "1X3456"
     val prisonerEntity = PrisonerEntity(1, "acb", fakeNow, "crn", "xyz", null)
     val popUserOTPEntity = PoPUserOTPEntity(
       null,
       prisonerEntity,
       fakeNow,
       fakeNow.plusDays(7).withHour(23).withMinute(59).withSecond(59),
-      "123456",
+      "1X3456",
       LocalDate.parse("1982-10-24"),
     )
 
@@ -206,11 +205,14 @@ class PoPUserOTPServiceTest {
   }
 
   @Test
-  fun `test generate otp is 6 digits`() {
+  fun `test generate otp is 6 digits and AlphaNumeric`() {
     repeat(1000) {
-      val otp = SecureRandom.getInstanceStrong().nextLong(999999)
-      val otpValue = String.format("%06d", otp)
+      val otpValue = randomStringByJavaRandom()
+      println(otpValue)
       Assertions.assertEquals(otpValue.toString().length, 6)
+      for (ch in otpValue) {
+        Assertions.assertEquals(ch.toString().matches("[a-zA-Z0-9]".toRegex()), true)
+      }
     }
   }
 

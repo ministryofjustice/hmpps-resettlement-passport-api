@@ -240,6 +240,7 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
 
     val expectedOutput1 = readFile("testdata/expectation/pop-user-otp-post-result.json")
     val nomsId = "G4161UF"
+
     webTestClient.post()
       .uri("/resettlement-passport/popUser/$nomsId/otp")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))

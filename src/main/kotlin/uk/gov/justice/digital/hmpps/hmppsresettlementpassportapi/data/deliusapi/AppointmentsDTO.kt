@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi
 data class AppointmentDelius(
   val type: Info,
   val dateTime: String?,
-  val duration: DurationInfo?,
+  val duration: String?,
   val staff: StaffInfo,
   val location: LocationInfo?,
   val description: String,
@@ -21,21 +21,6 @@ data class LocationInfo(
   val address: Address?,
 )
 
-data class DurationInfo(
-  val seconds: Long,
-  val zero: Boolean,
-  val nano: Long?,
-  val negative: Boolean,
-  val positive: Boolean,
-  val units: List<UnitsInfo> = listOf(),
-)
-
-data class UnitsInfo(
-  val durationEstimated: Boolean,
-  val timeBased: Boolean,
-  val dateBased: Boolean,
-)
-
 data class Address(
   val buildingName: String?,
   val buildingNumber: String?,
@@ -48,7 +33,6 @@ data class Address(
 data class StaffInfo(
   val code: String,
   val name: Fullname,
-  val email: String,
 )
 
 data class Fullname(

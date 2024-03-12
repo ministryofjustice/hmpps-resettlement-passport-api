@@ -1,6 +1,6 @@
 {
   "title": "Appointment 1",
-  "contact": "Unallocated Staff",
+  "contact": "Person",
   "date": "2024-01-12",
   "time": "13:05:00",
   "location": {
@@ -13,5 +13,5 @@
     "postcode": "BD1 1AA",
     "description": null
   },
-  "note": "###\nAppointment Title: Appointment 1\nContact: Unallocated Staff\nOrganisation: Org ABC\nLocation:\n  Building Name: Office\n  Building Number: 100\n  Street Name: Main Street\n  District: \n  Town: Bradford\n  County: West Yorkshire\n  Postcode: BD1 1AA\n###\nNo notes\n###"
+  "note": "###\nAppointment Title: Appointment 1\nContact: Person\nOrganisation: Org ABC\nLocation:\n  Building Name: Office\n  Building Number: 100\n  Street Name: Main Street\n  District: \n  Town: Bradford\n  County: West Yorkshire\n  Postcode: BD1 1AA\n###\nNo notes\n###"
 }

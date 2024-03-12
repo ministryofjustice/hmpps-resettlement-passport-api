@@ -78,7 +78,6 @@ class AppointmentsService(
     val appointmentList = mutableListOf<Appointment>()
     appList.forEach {
       val appointment: Appointment?
-      it.staff
       val addressInfo: Address = if (it.location?.address != null) {
         Address(
           it.location.address.buildingName,
@@ -107,8 +106,6 @@ class AppointmentsService(
         formattedDateVal,
         formattedTimeVal,
         addressInfo,
-        it.staff.email,
-        (it.duration?.seconds?.div(60)),
       )
       appointmentList.add(appointment)
     }
@@ -136,8 +133,6 @@ class AppointmentsService(
         postcode = extractSectionFromNotesTrimToNull(customFieldsFromNotes, POSTCODE, deliusContact.id),
         description = null,
       ),
-      contactEmail = null.toString(),
-      duration = deliusContact.appointmentDuration?.toLong(),
       note = deliusContact.notes,
     )
   }

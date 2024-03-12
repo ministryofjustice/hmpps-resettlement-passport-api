@@ -5,7 +5,7 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.randomStringByJavaRandom
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.randomAlphaNumericString
 import java.time.LocalDateTime
 
 class PoPUserOTPIntegrationTest : IntegrationTestBase() {
@@ -16,10 +16,10 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
   @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
   fun `Create, update and delete person on probation user otp - happy path`() {
     mockkStatic(LocalDateTime::class)
-    mockkStatic(::randomStringByJavaRandom)
+    mockkStatic(::randomAlphaNumericString)
     every { LocalDateTime.now() } returns fakeNow
     every {
-      randomStringByJavaRandom()
+      randomAlphaNumericString()
     } returns "1X3456"
 
     val expectedOutput = readFile("testdata/expectation/pop-user-otp-post-result.json")
@@ -90,9 +90,9 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
   fun `Create Person on Probation User OTP another entry`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    mockkStatic(::randomStringByJavaRandom)
+    mockkStatic(::randomAlphaNumericString)
     every {
-      randomStringByJavaRandom()
+      randomAlphaNumericString()
     } returns "1X3456"
 
     val expectedOutput = readFile("testdata/expectation/pop-user-otp-post-result.json")
@@ -121,9 +121,9 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .json(expectedOutput)
 
-    mockkStatic(::randomStringByJavaRandom)
+    mockkStatic(::randomAlphaNumericString)
     every {
-      randomStringByJavaRandom()
+      randomAlphaNumericString()
     } returns "5X7891"
 
     webTestClient.post()
@@ -190,9 +190,9 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
     popUserApiMockServer.resetMappings()
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    mockkStatic(::randomStringByJavaRandom)
+    mockkStatic(::randomAlphaNumericString)
     every {
-      randomStringByJavaRandom()
+      randomAlphaNumericString()
     } returns "1X3456"
 
     val expectedOutput1 = readFile("testdata/expectation/pop-user-otp-post-result.json")
@@ -233,9 +233,9 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
     popUserApiMockServer.resetMappings()
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    mockkStatic(::randomStringByJavaRandom)
+    mockkStatic(::randomAlphaNumericString)
     every {
-      randomStringByJavaRandom()
+      randomAlphaNumericString()
     } returns "1X3456"
 
     val expectedOutput1 = readFile("testdata/expectation/pop-user-otp-post-result.json")
@@ -274,9 +274,9 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
     popUserApiMockServer.resetMappings()
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow.plusDays(9)
-    mockkStatic(::randomStringByJavaRandom)
+    mockkStatic(::randomAlphaNumericString)
     every {
-      randomStringByJavaRandom()
+      randomAlphaNumericString()
     } returns "1X3456"
     val nomsId = "G4161UF"
 
@@ -288,7 +288,7 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
       .bodyValue(
         mapOf(
           "urn" to "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
-          "otp" to "123456",
+          "otp" to "1X3456",
           "email" to "chrisy.clemence@gmail.com",
           "dob" to "1982-10-24",
         ),
@@ -305,9 +305,9 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
     popUserApiMockServer.resetMappings()
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    mockkStatic(::randomStringByJavaRandom)
+    mockkStatic(::randomAlphaNumericString)
     every {
-      randomStringByJavaRandom()
+      randomAlphaNumericString()
     } returns "1X3456"
 
     val nomsId = "G4161UF"

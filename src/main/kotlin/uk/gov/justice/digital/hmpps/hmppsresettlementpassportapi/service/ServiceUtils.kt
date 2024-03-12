@@ -107,7 +107,7 @@ fun extractSectionFromNotes(customFields: List<String>, section: String, id: Lon
 
 fun extractSectionFromNotesTrimToNull(customFields: List<String>, section: String, id: Long?) = extractSectionFromNotes(customFields, section, id).ifBlank { null }
 
-fun randomStringByJavaRandom(): String {
+fun randomAlphaNumericString(): String {
   return ThreadLocalRandom.current()
     .ints(STRING_LENGTH.toLong(), 0, charPool.size)
     .asSequence()

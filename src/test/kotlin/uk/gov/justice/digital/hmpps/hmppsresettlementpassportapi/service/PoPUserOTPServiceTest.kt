@@ -26,7 +26,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
+import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
 class PoPUserOTPServiceTest {
@@ -113,9 +113,9 @@ class PoPUserOTPServiceTest {
   fun `test create Pop User OTP - creates and returns PoP User OTP`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    mockkStatic(::randomStringByJavaRandom)
+    mockkStatic(::randomAlphaNumericString)
     every {
-      randomStringByJavaRandom()
+      randomAlphaNumericString()
     } returns "1X3456"
     val prisonerEntity = PrisonerEntity(1, "acb", fakeNow, "crn", "xyz", null)
     val popUserOTPEntity = PoPUserOTPEntity(
@@ -183,7 +183,7 @@ class PoPUserOTPServiceTest {
       "123457",
       LocalDate.parse("1982-10-24"),
     )
-    var prisonerPersonal = PrisonerPersonal(
+    val prisonerPersonal = PrisonerPersonal(
       prisonerNumber = "A123456",
       firstName = "firstName",
       lastName = "lastName",
@@ -207,9 +207,8 @@ class PoPUserOTPServiceTest {
   @Test
   fun `test generate otp is 6 digits and AlphaNumeric`() {
     repeat(1000) {
-      val otpValue = randomStringByJavaRandom()
-      println(otpValue)
-      Assertions.assertEquals(otpValue.toString().length, 6)
+      val otpValue = randomAlphaNumericString()
+      Assertions.assertEquals(otpValue.length, 6)
       for (ch in otpValue) {
         Assertions.assertEquals(ch.toString().matches("[a-zA-Z0-9]".toRegex()), true)
       }
@@ -231,7 +230,8 @@ class PoPUserOTPServiceTest {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val oneLoginData = OneLoginData("urn1", "123457", "email@test.com", LocalDate.parse("1982-10-24"))
-    Mockito.lenient().`when`(popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(oneLoginData.otp ?: "0", testDate.toLocalDate(), testDate)).thenReturn(null)
+    val dob = testDate.toLocalDate()
+    Mockito.lenient().`when`(popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(oneLoginData.otp ?: "0", dob, testDate)).thenReturn(null)
     assertThrows<ResourceNotFoundException> { popUserOTPService.getPoPUserVerified(oneLoginData) }
     unmockkStatic(LocalDateTime::class)
   }

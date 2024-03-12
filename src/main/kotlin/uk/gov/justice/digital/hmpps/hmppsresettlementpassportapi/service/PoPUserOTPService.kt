@@ -13,7 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PoPUserApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import java.time.LocalDateTime
-import java.util.*
+import java.util.Optional
 
 @Service
 class PoPUserOTPService(
@@ -49,7 +49,7 @@ class PoPUserOTPService(
       ?: throw ValidationException("Person On Probation User DOB not found in Prisoner Search Service.")
 
     // For now OTP generated is in 6 digits, for 8 digits the below value should be 99999999
-    val otpValue = randomStringByJavaRandom()
+    val otpValue = randomAlphaNumericString()
     if (popUserOTPExists != null) {
       popUserOTPRepository.delete(popUserOTPExists)
     }

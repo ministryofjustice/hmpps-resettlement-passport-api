@@ -754,6 +754,53 @@ class EducationSkillsAndWorkResettlementStrategyTest {
         ),
       ),
     ),
+    Arguments.of(
+      "ASSESSMENT_SUMMARY",
+      ResettlementAssessmentResponsePage(
+        id = "ASSESSMENT_SUMMARY",
+        title = "Assessment summary",
+        questionsAndAnswers = mutableListOf(
+          ResettlementAssessmentResponseQuestionAndAnswer(
+            question = ResettlementAssessmentResponseQuestion(
+              id = "SUPPORT_NEEDS",
+              title = "Support needs",
+              subTitle = "Select one option",
+              type = TypeOfQuestion.RADIO,
+              options = mutableListOf(
+                Option(
+                  id = "SUPPORT_REQUIRED",
+                  displayText = "Support required",
+                  description = "a need for support has been identified and is accepted",
+                ),
+                Option(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
+                Option(
+                  id = "SUPPORT_DECLINED",
+                  displayText = "Support declined",
+                  description = "a need has been identified but support is declined",
+                ),
+              ),
+            ),
+            originalPageId = "ASSESSMENT_SUMMARY",
+          ),
+          ResettlementAssessmentResponseQuestionAndAnswer(
+            question = ResettlementAssessmentResponseQuestion(
+              id = "CASE_NOTE_SUMMARY",
+              title = "Add a case note summary",
+              subTitle = "This will be displayed as a case note in both DPS and nDelius",
+              type = TypeOfQuestion.LONG_TEXT,
+            ),
+            originalPageId = "ASSESSMENT_SUMMARY",
+          ),
+        ),
+      ),
+    ),
+    Arguments.of(
+      "CHECK_ANSWERS",
+      ResettlementAssessmentResponsePage(
+        id = "CHECK_ANSWERS",
+        questionsAndAnswers = mutableListOf(),
+      ),
+    ),
   )
 
   private fun setUpMocks(nomsId: String, returnResettlementAssessmentEntity: Boolean, assessment: ResettlementAssessmentQuestionAndAnswerList = ResettlementAssessmentQuestionAndAnswerList(listOf())) {

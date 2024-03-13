@@ -6,20 +6,7 @@
         "description": "Community Work"
       },
       "dateTime": "2024-09-18T09:00:00+01:00",
-      "duration": {
-        "seconds": 0,
-        "zero": true,
-        "nano": 0,
-        "negative": true,
-        "positive": true,
-        "units": [
-          {
-            "durationEstimated": true,
-            "timeBased": true,
-            "dateBased": true
-          }
-        ]
-      },
+      "duration": "PT30M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -49,13 +36,14 @@
         "description": "Jobs centre plus"
       },
       "dateTime": "2024-09-18T14:46:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
-          "forename": "Unallocated",
+          "forename": "CRSUATU",
           "surname": "Staff"
-        }
+        },
+        "email": "CRSUATU.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -78,13 +66,14 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2024-09-14T14:05:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT2XXXH",
       "staff": {
         "code": "CRSUATU",
         "name": {
-          "forename": "Unallocated",
+          "forename": "CRSUATU",
           "surname": "Staff"
-        }
+        },
+        "email": "CRSUATU.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",

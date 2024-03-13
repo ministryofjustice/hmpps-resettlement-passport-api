@@ -2,7 +2,7 @@
   "results": [
     {
       "title": "Appointment 2",
-      "contact": "Another person",
+      "contact": "Unallocated Staff",
       "date": "2020-06-01",
       "time": "17:00:00",
       "location": {
@@ -14,11 +14,12 @@
         "county": "North Yorkshire",
         "postcode": "YO99 9ZZ",
         "description": null
-      }
+      },
+      "duration": 60
     },
     {
       "title": "Appointment 1",
-      "contact": "Person",
+      "contact": "Unallocated Staff",
       "date": "2024-01-12",
       "time": "13:05:00",
       "location": {
@@ -30,7 +31,8 @@
         "county": "West Yorkshire",
         "postcode": "BD1 1AA",
         "description": null
-      }
+      },
+      "duration": 90
     }
   ]
 }

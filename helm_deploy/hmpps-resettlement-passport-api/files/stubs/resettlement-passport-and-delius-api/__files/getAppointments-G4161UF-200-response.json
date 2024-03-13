@@ -6,7 +6,7 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2024-11-25T13:00:00Z",
-      "duration": "PT1H",
+      "duration": "PT1H5M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -40,7 +40,7 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2024-10-31T01:34:00Z",
-      "duration": "PT1M",
+      "duration": "PT21M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -73,7 +73,7 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-09-07T16:35:00+01:00",
-      "duration": "PT5M",
+      "duration": "PT35M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -102,7 +102,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-09-02T01:01:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT41M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -135,7 +135,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-08-31T11:09:00+01:00",
-      "duration": "PT5M",
+      "duration": "PT25M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -192,7 +192,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-08-31T08:08:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT11M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -216,7 +216,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-08-31T07:07:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT71M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -240,7 +240,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-08-31T05:01:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT51M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -264,7 +264,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-08-31T04:35:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT31M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -288,7 +288,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-08-31T03:03:00+01:00",
-      "duration": "PT5M",
+      "duration": "PT51M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -312,7 +312,7 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-08-31T02:32:00+01:00",
-      "duration": "PT5M",
+      "duration": "PT55M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -336,7 +336,7 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-08-31T01:34:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT19M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -360,7 +360,7 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-08-20T01:00:00+01:00",
-      "duration": "PT1H",
+      "duration": "PT1H45M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -380,7 +380,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-07-27T15:47:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT45M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -400,7 +400,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-07-27T15:40:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT23M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -448,7 +448,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-07-26T17:25:00+01:00",
-      "duration": "PT10M",
+      "duration": "PT30M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -544,7 +544,7 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-07-26T13:00:00+01:00",
-      "duration": "PT1H",
+      "duration": "PT1H12M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -568,7 +568,7 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-07-25T15:40:00+01:00",
-      "duration": "PT10H",
+      "duration": "PT1H0M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -592,7 +592,7 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-07-21T13:00:00+01:00",
-      "duration": "PT1H",
+      "duration": "PT2H40M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -616,7 +616,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-07-16T13:00:00+01:00",
-      "duration": "PT1H",
+      "duration": "PT1H20M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -640,7 +640,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-07-13T14:00:00+01:00",
-      "duration": "PT1H",
+      "duration": "PT1H40M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -688,7 +688,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-07-12T13:58:00+01:00",
-      "duration": "PT1H",
+      "duration": "PT1M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -712,7 +712,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-07-11T15:10:00+01:00",
-      "duration": "PT1H",
+      "duration": "PT15M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -736,7 +736,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-07-11T15:00:00+01:00",
-      "duration": "PT1H",
+      "duration": "PT22M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -760,7 +760,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-07-11T14:05:00+01:00",
-      "duration": "PT1H",
+      "duration": "PT25M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -784,7 +784,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-07-11T14:02:00+01:00",
-      "duration": "PT1H",
+      "duration": "PT1H35M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -808,7 +808,7 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-07-11T14:00:00+01:00",
-      "duration": "PT1H",
+      "duration": "PT1H55M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -832,7 +832,7 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-07-11T13:58:00+01:00",
-      "duration": "PT1H",
+      "duration": "PT0H",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -856,7 +856,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-07-11T13:58:00+01:00",
-      "duration": "PT1H",
+      "duration": "PT0M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -880,7 +880,7 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-07-11T13:38:00+01:00",
-      "duration": "PT1H",
+      "duration": "PT1H0M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -904,7 +904,7 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-07-11T11:23:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT2H20M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -928,7 +928,7 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-07-11T11:20:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT1H10M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -952,7 +952,7 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-07-10T10:08:00+01:00",
-      "duration": "PT2M",
+      "duration": "PT1H2M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -1000,7 +1000,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-06-25T15:00:00+01:00",
-      "duration": "PT2H",
+      "duration": "PT2H50M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -1064,7 +1064,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-05-22T14:32:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT2H",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -1088,7 +1088,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-05-22T14:28:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT1H20M",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -1112,7 +1112,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-05-22T14:19:00+01:00",
-      "duration": "PT2M",
+      "duration": "PT2H",
       "staff": {
         "code": "CRSUATU",
         "name": {
@@ -1160,7 +1160,7 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-05-22T14:13:00+01:00",
-      "duration": "PT2M",
+      "duration": "PT20M",
       "staff": {
         "code": "CRSUATU",
         "name": {

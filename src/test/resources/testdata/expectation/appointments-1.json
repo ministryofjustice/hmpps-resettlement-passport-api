@@ -14,7 +14,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 90
     },
     {
       "title": "Appointment with CRS Staff (NS)",
@@ -30,7 +32,9 @@
         "county": "London",
         "postcode": "EC2",
         "description": null
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Staff (NS)",
@@ -46,7 +50,9 @@
         "county": "London",
         "postcode": "EC2",
         "description": null
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -62,7 +68,9 @@
         "county": "London",
         "postcode": "EC4",
         "description": null
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -78,7 +86,9 @@
         "county": "London",
         "postcode": "EC4",
         "description": null
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -94,7 +104,9 @@
         "county": "London",
         "postcode": "EC4",
         "description": null
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -110,7 +122,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -126,7 +140,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -142,7 +158,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -158,7 +176,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -174,7 +194,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Staff (NS)",
@@ -190,7 +212,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Staff (NS)",
@@ -206,7 +230,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Staff (NS)",
@@ -222,7 +248,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -238,7 +266,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -254,7 +284,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -270,7 +302,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -286,7 +320,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -302,7 +338,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -318,7 +356,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Staff (NS)",
@@ -334,7 +374,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Staff (NS)",
@@ -350,7 +392,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Staff (NS)",
@@ -366,7 +410,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Staff (NS)",
@@ -382,7 +428,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -398,7 +446,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -414,7 +464,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -430,7 +482,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -446,7 +500,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -462,7 +518,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -478,7 +536,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -494,7 +554,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -510,7 +572,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Staff (NS)",
@@ -526,7 +590,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Staff (NS)",
@@ -542,7 +608,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -558,7 +626,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Staff (NS)",
@@ -574,7 +644,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Staff (NS)",
@@ -590,7 +662,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Staff (NS)",
@@ -606,7 +680,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Staff (NS)",
@@ -622,7 +698,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -638,7 +716,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -654,7 +734,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -670,7 +752,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Staff (NS)",
@@ -686,7 +770,9 @@
         "county": null,
         "postcode": null,
         "description": null
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -702,7 +788,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -718,7 +806,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -734,7 +824,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -750,7 +842,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Provider (NS)",
@@ -766,7 +860,9 @@
         "county": null,
         "postcode": null,
         "description": "CRS Provider Location"
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Staff (NS)",
@@ -782,7 +878,9 @@
         "county": null,
         "postcode": null,
         "description": null
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     },
     {
       "title": "Appointment with CRS Staff (NS)",
@@ -798,7 +896,9 @@
         "county": null,
         "postcode": null,
         "description": null
-      }
+      },
+      "contactEmail": "unallocated.staff@test.com",
+      "duration": 60
     }
   ]
 }

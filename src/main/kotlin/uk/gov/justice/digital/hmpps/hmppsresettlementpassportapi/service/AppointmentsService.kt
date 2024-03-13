@@ -20,6 +20,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.time.Duration
 
 @Service
 class AppointmentsService(
@@ -78,6 +79,12 @@ class AppointmentsService(
     val appointmentList = mutableListOf<Appointment>()
     appList.forEach {
       val appointment: Appointment?
+      val duration: Duration? = try {
+        it.duration?.let { it1 -> Duration.parseIsoStringOrNull(it1) }
+      } catch (ex: IllegalArgumentException) {
+        null
+      }
+
       val addressInfo: Address = if (it.location?.address != null) {
         Address(
           it.location.address.buildingName,
@@ -106,6 +113,8 @@ class AppointmentsService(
         formattedDateVal,
         formattedTimeVal,
         addressInfo,
+        it.staff.email,
+        duration?.inWholeMinutes,
       )
       appointmentList.add(appointment)
     }
@@ -133,6 +142,8 @@ class AppointmentsService(
         postcode = extractSectionFromNotesTrimToNull(customFieldsFromNotes, POSTCODE, deliusContact.id),
         description = null,
       ),
+      contactEmail = null,
+      duration = deliusContact.appointmentDuration?.toLong(),
       note = deliusContact.notes,
     )
   }

@@ -49,5 +49,6 @@
       "lastDateChange": null
     }
   ],
-  "assessmentRequired": true
+  "assessmentRequired": true,
+  "resettlementReviewAvailable":false
 }

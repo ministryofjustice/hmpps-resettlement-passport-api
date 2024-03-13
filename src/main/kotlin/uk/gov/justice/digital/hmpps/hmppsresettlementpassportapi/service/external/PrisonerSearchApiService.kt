@@ -324,9 +324,10 @@ class PrisonerSearchApiService(
 
     val pathwayStatuses = getPathwayStatuses(prisonerEntity)
 
-    val assessmentRequired = isAssessmentRequired(prisonerEntity)
+    val assessmentRequired = isAssessmentRequired(prisonerEntity, ResettlementAssessmentType.BCST2)
+    val resettlementReviewAvailable = !assessmentRequired && isAssessmentRequired(prisonerEntity, ResettlementAssessmentType.RESETTLEMENT_PLAN)
 
-    return Prisoner(prisonerPersonal, pathwayStatuses, assessmentRequired)
+    return Prisoner(prisonerPersonal, pathwayStatuses, assessmentRequired, resettlementReviewAvailable)
   }
 
   fun checkPrisonerIsInActivePrison(prisoner: PrisonersSearch) {
@@ -423,9 +424,9 @@ class PrisonerSearchApiService(
     return releaseEligibilityType
   }
 
-  fun isAssessmentRequired(prisonerEntity: PrisonerEntity): Boolean {
+  fun isAssessmentRequired(prisonerEntity: PrisonerEntity, type: ResettlementAssessmentType): Boolean {
     // Assessment required we don't have all pathways in submitted
-    val pathwaysInSubmittedCount = resettlementAssessmentRepository.countByNomsIdAndAssessmentTypeAndAssessmentStatus(prisonerEntity.nomsId, ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED.id)
+    val pathwaysInSubmittedCount = resettlementAssessmentRepository.countByNomsIdAndAssessmentTypeAndAssessmentStatus(prisonerEntity.nomsId, type, ResettlementAssessmentStatus.SUBMITTED.id)
     return (pathwaysInSubmittedCount != Pathway.entries.size)
   }
 }

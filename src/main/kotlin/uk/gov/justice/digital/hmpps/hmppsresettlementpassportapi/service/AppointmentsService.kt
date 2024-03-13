@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import jakarta.transaction.Transactional
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
@@ -42,7 +43,9 @@ class AppointmentsService(
     private const val TOWN = "  Town"
     private const val COUNTY = "  County"
     private const val POSTCODE = "  Postcode"
+    private val log = LoggerFactory.getLogger(this::class.java)
   }
+
 
   @Transactional
   fun getAppointmentsById(
@@ -80,8 +83,9 @@ class AppointmentsService(
     appList.forEach {
       val appointment: Appointment?
       val duration: Duration? = try {
-        it.duration?.let { it1 -> Duration.parseIsoStringOrNull(it1) }
+        it.duration?.let { it1 -> Duration.parseIsoString(it1) }
       } catch (ex: IllegalArgumentException) {
+        log.warn("Unable to parse the duration value  " + it.duration)
         null
       }
 

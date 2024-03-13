@@ -46,7 +46,6 @@ class AppointmentsService(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-
   @Transactional
   fun getAppointmentsById(
     nomsId: String,

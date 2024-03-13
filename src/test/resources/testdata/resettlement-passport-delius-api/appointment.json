@@ -6,13 +6,14 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-11-25T13:00:00Z",
-      "duration": "PT1H",
+      "duration": "PT30M",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",

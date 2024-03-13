@@ -33,6 +33,7 @@ data class Address(
 data class StaffInfo(
   val code: String,
   val name: Fullname,
+  val email: String?,
 )
 
 data class Fullname(

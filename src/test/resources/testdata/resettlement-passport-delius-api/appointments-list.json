@@ -6,13 +6,14 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-11-25T13:00:00Z",
-      "duration": "PT1H",
+      "duration": "PT1H30M",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -30,13 +31,14 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-10-31T01:34:00Z",
-      "duration": "PT1M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -63,13 +65,14 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-09-07T16:35:00+01:00",
-      "duration": "PT5M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -92,13 +95,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-09-02T01:01:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -125,13 +129,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-08-31T11:09:00+01:00",
-      "duration": "PT5M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -158,13 +163,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-08-31T10:09:00+01:00",
-      "duration": "PT5M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -191,13 +197,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-08-31T08:08:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -215,13 +222,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-08-31T07:07:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -239,13 +247,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-08-31T05:01:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -263,13 +272,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-08-31T04:35:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -287,13 +297,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-08-31T03:03:00+01:00",
-      "duration": "PT5M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -311,13 +322,14 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-08-31T02:32:00+01:00",
-      "duration": "PT5M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -335,13 +347,14 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-08-31T01:34:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -365,7 +378,8 @@
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -379,13 +393,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-07-27T15:47:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -399,13 +414,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-07-27T15:40:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -423,13 +439,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-07-26T17:30:00+01:00",
-      "duration": "PT10M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -447,13 +464,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-07-26T17:25:00+01:00",
-      "duration": "PT10M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -471,13 +489,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-07-26T17:23:00+01:00",
-      "duration": "PT10M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -495,13 +514,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-07-26T17:15:00+01:00",
-      "duration": "PT10M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -519,13 +539,14 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-07-26T17:00:00+01:00",
-      "duration": "PT15M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -549,7 +570,8 @@
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -567,13 +589,14 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-07-25T15:40:00+01:00",
-      "duration": "PT10H",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -597,7 +620,8 @@
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -621,7 +645,8 @@
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -645,7 +670,8 @@
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -663,13 +689,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-07-12T15:52:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -693,7 +720,8 @@
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -717,7 +745,8 @@
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -741,7 +770,8 @@
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -765,7 +795,8 @@
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -789,7 +820,8 @@
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -813,7 +845,8 @@
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -837,7 +870,8 @@
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -861,7 +895,8 @@
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -885,7 +920,8 @@
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -903,13 +939,14 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-07-11T11:23:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -927,13 +964,14 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-07-11T11:20:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -951,13 +989,14 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-07-10T10:08:00+01:00",
-      "duration": "PT2M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -975,13 +1014,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-07-06T01:01:00+01:00",
-      "duration": "PT1H1M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -999,13 +1039,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-06-25T15:00:00+01:00",
-      "duration": "PT2H",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -1019,13 +1060,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-06-15T15:00:00+01:00",
-      "duration": "PT2H",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -1043,13 +1085,14 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-05-22T14:40:00+01:00",
-      "duration": "PT2M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "description": "Appointment with CRS Staff (NS)",
       "outcome": {
@@ -1063,13 +1106,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-05-22T14:32:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -1087,13 +1131,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-05-22T14:28:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -1111,13 +1156,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-05-22T14:19:00+01:00",
-      "duration": "PT2M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -1135,13 +1181,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-05-22T14:16:00+01:00",
-      "duration": "PT2M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -1159,13 +1206,14 @@
         "description": "Appointment with CRS Provider (NS)"
       },
       "dateTime": "2023-05-22T14:13:00+01:00",
-      "duration": "PT2M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -1183,13 +1231,14 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-05-22T13:47:00+01:00",
-      "duration": "PT2M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "description": "Appointment with CRS Staff (NS)",
       "outcome": {
@@ -1203,13 +1252,14 @@
         "description": "Appointment with CRS Staff (NS)"
       },
       "dateTime": "2023-05-22T13:42:00+01:00",
-      "duration": "PT1M",
+      "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
         "name": {
           "forename": "Unallocated",
           "surname": "Staff"
-        }
+        },
+        "email": "unallocated.staff@test.com"
       },
       "description": "Appointment with CRS Staff (NS)",
       "outcome": {

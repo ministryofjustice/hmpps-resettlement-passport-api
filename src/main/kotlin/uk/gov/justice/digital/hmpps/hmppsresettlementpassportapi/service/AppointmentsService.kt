@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import jakarta.transaction.Transactional
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
@@ -20,6 +21,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.time.Duration
 
 @Service
 class AppointmentsService(
@@ -41,6 +43,7 @@ class AppointmentsService(
     private const val TOWN = "  Town"
     private const val COUNTY = "  County"
     private const val POSTCODE = "  Postcode"
+    private val log = LoggerFactory.getLogger(this::class.java)
   }
 
   @Transactional
@@ -78,6 +81,13 @@ class AppointmentsService(
     val appointmentList = mutableListOf<Appointment>()
     appList.forEach {
       val appointment: Appointment?
+      val duration: Duration? = try {
+        it.duration?.let { it1 -> Duration.parseIsoString(it1) }
+      } catch (ex: IllegalArgumentException) {
+        log.warn("Unable to parse the duration value  " + it.duration)
+        null
+      }
+
       val addressInfo: Address = if (it.location?.address != null) {
         Address(
           it.location.address.buildingName,
@@ -106,6 +116,8 @@ class AppointmentsService(
         formattedDateVal,
         formattedTimeVal,
         addressInfo,
+        it.staff.email,
+        duration?.inWholeMinutes,
       )
       appointmentList.add(appointment)
     }
@@ -133,6 +145,8 @@ class AppointmentsService(
         postcode = extractSectionFromNotesTrimToNull(customFieldsFromNotes, POSTCODE, deliusContact.id),
         description = null,
       ),
+      contactEmail = null,
+      duration = deliusContact.appointmentDuration?.toLong(),
       note = deliusContact.notes,
     )
   }

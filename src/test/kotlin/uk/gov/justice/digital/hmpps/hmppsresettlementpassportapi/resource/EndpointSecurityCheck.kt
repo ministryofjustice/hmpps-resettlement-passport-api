@@ -6,8 +6,6 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AnnotationTypeFilter
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.justice.hmpps.sqs.HmppsQueueResource
-import uk.gov.justice.hmpps.sqs.HmppsReactiveQueueResource
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Method
 
@@ -36,20 +34,23 @@ class EndpointSecurityCheck {
     }
   }
 
-  private val excluded = setOf(HmppsQueueResource::class.java, HmppsReactiveQueueResource::class.java)
+  private val excluded = setOf(
+    "public java.util.List uk.gov.justice.hmpps.sqs.HmppsQueueResource.retryAllDlqs()",
+    "public java.lang.Object uk.gov.justice.hmpps.sqs.HmppsReactiveQueueResource.retryAllDlqs(kotlin.coroutines.Continuation)",
+  )
 
   private fun getAllUnprotectedControllers() = ClassPathScanningCandidateComponentProvider(false)
     .also { it.addIncludeFilter(AnnotationTypeFilter(RestController::class.java)) }
     .findCandidateComponents("uk.gov.justice")
     .map { Class.forName(it.beanClassName) }
-    .filter { !it.isProtectedByAnnotation() && !excluded.contains(it) }
+    .filter { !it.isProtectedByAnnotation() }
     .map { ControllerInfo(it.toString(), it.getUnprotectedEndpoints()) }
     .filter { it.unprotectedEndpoints.isNotEmpty() }
 
   private fun Class<*>.getUnprotectedEndpoints() = this.methods
     .filter { it.isEndpoint() }
     .map { EndpointInfo(it.toString(), it.isProtectedByAnnotation()) }
-    .filter { ep -> !ep.hasEndpointLevelProtection }
+    .filter { ep -> !ep.hasEndpointLevelProtection && !excluded.contains(ep.method) }
 
   private fun Method.isEndpoint() = this.annotations.any {
     it.annotationClass.qualifiedName!!.startsWith("org.springframework.web.bind.annotation")

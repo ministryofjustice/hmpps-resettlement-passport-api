@@ -25,6 +25,7 @@ class ResourceServerConfiguration {
           "/health/**", "/info", "/prometheus", "/h2-console/**", "/prototype/**",
           "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
         ).forEach { authorize(it, permitAll) }
+        authorize("/queue-admin/retry-all-dlqs", hasRole("RESETTLEMENT_PASSPORT_EDIT"))
         authorize(anyRequest, authenticated)
       }
       oauth2ResourceServer { jwt { jwtAuthenticationConverter = AuthAwareTokenConverter() } }

@@ -3,6 +3,7 @@ services:
   hmpps-resettlement-passport-api:
     build:
       context: .
+
     networks:
       - hmpps
     container_name: hmpps-resettlement-passport-api

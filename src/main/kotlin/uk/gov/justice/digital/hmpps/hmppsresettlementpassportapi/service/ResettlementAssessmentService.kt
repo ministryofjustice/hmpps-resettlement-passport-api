@@ -148,11 +148,17 @@ class ResettlementAssessmentService(
     val pathwayEntity = pathwayRepository.findById(pathway.id).get()
     val resettlementStatusEntity = resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.SUBMITTED.id).get()
 
-    val latestResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentStatusOrderByCreationDateDesc(prisonerEntity, pathwayEntity, resettlementStatusEntity)
-      ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"), resettlementAssessmentStrategies)
+    val latestResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
+      resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentStatusOrderByCreationDateDesc(prisonerEntity, pathwayEntity, resettlementStatusEntity)
+        ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"),
+      resettlementAssessmentStrategies,
+    )
 
-    val originalResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentStatusOrderByCreationDateAsc(prisonerEntity, pathwayEntity, resettlementStatusEntity)
-      ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"), resettlementAssessmentStrategies)
+    val originalResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
+      resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentStatusOrderByCreationDateAsc(prisonerEntity, pathwayEntity, resettlementStatusEntity)
+        ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"),
+      resettlementAssessmentStrategies,
+    )
 
     // If the latest and original assessments from the same, then only return the latest otherwise return both
     return if (latestResettlementAssessment == originalResettlementAssessment) {
@@ -165,7 +171,6 @@ class ResettlementAssessmentService(
         latestAssessment = latestResettlementAssessment,
       )
     }
-
   }
 
   fun convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(resettlementAssessmentEntity: ResettlementAssessmentEntity, resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy<*>>): ResettlementAssessmentResponse {

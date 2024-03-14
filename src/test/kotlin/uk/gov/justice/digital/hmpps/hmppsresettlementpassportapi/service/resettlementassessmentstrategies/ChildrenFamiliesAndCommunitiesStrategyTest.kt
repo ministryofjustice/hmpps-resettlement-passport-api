@@ -304,8 +304,7 @@ class ChildrenFamiliesAndCommunitiesStrategyTest {
       assessmentType = ResettlementAssessmentType.BCST2,
       pageId = pageIdInput,
     )
-    Assertions.assertEquals(expectedPage.id, page.id)
-    Assertions.assertEquals(expectedPage.questionsAndAnswers, page.questionsAndAnswers)
+    Assertions.assertEquals(expectedPage, page)
   }
 
   private fun `test get page from Id - no existing assessment data`() = Stream.of(
@@ -511,11 +510,13 @@ class ChildrenFamiliesAndCommunitiesStrategyTest {
       "ASSESSMENT_SUMMARY",
       ResettlementAssessmentResponsePage(
         id = "ASSESSMENT_SUMMARY",
+        title = "Assessment summary",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
             question = ResettlementAssessmentResponseQuestion(
               id = "SUPPORT_NEEDS",
-              title = "",
+              title = "Support needs",
+              subTitle = "Select one option",
               type = TypeOfQuestion.RADIO,
               options = mutableListOf(
                 Option(

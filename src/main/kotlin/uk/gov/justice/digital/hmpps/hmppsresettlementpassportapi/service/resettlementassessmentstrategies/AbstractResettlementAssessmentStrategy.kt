@@ -378,6 +378,7 @@ enum class GenericAssessmentPage(
       ResettlementAssessmentQuestionAndAnswer(GenericResettlementAssessmentQuestion.SUPPORT_NEEDS),
       ResettlementAssessmentQuestionAndAnswer(GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY),
     ),
+    title = "Assessment summary",
   ),
 }
 
@@ -392,7 +393,8 @@ enum class GenericResettlementAssessmentQuestion(
 ) : IResettlementAssessmentQuestion {
   SUPPORT_NEEDS(
     id = "SUPPORT_NEEDS",
-    title = "",
+    title = "Support needs",
+    subTitle = "Select one option",
     type = TypeOfQuestion.RADIO,
     options = listOf(
       Option(

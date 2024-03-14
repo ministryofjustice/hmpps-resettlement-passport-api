@@ -12,6 +12,7 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
   fun findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisoner: PrisonerEntity, pathwayEntity: PathwayEntity, assessmentType: ResettlementAssessmentType): ResettlementAssessmentEntity?
 
   fun findFirstByPrisonerAndPathwayAndAssessmentStatusOrderByCreationDateDesc(prisoner: PrisonerEntity, pathwayEntity: PathwayEntity, assessmentStatus: ResettlementAssessmentStatusEntity): ResettlementAssessmentEntity?
+  fun findFirstByPrisonerAndPathwayAndAssessmentStatusOrderByCreationDateAsc(prisoner: PrisonerEntity, pathwayEntity: PathwayEntity, assessmentStatus: ResettlementAssessmentStatusEntity): ResettlementAssessmentEntity?
 
   fun findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
     prisoner: PrisonerEntity,

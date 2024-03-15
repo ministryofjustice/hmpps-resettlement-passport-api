@@ -172,9 +172,8 @@ class CaseNotesApiService(
     return creatorsList.distinct()
   }
 
-  fun postCaseNote(nomsId: String, pathway: Pathway, caseNotesText: String, userId: String): CaseNote? {
+  fun postCaseNote(nomsId: String, caseNotesText: String, userId: String, subType: CaseNoteSubType): CaseNote? {
     val type = CaseNoteType.RESET
-    val subType = convertPathwayToCaseNoteSubType(pathway)
     val prisonCode = prisonerSearchApiService.findPrisonerPersonalDetails(nomsId).prisonId
 
     return caseNotesClientCredentialsService.getAuthorizedClient(userId).post()
@@ -216,7 +215,7 @@ class CaseNotesApiService(
     CaseNoteSubType.ED_SKL_WRK -> CaseNotePathway.EDUCATION_SKILLS_AND_WORK
     CaseNoteSubType.FINANCE_ID -> CaseNotePathway.FINANCE_AND_ID
     CaseNoteSubType.HEALTH -> CaseNotePathway.HEALTH
-    CaseNoteSubType.GEN, CaseNoteSubType.RESET -> CaseNotePathway.GENERAL
+    CaseNoteSubType.GEN, CaseNoteSubType.RESET, CaseNoteSubType.BCST -> CaseNotePathway.GENERAL
   }
 
   fun convertPathwayToCaseNoteSubType(pathway: Pathway) = when (pathway) {

@@ -52,9 +52,5 @@ enum class CaseNoteSubType {
   HEALTH,
   GEN,
   RESET,
+  BCST,
 }
-
-data class DpsCaseNotesSqsMessage(
-  val caseNoteId: Long,
-  val userId: String,
-)

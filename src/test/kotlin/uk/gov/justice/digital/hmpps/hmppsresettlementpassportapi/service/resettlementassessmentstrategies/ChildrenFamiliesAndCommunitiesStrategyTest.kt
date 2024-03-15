@@ -510,13 +510,11 @@ class ChildrenFamiliesAndCommunitiesStrategyTest {
       "ASSESSMENT_SUMMARY",
       ResettlementAssessmentResponsePage(
         id = "ASSESSMENT_SUMMARY",
-        title = "Assessment summary",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
             question = ResettlementAssessmentResponseQuestion(
               id = "SUPPORT_NEEDS",
-              title = "Support needs",
-              subTitle = "Select one option",
+              title = "",
               type = TypeOfQuestion.RADIO,
               options = mutableListOf(
                 Option(

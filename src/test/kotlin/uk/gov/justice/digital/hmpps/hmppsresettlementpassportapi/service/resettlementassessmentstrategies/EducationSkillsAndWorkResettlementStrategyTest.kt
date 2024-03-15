@@ -598,12 +598,12 @@ class EducationSkillsAndWorkResettlementStrategyTest {
       "EMPLOYMENT_DETAILS_BEFORE_CUSTODY",
       ResettlementAssessmentResponsePage(
         id = "EMPLOYMENT_DETAILS_BEFORE_CUSTODY",
-        title = "Enter name and address of the employer and job title",
+        title = "Employment before custody",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
             question = ResettlementAssessmentResponseQuestion(
               id = "EMPLOYMENT_TITLE_BEFORE_CUSTODY",
-              title = "Employment title before custody",
+              title = "Job title",
               type = TypeOfQuestion.SHORT_TEXT,
             ),
             originalPageId = "EMPLOYMENT_DETAILS_BEFORE_CUSTODY",
@@ -611,7 +611,7 @@ class EducationSkillsAndWorkResettlementStrategyTest {
           ResettlementAssessmentResponseQuestionAndAnswer(
             question = ResettlementAssessmentResponseQuestion(
               id = "NAME_OF_EMPLOYER",
-              title = "Employer company name before custody",
+              title = "Employer",
               type = TypeOfQuestion.SHORT_TEXT,
             ),
             originalPageId = "EMPLOYMENT_DETAILS_BEFORE_CUSTODY",
@@ -619,7 +619,7 @@ class EducationSkillsAndWorkResettlementStrategyTest {
           ResettlementAssessmentResponseQuestionAndAnswer(
             question = ResettlementAssessmentResponseQuestion(
               id = "ADDRESS_OF_EMPLOYER",
-              title = "Employer address before custody",
+              title = "Employer address",
               type = TypeOfQuestion.ADDRESS,
             ),
             originalPageId = "EMPLOYMENT_DETAILS_BEFORE_CUSTODY",
@@ -716,12 +716,12 @@ class EducationSkillsAndWorkResettlementStrategyTest {
       "TRAINING_PROVIDER_DETAILS",
       ResettlementAssessmentResponsePage(
         id = "TRAINING_PROVIDER_DETAILS",
-        title = "Enter name and address of the training or education provider",
+        title = "Education or training before custody",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
             question = ResettlementAssessmentResponseQuestion(
               id = "NAME_OF_TRAINING_PROVIDER",
-              title = "Education or training provider name",
+              title = "Education or training provider",
               type = TypeOfQuestion.SHORT_TEXT,
             ),
             originalPageId = "TRAINING_PROVIDER_DETAILS",

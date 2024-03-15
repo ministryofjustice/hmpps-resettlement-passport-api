@@ -185,13 +185,13 @@ enum class EducationSkillsAndWorkAssessmentPage(override val id: String, overrid
   RETURN_TO_JOB_AFTER_RELEASE(id = "RETURN_TO_JOB_AFTER_RELEASE", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.RETURN_TO_JOB_AFTER_RELEASE))),
   HAVE_A_JOB_AFTER_RELEASE(id = "HAVE_A_JOB_AFTER_RELEASE", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.HAVE_A_JOB_AFTER_RELEASE))),
   HELP_CONTACTING_EMPLOYER(id = "HELP_CONTACTING_EMPLOYER", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.HELP_CONTACTING_EMPLOYER))),
-  EMPLOYMENT_DETAILS_BEFORE_CUSTODY(id = "EMPLOYMENT_DETAILS_BEFORE_CUSTODY", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.EMPLOYMENT_TITLE_BEFORE_CUSTODY), ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.NAME_OF_EMPLOYER), ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.ADDRESS_OF_EMPLOYER)), title = "Enter name and address of the employer and job title"),
+  EMPLOYMENT_DETAILS_BEFORE_CUSTODY(id = "EMPLOYMENT_DETAILS_BEFORE_CUSTODY", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.EMPLOYMENT_TITLE_BEFORE_CUSTODY), ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.NAME_OF_EMPLOYER), ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.ADDRESS_OF_EMPLOYER)), title = "Employment before custody"),
   SUPPORT_TO_FIND_JOB(id = "SUPPORT_TO_FIND_JOB", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.SUPPORT_TO_FIND_JOB))),
   IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY(id = "IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY))),
   RETURN_TO_EDUCATION_OR_TRAINING_AFTER_RELEASE(id = "RETURN_TO_EDUCATION_OR_TRAINING_AFTER_RELEASE", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.RETURN_TO_EDUCATION_OR_TRAINING_AFTER_RELEASE))),
   WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE(id = "WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE))),
   HELP_CONTACTING_EDUCATION_PROVIDER(id = "HELP_CONTACTING_EDUCATION_PROVIDER", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.HELP_CONTACTING_EDUCATION_PROVIDER))),
-  TRAINING_PROVIDER_DETAILS(id = "TRAINING_PROVIDER_DETAILS", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.NAME_OF_TRAINING_PROVIDER), ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.ADDRESS_OF_TRAINING_PROVIDER)), title = "Enter name and address of the training or education provider"),
+  TRAINING_PROVIDER_DETAILS(id = "TRAINING_PROVIDER_DETAILS", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.NAME_OF_TRAINING_PROVIDER), ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.ADDRESS_OF_TRAINING_PROVIDER)), title = "Education or training before custody"),
   BURSARIES_AND_GRANTS(id = "BURSARIES_AND_GRANTS", questionsAndAnswers = listOf(ResettlementAssessmentQuestionAndAnswer(EducationSkillsAndWorkResettlementAssessmentQuestion.BURSARIES_AND_GRANTS))),
 }
 
@@ -248,17 +248,17 @@ enum class EducationSkillsAndWorkResettlementAssessmentQuestion(
   ),
   EMPLOYMENT_TITLE_BEFORE_CUSTODY(
     id = "EMPLOYMENT_TITLE_BEFORE_CUSTODY",
-    title = "Employment title before custody",
+    title = "Job title",
     type = TypeOfQuestion.SHORT_TEXT,
   ),
   NAME_OF_EMPLOYER(
     id = "NAME_OF_EMPLOYER",
-    title = "Employer company name before custody",
+    title = "Employer",
     type = TypeOfQuestion.SHORT_TEXT,
   ),
   ADDRESS_OF_EMPLOYER(
     id = "ADDRESS_OF_EMPLOYER",
-    title = "Employer address before custody",
+    title = "Employer address",
     type = TypeOfQuestion.ADDRESS,
   ),
   SUPPORT_TO_FIND_JOB(
@@ -293,7 +293,7 @@ enum class EducationSkillsAndWorkResettlementAssessmentQuestion(
   ),
   NAME_OF_TRAINING_PROVIDER(
     id = "NAME_OF_TRAINING_PROVIDER",
-    title = "Education or training provider name",
+    title = "Education or training provider",
     type = TypeOfQuestion.SHORT_TEXT,
   ),
   ADDRESS_OF_TRAINING_PROVIDER(

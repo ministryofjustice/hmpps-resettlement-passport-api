@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import java.time.LocalDateTime
 
 data class ResettlementAssessmentRequest(
@@ -44,6 +45,12 @@ data class ResettlementAssessmentResponseQuestion(
 ) : IResettlementAssessmentQuestion
 
 data class LatestResettlementAssessmentResponse(
+  val originalAssessment: ResettlementAssessmentResponse? = null,
+  val latestAssessment: ResettlementAssessmentResponse,
+)
+
+data class ResettlementAssessmentResponse(
+  val assessmentType: ResettlementAssessmentType,
   val lastUpdated: LocalDateTime,
   val updatedBy: String,
   val questionsAndAnswers: List<LatestResettlementAssessmentResponseQuestionAndAnswer>,

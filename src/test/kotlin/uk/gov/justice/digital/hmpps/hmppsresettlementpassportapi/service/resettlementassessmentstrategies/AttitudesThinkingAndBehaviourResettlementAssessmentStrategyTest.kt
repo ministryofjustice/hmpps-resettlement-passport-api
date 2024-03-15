@@ -184,13 +184,13 @@ class AttitudesThinkingAndBehaviourResettlementAssessmentStrategyTest {
       "ASSESSMENT_SUMMARY",
       ResettlementAssessmentResponsePage(
         id = "ASSESSMENT_SUMMARY",
-        title = "Assessment summary",
+        title = "",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
             question = ResettlementAssessmentResponseQuestion(
               id = "SUPPORT_NEEDS",
-              title = "Support needs",
-              subTitle = "Select one option",
+              title = "",
+              subTitle = "",
               type = TypeOfQuestion.RADIO,
               options = mutableListOf(
                 Option(

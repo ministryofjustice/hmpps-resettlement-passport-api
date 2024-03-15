@@ -29,7 +29,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.Prisone
 @Validated
 @RequestMapping("/resettlement-passport/popUser", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT') or hasAuthority('SCOPE_scope')")
-class PoPUserOTPResourceController(private val popUserOTPService: PoPUserOTPService, private val prisonerService: PrisonerService) {
+class PopUserOTPResourceController(private val popUserOTPService: PoPUserOTPService, private val prisonerService: PrisonerService) {
 
   @GetMapping("/otp", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get all OTP", description = "Get All Person on Probation Users OTP")

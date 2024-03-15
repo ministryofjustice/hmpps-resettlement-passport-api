@@ -378,7 +378,6 @@ enum class GenericAssessmentPage(
       ResettlementAssessmentQuestionAndAnswer(GenericResettlementAssessmentQuestion.SUPPORT_NEEDS),
       ResettlementAssessmentQuestionAndAnswer(GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY),
     ),
-    title = "",
   ),
 }
 
@@ -394,7 +393,6 @@ enum class GenericResettlementAssessmentQuestion(
   SUPPORT_NEEDS(
     id = "SUPPORT_NEEDS",
     title = "",
-    subTitle = "",
     type = TypeOfQuestion.RADIO,
     options = listOf(
       Option(

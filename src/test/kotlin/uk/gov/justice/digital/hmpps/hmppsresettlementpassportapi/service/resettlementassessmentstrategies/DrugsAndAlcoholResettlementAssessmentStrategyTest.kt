@@ -262,13 +262,11 @@ class DrugsAndAlcoholResettlementAssessmentStrategyTest {
       "ASSESSMENT_SUMMARY",
       ResettlementAssessmentResponsePage(
         id = "ASSESSMENT_SUMMARY",
-        title = "",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
             question = ResettlementAssessmentResponseQuestion(
               id = "SUPPORT_NEEDS",
               title = "",
-              subTitle = "",
               type = TypeOfQuestion.RADIO,
               options = mutableListOf(
                 Option(

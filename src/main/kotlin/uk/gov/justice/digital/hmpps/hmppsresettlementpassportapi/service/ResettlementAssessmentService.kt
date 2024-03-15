@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LatestRese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LatestResettlementAssessmentResponseQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayAndStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatusAndCaseNote
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
@@ -147,13 +148,36 @@ class ResettlementAssessmentService(
     val pathwayEntity = pathwayRepository.findById(pathway.id).get()
     val resettlementStatusEntity = resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.SUBMITTED.id).get()
 
-    val resettlementAssessment = resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentStatusOrderByCreationDateDesc(prisonerEntity, pathwayEntity, resettlementStatusEntity)
-      ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway")
+    val latestResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
+      resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentStatusOrderByCreationDateDesc(prisonerEntity, pathwayEntity, resettlementStatusEntity)
+        ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"),
+      resettlementAssessmentStrategies,
+    )
 
-    val resettlementStrategy = resettlementAssessmentStrategies.first { it.appliesTo(Pathway.getById(resettlementAssessment.pathway.id)) }
+    val originalResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
+      resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentStatusOrderByCreationDateAsc(prisonerEntity, pathwayEntity, resettlementStatusEntity)
+        ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"),
+      resettlementAssessmentStrategies,
+    )
+
+    // If the latest and original assessments from the same, then only return the latest otherwise return both
+    return if (latestResettlementAssessment == originalResettlementAssessment) {
+      LatestResettlementAssessmentResponse(
+        latestAssessment = latestResettlementAssessment,
+      )
+    } else {
+      LatestResettlementAssessmentResponse(
+        originalAssessment = originalResettlementAssessment,
+        latestAssessment = latestResettlementAssessment,
+      )
+    }
+  }
+
+  fun convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(resettlementAssessmentEntity: ResettlementAssessmentEntity, resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy<*>>): ResettlementAssessmentResponse {
+    val resettlementStrategy = resettlementAssessmentStrategies.first { it.appliesTo(Pathway.getById(resettlementAssessmentEntity.pathway.id)) }
 
     val questionClass = resettlementStrategy.getQuestionClass()
-    val questionsAndAnswers = resettlementAssessment.assessment.assessment.mapNotNull {
+    val questionsAndAnswers = resettlementAssessmentEntity.assessment.assessment.mapNotNull {
       val question = convertEnumStringToEnum(questionClass, GenericResettlementAssessmentQuestion::class, it.questionId) as IResettlementAssessmentQuestion
       if (question !in listOf(GenericResettlementAssessmentQuestion.SUPPORT_NEEDS, GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY)) {
         LatestResettlementAssessmentResponseQuestionAndAnswer(
@@ -166,9 +190,10 @@ class ResettlementAssessmentService(
       }
     }
 
-    return LatestResettlementAssessmentResponse(
-      lastUpdated = resettlementAssessment.creationDate,
-      updatedBy = resettlementAssessment.createdBy,
+    return ResettlementAssessmentResponse(
+      assessmentType = resettlementAssessmentEntity.assessmentType,
+      lastUpdated = resettlementAssessmentEntity.creationDate,
+      updatedBy = resettlementAssessmentEntity.createdBy,
       questionsAndAnswers = questionsAndAnswers,
     )
   }

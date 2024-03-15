@@ -1,0 +1,25 @@
+{
+  "originalAssessment": null,
+  "latestAssessment": {
+    "assessmentType": "BCST2",
+    "lastUpdated": "2023-10-10T15:54:02.235",
+    "updatedBy": "Prison Officer",
+    "questionsAndAnswers": [
+      {
+        "questionTitle": "Where did the person in prison live before custody?",
+        "answer": "No answer provided",
+        "originalPageId": "WHERE_DID_THEY_LIVE"
+      },
+      {
+        "questionTitle": "Where will the person in prison live when they are released?",
+        "answer": "Move to a new address",
+        "originalPageId": "WHERE_WILL_THEY_LIVE_2"
+      },
+      {
+        "questionTitle": "Enter the address",
+        "answer": "123 The Street\nLeeds\nWest Yorkshire\nLS1 1AA",
+        "originalPageId": "WHERE_WILL_THEY_LIVE_ADDRESS"
+      }
+    ]
+  }
+}

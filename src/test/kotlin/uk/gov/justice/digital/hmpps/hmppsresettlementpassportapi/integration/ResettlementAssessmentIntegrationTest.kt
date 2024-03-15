@@ -567,8 +567,27 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-resettlement-assessment-5.sql")
-  fun `Get latest resettlement assessment summary - happy path`() {
+  fun `Get latest resettlement assessment summary - happy path multiple assessments`() {
     val expectedOutput = readFile("testdata/expectation/latest-resettlement-assessment-1.json")
+
+    val nomsId = "G4161UF"
+    val pathway = "ACCOMMODATION"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/latest")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput, true)
+    unmockkAll()
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-7.sql")
+  fun `Get latest resettlement assessment summary - happy path single assessment`() {
+    val expectedOutput = readFile("testdata/expectation/latest-resettlement-assessment-2.json")
 
     val nomsId = "G4161UF"
     val pathway = "ACCOMMODATION"

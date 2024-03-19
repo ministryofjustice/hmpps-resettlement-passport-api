@@ -117,6 +117,14 @@ class HealthResettlementAssessmentStrategyTest {
       "REGISTERED_WITH_GP",
       "MEET_HEALTHCARE_TEAM",
     ),
+    // If the answer to REGISTERED_WITH_GP is NO_ANSWER, go to HELP_REGISTERING_GP
+    Arguments.of(
+      listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
+        ResettlementAssessmentRequestQuestionAndAnswer("REGISTERED_WITH_GP", answer = StringAnswer("NO_ANSWER")),
+      ),
+      "REGISTERED_WITH_GP",
+      "HELP_REGISTERING_GP",
+    ),
     // Any answer to HELP_REGISTERING_GP, go to MEET_HEALTHCARE_TEAM
     Arguments.of(
       listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(

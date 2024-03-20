@@ -416,7 +416,7 @@ enum class GenericResettlementAssessmentQuestion(
   ),
 }
 
-fun finalQuestionNextPage(questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, edit: Boolean): IAssessmentPage {
+fun finalQuestionNextPage(@Suppress("unused") questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, edit: Boolean): IAssessmentPage {
   return if (!edit) {
     GenericAssessmentPage.ASSESSMENT_SUMMARY
   } else {

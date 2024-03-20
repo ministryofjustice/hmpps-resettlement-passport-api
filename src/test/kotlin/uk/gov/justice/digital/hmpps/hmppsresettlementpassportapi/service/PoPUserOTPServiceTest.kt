@@ -70,6 +70,15 @@ class PoPUserOTPServiceTest {
   }
 
   @Test
+  fun `test get PoP User OTP - returns PoP User not found `() {
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
+
+    Mockito.`when`(popUserOTPRepository.findByPrisoner(any())).thenReturn(null)
+    val thrown = assertThrows<ResourceNotFoundException> { popUserOTPService.getOTPByPrisoner(prisonerEntity) }
+    Assertions.assertEquals("OTP for Prisoner with id 1 not found in database", thrown.message)
+  }
+
+  @Test
   fun `test delete PoPUserOTP - hard delete`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
@@ -153,7 +162,8 @@ class PoPUserOTPServiceTest {
     every { LocalDateTime.now() } returns fakeNow
     val oneLoginData = OneLoginData("urn1", "123457", "email@test.com", LocalDate.parse("1982-10-24"))
     Mockito.`when`(popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(oneLoginData.otp, LocalDate.parse("1982-10-24"), LocalDateTime.now())).thenReturn(null)
-    assertThrows<ResourceNotFoundException> { popUserOTPService.getPoPUserVerified(oneLoginData) }
+    val thrown = assertThrows<ResourceNotFoundException> { popUserOTPService.getPoPUserVerified(oneLoginData) }
+    Assertions.assertEquals("Person On Probation User otp  123457  not found in database or expired.", thrown.message)
     unmockkStatic(LocalDateTime::class)
   }
 

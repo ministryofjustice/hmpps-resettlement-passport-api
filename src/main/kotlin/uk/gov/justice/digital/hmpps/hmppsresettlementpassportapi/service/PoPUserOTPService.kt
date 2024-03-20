@@ -26,7 +26,7 @@ class PoPUserOTPService(
   @Transactional
   fun getOTPByPrisoner(prisoner: PrisonerEntity): PoPUserOTPEntity? {
     val popUserOTP = popUserOTPRepository.findByPrisoner(prisoner)
-      ?: throw ResourceNotFoundException("Prisoner with id ${prisoner.id}  not found in database")
+      ?: throw ResourceNotFoundException("OTP for Prisoner with id ${prisoner.id} not found in database")
     return popUserOTP
   }
 

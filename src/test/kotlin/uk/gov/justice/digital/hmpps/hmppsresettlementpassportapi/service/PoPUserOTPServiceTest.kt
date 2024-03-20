@@ -163,7 +163,7 @@ class PoPUserOTPServiceTest {
     val oneLoginData = OneLoginData("urn1", "123457", "email@test.com", LocalDate.parse("1982-10-24"))
     Mockito.`when`(popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(oneLoginData.otp, LocalDate.parse("1982-10-24"), LocalDateTime.now())).thenReturn(null)
     val thrown = assertThrows<ResourceNotFoundException> { popUserOTPService.getPoPUserVerified(oneLoginData) }
-    Assertions.assertEquals("Person On Probation User otp  123457  not found in database or expired.", thrown.message);
+    Assertions.assertEquals("Person On Probation User otp  123457  not found in database or expired.", thrown.message)
     unmockkStatic(LocalDateTime::class)
   }
 

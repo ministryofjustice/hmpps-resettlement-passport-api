@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import java.time.LocalDateTime
 
 data class PathwayCaseNote(
@@ -25,8 +26,22 @@ data class CaseNotesMeta(
   val userId: String,
 )
 
+enum class CaseNoteType(val displayName: String) {
+  All("All"), // Includes case notes in RESET + GEN/RESET
+  ACCOMMODATION(Pathway.ACCOMMODATION.displayName), // Each pathway includes any relevant BCST case notes
+  ATTITUDES_THINKING_AND_BEHAVIOUR(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR.displayName),
+  CHILDREN_FAMILIES_AND_COMMUNITY(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY.displayName),
+  DRUGS_AND_ALCOHOL(Pathway.DRUGS_AND_ALCOHOL.displayName),
+  EDUCATION_SKILLS_AND_WORK(Pathway.EDUCATION_SKILLS_AND_WORK.displayName),
+  FINANCE_AND_ID(Pathway.FINANCE_AND_ID.displayName),
+  HEALTH(Pathway.HEALTH.displayName);
+
+  companion object {
+    fun getByDisplayName(displayName: String?) = entries.firstOrNull { it.displayName == displayName }
+  }
+}
+
 enum class CaseNotePathway {
-  All,
   ACCOMMODATION,
   ATTITUDES_THINKING_AND_BEHAVIOUR,
   CHILDREN_FAMILIES_AND_COMMUNITY,
@@ -34,15 +49,15 @@ enum class CaseNotePathway {
   EDUCATION_SKILLS_AND_WORK,
   FINANCE_AND_ID,
   HEALTH,
-  GENERAL,
+  OTHER, // Any other case notes e.g. GEN/RESET or RESET/BCST not related to a pathway or anything else in RESET type
 }
 
-enum class CaseNoteType {
+enum class DpsCaseNoteType {
   GEN,
   RESET,
 }
 
-enum class CaseNoteSubType {
+enum class DpsCaseNoteSubType {
   ACCOM,
   ATB,
   CHDFAMCOM,

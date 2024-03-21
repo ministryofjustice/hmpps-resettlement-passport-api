@@ -77,7 +77,7 @@ class CaseNotesServiceTest {
           text = "text",
           creationDateTime = LocalDateTime.parse("2023-09-01T12:13:12"),
           occurrenceDateTime = LocalDateTime.parse("2023-08-12T23:01:09"),
-          pathway = CaseNotePathway.GENERAL,
+          pathway = CaseNotePathway.OTHER,
         ),
       )
     }
@@ -94,7 +94,7 @@ class CaseNotesServiceTest {
           text = "text",
           creationDateTime = LocalDateTime.parse("2023-09-01T00:00:00").plusSeconds(i),
           occurrenceDateTime = LocalDateTime.parse("2023-08-12T00:00:00"),
-          pathway = CaseNotePathway.GENERAL,
+          pathway = CaseNotePathway.OTHER,
         ),
       )
     }
@@ -111,7 +111,7 @@ class CaseNotesServiceTest {
           text = "text",
           creationDateTime = LocalDateTime.parse("2023-09-01T00:00:00"),
           occurrenceDateTime = LocalDateTime.parse("2023-08-12T00:00:00").plusSeconds(i),
-          pathway = CaseNotePathway.GENERAL,
+          pathway = CaseNotePathway.OTHER,
         ),
       )
     }

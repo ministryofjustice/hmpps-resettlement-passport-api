@@ -9,8 +9,9 @@ import org.springframework.web.reactive.function.client.WebClientException
 import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotePathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteSubType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DpsCaseNoteSubType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DpsCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesMeta
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNote
@@ -18,6 +19,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseNotesClientCredentialsService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.enumIncludes
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.extractCaseNoteTypeFromBcstCaseNote
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -36,48 +38,39 @@ class CaseNotesApiService(
   fun getCaseNotesByNomsId(
     nomsId: String,
     days: Int,
-    pathwayType: CaseNotePathway,
+    caseNoteType: CaseNoteType,
     createdBy: Int,
   ): List<PathwayCaseNote> {
     val caseNotes = mutableListOf<CaseNote>()
-    if (pathwayType == CaseNotePathway.All) {
-      val caseNotesGEN = fetchCaseNotesByNomsId(CaseNoteType.GEN, CaseNoteSubType.RESET, nomsId, days)
-      val caseNotesRESET = fetchCaseNotesByNomsId(CaseNoteType.RESET, null, nomsId, days)
+    if (caseNoteType == CaseNoteType.All) {
+      val caseNotesGEN = fetchCaseNotesByNomsId(DpsCaseNoteType.GEN, DpsCaseNoteSubType.RESET, nomsId, days)
+      val caseNotesRESET = fetchCaseNotesByNomsId(DpsCaseNoteType.RESET, null, nomsId, days)
       caseNotes.addAll(caseNotesGEN)
       caseNotes.addAll(caseNotesRESET)
     } else {
-      if (pathwayType == CaseNotePathway.GENERAL) {
-        val caseNotesGEN = fetchCaseNotesByNomsId(CaseNoteType.GEN, CaseNoteSubType.RESET, nomsId, days)
-        if (createdBy != 0) {
-          caseNotesGEN.forEach {
-            if (it.authorUserId.toInt() == createdBy) {
-              caseNotes.add(it)
-            }
-          }
-        } else {
-          caseNotes.addAll(caseNotesGEN)
-        }
-      } else {
-        val subType = convertCaseNotePathwayToCaseNoteSubType(pathwayType)
-        val caseNotesRESET = fetchCaseNotesByNomsId(CaseNoteType.RESET, subType, nomsId, days)
-        if (createdBy != 0) {
-          caseNotesRESET.forEach {
-            if (it.authorUserId.toInt() == createdBy) {
-              caseNotes.add(it)
-            }
-          }
-        } else {
-          caseNotes.addAll(caseNotesRESET)
+      val subType = convertCaseNoteTypeToCaseNoteSubType(caseNoteType)
+      caseNotes.addAll(fetchCaseNotesByNomsId(DpsCaseNoteType.RESET, subType, nomsId, days))
+      // We also need to get any BCST case notes where the first line indicates it's related to a pathway
+      val caseNotesBcst = fetchCaseNotesByNomsId(DpsCaseNoteType.RESET, DpsCaseNoteSubType.BCST, nomsId, days)
+      caseNotesBcst.forEach {
+        val currentCaseNoteType = extractCaseNoteTypeFromBcstCaseNote(it.text)
+        if (currentCaseNoteType == caseNoteType) {
+          it.subType = convertCaseNoteTypeToCaseNoteSubType(caseNoteType)?.name!!
+          caseNotes.add(it)
         }
       }
+    }
+
+    if (createdBy != 0) {
+      caseNotes.retainAll { it.authorUserId.toInt() == createdBy }
     }
 
     return mapCaseNotes(caseNotes)
   }
 
   private fun fetchCaseNotesByNomsId(
-    type: CaseNoteType,
-    subType: CaseNoteSubType?,
+    type: DpsCaseNoteType,
+    subType: DpsCaseNoteSubType?,
     nomsId: String,
     days: Int,
   ): List<CaseNote> {
@@ -132,10 +125,10 @@ class CaseNotesApiService(
   private fun mapCaseNotes(searchList: List<CaseNote>): List<PathwayCaseNote> {
     val caseNotesList = mutableListOf<PathwayCaseNote>()
     searchList.forEach { caseNote ->
-      val pathwayType = if (enumIncludes<CaseNoteSubType>(caseNote.subType)) {
-        convertCaseNoteSubTypeToCaseNotePathway(CaseNoteSubType.valueOf(caseNote.subType))
+      val pathwayType = if (enumIncludes<DpsCaseNoteSubType>(caseNote.subType)) {
+        convertCaseNoteSubTypeToCaseNotePathway(DpsCaseNoteSubType.valueOf(caseNote.subType))
       } else {
-        CaseNotePathway.GENERAL
+        CaseNotePathway.OTHER
       }
       val prisoner = PathwayCaseNote(
         caseNote.caseNoteId,
@@ -150,16 +143,9 @@ class CaseNotesApiService(
     return caseNotesList
   }
 
-  fun getCaseNotesCreatorsByPathway(nomsId: String, pathwayType: CaseNotePathway): List<CaseNotesMeta> {
-    val type: CaseNoteType
-    val subType: CaseNoteSubType?
-    if (pathwayType == CaseNotePathway.GENERAL) {
-      type = CaseNoteType.GEN
-      subType = CaseNoteSubType.RESET
-    } else {
-      type = CaseNoteType.RESET
-      subType = convertCaseNotePathwayToCaseNoteSubType(pathwayType)
-    }
+  fun getCaseNotesCreatorsByPathway(nomsId: String, caseNoteType: CaseNoteType): List<CaseNotesMeta> {
+    val type = DpsCaseNoteType.RESET
+    val subType = convertCaseNoteTypeToCaseNoteSubType(caseNoteType)
     val creatorsList = mutableListOf<CaseNotesMeta>()
     val caseNotes = fetchCaseNotesByNomsId(type, subType, nomsId, 0)
     caseNotes.forEach { caseNote ->
@@ -172,8 +158,8 @@ class CaseNotesApiService(
     return creatorsList.distinct()
   }
 
-  fun postCaseNote(nomsId: String, caseNotesText: String, userId: String, subType: CaseNoteSubType): CaseNote? {
-    val type = CaseNoteType.RESET
+  fun postCaseNote(nomsId: String, caseNotesText: String, userId: String, subType: DpsCaseNoteSubType): CaseNote? {
+    val type = DpsCaseNoteType.RESET
     val prisonCode = prisonerSearchApiService.findPrisonerPersonalDetails(nomsId).prisonId
 
     return caseNotesClientCredentialsService.getAuthorizedClient(userId).post()
@@ -190,41 +176,40 @@ class CaseNotesApiService(
         ),
       )
       .retrieve()
-      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found when posting case note") })
+      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found when posting case note of type $type and subtype $subType with text $caseNotesText") }) // TODO revert
       .bodyToMono<CaseNote>()
       .block()
   }
 
-  fun convertCaseNotePathwayToCaseNoteSubType(caseNotePathway: CaseNotePathway) = when (caseNotePathway) {
-    CaseNotePathway.All -> null
-    CaseNotePathway.ACCOMMODATION -> CaseNoteSubType.ACCOM
-    CaseNotePathway.ATTITUDES_THINKING_AND_BEHAVIOUR -> CaseNoteSubType.ATB
-    CaseNotePathway.CHILDREN_FAMILIES_AND_COMMUNITY -> CaseNoteSubType.CHDFAMCOM
-    CaseNotePathway.DRUGS_AND_ALCOHOL -> CaseNoteSubType.DRUG_ALCOHOL
-    CaseNotePathway.EDUCATION_SKILLS_AND_WORK -> CaseNoteSubType.ED_SKL_WRK
-    CaseNotePathway.FINANCE_AND_ID -> CaseNoteSubType.FINANCE_ID
-    CaseNotePathway.HEALTH -> CaseNoteSubType.HEALTH
-    CaseNotePathway.GENERAL -> CaseNoteSubType.GEN
+  fun convertCaseNoteTypeToCaseNoteSubType(caseNoteType: CaseNoteType) = when (caseNoteType) {
+    CaseNoteType.All -> null
+    CaseNoteType.ACCOMMODATION -> DpsCaseNoteSubType.ACCOM
+    CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR -> DpsCaseNoteSubType.ATB
+    CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY -> DpsCaseNoteSubType.CHDFAMCOM
+    CaseNoteType.DRUGS_AND_ALCOHOL -> DpsCaseNoteSubType.DRUG_ALCOHOL
+    CaseNoteType.EDUCATION_SKILLS_AND_WORK -> DpsCaseNoteSubType.ED_SKL_WRK
+    CaseNoteType.FINANCE_AND_ID -> DpsCaseNoteSubType.FINANCE_ID
+    CaseNoteType.HEALTH -> DpsCaseNoteSubType.HEALTH
   }
 
-  fun convertCaseNoteSubTypeToCaseNotePathway(caseNoteSubType: CaseNoteSubType) = when (caseNoteSubType) {
-    CaseNoteSubType.ACCOM -> CaseNotePathway.ACCOMMODATION
-    CaseNoteSubType.ATB -> CaseNotePathway.ATTITUDES_THINKING_AND_BEHAVIOUR
-    CaseNoteSubType.CHDFAMCOM -> CaseNotePathway.CHILDREN_FAMILIES_AND_COMMUNITY
-    CaseNoteSubType.DRUG_ALCOHOL -> CaseNotePathway.DRUGS_AND_ALCOHOL
-    CaseNoteSubType.ED_SKL_WRK -> CaseNotePathway.EDUCATION_SKILLS_AND_WORK
-    CaseNoteSubType.FINANCE_ID -> CaseNotePathway.FINANCE_AND_ID
-    CaseNoteSubType.HEALTH -> CaseNotePathway.HEALTH
-    CaseNoteSubType.GEN, CaseNoteSubType.RESET, CaseNoteSubType.BCST -> CaseNotePathway.GENERAL
+  fun convertCaseNoteSubTypeToCaseNotePathway(dpsCaseNoteSubType: DpsCaseNoteSubType) = when (dpsCaseNoteSubType) {
+    DpsCaseNoteSubType.ACCOM -> CaseNotePathway.ACCOMMODATION
+    DpsCaseNoteSubType.ATB -> CaseNotePathway.ATTITUDES_THINKING_AND_BEHAVIOUR
+    DpsCaseNoteSubType.CHDFAMCOM -> CaseNotePathway.CHILDREN_FAMILIES_AND_COMMUNITY
+    DpsCaseNoteSubType.DRUG_ALCOHOL -> CaseNotePathway.DRUGS_AND_ALCOHOL
+    DpsCaseNoteSubType.ED_SKL_WRK -> CaseNotePathway.EDUCATION_SKILLS_AND_WORK
+    DpsCaseNoteSubType.FINANCE_ID -> CaseNotePathway.FINANCE_AND_ID
+    DpsCaseNoteSubType.HEALTH -> CaseNotePathway.HEALTH
+    DpsCaseNoteSubType.GEN, DpsCaseNoteSubType.RESET, DpsCaseNoteSubType.BCST -> CaseNotePathway.OTHER
   }
 
   fun convertPathwayToCaseNoteSubType(pathway: Pathway) = when (pathway) {
-    Pathway.ACCOMMODATION -> CaseNoteSubType.ACCOM
-    Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR -> CaseNoteSubType.ATB
-    Pathway.CHILDREN_FAMILIES_AND_COMMUNITY -> CaseNoteSubType.CHDFAMCOM
-    Pathway.DRUGS_AND_ALCOHOL -> CaseNoteSubType.DRUG_ALCOHOL
-    Pathway.EDUCATION_SKILLS_AND_WORK -> CaseNoteSubType.ED_SKL_WRK
-    Pathway.FINANCE_AND_ID -> CaseNoteSubType.FINANCE_ID
-    Pathway.HEALTH -> CaseNoteSubType.HEALTH
+    Pathway.ACCOMMODATION -> DpsCaseNoteSubType.ACCOM
+    Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR -> DpsCaseNoteSubType.ATB
+    Pathway.CHILDREN_FAMILIES_AND_COMMUNITY -> DpsCaseNoteSubType.CHDFAMCOM
+    Pathway.DRUGS_AND_ALCOHOL -> DpsCaseNoteSubType.DRUG_ALCOHOL
+    Pathway.EDUCATION_SKILLS_AND_WORK -> DpsCaseNoteSubType.ED_SKL_WRK
+    Pathway.FINANCE_AND_ID -> DpsCaseNoteSubType.FINANCE_ID
+    Pathway.HEALTH -> DpsCaseNoteSubType.HEALTH
   }
 }

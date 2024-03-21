@@ -103,10 +103,13 @@ class ResettlementAssessmentService(
         throw RuntimeException("Can't submit assessment with id ${assessment.id} as caseNoteText is null")
       }
 
+      // Add templated first line to case note before posting
+      val caseNotesText = "${getFirstLineOfBcstCaseNote(Pathway.getById(assessment.pathway.id), assessment.assessmentType)}\n\n${assessment.caseNoteText}"
+
       // Post case note to DPS
       caseNotesService.postBCSTCaseNoteToDps(
         nomsId = prisonerEntity.nomsId,
-        notes = assessment.caseNoteText!!,
+        notes = caseNotesText,
         userId = assessment.createdByUserId,
       )
 

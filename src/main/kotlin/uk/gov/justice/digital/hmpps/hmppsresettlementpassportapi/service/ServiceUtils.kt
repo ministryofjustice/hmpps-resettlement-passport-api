@@ -3,6 +3,9 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import com.nimbusds.jwt.JWTParser
 import org.apache.commons.text.WordUtils
 import org.slf4j.LoggerFactory
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AppointmentsService.Companion.SECTION_DELIMITER
 import java.lang.IllegalArgumentException
 import java.util.concurrent.ThreadLocalRandom
@@ -13,6 +16,9 @@ private val log = LoggerFactory.getLogger(object {}::class.java.`package`.name)
 
 val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 const val STRING_LENGTH = 6
+const val BCST_CASE_NOTE_PREFIX = "Case note summary from"
+const val BCST_CASE_NOTE_POSTFIX = "report"
+val BCST_CASE_NOTE_REGEX = Regex("$BCST_CASE_NOTE_PREFIX (.*) (${ResettlementAssessmentType.entries.joinToString("|")}) $BCST_CASE_NOTE_POSTFIX")
 
 fun <T : Enum<*>> convertStringToEnum(enumClass: KClass<T>, stringValue: String?): T? {
   val enum = enumClass.java.enumConstants.firstOrNull { it.name.fuzzyMatch(stringValue) }
@@ -114,3 +120,7 @@ fun randomAlphaNumericString(): String {
     .map(charPool::get)
     .joinToString("")
 }
+
+fun extractCaseNoteTypeFromBcstCaseNote(text: String) = CaseNoteType.getByDisplayName(BCST_CASE_NOTE_REGEX.find(text)?.groups?.get(1)?.value)
+
+fun getFirstLineOfBcstCaseNote(pathway: Pathway, type: ResettlementAssessmentType) = "$BCST_CASE_NOTE_PREFIX ${pathway.displayName} ${type.displayName} $BCST_CASE_NOTE_POSTFIX"

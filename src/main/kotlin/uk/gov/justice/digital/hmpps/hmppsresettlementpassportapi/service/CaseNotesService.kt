@@ -1,12 +1,11 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotePathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteSubType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DpsCaseNoteSubType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesMeta
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
@@ -21,7 +20,7 @@ class CaseNotesService(
   val objectMapper: ObjectMapper,
   val prisonerRepository: PrisonerRepository,
 ) {
-  fun getCaseNotesByNomsId(nomsId: String, page: Int, size: Int, sort: String, days: Int, pathwayType: CaseNotePathway, createdByUserId: Int): CaseNotesList {
+  fun getCaseNotesByNomsId(nomsId: String, page: Int, size: Int, sort: String, days: Int, caseNoteType: CaseNoteType, createdByUserId: Int): CaseNotesList {
     if (page < 0 || size <= 0) {
       throw NoDataWithCodeFoundException(
         "Data",
@@ -36,9 +35,9 @@ class CaseNotesService(
     var combinedCaseNotes = mutableListOf<PathwayCaseNote>()
 
     // Get case notes from DPS Case Notes API, delius_contact table and dps_case_notes
-    combinedCaseNotes.addAll(caseNotesApiService.getCaseNotesByNomsId(nomsId, days, pathwayType, createdByUserId))
+    combinedCaseNotes.addAll(caseNotesApiService.getCaseNotesByNomsId(nomsId, days, caseNoteType, createdByUserId))
     if (createdByUserId == 0) { // RP2-900 For now for can't filter non-DPS case notes by the user. In this case just don't show anything from the database/Delius
-      combinedCaseNotes.addAll(deliusContactService.getCaseNotesByNomsId(nomsId, pathwayType))
+      combinedCaseNotes.addAll(deliusContactService.getCaseNotesByNomsId(nomsId, caseNoteType))
     }
 
     // Remove duplicates
@@ -87,8 +86,8 @@ class CaseNotesService(
     return CaseNotesList(null, null, null, null, 0, false)
   }
 
-  fun getCaseNotesCreatorsByPathway(nomsId: String, pathwayType: CaseNotePathway): List<CaseNotesMeta> {
-    return caseNotesApiService.getCaseNotesCreatorsByPathway(nomsId, pathwayType)
+  fun getCaseNotesCreatorsByPathway(nomsId: String, caseNoteType: CaseNoteType): List<CaseNotesMeta> {
+    return caseNotesApiService.getCaseNotesCreatorsByPathway(nomsId, caseNoteType)
   }
 
   // Remove duplicates based on the createdBy + text + creationDate + occurrenceDate + pathway
@@ -99,7 +98,7 @@ class CaseNotesService(
       nomsId = nomsId,
       caseNotesText = notes,
       userId = userId,
-      subType = CaseNoteSubType.BCST,
+      subType = DpsCaseNoteSubType.BCST,
     )
   }
 }

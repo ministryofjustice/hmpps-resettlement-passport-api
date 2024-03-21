@@ -7,7 +7,7 @@ data class CaseNote(
   val offenderIdentifier: String,
   val type: String,
   val typeDescription: String,
-  val subType: String,
+  var subType: String,
   val subTypeDescription: String,
   val source: String,
   val creationDateTime: LocalDateTime,

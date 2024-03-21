@@ -48,18 +48,3 @@ VALUES(7, 1, 'HEALTH', 'CASE_NOTE', '2020-01-09 02:09:23.476', NULL, NULL, 'stri
 INSERT INTO delius_contact
 (id, prisoner_id, category, contact_type, created_date, appointment_date, appointment_duration, notes, created_by)
 VALUES(8, 1, 'HEALTH', 'CASE_NOTE', '2020-01-09 02:09:23.476', NULL, NULL, 'string test string - another health case note', 'Liz Murphy');
-
-INSERT INTO dps_case_note (id, prisoner_id, pathway_id, created_date, notes, created_by)
-VALUES(1, 1, 1, '2024-01-30 16:59:22.178', 'Some case notes', 'JB');
-INSERT INTO dps_case_note (id, prisoner_id, pathway_id, created_date, notes, created_by)
-VALUES(2, 1, 2, '2024-01-29 16:59:22.178', 'Some more case notes', 'JB');
-INSERT INTO dps_case_note (id, prisoner_id, pathway_id, created_date, notes, created_by)
-VALUES(3, 1, 3, '2024-01-27 16:59:22.178', 'Case notes...', 'JB');
-INSERT INTO dps_case_note (id, prisoner_id, pathway_id, created_date, notes, created_by)
-VALUES(4, 1, 4, '2024-01-30 16:59:22.178', 'Case notes', 'JB');
-INSERT INTO dps_case_note (id, prisoner_id, pathway_id, created_date, notes, created_by)
-VALUES(5, 1, 5, '2024-01-28 16:59:22.178', 'case note text', 'JB');
-INSERT INTO dps_case_note (id, prisoner_id, pathway_id, created_date, notes, created_by)
-VALUES(6, 1, 6, '2024-01-30 16:58:22.178', 'case notes', 'JB');
-INSERT INTO dps_case_note (id, prisoner_id, pathway_id, created_date, notes, created_by)
-VALUES(7, 1, 7, '2024-01-13 16:59:22.178', 'case notes.', 'JB');

@@ -68,9 +68,9 @@ data class ResettlementAssessmentEntity(
   val createdByUserId: String,
 )
 
-enum class ResettlementAssessmentType {
-  BCST2,
-  RESETTLEMENT_PLAN,
+enum class ResettlementAssessmentType(val displayName: String) {
+  BCST2("BCST2"),
+  RESETTLEMENT_PLAN("Pre-release"),
 }
 
 data class ResettlementAssessmentQuestionAndAnswerList(

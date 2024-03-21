@@ -34,7 +34,8 @@ enum class CaseNoteType(val displayName: String) {
   DRUGS_AND_ALCOHOL(Pathway.DRUGS_AND_ALCOHOL.displayName),
   EDUCATION_SKILLS_AND_WORK(Pathway.EDUCATION_SKILLS_AND_WORK.displayName),
   FINANCE_AND_ID(Pathway.FINANCE_AND_ID.displayName),
-  HEALTH(Pathway.HEALTH.displayName);
+  HEALTH(Pathway.HEALTH.displayName),
+  ;
 
   companion object {
     fun getByDisplayName(displayName: String?) = entries.firstOrNull { it.displayName == displayName }

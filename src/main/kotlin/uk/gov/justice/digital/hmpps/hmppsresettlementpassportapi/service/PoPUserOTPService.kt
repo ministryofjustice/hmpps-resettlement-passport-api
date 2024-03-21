@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import jakarta.transaction.Transactional
 import jakarta.validation.ValidationException
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserResponse
@@ -22,6 +23,10 @@ class PoPUserOTPService(
   private val popUserApiService: PoPUserApiService,
   private val prisonerSearchApiService: PrisonerSearchApiService,
 ) {
+
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+  }
 
   @Transactional
   fun getOTPByPrisoner(prisoner: PrisonerEntity): PoPUserOTPEntity? {
@@ -88,5 +93,12 @@ class PoPUserOTPService(
     } else {
       throw ValidationException("required data otp, urn, email or dob  is missing")
     }
+  }
+
+  @Transactional
+  fun deleteExpiredPoPUserOTP() {
+    log.info("Started running scheduled deleteExpiredPoPUserOTP job")
+    popUserOTPRepository.deleteByExpiryDateIsLessThan(LocalDateTime.now())
+    log.info("Finished running scheduled deleteExpiredPoPUserOTP job")
   }
 }

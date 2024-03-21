@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service
 class SchedulerService(
   val metricsService: MetricsService,
   val prisonerService: PrisonerService,
+  val poPUserOTPService: PoPUserOTPService,
   @Value("\${cron.release-dates.batch-size:200}") val batchSize: Int,
 ) {
 
@@ -39,5 +40,10 @@ class SchedulerService(
     }
 
     log.info("Finished updating prisoner entities with new release date")
+  }
+
+  @Scheduled(cron = "0 0 3 * * *")
+  fun deleteExpiredOTPScheduledTask() {
+    poPUserOTPService.deleteExpiredPoPUserOTP()
   }
 }

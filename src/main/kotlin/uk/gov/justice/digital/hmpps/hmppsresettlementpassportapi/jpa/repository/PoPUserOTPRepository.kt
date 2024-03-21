@@ -12,4 +12,6 @@ interface PoPUserOTPRepository : JpaRepository<PoPUserOTPEntity, Long> {
   fun findByPrisoner(prisoner: PrisonerEntity): PoPUserOTPEntity?
 
   fun findByOtpAndDobAndExpiryDateIsGreaterThan(otp: String?, dob: LocalDate, expiryDate: LocalDateTime): PoPUserOTPEntity?
+
+  fun deleteByExpiryDateIsLessThan(expiryDate: LocalDateTime)
 }

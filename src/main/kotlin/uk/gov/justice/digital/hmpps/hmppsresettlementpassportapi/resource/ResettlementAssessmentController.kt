@@ -172,7 +172,9 @@ class ResettlementAssessmentController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-  ) = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId)
+    @RequestParam("assessmentType", required = false, defaultValue = "BCST2")
+    assessmentType: ResettlementAssessmentType,
+  ) = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId, assessmentType)
 
   @PostMapping("/{nomsId}/resettlement-assessment/{pathway}/complete", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Completes a resettlement assessment for the given nomsId and pathway", description = "Completes a resettlement assessment for the given nomsId and pathway")

@@ -7,7 +7,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.Resource
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LatestResettlementAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LatestResettlementAssessmentResponseQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayAndStatus
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatusAndCaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
@@ -27,7 +26,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.GenericResettlementAssessmentQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.IResettlementAssessmentStrategy
-import java.time.LocalDateTime
 
 @Service
 class ResettlementAssessmentService(
@@ -105,27 +103,13 @@ class ResettlementAssessmentService(
         throw RuntimeException("Can't submit assessment with id ${assessment.id} as caseNoteText is null")
       }
 
-      // Add case note to delius_contact table
-      deliusContactService.addDeliusCaseNoteToDatabase(
-        nomsId = nomsId,
-        pathwayStatusAndCaseNote = PathwayStatusAndCaseNote(
-          pathway = Pathway.getById(assessment.pathway.id),
-          status = Status.getById(assessment.statusChangedTo!!.id),
-          caseNoteText = assessment.caseNoteText!!,
-        ),
-        username = assessment.createdBy,
-      )
+      // Add templated first line to case note before posting
+      val caseNotesText = "${getFirstLineOfBcstCaseNote(Pathway.getById(assessment.pathway.id), assessment.assessmentType)}\n\n${assessment.caseNoteText}"
 
-      // Publish case note to Delius SNS topic
-      // TODO - placeholder for when this is available. For now it will just be in our database.
-
-      // Add case note to DPS (database and SQS)
-      caseNotesService.addCaseNoteToDps(
-        prisonerEntity = prisonerEntity,
-        pathwayEntity = assessment.pathway,
-        createdDate = LocalDateTime.now(),
-        notes = assessment.caseNoteText!!,
-        name = assessment.createdBy,
+      // Post case note to DPS
+      caseNotesService.postBCSTCaseNoteToDps(
+        nomsId = prisonerEntity.nomsId,
+        notes = caseNotesText,
         userId = assessment.createdByUserId,
       )
 

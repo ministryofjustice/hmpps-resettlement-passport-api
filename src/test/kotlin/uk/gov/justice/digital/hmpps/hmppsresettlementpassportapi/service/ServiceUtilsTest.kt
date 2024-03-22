@@ -6,6 +6,9 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -304,6 +307,41 @@ class ServiceUtilsTest {
     "  County: ",
     "  Postcode: LS1 #",
     "section 1: 1234",
+  )
+
+  @ParameterizedTest
+  @MethodSource("test extractCaseNoteTypeFromBcstCaseNote data")
+  fun `test extractCaseNoteTypeFromBcstCaseNote`(text: String, expectedCaseNoteType: CaseNoteType?) {
+    Assertions.assertEquals(expectedCaseNoteType, extractCaseNoteTypeFromBcstCaseNote(text))
+  }
+
+  private fun `test extractCaseNoteTypeFromBcstCaseNote data`() = Stream.of(
+    Arguments.of("", null),
+    Arguments.of("Some random text", null),
+    Arguments.of("Case note summary from Accommodation BCST2 report", CaseNoteType.ACCOMMODATION),
+    Arguments.of("Case note summary from Accommodation BCST2 report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.ACCOMMODATION),
+    Arguments.of("Case note summary from Attitudes, thinking and behaviour BCST2 report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR),
+    Arguments.of("Case note summary from Children, families and communities BCST2 report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY),
+    Arguments.of("Case note summary from Drugs and alcohol BCST2 report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.DRUGS_AND_ALCOHOL),
+    Arguments.of("Case note summary from Education, skills and work BCST2 report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.EDUCATION_SKILLS_AND_WORK),
+    Arguments.of("Case note summary from Finance and ID BCST2 report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.FINANCE_AND_ID),
+    Arguments.of("Case note summary from Health BCST2 report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.HEALTH),
+  )
+
+  @ParameterizedTest
+  @MethodSource("test getFirstLineOfBcstCaseNote data")
+  fun `test getFirstLineOfBcstCaseNote`(pathway: Pathway, resettlementAssessmentType: ResettlementAssessmentType, expectedText: String) {
+    Assertions.assertEquals(expectedText, getFirstLineOfBcstCaseNote(pathway, resettlementAssessmentType))
+  }
+
+  private fun `test getFirstLineOfBcstCaseNote data`() = Stream.of(
+    Arguments.of(Pathway.ACCOMMODATION, ResettlementAssessmentType.BCST2, "Case note summary from Accommodation BCST2 report"),
+    Arguments.of(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, ResettlementAssessmentType.BCST2, "Case note summary from Attitudes, thinking and behaviour BCST2 report"),
+    Arguments.of(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, ResettlementAssessmentType.BCST2, "Case note summary from Children, families and communities BCST2 report"),
+    Arguments.of(Pathway.DRUGS_AND_ALCOHOL, ResettlementAssessmentType.BCST2, "Case note summary from Drugs and alcohol BCST2 report"),
+    Arguments.of(Pathway.EDUCATION_SKILLS_AND_WORK, ResettlementAssessmentType.BCST2, "Case note summary from Education, skills and work BCST2 report"),
+    Arguments.of(Pathway.FINANCE_AND_ID, ResettlementAssessmentType.BCST2, "Case note summary from Finance and ID BCST2 report"),
+    Arguments.of(Pathway.HEALTH, ResettlementAssessmentType.BCST2, "Case note summary from Health BCST2 report"),
   )
 }
 

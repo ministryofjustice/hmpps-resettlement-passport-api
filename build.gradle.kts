@@ -56,8 +56,6 @@ dependencies {
 
   implementation("com.pauldijou:jwt-core_2.11:5.0.0")
 
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:3.1.1")
-
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 
   implementation(platform("org.testcontainers:testcontainers-bom:1.19.7"))
@@ -68,7 +66,6 @@ dependencies {
   testImplementation("io.swagger.parser.v3:swagger-parser:2.1.19")
   testImplementation("org.springframework.security:spring-security-test")
   testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:2.35.1")
-  testImplementation("org.testcontainers:localstack")
   testImplementation("org.testcontainers:postgresql")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
@@ -86,7 +83,7 @@ dependencies {
 openApi {
   outputDir.set(project.layout.buildDirectory.dir("docs"))
   outputFileName.set("openapi.json")
-  customBootRun.args.set(listOf("--spring.profiles.active=dev,localstack,docs"))
+  customBootRun.args.set(listOf("--spring.profiles.active=dev,docs"))
 }
 
 java {

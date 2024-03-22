@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 import com.google.common.io.Resources
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,14 +10,9 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.DynamicPropertyRegistry
-import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.SqlMergeMode
 import org.springframework.test.web.reactive.server.WebTestClient
-import software.amazon.awssdk.services.sqs.model.PurgeQueueRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.LocalStackContainer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.LocalStackContainer.setLocalStackProperties
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBase
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.AllocationManagerApiMockServer
@@ -35,8 +29,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wir
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonRegisterApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonerSearchApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ResettlementPassportDeliusApiMockServer
-import uk.gov.justice.hmpps.sqs.HmppsQueueService
-import uk.gov.justice.hmpps.sqs.MissingQueueException
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
@@ -49,16 +41,6 @@ abstract class IntegrationTestBase : TestBase() {
 
   @Autowired
   protected lateinit var jwtAuthHelper: JwtAuthHelper
-
-  @Autowired
-  protected lateinit var hmppsQueueService: HmppsQueueService
-
-  private val caseNotesQueue by lazy { hmppsQueueService.findByQueueId("casenotes") ?: throw MissingQueueException("HmppsQueue casenotes not found") }
-
-  @BeforeEach
-  fun `Clear queues`() {
-    caseNotesQueue.sqsClient.purgeQueue(PurgeQueueRequest.builder().queueUrl(caseNotesQueue.queueUrl).build())
-  }
 
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -104,15 +86,6 @@ abstract class IntegrationTestBase : TestBase() {
 
     @JvmField
     val popUserApiMockServer = PoPUserApiMockServer()
-
-    private val localStackContainer = LocalStackContainer.instance
-
-    @JvmStatic
-    @DynamicPropertySource
-    fun testcontainers(registry: DynamicPropertyRegistry) {
-      log.info("Using a Testcontainers instance of LocalStack")
-      localStackContainer?.also { setLocalStackProperties(it, registry) }
-    }
 
     @BeforeAll
     @JvmStatic

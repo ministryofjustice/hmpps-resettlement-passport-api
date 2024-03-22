@@ -224,4 +224,36 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .json(expectedOutput)
   }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-5.sql")
+  fun `Get All RESET CaseNotes for a Prisoner happy path - with BCST`() {
+    val expectedOutput = readFile("testdata/expectation/case-notes-with-bcst.json")
+    caseNotesApiMockServer.stubGet("/case-notes/G4274GN?page=0&size=500&type=RESET", 200, "testdata/case-notes-api/case-notes-with-bcst.json")
+    webTestClient.get()
+      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=30&sort=occurenceDateTime,DESC&days=0&pathwayType=All")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-5.sql")
+  fun `Get specific pathway RESET CaseNotes for a Prisoner happy path - with BCST`() {
+    val expectedOutput = readFile("testdata/expectation/case-notes-with-accom-bcst.json")
+    caseNotesApiMockServer.stubGetCaseNotesSpecificPathway("G4274GN", 500, 0, "RESET", "ACCOM", 200)
+    caseNotesApiMockServer.stubGet("/case-notes/G4274GN?page=0&size=500&type=RESET&subType=BCST", 200, "testdata/case-notes-api/case-notes-bcst.json")
+
+    webTestClient.get()
+      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=30&sort=occurenceDateTime,DESC&days=0&pathwayType=ACCOMMODATION")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
+  }
 }

@@ -34,11 +34,6 @@ class EndpointSecurityCheck {
     }
   }
 
-  private val excluded = setOf(
-    "public java.util.List uk.gov.justice.hmpps.sqs.HmppsQueueResource.retryAllDlqs()",
-    "public java.lang.Object uk.gov.justice.hmpps.sqs.HmppsReactiveQueueResource.retryAllDlqs(kotlin.coroutines.Continuation)",
-  )
-
   private fun getAllUnprotectedControllers() = ClassPathScanningCandidateComponentProvider(false)
     .also { it.addIncludeFilter(AnnotationTypeFilter(RestController::class.java)) }
     .findCandidateComponents("uk.gov.justice")
@@ -50,7 +45,7 @@ class EndpointSecurityCheck {
   private fun Class<*>.getUnprotectedEndpoints() = this.methods
     .filter { it.isEndpoint() }
     .map { EndpointInfo(it.toString(), it.isProtectedByAnnotation()) }
-    .filter { ep -> !ep.hasEndpointLevelProtection && !excluded.contains(ep.method) }
+    .filter { ep -> !ep.hasEndpointLevelProtection }
 
   private fun Method.isEndpoint() = this.annotations.any {
     it.annotationClass.qualifiedName!!.startsWith("org.springframework.web.bind.annotation")

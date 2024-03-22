@@ -22,19 +22,19 @@ data class PathwayEntity(
   val creationDate: LocalDateTime,
 )
 
-enum class Pathway(val id: Long) {
-  ACCOMMODATION(1),
-  ATTITUDES_THINKING_AND_BEHAVIOUR(2),
-  CHILDREN_FAMILIES_AND_COMMUNITY(3),
-  DRUGS_AND_ALCOHOL(4),
-  EDUCATION_SKILLS_AND_WORK(5),
-  FINANCE_AND_ID(6),
-  HEALTH(7),
+enum class Pathway(val id: Long, val displayName: String) {
+  ACCOMMODATION(1, "Accommodation"),
+  ATTITUDES_THINKING_AND_BEHAVIOUR(2, "Attitudes, thinking and behaviour"),
+  CHILDREN_FAMILIES_AND_COMMUNITY(3, "Children, families and communities"),
+  DRUGS_AND_ALCOHOL(4, "Drugs and alcohol"),
+  EDUCATION_SKILLS_AND_WORK(5, "Education, skills and work"),
+  FINANCE_AND_ID(6, "Finance and ID"),
+  HEALTH(7, "Health"),
   ;
 
   companion object {
-    fun getById(id: Long) = values().first { it.id == id }
+    fun getById(id: Long) = entries.first { it.id == id }
 
-    fun getAllPathways() = values().sortedBy { it.id }.toSet()
+    fun getAllPathways() = entries.sortedBy { it.id }.toSet()
   }
 }

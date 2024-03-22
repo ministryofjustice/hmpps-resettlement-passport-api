@@ -4,7 +4,6 @@ import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -13,10 +12,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.MapAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Category
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ContactType
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DeliusContactEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DpsCaseNoteEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
@@ -26,8 +21,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.DeliusContactRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.DpsCaseNoteRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import java.time.LocalDate
@@ -42,12 +35,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
   @Autowired
   private lateinit var pathwayStatusRepository: PathwayStatusRepository
-
-  @Autowired
-  private lateinit var dpsCaseNoteRepository: DpsCaseNoteRepository
-
-  @Autowired
-  private lateinit var deliusContactRepository: DeliusContactRepository
 
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
@@ -430,20 +417,24 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-resettlement-assessment-4.sql")
-  fun `Post resettlement assessment submit - happy path async`() {
+  fun `Post resettlement assessment submit - happy path`() {
     val nomsId = "ABC1234"
     val assessmentType = "BCST2"
+
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "BCST", "Case note summary from Accommodation BCST2 report\\n\\nCase note related to accommodation", "MDI", 200)
+    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "BCST", "Case note summary from Attitudes, thinking and behaviour BCST2 report\\n\\nCase note related to Attitudes, thinking and behaviour", "MDI", 200)
+    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "BCST", "Case note summary from Children, families and communities BCST2 report\\n\\nCase note related to Children, family and communities", "MDI", 200)
+    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "BCST", "Case note summary from Drugs and alcohol BCST2 report\\n\\nCase note related to Drugs and alcohol", "MDI", 200)
+    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "BCST", "Case note summary from Education, skills and work BCST2 report\\n\\nCase note related to education, skills and work", "MDI", 200)
+    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "BCST", "Case note summary from Finance and ID BCST2 report\\n\\nCase note related to Finance and ID", "MDI", 200)
+    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "BCST", "Case note summary from Health BCST2 report\\n\\nCase note related to Health", "MDI", 200)
 
     webTestClient.post()
       .uri("resettlement-passport/prisoner/$nomsId/resettlement-assessment/submit?assessmentType=$assessmentType")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), authSource = "nomis"))
       .exchange()
       .expectStatus().isOk
-
-    // Check correct messages are on the case notes queue
-    val caseNotesQueue = hmppsQueueService.findByQueueId("casenotes")
-    val caseNotesQueueMessages = caseNotesQueue?.sqsClient?.receiveMessage { it.queueUrl(caseNotesQueue.queueUrl).maxNumberOfMessages(10) }?.get()
-    Assertions.assertEquals(listOf("{\"caseNoteId\":1,\"userId\":\"USER_1\"}", "{\"caseNoteId\":2,\"userId\":\"USER_1\"}", "{\"caseNoteId\":3,\"userId\":\"USER_1\"}", "{\"caseNoteId\":4,\"userId\":\"USER_1\"}", "{\"caseNoteId\":5,\"userId\":\"USER_1\"}", "{\"caseNoteId\":6,\"userId\":\"USER_1\"}", "{\"caseNoteId\":7,\"userId\":\"USER_1\"}"), caseNotesQueueMessages?.messages()?.map { it.body() })
 
     // Check correct updates have been made to the database
     val assessmentsInDatabase = resettlementAssessmentRepository.findAll()
@@ -472,34 +463,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     )
 
     assertThat(pathwayStatusesInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedPathwayStatuses)
-
-    // Check delius_contacts have been added to the database
-    val deliusContactsInDatabase = deliusContactRepository.findAll()
-    val expectedDeliusContacts = listOf(
-      DeliusContactEntity(id = 1, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), category = Category.ACCOMMODATION, contactType = ContactType.CASE_NOTE, createdDate = LocalDateTime.parse("2024-01-31T14:57:53.952046"), appointmentDate = null, appointmentDuration = null, notes = "Case note related to accommodation", createdBy = "A User"),
-      DeliusContactEntity(id = 2, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), category = Category.ATTITUDES_THINKING_AND_BEHAVIOUR, contactType = ContactType.CASE_NOTE, createdDate = LocalDateTime.parse("2024-01-31T14:57:54.016061"), appointmentDate = null, appointmentDuration = null, notes = "Case note related to Attitudes, thinking and behaviour", createdBy = "A User"),
-      DeliusContactEntity(id = 3, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), category = Category.CHILDREN_FAMILIES_AND_COMMUNITY, contactType = ContactType.CASE_NOTE, createdDate = LocalDateTime.parse("2024-01-31T14:57:54.042389"), appointmentDate = null, appointmentDuration = null, notes = "Case note related to Children, family and communities", createdBy = "A User"),
-      DeliusContactEntity(id = 4, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), category = Category.DRUGS_AND_ALCOHOL, contactType = ContactType.CASE_NOTE, createdDate = LocalDateTime.parse("2024-01-31T14:57:54.059559"), appointmentDate = null, appointmentDuration = null, notes = "Case note related to Drugs and alcohol", createdBy = "A User"),
-      DeliusContactEntity(id = 5, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), category = Category.EDUCATION_SKILLS_AND_WORK, contactType = ContactType.CASE_NOTE, createdDate = LocalDateTime.parse("2024-01-31T14:57:54.076275"), appointmentDate = null, appointmentDuration = null, notes = "Case note related to education, skills and work", createdBy = "A User"),
-      DeliusContactEntity(id = 6, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), category = Category.FINANCE_AND_ID, contactType = ContactType.CASE_NOTE, createdDate = LocalDateTime.parse("2024-01-31T14:57:54.097218"), appointmentDate = null, appointmentDuration = null, notes = "Case note related to Finance and ID", createdBy = "A User"),
-      DeliusContactEntity(id = 7, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), category = Category.HEALTH, contactType = ContactType.CASE_NOTE, createdDate = LocalDateTime.parse("2024-01-31T14:57:54.115010"), appointmentDate = null, appointmentDuration = null, notes = "Case note related to Health", createdBy = "A User"),
-    )
-
-    assertThat(deliusContactsInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedDeliusContacts)
-
-    // Check dps_case_notes have been added to the database
-    val dpsCaseNotesInDatabase = dpsCaseNoteRepository.findAll()
-    val expectedDpsNotes = listOf(
-      DpsCaseNoteEntity(id = 1, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 1, name = "Accommodation", active = true, creationDate = LocalDateTime.parse("2024-01-31T15:13:11.779810")), createdDate = LocalDateTime.parse("2024-01-31T15:13:22.102532"), notes = "Case note related to accommodation", createdBy = "A User"),
-      DpsCaseNoteEntity(id = 2, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 2, name = "Attitudes, thinking and behaviour", active = true, creationDate = LocalDateTime.parse("2024-01-31T15:13:11.779810")), createdDate = LocalDateTime.parse("2024-01-31T15:13:22.150901"), notes = "Case note related to Attitudes, thinking and behaviour", createdBy = "A User"),
-      DpsCaseNoteEntity(id = 3, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 3, name = "Children, families and communities", active = true, creationDate = LocalDateTime.parse("2024-01-31T15:13:11.779810")), createdDate = LocalDateTime.parse("2024-01-31T15:13:22.182949"), notes = "Case note related to Children, family and communities", createdBy = "A User"),
-      DpsCaseNoteEntity(id = 4, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 4, name = "Drugs and alcohol", active = true, creationDate = LocalDateTime.parse("2024-01-31T15:13:11.779810")), createdDate = LocalDateTime.parse("2024-01-31T15:13:22.207773"), notes = "Case note related to Drugs and alcohol", createdBy = "A User"),
-      DpsCaseNoteEntity(id = 5, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 5, name = "Education, skills and work", active = true, creationDate = LocalDateTime.parse("2024-01-31T15:13:11.779810")), createdDate = LocalDateTime.parse("2024-01-31T15:13:22.228386"), notes = "Case note related to education, skills and work", createdBy = "A User"),
-      DpsCaseNoteEntity(id = 6, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 6, name = "Finance and ID", active = true, creationDate = LocalDateTime.parse("2024-01-31T15:13:11.779810")), createdDate = LocalDateTime.parse("2024-01-31T15:13:22.248694"), notes = "Case note related to Finance and ID", createdBy = "A User"),
-      DpsCaseNoteEntity(id = 7, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = PathwayEntity(id = 7, name = "Health", active = true, creationDate = LocalDateTime.parse("2024-01-31T15:13:11.779810")), createdDate = LocalDateTime.parse("2024-01-31T15:13:22.268440"), notes = "Case note related to Health", createdBy = "A User"),
-    )
-
-    assertThat(dpsCaseNotesInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedDpsNotes)
   }
 
   @Test

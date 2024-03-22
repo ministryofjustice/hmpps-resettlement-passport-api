@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotePathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesMeta
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseNotesService
@@ -67,9 +67,9 @@ class CaseNotesResourceController(
     @RequestParam(value = "days", defaultValue = "0")
     days: Int = 0,
     @Schema(example = "21")
-    @Parameter(description = "Get Case notes for a specific pathway, property supported are ACCOMMODATION, ATTITUDES_THINKING_AND_BEHAVIOUR, CHILDREN_FAMILIES_AND_COMMUNITY, DRUGS_AND_ALCOHOL, EDUCATION_SKILLS_AND_WORK, FINANCE_AND_ID, HEALTH, GENERAL ")
+    @Parameter(description = "Get Case notes for a specific pathway or all, property supported are All, ACCOMMODATION, ATTITUDES_THINKING_AND_BEHAVIOUR, CHILDREN_FAMILIES_AND_COMMUNITY, DRUGS_AND_ALCOHOL, EDUCATION_SKILLS_AND_WORK, FINANCE_AND_ID, HEALTH")
     @RequestParam(value = "pathwayType", defaultValue = "All")
-    pathwayType: CaseNotePathway,
+    pathwayType: CaseNoteType,
     @Schema(example = "12345")
     @Parameter(description = "Get Case notes created by given author UserId for a specific pathway ")
     @RequestParam(value = "createdByUserId", defaultValue = "0")
@@ -112,8 +112,8 @@ class CaseNotesResourceController(
     @PathVariable("pathway")
     @Parameter(
       required = true,
-      description = "Get Case notes Creators for a specific pathway, property supported are ACCOMMODATION, ATTITUDES_THINKING_AND_BEHAVIOUR, CHILDREN_FAMILIES_AND_COMMUNITY, DRUGS_AND_ALCOHOL, EDUCATION_SKILLS_AND_WORK, FINANCE_AND_ID, HEALTH, GENERAL ",
+      description = "Get case notes creators for a specific pathway or all case notes, supported values are All, ACCOMMODATION, ATTITUDES_THINKING_AND_BEHAVIOUR, CHILDREN_FAMILIES_AND_COMMUNITY, DRUGS_AND_ALCOHOL, EDUCATION_SKILLS_AND_WORK, FINANCE_AND_ID, HEALTH",
     )
-    pathway: CaseNotePathway,
+    pathway: CaseNoteType,
   ): List<CaseNotesMeta> = caseNotesService.getCaseNotesCreatorsByPathway(nomsId, pathway)
 }

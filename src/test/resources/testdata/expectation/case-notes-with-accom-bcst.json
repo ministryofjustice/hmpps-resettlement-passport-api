@@ -1,0 +1,49 @@
+{
+  "content": [
+    {
+      "caseNoteId": "47028559",
+      "pathway": "ACCOMMODATION",
+      "creationDateTime": "2024-01-12T11:01:01",
+      "occurenceDateTime": "2024-01-12T11:01:01",
+      "createdBy": "A User",
+      "text": "Case note summary from Accommodation BCST2 report\\n\\nSome text after\\n\\nDetails of case note etc"
+    },
+    {
+      "caseNoteId": "db-1",
+      "pathway": "ACCOMMODATION",
+      "creationDateTime": "2023-12-05T17:44:30.091",
+      "occurenceDateTime": "2023-12-05T17:44:30.091",
+      "createdBy": "John Williams",
+      "text": "This is some case note text."
+    },
+    {
+      "caseNoteId": "47028491",
+      "pathway": "ACCOMMODATION",
+      "creationDateTime": "2023-09-05T13:54:56.992827119",
+      "occurenceDateTime": "2023-09-05T13:54:00",
+      "createdBy": "James Smith",
+      "text": "Test case note"
+    },
+    {
+      "caseNoteId": "47028492",
+      "pathway": "ACCOMMODATION",
+      "creationDateTime": "2023-09-05T13:57:13.214269427",
+      "occurenceDateTime": "2023-09-05T07:00:48",
+      "createdBy": "Mike Small",
+      "text": "This is a test case note message from Resettlement Passport"
+    },
+    {
+      "caseNoteId": "47028493",
+      "pathway": "ACCOMMODATION",
+      "creationDateTime": "2023-09-05T14:03:18.14468552",
+      "occurenceDateTime": "2023-09-05T07:00:48",
+      "createdBy": "Paul Smith",
+      "text": "This is a 2nd test case note message from Resettlement Passport"
+    }
+  ],
+  "pageSize": 5,
+  "page": 0,
+  "sortName": "occurenceDateTime,DESC",
+  "totalElements": 5,
+  "last": true
+}

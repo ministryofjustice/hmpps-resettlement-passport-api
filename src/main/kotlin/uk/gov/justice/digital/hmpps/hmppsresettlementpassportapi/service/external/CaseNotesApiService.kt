@@ -43,9 +43,15 @@ class CaseNotesApiService(
   ): List<PathwayCaseNote> {
     val caseNotes = mutableListOf<CaseNote>()
     if (caseNoteType == CaseNoteType.All) {
-      val caseNotesGEN = fetchCaseNotesByNomsId(DpsCaseNoteType.GEN, DpsCaseNoteSubType.RESET, nomsId, days)
+      caseNotes.addAll(fetchCaseNotesByNomsId(DpsCaseNoteType.GEN, DpsCaseNoteSubType.RESET, nomsId, days))
       val caseNotesRESET = fetchCaseNotesByNomsId(DpsCaseNoteType.RESET, null, nomsId, days)
-      caseNotes.addAll(caseNotesGEN)
+      caseNotesRESET.forEach {
+        val currentCaseNoteType = extractCaseNoteTypeFromBcstCaseNote(it.text)
+        if (currentCaseNoteType != null) {
+          it.subType = convertCaseNoteTypeToCaseNoteSubType(currentCaseNoteType)?.name!!
+        }
+        caseNotes.add(it)
+      }
       caseNotes.addAll(caseNotesRESET)
     } else {
       val subType = convertCaseNoteTypeToCaseNoteSubType(caseNoteType)
@@ -55,7 +61,7 @@ class CaseNotesApiService(
       caseNotesBcst.forEach {
         val currentCaseNoteType = extractCaseNoteTypeFromBcstCaseNote(it.text)
         if (currentCaseNoteType == caseNoteType) {
-          it.subType = convertCaseNoteTypeToCaseNoteSubType(caseNoteType)?.name!!
+          it.subType = convertCaseNoteTypeToCaseNoteSubType(currentCaseNoteType)?.name!!
           caseNotes.add(it)
         }
       }
@@ -176,7 +182,7 @@ class CaseNotesApiService(
         ),
       )
       .retrieve()
-      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found when posting case note of type $type and subtype $subType with text $caseNotesText") }) // TODO revert
+      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found when posting case note of type $type and subtype $subType") })
       .bodyToMono<CaseNote>()
       .block()
   }

@@ -40,7 +40,7 @@ class ResettlementAssessmentService(
   private val pathwayAndStatusService: PathwayAndStatusService,
 ) {
   @Transactional
-  fun getResettlementAssessmentSummaryByNomsId(nomsId: String): List<PrisonerResettlementAssessment> {
+  fun getResettlementAssessmentSummaryByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType): List<PrisonerResettlementAssessment> {
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val pathways = Pathway.entries.toTypedArray()
@@ -50,7 +50,7 @@ class ResettlementAssessmentService(
         resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(
           prisonerEntity,
           pathwayEntity,
-          ResettlementAssessmentType.BCST2,
+          assessmentType,
         )
       if (resettlementAssessmentForPathway == null) {
         PrisonerResettlementAssessment(it, ResettlementAssessmentStatus.NOT_STARTED)

@@ -117,7 +117,7 @@ class ResettlementAssessmentServiceTest {
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, financeIdPathwayEntity, assessmentType)).thenReturn(financeIdResettlementAssessmentEntity)
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, healthPathwayEntity, assessmentType)).thenReturn(healthResettlementAssessmentEntity)
 
-    val response = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId)
+    val response = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId, ResettlementAssessmentType.BCST2)
     Assertions.assertEquals(prisonerResettlementAssessmentSummary, response)
   }
 
@@ -165,8 +165,10 @@ class ResettlementAssessmentServiceTest {
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, financeIdPathwayEntity, assessmentType)).thenReturn(null)
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, healthPathwayEntity, assessmentType)).thenReturn(healthResettlementAssessmentEntity)
 
-    val response = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId)
-    Assertions.assertEquals(prisonerResettlementAssessmentSummary, response)
+    val bcst2Response = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId, ResettlementAssessmentType.BCST2)
+    Assertions.assertEquals(prisonerResettlementAssessmentSummary, bcst2Response)
+    val resettlementResponse = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId, ResettlementAssessmentType.BCST2)
+    Assertions.assertEquals(prisonerResettlementAssessmentSummary, resettlementResponse)
   }
 
   @ParameterizedTest

@@ -172,6 +172,7 @@ class ResettlementAssessmentController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
+    @RequestParam("assessmentType", required = false, defaultValue = "BCST2")
     assessmentType: ResettlementAssessmentType,
   ) = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId, assessmentType)
 

@@ -122,7 +122,7 @@ class ResettlementAssessmentServiceTest {
   }
 
   @Test
-  fun `test getResettlementAssessmentSummaryByNomsId - returns assessment with not started statuses for pathways with null value in resettlement_assessment table`() {
+  fun `test getResettlementAssessmentSummaryByNomsId with BCST2 type - returns assessment with not started statuses for pathways with null value in resettlement_assessment table`() {
     val nomsId: String = "GY3245"
     val assessmentType = ResettlementAssessmentType.BCST2
     val prisonerEntity = PrisonerEntity(1, "GY3245", testDate, "crn", "xyz1", LocalDate.parse("2025-01-23"))
@@ -166,9 +166,55 @@ class ResettlementAssessmentServiceTest {
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, healthPathwayEntity, assessmentType)).thenReturn(healthResettlementAssessmentEntity)
 
     val bcst2Response = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId, ResettlementAssessmentType.BCST2)
-    Assertions.assertEquals(prisonerResettlementAssessmentSummary, bcst2Response)
-    val resettlementResponse = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId, ResettlementAssessmentType.BCST2)
-    Assertions.assertEquals(prisonerResettlementAssessmentSummary, resettlementResponse)
+    Assertions.assertEquals(prisonerResettlementAssessmentSummary, bcst2Response);
+  }
+
+  @Test
+  fun `test getResettlementAssessmentSummaryByNomsId with RESETTLEMENT_PLAN type - returns assessment with not started statuses for pathways with null value in resettlement_assessment`() {
+    val nomsId: String = "GY3245"
+    val assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN
+    val prisonerEntity = PrisonerEntity(1, "GY3245", testDate, "crn", "xyz1", LocalDate.parse("2025-01-23"))
+    val accommodationPathwayEntity = PathwayEntity(1, "Accommodation", true, fakeNow)
+    val accommodationResettlementAssessmentEntity = createNotStartedResettlementAssessmentEntity(1, "Accommodation")
+    val attitudesPathwayEntity = PathwayEntity(2, "Attitudes, thinking and behaviour", true, fakeNow)
+    val attitudesResettlementAssessmentEntity = createNotStartedResettlementAssessmentEntity(2, "Attitudes, thinking and behaviour")
+    val childrenFamiliesPathwayEntity = PathwayEntity(3, "Children, families and communities", true, fakeNow)
+    val drugsAlcoholPathwayEntity = PathwayEntity(4, "Drugs and alcohol", true, fakeNow)
+    val drugsAlcoholResettlementAssessmentEntity = createNotStartedResettlementAssessmentEntity(4, "Drugs and alcohol")
+    val educationSkillsPathwayEntity = PathwayEntity(5, "Education, skills and work", true, fakeNow)
+    val educationSkillsResettlementAssessmentEntity = createNotStartedResettlementAssessmentEntity(5, "Education, skills and work")
+    val financeIdPathwayEntity = PathwayEntity(6, "Finance and ID", true, fakeNow)
+    val healthPathwayEntity = PathwayEntity(7, "Health", true, fakeNow)
+    val healthResettlementAssessmentEntity = createCompleteResettlementAssessmentEntity(7, "Health")
+
+    val prisonerResettlementAssessmentSummary = listOf(
+      PrisonerResettlementAssessment(Pathway.ACCOMMODATION, ResettlementAssessmentStatus.NOT_STARTED),
+      PrisonerResettlementAssessment(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, ResettlementAssessmentStatus.NOT_STARTED),
+      PrisonerResettlementAssessment(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, ResettlementAssessmentStatus.NOT_STARTED),
+      PrisonerResettlementAssessment(Pathway.DRUGS_AND_ALCOHOL, ResettlementAssessmentStatus.NOT_STARTED),
+      PrisonerResettlementAssessment(Pathway.EDUCATION_SKILLS_AND_WORK, ResettlementAssessmentStatus.NOT_STARTED),
+      PrisonerResettlementAssessment(Pathway.FINANCE_AND_ID, ResettlementAssessmentStatus.NOT_STARTED),
+      PrisonerResettlementAssessment(Pathway.HEALTH, ResettlementAssessmentStatus.COMPLETE),
+    )
+
+    Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
+    Mockito.`when`(pathwayRepository.findById(Pathway.ACCOMMODATION.id)).thenReturn(Optional.of(accommodationPathwayEntity))
+    Mockito.`when`(pathwayRepository.findById(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR.id)).thenReturn(Optional.of(attitudesPathwayEntity))
+    Mockito.`when`(pathwayRepository.findById(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY.id)).thenReturn(Optional.of(childrenFamiliesPathwayEntity))
+    Mockito.`when`(pathwayRepository.findById(Pathway.DRUGS_AND_ALCOHOL.id)).thenReturn(Optional.of(drugsAlcoholPathwayEntity))
+    Mockito.`when`(pathwayRepository.findById(Pathway.EDUCATION_SKILLS_AND_WORK.id)).thenReturn(Optional.of(educationSkillsPathwayEntity))
+    Mockito.`when`(pathwayRepository.findById(Pathway.FINANCE_AND_ID.id)).thenReturn(Optional.of(financeIdPathwayEntity))
+    Mockito.`when`(pathwayRepository.findById(Pathway.HEALTH.id)).thenReturn(Optional.of(healthPathwayEntity))
+    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, accommodationPathwayEntity, assessmentType)).thenReturn(accommodationResettlementAssessmentEntity)
+    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, attitudesPathwayEntity, assessmentType)).thenReturn(attitudesResettlementAssessmentEntity)
+    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, childrenFamiliesPathwayEntity, assessmentType)).thenReturn(null)
+    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, drugsAlcoholPathwayEntity, assessmentType)).thenReturn(drugsAlcoholResettlementAssessmentEntity)
+    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, educationSkillsPathwayEntity, assessmentType)).thenReturn(educationSkillsResettlementAssessmentEntity)
+    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, financeIdPathwayEntity, assessmentType)).thenReturn(null)
+    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, healthPathwayEntity, assessmentType)).thenReturn(healthResettlementAssessmentEntity)
+
+    val resettlementResponse = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId, ResettlementAssessmentType.RESETTLEMENT_PLAN)
+    Assertions.assertEquals(prisonerResettlementAssessmentSummary, resettlementResponse);
   }
 
   @ParameterizedTest

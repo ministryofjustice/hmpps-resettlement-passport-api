@@ -157,9 +157,10 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val expectedOutput = readFile("testdata/expectation/resettlement-assessment-summary-1.json")
 
     val nomsId = "G4161UF"
+    val assessmentType = "BCST2"
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/summary")
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/summary?assessmentType=$assessmentType")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -177,9 +178,10 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val expectedOutput = readFile("testdata/expectation/resettlement-assessment-summary-2.json")
 
     val nomsId = "G4161UF"
+    val assessmentType = "BCST2"
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/summary")
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/summary?assessmentType=$assessmentType")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -211,8 +213,10 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get resettlement assessment summary- nomsId not found`() {
     val nomsId = "!--G4161UF"
+    val assessmentType = "BCST2"
+
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/summary")
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/summary?assessmentType=$assessmentType")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(404)

@@ -33,10 +33,10 @@ class PathwayPatchService(
     when (authSource) {
       "nomis" -> {
         caseNotesApiService.postCaseNote(
-          nomsId,
-          pathwayStatusAndCaseNote.pathway,
-          pathwayStatusAndCaseNote.caseNoteText,
-          userId,
+          nomsId = nomsId,
+          caseNotesText = pathwayStatusAndCaseNote.caseNoteText,
+          userId = userId,
+          subType = caseNotesApiService.convertPathwayToCaseNoteSubType(pathwayStatusAndCaseNote.pathway),
         )
       }
       "delius" -> {

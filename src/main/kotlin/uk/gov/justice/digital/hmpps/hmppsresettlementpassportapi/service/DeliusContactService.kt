@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotePathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatusAndCaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Category
@@ -36,19 +37,18 @@ class DeliusContactService(private val deliusContactRepository: DeliusContactRep
     deliusContactRepository.save(deliusContactEntity)
   }
 
-  fun getCaseNotesByNomsId(nomsId: String, pathwayType: CaseNotePathway): List<PathwayCaseNote> {
+  fun getCaseNotesByNomsId(nomsId: String, caseNoteType: CaseNoteType): List<PathwayCaseNote> {
     val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val contactType = ContactType.CASE_NOTE
-    val deliusContacts: List<DeliusContactEntity> = when (pathwayType) {
-      CaseNotePathway.All -> deliusContactRepository.findByPrisonerAndContactType(prisoner, contactType)
-      CaseNotePathway.ACCOMMODATION -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.ACCOMMODATION)
-      CaseNotePathway.ATTITUDES_THINKING_AND_BEHAVIOUR -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.ATTITUDES_THINKING_AND_BEHAVIOUR)
-      CaseNotePathway.CHILDREN_FAMILIES_AND_COMMUNITY -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.CHILDREN_FAMILIES_AND_COMMUNITY)
-      CaseNotePathway.DRUGS_AND_ALCOHOL -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.DRUGS_AND_ALCOHOL)
-      CaseNotePathway.EDUCATION_SKILLS_AND_WORK -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.EDUCATION_SKILLS_AND_WORK)
-      CaseNotePathway.FINANCE_AND_ID -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.FINANCE_AND_ID)
-      CaseNotePathway.HEALTH -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.HEALTH)
-      CaseNotePathway.GENERAL -> emptyList()
+    val deliusContacts: List<DeliusContactEntity> = when (caseNoteType) {
+      CaseNoteType.All -> deliusContactRepository.findByPrisonerAndContactType(prisoner, contactType)
+      CaseNoteType.ACCOMMODATION -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.ACCOMMODATION)
+      CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.ATTITUDES_THINKING_AND_BEHAVIOUR)
+      CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.CHILDREN_FAMILIES_AND_COMMUNITY)
+      CaseNoteType.DRUGS_AND_ALCOHOL -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.DRUGS_AND_ALCOHOL)
+      CaseNoteType.EDUCATION_SKILLS_AND_WORK -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.EDUCATION_SKILLS_AND_WORK)
+      CaseNoteType.FINANCE_AND_ID -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.FINANCE_AND_ID)
+      CaseNoteType.HEALTH -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.HEALTH)
     }
     return mapDeliusContactsToPathwayCaseNotes(deliusContacts)
   }

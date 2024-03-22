@@ -166,7 +166,7 @@ class ResettlementAssessmentServiceTest {
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, healthPathwayEntity, assessmentType)).thenReturn(healthResettlementAssessmentEntity)
 
     val bcst2Response = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId, ResettlementAssessmentType.BCST2)
-    Assertions.assertEquals(prisonerResettlementAssessmentSummary, bcst2Response);
+    Assertions.assertEquals(prisonerResettlementAssessmentSummary, bcst2Response)
   }
 
   @Test
@@ -214,7 +214,7 @@ class ResettlementAssessmentServiceTest {
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, healthPathwayEntity, assessmentType)).thenReturn(healthResettlementAssessmentEntity)
 
     val resettlementResponse = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId, ResettlementAssessmentType.RESETTLEMENT_PLAN)
-    Assertions.assertEquals(prisonerResettlementAssessmentSummary, resettlementResponse);
+    Assertions.assertEquals(prisonerResettlementAssessmentSummary, resettlementResponse)
   }
 
   @ParameterizedTest

@@ -1,11 +1,12 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/prisoner/G8203UV"
+    "urlPath": "/risks/crn/U416101/predictors/all"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "getPrisonerDetails-G8203UV-200-response.json",
+    "fixedDelayMilliseconds": 60000,
+    "bodyFileName": "getRiskPredictorsByCrn-G9981UK-timeout-response.json",
     "headers": {
       "Content-Type": "application/json;charset=UTF-8",
       "Server": "wiremock"

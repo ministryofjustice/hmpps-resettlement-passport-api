@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/api/images/offenders/G8203UV"
+    "urlPath": "/probation-cases/G9981UK/crn"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "getPrisonerImages-G8203UV-200-response.json",
+    "bodyFileName": "getPrisonerByNomsNumber-G9981UK-200-response.json",
     "headers": {
       "Content-Type": "application/json;charset=UTF-8",
       "Server": "wiremock"

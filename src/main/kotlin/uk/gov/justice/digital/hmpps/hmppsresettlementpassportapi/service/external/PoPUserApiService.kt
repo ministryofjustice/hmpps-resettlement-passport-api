@@ -10,13 +10,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserRes
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.OneLoginData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PoPUserOTPRepository
 import java.util.*
 
 @Service
 class PoPUserApiService(
 
-  private val poPUserOTPRepository: PoPUserOTPRepository,
   private val popUserWebClientCredentials: WebClient,
 ) {
 

@@ -645,6 +645,77 @@ class AccommodationResettlementAssessmentStrategyTest {
     Assertions.assertEquals(expectedPage, page)
   }
 
+  @Test
+  fun `test get page from Id check answers - RESETTLEMENT_PLAN existing submitted edit BCST2 assessment`() {
+    val nomsId = "123"
+
+    val existingAssessment = ResettlementAssessmentQuestionAndAnswerList(
+      mutableListOf(
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE", StringAnswer("SOCIAL_HOUSING")),
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
+      ),
+    )
+
+    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23"))
+    val pathwayEntity = PathwayEntity(1, "Accommodation", true, testDate)
+    val resettlementAssessmentStatusEntities = listOf(ResettlementAssessmentStatusEntity(3, "Complete", true, testDate), ResettlementAssessmentStatusEntity(4, "Submitted", true, testDate))
+    val resettlementAssessmentEntity = ResettlementAssessmentEntity(1, prisonerEntity, pathwayEntity, StatusEntity(1, "Not Started", true, testDate), ResettlementAssessmentType.BCST2, existingAssessment, testDate, "", resettlementAssessmentStatusEntities.first { it.id == ResettlementAssessmentStatus.SUBMITTED.id }, "some text", "USER_1")
+    Mockito.`when`(pathwayRepository.findById(Pathway.ACCOMMODATION.id)).thenReturn(Optional.of(pathwayEntity))
+    Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
+    Mockito.`when`(resettlementAssessmentStatusRepository.findAll())
+      .thenReturn(resettlementAssessmentStatusEntities)
+    Mockito.`when`(
+      resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
+        prisonerEntity,
+        pathwayEntity,
+        ResettlementAssessmentType.BCST2,
+        resettlementAssessmentStatusEntities,
+      ),
+    ).thenReturn(resettlementAssessmentEntity)
+    Mockito.`when`(
+      resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
+        prisonerEntity,
+        pathwayEntity,
+        ResettlementAssessmentType.RESETTLEMENT_PLAN,
+        resettlementAssessmentStatusEntities,
+      ),
+    ).thenReturn(null)
+
+    val expectedPage = ResettlementAssessmentResponsePage(
+      id = "CHECK_ANSWERS",
+      questionsAndAnswers = mutableListOf(
+        ResettlementAssessmentResponseQuestionAndAnswer(
+          AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE,
+          answer = StringAnswer("SOCIAL_HOUSING"),
+          originalPageId = "WHERE_DID_THEY_LIVE",
+        ),
+        ResettlementAssessmentResponseQuestionAndAnswer(
+          AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE_ADDRESS,
+          answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123"))),
+          originalPageId = "WHERE_DID_THEY_LIVE_ADDRESS",
+        ),
+        ResettlementAssessmentResponseQuestionAndAnswer(
+          GenericResettlementAssessmentQuestion.SUPPORT_NEEDS,
+          answer = StringAnswer(answer = null),
+          originalPageId = "ASSESSMENT_SUMMARY",
+        ),
+        ResettlementAssessmentResponseQuestionAndAnswer(
+          GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY,
+          answer = StringAnswer(answer = null),
+          originalPageId = "ASSESSMENT_SUMMARY",
+        ),
+      ),
+    )
+
+    val page = resettlementAssessmentService.getPageFromId(
+      nomsId = nomsId,
+      pathway = Pathway.ACCOMMODATION,
+      assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN,
+      pageId = "CHECK_ANSWERS",
+    )
+    Assertions.assertEquals(expectedPage, page)
+  }
+
   @ParameterizedTest
   @MethodSource("test complete assessment data")
   fun `test complete assessment`(assessment: ResettlementAssessmentCompleteRequest, expectedEntity: ResettlementAssessmentEntity?, expectedException: Throwable?, existingAssessment: ResettlementAssessmentEntity?) {

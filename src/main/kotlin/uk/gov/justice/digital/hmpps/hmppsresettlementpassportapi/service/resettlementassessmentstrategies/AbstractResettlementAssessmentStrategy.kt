@@ -145,17 +145,15 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
       existingAssessment = getExistingAssessment(nomsId, pathway, ResettlementAssessmentType.BCST2)
       // If the SUPPORT_NEEDS page has not been answered in the latest assessment (because this is an edit), add these back in
       if (existingAssessment != null) {
-        val additionalQuestionsAndAnswers = mutableListOf<ResettlementAssessmentSimpleQuestionAndAnswer>()
         GenericAssessmentPage.ASSESSMENT_SUMMARY.questionsAndAnswers.forEach { qAndA ->
           if (!existingAssessment.assessment.assessment.any { it.questionId == qAndA.question.id }) {
-            additionalQuestionsAndAnswers.add(
+            existingAssessment.assessment.assessment.add(
               ResettlementAssessmentSimpleQuestionAndAnswer(
                 qAndA.question.id,
                 StringAnswer(null),
               ),
             )
           }
-          existingAssessment.assessment.assessment.addAll(additionalQuestionsAndAnswers)
         }
       }
     }

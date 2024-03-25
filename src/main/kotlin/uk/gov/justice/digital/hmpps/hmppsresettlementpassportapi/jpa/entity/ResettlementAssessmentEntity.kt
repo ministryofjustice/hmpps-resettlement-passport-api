@@ -74,7 +74,7 @@ enum class ResettlementAssessmentType(val displayName: String) {
 }
 
 data class ResettlementAssessmentQuestionAndAnswerList(
-  val assessment: List<ResettlementAssessmentSimpleQuestionAndAnswer>,
+  var assessment: List<ResettlementAssessmentSimpleQuestionAndAnswer>,
 )
 
 data class ResettlementAssessmentSimpleQuestionAndAnswer(

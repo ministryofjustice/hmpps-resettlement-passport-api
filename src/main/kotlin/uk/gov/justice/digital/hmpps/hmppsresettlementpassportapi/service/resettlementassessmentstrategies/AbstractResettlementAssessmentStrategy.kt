@@ -143,6 +143,26 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     // If this is a RESETTLEMENT_PLAN (BCST3) type and there is not existing assessment we should use an existing BCST2 if available.
     if (existingAssessment == null && assessmentType == ResettlementAssessmentType.RESETTLEMENT_PLAN) {
       existingAssessment = getExistingAssessment(nomsId, pathway, ResettlementAssessmentType.BCST2)
+      if (existingAssessment != null && !existingAssessment.assessment.assessment.any { it.questionId == GenericResettlementAssessmentQuestion.SUPPORT_NEEDS.id }) {
+        val questionsAndAnswers = existingAssessment.assessment.assessment.toMutableList()
+        questionsAndAnswers.add(
+          ResettlementAssessmentSimpleQuestionAndAnswer(
+            GenericResettlementAssessmentQuestion.SUPPORT_NEEDS.id,
+            StringAnswer(null),
+          )
+        )
+        existingAssessment.assessment.assessment = questionsAndAnswers
+      }
+      if (existingAssessment != null && !existingAssessment.assessment.assessment.any { it.questionId == GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY.id }) {
+        val questionsAndAnswers = existingAssessment.assessment.assessment.toMutableList()
+        questionsAndAnswers.add(
+          ResettlementAssessmentSimpleQuestionAndAnswer(
+            GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY.id,
+            StringAnswer(null),
+          )
+        )
+        existingAssessment.assessment.assessment = questionsAndAnswers
+      }
     }
 
     // Get the current page

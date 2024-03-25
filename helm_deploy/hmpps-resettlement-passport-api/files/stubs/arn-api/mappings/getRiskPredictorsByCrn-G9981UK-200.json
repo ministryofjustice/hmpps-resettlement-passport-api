@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/risks/crn/X596670/predictors/all"
+    "urlPath": "/risks/crn/X705049/predictors/all"
   },
   "response": {
     "status": 200,

@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserap
 import java.time.LocalDate
 
 data class OneLoginData(
-
   val urn: String? = null,
   val otp: String? = null,
   val email: String? = null,

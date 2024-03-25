@@ -1,1 +1,1 @@
-Alter table person_on_probation_user_otp add unique (otp)
+Alter table person_on_probation_user_otp add unique (otp);

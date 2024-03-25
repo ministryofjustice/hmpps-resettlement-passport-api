@@ -138,6 +138,8 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     // Get the latest complete assessment (if exists)
     var existingAssessment = getExistingAssessment(nomsId, pathway, assessmentType)
 
+    val edit = existingAssessment?.assessmentStatus?.id == ResettlementAssessmentStatus.SUBMITTED.id
+
     // If this is a RESETTLEMENT_PLAN (BCST3) type and there is not existing assessment we should use an existing BCST2 if available.
     if (existingAssessment == null && assessmentType == ResettlementAssessmentType.RESETTLEMENT_PLAN) {
       existingAssessment = getExistingAssessment(nomsId, pathway, ResettlementAssessmentType.BCST2)
@@ -171,7 +173,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     if (existingAssessment != null) {
       if (resettlementAssessmentResponsePage.id == GenericAssessmentPage.CHECK_ANSWERS.id) {
         // If the existing assessment is submitted we are in an edit and don't want to send back the ASSESSMENT_SUMMARY questions
-        val questionsToExclude = if (existingAssessment.assessmentStatus.id == ResettlementAssessmentStatus.SUBMITTED.id) {
+        val questionsToExclude = if (edit) {
           GenericAssessmentPage.ASSESSMENT_SUMMARY.questionsAndAnswers.map { it.question }
         } else {
           listOf()

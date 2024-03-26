@@ -55,7 +55,7 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       assessmentType = ResettlementAssessmentType.BCST2,
       creationDate = LocalDateTime.parse("2023-01-01T12:00:00"),
       createdBy = "Human, A",
-      assessment = ResettlementAssessmentQuestionAndAnswerList(listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_1", answer = StringAnswer("Test Answer 1")))),
+      assessment = ResettlementAssessmentQuestionAndAnswerList(mutableListOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_1", answer = StringAnswer("Test Answer 1")))),
       assessmentStatus = assessmentStatus,
       caseNoteText = "Some case note text",
       createdByUserId = "JSMITH_GEN",
@@ -85,7 +85,7 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       creationDate = LocalDateTime.parse("2023-01-01T12:00:00"),
       createdBy = "Human, A",
       assessment = ResettlementAssessmentQuestionAndAnswerList(
-        listOf(
+        mutableListOf(
           ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_2", answer = StringAnswer("My answer")),
           ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_3", answer = ListAnswer(listOf("Answer 1", "Answer 2", "Answer 3"))),
         ),
@@ -103,7 +103,7 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       creationDate = LocalDateTime.parse("2022-01-01T12:00:00"),
       createdBy = "Human, A",
       assessment = ResettlementAssessmentQuestionAndAnswerList(
-        listOf(
+        mutableListOf(
           ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_4", answer = MapAnswer(listOf(mapOf(Pair("key1", "value1"), Pair("key2", "value2"))))),
           ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_5", answer = ListAnswer(listOf("Answer 1", "Answer 2", "Answer 3"))),
         ),
@@ -183,7 +183,7 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       pathway = getPathwayEntity(pathway),
       statusChangedTo = getStatusEntity(Status.SUPPORT_NOT_REQUIRED),
       assessmentType = ResettlementAssessmentType.BCST2,
-      assessment = ResettlementAssessmentQuestionAndAnswerList(listOf()),
+      assessment = ResettlementAssessmentQuestionAndAnswerList(mutableListOf()),
       creationDate = creationDate,
       createdBy = "test user",
       assessmentStatus = getResettlementAssessmentStatusEntity(status),

@@ -138,9 +138,24 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     // Get the latest complete assessment (if exists)
     var existingAssessment = getExistingAssessment(nomsId, pathway, assessmentType)
 
+    val edit = existingAssessment?.assessmentStatus?.id == ResettlementAssessmentStatus.SUBMITTED.id
+
     // If this is a RESETTLEMENT_PLAN (BCST3) type and there is not existing assessment we should use an existing BCST2 if available.
     if (existingAssessment == null && assessmentType == ResettlementAssessmentType.RESETTLEMENT_PLAN) {
       existingAssessment = getExistingAssessment(nomsId, pathway, ResettlementAssessmentType.BCST2)
+      // If the SUPPORT_NEEDS page has not been answered in the latest assessment (because this is an edit), add these back in
+      if (existingAssessment != null) {
+        GenericAssessmentPage.ASSESSMENT_SUMMARY.questionsAndAnswers.forEach { qAndA ->
+          if (!existingAssessment.assessment.assessment.any { it.questionId == qAndA.question.id }) {
+            existingAssessment.assessment.assessment.add(
+              ResettlementAssessmentSimpleQuestionAndAnswer(
+                qAndA.question.id,
+                StringAnswer(null),
+              ),
+            )
+          }
+        }
+      }
     }
 
     // Get the current page
@@ -171,7 +186,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     if (existingAssessment != null) {
       if (resettlementAssessmentResponsePage.id == GenericAssessmentPage.CHECK_ANSWERS.id) {
         // If the existing assessment is submitted we are in an edit and don't want to send back the ASSESSMENT_SUMMARY questions
-        val questionsToExclude = if (existingAssessment.assessmentStatus.id == ResettlementAssessmentStatus.SUBMITTED.id) {
+        val questionsToExclude = if (edit) {
           GenericAssessmentPage.ASSESSMENT_SUMMARY.questionsAndAnswers.map { it.question }
         } else {
           listOf()
@@ -264,7 +279,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
           it.question,
           it.answer,
         )
-      },
+      }.toMutableList(),
     )
 
     // Create new resettlement assessment entity and save to database

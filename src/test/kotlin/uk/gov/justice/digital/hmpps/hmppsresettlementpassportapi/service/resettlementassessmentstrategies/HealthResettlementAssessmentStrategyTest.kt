@@ -264,7 +264,6 @@ class HealthResettlementAssessmentStrategyTest {
               options = mutableListOf(
                 Option(id = "PHYSICAL_HEALTH", displayText = "Physical health"),
                 Option(id = "MENTAL_HEALTH", displayText = "Mental health"),
-                Option(id = "PERINATAL_MENTAL_HEALTH", displayText = "Perinatal mental health"),
                 Option(id = "NO_ANSWER", displayText = "No answer provided", exclusive = true),
               ),
             ),

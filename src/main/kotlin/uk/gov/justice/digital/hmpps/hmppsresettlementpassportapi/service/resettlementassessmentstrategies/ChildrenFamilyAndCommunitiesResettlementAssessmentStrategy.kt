@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentStatusRepository
@@ -24,8 +25,19 @@ class ChildrenFamilyAndCommunitiesResettlementAssessmentStrategy(
   prisonerRepository: PrisonerRepository,
   statusRepository: StatusRepository,
   pathwayRepository: PathwayRepository,
+  pathwayStatusRepository: PathwayStatusRepository,
   resettlementAssessmentStatusRepository: ResettlementAssessmentStatusRepository,
-) : AbstractResettlementAssessmentStrategy<ChildrenFamilyAndCommunitiesAssessmentPage, ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion>(resettlementAssessmentRepository, prisonerRepository, statusRepository, pathwayRepository, resettlementAssessmentStatusRepository, ChildrenFamilyAndCommunitiesAssessmentPage::class, ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion::class) {
+) :
+  AbstractResettlementAssessmentStrategy<ChildrenFamilyAndCommunitiesAssessmentPage, ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion>(
+    resettlementAssessmentRepository,
+    prisonerRepository,
+    statusRepository,
+    pathwayRepository,
+    pathwayStatusRepository,
+    resettlementAssessmentStatusRepository,
+    ChildrenFamilyAndCommunitiesAssessmentPage::class,
+    ChildrenFamilyAndCommunitiesResettlementAssessmentQuestion::class,
+  ) {
   override fun appliesTo(pathway: Pathway) = pathway == Pathway.CHILDREN_FAMILIES_AND_COMMUNITY
 
   override fun getPageList(): List<ResettlementAssessmentNode> = listOf(

@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentStatusRepository
@@ -24,8 +25,19 @@ class EducationSkillsAndWorkResettlementAssessmentStrategy(
   prisonerRepository: PrisonerRepository,
   statusRepository: StatusRepository,
   pathwayRepository: PathwayRepository,
+  pathwayStatusRepository: PathwayStatusRepository,
   resettlementAssessmentStatusRepository: ResettlementAssessmentStatusRepository,
-) : AbstractResettlementAssessmentStrategy<EducationSkillsAndWorkAssessmentPage, EducationSkillsAndWorkResettlementAssessmentQuestion>(resettlementAssessmentRepository, prisonerRepository, statusRepository, pathwayRepository, resettlementAssessmentStatusRepository, EducationSkillsAndWorkAssessmentPage::class, EducationSkillsAndWorkResettlementAssessmentQuestion::class) {
+) :
+  AbstractResettlementAssessmentStrategy<EducationSkillsAndWorkAssessmentPage, EducationSkillsAndWorkResettlementAssessmentQuestion>(
+    resettlementAssessmentRepository,
+    prisonerRepository,
+    statusRepository,
+    pathwayRepository,
+    pathwayStatusRepository,
+    resettlementAssessmentStatusRepository,
+    EducationSkillsAndWorkAssessmentPage::class,
+    EducationSkillsAndWorkResettlementAssessmentQuestion::class,
+  ) {
   override fun appliesTo(pathway: Pathway) = pathway == Pathway.EDUCATION_SKILLS_AND_WORK
 
   override fun getPageList(): List<ResettlementAssessmentNode> = listOf(

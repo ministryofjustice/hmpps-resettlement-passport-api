@@ -40,6 +40,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentStatusRepository
@@ -68,6 +69,9 @@ class AccommodationResettlementAssessmentStrategyTest {
   private lateinit var statusRepository: StatusRepository
 
   @Mock
+  private lateinit var pathwayStatusRepository: PathwayStatusRepository
+
+  @Mock
   private lateinit var resettlementAssessmentStatusRepository: ResettlementAssessmentStatusRepository
 
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
@@ -79,6 +83,7 @@ class AccommodationResettlementAssessmentStrategyTest {
       prisonerRepository,
       statusRepository,
       pathwayRepository,
+      pathwayStatusRepository,
       resettlementAssessmentStatusRepository,
     )
   }

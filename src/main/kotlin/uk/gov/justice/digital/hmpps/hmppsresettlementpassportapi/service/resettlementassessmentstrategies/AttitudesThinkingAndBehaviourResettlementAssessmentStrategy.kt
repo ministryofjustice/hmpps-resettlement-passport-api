@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentStatusRepository
@@ -23,6 +24,7 @@ class AttitudesThinkingAndBehaviourResettlementAssessmentStrategy(
   prisonerRepository: PrisonerRepository,
   statusRepository: StatusRepository,
   pathwayRepository: PathwayRepository,
+  pathwayStatusRepository: PathwayStatusRepository,
   resettlementAssessmentStatusRepository: ResettlementAssessmentStatusRepository,
 ) :
   AbstractResettlementAssessmentStrategy<AttitudesThinkingAndBehaviourAssessmentPage, AttitudesThinkingAndBehaviourResettlementAssessmentQuestion>(
@@ -30,6 +32,7 @@ class AttitudesThinkingAndBehaviourResettlementAssessmentStrategy(
     prisonerRepository,
     statusRepository,
     pathwayRepository,
+    pathwayStatusRepository,
     resettlementAssessmentStatusRepository,
     AttitudesThinkingAndBehaviourAssessmentPage::class,
     AttitudesThinkingAndBehaviourResettlementAssessmentQuestion::class,

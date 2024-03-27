@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentStatusRepository
@@ -24,8 +25,18 @@ class FinanceAndIdResettlementAssessmentStrategy(
   prisonerRepository: PrisonerRepository,
   statusRepository: StatusRepository,
   pathwayRepository: PathwayRepository,
+  pathwayStatusRepository: PathwayStatusRepository,
   resettlementAssessmentStatusRepository: ResettlementAssessmentStatusRepository,
-) : AbstractResettlementAssessmentStrategy<FinanceAndIdAssessmentPage, FinanceAndIdResettlementAssessmentQuestion>(resettlementAssessmentRepository, prisonerRepository, statusRepository, pathwayRepository, resettlementAssessmentStatusRepository, FinanceAndIdAssessmentPage::class, FinanceAndIdResettlementAssessmentQuestion::class) {
+) : AbstractResettlementAssessmentStrategy<FinanceAndIdAssessmentPage, FinanceAndIdResettlementAssessmentQuestion>(
+  resettlementAssessmentRepository,
+  prisonerRepository,
+  statusRepository,
+  pathwayRepository,
+  pathwayStatusRepository,
+  resettlementAssessmentStatusRepository,
+  FinanceAndIdAssessmentPage::class,
+  FinanceAndIdResettlementAssessmentQuestion::class,
+) {
   override fun appliesTo(pathway: Pathway) = pathway == Pathway.FINANCE_AND_ID
 
   override fun getPageList(): List<ResettlementAssessmentNode> = listOf(

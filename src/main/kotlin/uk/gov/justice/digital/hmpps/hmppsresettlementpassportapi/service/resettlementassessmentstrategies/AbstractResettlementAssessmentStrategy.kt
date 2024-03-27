@@ -27,6 +27,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentStatusRepository
@@ -34,6 +35,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.convertEnumStringToEnum
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClaimFromJWTToken
 import java.time.LocalDateTime
+import kotlin.jvm.optionals.getOrNull
 import kotlin.reflect.KClass
 
 abstract class AbstractResettlementAssessmentStrategy<T, Q>(
@@ -41,6 +43,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
   private val prisonerRepository: PrisonerRepository,
   private val statusRepository: StatusRepository,
   private val pathwayRepository: PathwayRepository,
+  private val pathwayStatusRepository: PathwayStatusRepository,
   private val resettlementAssessmentStatusRepository: ResettlementAssessmentStatusRepository,
   private val assessmentPageClass: KClass<T>,
   private val questionClass: KClass<Q>,
@@ -112,8 +115,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     assessmentType: ResettlementAssessmentType,
   ): ResettlementAssessmentEntity? {
     // Obtain prisoner from database, if exists
-    val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
-      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+    val prisonerEntity = loadPrisoner(nomsId)
 
     // Obtain pathway entity from database
     val pathwayEntity = pathwayRepository.findById(pathway.id).get()
@@ -128,6 +130,11 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
       resettlementAssessmentStatusEntities,
     )
   }
+
+  private fun loadPrisoner(nomsId: String) = (
+    prisonerRepository.findByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+    )
 
   override fun getPageFromId(
     nomsId: String,
@@ -195,15 +202,41 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
           existingAssessment.assessment.assessment.map { ResettlementAssessmentResponseQuestionAndAnswer(question = getQuestionList().first { q -> q.id == it.questionId }, answer = it.answer, originalPageId = findPageIdFromQuestionId(it.questionId)) }.filter { it.question !in questionsToExclude }
         resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(resettlementAssessmentResponsePage.id, questionsAndAnswers = questionsAndAnswers)
       }
+
       resettlementAssessmentResponsePage.questionsAndAnswers.forEach { q ->
         val existingAnswer = existingAssessment.assessment.assessment.find { it.questionId == q.question.id }
-        if (existingAnswer != null && q.question != GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY) {
+        if (existingAnswer != null && q.question.id != GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY.id) {
           q.answer = existingAnswer.answer
         }
+      }
+
+      if (resettlementAssessmentResponsePage.id == GenericAssessmentPage.ASSESSMENT_SUMMARY.id && assessmentType == ResettlementAssessmentType.RESETTLEMENT_PLAN) {
+        resettlementAssessmentResponsePage = resettlementAssessmentResponsePage.copy(
+          questionsAndAnswers = resettlementAssessmentResponsePage.questionsAndAnswers.map { existingQAndA ->
+            if (existingQAndA.question.id == GenericResettlementAssessmentQuestion.SUPPORT_NEEDS.id) {
+              useExtendedStatusQuestion(pathway, nomsId) ?: existingQAndA
+            } else {
+              existingQAndA
+            }
+          },
+        )
       }
     }
 
     return resettlementAssessmentResponsePage
+  }
+
+  private fun useExtendedStatusQuestion(pathway: Pathway, nomsId: String): ResettlementAssessmentResponseQuestionAndAnswer? {
+    val pathwayEntity = pathwayRepository.findById(pathway.id).getOrNull() ?: return null
+    val prisonerEntity = loadPrisoner(nomsId)
+    val pathwayStatus = pathwayStatusRepository.findByPathwayAndPrisoner(pathwayEntity, prisonerEntity) ?: return null
+
+    val status = pathwayStatus.status.toStatus()
+    return ResettlementAssessmentResponseQuestionAndAnswer(
+      question = GenericResettlementAssessmentQuestion.SUPPORT_NEEDS_REASSESS,
+      originalPageId = GenericAssessmentPage.ASSESSMENT_SUMMARY.id,
+      answer = StringAnswer(status.name),
+    )
   }
 
   override fun findPageIdFromQuestionId(questionId: String): String {
@@ -428,6 +461,39 @@ enum class GenericResettlementAssessmentQuestion(
     title = "Add a case note summary",
     subTitle = "This will be displayed as a case note in both DPS and nDelius",
     type = TypeOfQuestion.LONG_TEXT,
+  ),
+  SUPPORT_NEEDS_REASSESS(
+    id = "SUPPORT_NEEDS_2",
+    title = "",
+    type = TypeOfQuestion.RADIO,
+    options = listOf(
+      Option(
+        id = "SUPPORT_REQUIRED",
+        displayText = "Support required",
+        description = "a need for support has been identified and is accepted",
+      ),
+      Option(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
+      Option(
+        id = "SUPPORT_DECLINED",
+        displayText = "Support declined",
+        description = "a need has been identified but support is declined",
+      ),
+      Option(
+        id = "NOT_STARTED",
+        displayText = "Not Started",
+        description = "TODO",
+      ),
+      Option(
+        id = "IN_PROGRESS",
+        displayText = "In Progress",
+        description = "TODO",
+      ),
+      Option(
+        id = "DONE",
+        displayText = "Done",
+        description = "TODO",
+      ),
+    ),
   ),
 }
 

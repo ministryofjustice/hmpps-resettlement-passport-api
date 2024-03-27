@@ -34,5 +34,4 @@ data class PoPUserOTPEntity(
 
   @Column(name = "dob")
   var dob: LocalDate,
-
 )

@@ -29,13 +29,14 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.StatusRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.Optional
+import java.util.*
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -58,6 +59,9 @@ class HealthResettlementAssessmentStrategyTest {
   @Mock
   private lateinit var resettlementAssessmentStatusRepository: ResettlementAssessmentStatusRepository
 
+  @Mock
+  private lateinit var pathwayStatusRepository: PathwayStatusRepository
+
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
 
   @BeforeEach
@@ -67,6 +71,7 @@ class HealthResettlementAssessmentStrategyTest {
       prisonerRepository,
       statusRepository,
       pathwayRepository,
+      pathwayStatusRepository,
       resettlementAssessmentStatusRepository,
     )
   }

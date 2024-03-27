@@ -20,7 +20,9 @@ data class StatusEntity(
 
   @Column(name = "creation_date")
   val creationDate: LocalDateTime,
-)
+) {
+  fun toStatus(): Status = Status.getById(id)
+}
 
 enum class Status(val id: Long) {
   NOT_STARTED(1),

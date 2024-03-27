@@ -1,3 +1,5 @@
+import org.springframework.boot.gradle.tasks.run.BootRun
+
 plugins {
   val kotlinVersion = "1.9.23"
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.15.3"
@@ -112,4 +114,8 @@ tasks.jacocoTestReport {
   reports {
     xml.required.set(true)
   }
+}
+
+tasks.named<BootRun>("bootRun") {
+  systemProperty("spring.profiles.active", project.findProperty("profiles")?.toString() ?: "dev")
 }

@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
@@ -40,7 +41,7 @@ class HealthResettlementAssessmentStrategy(
 ) {
   override fun appliesTo(pathway: Pathway) = pathway == Pathway.HEALTH
 
-  override fun getPageList(): List<ResettlementAssessmentNode> = listOf(
+  override fun getPageList(assessmentType: ResettlementAssessmentType): List<ResettlementAssessmentNode> = listOf(
     ResettlementAssessmentNode(
       HealthAssessmentPage.REGISTERED_WITH_GP,
       nextPage =
@@ -82,7 +83,7 @@ class HealthResettlementAssessmentStrategy(
       HealthAssessmentPage.WHAT_HEALTH_NEED,
       nextPage = ::finalQuestionNextPage,
     ),
-    assessmentSummaryNode,
+    assessmentSummaryNode(assessmentType),
   )
 }
 

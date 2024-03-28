@@ -91,10 +91,10 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
       throw ServerWebInputException("Cannot get the next question from CHECK_ANSWERS as this is the end of the flow for this pathway.")
     } else {
       // Option 3 - If none of the above use the next page function in the question lambda to calculate the next page
-      val questionLambda = getPageList().first { it.assessmentPage == currentPageEnum }
+      val questionLambda = getPageList(assessmentType).first { it.assessmentPage == currentPageEnum }
       val questions: List<ResettlementAssessmentQuestionAndAnswer> = assessment.questionsAndAnswers!!.map {
         ResettlementAssessmentQuestionAndAnswer(
-          findQuestionEnum(enumClass = questionClass, stringValue = it.question),
+          convertEnumStringToEnum(enumClass = questionClass, secondaryEnumClass = GenericResettlementAssessmentQuestion::class, stringValue = it.question),
           it.answer as Answer<*>,
         )
       }
@@ -105,13 +105,6 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
 
     return nextPage.id
   }
-
-  private fun findQuestionEnum(enumClass: KClass<Q>, stringValue: String?): IResettlementAssessmentQuestion {
-    return enumClass.java.enumConstants.firstOrNull { it.name == stringValue || it.id == stringValue }
-      ?: GenericResettlementAssessmentQuestion.entries.firstOrNull { it.name == stringValue || it.id == stringValue }
-      ?: throw IllegalArgumentException("$stringValue does not exist in enum ${enumClass.simpleName} (or GenericResettlementAssessmentQuestion)")
-  }
-
   private fun getExistingAssessment(
     nomsId: String,
     pathway: Pathway,
@@ -206,7 +199,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
             ResettlementAssessmentResponseQuestionAndAnswer(
               question = getQuestionList().first { q -> q.id == it.questionId },
               answer = it.answer,
-              originalPageId = findPageIdFromQuestionId(it.questionId),
+              originalPageId = findPageIdFromQuestionId(it.questionId, assessmentType),
             )
           }.filter { it.question !in questionsToExclude }
         resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(resettlementAssessmentResponsePage.id, questionsAndAnswers = questionsAndAnswers)
@@ -242,18 +235,18 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
 
     val status = pathwayStatus.status.toStatus()
     return ResettlementAssessmentResponseQuestionAndAnswer(
-      question = GenericResettlementAssessmentQuestion.SUPPORT_NEEDS_REASSESS,
-      originalPageId = GenericAssessmentPage.ASSESSMENT_SUMMARY.id,
+      question = GenericResettlementAssessmentQuestion.SUPPORT_NEEDS_PRERELEASE,
+      originalPageId = GenericAssessmentPage.PRERELEASE_ASSESSMENT_SUMMARY.id,
       answer = StringAnswer(status.name),
     )
   }
 
-  override fun findPageIdFromQuestionId(questionId: String): String {
-    val pageList = getPageList().map { it.assessmentPage } + GenericAssessmentPage.entries
+  override fun findPageIdFromQuestionId(questionId: String, assessmentType: ResettlementAssessmentType): String {
+    val pageList = getPageList(assessmentType).map { it.assessmentPage }
     return pageList.firstOrNull { p -> (p.questionsAndAnswers.any { q -> q.question.id == questionId }) }?.id ?: throw RuntimeException("Cannot find page for question [$questionId] - check that the question is used in a page!")
   }
 
-  abstract fun getPageList(): List<ResettlementAssessmentNode>
+  abstract fun getPageList(assessmentType: ResettlementAssessmentType): List<ResettlementAssessmentNode>
 
   fun getQuestionList(): List<IResettlementAssessmentQuestion> = questionClass.java.enumConstants.asList() + GenericResettlementAssessmentQuestion.entries
 
@@ -302,7 +295,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     if (!edit) {
       // Get statusChangedTo out of SUPPORT_NEEDS question and convert to a Status
       val supportNeedsQuestionAndAnswer = if (assessmentType == ResettlementAssessmentType.RESETTLEMENT_PLAN) {
-        assessment.questionsAndAnswers.first { it.question == GenericResettlementAssessmentQuestion.SUPPORT_NEEDS_REASSESS.id }
+        assessment.questionsAndAnswers.first { it.question == GenericResettlementAssessmentQuestion.SUPPORT_NEEDS_PRERELEASE.id }
       } else {
         assessment.questionsAndAnswers.first { it.question == GenericResettlementAssessmentQuestion.SUPPORT_NEEDS.id }
       }
@@ -379,7 +372,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     // Convert to Map of pages to List of questionsAndAnswers
     val nodeToQuestionMap = assessment.questionsAndAnswers
       .groupByTo(LinkedHashMap()) { qa ->
-        getPageList()
+        getPageList(assessmentType)
           .firstOrNull { n ->
             qa.question in n.assessmentPage.questionsAndAnswers
               .map { q -> q.question.id }
@@ -408,7 +401,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
       try {
         val actualPage: IAssessmentPage? = nodeToQuestionMap.keys.elementAtOrNull(pageNumber)?.assessmentPage
         val expectedPage: IAssessmentPage =
-          currentNode?.nextPage?.invoke(NextPageContext(nodeToQuestionMap[currentNode]!!, edit, assessmentType)) ?: getPageList()[0].assessmentPage
+          currentNode?.nextPage?.invoke(NextPageContext(nodeToQuestionMap[currentNode]!!, edit, assessmentType)) ?: getPageList(assessmentType)[0].assessmentPage
         if (expectedPage == GenericAssessmentPage.CHECK_ANSWERS) {
           break
         }
@@ -449,10 +442,18 @@ enum class GenericAssessmentPage(
   PRERELEASE_ASSESSMENT_SUMMARY(
     id = "PRERELEASE_ASSESSMENT_SUMMARY",
     questionsAndAnswers = listOf(
-      ResettlementAssessmentQuestionAndAnswer(GenericResettlementAssessmentQuestion.SUPPORT_NEEDS_REASSESS),
+      ResettlementAssessmentQuestionAndAnswer(GenericResettlementAssessmentQuestion.SUPPORT_NEEDS_PRERELEASE),
       ResettlementAssessmentQuestionAndAnswer(GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY),
     ),
   ),
+  ;
+
+  companion object {
+    fun entriesFor(assessmentType: ResettlementAssessmentType): Iterable<GenericAssessmentPage> = when (assessmentType) {
+      ResettlementAssessmentType.RESETTLEMENT_PLAN -> listOf(CHECK_ANSWERS, PRERELEASE_ASSESSMENT_SUMMARY)
+      ResettlementAssessmentType.BCST2 -> listOf(CHECK_ANSWERS, ASSESSMENT_SUMMARY)
+    }
+  }
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
@@ -488,8 +489,8 @@ enum class GenericResettlementAssessmentQuestion(
     subTitle = "This will be displayed as a case note in both DPS and nDelius",
     type = TypeOfQuestion.LONG_TEXT,
   ),
-  SUPPORT_NEEDS_REASSESS(
-    id = "SUPPORT_NEEDS_REASSESS",
+  SUPPORT_NEEDS_PRERELEASE(
+    id = "SUPPORT_NEEDS_PRERELEASE",
     title = "",
     type = TypeOfQuestion.RADIO,
     options = listOf(
@@ -532,9 +533,18 @@ fun finalQuestionNextPage(nextPageContext: NextPageContext): IAssessmentPage {
   }
 }
 
-val assessmentSummaryNode = ResettlementAssessmentNode(
-  assessmentPage = GenericAssessmentPage.ASSESSMENT_SUMMARY,
-  nextPage = fun(_: NextPageContext): IAssessmentPage {
-    return GenericAssessmentPage.CHECK_ANSWERS
-  },
-)
+fun assessmentSummaryNode(assessmentType: ResettlementAssessmentType): ResettlementAssessmentNode =
+  when (assessmentType) {
+    ResettlementAssessmentType.BCST2 -> ResettlementAssessmentNode(
+      assessmentPage = GenericAssessmentPage.ASSESSMENT_SUMMARY,
+      nextPage = fun(_: NextPageContext): IAssessmentPage {
+        return GenericAssessmentPage.CHECK_ANSWERS
+      },
+    )
+    ResettlementAssessmentType.RESETTLEMENT_PLAN -> ResettlementAssessmentNode(
+      assessmentPage = GenericAssessmentPage.PRERELEASE_ASSESSMENT_SUMMARY,
+      nextPage = fun(_: NextPageContext): IAssessmentPage {
+        return GenericAssessmentPage.CHECK_ANSWERS
+      },
+    )
+  }

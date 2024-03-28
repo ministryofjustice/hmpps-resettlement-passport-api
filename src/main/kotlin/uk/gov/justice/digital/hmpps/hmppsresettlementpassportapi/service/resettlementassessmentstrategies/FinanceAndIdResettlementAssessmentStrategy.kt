@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
@@ -40,7 +41,7 @@ class FinanceAndIdResettlementAssessmentStrategy(
 ) {
   override fun appliesTo(pathway: Pathway) = pathway == Pathway.FINANCE_AND_ID
 
-  override fun getPageList(): List<ResettlementAssessmentNode> = listOf(
+  override fun getPageList(assessmentType: ResettlementAssessmentType): List<ResettlementAssessmentNode> = listOf(
     ResettlementAssessmentNode(
       FinanceAndIdAssessmentPage.HAS_BANK_ACCOUNT,
       nextPage =
@@ -118,7 +119,7 @@ class FinanceAndIdResettlementAssessmentStrategy(
       FinanceAndIdAssessmentPage.HELP_MANAGE_DEBTS,
       nextPage = ::finalQuestionNextPage,
     ),
-    assessmentSummaryNode,
+    assessmentSummaryNode(assessmentType),
   )
 }
 

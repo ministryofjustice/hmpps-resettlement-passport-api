@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
@@ -41,7 +42,7 @@ class EducationSkillsAndWorkResettlementAssessmentStrategy(
   ) {
   override fun appliesTo(pathway: Pathway) = pathway == Pathway.EDUCATION_SKILLS_AND_WORK
 
-  override fun getPageList(): List<ResettlementAssessmentNode> = listOf(
+  override fun getPageList(assessmentType: ResettlementAssessmentType): List<ResettlementAssessmentNode> = listOf(
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.JOB_BEFORE_CUSTODY,
       nextPage =
@@ -194,7 +195,7 @@ class EducationSkillsAndWorkResettlementAssessmentStrategy(
       EducationSkillsAndWorkAssessmentPage.BURSARIES_AND_GRANTS,
       nextPage = ::finalQuestionNextPage,
     ),
-    assessmentSummaryNode,
+    assessmentSummaryNode(assessmentType),
   )
 }
 

@@ -146,18 +146,28 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     // If this is a RESETTLEMENT_PLAN (BCST3) type and there is not existing assessment we should use an existing BCST2 if available.
     if (existingAssessment == null && assessmentType == ResettlementAssessmentType.RESETTLEMENT_PLAN) {
       existingAssessment = getExistingAssessment(nomsId, pathway, ResettlementAssessmentType.BCST2)
-      // If the SUPPORT_NEEDS page has not been answered in the latest assessment (because this is an edit), add these back in
+
       if (existingAssessment != null) {
-        GenericAssessmentPage.PRERELEASE_ASSESSMENT_SUMMARY.questionsAndAnswers.forEach { qAndA ->
-          if (!existingAssessment.assessment.assessment.any { it.questionId == qAndA.question.id }) {
-            existingAssessment.assessment.assessment.add(
-              ResettlementAssessmentSimpleQuestionAndAnswer(
-                qAndA.question.id,
-                StringAnswer(null),
-              ),
-            )
-          }
+        // remove SUPPORT_NEEDS and replace with SUPPORT_NEEDS_PRERELEASE which has more options
+        val questions = existingAssessment.questionsAndAnswers.toMutableList()
+        questions.removeIf { it.questionId == GenericResettlementAssessmentQuestion.SUPPORT_NEEDS.id }
+        if (!questions.any { it.questionId == GenericResettlementAssessmentQuestion.SUPPORT_NEEDS_PRERELEASE.id }) {
+          questions.add(
+            ResettlementAssessmentSimpleQuestionAndAnswer(
+              GenericResettlementAssessmentQuestion.SUPPORT_NEEDS_PRERELEASE.id,
+              StringAnswer(null),
+            ),
+          )
         }
+        if (!questions.any { it.questionId == GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY.id }) {
+          questions.add(
+            ResettlementAssessmentSimpleQuestionAndAnswer(
+              GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY.id,
+              StringAnswer(null),
+            ),
+          )
+        }
+        existingAssessment = existingAssessment.copy(assessment = ResettlementAssessmentQuestionAndAnswerList(questions.toList()))
       }
     }
 
@@ -210,39 +220,25 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
         if (existingAnswer != null && q.question.id != GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY.id) {
           q.answer = existingAnswer.answer
         }
-      }
-
-      if (resettlementAssessmentResponsePage.id == GenericAssessmentPage.ASSESSMENT_SUMMARY.id && assessmentType == ResettlementAssessmentType.RESETTLEMENT_PLAN) {
-        resettlementAssessmentResponsePage = resettlementAssessmentResponsePage.copy(
-          questionsAndAnswers = resettlementAssessmentResponsePage.questionsAndAnswers.map { existingQAndA ->
-            if (existingQAndA.question.id == GenericResettlementAssessmentQuestion.SUPPORT_NEEDS.id) {
-              useExtendedStatusQuestion(pathway, nomsId) ?: existingQAndA
-            } else {
-              existingQAndA
-            }
-          },
-        )
+        if (q.question.id == GenericResettlementAssessmentQuestion.SUPPORT_NEEDS_PRERELEASE.id) {
+          q.answer = loadPathwayStatusAnswer(pathway, nomsId) ?: existingAnswer?.answer
+        }
       }
     }
 
     return resettlementAssessmentResponsePage
   }
 
-  private fun useExtendedStatusQuestion(pathway: Pathway, nomsId: String): ResettlementAssessmentResponseQuestionAndAnswer? {
+  private fun loadPathwayStatusAnswer(pathway: Pathway, nomsId: String): StringAnswer? {
     val pathwayEntity = pathwayRepository.findById(pathway.id).getOrNull() ?: return null
     val prisonerEntity = loadPrisoner(nomsId)
     val pathwayStatus = pathwayStatusRepository.findByPathwayAndPrisoner(pathwayEntity, prisonerEntity) ?: return null
 
-    val status = pathwayStatus.status.toStatus()
-    return ResettlementAssessmentResponseQuestionAndAnswer(
-      question = GenericResettlementAssessmentQuestion.SUPPORT_NEEDS_PRERELEASE,
-      originalPageId = GenericAssessmentPage.PRERELEASE_ASSESSMENT_SUMMARY.id,
-      answer = StringAnswer(status.name),
-    )
+    return StringAnswer(pathwayStatus.status.toStatus().name)
   }
 
   override fun findPageIdFromQuestionId(questionId: String, assessmentType: ResettlementAssessmentType): String {
-    val pageList = getPageList(assessmentType).map { it.assessmentPage }
+    val pageList = getPageList(assessmentType).map { it.assessmentPage } + GenericAssessmentPage.entries
     return pageList.firstOrNull { p -> (p.questionsAndAnswers.any { q -> q.question.id == questionId }) }?.id ?: throw RuntimeException("Cannot find page for question [$questionId] - check that the question is used in a page!")
   }
 
@@ -386,8 +382,8 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
 
     // Ensure the correct number of questions are answered in each page
     nodeToQuestionMap.forEach { entry ->
-      val expectedQuestions = entry.key.assessmentPage.questionsAndAnswers.map { it.question }
-      val actualQuestions = entry.value.map { it.question }
+      val expectedQuestions = entry.key.assessmentPage.questionsAndAnswers.map { it.question }.toSet()
+      val actualQuestions = entry.value.map { it.question }.toSet()
       if (expectedQuestions != actualQuestions) {
         throw ServerWebInputException("Error validating questions and answers - wrong questions answered on page [${entry.key.assessmentPage.id}]. Expected [$expectedQuestions] but found [$actualQuestions]")
       }

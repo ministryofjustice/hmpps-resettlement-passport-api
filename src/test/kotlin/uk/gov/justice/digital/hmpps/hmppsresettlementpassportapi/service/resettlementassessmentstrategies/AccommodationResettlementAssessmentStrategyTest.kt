@@ -48,7 +48,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClaimFromJWTToken
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.Optional
+import java.util.*
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -700,14 +700,14 @@ class AccommodationResettlementAssessmentStrategyTest {
           originalPageId = "WHERE_DID_THEY_LIVE_ADDRESS",
         ),
         ResettlementAssessmentResponseQuestionAndAnswer(
-          GenericResettlementAssessmentQuestion.SUPPORT_NEEDS,
+          GenericResettlementAssessmentQuestion.SUPPORT_NEEDS_REASSESS,
           answer = StringAnswer(answer = null),
-          originalPageId = "ASSESSMENT_SUMMARY",
+          originalPageId = "ASSESSMENT_SUMMARY_2",
         ),
         ResettlementAssessmentResponseQuestionAndAnswer(
           GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY,
           answer = StringAnswer(answer = null),
-          originalPageId = "ASSESSMENT_SUMMARY",
+          originalPageId = "ASSESSMENT_SUMMARY_2",
         ),
       ),
     )
@@ -1048,7 +1048,12 @@ class AccommodationResettlementAssessmentStrategyTest {
     if (valid) {
       resettlementAssessmentService.validateQuestionAndAnswerSet(assessment, false)
     } else {
-      assertThrows<ServerWebInputException> { resettlementAssessmentService.validateQuestionAndAnswerSet(assessment, false) }
+      assertThrows<ServerWebInputException> {
+        resettlementAssessmentService.validateQuestionAndAnswerSet(
+          assessment,
+          false,
+        )
+      }
     }
   }
 

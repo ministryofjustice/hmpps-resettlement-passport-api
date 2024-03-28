@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
@@ -41,7 +42,7 @@ class DrugsAndAlcoholResettlementAssessmentStrategy(
   ) {
   override fun appliesTo(pathway: Pathway) = pathway == Pathway.DRUGS_AND_ALCOHOL
 
-  override fun getPageList(): List<ResettlementAssessmentNode> = listOf(
+  override fun getPageList(assessmentType: ResettlementAssessmentType): List<ResettlementAssessmentNode> = listOf(
     ResettlementAssessmentNode(
       DrugsAndAlcoholAssessmentPage.DRUG_ISSUES,
       nextPage =
@@ -83,7 +84,7 @@ class DrugsAndAlcoholResettlementAssessmentStrategy(
       DrugsAndAlcoholAssessmentPage.SUPPORT_WITH_ALCOHOL_ISSUES,
       nextPage = ::finalQuestionNextPage,
     ),
-    assessmentSummaryNode,
+    assessmentSummaryNode(assessmentType),
   )
 }
 

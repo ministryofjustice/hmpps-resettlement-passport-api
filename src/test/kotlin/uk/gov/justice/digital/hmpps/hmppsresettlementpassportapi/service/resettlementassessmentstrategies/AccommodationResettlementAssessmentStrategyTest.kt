@@ -700,14 +700,14 @@ class AccommodationResettlementAssessmentStrategyTest {
           originalPageId = "WHERE_DID_THEY_LIVE_ADDRESS",
         ),
         ResettlementAssessmentResponseQuestionAndAnswer(
-          GenericResettlementAssessmentQuestion.SUPPORT_NEEDS_REASSESS,
+          GenericResettlementAssessmentQuestion.SUPPORT_NEEDS_PRERELEASE,
           answer = StringAnswer(answer = null),
-          originalPageId = "ASSESSMENT_SUMMARY_2",
+          originalPageId = "PRERELEASE_ASSESSMENT_SUMMARY",
         ),
         ResettlementAssessmentResponseQuestionAndAnswer(
           GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY,
           answer = StringAnswer(answer = null),
-          originalPageId = "ASSESSMENT_SUMMARY_2",
+          originalPageId = "PRERELEASE_ASSESSMENT_SUMMARY",
         ),
       ),
     )
@@ -1023,7 +1023,7 @@ class AccommodationResettlementAssessmentStrategyTest {
   @ParameterizedTest
   @MethodSource("test findPageIdFromQuestionId data")
   fun `test findPageIdFromQuestionId`(questionId: String, expectedPageId: String) {
-    Assertions.assertEquals(expectedPageId, resettlementAssessmentService.findPageIdFromQuestionId(questionId))
+    Assertions.assertEquals(expectedPageId, resettlementAssessmentService.findPageIdFromQuestionId(questionId, ResettlementAssessmentType.BCST2))
   }
 
   private fun `test findPageIdFromQuestionId data`() = Stream.of(

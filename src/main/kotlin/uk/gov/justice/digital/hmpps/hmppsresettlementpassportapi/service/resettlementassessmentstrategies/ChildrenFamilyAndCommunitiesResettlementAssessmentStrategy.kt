@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
@@ -41,7 +42,7 @@ class ChildrenFamilyAndCommunitiesResettlementAssessmentStrategy(
   ) {
   override fun appliesTo(pathway: Pathway) = pathway == Pathway.CHILDREN_FAMILIES_AND_COMMUNITY
 
-  override fun getPageList(): List<ResettlementAssessmentNode> = listOf(
+  override fun getPageList(assessmentType: ResettlementAssessmentType): List<ResettlementAssessmentNode> = listOf(
     ResettlementAssessmentNode(
       ChildrenFamilyAndCommunitiesAssessmentPage.PARTNER_OR_SPOUSE,
       nextPage = fun(_: NextPageContext): IAssessmentPage {
@@ -133,7 +134,7 @@ class ChildrenFamilyAndCommunitiesResettlementAssessmentStrategy(
       ChildrenFamilyAndCommunitiesAssessmentPage.COMMUNITY_ORGANISATION_SUPPORT,
       nextPage = ::finalQuestionNextPage,
     ),
-    assessmentSummaryNode,
+    assessmentSummaryNode(assessmentType),
   )
 }
 

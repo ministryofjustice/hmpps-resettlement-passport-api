@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
@@ -40,7 +41,7 @@ class AccommodationResettlementAssessmentStrategy(
 ) {
   override fun appliesTo(pathway: Pathway) = pathway == Pathway.ACCOMMODATION
 
-  override fun getPageList(): List<ResettlementAssessmentNode> = listOf(
+  override fun getPageList(assessmentType: ResettlementAssessmentType): List<ResettlementAssessmentNode> = listOf(
     ResettlementAssessmentNode(
       AccommodationAssessmentPage.WHERE_DID_THEY_LIVE,
       nextPage =
@@ -74,7 +75,7 @@ class AccommodationResettlementAssessmentStrategy(
       AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_1,
       nextPage =
       fun(nextPageContext: NextPageContext): IAssessmentPage {
-        val (currentQuestionsAndAnswers, edit, assessmentType) = nextPageContext
+        val (currentQuestionsAndAnswers, edit) = nextPageContext
         return if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_1 && it.answer?.answer is String && (it.answer!!.answer as String == "MOVE_TO_NEW_ADDRESS") }) {
           AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_ADDRESS
         } else if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_1 && (it.answer?.answer as String in listOf("RETURN_TO_PREVIOUS_ADDRESS", "DOES_NOT_HAVE_ANYWHERE", "NO_ANSWER")) }) {
@@ -89,7 +90,7 @@ class AccommodationResettlementAssessmentStrategy(
       AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_2,
       nextPage =
       fun(nextPageContext: NextPageContext): IAssessmentPage {
-        val (currentQuestionsAndAnswers, edit, assessmentType) = nextPageContext
+        val (currentQuestionsAndAnswers, edit) = nextPageContext
         return if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_2 && it.answer?.answer is String && (it.answer!!.answer as String == "MOVE_TO_NEW_ADDRESS") }) {
           AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_ADDRESS
         } else if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_2 && (it.answer?.answer as String in listOf("DOES_NOT_HAVE_ANYWHERE", "NO_ANSWER")) }) {
@@ -104,7 +105,7 @@ class AccommodationResettlementAssessmentStrategy(
       AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_ADDRESS,
       nextPage = ::finalQuestionNextPage,
     ),
-    assessmentSummaryNode,
+    assessmentSummaryNode(assessmentType),
   )
 }
 

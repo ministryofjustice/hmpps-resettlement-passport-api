@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IAssessmentPage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.NextPageContext
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentNode
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
@@ -81,11 +82,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     if (currentPageEnum == null) {
       // Option 1 - If the current page is null then send back the first page unless there is already an assessment completed, in which case go straight to CHECK_ANSWERS
       nextPage = if (existingAssessment == null) {
-        if (assessmentPageClass.java.enumConstants.isNotEmpty()) {
-          assessmentPageClass.java.enumConstants[0] as IAssessmentPage
-        } else {
-          GenericAssessmentPage.ASSESSMENT_SUMMARY
-        }
+        assessmentPageClass.java.enumConstants?.getOrNull(0) as IAssessmentPage? ?: throw UnsupportedOperationException("${assessmentPageClass.simpleName} has no constants")
       } else {
         GenericAssessmentPage.CHECK_ANSWERS
       }
@@ -97,16 +94,22 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
       val questionLambda = getPageList().first { it.assessmentPage == currentPageEnum }
       val questions: List<ResettlementAssessmentQuestionAndAnswer> = assessment.questionsAndAnswers!!.map {
         ResettlementAssessmentQuestionAndAnswer(
-          convertEnumStringToEnum(enumClass = questionClass, secondaryEnumClass = GenericResettlementAssessmentQuestion::class, stringValue = it.question),
+          findQuestionEnum(enumClass = questionClass, stringValue = it.question),
           it.answer as Answer<*>,
         )
       }
       // If the existing assessment is SUBMITTED this is an edit
       val edit = existingAssessment?.assessmentStatus?.id == ResettlementAssessmentStatus.SUBMITTED.id
-      nextPage = questionLambda.nextPage(questions, edit)
+      nextPage = questionLambda.nextPage(NextPageContext(questions, edit, assessmentType))
     }
 
     return nextPage.id
+  }
+
+  private fun findQuestionEnum(enumClass: KClass<Q>, stringValue: String?): IResettlementAssessmentQuestion {
+    return enumClass.java.enumConstants.firstOrNull { it.name == stringValue || it.id == stringValue }
+      ?: GenericResettlementAssessmentQuestion.entries.firstOrNull { it.name == stringValue || it.id == stringValue }
+      ?: throw IllegalArgumentException("$stringValue does not exist in enum ${enumClass.simpleName} (or GenericResettlementAssessmentQuestion)")
   }
 
   private fun getExistingAssessment(
@@ -152,7 +155,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
       existingAssessment = getExistingAssessment(nomsId, pathway, ResettlementAssessmentType.BCST2)
       // If the SUPPORT_NEEDS page has not been answered in the latest assessment (because this is an edit), add these back in
       if (existingAssessment != null) {
-        GenericAssessmentPage.ASSESSMENT_SUMMARY.questionsAndAnswers.forEach { qAndA ->
+        GenericAssessmentPage.PRERELEASE_ASSESSMENT_SUMMARY.questionsAndAnswers.forEach { qAndA ->
           if (!existingAssessment.assessment.assessment.any { it.questionId == qAndA.question.id }) {
             existingAssessment.assessment.assessment.add(
               ResettlementAssessmentSimpleQuestionAndAnswer(
@@ -199,7 +202,13 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
           listOf()
         }
         val questionsAndAnswers: List<ResettlementAssessmentResponseQuestionAndAnswer> =
-          existingAssessment.assessment.assessment.map { ResettlementAssessmentResponseQuestionAndAnswer(question = getQuestionList().first { q -> q.id == it.questionId }, answer = it.answer, originalPageId = findPageIdFromQuestionId(it.questionId)) }.filter { it.question !in questionsToExclude }
+          existingAssessment.assessment.assessment.map {
+            ResettlementAssessmentResponseQuestionAndAnswer(
+              question = getQuestionList().first { q -> q.id == it.questionId },
+              answer = it.answer,
+              originalPageId = findPageIdFromQuestionId(it.questionId),
+            )
+          }.filter { it.question !in questionsToExclude }
         resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(resettlementAssessmentResponsePage.id, questionsAndAnswers = questionsAndAnswers)
       }
 
@@ -270,7 +279,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     val edit = getExistingAssessment(nomsId, pathway, assessmentType)?.assessmentStatus?.id == ResettlementAssessmentStatus.SUBMITTED.id
 
     // Check that question and answer set is valid
-    validateQuestionAndAnswerSet(assessment, edit)
+    validateQuestionAndAnswerSet(assessment, edit, assessmentType)
 
     // Obtain prisoner from database, if exists
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
@@ -292,8 +301,11 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
 
     if (!edit) {
       // Get statusChangedTo out of SUPPORT_NEEDS question and convert to a Status
-      val supportNeedsQuestionAndAnswer =
+      val supportNeedsQuestionAndAnswer = if (assessmentType == ResettlementAssessmentType.RESETTLEMENT_PLAN) {
+        assessment.questionsAndAnswers.first { it.question == GenericResettlementAssessmentQuestion.SUPPORT_NEEDS_REASSESS.id }
+      } else {
         assessment.questionsAndAnswers.first { it.question == GenericResettlementAssessmentQuestion.SUPPORT_NEEDS.id }
+      }
 
       val statusChangedTo = convertFromSupportNeedAnswerToStatus(supportNeedsQuestionAndAnswer.answer)
       statusEntity = statusRepository.findById(statusChangedTo.id).get()
@@ -339,6 +351,9 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
         "SUPPORT_REQUIRED" -> Status.SUPPORT_REQUIRED
         "SUPPORT_NOT_REQUIRED" -> Status.SUPPORT_NOT_REQUIRED
         "SUPPORT_DECLINED" -> Status.SUPPORT_DECLINED
+        "NOT_STARTED" -> Status.NOT_STARTED
+        "IN_PROGRESS" -> Status.IN_PROGRESS
+        "DONE" -> Status.DONE
         else -> throw ServerWebInputException("Support need [$supportNeed] is not a valid option")
       }
     } else {
@@ -356,7 +371,11 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
 
   override fun getQuestionClass(): KClass<Q> = questionClass
 
-  fun validateQuestionAndAnswerSet(assessment: ResettlementAssessmentCompleteRequest, edit: Boolean) {
+  fun validateQuestionAndAnswerSet(
+    assessment: ResettlementAssessmentCompleteRequest,
+    edit: Boolean,
+    assessmentType: ResettlementAssessmentType = ResettlementAssessmentType.BCST2,
+  ) {
     // Convert to Map of pages to List of questionsAndAnswers
     val nodeToQuestionMap = assessment.questionsAndAnswers
       .groupByTo(LinkedHashMap()) { qa ->
@@ -389,7 +408,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
       try {
         val actualPage: IAssessmentPage? = nodeToQuestionMap.keys.elementAtOrNull(pageNumber)?.assessmentPage
         val expectedPage: IAssessmentPage =
-          currentNode?.nextPage?.invoke(nodeToQuestionMap[currentNode]!!, edit) ?: getPageList()[0].assessmentPage
+          currentNode?.nextPage?.invoke(NextPageContext(nodeToQuestionMap[currentNode]!!, edit, assessmentType)) ?: getPageList()[0].assessmentPage
         if (expectedPage == GenericAssessmentPage.CHECK_ANSWERS) {
           break
         }
@@ -424,6 +443,13 @@ enum class GenericAssessmentPage(
     id = "ASSESSMENT_SUMMARY",
     questionsAndAnswers = listOf(
       ResettlementAssessmentQuestionAndAnswer(GenericResettlementAssessmentQuestion.SUPPORT_NEEDS),
+      ResettlementAssessmentQuestionAndAnswer(GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY),
+    ),
+  ),
+  PRERELEASE_ASSESSMENT_SUMMARY(
+    id = "PRERELEASE_ASSESSMENT_SUMMARY",
+    questionsAndAnswers = listOf(
+      ResettlementAssessmentQuestionAndAnswer(GenericResettlementAssessmentQuestion.SUPPORT_NEEDS_REASSESS),
       ResettlementAssessmentQuestionAndAnswer(GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY),
     ),
   ),
@@ -463,7 +489,7 @@ enum class GenericResettlementAssessmentQuestion(
     type = TypeOfQuestion.LONG_TEXT,
   ),
   SUPPORT_NEEDS_REASSESS(
-    id = "SUPPORT_NEEDS_2",
+    id = "SUPPORT_NEEDS_REASSESS",
     title = "",
     type = TypeOfQuestion.RADIO,
     options = listOf(
@@ -472,16 +498,15 @@ enum class GenericResettlementAssessmentQuestion(
         displayText = "Support required",
         description = "a need for support has been identified and is accepted",
       ),
-      Option(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
+      Option(
+        id = "SUPPORT_NOT_REQUIRED",
+        displayText = "Support not required",
+        description = "no need was identified",
+      ),
       Option(
         id = "SUPPORT_DECLINED",
         displayText = "Support declined",
         description = "a need has been identified but support is declined",
-      ),
-      Option(
-        id = "NOT_STARTED",
-        displayText = "Not Started",
-        description = "TODO",
       ),
       Option(
         id = "IN_PROGRESS",
@@ -497,9 +522,11 @@ enum class GenericResettlementAssessmentQuestion(
   ),
 }
 
-fun finalQuestionNextPage(@Suppress("unused") questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, edit: Boolean): IAssessmentPage {
-  return if (!edit) {
+fun finalQuestionNextPage(nextPageContext: NextPageContext): IAssessmentPage {
+  return if (!nextPageContext.edit && nextPageContext.assessmentType == ResettlementAssessmentType.BCST2) {
     GenericAssessmentPage.ASSESSMENT_SUMMARY
+  } else if (!nextPageContext.edit && nextPageContext.assessmentType == ResettlementAssessmentType.RESETTLEMENT_PLAN) {
+    GenericAssessmentPage.PRERELEASE_ASSESSMENT_SUMMARY
   } else {
     GenericAssessmentPage.CHECK_ANSWERS
   }
@@ -507,7 +534,7 @@ fun finalQuestionNextPage(@Suppress("unused") questionsAndAnswers: List<Resettle
 
 val assessmentSummaryNode = ResettlementAssessmentNode(
   assessmentPage = GenericAssessmentPage.ASSESSMENT_SUMMARY,
-  nextPage = fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
+  nextPage = fun(_: NextPageContext): IAssessmentPage {
     return GenericAssessmentPage.CHECK_ANSWERS
   },
 )

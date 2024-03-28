@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IAssessmentPage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.NextPageContext
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentNode
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
@@ -43,7 +44,7 @@ class AttitudesThinkingAndBehaviourResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       AttitudesThinkingAndBehaviourAssessmentPage.HELP_TO_MANAGE_ANGER,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
+      fun(_: NextPageContext): IAssessmentPage {
         return AttitudesThinkingAndBehaviourAssessmentPage.ISSUES_WITH_GAMBLING
       },
     ),

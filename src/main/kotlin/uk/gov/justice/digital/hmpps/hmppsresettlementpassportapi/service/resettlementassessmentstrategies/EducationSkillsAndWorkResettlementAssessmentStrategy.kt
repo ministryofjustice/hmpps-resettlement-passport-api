@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IAssessmentPage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.NextPageContext
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentNode
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
@@ -44,7 +45,8 @@ class EducationSkillsAndWorkResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.JOB_BEFORE_CUSTODY,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
+      fun(context: NextPageContext): IAssessmentPage {
+        val (currentQuestionsAndAnswers) = context
         return if (currentQuestionsAndAnswers.any { it.question == EducationSkillsAndWorkResettlementAssessmentQuestion.JOB_BEFORE_CUSTODY && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           EducationSkillsAndWorkAssessmentPage.TYPE_OF_EMPLOYMENT_CONTRACT
         } else if (currentQuestionsAndAnswers.any { it.question == EducationSkillsAndWorkResettlementAssessmentQuestion.JOB_BEFORE_CUSTODY && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
@@ -58,14 +60,15 @@ class EducationSkillsAndWorkResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.TYPE_OF_EMPLOYMENT_CONTRACT,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
+      fun(_: NextPageContext): IAssessmentPage {
         return EducationSkillsAndWorkAssessmentPage.RETURN_TO_JOB_AFTER_RELEASE
       },
     ),
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.RETURN_TO_JOB_AFTER_RELEASE,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
+      fun(context: NextPageContext): IAssessmentPage {
+        val (currentQuestionsAndAnswers) = context
         return if (currentQuestionsAndAnswers.any { it.question == EducationSkillsAndWorkResettlementAssessmentQuestion.RETURN_TO_JOB_AFTER_RELEASE && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           EducationSkillsAndWorkAssessmentPage.HELP_CONTACTING_EMPLOYER
         } else if (currentQuestionsAndAnswers.any { it.question == EducationSkillsAndWorkResettlementAssessmentQuestion.RETURN_TO_JOB_AFTER_RELEASE && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
@@ -79,7 +82,8 @@ class EducationSkillsAndWorkResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.HAVE_A_JOB_AFTER_RELEASE,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
+      fun(context: NextPageContext): IAssessmentPage {
+        val (currentQuestionsAndAnswers) = context
         return if (currentQuestionsAndAnswers.any { it.question == EducationSkillsAndWorkResettlementAssessmentQuestion.HAVE_A_JOB_AFTER_RELEASE && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           EducationSkillsAndWorkAssessmentPage.HELP_CONTACTING_EMPLOYER
         } else if (currentQuestionsAndAnswers.any { it.question == EducationSkillsAndWorkResettlementAssessmentQuestion.HAVE_A_JOB_AFTER_RELEASE && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
@@ -93,7 +97,8 @@ class EducationSkillsAndWorkResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.HELP_CONTACTING_EMPLOYER,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
+      fun(context: NextPageContext): IAssessmentPage {
+        val (currentQuestionsAndAnswers) = context
         return if (currentQuestionsAndAnswers.any { it.question == EducationSkillsAndWorkResettlementAssessmentQuestion.HELP_CONTACTING_EMPLOYER && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           EducationSkillsAndWorkAssessmentPage.EMPLOYMENT_DETAILS_BEFORE_CUSTODY
         } else if (currentQuestionsAndAnswers.any { it.question == EducationSkillsAndWorkResettlementAssessmentQuestion.HELP_CONTACTING_EMPLOYER && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
@@ -107,21 +112,22 @@ class EducationSkillsAndWorkResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.EMPLOYMENT_DETAILS_BEFORE_CUSTODY,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
+      fun(_: NextPageContext): IAssessmentPage {
         return EducationSkillsAndWorkAssessmentPage.IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY
       },
     ),
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.SUPPORT_TO_FIND_JOB,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
+      fun(_: NextPageContext): IAssessmentPage {
         return EducationSkillsAndWorkAssessmentPage.IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY
       },
     ),
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
+      fun(context: NextPageContext): IAssessmentPage {
+        val (currentQuestionsAndAnswers) = context
         return if (currentQuestionsAndAnswers.any { it.question == EducationSkillsAndWorkResettlementAssessmentQuestion.IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           EducationSkillsAndWorkAssessmentPage.RETURN_TO_EDUCATION_OR_TRAINING_AFTER_RELEASE
         } else if (currentQuestionsAndAnswers.any { it.question == EducationSkillsAndWorkResettlementAssessmentQuestion.IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
@@ -135,7 +141,8 @@ class EducationSkillsAndWorkResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.RETURN_TO_EDUCATION_OR_TRAINING_AFTER_RELEASE,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
+      fun(context: NextPageContext): IAssessmentPage {
+        val (currentQuestionsAndAnswers) = context
         return if (currentQuestionsAndAnswers.any { it.question == EducationSkillsAndWorkResettlementAssessmentQuestion.RETURN_TO_EDUCATION_OR_TRAINING_AFTER_RELEASE && it.answer?.answer is String && (it.answer!!.answer as String == "NO") }) {
           EducationSkillsAndWorkAssessmentPage.WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE
         } else if (currentQuestionsAndAnswers.any { it.question == EducationSkillsAndWorkResettlementAssessmentQuestion.RETURN_TO_EDUCATION_OR_TRAINING_AFTER_RELEASE && (it.answer?.answer as String in listOf("YES", "NO_ANSWER")) }) {
@@ -149,11 +156,12 @@ class EducationSkillsAndWorkResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, edit: Boolean): IAssessmentPage {
+      fun(context: NextPageContext): IAssessmentPage {
+        val (currentQuestionsAndAnswers) = context
         return if (currentQuestionsAndAnswers.any { it.question == EducationSkillsAndWorkResettlementAssessmentQuestion.WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           EducationSkillsAndWorkAssessmentPage.BURSARIES_AND_GRANTS
         } else if (currentQuestionsAndAnswers.any { it.question == EducationSkillsAndWorkResettlementAssessmentQuestion.WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
-          finalQuestionNextPage(currentQuestionsAndAnswers, edit)
+          finalQuestionNextPage(context)
         } else {
           // Bad request if the question isn't answered
           throw ServerWebInputException("No valid answer found to mandatory question ${EducationSkillsAndWorkResettlementAssessmentQuestion.WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE}.")
@@ -163,7 +171,8 @@ class EducationSkillsAndWorkResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.HELP_CONTACTING_EDUCATION_PROVIDER,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
+      fun(context: NextPageContext): IAssessmentPage {
+        val (currentQuestionsAndAnswers) = context
         return if (currentQuestionsAndAnswers.any { it.question == EducationSkillsAndWorkResettlementAssessmentQuestion.HELP_CONTACTING_EDUCATION_PROVIDER && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           EducationSkillsAndWorkAssessmentPage.TRAINING_PROVIDER_DETAILS
         } else if (currentQuestionsAndAnswers.any { it.question == EducationSkillsAndWorkResettlementAssessmentQuestion.HELP_CONTACTING_EDUCATION_PROVIDER && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
@@ -177,7 +186,7 @@ class EducationSkillsAndWorkResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       EducationSkillsAndWorkAssessmentPage.TRAINING_PROVIDER_DETAILS,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
+      fun(_: NextPageContext): IAssessmentPage {
         return EducationSkillsAndWorkAssessmentPage.BURSARIES_AND_GRANTS
       },
     ),

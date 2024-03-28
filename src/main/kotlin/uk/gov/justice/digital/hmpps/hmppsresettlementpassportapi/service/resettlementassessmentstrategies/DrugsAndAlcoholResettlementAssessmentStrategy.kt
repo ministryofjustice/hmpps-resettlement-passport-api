@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IAssessmentPage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.NextPageContext
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentNode
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
@@ -44,7 +45,8 @@ class DrugsAndAlcoholResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       DrugsAndAlcoholAssessmentPage.DRUG_ISSUES,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
+      fun(context: NextPageContext): IAssessmentPage {
+        val (currentQuestionsAndAnswers) = context
         return if (currentQuestionsAndAnswers.any { it.question == DrugsAndAlcoholResettlementAssessmentQuestion.DRUG_ISSUES && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           DrugsAndAlcoholAssessmentPage.SUPPORT_WITH_DRUG_ISSUES
         } else if (currentQuestionsAndAnswers.any { it.question == DrugsAndAlcoholResettlementAssessmentQuestion.DRUG_ISSUES && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
@@ -58,18 +60,19 @@ class DrugsAndAlcoholResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       DrugsAndAlcoholAssessmentPage.SUPPORT_WITH_DRUG_ISSUES,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
+      fun(_: NextPageContext): IAssessmentPage {
         return DrugsAndAlcoholAssessmentPage.ALCOHOL_ISSUES
       },
     ),
     ResettlementAssessmentNode(
       DrugsAndAlcoholAssessmentPage.ALCOHOL_ISSUES,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, edit: Boolean): IAssessmentPage {
+      fun(context: NextPageContext): IAssessmentPage {
+        val (currentQuestionsAndAnswers) = context
         return if (currentQuestionsAndAnswers.any { it.question == DrugsAndAlcoholResettlementAssessmentQuestion.ALCOHOL_ISSUES && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           DrugsAndAlcoholAssessmentPage.SUPPORT_WITH_ALCOHOL_ISSUES
         } else if (currentQuestionsAndAnswers.any { it.question == DrugsAndAlcoholResettlementAssessmentQuestion.ALCOHOL_ISSUES && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
-          finalQuestionNextPage(currentQuestionsAndAnswers, edit)
+          finalQuestionNextPage(context)
         } else {
           // Bad request if the question isn't answered
           throw ServerWebInputException("No valid answer found to mandatory question ${DrugsAndAlcoholResettlementAssessmentQuestion.ALCOHOL_ISSUES}.")

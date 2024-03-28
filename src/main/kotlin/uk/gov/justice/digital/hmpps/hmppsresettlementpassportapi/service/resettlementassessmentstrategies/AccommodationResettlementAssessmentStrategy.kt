@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IAssessmentPage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.NextPageContext
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentNode
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
@@ -43,7 +44,8 @@ class AccommodationResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       AccommodationAssessmentPage.WHERE_DID_THEY_LIVE,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
+      fun(nextPageContext: NextPageContext): IAssessmentPage {
+        val (currentQuestionsAndAnswers) = nextPageContext
         return if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE && it.answer?.answer is String && (it.answer!!.answer as String in listOf("PRIVATE_RENTED_HOUSING", "SOCIAL_HOUSING", "HOMEOWNER")) }) {
           AccommodationAssessmentPage.WHERE_DID_THEY_LIVE_ADDRESS
         } else if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE && (it.answer?.answer as String in listOf("NO_PERMANENT_OR_FIXED", "NO_ANSWER")) }) {
@@ -57,25 +59,26 @@ class AccommodationResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       AccommodationAssessmentPage.WHERE_DID_THEY_LIVE_ADDRESS,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
+      fun(_: NextPageContext): IAssessmentPage {
         return AccommodationAssessmentPage.HELP_TO_KEEP_HOME
       },
     ),
     ResettlementAssessmentNode(
       AccommodationAssessmentPage.HELP_TO_KEEP_HOME,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
+      fun(_: NextPageContext): IAssessmentPage {
         return AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_1
       },
     ),
     ResettlementAssessmentNode(
       AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_1,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, edit: Boolean): IAssessmentPage {
+      fun(nextPageContext: NextPageContext): IAssessmentPage {
+        val (currentQuestionsAndAnswers, edit, assessmentType) = nextPageContext
         return if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_1 && it.answer?.answer is String && (it.answer!!.answer as String == "MOVE_TO_NEW_ADDRESS") }) {
           AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_ADDRESS
         } else if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_1 && (it.answer?.answer as String in listOf("RETURN_TO_PREVIOUS_ADDRESS", "DOES_NOT_HAVE_ANYWHERE", "NO_ANSWER")) }) {
-          finalQuestionNextPage(currentQuestionsAndAnswers, edit)
+          finalQuestionNextPage(NextPageContext(currentQuestionsAndAnswers, edit, assessmentType))
         } else {
           // Bad request if the question isn't answered
           throw ServerWebInputException("No valid answer found to mandatory question ${AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_1}.")
@@ -85,11 +88,12 @@ class AccommodationResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_2,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, edit: Boolean): IAssessmentPage {
+      fun(nextPageContext: NextPageContext): IAssessmentPage {
+        val (currentQuestionsAndAnswers, edit, assessmentType) = nextPageContext
         return if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_2 && it.answer?.answer is String && (it.answer!!.answer as String == "MOVE_TO_NEW_ADDRESS") }) {
           AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_ADDRESS
         } else if (currentQuestionsAndAnswers.any { it.question == AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_2 && (it.answer?.answer as String in listOf("DOES_NOT_HAVE_ANYWHERE", "NO_ANSWER")) }) {
-          finalQuestionNextPage(currentQuestionsAndAnswers, edit)
+          finalQuestionNextPage(NextPageContext(currentQuestionsAndAnswers, edit, assessmentType))
         } else {
           // Bad request if the question isn't answered
           throw ServerWebInputException("No valid answer found to mandatory question ${AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_2}.")

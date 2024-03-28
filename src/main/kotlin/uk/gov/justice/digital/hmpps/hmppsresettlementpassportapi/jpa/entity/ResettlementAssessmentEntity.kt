@@ -66,7 +66,10 @@ data class ResettlementAssessmentEntity(
 
   @Column(name = "created_by_user_id")
   val createdByUserId: String,
-)
+) {
+  val questionsAndAnswers: List<ResettlementAssessmentSimpleQuestionAndAnswer>
+    get() = assessment.assessment
+}
 
 enum class ResettlementAssessmentType(val displayName: String) {
   BCST2("BCST2"),
@@ -74,7 +77,7 @@ enum class ResettlementAssessmentType(val displayName: String) {
 }
 
 data class ResettlementAssessmentQuestionAndAnswerList(
-  val assessment: MutableList<ResettlementAssessmentSimpleQuestionAndAnswer>,
+  val assessment: List<ResettlementAssessmentSimpleQuestionAndAnswer>,
 )
 
 data class ResettlementAssessmentSimpleQuestionAndAnswer(

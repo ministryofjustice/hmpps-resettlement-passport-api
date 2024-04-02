@@ -40,6 +40,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentStatusRepository
@@ -68,6 +69,9 @@ class AccommodationResettlementAssessmentStrategyTest {
   private lateinit var statusRepository: StatusRepository
 
   @Mock
+  private lateinit var pathwayStatusRepository: PathwayStatusRepository
+
+  @Mock
   private lateinit var resettlementAssessmentStatusRepository: ResettlementAssessmentStatusRepository
 
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
@@ -79,6 +83,7 @@ class AccommodationResettlementAssessmentStrategyTest {
       prisonerRepository,
       statusRepository,
       pathwayRepository,
+      pathwayStatusRepository,
       resettlementAssessmentStatusRepository,
     )
   }
@@ -695,14 +700,14 @@ class AccommodationResettlementAssessmentStrategyTest {
           originalPageId = "WHERE_DID_THEY_LIVE_ADDRESS",
         ),
         ResettlementAssessmentResponseQuestionAndAnswer(
-          GenericResettlementAssessmentQuestion.SUPPORT_NEEDS,
+          GenericResettlementAssessmentQuestion.SUPPORT_NEEDS_PRERELEASE,
           answer = StringAnswer(answer = null),
-          originalPageId = "ASSESSMENT_SUMMARY",
+          originalPageId = "PRERELEASE_ASSESSMENT_SUMMARY",
         ),
         ResettlementAssessmentResponseQuestionAndAnswer(
           GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY,
           answer = StringAnswer(answer = null),
-          originalPageId = "ASSESSMENT_SUMMARY",
+          originalPageId = "PRERELEASE_ASSESSMENT_SUMMARY",
         ),
       ),
     )
@@ -1018,7 +1023,7 @@ class AccommodationResettlementAssessmentStrategyTest {
   @ParameterizedTest
   @MethodSource("test findPageIdFromQuestionId data")
   fun `test findPageIdFromQuestionId`(questionId: String, expectedPageId: String) {
-    Assertions.assertEquals(expectedPageId, resettlementAssessmentService.findPageIdFromQuestionId(questionId))
+    Assertions.assertEquals(expectedPageId, resettlementAssessmentService.findPageIdFromQuestionId(questionId, ResettlementAssessmentType.BCST2))
   }
 
   private fun `test findPageIdFromQuestionId data`() = Stream.of(
@@ -1043,7 +1048,12 @@ class AccommodationResettlementAssessmentStrategyTest {
     if (valid) {
       resettlementAssessmentService.validateQuestionAndAnswerSet(assessment, false)
     } else {
-      assertThrows<ServerWebInputException> { resettlementAssessmentService.validateQuestionAndAnswerSet(assessment, false) }
+      assertThrows<ServerWebInputException> {
+        resettlementAssessmentService.validateQuestionAndAnswerSet(
+          assessment,
+          false,
+        )
+      }
     }
   }
 

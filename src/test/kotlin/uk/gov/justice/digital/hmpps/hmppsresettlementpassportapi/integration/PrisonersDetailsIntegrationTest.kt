@@ -12,7 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Period
-import java.util.*
+import java.util.Base64
 
 class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
 

@@ -67,3 +67,5 @@ VALUES
     (5, 1, 5, 4, 'BCST2', '{"assessment": []}'::jsonb, 1, '2023-10-16 12:21:38.709', 'Prison Officer'),
     (6, 1, 6, 4, 'BCST2', '{"assessment": []}'::jsonb, 1, '2023-10-16 12:21:38.709', 'Prison Officer'),
     (7, 1, 7, 4, 'BCST2', '{"assessment": []}'::jsonb, 1, '2023-10-16 12:21:38.709', 'Prison Officer');
+
+INSERT INTO public.pathway_status (id, prisoner_id, pathway_id, status_id, updated_date) VALUES (1, 1, 1, 5, '2024-04-02 09:25:01.126170 +00:00');

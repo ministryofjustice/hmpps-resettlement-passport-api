@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IAssessmentPage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.NextPageContext
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentNode
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
@@ -12,7 +13,9 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentStatusRepository
@@ -24,15 +27,26 @@ class HealthResettlementAssessmentStrategy(
   prisonerRepository: PrisonerRepository,
   statusRepository: StatusRepository,
   pathwayRepository: PathwayRepository,
+  pathwayStatusRepository: PathwayStatusRepository,
   resettlementAssessmentStatusRepository: ResettlementAssessmentStatusRepository,
-) : AbstractResettlementAssessmentStrategy<HealthAssessmentPage, HealthResettlementAssessmentQuestion>(resettlementAssessmentRepository, prisonerRepository, statusRepository, pathwayRepository, resettlementAssessmentStatusRepository, HealthAssessmentPage::class, HealthResettlementAssessmentQuestion::class) {
+) : AbstractResettlementAssessmentStrategy<HealthAssessmentPage, HealthResettlementAssessmentQuestion>(
+  resettlementAssessmentRepository,
+  prisonerRepository,
+  statusRepository,
+  pathwayRepository,
+  pathwayStatusRepository,
+  resettlementAssessmentStatusRepository,
+  HealthAssessmentPage::class,
+  HealthResettlementAssessmentQuestion::class,
+) {
   override fun appliesTo(pathway: Pathway) = pathway == Pathway.HEALTH
 
-  override fun getPageList(): List<ResettlementAssessmentNode> = listOf(
+  override fun getPageList(assessmentType: ResettlementAssessmentType): List<ResettlementAssessmentNode> = listOf(
     ResettlementAssessmentNode(
       HealthAssessmentPage.REGISTERED_WITH_GP,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
+      fun(context: NextPageContext): IAssessmentPage {
+        val (currentQuestionsAndAnswers) = context
         return if (currentQuestionsAndAnswers.any { it.question == HealthResettlementAssessmentQuestion.REGISTERED_WITH_GP && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           HealthAssessmentPage.MEET_HEALTHCARE_TEAM
         } else if (currentQuestionsAndAnswers.any { it.question == HealthResettlementAssessmentQuestion.REGISTERED_WITH_GP && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
@@ -46,18 +60,19 @@ class HealthResettlementAssessmentStrategy(
     ResettlementAssessmentNode(
       HealthAssessmentPage.HELP_REGISTERING_GP,
       nextPage =
-      fun(_: List<ResettlementAssessmentQuestionAndAnswer>, _: Boolean): IAssessmentPage {
+      fun(_: NextPageContext): IAssessmentPage {
         return HealthAssessmentPage.MEET_HEALTHCARE_TEAM
       },
     ),
     ResettlementAssessmentNode(
       HealthAssessmentPage.MEET_HEALTHCARE_TEAM,
       nextPage =
-      fun(currentQuestionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>, edit: Boolean): IAssessmentPage {
+      fun(context: NextPageContext): IAssessmentPage {
+        val (currentQuestionsAndAnswers) = context
         return if (currentQuestionsAndAnswers.any { it.question == HealthResettlementAssessmentQuestion.MEET_HEALTHCARE_TEAM && it.answer?.answer is String && (it.answer!!.answer as String == "YES") }) {
           HealthAssessmentPage.WHAT_HEALTH_NEED
         } else if (currentQuestionsAndAnswers.any { it.question == HealthResettlementAssessmentQuestion.MEET_HEALTHCARE_TEAM && (it.answer?.answer as String in listOf("NO", "NO_ANSWER")) }) {
-          finalQuestionNextPage(currentQuestionsAndAnswers, edit)
+          finalQuestionNextPage(context)
         } else {
           // Bad request if the question isn't answered
           throw ServerWebInputException("No valid answer found to mandatory question ${HealthResettlementAssessmentQuestion.MEET_HEALTHCARE_TEAM}.")
@@ -68,7 +83,7 @@ class HealthResettlementAssessmentStrategy(
       HealthAssessmentPage.WHAT_HEALTH_NEED,
       nextPage = ::finalQuestionNextPage,
     ),
-    assessmentSummaryNode,
+    assessmentSummaryNode(assessmentType),
   )
 }
 

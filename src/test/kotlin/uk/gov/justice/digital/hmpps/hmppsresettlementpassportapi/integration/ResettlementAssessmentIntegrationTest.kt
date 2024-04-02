@@ -626,4 +626,24 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectStatus().isNotFound
       .expectHeader().contentType("application/json")
   }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-7.sql")
+  fun `Uses pathway status for pre release assessment summary`() {
+    val nomsId = "G4161UF"
+    val pathway = "ACCOMMODATION"
+    val assessmentType = "RESETTLEMENT_PLAN"
+    val page = "PRERELEASE_ASSESSMENT_SUMMARY"
+
+    val expectedOutput = readFile("testdata/expectation/pre-release-assessment-summary.json")
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/page/$page?assessmentType=$assessmentType")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
+  }
 }

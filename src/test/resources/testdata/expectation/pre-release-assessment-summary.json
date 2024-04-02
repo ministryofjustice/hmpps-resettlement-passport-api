@@ -30,7 +30,7 @@
           },
           {
             "id": "IN_PROGRESS",
-            "displayText": "In Progress",
+            "displayText": "In progress",
             "description": "work is ongoing",
             "exclusive": false
           },
@@ -45,7 +45,7 @@
       },
       "answer": {
         "@class": "StringAnswer",
-        "answer": null
+        "answer": "DONE"
       },
       "originalPageId": "PRERELEASE_ASSESSMENT_SUMMARY"
     },

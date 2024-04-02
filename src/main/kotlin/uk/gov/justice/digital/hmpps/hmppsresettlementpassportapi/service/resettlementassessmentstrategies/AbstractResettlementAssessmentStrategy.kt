@@ -507,7 +507,7 @@ enum class GenericResettlementAssessmentQuestion(
       ),
       Option(
         id = "IN_PROGRESS",
-        displayText = "In Progress",
+        displayText = "In progress",
         description = "work is ongoing",
       ),
       Option(

@@ -508,12 +508,12 @@ enum class GenericResettlementAssessmentQuestion(
       Option(
         id = "IN_PROGRESS",
         displayText = "In Progress",
-        description = "TODO",
+        description = "work is ongoing",
       ),
       Option(
         id = "DONE",
         displayText = "Done",
-        description = "TODO",
+        description = "all required work has been completed successfully",
       ),
     ),
   ),

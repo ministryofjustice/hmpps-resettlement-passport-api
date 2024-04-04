@@ -251,6 +251,24 @@
       "eventId": 47028556,
       "sensitive": false,
       "amendments": []
+    },
+    {
+      "caseNoteId": "47028562",
+      "offenderIdentifier": "A3426DZ",
+      "type": "RESET",
+      "typeDescription": "Resettlement",
+      "subType": "BCST",
+      "subTypeDescription": "BCST",
+      "source": "INST",
+      "creationDateTime": "2024-01-12T11:01:02",
+      "occurrenceDateTime": "2024-01-12T11:01:02",
+      "authorName": "A User",
+      "authorUserId": "12367",
+      "text": "Case note summary from Accommodation Pre-release report\\n\\nCase note details here",
+      "locationId": "MDI",
+      "eventId": 47028557,
+      "sensitive": false,
+      "amendments": []
     }
   ],
   "pageable": {

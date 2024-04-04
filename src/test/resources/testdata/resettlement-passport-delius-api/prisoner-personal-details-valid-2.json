@@ -1,0 +1,13 @@
+{
+  "crn": "D345678",
+  "name": {
+    "forename": "CHRISY",
+    "surname": "CLEMENCE"
+  },
+  "dateOfBirth": "1974-05-30",
+  "contactDetails": {
+    "telephone": "0198765432",
+    "mobile": "0798654321",
+    "email": "chrisy.clemence@test.com"
+  }
+}

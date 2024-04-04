@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.CaseIdentifiers
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.Manager
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.MappaDetail
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.PersonalDetail
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.convertNameToTitleCase
 import java.time.LocalDate
@@ -125,5 +126,22 @@ class ResettlementPassportDeliusApiService(
       )
       .bodyToMono<AccommodationsDelius>()
       .block() ?: throw RuntimeException("Unexpected null returned from request.")
+  }
+
+  fun getPersonalDetails(nomsId: String, crn: String): PersonalDetail? {
+    val prisonersDetails = rpDeliusWebClientCredentials.get()
+      .uri("/probation-cases/$crn")
+      .retrieve()
+      .bodyToMono<PersonalDetail>()
+      .onErrorReturn(
+        {
+          log.warn("Unable to fetch personal details for nomsId $nomsId in delius due to error. Setting to null.", it)
+          it is WebClientException
+        },
+        PersonalDetail(crn, null, null, null),
+      )
+      .block()
+
+    return prisonersDetails
   }
 }

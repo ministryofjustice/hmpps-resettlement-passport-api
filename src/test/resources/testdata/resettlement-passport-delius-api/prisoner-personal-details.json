@@ -1,0 +1,13 @@
+{
+  "crn": "D345678",
+  "name": {
+    "forename": "John",
+    "surname": "Smith"
+  },
+  "dateOfBirth": "1982-10-24",
+  "contactDetails": {
+    "telephone": "012345678",
+    "mobile": "0778899665",
+    "email": "john.smith@test.com"
+  }
+}

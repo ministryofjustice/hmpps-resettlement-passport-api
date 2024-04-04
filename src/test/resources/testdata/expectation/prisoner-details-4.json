@@ -10,7 +10,10 @@
     "dateOfBirth": "1982-10-24",
     "age": REPLACE_WITH_AGE,
     "location": "K-3-011",
-    "facialImageId": "1313058"
+    "facialImageId": "1313058",
+    "mobile": "0778899665",
+    "telephone": "012345678",
+    "email": "john.smith@test.com"
   },
   "pathways": [
     {

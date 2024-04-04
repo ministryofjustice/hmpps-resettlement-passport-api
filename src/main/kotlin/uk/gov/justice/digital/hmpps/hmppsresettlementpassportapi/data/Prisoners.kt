@@ -34,6 +34,9 @@ data class PrisonerPersonal(
   var age: Int?,
   var location: String? = null,
   var facialImageId: String? = null,
+  var mobile: String? = null,
+  var telephone: String? = null,
+  var email: String? = null,
 )
 
 data class PathwayStatus(

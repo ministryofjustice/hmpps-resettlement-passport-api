@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoner
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerPersonal
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.PersonalDetail
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonerImage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
@@ -37,6 +38,7 @@ class PrisonerSearchApiService(
   private val prisonApiService: PrisonApiService,
   private val pathwayStatusRepository: PathwayStatusRepository,
   private val resettlementAssessmentRepository: ResettlementAssessmentRepository,
+  private val deliusApiService: ResettlementPassportDeliusApiService,
 ) {
 
   companion object {
@@ -307,6 +309,12 @@ class PrisonerSearchApiService(
     if (prisonerSearch.dateOfBirth != null) {
       age = Period.between(prisonerSearch.dateOfBirth, LocalDate.now()).years
     }
+    var personalDetails = PersonalDetail(null.toString(), null, null, null)
+    if (prisonerEntity.crn != null) {
+      personalDetails = deliusApiService.getPersonalDetails(nomsId, prisonerEntity.crn!!)!!
+    } else {
+      personalDetails.contactDetails = PersonalDetail.ContactDetails(null, null, null)
+    }
 
     val prisonerPersonal = PrisonerPersonal(
       prisonerSearch.prisonerNumber,
@@ -320,6 +328,10 @@ class PrisonerSearchApiService(
       age,
       prisonerSearch.cellLocation,
       prisonerImage?.imageId,
+      personalDetails.contactDetails?.mobile,
+      personalDetails.contactDetails?.telephone,
+      personalDetails.contactDetails?.email,
+
     )
 
     val pathwayStatuses = getPathwayStatuses(prisonerEntity)

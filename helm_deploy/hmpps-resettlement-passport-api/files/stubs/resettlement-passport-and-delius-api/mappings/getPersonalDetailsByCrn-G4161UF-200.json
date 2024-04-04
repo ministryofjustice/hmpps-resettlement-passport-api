@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/probation-cases/U416100"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "getPersonalDetailsByCrn-G4161UF-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

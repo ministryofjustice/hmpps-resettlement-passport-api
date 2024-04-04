@@ -33,6 +33,14 @@
       "text": "Case note summary from Children, families and communities BCST2 report\\n\\nSome text after\\n\\nDetails of case note etc"
     },
     {
+      "caseNoteId": "47028562",
+      "pathway": "ACCOMMODATION",
+      "creationDateTime": "2024-01-12T11:01:02",
+      "occurenceDateTime": "2024-01-12T11:01:02",
+      "createdBy": "A User",
+      "text": "Case note summary from Accommodation Pre-release report\\n\\nCase note details here"
+    },
+    {
       "caseNoteId": "47028559",
       "pathway": "ACCOMMODATION",
       "creationDateTime": "2024-01-12T11:01:01",
@@ -177,9 +185,9 @@
       "text": "string test string - another health case note"
     }
   ],
-  "pageSize": 22,
+  "pageSize": 23,
   "page": 0,
   "sortName": "occurenceDateTime,DESC",
-  "totalElements": 22,
+  "totalElements": 23,
   "last": true
 }

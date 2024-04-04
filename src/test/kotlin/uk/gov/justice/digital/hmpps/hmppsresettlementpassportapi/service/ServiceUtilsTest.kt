@@ -326,6 +326,13 @@ class ServiceUtilsTest {
     Arguments.of("Case note summary from Education, skills and work BCST2 report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.EDUCATION_SKILLS_AND_WORK),
     Arguments.of("Case note summary from Finance and ID BCST2 report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.FINANCE_AND_ID),
     Arguments.of("Case note summary from Health BCST2 report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.HEALTH),
+    Arguments.of("Case note summary from Accommodation Pre-release report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.ACCOMMODATION),
+    Arguments.of("Case note summary from Attitudes, thinking and behaviour Pre-release report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR),
+    Arguments.of("Case note summary from Children, families and communities Pre-release report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY),
+    Arguments.of("Case note summary from Drugs and alcohol Pre-release report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.DRUGS_AND_ALCOHOL),
+    Arguments.of("Case note summary from Education, skills and work Pre-release report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.EDUCATION_SKILLS_AND_WORK),
+    Arguments.of("Case note summary from Finance and ID Pre-release report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.FINANCE_AND_ID),
+    Arguments.of("Case note summary from Health Pre-release report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.HEALTH),
   )
 
   @ParameterizedTest

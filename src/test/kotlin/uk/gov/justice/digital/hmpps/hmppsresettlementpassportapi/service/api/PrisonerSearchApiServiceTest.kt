@@ -37,6 +37,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -65,6 +66,9 @@ class PrisonerSearchApiServiceTest {
   @Mock
   private lateinit var resettlementAssessmentRepository: ResettlementAssessmentRepository
 
+  @Mock
+  private lateinit var deliusApiService: ResettlementPassportDeliusApiService
+
   @BeforeEach
   fun beforeEach() {
     mockWebServer.start()
@@ -77,6 +81,7 @@ class PrisonerSearchApiServiceTest {
       prisonApiService,
       pathwayStatusRepository,
       resettlementAssessmentRepository,
+      deliusApiService,
     )
   }
 

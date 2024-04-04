@@ -11,9 +11,9 @@
     "age": REPLACE_WITH_AGE,
     "location": "K-3-011",
     "facialImageId": "1313058",
-    "mobile": "0000000000",
-    "telephone": "000000000",
-    "email": "john.smith@test.com"
+    "mobile": null,
+    "telephone": null,
+    "email": null
   },
   "pathways": [
     {

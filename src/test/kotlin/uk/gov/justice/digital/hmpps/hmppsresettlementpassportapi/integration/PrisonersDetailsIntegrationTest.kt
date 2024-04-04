@@ -29,6 +29,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
+    deliusApiMockServer.stubGetPersonalDetailsFromCrn("abc", 200)
     prisonRegisterApiMockServer.stubPrisonList(200)
 
     webTestClient.get()
@@ -56,6 +57,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
+    deliusApiMockServer.stubGetPersonalDetailsFromCrn("abc", 200)
     prisonRegisterApiMockServer.stubPrisonList(200)
 
     webTestClient.get()
@@ -74,14 +76,16 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Get Prisoner Details - error getting CRN - blank database`() {
-    var expectedOutput = readFile("testdata/expectation/prisoner-details-2.json")
+    var expectedOutput = readFile("testdata/expectation/prisoner-details-5.json")
     val dob = LocalDate.of(1982, 10, 24)
     val age = Period.between(dob, LocalDate.now()).years
     expectedOutput = expectedOutput.replace("REPLACE_WITH_AGE", "$age")
     val nomsId = "123"
+    val crn = "abc"
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
     deliusApiMockServer.stubGet("/probation-cases/$nomsId/crn", 404, null)
+    deliusApiMockServer.stubGet("/probation-cases/$crn", 404, null)
     prisonRegisterApiMockServer.stubPrisonList(200)
 
     webTestClient.get()
@@ -109,6 +113,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
+    deliusApiMockServer.stubGetPersonalDetailsFromCrn("abc", 200)
     prisonRegisterApiMockServer.stubPrisonList(200)
 
     webTestClient.get()
@@ -250,6 +255,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
+    deliusApiMockServer.stubGetPersonalDetailsFromCrn("abc", 200)
     prisonRegisterApiMockServer.stubPrisonList(200)
 
     webTestClient.get()
@@ -277,6 +283,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
+    deliusApiMockServer.stubGetPersonalDetailsFromCrn("abc", 200)
     prisonRegisterApiMockServer.stubPrisonList(200)
 
     webTestClient.get()

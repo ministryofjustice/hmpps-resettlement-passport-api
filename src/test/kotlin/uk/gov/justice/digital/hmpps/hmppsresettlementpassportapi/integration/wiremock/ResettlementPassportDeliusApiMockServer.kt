@@ -135,4 +135,25 @@ class ResettlementPassportDeliusApiMockServer : WireMockServerBase(9102) {
       ),
     )
   }
+
+  fun stubGetPersonalDetailsFromCrn(crn: String, status: Int) {
+    val personalDetailsJSON = readFile("testdata/resettlement-passport-delius-api/prisoner-personal-details.json")
+    stubFor(
+      get("/probation-cases/$crn").willReturn(
+        if (status == 200) {
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody(
+              personalDetailsJSON,
+            )
+            .withStatus(status)
+        } else {
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody("{\"Error\" : \"$status\"}")
+            .withStatus(status)
+        },
+      ),
+    )
+  }
 }

@@ -12,6 +12,8 @@ update pathway_status set pathway = (
     end
 );
 
+alter table pathway_status alter column pathway drop default;
+
 alter table pathway_status drop column pathway_id;
 
 alter table pathway_status add status varchar(100) not null default 'PENDING';
@@ -26,5 +28,7 @@ update pathway_status set status = (
         when status_id = 6 then 'SUPPORT_REQUIRED'
     end
 );
+
+alter table pathway_status alter column status drop default;
 
 alter table pathway_status drop column status_id;

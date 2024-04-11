@@ -12,6 +12,8 @@ update resettlement_assessment set pathway = (
     end
 );
 
+alter table resettlement_assessment alter column pathway drop default;
+
 alter table resettlement_assessment drop column pathway_id;
 
 alter table resettlement_assessment add assessment_status varchar(100) not null default 'PENDING';
@@ -24,6 +26,8 @@ update resettlement_assessment set assessment_status = (
         when assessment_status_id = 4 then 'SUBMITTED'
     end
 );
+
+alter table resettlement_assessment alter column assessment_status drop default;
 
 alter table resettlement_assessment drop column assessment_status_id;
 

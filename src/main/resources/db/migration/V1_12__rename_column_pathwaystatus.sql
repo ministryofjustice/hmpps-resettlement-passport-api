@@ -1,1 +1,1 @@
-Alter table pathway_status rename column creation_date to updated_date;
+Alter table pathway_status rename column creation_date to updated_date

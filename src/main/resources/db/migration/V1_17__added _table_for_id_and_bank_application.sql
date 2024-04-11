@@ -46,4 +46,5 @@ create table bank_application_status_log
     changed_at    timestamp with time zone not null default now()
 );
 
+
 ALTER TABLE prisoner ADD UNIQUE (noms_id);

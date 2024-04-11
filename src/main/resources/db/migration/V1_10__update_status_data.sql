@@ -4,3 +4,4 @@ insert into status (id, name, active) values (2, 'In Progress', true);
 insert into status (id, name, active) values (3, 'Support Not Required', true);
 insert into status (id, name, active) values (4, 'Support Declined', true);
 insert into status (id, name, active) values (5, 'Done', true);
+

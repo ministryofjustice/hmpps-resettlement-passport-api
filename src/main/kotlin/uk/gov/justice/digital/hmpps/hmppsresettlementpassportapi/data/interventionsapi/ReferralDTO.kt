@@ -14,5 +14,4 @@ data class ReferralDTO(
   val serviceProviderLocation: String?,
   val serviceProviderName: String?,
   val isDraft: Boolean,
-
 )

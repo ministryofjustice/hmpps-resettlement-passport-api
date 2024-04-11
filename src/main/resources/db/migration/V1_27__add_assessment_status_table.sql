@@ -24,4 +24,5 @@ create table resettlement_assessment
     status_changed_to_status_id integer references status (id),
     created_date          timestamp with time zone not null,
     created_by            varchar(200) not null
+
 );

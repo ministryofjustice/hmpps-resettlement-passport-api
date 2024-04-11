@@ -16,20 +16,18 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prison
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
@@ -239,30 +237,22 @@ class PrisonerSearchApiServiceTest {
     val mockPrisonerEntity3 =
       PrisonerEntity(3, "A8229DY", LocalDateTime.now(), "test", "xyz", LocalDate.parse("2025-01-23"))
 
-    val mockPathwayEntity1 = PathwayEntity(1, "Accommodation", true, LocalDateTime.now())
-    val mockPathwayEntity2 = PathwayEntity(2, "Attitudes, thinking and behaviour", true, LocalDateTime.now())
-    val mockPathwayEntity3 = PathwayEntity(3, "Children, families and communities", false, LocalDateTime.now())
+    val pathway1 = Pathway.ACCOMMODATION
+    val pathway2 = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR
+    val pathway3 = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY
 
-    val mockStatusEntity = StatusEntity(1, "Not Started", true, LocalDateTime.now())
+    val status = Status.NOT_STARTED
 
     val mockPathwayStatusEntities = listOf(
-      PathwayStatusEntity(1, mockPrisonerEntity2, mockPathwayEntity1, mockStatusEntity, LocalDateTime.now()),
-      PathwayStatusEntity(2, mockPrisonerEntity2, mockPathwayEntity2, mockStatusEntity, LocalDateTime.now()),
-      PathwayStatusEntity(3, mockPrisonerEntity3, mockPathwayEntity2, mockStatusEntity, LocalDateTime.now()),
-      PathwayStatusEntity(4, mockPrisonerEntity3, mockPathwayEntity3, mockStatusEntity, LocalDateTime.now()),
-      PathwayStatusEntity(5, mockPrisonerEntity1, mockPathwayEntity3, mockStatusEntity, LocalDateTime.now()),
-      PathwayStatusEntity(5, mockPrisonerEntity1, mockPathwayEntity1, mockStatusEntity, LocalDateTime.now()),
+      PathwayStatusEntity(1, mockPrisonerEntity2, pathway1, status, LocalDateTime.now()),
+      PathwayStatusEntity(2, mockPrisonerEntity2, pathway2, status, LocalDateTime.now()),
+      PathwayStatusEntity(3, mockPrisonerEntity3, pathway2, status, LocalDateTime.now()),
+      PathwayStatusEntity(4, mockPrisonerEntity3, pathway3, status, LocalDateTime.now()),
+      PathwayStatusEntity(5, mockPrisonerEntity1, pathway3, status, LocalDateTime.now()),
+      PathwayStatusEntity(5, mockPrisonerEntity1, pathway1, status, LocalDateTime.now()),
     )
 
     `when`(pathwayStatusRepository.findByPrison(any())).thenReturn(mockPathwayStatusEntities)
-
-    `when`(pathwayAndStatusService.findAllPathways()).thenReturn(
-      listOf(
-        mockPathwayEntity1,
-        mockPathwayEntity2,
-        mockPathwayEntity3,
-      ),
-    )
   }
 
   private fun mockDatabaseCallsForPathwayView() {
@@ -273,26 +263,20 @@ class PrisonerSearchApiServiceTest {
     val mockPrisonerEntity3 =
       PrisonerEntity(3, "A8339DY", LocalDateTime.now(), "3", "MDI", LocalDate.parse("2025-01-23"))
 
-    val mockPathwayEntity1 = PathwayEntity(1, "Accommodation", true, LocalDateTime.now())
+    val pathway = Pathway.ACCOMMODATION
 
-    val mockStatusEntity1 = StatusEntity(1, "Not Started", true, LocalDateTime.now())
-    val mockStatusEntity4 = StatusEntity(4, "Support declined", true, LocalDateTime.now())
-    val mockStatusEntity5 = StatusEntity(5, "Done", true, LocalDateTime.now())
+    val status1 = Status.NOT_STARTED
+    val status4 = Status.SUPPORT_DECLINED
+    val status5 = Status.DONE
 
-    `when`(resettlementAssessmentRepository.findPrisonersWithAllAssessmentsInStatus("MDI", ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED.id, Pathway.entries.size))
+    `when`(resettlementAssessmentRepository.findPrisonersWithAllAssessmentsInStatus("MDI", ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED, Pathway.entries.size))
       .thenReturn(listOf(mockPrisonerEntity1, mockPrisonerEntity2, mockPrisonerEntity3))
 
     `when`(pathwayStatusRepository.findByPrison("MDI")).thenReturn(
       listOf(
-        PathwayStatusEntity(1, mockPrisonerEntity1, mockPathwayEntity1, mockStatusEntity1, LocalDateTime.now()),
-        PathwayStatusEntity(8, mockPrisonerEntity2, mockPathwayEntity1, mockStatusEntity4, LocalDateTime.now()),
-        PathwayStatusEntity(15, mockPrisonerEntity3, mockPathwayEntity1, mockStatusEntity5, LocalDateTime.now()),
-      ),
-    )
-
-    `when`(pathwayAndStatusService.findAllPathways()).thenReturn(
-      listOf(
-        mockPathwayEntity1,
+        PathwayStatusEntity(1, mockPrisonerEntity1, pathway, status1, LocalDateTime.now()),
+        PathwayStatusEntity(8, mockPrisonerEntity2, pathway, status4, LocalDateTime.now()),
+        PathwayStatusEntity(15, mockPrisonerEntity3, pathway, status5, LocalDateTime.now()),
       ),
     )
   }
@@ -1089,6 +1073,7 @@ private fun createPrisonerReleaseEligibilityDateAndType(homeDetentionCurfewEligi
   releaseEligibilityDate = releaseEligibilityDate,
   releaseEligibilityType = releaseEligibilityType,
   assessmentRequired = true,
+  status = Pathway.entries.map { PathwayStatus(it, Status.NOT_STARTED) },
 )
 
 private fun createPrisonerReleaseDate(releaseDate: LocalDate?) = Prisoners(

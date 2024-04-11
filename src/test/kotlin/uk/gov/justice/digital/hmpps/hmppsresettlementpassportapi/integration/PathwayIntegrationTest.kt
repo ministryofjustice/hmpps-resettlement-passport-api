@@ -4,16 +4,14 @@ import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatusAndCaseNote
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Category
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ContactType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DeliusContactEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.DeliusContactRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import java.time.LocalDate
@@ -58,18 +56,8 @@ class PathwayIntegrationTest : IntegrationTestBase() {
           "MDI",
           LocalDate.parse("2030-09-12"),
         ),
-        PathwayEntity(
-          1,
-          "Accommodation",
-          true,
-          LocalDateTime.parse("2023-08-15T11:32:22.171"),
-        ),
-        StatusEntity(
-          2,
-          "In Progress",
-          true,
-          LocalDateTime.parse("2023-08-17T12:00:01"),
-        ),
+        Pathway.ACCOMMODATION,
+        Status.IN_PROGRESS,
         LocalDateTime.now(),
       )
     val actualPathwayStatus = pathwayStatusRepository.findById(1)
@@ -110,18 +98,8 @@ class PathwayIntegrationTest : IntegrationTestBase() {
       PathwayStatusEntity(
         1,
         expectedPrisoner,
-        PathwayEntity(
-          1,
-          "Accommodation",
-          true,
-          LocalDateTime.parse("2023-08-15T11:32:22.171"),
-        ),
-        StatusEntity(
-          2,
-          "In Progress",
-          true,
-          LocalDateTime.parse("2023-08-17T12:00:01"),
-        ),
+        Pathway.ACCOMMODATION,
+        Status.IN_PROGRESS,
         LocalDateTime.now(),
       )
     val actualPathwayStatus = pathwayStatusRepository.findById(1)
@@ -193,9 +171,9 @@ class PathwayIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(404)
       .jsonPath("errorCode").isEmpty
       .jsonPath("userMessage")
-      .isEqualTo("Resource not found. Check request parameters - Prisoner with id 789 has no pathway_status entry for Accommodation in database")
+      .isEqualTo("Resource not found. Check request parameters - Prisoner with id 789 has no pathway_status entry for ACCOMMODATION in database")
       .jsonPath("developerMessage")
-      .isEqualTo("Prisoner with id 789 has no pathway_status entry for Accommodation in database")
+      .isEqualTo("Prisoner with id 789 has no pathway_status entry for ACCOMMODATION in database")
       .jsonPath("moreInfo").isEmpty
   }
 
@@ -259,7 +237,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
       .jsonPath("errorCode").isEmpty
       .jsonPath("userMessage").isEqualTo("Validation failure - please check request parameters and try again")
       .jsonPath("developerMessage").isEqualTo(
-        "Cannot deserialize value of type `uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway` from String \"FAKE_PATHWAY\": not one of the values accepted for Enum class: [ACCOMMODATION, CHILDREN_FAMILIES_AND_COMMUNITY, FINANCE_AND_ID, DRUGS_AND_ALCOHOL, ATTITUDES_THINKING_AND_BEHAVIOUR, EDUCATION_SKILLS_AND_WORK, HEALTH]\n" +
+        "Cannot deserialize value of type `uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway` from String \"FAKE_PATHWAY\": not one of the values accepted for Enum class: [ACCOMMODATION, CHILDREN_FAMILIES_AND_COMMUNITY, FINANCE_AND_ID, DRUGS_AND_ALCOHOL, ATTITUDES_THINKING_AND_BEHAVIOUR, EDUCATION_SKILLS_AND_WORK, HEALTH]\n" +
           " at [Source: (org.springframework.util.StreamUtils\$NonClosingInputStream); line: 2, column: 14] (through reference chain: uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatusAndCaseNote[\"pathway\"])",
       )
       .jsonPath("moreInfo").isEmpty

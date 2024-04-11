@@ -4,7 +4,7 @@ import com.nimbusds.jwt.JWTParser
 import org.apache.commons.text.WordUtils
 import org.slf4j.LoggerFactory
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AppointmentsService.Companion.SECTION_DELIMITER
 import java.lang.IllegalArgumentException

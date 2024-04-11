@@ -4,9 +4,9 @@ VALUES
 (1, 'G4161UF', '2023-10-16 12:21:38.709','NGRBG54');
 
 INSERT INTO resettlement_assessment
-(id, prisoner_id, pathway_id, assessment_status_id, assessment_type, assessment, status_changed_to_status_id, created_date, created_by)
+(id, prisoner_id, pathway, assessment_status, assessment_type, assessment, status_changed_to, created_date, created_by)
 VALUES
-    (1, 1, 1, 4, 'BCST2', '{
+    (1, 1, 'ACCOMMODATION', 'SUBMITTED', 'BCST2', '{
       "assessment": [
         {
           "answer": {
@@ -60,12 +60,12 @@ VALUES
           "questionId": "CASE_NOTE_SUMMARY"
         }
       ]
-    }'::jsonb, 1, '2023-10-10 15:54:02.235', 'Prison Officer'),
-    (2, 1, 2, 4, 'BCST2', '{"assessment": []}'::jsonb, 1, '2023-10-16 12:21:38.709', 'Prison Officer'),
-    (3, 1, 3, 4, 'BCST2', '{"assessment": []}'::jsonb, 1, '2023-10-16 12:21:38.709', 'Prison Officer'),
-    (4, 1, 4, 4, 'BCST2', '{"assessment": []}'::jsonb, 1, '2023-10-16 12:21:38.709', 'Prison Officer'),
-    (5, 1, 5, 4, 'BCST2', '{"assessment": []}'::jsonb, 1, '2023-10-16 12:21:38.709', 'Prison Officer'),
-    (6, 1, 6, 4, 'BCST2', '{"assessment": []}'::jsonb, 1, '2023-10-16 12:21:38.709', 'Prison Officer'),
-    (7, 1, 7, 4, 'BCST2', '{"assessment": []}'::jsonb, 1, '2023-10-16 12:21:38.709', 'Prison Officer');
+    }'::jsonb, 'NOT_STARTED', '2023-10-10 15:54:02.235', 'Prison Officer'),
+    (2, 1, 'ATTITUDES_THINKING_AND_BEHAVIOUR', 'SUBMITTED', 'BCST2', '{"assessment": []}'::jsonb, 'NOT_STARTED', '2023-10-16 12:21:38.709', 'Prison Officer'),
+    (3, 1, 'CHILDREN_FAMILIES_AND_COMMUNITY', 'SUBMITTED', 'BCST2', '{"assessment": []}'::jsonb, 'NOT_STARTED', '2023-10-16 12:21:38.709', 'Prison Officer'),
+    (4, 1, 'DRUGS_AND_ALCOHOL', 'SUBMITTED', 'BCST2', '{"assessment": []}'::jsonb, 'NOT_STARTED', '2023-10-16 12:21:38.709', 'Prison Officer'),
+    (5, 1, 'EDUCATION_SKILLS_AND_WORK', 'SUBMITTED', 'BCST2', '{"assessment": []}'::jsonb, 'NOT_STARTED', '2023-10-16 12:21:38.709', 'Prison Officer'),
+    (6, 1, 'FINANCE_AND_ID', 'SUBMITTED', 'BCST2', '{"assessment": []}'::jsonb, 'NOT_STARTED', '2023-10-16 12:21:38.709', 'Prison Officer'),
+    (7, 1, 'HEALTH', 'SUBMITTED', 'BCST2', '{"assessment": []}'::jsonb, 'NOT_STARTED', '2023-10-16 12:21:38.709', 'Prison Officer');
 
-INSERT INTO public.pathway_status (id, prisoner_id, pathway_id, status_id, updated_date) VALUES (1, 1, 1, 5, '2024-04-02 09:25:01.126170 +00:00');
+INSERT INTO pathway_status (id, prisoner_id, pathway, status, updated_date) VALUES (1, 1, 'ACCOMMODATION', 'DONE', '2024-04-02 09:25:01.126170 +00:00');

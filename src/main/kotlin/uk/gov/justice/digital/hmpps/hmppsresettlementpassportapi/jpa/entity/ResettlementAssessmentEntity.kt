@@ -19,6 +19,9 @@ import jakarta.persistence.Table
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.type.SqlTypes
 import org.springframework.stereotype.Component
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
 import java.io.IOException
 import java.time.LocalDateTime
@@ -34,13 +37,12 @@ data class ResettlementAssessmentEntity(
   @JoinColumn(name = "prisoner_id", referencedColumnName = "id")
   val prisoner: PrisonerEntity,
 
-  @ManyToOne
-  @JoinColumn(name = "pathway_id", referencedColumnName = "id")
-  val pathway: PathwayEntity,
+  @Enumerated(EnumType.STRING)
+  val pathway: Pathway,
 
-  @ManyToOne
-  @JoinColumn(name = "status_changed_to_status_id", referencedColumnName = "id")
-  var statusChangedTo: StatusEntity?,
+  @Enumerated(EnumType.STRING)
+  @Column(name = "status_changed_to")
+  var statusChangedTo: Status?,
 
   @Column(name = "assessment_type")
   @Enumerated(EnumType.STRING)
@@ -57,9 +59,9 @@ data class ResettlementAssessmentEntity(
   @Column(name = "created_by")
   val createdBy: String,
 
-  @ManyToOne
-  @JoinColumn(name = "assessment_status_id", referencedColumnName = "id")
-  var assessmentStatus: ResettlementAssessmentStatusEntity,
+  @Enumerated(EnumType.STRING)
+  @Column(name = "assessment_status")
+  var assessmentStatus: ResettlementAssessmentStatus,
 
   @Column(name = "case_note_text")
   var caseNoteText: String?,

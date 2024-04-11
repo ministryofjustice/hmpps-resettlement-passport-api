@@ -7,20 +7,20 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoner
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerPersonal
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.PersonalDetail
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonerImage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
@@ -198,7 +198,7 @@ class PrisonerSearchApiService(
     val prisonersList = mutableListOf<Prisoners>()
 
     // Find prisoners in prison that do not require an assessment
-    val prisonersWithSubmittedAssessment = resettlementAssessmentRepository.findPrisonersWithAllAssessmentsInStatus(prisonId, ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED.id, Pathway.entries.size)
+    val prisonersWithSubmittedAssessment = resettlementAssessmentRepository.findPrisonersWithAllAssessmentsInStatus(prisonId, ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED, Pathway.entries.size)
 
     // Find the pathway statuses for prisoners in prison
     val prisonerPathwayStatusesFromDatabase = pathwayStatusRepository.findByPrison(prisonId)
@@ -215,15 +215,15 @@ class PrisonerSearchApiService(
       val lastUpdatedDate: LocalDate?
 
       if (prisonerEntity != null) {
-        pathwayStatuses = if (pathwayView == null) pathwayStatusesEntities.map { PathwayStatus(pathway = Pathway.getById(it.pathway.id), status = Status.getById(it.status.id), lastDateChange = it.updatedDate?.toLocalDate()) } else null
+        pathwayStatuses = if (pathwayView == null) pathwayStatusesEntities.map { PathwayStatus(pathway = it.pathway, status = it.status, lastDateChange = it.updatedDate?.toLocalDate()) } else null
         sortedPathwayStatuses = pathwayStatuses?.sortedWith(compareBy(nullsLast()) { it.lastDateChange })
         lastUpdatedDate =
           if (pathwayView == null) {
             sortedPathwayStatuses?.first()?.lastDateChange
           } else {
-            pathwayStatusesEntities.find { Pathway.getById(it.pathway.id) == pathwayView }?.updatedDate?.toLocalDate()
+            pathwayStatusesEntities.find { it.pathway == pathwayView }?.updatedDate?.toLocalDate()
           }
-        pathwayStatus = if (pathwayView != null) Status.getById(pathwayStatusesEntities.first { Pathway.getById(it.pathway.id) == pathwayView }.status.id) else null
+        pathwayStatus = if (pathwayView != null) pathwayStatusesEntities.first { it.pathway == pathwayView }.status else null
       } else {
         // We don't know about this prisoner yet so just set all the statuses to NOT_STARTED.
         pathwayStatuses = if (pathwayView == null) defaultPathwayStatuses else null
@@ -353,35 +353,29 @@ class PrisonerSearchApiService(
     prisonerEntity: PrisonerEntity,
   ): ArrayList<PathwayStatus> {
     val pathwayStatuses = ArrayList<PathwayStatus>()
-    val pathwayRepoData = pathwayAndStatusService.findAllPathways()
-    pathwayRepoData.forEach { pathwayEntity ->
-      if (pathwayEntity.active) {
-        // Find the status in the database of each pathway for this prisoner - if any data is missing then throw an exception (should never happen)
-        val pathwayStatusEntity =
-          pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(pathwayEntity, prisonerEntity)
-        val pathwayStatus = PathwayStatus(
-          Pathway.getById(pathwayEntity.id),
-          Status.getById(pathwayStatusEntity.status.id),
-          pathwayStatusEntity.updatedDate?.toLocalDate(),
-        )
-        pathwayStatuses.add(pathwayStatus)
-      }
+    Pathway.entries.forEach { pathway ->
+      // Find the status in the database of each pathway for this prisoner - if any data is missing then throw an exception (should never happen)
+      val pathwayStatusEntity =
+        pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(pathway, prisonerEntity)
+      val pathwayStatus = PathwayStatus(
+        pathway,
+        pathwayStatusEntity.status,
+        pathwayStatusEntity.updatedDate?.toLocalDate(),
+      )
+      pathwayStatuses.add(pathwayStatus)
     }
     return pathwayStatuses
   }
 
   fun getDefaultPathwayStatuses(): List<PathwayStatus> {
     val pathwayStatuses = ArrayList<PathwayStatus>()
-    val pathwayRepoData = pathwayAndStatusService.findAllPathways()
-    pathwayRepoData.forEach { pathwayEntity ->
-      if (pathwayEntity.active) {
-        val pathwayStatus = PathwayStatus(
-          Pathway.getById(pathwayEntity.id),
-          Status.NOT_STARTED,
-          null,
-        )
-        pathwayStatuses.add(pathwayStatus)
-      }
+    Pathway.entries.forEach { pathway ->
+      val pathwayStatus = PathwayStatus(
+        pathway,
+        Status.NOT_STARTED,
+        null,
+      )
+      pathwayStatuses.add(pathwayStatus)
     }
     return pathwayStatuses
   }
@@ -438,7 +432,7 @@ class PrisonerSearchApiService(
 
   fun isAssessmentRequired(prisonerEntity: PrisonerEntity, type: ResettlementAssessmentType): Boolean {
     // Assessment required we don't have all pathways in submitted
-    val pathwaysInSubmittedCount = resettlementAssessmentRepository.countByNomsIdAndAssessmentTypeAndAssessmentStatus(prisonerEntity.nomsId, type, ResettlementAssessmentStatus.SUBMITTED.id)
+    val pathwaysInSubmittedCount = resettlementAssessmentRepository.countByNomsIdAndAssessmentTypeAndAssessmentStatus(prisonerEntity.nomsId, type, ResettlementAssessmentStatus.SUBMITTED)
     return (pathwaysInSubmittedCount != Pathway.entries.size)
   }
 }

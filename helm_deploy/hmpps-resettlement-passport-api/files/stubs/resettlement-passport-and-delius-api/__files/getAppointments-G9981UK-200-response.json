@@ -1,0 +1,127 @@
+{
+  "results": [
+    {
+      "type": {
+        "code": "",
+        "description": ""
+      },
+      "dateTime": "2027-04-19T13:00:00Z",
+      "duration": "PT30M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Initial Appointment - In office (NS)"
+    },
+    {
+      "type": {
+        "code": "",
+        "description": ""
+      },
+      "dateTime": "2027-04-20T15:00:00Z",
+      "duration": "PT45M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "abc"
+    },
+    {
+      "type": {
+        "code": "",
+        "description": ""
+      },
+      "dateTime": "2027-04-20T15:00:00Z",
+      "duration": "PT0M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Tim",
+          "surname": "Staff"
+        },
+        "email": "tim.staff234@justice.gov.uk"
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "A Location",
+        "address": {
+          "buildingName": "New Court",
+          "buildingNumber": "10",
+          "streetName": "New Street",
+          "district": "NewPlace",
+          "town": "New Town",
+          "county": "London",
+          "postcode": "EC2"
+        }
+      },
+      "description": "abc"
+    },
+    {
+      "type": {
+        "code": "",
+        "description": ""
+      },
+      "dateTime": "2027-04-21T10:00:00Z",
+      "duration": "PT60M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Unallocated",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location"
+      },
+      "description": "Appointment with CRS Provider (NS)"
+    },
+    {
+      "type": {
+        "code": "",
+        "description": ""
+      },
+      "dateTime": "2027-04-21T10:00:00Z",
+      "duration": "PT5M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Liz",
+          "surname": "Staff"
+        }
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "Camden Probation Office",
+        "address": {
+          "buildingName": "The probation office",
+          "buildingNumber": "23",
+          "streetName": "Justice Lane",
+          "district": "Camden",
+          "town": "London",
+          "county": "Greater London",
+          "postcode": "N76 1AA"
+        }
+      },
+      "description": "went to see family"
+    }
+  ],
+  "totalElements": 50,
+  "totalPages": 1,
+  "page": 0,
+  "size": 50
+}

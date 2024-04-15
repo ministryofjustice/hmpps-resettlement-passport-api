@@ -1,18 +1,29 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.api
 
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
+import org.assertj.core.api.AssertProvider
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
+import org.springframework.boot.test.json.JsonContentAssert
+import org.springframework.http.codec.json.Jackson2JsonEncoder
 import org.springframework.web.reactive.function.client.WebClient
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusCreateAppointment
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusCreateAppointmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
+import java.time.Duration
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.ZonedDateTime
 
 class ResettlementPassportDeliusApiServiceTest {
@@ -23,7 +34,19 @@ class ResettlementPassportDeliusApiServiceTest {
   @BeforeEach
   fun beforeEach() {
     mockWebServer.start()
-    val webClient = WebClient.create(mockWebServer.url("/").toUrl().toString())
+    val webClient = WebClient.builder().baseUrl(mockWebServer.url("/").toUrl().toString())
+      .codecs {
+        it.defaultCodecs()
+          .jackson2JsonEncoder(
+            Jackson2JsonEncoder(
+              jacksonObjectMapper()
+                .registerModule(JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .disable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS),
+            ),
+          )
+      }
+      .build()
     val prisonerRepository: PrisonerRepository = mock()
     rpDeliusApiService = ResettlementPassportDeliusApiService(webClient, prisonerRepository)
   }
@@ -59,7 +82,9 @@ class ResettlementPassportDeliusApiServiceTest {
   fun `test get CRN not found upstream`() {
     val nomsId = "ABC1234"
 
-    mockWebServer.enqueue(MockResponse().setBody("{}").addHeader("Content-Type", "application/json").setResponseCode(404))
+    mockWebServer.enqueue(
+      MockResponse().setBody("{}").addHeader("Content-Type", "application/json").setResponseCode(404),
+    )
     assertNull(rpDeliusApiService.getCrn(nomsId))
   }
 
@@ -67,7 +92,9 @@ class ResettlementPassportDeliusApiServiceTest {
   fun `test get CRN 500 error upstream`() {
     val nomsId = "ABC1234"
 
-    mockWebServer.enqueue(MockResponse().setBody("{}").addHeader("Content-Type", "application/json").setResponseCode(500))
+    mockWebServer.enqueue(
+      MockResponse().setBody("{}").addHeader("Content-Type", "application/json").setResponseCode(500),
+    )
     assertNull(rpDeliusApiService.getCrn(nomsId))
   }
 
@@ -80,7 +107,8 @@ class ResettlementPassportDeliusApiServiceTest {
     val mockedJsonResponse = readFile("testdata/resettlement-passport-delius-api/appointments-list.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
 
-    val appointmentList = rpDeliusApiService.fetchAppointments(nomsId, crn, LocalDate.now().minusDays(1), LocalDate.now().plusDays(365))
+    val appointmentList =
+      rpDeliusApiService.fetchAppointments(nomsId, crn, LocalDate.now().minusDays(1), LocalDate.now().plusDays(365))
     Assertions.assertEquals(expectedType, appointmentList[0].type.description)
   }
 
@@ -99,5 +127,45 @@ class ResettlementPassportDeliusApiServiceTest {
     Assertions.assertEquals(expectedReferralDate, accommodation.referralDate)
     Assertions.assertEquals(expectedStartDateTime, accommodation.startDateTime)
     Assertions.assertEquals(expectedBuildingName, accommodation.mainAddress?.buildingName)
+  }
+
+  @Test
+  fun `create appointment`() {
+    val crn = "CRN1"
+
+    mockWebServer.enqueue(response = MockResponse().setResponseCode(201))
+
+    val appointment = DeliusCreateAppointment(
+      type = DeliusCreateAppointmentType.Health,
+      start = LocalDate.of(2024, 4, 15).atTime(14, 32).atZone(ZoneId.of("Europe/London")),
+      duration = Duration.ofMinutes(30),
+      notes = "notes",
+    )
+    rpDeliusApiService.createAppointment(crn, appointment)
+
+    assertThat(mockWebServer.requestCount).isEqualTo(1)
+    val request = mockWebServer.takeRequest()
+    assertThat(request.path).isEqualTo("/appointments/CRN1")
+    assertThat(request.headers).contains("Content-Type" to "application/json")
+
+    assertThat(forJson(request.body.readUtf8())).isEqualToJson(
+      """
+      {
+        "type": "Health",
+        "start": "2024-04-15T14:32:00.000+0100",
+        "duration": "PT30M",
+        "notes": "notes",
+      }
+      """.trimIndent(),
+    )
+  }
+
+  private fun forJson(json: String): AssertProvider<JsonContentAssert> {
+    return AssertProvider<JsonContentAssert> {
+      JsonContentAssert(
+        ResettlementPassportDeliusApiServiceTest::class.java,
+        json,
+      )
+    }
   }
 }

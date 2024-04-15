@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wi
 
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
+import com.github.tomakehurst.wiremock.client.WireMock.post
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import java.time.LocalDate
 
@@ -154,6 +155,16 @@ class ResettlementPassportDeliusApiMockServer : WireMockServerBase(9102) {
             .withStatus(status)
         },
       ),
+    )
+  }
+
+  fun stubCreateAppointmentOK(crn: String) {
+    stubFor(
+      post("/appointments/$crn")
+        .willReturn(
+          aResponse().withStatus(201),
+
+        ),
     )
   }
 }

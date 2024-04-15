@@ -1,27 +1,18 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkAll
-import org.junit.jupiter.api.Assertions
+import com.github.tomakehurst.wiremock.client.WireMock.equalTo
+import com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath
+import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.context.jdbc.Sql
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CreateAppointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CreateAppointmentAddress
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Category
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ContactType
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DeliusContactEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.DeliusContactRepository
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 class AppointmentsIntegrationTest : IntegrationTestBase() {
-
-  @Autowired
-  private lateinit var deliusContactRepository: DeliusContactRepository
 
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
@@ -218,14 +209,9 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-prisoners-2.sql")
   fun `Create Appointment happy path`() {
-    val fakeNow = LocalDateTime.parse("2023-12-17T12:00:01")
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
+    deliusApiMockServer.stubCreateAppointmentOK("123")
     val nomsId = "G1458GV"
-    val expectedDeliusContact = listOf(
-      DeliusContactEntity(
-        id = 1, prisoner = PrisonerEntity(id = 1, nomsId = "G1458GV", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), category = Category.DRUGS_AND_ALCOHOL, contactType = ContactType.APPOINTMENT, createdBy = "RESETTLEMENTPASSPORT_ADM", createdDate = fakeNow,
-        notes = """
+    val expectedNotes = """
       ###
       Appointment Title: AA
       Contact: Hannah Smith
@@ -241,10 +227,8 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
       ###
       Remember to bring ID
       ###
-        """.trimIndent(),
-        appointmentDate = LocalDateTime.parse("2023-08-17T12:00:01"), appointmentDuration = 120,
-      ),
-    )
+    """.trimIndent()
+
     webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/appointments?page=0&size=50")
       .bodyValue(
@@ -253,9 +237,17 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(200)
-    val actualDeliusContact = deliusContactRepository.findAll()
-    Assertions.assertEquals(expectedDeliusContact, actualDeliusContact)
-    unmockkAll()
+
+    deliusApiMockServer.verify(
+      postRequestedFor(urlEqualTo("/appointments/123"))
+        .withHeader("Content-Type", equalTo("application/json"))
+        .withRequestBody(
+          matchingJsonPath("$.type", equalTo("DrugsAndAlcohol"))
+            .and(matchingJsonPath("$.start", equalTo("2023-08-17T12:00:01.000+0100")))
+            .and(matchingJsonPath("$.duration", equalTo("PT2H")))
+            .and(matchingJsonPath("$.notes", equalTo(expectedNotes))),
+        ),
+    )
   }
 
   @Test

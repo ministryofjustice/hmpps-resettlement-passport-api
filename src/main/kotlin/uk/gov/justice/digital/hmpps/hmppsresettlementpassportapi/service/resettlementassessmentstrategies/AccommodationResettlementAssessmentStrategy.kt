@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resett
 import com.fasterxml.jackson.annotation.JsonFormat
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IAssessmentPage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.NextPageContext
@@ -12,30 +13,20 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentStatusRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.StatusRepository
 
 @Service
 class AccommodationResettlementAssessmentStrategy(
   resettlementAssessmentRepository: ResettlementAssessmentRepository,
   prisonerRepository: PrisonerRepository,
-  statusRepository: StatusRepository,
-  pathwayRepository: PathwayRepository,
   pathwayStatusRepository: PathwayStatusRepository,
-  resettlementAssessmentStatusRepository: ResettlementAssessmentStatusRepository,
 ) : AbstractResettlementAssessmentStrategy<AccommodationAssessmentPage, AccommodationResettlementAssessmentQuestion>(
   resettlementAssessmentRepository,
   prisonerRepository,
-  statusRepository,
-  pathwayRepository,
   pathwayStatusRepository,
-  resettlementAssessmentStatusRepository,
   AccommodationAssessmentPage::class,
   AccommodationResettlementAssessmentQuestion::class,
 ) {

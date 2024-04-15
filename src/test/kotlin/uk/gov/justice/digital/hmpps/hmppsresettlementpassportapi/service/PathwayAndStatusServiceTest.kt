@@ -13,21 +13,16 @@ import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.http.HttpStatusCode
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayAndStatus
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.StatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
 class PathwayAndStatusServiceTest {
@@ -41,12 +36,6 @@ class PathwayAndStatusServiceTest {
   private lateinit var prisonerRepository: PrisonerRepository
 
   @Mock
-  private lateinit var pathwayRepository: PathwayRepository
-
-  @Mock
-  private lateinit var statusRepository: StatusRepository
-
-  @Mock
   private lateinit var resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService
 
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
@@ -54,7 +43,7 @@ class PathwayAndStatusServiceTest {
 
   @BeforeEach
   fun beforeEach() {
-    pathwayAndStatusService = PathwayAndStatusService(pathwayStatusRepository, prisonerRepository, pathwayRepository, statusRepository, resettlementPassportDeliusApiService)
+    pathwayAndStatusService = PathwayAndStatusService(pathwayStatusRepository, prisonerRepository, resettlementPassportDeliusApiService)
   }
 
   @Test
@@ -66,18 +55,16 @@ class PathwayAndStatusServiceTest {
     val nomsId = "abc"
     val crn = "crn1"
     val prisonId = "xyz"
-    val pathwayEntity = PathwayEntity(1, "Accommodation", true, testDate)
-    val newStatusEntity = StatusEntity(2, "In Progress", true, testDate)
+    val pathway = Pathway.ACCOMMODATION
+    val newStatus = Status.IN_PROGRESS
     val prisonerEntity = PrisonerEntity(1, nomsId, testDate, crn, prisonId, LocalDate.parse("2025-01-23"))
-    val oldStatusEntity = StatusEntity(1, "Not Started", true, testDate)
-    val pathwayStatusEntity = PathwayStatusEntity(1, prisonerEntity, pathwayEntity, oldStatusEntity, testDate)
+    val oldStatus = Status.NOT_STARTED
+    val pathwayStatusEntity = PathwayStatusEntity(1, prisonerEntity, pathway, oldStatus, testDate)
 
-    Mockito.`when`(pathwayRepository.findById(Pathway.ACCOMMODATION.id)).thenReturn(Optional.of(pathwayEntity))
-    Mockito.`when`(statusRepository.findById(Status.IN_PROGRESS.id)).thenReturn(Optional.of(newStatusEntity))
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
-    Mockito.`when`(pathwayStatusRepository.findByPathwayAndPrisoner(pathwayEntity, prisonerEntity)).thenReturn(pathwayStatusEntity)
+    Mockito.`when`(pathwayStatusRepository.findByPathwayAndPrisoner(pathway, prisonerEntity)).thenReturn(pathwayStatusEntity)
 
-    val expectedPathwayStatusEntity = PathwayStatusEntity(1, prisonerEntity, pathwayEntity, newStatusEntity, fakeNow)
+    val expectedPathwayStatusEntity = PathwayStatusEntity(1, prisonerEntity, pathway, newStatus, fakeNow)
 
     val response = pathwayAndStatusService.updatePathwayStatus(nomsId, PathwayAndStatus(Pathway.ACCOMMODATION, Status.IN_PROGRESS))
     Assertions.assertEquals(HttpStatusCode.valueOf(200), response.statusCode)
@@ -100,16 +87,14 @@ class PathwayAndStatusServiceTest {
     val nomsId = "abc"
     val crn = "crn1"
     val prisonId = "xyz1"
-    val pathwayEntity = PathwayEntity(1, "Accommodation", true, testDate)
-    val newStatusEntity = StatusEntity(2, "In Progress", true, testDate)
+    val pathway = Pathway.ACCOMMODATION
+    val newStatus = Status.IN_PROGRESS
     val prisonerEntity = PrisonerEntity(1, nomsId, testDate, crn, prisonId, LocalDate.parse("2025-01-23"))
 
-    Mockito.`when`(pathwayRepository.findById(Pathway.ACCOMMODATION.id)).thenReturn(Optional.of(pathwayEntity))
-    Mockito.`when`(statusRepository.findById(Status.IN_PROGRESS.id)).thenReturn(Optional.of(newStatusEntity))
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
-    Mockito.`when`(pathwayStatusRepository.findByPathwayAndPrisoner(pathwayEntity, prisonerEntity)).thenReturn(null)
+    Mockito.`when`(pathwayStatusRepository.findByPathwayAndPrisoner(pathway, prisonerEntity)).thenReturn(null)
 
-    assertThrows<ResourceNotFoundException> { pathwayAndStatusService.updatePathwayStatus(nomsId, PathwayAndStatus(Pathway.ACCOMMODATION, Status.IN_PROGRESS)) }
+    assertThrows<ResourceNotFoundException> { pathwayAndStatusService.updatePathwayStatus(nomsId, PathwayAndStatus(pathway, newStatus)) }
     Mockito.verify(pathwayStatusRepository, Mockito.never()).save(Mockito.any())
   }
 }

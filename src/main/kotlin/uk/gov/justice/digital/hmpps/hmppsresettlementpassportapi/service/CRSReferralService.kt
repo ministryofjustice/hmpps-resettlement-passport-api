@@ -7,8 +7,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CRSReferra
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CRSReferralResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CRSReferralsWithPathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ContractTypeAndServiceCategories
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.interventionsapi.ReferralDTO
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.InterventionsApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
@@ -28,7 +28,7 @@ class CRSReferralService(
   fun getAllPathwayCRSReferralsByNomsId(
     nomsId: String,
   ): CRSReferralResponse {
-    return getCRSReferralsByPathway(nomsId, Pathway.getAllPathways())
+    return getCRSReferralsByPathway(nomsId, Pathway.entries.toSet())
   }
 
   fun getCRSReferralsByPathway(

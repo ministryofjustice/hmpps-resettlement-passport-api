@@ -6,8 +6,10 @@ import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LatestResettlementAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LatestResettlementAssessmentResponseQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayAndStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
@@ -15,25 +17,17 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.PrisonerResettlementAssessment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.GenericResettlementAssessmentQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.IResettlementAssessmentStrategy
 
 @Service
 class ResettlementAssessmentService(
   private val resettlementAssessmentRepository: ResettlementAssessmentRepository,
-  private val resettlementAssessmentStatusRepository: ResettlementAssessmentStatusRepository,
   private val prisonerRepository: PrisonerRepository,
-  private val pathwayRepository: PathwayRepository,
-  private val deliusContactService: DeliusContactService,
   private val caseNotesService: CaseNotesService,
   private val pathwayAndStatusService: PathwayAndStatusService,
 ) {
@@ -43,11 +37,10 @@ class ResettlementAssessmentService(
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val pathways = Pathway.entries.toTypedArray()
     return pathways.map {
-      val pathwayEntity = pathwayRepository.findById(it.id).get()
       val resettlementAssessmentForPathway =
         resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(
           prisonerEntity,
-          pathwayEntity,
+          it,
           assessmentType,
         )
       if (resettlementAssessmentForPathway == null) {
@@ -55,7 +48,7 @@ class ResettlementAssessmentService(
       } else {
         PrisonerResettlementAssessment(
           it,
-          ResettlementAssessmentStatus.getById(resettlementAssessmentForPathway.assessmentStatus.id),
+          resettlementAssessmentForPathway.assessmentStatus,
         )
       }
     }
@@ -71,19 +64,16 @@ class ResettlementAssessmentService(
 
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val resettlementAssessmentStatusCompleteEntity = resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.COMPLETE.id).get()
-    val resettlementAssessmentStatusSubmittedEntity = resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.SUBMITTED.id).get()
 
     val assessmentList = mutableListOf<ResettlementAssessmentEntity>()
 
     // For each pathway, get the latest complete assessment
     Pathway.entries.forEach { pathway ->
-      val pathwayEntity = pathwayRepository.findById(pathway.id).get()
       val resettlementAssessment = resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
         prisoner = prisonerEntity,
-        pathway = pathwayEntity,
+        pathway = pathway,
         assessmentType = assessmentType,
-        assessmentStatus = listOf(resettlementAssessmentStatusCompleteEntity),
+        assessmentStatus = listOf(ResettlementAssessmentStatus.COMPLETE),
       )
       if (resettlementAssessment != null) {
         assessmentList.add(resettlementAssessment)
@@ -104,7 +94,7 @@ class ResettlementAssessmentService(
       }
 
       // Add templated first line to case note before posting
-      val caseNotesText = "${getFirstLineOfBcstCaseNote(Pathway.getById(assessment.pathway.id), assessment.assessmentType)}\n\n${assessment.caseNoteText}"
+      val caseNotesText = "${getFirstLineOfBcstCaseNote(assessment.pathway, assessment.assessmentType)}\n\n${assessment.caseNoteText}"
 
       // Post case note to DPS
       caseNotesService.postBCSTCaseNoteToDps(
@@ -116,11 +106,11 @@ class ResettlementAssessmentService(
       // Update pathway status
       pathwayAndStatusService.updatePathwayStatus(
         nomsId = nomsId,
-        pathwayAndStatus = PathwayAndStatus(Pathway.getById(assessment.pathway.id), Status.getById(assessment.statusChangedTo!!.id)),
+        pathwayAndStatus = PathwayAndStatus(assessment.pathway, assessment.statusChangedTo!!),
       )
 
       // Update assessment status to SUBMITTED
-      assessment.assessmentStatus = resettlementAssessmentStatusSubmittedEntity
+      assessment.assessmentStatus = ResettlementAssessmentStatus.SUBMITTED
       resettlementAssessmentRepository.save(assessment)
     }
   }
@@ -129,17 +119,14 @@ class ResettlementAssessmentService(
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
 
-    val pathwayEntity = pathwayRepository.findById(pathway.id).get()
-    val resettlementStatusEntity = resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.SUBMITTED.id).get()
-
     val latestResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
-      resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentStatusOrderByCreationDateDesc(prisonerEntity, pathwayEntity, resettlementStatusEntity)
+      resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentStatusOrderByCreationDateDesc(prisonerEntity, pathway, ResettlementAssessmentStatus.SUBMITTED)
         ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"),
       resettlementAssessmentStrategies,
     )
 
     val originalResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
-      resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentStatusOrderByCreationDateAsc(prisonerEntity, pathwayEntity, resettlementStatusEntity)
+      resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentStatusOrderByCreationDateAsc(prisonerEntity, pathway, ResettlementAssessmentStatus.SUBMITTED)
         ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"),
       resettlementAssessmentStrategies,
     )
@@ -158,7 +145,7 @@ class ResettlementAssessmentService(
   }
 
   fun convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(resettlementAssessmentEntity: ResettlementAssessmentEntity, resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy<*>>): ResettlementAssessmentResponse {
-    val resettlementStrategy = resettlementAssessmentStrategies.first { it.appliesTo(Pathway.getById(resettlementAssessmentEntity.pathway.id)) }
+    val resettlementStrategy = resettlementAssessmentStrategies.first { it.appliesTo(resettlementAssessmentEntity.pathway) }
 
     val questionClass = resettlementStrategy.getQuestionClass()
     val questionsAndAnswers = resettlementAssessmentEntity.assessment.assessment.mapNotNull {

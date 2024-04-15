@@ -10,10 +10,13 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponseQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponseQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.MapAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
@@ -21,23 +24,15 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentStatusRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.StatusRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.Optional
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -49,19 +44,10 @@ class EducationSkillsAndWorkResettlementStrategyTest {
   private lateinit var prisonerRepository: PrisonerRepository
 
   @Mock
-  private lateinit var pathwayRepository: PathwayRepository
-
-  @Mock
   private lateinit var resettlementAssessmentRepository: ResettlementAssessmentRepository
 
   @Mock
-  private lateinit var statusRepository: StatusRepository
-
-  @Mock
   private lateinit var pathwayStatusRepository: PathwayStatusRepository
-
-  @Mock
-  private lateinit var resettlementAssessmentStatusRepository: ResettlementAssessmentStatusRepository
 
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
 
@@ -70,10 +56,7 @@ class EducationSkillsAndWorkResettlementStrategyTest {
     resettlementAssessmentService = EducationSkillsAndWorkResettlementAssessmentStrategy(
       resettlementAssessmentRepository,
       prisonerRepository,
-      statusRepository,
-      pathwayRepository,
       pathwayStatusRepository,
-      resettlementAssessmentStatusRepository,
     )
   }
 
@@ -808,19 +791,14 @@ class EducationSkillsAndWorkResettlementStrategyTest {
 
   private fun setUpMocks(nomsId: String, returnResettlementAssessmentEntity: Boolean, assessment: ResettlementAssessmentQuestionAndAnswerList = ResettlementAssessmentQuestionAndAnswerList(mutableListOf())) {
     val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23"))
-    val pathwayEntity = PathwayEntity(5, "Education, skills and work", true, testDate)
-    val resettlementAssessmentStatusEntities = listOf(ResettlementAssessmentStatusEntity(3, "Complete", true, testDate), ResettlementAssessmentStatusEntity(4, "Submitted", true, testDate))
-    val resettlementAssessmentEntity = if (returnResettlementAssessmentEntity) ResettlementAssessmentEntity(1, prisonerEntity, pathwayEntity, StatusEntity(1, "Not Started", true, testDate), ResettlementAssessmentType.BCST2, assessment, testDate, "", resettlementAssessmentStatusEntities[0], "some text", "USER_1") else null
-    Mockito.`when`(pathwayRepository.findById(Pathway.EDUCATION_SKILLS_AND_WORK.id)).thenReturn(Optional.of(pathwayEntity))
+    val resettlementAssessmentEntity = if (returnResettlementAssessmentEntity) ResettlementAssessmentEntity(1, prisonerEntity, Pathway.EDUCATION_SKILLS_AND_WORK, Status.NOT_STARTED, ResettlementAssessmentType.BCST2, assessment, testDate, "", ResettlementAssessmentStatus.COMPLETE, "some text", "USER_1") else null
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
-    Mockito.`when`(resettlementAssessmentStatusRepository.findAll())
-      .thenReturn(resettlementAssessmentStatusEntities)
     Mockito.`when`(
       resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
         prisonerEntity,
-        pathwayEntity,
+        Pathway.EDUCATION_SKILLS_AND_WORK,
         ResettlementAssessmentType.BCST2,
-        resettlementAssessmentStatusEntities,
+        listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED),
       ),
     ).thenReturn(resettlementAssessmentEntity)
   }

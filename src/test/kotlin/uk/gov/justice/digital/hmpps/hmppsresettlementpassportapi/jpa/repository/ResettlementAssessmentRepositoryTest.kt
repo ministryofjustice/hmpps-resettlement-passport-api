@@ -4,20 +4,17 @@ import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.MapAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentSimpleQuestionAndAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatus
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -26,37 +23,23 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
   lateinit var prisonerRepository: PrisonerRepository
 
   @Autowired
-  lateinit var pathwayRepository: PathwayRepository
-
-  @Autowired
   lateinit var resettlementAssessmentRepository: ResettlementAssessmentRepository
-
-  @Autowired
-  lateinit var resettlementAssessmentStatusRepository: ResettlementAssessmentStatusRepository
-
-  @Autowired
-  lateinit var statusRepository: StatusRepository
 
   @Test
   fun `test persist new resettlement assessment`() {
     val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.parse("2022-12-20T10:13:03"), "crn1", "xyz1", LocalDate.parse("2025-01-23"))
     prisonerRepository.save(prisoner)
 
-    val pathway = PathwayEntity(-1, "Accommodation", true, LocalDateTime.parse("2022-12-20T10:13:03"))
-    pathwayRepository.save(pathway)
-
-    val assessmentStatus = resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.NOT_STARTED.id).get()
-
     val resettlementAssessmentQuestionAndAnswerList = ResettlementAssessmentEntity(
       id = null,
       prisoner = prisoner,
-      pathway = pathway,
-      statusChangedTo = statusRepository.getReferenceById(Status.SUPPORT_DECLINED.id),
+      pathway = Pathway.ACCOMMODATION,
+      statusChangedTo = Status.SUPPORT_DECLINED,
       assessmentType = ResettlementAssessmentType.BCST2,
       creationDate = LocalDateTime.parse("2023-01-01T12:00:00"),
       createdBy = "Human, A",
       assessment = ResettlementAssessmentQuestionAndAnswerList(mutableListOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_1", answer = StringAnswer("Test Answer 1")))),
-      assessmentStatus = assessmentStatus,
+      assessmentStatus = ResettlementAssessmentStatus.NOT_STARTED,
       caseNoteText = "Some case note text",
       createdByUserId = "JSMITH_GEN",
     )
@@ -71,16 +54,11 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
     val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.parse("2022-12-20T10:13:03"), "crn1", "xyz1", LocalDate.parse("2025-01-23"))
     prisonerRepository.save(prisoner)
 
-    val pathway = PathwayEntity(-1, "Accommodation", true, LocalDateTime.parse("2022-12-20T10:13:03"))
-    pathwayRepository.save(pathway)
-
-    val assessmentStatus = resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.NOT_STARTED.id).get()
-
     val resettlementAssessment = ResettlementAssessmentEntity(
       id = null,
       prisoner = prisoner,
-      pathway = pathway,
-      statusChangedTo = statusRepository.getReferenceById(Status.SUPPORT_NOT_REQUIRED.id),
+      pathway = Pathway.ACCOMMODATION,
+      statusChangedTo = Status.SUPPORT_NOT_REQUIRED,
       assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN,
       creationDate = LocalDateTime.parse("2023-01-01T12:00:00"),
       createdBy = "Human, A",
@@ -90,15 +68,15 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
           ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_3", answer = ListAnswer(listOf("Answer 1", "Answer 2", "Answer 3"))),
         ),
       ),
-      assessmentStatus = assessmentStatus,
+      assessmentStatus = ResettlementAssessmentStatus.NOT_STARTED,
       caseNoteText = "some case note text",
       createdByUserId = "JWILLIAMS_GEN",
     )
     val resettlementAssessment2 = ResettlementAssessmentEntity(
       id = null,
       prisoner = prisoner,
-      pathway = pathway,
-      statusChangedTo = statusRepository.getReferenceById(Status.NOT_STARTED.id),
+      pathway = Pathway.ACCOMMODATION,
+      statusChangedTo = Status.NOT_STARTED,
       assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN,
       creationDate = LocalDateTime.parse("2022-01-01T12:00:00"),
       createdBy = "Human, A",
@@ -108,14 +86,14 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
           ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_5", answer = ListAnswer(listOf("Answer 1", "Answer 2", "Answer 3"))),
         ),
       ),
-      assessmentStatus = assessmentStatus,
+      assessmentStatus = ResettlementAssessmentStatus.NOT_STARTED,
       caseNoteText = "Some case notes",
       createdByUserId = "ABC1234",
     )
     resettlementAssessmentRepository.save(resettlementAssessment)
     resettlementAssessmentRepository.save(resettlementAssessment2)
 
-    val resettlementAssessmentsFromDB = resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisoner, pathway, ResettlementAssessmentType.RESETTLEMENT_PLAN)
+    val resettlementAssessmentsFromDB = resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisoner, Pathway.ACCOMMODATION, ResettlementAssessmentType.RESETTLEMENT_PLAN)
     assertThat(resettlementAssessmentsFromDB).usingRecursiveComparison().isEqualTo(resettlementAssessment)
   }
 
@@ -166,32 +144,28 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
     resettlementAssessmentRepository.saveAll(resettlementAssessmentList)
 
     // Run query for each prisoner and ensure the number of pathways is correct
-    Assertions.assertEquals(0, resettlementAssessmentRepository.countByNomsIdAndAssessmentTypeAndAssessmentStatus("NOMS1", ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED.id))
-    Assertions.assertEquals(7, resettlementAssessmentRepository.countByNomsIdAndAssessmentTypeAndAssessmentStatus("NOMS2", ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED.id))
-    Assertions.assertEquals(0, resettlementAssessmentRepository.countByNomsIdAndAssessmentTypeAndAssessmentStatus("NOMS3", ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED.id))
-    Assertions.assertEquals(7, resettlementAssessmentRepository.countByNomsIdAndAssessmentTypeAndAssessmentStatus("NOMS4", ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED.id))
-    Assertions.assertEquals(4, resettlementAssessmentRepository.countByNomsIdAndAssessmentTypeAndAssessmentStatus("NOMS5", ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED.id))
+    Assertions.assertEquals(0, resettlementAssessmentRepository.countByNomsIdAndAssessmentTypeAndAssessmentStatus("NOMS1", ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED))
+    Assertions.assertEquals(7, resettlementAssessmentRepository.countByNomsIdAndAssessmentTypeAndAssessmentStatus("NOMS2", ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED))
+    Assertions.assertEquals(0, resettlementAssessmentRepository.countByNomsIdAndAssessmentTypeAndAssessmentStatus("NOMS3", ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED))
+    Assertions.assertEquals(7, resettlementAssessmentRepository.countByNomsIdAndAssessmentTypeAndAssessmentStatus("NOMS4", ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED))
+    Assertions.assertEquals(4, resettlementAssessmentRepository.countByNomsIdAndAssessmentTypeAndAssessmentStatus("NOMS5", ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED))
 
     // Check we get the correct list of prisoners back
-    Assertions.assertEquals(listOf(prisoner2, prisoner4), resettlementAssessmentRepository.findPrisonersWithAllAssessmentsInStatus("MDI", ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED.id, Pathway.entries.size))
+    Assertions.assertEquals(listOf(prisoner2, prisoner4), resettlementAssessmentRepository.findPrisonersWithAllAssessmentsInStatus("MDI", ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED, Pathway.entries.size))
   }
 
   fun generateResettlementAssessmentEntity(prisoner: PrisonerEntity, pathway: Pathway, status: ResettlementAssessmentStatus, creationDate: LocalDateTime) =
     ResettlementAssessmentEntity(
       id = null,
       prisoner = prisoner,
-      pathway = getPathwayEntity(pathway),
-      statusChangedTo = getStatusEntity(Status.SUPPORT_NOT_REQUIRED),
+      pathway = pathway,
+      statusChangedTo = Status.SUPPORT_NOT_REQUIRED,
       assessmentType = ResettlementAssessmentType.BCST2,
       assessment = ResettlementAssessmentQuestionAndAnswerList(mutableListOf()),
       creationDate = creationDate,
       createdBy = "test user",
-      assessmentStatus = getResettlementAssessmentStatusEntity(status),
+      assessmentStatus = status,
       caseNoteText = "test",
       createdByUserId = "USER_1",
     )
-
-  fun getPathwayEntity(pathway: Pathway): PathwayEntity = pathwayRepository.getReferenceById(pathway.id)
-  fun getResettlementAssessmentStatusEntity(resettlementAssessmentStatus: ResettlementAssessmentStatus): ResettlementAssessmentStatusEntity = resettlementAssessmentStatusRepository.getReferenceById(resettlementAssessmentStatus.id)
-  fun getStatusEntity(status: Status): StatusEntity = statusRepository.getReferenceById(status.id)
 }

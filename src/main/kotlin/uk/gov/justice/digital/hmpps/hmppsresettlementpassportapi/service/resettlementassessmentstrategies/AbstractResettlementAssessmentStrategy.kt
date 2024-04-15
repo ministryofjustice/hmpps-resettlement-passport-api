@@ -4,11 +4,14 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import jakarta.transaction.Transactional
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentCompleteRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponseQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponseQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IAssessmentPage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
@@ -19,33 +22,22 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentSimpleQuestionAndAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Status
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentStatusRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.StatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.convertEnumStringToEnum
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClaimFromJWTToken
 import java.time.LocalDateTime
-import kotlin.jvm.optionals.getOrNull
 import kotlin.reflect.KClass
 
 abstract class AbstractResettlementAssessmentStrategy<T, Q>(
   private val resettlementAssessmentRepository: ResettlementAssessmentRepository,
   private val prisonerRepository: PrisonerRepository,
-  private val statusRepository: StatusRepository,
-  private val pathwayRepository: PathwayRepository,
   private val pathwayStatusRepository: PathwayStatusRepository,
-  private val resettlementAssessmentStatusRepository: ResettlementAssessmentStatusRepository,
   private val assessmentPageClass: KClass<T>,
   private val questionClass: KClass<Q>,
 ) :
@@ -99,7 +91,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
         )
       }
       // If the existing assessment is SUBMITTED this is an edit
-      val edit = existingAssessment?.assessmentStatus?.id == ResettlementAssessmentStatus.SUBMITTED.id
+      val edit = existingAssessment?.assessmentStatus == ResettlementAssessmentStatus.SUBMITTED
       nextPage = questionLambda.nextPage(NextPageContext(questions, edit, assessmentType))
     }
 
@@ -113,15 +105,12 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     // Obtain prisoner from database, if exists
     val prisonerEntity = loadPrisoner(nomsId)
 
-    // Obtain pathway entity from database
-    val pathwayEntity = pathwayRepository.findById(pathway.id).get()
-
     // Obtain COMPLETE and SUBMITTED resettlement status entity from database
-    val resettlementAssessmentStatusEntities = resettlementAssessmentStatusRepository.findAll().filter { it.id in listOf(ResettlementAssessmentStatus.COMPLETE.id, ResettlementAssessmentStatus.SUBMITTED.id) }
+    val resettlementAssessmentStatusEntities = listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED)
 
     return resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
       prisonerEntity,
-      pathwayEntity,
+      pathway,
       assessmentType,
       resettlementAssessmentStatusEntities,
     )
@@ -141,7 +130,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     // Get the latest complete assessment (if exists)
     var existingAssessment = getExistingAssessment(nomsId, pathway, assessmentType)
 
-    val edit = existingAssessment?.assessmentStatus?.id == ResettlementAssessmentStatus.SUBMITTED.id
+    val edit = existingAssessment?.assessmentStatus == ResettlementAssessmentStatus.SUBMITTED
 
     // If this is a RESETTLEMENT_PLAN (BCST3) type and there is not existing assessment we should use an existing BCST2 if available.
     if (existingAssessment == null && assessmentType == ResettlementAssessmentType.RESETTLEMENT_PLAN) {
@@ -230,11 +219,10 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
   }
 
   private fun loadPathwayStatusAnswer(pathway: Pathway, nomsId: String): StringAnswer? {
-    val pathwayEntity = pathwayRepository.findById(pathway.id).getOrNull() ?: return null
     val prisonerEntity = loadPrisoner(nomsId)
-    val pathwayStatus = pathwayStatusRepository.findByPathwayAndPrisoner(pathwayEntity, prisonerEntity) ?: return null
+    val pathwayStatus = pathwayStatusRepository.findByPathwayAndPrisoner(pathway, prisonerEntity) ?: return null
 
-    return StringAnswer(pathwayStatus.status.toStatus().name)
+    return StringAnswer(pathwayStatus.status.name)
   }
 
   override fun findPageIdFromQuestionId(questionId: String, assessmentType: ResettlementAssessmentType): String {
@@ -265,7 +253,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     val userId = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get sub from auth token")
 
     // Check if the latest assessment is submitted - if so this is an edit
-    val edit = getExistingAssessment(nomsId, pathway, assessmentType)?.assessmentStatus?.id == ResettlementAssessmentStatus.SUBMITTED.id
+    val edit = getExistingAssessment(nomsId, pathway, assessmentType)?.assessmentStatus == ResettlementAssessmentStatus.SUBMITTED
 
     // Check that question and answer set is valid
     validateQuestionAndAnswerSet(assessment, edit, assessmentType)
@@ -274,18 +262,15 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
 
-    // Obtain pathway entity from database
-    val pathwayEntity = pathwayRepository.findById(pathway.id).get()
-
     // If it's not an edit then use COMPLETE status, else use SUBMITTED
-    val resettlementAssessmentStatusEntity = if (!edit) {
-      resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.COMPLETE.id).get()
+    val resettlementAssessmentStatus = if (!edit) {
+      ResettlementAssessmentStatus.COMPLETE
     } else {
-      resettlementAssessmentStatusRepository.findById(ResettlementAssessmentStatus.SUBMITTED.id).get()
+      ResettlementAssessmentStatus.SUBMITTED
     }
 
     // If it's not an edit, get the status and the case note out of the questions and answers
-    var statusEntity: StatusEntity? = null
+    var status: Status? = null
     var caseNoteText: String? = null
 
     if (!edit) {
@@ -296,8 +281,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
         assessment.questionsAndAnswers.first { it.question == GenericResettlementAssessmentQuestion.SUPPORT_NEEDS.id }
       }
 
-      val statusChangedTo = convertFromSupportNeedAnswerToStatus(supportNeedsQuestionAndAnswer.answer)
-      statusEntity = statusRepository.findById(statusChangedTo.id).get()
+      status = convertFromSupportNeedAnswerToStatus(supportNeedsQuestionAndAnswer.answer)
 
       // Get caseNoteText out of CASE_NOTE_SUMMARY question as String
       val caseNoteQuestionAndAnswer =
@@ -320,13 +304,13 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     val resettlementAssessmentEntity = ResettlementAssessmentEntity(
       id = null,
       prisoner = prisonerEntity,
-      pathway = pathwayEntity,
-      statusChangedTo = statusEntity,
+      pathway = pathway,
+      statusChangedTo = status,
       assessmentType = assessmentType,
       assessment = resettlementAssessmentQuestionAndAnswerList,
       creationDate = LocalDateTime.now(),
       createdBy = name,
-      assessmentStatus = resettlementAssessmentStatusEntity,
+      assessmentStatus = resettlementAssessmentStatus,
       caseNoteText = caseNoteText,
       createdByUserId = userId,
     )

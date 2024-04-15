@@ -1,11 +1,11 @@
-INSERT INTO public.prisoner (id, noms_id, creation_date, crn, prison_id, release_date)
+INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id, release_date)
 VALUES (1, 'A8731DY', '2024-04-02 09:11:34.721525 +00:00', 'U328968', 'MDI', '2024-06-17');
 
 
-INSERT INTO public.resettlement_assessment (id, prisoner_id, pathway_id, assessment_status_id, assessment_type,
-                                            assessment, status_changed_to_status_id, created_date, created_by,
-                                            case_note_text, created_by_user_id)
-VALUES (1, 1, 1, 4, 'BCST2', '{
+INSERT INTO resettlement_assessment (id, prisoner_id, pathway, assessment_status, assessment_type,
+                                            assessment, status_changed_to, created_date, created_by,
+                                            case_note_text, created_by_user_id) VALUES
+(1, 1, 'ACCOMMODATION', 'SUBMITTED', 'BCST2', '{
   "assessment": [
     {
       "answer": {
@@ -36,11 +36,8 @@ VALUES (1, 1, 1, 4, 'BCST2', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', 4, '2024-04-02 09:22:25.080465 +00:00', 'Matthew Kerry', 'D', 'MKERRY_GEN');
-INSERT INTO public.resettlement_assessment (id, prisoner_id, pathway_id, assessment_status_id, assessment_type,
-                                            assessment, status_changed_to_status_id, created_date, created_by,
-                                            case_note_text, created_by_user_id)
-VALUES (2, 1, 2, 4, 'BCST2', '{
+}', 'SUPPORT_DECLINED', '2024-04-02 09:22:25.080465 +00:00', 'Matthew Kerry', 'D', 'MKERRY_GEN'),
+(2, 1, 'ATTITUDES_THINKING_AND_BEHAVIOUR', 'SUBMITTED', 'BCST2', '{
   "assessment": [
     {
       "answer": {
@@ -71,11 +68,8 @@ VALUES (2, 1, 2, 4, 'BCST2', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', 3, '2024-04-02 09:22:42.735799 +00:00', 'Matthew Kerry', 'a', 'MKERRY_GEN');
-INSERT INTO public.resettlement_assessment (id, prisoner_id, pathway_id, assessment_status_id, assessment_type,
-                                            assessment, status_changed_to_status_id, created_date, created_by,
-                                            case_note_text, created_by_user_id)
-VALUES (3, 1, 3, 4, 'BCST2', '{
+}', 'SUPPORT_NOT_REQUIRED', '2024-04-02 09:22:42.735799 +00:00', 'Matthew Kerry', 'a', 'MKERRY_GEN'),
+(3, 1, 'CHILDREN_FAMILIES_AND_COMMUNITY', 'SUBMITTED', 'BCST2', '{
   "assessment": [
     {
       "answer": {
@@ -148,11 +142,8 @@ VALUES (3, 1, 3, 4, 'BCST2', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', 3, '2024-04-02 09:23:24.498140 +00:00', 'Matthew Kerry', 'a', 'MKERRY_GEN');
-INSERT INTO public.resettlement_assessment (id, prisoner_id, pathway_id, assessment_status_id, assessment_type,
-                                            assessment, status_changed_to_status_id, created_date, created_by,
-                                            case_note_text, created_by_user_id)
-VALUES (4, 1, 4, 4, 'BCST2', '{
+}', 'SUPPORT_NOT_REQUIRED', '2024-04-02 09:23:24.498140 +00:00', 'Matthew Kerry', 'a', 'MKERRY_GEN'),
+(4, 1, 'DRUGS_AND_ALCOHOL', 'SUBMITTED', 'BCST2', '{
   "assessment": [
     {
       "answer": {
@@ -183,11 +174,8 @@ VALUES (4, 1, 4, 4, 'BCST2', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', 3, '2024-04-02 09:24:00.471236 +00:00', 'Matthew Kerry', 'a', 'MKERRY_GEN');
-INSERT INTO public.resettlement_assessment (id, prisoner_id, pathway_id, assessment_status_id, assessment_type,
-                                            assessment, status_changed_to_status_id, created_date, created_by,
-                                            case_note_text, created_by_user_id)
-VALUES (5, 1, 5, 4, 'BCST2', '{
+}', 'SUPPORT_NOT_REQUIRED', '2024-04-02 09:24:00.471236 +00:00', 'Matthew Kerry', 'a', 'MKERRY_GEN'),
+(5, 1, 'EDUCATION_SKILLS_AND_WORK', 'SUBMITTED', 'BCST2', '{
   "assessment": [
     {
       "answer": {
@@ -239,11 +227,8 @@ VALUES (5, 1, 5, 4, 'BCST2', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', 3, '2024-04-02 09:24:21.616536 +00:00', 'Matthew Kerry', 'b', 'MKERRY_GEN');
-INSERT INTO public.resettlement_assessment (id, prisoner_id, pathway_id, assessment_status_id, assessment_type,
-                                            assessment, status_changed_to_status_id, created_date, created_by,
-                                            case_note_text, created_by_user_id)
-VALUES (6, 1, 6, 4, 'BCST2', '{
+}', 'SUPPORT_NOT_REQUIRED', '2024-04-02 09:24:21.616536 +00:00', 'Matthew Kerry', 'b', 'MKERRY_GEN'),
+(6, 1, 'FINANCE_AND_ID', 'SUBMITTED', 'BCST2', '{
   "assessment": [
     {
       "answer": {
@@ -306,11 +291,8 @@ VALUES (6, 1, 6, 4, 'BCST2', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', 3, '2024-04-02 09:24:43.388222 +00:00', 'Matthew Kerry', 'a', 'MKERRY_GEN');
-INSERT INTO public.resettlement_assessment (id, prisoner_id, pathway_id, assessment_status_id, assessment_type,
-                                            assessment, status_changed_to_status_id, created_date, created_by,
-                                            case_note_text, created_by_user_id)
-VALUES (7, 1, 7, 4, 'BCST2', '{
+}', 'SUPPORT_NOT_REQUIRED', '2024-04-02 09:24:43.388222 +00:00', 'Matthew Kerry', 'a', 'MKERRY_GEN'),
+(7, 1, 'HEALTH', 'SUBMITTED', 'BCST2', '{
   "assessment": [
     {
       "answer": {
@@ -348,6 +330,6 @@ VALUES (7, 1, 7, 4, 'BCST2', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', 3, '2024-04-02 09:24:58.336982 +00:00', 'Matthew Kerry', 'c', 'MKERRY_GEN');
+}', 'SUPPORT_NOT_REQUIRED', '2024-04-02 09:24:58.336982 +00:00', 'Matthew Kerry', 'c', 'MKERRY_GEN');
 
-INSERT INTO public.pathway_status (id, prisoner_id, pathway_id, status_id, updated_date) VALUES (1, 1, 1, 5, '2024-04-02 09:25:01.126170 +00:00');
+INSERT INTO pathway_status (id, prisoner_id, pathway, status, updated_date) VALUES (1, 1, 'ACCOMMODATION', 'DONE', '2024-04-02 09:25:01.126170 +00:00');

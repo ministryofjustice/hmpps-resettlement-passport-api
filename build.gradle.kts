@@ -38,7 +38,8 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
-  runtimeOnly("org.flywaydb:flyway-core")
+  implementation("org.flywaydb:flyway-core")
+
   runtimeOnly("org.springframework.boot:spring-boot-starter-jdbc")
   runtimeOnly("org.postgresql:postgresql:42.7.3")
 

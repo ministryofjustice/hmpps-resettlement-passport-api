@@ -13,10 +13,10 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteTy
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesMeta
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DpsCaseNoteSubType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DpsCaseNoteType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNotes
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseNotesClientCredentialsService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.enumIncludes
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.extractCaseNoteTypeFromBcstCaseNote

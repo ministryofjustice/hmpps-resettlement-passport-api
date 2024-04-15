@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.StatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.MetricsService
@@ -271,8 +271,8 @@ class MetricsIntegrationTest : IntegrationTestBase() {
             PathwayStatusEntity(
               null,
               prisoner,
-              PathwayEntity(pathwayId.toLong() + 1, "", true, LocalDateTime.now()),
-              StatusEntity(statusId.toLong(), "", true, LocalDateTime.now()),
+              Pathway.entries[pathwayId],
+              Status.entries[statusId - 1],
               LocalDateTime.now(),
             ),
           )

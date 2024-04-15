@@ -215,7 +215,7 @@ class PrisonerSearchApiService(
       val lastUpdatedDate: LocalDate?
 
       if (prisonerEntity != null) {
-        pathwayStatuses = if (pathwayView == null) pathwayStatusesEntities.map { PathwayStatus(pathway = it.pathway, status = it.status, lastDateChange = it.updatedDate?.toLocalDate()) } else null
+        pathwayStatuses = if (pathwayView == null) pathwayStatusesEntities.map { PathwayStatus(pathway = it.pathway, status = it.status, lastDateChange = it.updatedDate?.toLocalDate()) }.sortedBy { it.pathway } else null
         sortedPathwayStatuses = pathwayStatuses?.sortedWith(compareBy(nullsLast()) { it.lastDateChange })
         lastUpdatedDate =
           if (pathwayView == null) {

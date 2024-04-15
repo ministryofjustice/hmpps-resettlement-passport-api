@@ -249,7 +249,7 @@ class PrisonerSearchApiServiceTest {
       PathwayStatusEntity(3, mockPrisonerEntity3, pathway2, status, LocalDateTime.now()),
       PathwayStatusEntity(4, mockPrisonerEntity3, pathway3, status, LocalDateTime.now()),
       PathwayStatusEntity(5, mockPrisonerEntity1, pathway3, status, LocalDateTime.now()),
-      PathwayStatusEntity(5, mockPrisonerEntity1, pathway1, status, LocalDateTime.now()),
+      PathwayStatusEntity(6, mockPrisonerEntity1, pathway1, status, LocalDateTime.now()),
     )
 
     `when`(pathwayStatusRepository.findByPrison(any())).thenReturn(mockPathwayStatusEntities)
@@ -348,12 +348,12 @@ class PrisonerSearchApiServiceTest {
         lastUpdatedDate = LocalDate.now(),
         status = listOf(
           PathwayStatus(
-            pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
+            pathway = Pathway.ACCOMMODATION,
             status = Status.NOT_STARTED,
             lastDateChange = LocalDate.now(),
           ),
           PathwayStatus(
-            pathway = Pathway.ACCOMMODATION,
+            pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
             status = Status.NOT_STARTED,
             lastDateChange = LocalDate.now(),
           ),

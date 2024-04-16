@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientException
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.client.awaitBodilessEntity
 import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
@@ -150,11 +151,16 @@ class ResettlementPassportDeliusApiService(
 
   fun createAppointment(crn: String, appointment: DeliusCreateAppointment) {
     runBlocking {
-      rpDeliusWebClientCredentials.post()
-        .uri("/appointments/{crn}", crn)
-        .bodyValue(appointment)
-        .retrieve()
-        .awaitBodilessEntity()
+      try {
+        rpDeliusWebClientCredentials.post()
+          .uri("/appointments/{crn}", crn)
+          .bodyValue(appointment)
+          .retrieve()
+          .awaitBodilessEntity()
+      } catch (e: WebClientResponseException) {
+        log.error("Error calling create appointment delius api {}, {}", e.statusCode, e.responseBodyAsString)
+        throw e
+      }
     }
   }
 }

@@ -149,7 +149,7 @@ class ResettlementPassportDeliusApiServiceTest {
       """
       {
         "type": "Health",
-        "start": "2024-04-15T14:32:00.000+0100",
+        "start": "2024-04-15T14:32:00.000+01",
         "duration": "PT30M",
         "notes": "notes",
       }

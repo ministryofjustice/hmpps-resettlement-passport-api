@@ -185,7 +185,7 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
         .withHeader("Content-Type", equalTo("application/json"))
         .withRequestBody(
           matchingJsonPath("$.type", equalTo("DrugsAndAlcohol"))
-            .and(matchingJsonPath("$.start", equalTo("2023-08-17T12:00:01.000+0100")))
+            .and(matchingJsonPath("$.start", equalTo("2023-08-17T12:00:01.000+01")))
             .and(matchingJsonPath("$.duration", equalTo("PT2H")))
             .and(matchingJsonPath("$.notes", equalTo(expectedNotes))),
         ),

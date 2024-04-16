@@ -7,6 +7,7 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.assertj.core.api.AssertProvider
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertNull
@@ -16,6 +17,7 @@ import org.mockito.kotlin.mock
 import org.springframework.boot.test.json.JsonContentAssert
 import org.springframework.http.codec.json.Jackson2JsonEncoder
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusCreateAppointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusCreateAppointmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
@@ -135,12 +137,7 @@ class ResettlementPassportDeliusApiServiceTest {
 
     mockWebServer.enqueue(response = MockResponse().setResponseCode(201))
 
-    val appointment = DeliusCreateAppointment(
-      type = DeliusCreateAppointmentType.Health,
-      start = LocalDate.of(2024, 4, 15).atTime(14, 32).atZone(ZoneId.of("Europe/London")),
-      duration = Duration.ofMinutes(30),
-      notes = "notes",
-    )
+    val appointment = aCreateAppointmentRequest()
     rpDeliusApiService.createAppointment(crn, appointment)
 
     assertThat(mockWebServer.requestCount).isEqualTo(1)
@@ -159,6 +156,24 @@ class ResettlementPassportDeliusApiServiceTest {
       """.trimIndent(),
     )
   }
+
+  @Test
+  fun `Create appointment bad request`() {
+    val crn = "CRN1"
+
+    mockWebServer.enqueue(response = MockResponse().setResponseCode(400))
+
+    val appointment = aCreateAppointmentRequest()
+    assertThatThrownBy { rpDeliusApiService.createAppointment(crn, appointment) }
+      .isInstanceOf(WebClientResponseException.BadRequest::class.java)
+  }
+
+  private fun aCreateAppointmentRequest() = DeliusCreateAppointment(
+    type = DeliusCreateAppointmentType.Health,
+    start = LocalDate.of(2024, 4, 15).atTime(14, 32).atZone(ZoneId.of("Europe/London")),
+    duration = Duration.ofMinutes(30),
+    notes = "notes",
+  )
 
   private fun forJson(json: String): AssertProvider<JsonContentAssert> {
     return AssertProvider<JsonContentAssert> {

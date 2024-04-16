@@ -59,7 +59,6 @@ data class DeliusCreateAppointment(
   val type: DeliusCreateAppointmentType,
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
   val start: ZonedDateTime,
-//  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "'P'yyyy'Y'M'M'd'DT'H'H'm'M's.SSS'S'")
   val duration: Duration,
   val notes: String? = null,
 )

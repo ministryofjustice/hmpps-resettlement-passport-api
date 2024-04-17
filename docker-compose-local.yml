@@ -21,7 +21,7 @@ services:
       - hmpps
     container_name: rp-api-wiremock
     ports:
-      - "9093:8080"
+      - "9193:8080"
     volumes:
       - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs:/home/wiremock:ro"
 

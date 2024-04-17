@@ -7,30 +7,30 @@ api:
     url:
       oauth: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
       #oauth: http://localhost:9090/auth
-      prison-register: http://localhost:9093/prison-register-api
+      prison-register: http://localhost:9193/prison-register-api
       #prison-register: https://prison-register-dev.hmpps.service.justice.gov.uk
-      prisoner-search: http://localhost:9093/prisoner-search-api
+      prisoner-search: http://localhost:9193/prisoner-search-api
       #prisoner-search: https://prisoner-search-dev.prison.service.justice.gov.uk
-      cvl: http://localhost:9093/cvl-api
+      cvl: http://localhost:9193/cvl-api
       #cvl: https://create-and-vary-a-licence-api-dev.hmpps.service.justice.gov.uk
-      arn: http://localhost:9093/arn-api
+      arn: http://localhost:9193/arn-api
       #arn: https://assess-risks-and-needs-dev.hmpps.service.justice.gov.uk
-      prison: http://localhost:9093/prison-api
+      prison: http://localhost:9193/prison-api
       #prison: https://prison-api-dev.prison.service.justice.gov.uk
       case-notes: https://dev.offender-case-notes.service.justice.gov.uk
-      key-worker: http://localhost:9093/key-worker-api
+      key-worker: http://localhost:9193/key-worker-api
       #key-worker: https://keyworker-api-dev.prison.service.justice.gov.uk
-      allocation-manager: http://localhost:9093/allocation-manager-api
+      allocation-manager: http://localhost:9193/allocation-manager-api
       #https://allocation-manager-staging.apps.live.cloud-platform.service.justice.gov.uk
-      resettlement-passport-delius: http://localhost:9093/resettlement-passport-and-delius-api
+      resettlement-passport-delius: http://localhost:9193/resettlement-passport-and-delius-api
       #https://resettlement-passport-and-delius-dev.hmpps.service.justice.gov.uk
-      education-employment: http://localhost:9093/education-employment-api
+      education-employment: http://localhost:9193/education-employment-api
       #https://education-employment-api-dev.hmpps.service.justice.gov.uk
-      ciag: http://localhost:9093/ciag-api
+      ciag: http://localhost:9193/ciag-api
       #https://ciag-induction-api-dev.hmpps.service.justice.gov.uk
-      interventions-service: http://localhost:9093/interventions-service-api
+      interventions-service: http://localhost:9193/interventions-service-api
       #https://hmpps-interventions-service-dev.apps.live-1.cloud-platform.service.justice.gov.uk
-      pop-user-service: http://localhost:9093/pop-user-api
+      pop-user-service: http://localhost:9193/pop-user-api
       #https://person-on-probation-user-api-dev.hmpps.service.justice.gov.uk
 
 management.endpoint:

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Appointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AppointmentsList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CreateAppointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AppointmentsService
@@ -31,41 +30,6 @@ import java.time.LocalDate
 class AppointmentsResourceController(
   private val appointmentsService: AppointmentsService,
 ) {
-
-  @GetMapping("/{nomsId}/appointments/{appointmentId}")
-  @Operation(summary = "Get an appointment", description = "Get an appointments by id")
-  @ApiResponses(
-    value = [
-      ApiResponse(
-        responseCode = "200",
-        description = "Successful Operation",
-      ),
-      ApiResponse(
-        responseCode = "401",
-        description = "Unauthorized to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-      ApiResponse(
-        responseCode = "403",
-        description = "Forbidden, requires an appropriate role",
-        content = [
-          Content(
-            mediaType = MediaType.APPLICATION_JSON_VALUE,
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
-      ),
-    ],
-  )
-  fun getAppointment(
-    @Schema(example = "AXXXS", required = true)
-    @PathVariable("nomsId")
-    @Parameter(required = true)
-    nomsId: String,
-    @PathVariable("appointmentId")
-    @Parameter(required = true)
-    appointmentId: Long,
-  ): Appointment = appointmentsService.getAppointmentsById(nomsId, appointmentId)
 
   @GetMapping("/{nomsId}/appointments")
   @Operation(summary = "Get all appointments", description = "All Appointments for the prisoner")

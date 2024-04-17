@@ -24,12 +24,9 @@ class AppointmentsServiceTest {
   @Mock
   private lateinit var rpDeliusApiService: ResettlementPassportDeliusApiService
 
-  @Mock
-  private lateinit var deliusContactService: DeliusContactService
-
   @BeforeEach
   fun beforeEach() {
-    appointmentsService = AppointmentsService(prisonerRepository, rpDeliusApiService, deliusContactService)
+    appointmentsService = AppointmentsService(prisonerRepository, rpDeliusApiService)
   }
 
   @Test

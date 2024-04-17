@@ -1,5 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi
 
+import com.fasterxml.jackson.annotation.JsonFormat
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Category
+import java.time.Duration
+import java.time.ZonedDateTime
+
 data class AppointmentDelius(
   val type: Info,
   val dateTime: String?,
@@ -30,6 +35,7 @@ data class Address(
   val county: String?,
   val postcode: String?,
 )
+
 data class StaffInfo(
   val code: String,
   val name: Fullname,
@@ -48,3 +54,36 @@ data class AppointmentsDeliusList(
   val page: Int,
   val size: Int,
 )
+
+data class DeliusCreateAppointment(
+  val type: DeliusCreateAppointmentType,
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX")
+  val start: ZonedDateTime,
+  val duration: Duration,
+  val notes: String? = null,
+)
+
+enum class DeliusCreateAppointmentType {
+  Accommodation,
+  ThinkingAndBehaviour,
+  FamilyAndCommunity,
+  DrugsAndAlcohol,
+  SkillsAndWork,
+  Finance,
+  Health,
+  Benefits,
+  ;
+
+  companion object {
+    fun fromCategory(category: Category) = when (category) {
+      Category.ACCOMMODATION -> Accommodation
+      Category.ATTITUDES_THINKING_AND_BEHAVIOUR -> ThinkingAndBehaviour
+      Category.CHILDREN_FAMILIES_AND_COMMUNITY -> FamilyAndCommunity
+      Category.DRUGS_AND_ALCOHOL -> DrugsAndAlcohol
+      Category.EDUCATION_SKILLS_AND_WORK -> SkillsAndWork
+      Category.FINANCE_AND_ID -> Finance
+      Category.HEALTH -> Health
+      Category.BENEFITS -> Benefits
+    }
+  }
+}

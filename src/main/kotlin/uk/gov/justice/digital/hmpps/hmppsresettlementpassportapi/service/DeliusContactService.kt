@@ -12,7 +12,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Cont
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DeliusContactEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.DeliusContactRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
-import java.lang.IllegalArgumentException
 import java.time.LocalDateTime
 
 @Service
@@ -32,9 +31,6 @@ class DeliusContactService(private val deliusContactRepository: DeliusContactRep
         createdBy = username,
       ),
     )
-  }
-  fun addAppointmentToDatabase(deliusContactEntity: DeliusContactEntity) {
-    deliusContactRepository.save(deliusContactEntity)
   }
 
   fun getCaseNotesByNomsId(nomsId: String, caseNoteType: CaseNoteType): List<PathwayCaseNote> {
@@ -75,18 +71,5 @@ class DeliusContactService(private val deliusContactRepository: DeliusContactRep
     Category.FINANCE_AND_ID -> CaseNotePathway.FINANCE_AND_ID
     Category.HEALTH -> CaseNotePathway.HEALTH
     Category.BENEFITS -> throw IllegalArgumentException("Error retrieving case notes - cannot use BENEFITS category with a case note") // should never happen
-  }
-
-  fun getAppointments(nomsId: String): List<DeliusContactEntity> {
-    val prisonerEntity = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    return deliusContactRepository.findByPrisonerAndContactType(prisonerEntity, ContactType.APPOINTMENT)
-  }
-
-  fun getAppointmentById(id: Long, nomsId: String): DeliusContactEntity {
-    val contactEntity = deliusContactRepository.findById(id) ?: throw ResourceNotFoundException("Contact with id $id and nomis id $nomsId not found in database")
-    if (contactEntity.get().prisoner.nomsId != nomsId) {
-      throw ResourceNotFoundException("Contact with id $id and nomis id $nomsId not found in database")
-    }
-    return contactEntity.get()
   }
 }

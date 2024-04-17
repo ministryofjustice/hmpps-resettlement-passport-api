@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wi
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
-import java.util.*
+import java.util.Base64
 
 class PrisonApiMockServer : WireMockServerBase(9098) {
   companion object {
@@ -39,7 +39,7 @@ class PrisonApiMockServer : WireMockServerBase(9098) {
             .withHeader("Content-Type", "image/jpeg")
             .withBody(
               Base64.getDecoder()
-                .decode(PrisonApiMockServer.TEST_IMAGE_BASE64),
+                .decode(TEST_IMAGE_BASE64),
             )
             .withStatus(200)
         } else {

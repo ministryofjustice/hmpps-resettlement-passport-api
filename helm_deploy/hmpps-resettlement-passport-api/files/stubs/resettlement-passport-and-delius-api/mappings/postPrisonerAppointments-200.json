@@ -1,0 +1,12 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPathPattern": "/appointments/([A-Z1-9]+)"
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Server": "wiremock"
+    }
+  }
+}

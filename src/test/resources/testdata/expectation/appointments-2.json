@@ -1,24 +1,6 @@
 {
   "results": [
     {
-      "title": "Appointment 2",
-      "contact": "Unallocated Staff",
-      "date": "2020-06-01",
-      "time": "17:00:00",
-      "location": {
-        "buildingName": null,
-        "buildingNumber": "200",
-        "streetName": "High Street",
-        "district": "Legal District",
-        "town": "York",
-        "county": "North Yorkshire",
-        "postcode": "YO99 9ZZ",
-        "description": null
-      },
-      "contactEmail": null,
-      "duration": 60
-    },
-    {
       "title": "Appointment with CRS Staff (NS)",
       "contact": "Unallocated Staff",
       "date": "2023-05-22",
@@ -916,24 +898,6 @@
         "description": "CRS Provider Location"
       },
       "contactEmail": "unallocated.staff@test.com",
-      "duration": 90
-    },
-    {
-      "title": "Appointment 1",
-      "contact": "Unallocated Staff",
-      "date": "2024-01-12",
-      "time": "13:05:00",
-      "location": {
-        "buildingName": "Office",
-        "buildingNumber": "100",
-        "streetName": "Main Street",
-        "district": null,
-        "town": "Bradford",
-        "county": "West Yorkshire",
-        "postcode": "BD1 1AA",
-        "description": null
-      },
-      "contactEmail": null,
       "duration": 90
     }
   ]

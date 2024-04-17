@@ -1,9 +1,11 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
+import org.springframework.http.codec.json.Jackson2JsonEncoder
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager
@@ -34,6 +36,7 @@ class WebClientConfiguration(
   @Value("\${api.base.url.ciag}") private val ciagRootUri: String,
   @Value("\${api.base.url.interventions-service}") private val interventionsRootUri: String,
   @Value("\${api.base.url.pop-user-service}") private val popUserRootUri: String,
+  private val objectMapper: ObjectMapper,
   val clientRegistrationRepo: ClientRegistrationRepository,
 ) {
 
@@ -123,7 +126,14 @@ class WebClientConfiguration(
       .baseUrl(baseUrl)
       .clientConnector(ReactorClientHttpConnector(httpClient))
       .filter(oauth2Client)
-      .codecs { codecs -> codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024) }
+      .codecs { codecs ->
+        codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024)
+        codecs.defaultCodecs().jackson2JsonEncoder(
+          Jackson2JsonEncoder(
+            objectMapper,
+          ),
+        )
+      }
       .build()
   }
 

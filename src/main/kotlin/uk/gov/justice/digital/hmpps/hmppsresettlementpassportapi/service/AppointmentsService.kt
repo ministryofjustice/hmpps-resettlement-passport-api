@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
-import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Address
@@ -12,22 +11,25 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Appointmen
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AppointmentsList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CreateAppointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.AppointmentDelius
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ContactType
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DeliusContactEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusCreateAppointment
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusCreateAppointmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import kotlin.time.Duration
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
+import kotlin.time.toJavaDuration
 
 @Service
 class AppointmentsService(
   private val prisonerRepository: PrisonerRepository,
   private val rpDeliusApiService: ResettlementPassportDeliusApiService,
-  private val deliusContactService: DeliusContactService,
 ) {
 
   companion object {
@@ -47,14 +49,6 @@ class AppointmentsService(
   }
 
   @Transactional
-  fun getAppointmentsById(
-    nomsId: String,
-    id: Long,
-  ): Appointment {
-    return mapAppointmentFromDatabase(deliusContactService.getAppointmentById(id, nomsId))
-  }
-
-  @Transactional
   fun getAppointmentsByNomsId(
     nomsId: String,
     startDate: LocalDate,
@@ -68,13 +62,9 @@ class AppointmentsService(
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val crn = prisonerEntity.crn ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in database")
 
-    val appointments = mutableListOf<Appointment>()
-    appointments.addAll(mapAppointmentsFromDeliusApi(rpDeliusApiService.fetchAppointments(nomsId, crn, startDate, endDate)))
-    appointments.addAll(mapAppointmentsFromDatabase(deliusContactService.getAppointments(nomsId)))
+    val appointments = mapAppointmentsFromDeliusApi(rpDeliusApiService.fetchAppointments(nomsId, crn, startDate, endDate))
 
-    appointments.sortBy { LocalDateTime.of(it.date, it.time) }
-
-    return AppointmentsList(appointments)
+    return AppointmentsList(appointments.sortedBy { LocalDateTime.of(it.date, it.time) })
   }
 
   private fun mapAppointmentsFromDeliusApi(appList: List<AppointmentDelius>): List<Appointment> {
@@ -124,51 +114,20 @@ class AppointmentsService(
     return appointmentList
   }
 
-  fun mapAppointmentsFromDatabase(deliusContacts: List<DeliusContactEntity>) = deliusContacts.map { deliusContact ->
-    mapAppointmentFromDatabase(deliusContact)
-  }
-
-  fun mapAppointmentFromDatabase(deliusContact: DeliusContactEntity): Appointment {
-    val customFieldsFromNotes = getCustomFieldsFromNotes(deliusContact.notes, deliusContact.id)
-    return Appointment(
-      title = extractSectionFromNotes(customFieldsFromNotes, APPOINTMENT_TITLE, deliusContact.id),
-      contact = extractSectionFromNotes(customFieldsFromNotes, CONTACT, deliusContact.id),
-      date = deliusContact.appointmentDate?.toLocalDate(),
-      time = deliusContact.appointmentDate?.toLocalTime(),
-      location = Address(
-        buildingName = extractSectionFromNotesTrimToNull(customFieldsFromNotes, BUILDING_NAME, deliusContact.id),
-        buildingNumber = extractSectionFromNotesTrimToNull(customFieldsFromNotes, BUILDING_NUMBER, deliusContact.id),
-        streetName = extractSectionFromNotesTrimToNull(customFieldsFromNotes, STREET_NAME, deliusContact.id),
-        district = extractSectionFromNotesTrimToNull(customFieldsFromNotes, DISTRICT, deliusContact.id),
-        town = extractSectionFromNotesTrimToNull(customFieldsFromNotes, TOWN, deliusContact.id),
-        county = extractSectionFromNotesTrimToNull(customFieldsFromNotes, COUNTY, deliusContact.id),
-        postcode = extractSectionFromNotesTrimToNull(customFieldsFromNotes, POSTCODE, deliusContact.id),
-        description = null,
-      ),
-      contactEmail = null,
-      duration = deliusContact.appointmentDuration?.toLong(),
-      note = deliusContact.notes,
-    )
-  }
-
   @Transactional
   fun createAppointment(appointment: CreateAppointment, nomsId: String, auth: String): ResponseEntity<Void> {
-    val now = LocalDateTime.now()
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
 
-    val appointmentEntity = DeliusContactEntity(
-      null,
-      prisoner,
-      category = appointment.appointmentType,
-      contactType = ContactType.APPOINTMENT,
-      createdDate = now,
-      appointmentDate = appointment.dateAndTime,
-      appointmentDuration = appointment.appointmentDuration,
-      notes = createNotes(appointment),
-      createdBy = getClaimFromJWTToken(auth, "name") ?: throw ServerWebInputException("Cannot get name from auth token"),
+    rpDeliusApiService.createAppointment(
+      prisoner.crn!!,
+      DeliusCreateAppointment(
+        type = DeliusCreateAppointmentType.fromCategory(appointment.appointmentType),
+        start = appointment.dateAndTime.atZone(ZoneId.of("Europe/London")),
+        duration = appointment.appointmentDuration.toDuration(DurationUnit.MINUTES).toJavaDuration(),
+        notes = createNotes(appointment),
+      ),
     )
-    deliusContactService.addAppointmentToDatabase(appointmentEntity)
     return ResponseEntity.ok().build()
   }
 

@@ -7,7 +7,7 @@ import org.testcontainers.containers.wait.strategy.Wait
 object PostgresContainer {
   val instance: PostgreSQLContainer<Nothing>? by lazy { startPostgresqlContainer() }
 
-  private fun startPostgresqlContainer(): PostgreSQLContainer<Nothing>? {
+  private fun startPostgresqlContainer(): PostgreSQLContainer<Nothing> {
     log.info("Creating a Postgres database")
     return PostgreSQLContainer<Nothing>("postgres").apply {
       withEnv("HOSTNAME_EXTERNAL", "localhost")

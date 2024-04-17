@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/allocation-manager-api/api/allocation/A8731DY"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "allocation-manager-api-getPomsByNomsId-A8731DY-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

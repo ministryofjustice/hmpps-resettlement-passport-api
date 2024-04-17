@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/prisoner-search-api/prisoner/G9981UK"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "prisoner-search-api-getPrisonerDetails-G9981UK-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

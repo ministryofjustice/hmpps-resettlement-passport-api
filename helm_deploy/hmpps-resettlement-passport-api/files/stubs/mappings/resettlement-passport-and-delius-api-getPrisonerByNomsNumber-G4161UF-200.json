@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/resettlement-passport-and-delius-api/probation-cases/G4161UF/crn"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "resettlement-passport-and-delius-api-getPrisonerByNomsNumber-G4161UF-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

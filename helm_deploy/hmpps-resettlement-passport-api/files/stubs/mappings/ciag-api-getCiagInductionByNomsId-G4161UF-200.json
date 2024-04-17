@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/ciag-api/ciag/induction/G4161UF"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "ciag-api-getCiagInductionByNomsId-G4161UF-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

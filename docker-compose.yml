@@ -1,4 +1,6 @@
 version: "3"
+include:
+  - docker-compose-local.yml
 services:
   hmpps-resettlement-passport-api:
     build:
@@ -19,16 +21,19 @@ services:
       - SPRING_FLYWAY_URL=jdbc:postgresql://resettlement-passport-db:5432/resettlement-passport?sslmode=prefer
       - RESETTLEMENT_PASSPORT_API_CLIENT_ID=${RESETTLEMENT_PASSPORT_API_CLIENT_ID}
       - RESETTLEMENT_PASSPORT_API_CLIENT_SECRET=${RESETTLEMENT_PASSPORT_API_CLIENT_SECRET}
-      - API_BASE_URL_PRISON_REGISTER=http://prison-register-api-stub:8080
-      - API_BASE_URL_PRISONER_SEARCH=http://prisoner-search-api-stub:8080
-      - API_BASE_URL_CVL=http://cvl-stub:8080
-      - API_BASE_URL_ARN=http://arn-api-stub:8080
-      - API_BASE_URL_PRISON=http://prison-api-stub:8080
-      - API_BASE_URL_RESETTLEMENT-PASSPORT-DELIUS=http://resettlement-passport-and-delius-api-stub:8080
-      - API_BASE_URL_EDUCATION-EMPLOYMENT=http://education-employment-api-stub:8080
-      - API_BASE_URL_CIAG=http://ciag-api-stub:8080
-      - API_BASE_URL_INTERVENTIONS-SERVICE=http://interventions-service-api-stub:8080
-      - API_BASE_URL_pop-user-service=http://pop-user-api-stub:8080
+      - API_BASE_URL_PRISON_REGISTER=http://wiremock:8080/prison-register-api
+      - API_BASE_URL_PRISONER_SEARCH=http://wiremock:8080/prisoner-search-api
+      - API_BASE_URL_CVL=http://wiremock:8080/cvl-api
+      - API_BASE_URL_ARN=http://wiremock:8080/arn-api
+      - API_BASE_URL_PRISON=http://wiremock:8080/prison-api
+      - API_BASE_URL_RESETTLEMENT-PASSPORT-DELIUS=http://wiremock:8080/resettlement-passport-and-delius-api
+      - API_BASE_URL_EDUCATION-EMPLOYMENT=http://wiremock:8080/education-employment-api
+      - API_BASE_URL_CIAG=http://wiremock:8080/ciag-api
+      - API_BASE_URL_INTERVENTIONS-SERVICE=http://wiremock:8080/interventions-service-api
+      - API_BASE_URL_pop-user-service=http://wiremock:8080/pop-user-api
+      - API_BASE_URL_CASE-NOTES=https://dev.offender-case-notes.service.justice.gov.uk
+      - API_BASE_URL_KEY-WORKER=http://wiremock:8080/key-wprler-api-
+      - API_BASE_URL_ALLOCATION-MANAGER=http://wiremock:8080/allocation-manager-api
 
 networks:
   hmpps:

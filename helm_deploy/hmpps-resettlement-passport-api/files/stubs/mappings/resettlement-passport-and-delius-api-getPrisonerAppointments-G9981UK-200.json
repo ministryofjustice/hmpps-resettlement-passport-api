@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/resettlement-passport-and-delius-api/appointments/X705049"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "resettlement-passport-and-delius-api-getAppointments-G9981UK-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

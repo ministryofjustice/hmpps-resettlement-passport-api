@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/ciag-api/ciag/induction/A8731DY"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "ciag-api-getCiagInductionByNomsId-A8731DY-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/key-worker-api/key-worker/offender/A8731DY"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "key-worker-api-getKeyWorkerByNomsId-A8731DY-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

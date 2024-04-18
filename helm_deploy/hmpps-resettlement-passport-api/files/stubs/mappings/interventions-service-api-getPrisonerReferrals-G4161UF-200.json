@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/interventions-service-api/probation-case/U416100/referral"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "interventions-service-api-getPrisonerReferrals-G4161UF-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

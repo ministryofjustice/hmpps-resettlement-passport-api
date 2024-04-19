@@ -2,7 +2,7 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
   val kotlinVersion = "1.9.23"
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.15.5"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.15.6"
   id("org.springdoc.openapi-gradle-plugin") version "1.8.0"
   id("jacoco")
   id("org.sonarqube") version "4.0.0.2929"
@@ -63,19 +63,19 @@ dependencies {
 
   implementation(platform("org.testcontainers:testcontainers-bom:1.19.7"))
   testImplementation("org.awaitility:awaitility-kotlin")
-  testImplementation("io.jsonwebtoken:jjwt-impl:0.11.5")
-  testImplementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
+  testImplementation("io.jsonwebtoken:jjwt-impl:0.12.5")
+  testImplementation("io.jsonwebtoken:jjwt-jackson:0.12.5")
   testImplementation("org.mockito:mockito-inline:5.2.0")
   testImplementation("io.swagger.parser.v3:swagger-parser:2.1.19")
   testImplementation("org.springframework.security:spring-security-test")
-  testImplementation("com.github.tomakehurst:wiremock-jre8-standalone:2.35.1")
+  testImplementation("org.wiremock:wiremock-standalone:3.5.3")
   testImplementation("org.testcontainers:postgresql")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("javax.xml.bind:jaxb-api:2.3.1")
   testImplementation("io.opentelemetry:opentelemetry-sdk-testing:1.34.1")
   testImplementation("com.squareup.okhttp3:okhttp:4.12.0")
-  testImplementation("com.squareup.okhttp3:mockwebserver:4.11.0")
+  testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
   testImplementation("io.mockk:mockk:1.13.10")
 
   if (project.hasProperty("docs")) {

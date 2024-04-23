@@ -287,8 +287,6 @@ class PrisonerSearchApiService(
     val prisonerSearch = findPrisonerPersonalDetails(nomsId)
     setDisplayedReleaseDate(prisonerSearch)
 
-    checkPrisonerIsInActivePrison(prisonerSearch)
-
     // Add initial pathway statuses if required
     pathwayAndStatusService.addPrisonerAndInitialPathwayStatus(
       nomsId,

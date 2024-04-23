@@ -457,21 +457,6 @@ class PrisonerSearchApiServiceTest {
     last = true,
   )
 
-  @Test
-  fun `test check prisoner is in active prison - happy path`() {
-    `when`(prisonRegisterApiService.getActivePrisonsList()).thenReturn(
-      mutableListOf(
-        Prison("ABC", "Test prison ABC", true),
-        Prison("DEF", "Test prison DEF", true),
-        Prison("GHI", "Test prison GHI", true),
-      ),
-    )
-    assertDoesNotThrow {
-      prisonerSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("ABC"))
-      prisonerSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("DEF"))
-      prisonerSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("GHI"))
-    }
-  }
 
   @Test
   fun `test sort prisoners- sort prisoners by name ascending`() {

@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "POST",
-    "urlPathPattern": "/appointments/([A-Z1-9]+)"
+    "urlPathPattern": "/resettlement-passport-and-delius-api/appointments/([A-Z1-9]+)"
   },
   "response": {
     "status": 201,

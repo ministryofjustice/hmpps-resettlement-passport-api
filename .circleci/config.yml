@@ -9,7 +9,7 @@ parameters:
     default: dps_alerts_security
   releases-slack-channel:
     type: string
-    default: dps-releases
+    default: resettlement_passport_releases
 
 jobs:
   validate:

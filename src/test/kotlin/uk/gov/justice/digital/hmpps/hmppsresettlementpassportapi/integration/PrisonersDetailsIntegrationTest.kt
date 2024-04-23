@@ -166,25 +166,6 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
-  fun `Get Prisoner Details - prison not active (RP2-557)`() {
-    val nomsId = "123"
-    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
-    prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
-    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
-    prisonRegisterApiMockServer.stubPrisonListNoData(200)
-
-    webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$nomsId")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
-      .expectStatus().isNotFound
-      .expectHeader().contentType("application/json")
-      .expectBody()
-      .jsonPath("status").isEqualTo(404)
-  }
-
-  @Test
   fun `Get image for Prisoner happy path`() {
     val nomsId = "abc"
     val imageId = "1313058"

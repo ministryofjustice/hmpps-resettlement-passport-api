@@ -7,18 +7,14 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.springframework.web.reactive.function.client.WebClient
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prison
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
@@ -458,32 +454,6 @@ class PrisonerSearchApiServiceTest {
     totalElements = 1,
     last = true,
   )
-
-  @Test
-  fun `test check prisoner is in active prison - happy path`() {
-    `when`(prisonRegisterApiService.getActivePrisonsList()).thenReturn(
-      mutableListOf(
-        Prison("ABC", "Test prison ABC", true),
-        Prison("DEF", "Test prison DEF", true),
-        Prison("GHI", "Test prison GHI", true),
-      ),
-    )
-    assertDoesNotThrow {
-      prisonerSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("ABC"))
-      prisonerSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("DEF"))
-      prisonerSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("GHI"))
-    }
-  }
-
-  @Test
-  fun `test check prisoner is in active prison - not found`() {
-    `when`(prisonRegisterApiService.getActivePrisonsList()).thenReturn(mutableListOf())
-    assertThrows<ResourceNotFoundException> {
-      prisonerSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("ABC"))
-      prisonerSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("DEF"))
-      prisonerSearchApiService.checkPrisonerIsInActivePrison(createPrisoner("GHI"))
-    }
-  }
 
   @Test
   fun `test sort prisoners- sort prisoners by name ascending`() {

@@ -287,8 +287,6 @@ class PrisonerSearchApiService(
     val prisonerSearch = findPrisonerPersonalDetails(nomsId)
     setDisplayedReleaseDate(prisonerSearch)
 
-    checkPrisonerIsInActivePrison(prisonerSearch)
-
     // Add initial pathway statuses if required
     pathwayAndStatusService.addPrisonerAndInitialPathwayStatus(
       nomsId,
@@ -340,13 +338,6 @@ class PrisonerSearchApiService(
     val resettlementReviewAvailable = !assessmentRequired && isAssessmentRequired(prisonerEntity, ResettlementAssessmentType.RESETTLEMENT_PLAN)
 
     return Prisoner(prisonerPersonal, pathwayStatuses, assessmentRequired, resettlementReviewAvailable)
-  }
-
-  fun checkPrisonerIsInActivePrison(prisoner: PrisonersSearch) {
-    // Send back a 404 if the prisonId is not in the active list as we should only display data for non-released prisoners.
-    if (!prisonRegisterApiService.getActivePrisonsList().map { it.id }.contains(prisoner.prisonId)) {
-      throw ResourceNotFoundException("Prisoner with nomsId ${prisoner.prisonerNumber} and prisonId ${prisoner.prisonId} not found in any active prison")
-    }
   }
 
   protected fun getPathwayStatuses(

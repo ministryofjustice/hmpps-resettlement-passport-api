@@ -1,0 +1,22 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/case-notes-api/case-notes/G9981UK",
+    "queryParameters": {
+      "type": {
+        "equalTo": "GEN"
+      },
+      "subType": {
+        "equalTo": "RESET"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "case-notes-api-get-case-notes-gen-G9981UK-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

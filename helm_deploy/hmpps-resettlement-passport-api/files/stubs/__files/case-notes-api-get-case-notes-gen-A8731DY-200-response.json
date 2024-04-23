@@ -1,0 +1,65 @@
+{
+  "content": [
+    {
+      "caseNoteId": "47019754",
+      "offenderIdentifier": "A8731DY",
+      "type": "GEN",
+      "typeDescription": "General",
+      "subType": "RESET",
+      "subTypeDescription": "Resettlement",
+      "source": "INST",
+      "creationDateTime": "2023-02-09T11:37:21.130497446",
+      "occurrenceDateTime": "2023-02-09T11:36:00",
+      "authorName": "Aujla, Charan",
+      "authorUserId": "486674",
+      "text": "test",
+      "locationId": "MDI",
+      "eventId": 47019754,
+      "sensitive": false,
+      "amendments": []
+    },
+    {
+      "caseNoteId": "47018942",
+      "offenderIdentifier": "A8731DY",
+      "type": "GEN",
+      "typeDescription": "General",
+      "subType": "RESET",
+      "subTypeDescription": "Resettlement",
+      "source": "INST",
+      "creationDateTime": "2023-01-31T12:06:15.267018764",
+      "occurrenceDateTime": "2023-01-31T12:05:00",
+      "authorName": "Aujla, Charan",
+      "authorUserId": "486674",
+      "text": "DEV TEST",
+      "locationId": "MDI",
+      "eventId": 47018942,
+      "sensitive": false,
+      "amendments": []
+    }
+  ],
+  "pageable": {
+    "pageNumber": 0,
+    "pageSize": 500,
+    "sort": {
+      "empty": false,
+      "sorted": true,
+      "unsorted": false
+    },
+    "offset": 0,
+    "paged": true,
+    "unpaged": false
+  },
+  "last": true,
+  "totalElements": 2,
+  "totalPages": 1,
+  "size": 500,
+  "number": 0,
+  "sort": {
+    "empty": false,
+    "sorted": true,
+    "unsorted": false
+  },
+  "first": true,
+  "numberOfElements": 2,
+  "empty": false
+}

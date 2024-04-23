@@ -17,7 +17,8 @@ api:
       #arn: https://assess-risks-and-needs-dev.hmpps.service.justice.gov.uk
       prison: http://localhost:9193/prison-api
       #prison: https://prison-api-dev.prison.service.justice.gov.uk
-      case-notes: https://dev.offender-case-notes.service.justice.gov.uk
+      case-notes: http://localhost:9193/case-notes-api
+#      case-notes: https://dev.offender-case-notes.service.justice.gov.uk
       key-worker: http://localhost:9193/key-worker-api
       #key-worker: https://keyworker-api-dev.prison.service.justice.gov.uk
       allocation-manager: http://localhost:9193/allocation-manager-api

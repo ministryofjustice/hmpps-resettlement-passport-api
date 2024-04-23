@@ -28,6 +28,7 @@ class CvlApiService(
         ),
       )
       .retrieve()
+      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Licence condition not found") })
       .bodyToFlux<LicenceSummary>()
       .collectList()
       .block() ?: throw RuntimeException("Unexpected null returned from request.")
@@ -74,6 +75,7 @@ class CvlApiService(
         ),
       )
       .retrieve()
+      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Licence condition not found") })
       .bodyToMono<Licence>()
       .block() ?: throw RuntimeException("Unexpected null returned from request.")
 

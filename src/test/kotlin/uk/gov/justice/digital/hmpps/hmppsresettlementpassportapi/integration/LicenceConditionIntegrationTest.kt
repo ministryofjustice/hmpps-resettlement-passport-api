@@ -27,6 +27,25 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `Get licence condition by nomisId not found`() {
+    val nomsId = "abc"
+
+    cvlApiMockServer.stubFindLicencesByNomsId(nomsId, 404)
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/licence-condition/")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isNotFound
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(404)
+      .jsonPath("errorCode").isEmpty
+      .jsonPath("userMessage").isEqualTo("Resource not found. Check request parameters - Licence condition not found")
+      .jsonPath("developerMessage").isEqualTo("Licence condition not found")
+      .jsonPath("moreInfo").isEmpty
+  }
+
+  @Test
   fun `Get image from licence condition not found`() {
     val nomsId = "abc"
     val licenceId = "123"

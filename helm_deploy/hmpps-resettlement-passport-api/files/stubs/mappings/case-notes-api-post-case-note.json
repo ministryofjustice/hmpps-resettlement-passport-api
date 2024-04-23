@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPathPattern": "/case-notes-api/case-notes/([A-Z1-9]+)"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "case-notes-api-post-case-note-201-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

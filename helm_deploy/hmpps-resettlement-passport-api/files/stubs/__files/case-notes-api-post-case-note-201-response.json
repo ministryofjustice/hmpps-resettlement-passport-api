@@ -1,0 +1,18 @@
+{
+  "caseNoteId": "{{randomValue length=8 type='NUMERIC'}}",
+  "offenderIdentifier": "{{request.pathSegments.2}}",
+  "type": "RESET",
+  "typeDescription": "Resettlement",
+  "subType": "{{jsonPath request.body '$.subType'}}",
+  "subTypeDescription": "Finance and ID",
+  "source": "INST",
+  "creationDateTime": "{{now}}",
+  "occurrenceDateTime": "{{now}}",
+  "authorName": "User, Api",
+  "authorUserId": "123456",
+  "text": "{{jsonPath request.body '$.text'}}",
+  "locationId": "MDI",
+  "eventId": "{{randomValue length=8 type='NUMERIC'}}",
+  "sensitive": false,
+  "amendments": []
+}

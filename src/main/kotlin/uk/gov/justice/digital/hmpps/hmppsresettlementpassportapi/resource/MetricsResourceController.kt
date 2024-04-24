@@ -16,12 +16,16 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerCountMetricsByReleaseDate
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.MetricsService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.POPUserMetricsService
 
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/metrics", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
-class MetricsResourceController(private val metricsService: MetricsService) {
+class MetricsResourceController(
+  private val metricsService: MetricsService,
+  private val popUserMetricsService: POPUserMetricsService
+  ) {
 
   @GetMapping("/prisoner-counts", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get metrics by prison Id", description = "Metrics data based on prison Id")
@@ -64,4 +68,46 @@ class MetricsResourceController(private val metricsService: MetricsService) {
     @Parameter(required = true)
     prisonId: String,
   ): PrisonerCountMetricsByReleaseDate = metricsService.getMetricsByPrisonId(prisonId)
+
+  @GetMapping("/pop-user-counts", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(summary = "Get metrics on person on probation user by prison Id", description = "Metrics data based on prison Id")
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [
+          Content(
+            mediaType = "application/json",
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "400",
+        description = "Incorrect input options provided",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "404",
+        description = "No metrics found for given prison",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  fun getPopUserMetrics(
+    @Schema(example = "MDI", required = true, minLength = 3, maxLength = 6)
+    @RequestParam("prisonId")
+    @Parameter(required = true)
+    prisonId: String,
+  ): Int = popUserMetricsService.recordProbationUsersMetrics(prisonId)
 }

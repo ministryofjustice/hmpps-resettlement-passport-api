@@ -2,12 +2,9 @@
   "id": 2,
   "crn": "U416100",
   "cprId": "NA",
-  "email": "user2@gmail.com",
   "verified": true,
   "creationDate": "2024-02-26T09:42:35.23756",
   "modifiedDate": "2024-02-26T09:42:35.23756",
   "nomsId": "A8731DY",
-  "oneLoginUrn": "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj9",
-  "prisonId": "MDI",
-  "releaseDate": "2024-12-31"
+  "oneLoginUrn": "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj9"
 }

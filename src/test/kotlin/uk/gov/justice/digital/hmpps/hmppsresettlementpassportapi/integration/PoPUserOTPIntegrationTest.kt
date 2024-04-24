@@ -215,7 +215,6 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
         mapOf(
           "urn" to "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
           "otp" to "1X3456",
-          "email" to "chrisy.clemence@gmail.com",
           "dob" to "1982-10-24",
         ),
       )
@@ -258,7 +257,6 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
         mapOf(
           "urn" to "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
           "otp" to "123457",
-          "email" to "chrisy.clemence@gmail.com",
           "dob" to "1982-10-24",
         ),
       )
@@ -289,7 +287,6 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
         mapOf(
           "urn" to "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
           "otp" to "1X3456",
-          "email" to "chrisy.clemence@gmail.com",
           "dob" to "1982-10-24",
         ),
       )
@@ -320,7 +317,6 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
         mapOf(
           "urn" to "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
           "otp" to "123456",
-          "email" to "chrisy.clemence@gmail.com",
           "dob" to "2000-01-01",
         ),
 

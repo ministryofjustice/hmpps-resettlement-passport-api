@@ -31,13 +31,10 @@ class PoPUserApiService(
         .bodyValue(
           mapOf(
             "crn" to prisoner.get().crn,
-            "email" to oneLoginData.email,
             "cprId" to "NA",
             "verified" to true,
             "nomsId" to prisoner.get().nomsId,
             "oneLoginUrn" to oneLoginData.urn,
-            "prisonId" to prisonerSearch.prisonId,
-            "releaseDate" to prisonerSearch.releaseDate,
           ),
         )
         .retrieve()

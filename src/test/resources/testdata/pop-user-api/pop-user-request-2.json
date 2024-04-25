@@ -1,10 +1,7 @@
 {
   "crn":"abc",
-  "email":"chrisy.clemence@gmail.com",
   "cprId":"NA",
   "verified":true,
   "nomsId": "G4161UF",
-  "oneLoginUrn": "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
-  "prisonerId": "MDI",
-  "releaseDate": "2024-12-31"
+  "oneLoginUrn": "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8"
 }

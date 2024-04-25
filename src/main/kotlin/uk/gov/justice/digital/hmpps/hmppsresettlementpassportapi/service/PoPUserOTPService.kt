@@ -71,7 +71,7 @@ class PoPUserOTPService(
   }
 
   fun getPoPUserVerified(oneLoginData: OneLoginData): PoPUserResponse? {
-    return if (oneLoginData.otp != null && oneLoginData.dob != null && oneLoginData.urn != null && oneLoginData.email != null) {
+    return if (oneLoginData.otp != null && oneLoginData.dob != null && oneLoginData.urn != null) {
       val popUserOTPEntityExists = popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(
         oneLoginData.otp,
         oneLoginData.dob, LocalDateTime.now(),
@@ -91,7 +91,7 @@ class PoPUserOTPService(
         throw ResourceNotFoundException("Prisoner with id ${popUserOTPEntityExists.prisoner.id}  not found in database")
       }
     } else {
-      throw ValidationException("required data otp, urn, email or dob  is missing")
+      throw ValidationException("required data otp, urn or dob  is missing")
     }
   }
 

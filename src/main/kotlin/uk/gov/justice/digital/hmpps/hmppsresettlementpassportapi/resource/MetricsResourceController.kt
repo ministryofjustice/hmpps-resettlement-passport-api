@@ -109,5 +109,5 @@ class MetricsResourceController(
     @RequestParam("prisonId")
     @Parameter(required = true)
     prisonId: String,
-  ): Int = popUserMetricsService.recordProbationUsersMetrics(prisonId)
+  ): Int = popUserMetricsService.recordProbationUsersMetrics()
 }

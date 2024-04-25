@@ -87,8 +87,9 @@ class PoPUserOTPService(
           prisonerEntity,
           prisoner,
         )
-        if (response!=null)
+        if (response != null) {
           popUserOTPRepository.delete(popUserOTPEntityExists)
+        }
         return response
       } else {
         throw ResourceNotFoundException("Prisoner with id ${popUserOTPEntityExists.prisoner.id}  not found in database")

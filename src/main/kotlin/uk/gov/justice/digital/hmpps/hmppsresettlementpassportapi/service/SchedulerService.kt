@@ -12,6 +12,7 @@ class SchedulerService(
   val metricsService: MetricsService,
   val prisonerService: PrisonerService,
   val poPUserOTPService: PoPUserOTPService,
+  val popUserMetricsService: POPUserMetricsService,
   @Value("\${cron.release-dates.batch-size:200}") val batchSize: Int,
 ) {
 
@@ -22,6 +23,7 @@ class SchedulerService(
   @Scheduled(cron = "0 0/15 * * * ?")
   fun metricsScheduledTask() {
     metricsService.recordCustomMetrics()
+    popUserMetricsService.recordCustomMetrics()
   }
 
   @Scheduled(cron = "0 0 2 * * *")

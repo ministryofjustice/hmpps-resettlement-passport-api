@@ -36,7 +36,7 @@ class POPUserMetricsService(
     val otpList = prisonOTPService.getAllOTPs()
     val cnt = otpList?.size ?: 0
     registry.gauge(
-        Met,
+        "total_pop_user_count",
         cnt,
       )
     return cnt

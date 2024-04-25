@@ -24,8 +24,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.POPUser
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class MetricsResourceController(
   private val metricsService: MetricsService,
-  private val popUserMetricsService: POPUserMetricsService
-  ) {
+  private val popUserMetricsService: POPUserMetricsService,
+) {
 
   @GetMapping("/prisoner-counts", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get metrics by prison Id", description = "Metrics data based on prison Id")

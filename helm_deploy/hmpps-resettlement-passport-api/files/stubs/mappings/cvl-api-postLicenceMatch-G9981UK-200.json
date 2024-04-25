@@ -9,8 +9,8 @@
     ]
   },
   "response": {
-    "status": 404,
-    "body": {},
+    "status": 200,
+    "jsonBody": [],
     "headers": {
       "Content-Type": "application/json;charset=UTF-8",
       "Server": "wiremock"

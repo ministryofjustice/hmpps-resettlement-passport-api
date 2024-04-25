@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/cvl-api/licence/match",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{\"nomsId\":[\"G9981UK\"]}"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": [],
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

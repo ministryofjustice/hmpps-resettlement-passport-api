@@ -253,7 +253,6 @@ class PoPUserOTPServiceTest {
     every { LocalDateTime.now() } returns fakeNow
     val oneLoginUserData = OneLoginData("urn1", "123457", "email@test.com", LocalDate.parse("1982-10-24"))
     val prisoner = PrisonerEntity(1, "acb", fakeNow, "crn", "xyz", null)
-    val popUserResponse = PoPUserResponse(1, "crn1", "NA", true, fakeNow, fakeNow, "GU1234", "urn1")
     val prisonerResponse = PrisonersSearch(
       prisonerNumber = "A123456",
       firstName = "firstName",

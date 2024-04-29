@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi
 
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class PopUserData(

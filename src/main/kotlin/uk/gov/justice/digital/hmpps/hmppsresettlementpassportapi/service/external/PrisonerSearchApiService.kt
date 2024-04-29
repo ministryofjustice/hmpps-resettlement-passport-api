@@ -329,6 +329,7 @@ class PrisonerSearchApiService(
       personalDetails.contactDetails?.mobile,
       personalDetails.contactDetails?.telephone,
       personalDetails.contactDetails?.email,
+      prisonerSearch.prisonName,
 
     )
 

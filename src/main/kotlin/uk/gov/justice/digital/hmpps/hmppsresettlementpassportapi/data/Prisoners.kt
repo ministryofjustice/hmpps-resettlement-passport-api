@@ -35,6 +35,7 @@ data class PrisonerPersonal(
   var mobile: String? = null,
   var telephone: String? = null,
   var email: String? = null,
+  var prisonName: String? = null,
 )
 
 data class PathwayStatus(

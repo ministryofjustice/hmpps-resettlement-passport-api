@@ -27,13 +27,6 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
 
     webTestClient.get()
-      .uri("/resettlement-passport/popUser/otp")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
-      .expectStatus().isOk
-      .expectBody().json("[]")
-
-    webTestClient.get()
       .uri("/resettlement-passport/popUser/$nomsId/otp")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
@@ -100,13 +93,6 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
     val nomsId = "G4161UF"
 
     webTestClient.get()
-      .uri("/resettlement-passport/popUser/otp")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
-      .expectStatus().isOk
-      .expectBody().json("[]")
-
-    webTestClient.get()
       .uri("/resettlement-passport/popUser/$nomsId/otp")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
@@ -146,28 +132,11 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `Get a Person on Probation all Users  - Unauthorized`() {
-    webTestClient.get()
-      .uri("/person-on-probation-user/popUser/otp")
-      .exchange()
-      .expectStatus().isUnauthorized
-  }
-
-  @Test
   fun `Get a Person on Probation User OTP by nomsId - Forbidden`() {
     val nomsId = "G4161UF"
 
     webTestClient.get()
       .uri("/resettlement-passport/popUser/$nomsId/otp")
-      .headers(setAuthorisation())
-      .exchange()
-      .expectStatus().isForbidden
-  }
-
-  @Test
-  fun `Get a Person on Probation all user OTP  - Forbidden`() {
-    webTestClient.get()
-      .uri("/resettlement-passport/popUser/otp")
       .headers(setAuthorisation())
       .exchange()
       .expectStatus().isForbidden

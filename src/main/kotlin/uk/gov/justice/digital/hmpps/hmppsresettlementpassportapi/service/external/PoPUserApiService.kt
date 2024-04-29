@@ -55,5 +55,4 @@ class PoPUserApiService(
       .collectList()
       .block() ?: throw RuntimeException("Unexpected null returned from request.")
   }
-
 }

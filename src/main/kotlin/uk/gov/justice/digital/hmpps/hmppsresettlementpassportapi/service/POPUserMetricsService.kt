@@ -29,7 +29,6 @@ class POPUserMetricsService(
 
   fun recordProbationUsersLicenceConditionMetrics() {
     log.info("Started running scheduled POP User metrics job - LicenceCondition")
-
     val popUserList = popUserOTPService.getAllOTPs()
 
     var totalPopUser = 0

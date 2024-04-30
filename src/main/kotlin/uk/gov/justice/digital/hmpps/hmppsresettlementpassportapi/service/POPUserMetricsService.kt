@@ -24,10 +24,11 @@ class POPUserMetricsService(
   }
 
   fun recordCustomMetrics() {
-    recordProbationUsersLicencesConditionMetrics()
+    recordProbationUsersLicenceConditionMetrics()
   }
 
-  fun recordProbationUsersLicencesConditionMetrics() {
+  fun recordProbationUsersLicenceConditionMetrics() {
+    log.info("Started running scheduled POP User metrics job - LicenceCondition")
     val popUserList = popUserOTPService.getAllOTPs()
 
     var totalPopUser = 0
@@ -55,8 +56,18 @@ class POPUserMetricsService(
               }
             }
           }
-          percentStdLicenceCondition = (stdLicenceConditionCount / totalPopUser) * 100
-          percentOtherLicenceCondition = (otherLicenceConditionCount / totalPopUser) * 100
+          percentStdLicenceCondition = if (stdLicenceConditionCount > 0) {
+            100 - ((stdLicenceConditionCount / totalPopUser) * 100)
+          } else {
+            100
+          }
+
+          percentOtherLicenceCondition = if (otherLicenceConditionCount > 0) {
+            100 - ((otherLicenceConditionCount / totalPopUser) * 100)
+          } else {
+            100
+          }
+
           val metrics = listOf(
             PopUserCountMetric(LicenceTag.STANDARD, percentStdLicenceCondition),
             PopUserCountMetric(LicenceTag.OTHERS, percentOtherLicenceCondition),
@@ -66,7 +77,7 @@ class POPUserMetricsService(
 
           popUserCountMetrics.metrics[prison]?.forEachIndexed { i, metric ->
             registry.gauge(
-              "total_licence_conditions_percentage",
+              "missing_licence_conditions_percentage",
               prisonTag
                 .and("licenceType", metric.licenceType.label),
               popUserCountMetrics,
@@ -77,9 +88,10 @@ class POPUserMetricsService(
           }
         } catch (_: ResourceNotFoundException) {
         } catch (ex: Exception) {
-          log.warn("Error collecting metrics for popUser LicenceConditions ${prison.name}", ex)
+          log.warn("Error collecting metrics for popUser Missing Licence Conditions ${prison.name}", ex)
         }
       }
     }
+    log.info("Finished running scheduled POP User metrics job - LicenceCondition")
   }
 }

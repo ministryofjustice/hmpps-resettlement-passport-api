@@ -37,11 +37,12 @@ class POPUserMetricsService(
     }
     val prisonList = prisonRegisterApiService.getActivePrisonsList()
     if (popUserList != null) {
+      var percentStdLicenceCondition: Int
+      var percentOtherLicenceCondition: Int
       for (prison in prisonList) {
         var stdLicenceConditionCount = 0
         var otherLicenceConditionCount = 0
-        var percentStdLicenceCondition = 0
-        var percentOtherLicenceCondition = 0
+
         try {
           for (popUser in popUserList) {
             if (popUser.prisoner.prisonId.equals(prison.id)) {

@@ -93,7 +93,6 @@ class PoPUserOTPService(
           throw RuntimeException("Person On Probation User Verification failed for nomsId ${popUserOTPEntityExists.prisoner.nomsId} ")
         }
         return response
-
       } else {
         throw ResourceNotFoundException("Prisoner with id ${popUserOTPEntityExists.prisoner.id}  not found in database")
       }

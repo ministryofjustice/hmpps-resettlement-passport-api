@@ -31,43 +31,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.Prisone
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT') or hasAuthority('SCOPE_scope')")
 class PopUserOTPResourceController(private val popUserOTPService: PoPUserOTPService, private val prisonerService: PrisonerService) {
 
-  @GetMapping("/otp", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Get all OTP", description = "Get All Person on Probation Users OTP")
-  @ApiResponses(
-    value = [
-      ApiResponse(
-        responseCode = "200",
-        description = "Successful Operation",
-      ),
-      ApiResponse(
-        description = "Not found",
-        responseCode = "404",
-        content = [Content(mediaType = MediaType.APPLICATION_JSON_VALUE)],
-      ),
-      ApiResponse(
-        responseCode = "401",
-        description = "Unauthorized to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-      ApiResponse(
-        responseCode = "403",
-        description = "Forbidden, requires an appropriate role",
-        content = [
-          Content(
-            mediaType = MediaType.APPLICATION_JSON_VALUE,
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
-      ),
-      ApiResponse(
-        responseCode = "400",
-        description = "Incorrect information provided to perform assessment match",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-    ],
-  )
-  fun getPoPUsersOTP() = popUserOTPService.getAllOTPs()
-
   @GetMapping("/{nomsId}/otp", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get OTP for NomsId", description = "Get Person on Probation User OTP")
   @ApiResponses(

@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.bodyToFlux
 import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserResponse
@@ -43,5 +44,15 @@ class PoPUserApiService(
     } else {
       throw ResourceNotFoundException("Person On Probation User verification already done.")
     }
+  }
+
+  fun getVerifiedPopUsers(): List<uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.PopUserData> {
+    return popUserWebClientCredentials
+      .get()
+      .uri("/person-on-probation-user/users/all")
+      .retrieve()
+      .bodyToFlux<uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.PopUserData>()
+      .collectList()
+      .block() ?: throw RuntimeException("Unexpected null returned from request.")
   }
 }

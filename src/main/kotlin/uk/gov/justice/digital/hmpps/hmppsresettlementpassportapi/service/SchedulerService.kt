@@ -12,7 +12,7 @@ class SchedulerService(
   val metricsService: MetricsService,
   val prisonerService: PrisonerService,
   val poPUserOTPService: PoPUserOTPService,
-  val popUserMetricsService: POPUserMetricsService,
+  val popUserMetricsService: PoPUserMetricsService,
   @Value("\${cron.release-dates.batch-size:200}") val batchSize: Int,
 ) {
 

@@ -43,7 +43,7 @@ enum class LicenceTag(val label: String) {
 }
 data class PopUserCountMetric(
   val licenceType: LicenceTag,
-  val value: Int,
+  val value: Double,
 )
 
 data class PopUserCountMetrics(

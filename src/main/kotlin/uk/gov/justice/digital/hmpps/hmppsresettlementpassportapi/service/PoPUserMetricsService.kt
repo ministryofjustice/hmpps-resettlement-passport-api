@@ -11,7 +11,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PopUserCou
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
 
 @Service
-class POPUserMetricsService(
+class PoPUserMetricsService(
   private val registry: MeterRegistry,
   private val popUserOTPService: PoPUserOTPService,
   private val prisonRegisterApiService: PrisonRegisterApiService,
@@ -37,8 +37,8 @@ class POPUserMetricsService(
     }
     val prisonList = prisonRegisterApiService.getActivePrisonsList()
     if (popUserList != null) {
-      var percentStdLicenceCondition: Int
-      var percentOtherLicenceCondition: Int
+      var percentStdLicenceCondition: Double
+      var percentOtherLicenceCondition: Double
       for (prison in prisonList) {
         var stdLicenceConditionCount = 0
         var otherLicenceConditionCount = 0
@@ -57,17 +57,8 @@ class POPUserMetricsService(
               }
             }
           }
-          percentStdLicenceCondition = if (stdLicenceConditionCount > 0) {
-            100 - ((stdLicenceConditionCount / totalPopUser) * 100)
-          } else {
-            100
-          }
-
-          percentOtherLicenceCondition = if (otherLicenceConditionCount > 0) {
-            100 - ((otherLicenceConditionCount / totalPopUser) * 100)
-          } else {
-            100
-          }
+          percentStdLicenceCondition = calculatePercentage(stdLicenceConditionCount, totalPopUser)
+          percentOtherLicenceCondition = calculatePercentage(otherLicenceConditionCount, totalPopUser)
 
           val metrics = listOf(
             PopUserCountMetric(LicenceTag.STANDARD, percentStdLicenceCondition),
@@ -94,5 +85,13 @@ class POPUserMetricsService(
       }
     }
     log.info("Finished running scheduled POP User metrics job - LicenceCondition")
+  }
+
+  fun calculatePercentage(count: Int, total: Int): Double {
+    return if (count > 0) {
+      100.00 - ((count.toDouble() / total) * 100)
+    } else {
+      100.00
+    }
   }
 }

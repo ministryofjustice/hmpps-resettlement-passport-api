@@ -5,6 +5,7 @@ import io.micrometer.core.instrument.Tags
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceConditions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceTag
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PopUserCountMetric
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PopUserCountMetrics
@@ -36,7 +37,7 @@ class PoPUserMetricsService(
       totalPopUser = popUserList.size
     }
     val prisonList = prisonRegisterApiService.getActivePrisonsList()
-    if (popUserList != null) {
+    if (popUserList != null && totalPopUser > 0) {
       var percentStdLicenceCondition: Double
       var percentOtherLicenceCondition: Double
       for (prison in prisonList) {
@@ -46,7 +47,12 @@ class PoPUserMetricsService(
         try {
           for (popUser in popUserList) {
             if (popUser.prisoner.prisonId.equals(prison.id)) {
-              val licencesConditions = licenceConditionService.getLicenceConditionsByNomsId(popUser.prisoner.nomsId)
+              var licencesConditions: LicenceConditions
+              try {
+                licencesConditions = licenceConditionService.getLicenceConditionsByNomsId(popUser.prisoner.nomsId)!!
+              } catch (_: ResourceNotFoundException) {
+                continue
+              }
               val stdLicenceConditionList = licencesConditions?.standardLicenceConditions
               val otherLicenceConditionList = licencesConditions?.otherLicenseConditions
               if (!stdLicenceConditionList.isNullOrEmpty()) {
@@ -78,7 +84,6 @@ class PoPUserMetricsService(
                 ?: throw RuntimeException("Can't find value for metric $metric. This is likely a coding error!")
             }
           }
-        } catch (_: ResourceNotFoundException) {
         } catch (ex: Exception) {
           log.warn("Error collecting metrics for popUser Missing Licence Conditions ${prison.name}", ex)
         }

@@ -81,4 +81,32 @@ class CvlApiMockServer : WireMockServerBase(9095) {
       ),
     )
   }
+
+  fun stubFindNoLicencesByNomsId(nomsId: String, status: Int) {
+    var licenceSummaryJSON = " [] "
+    if (status == 404) {
+      licenceSummaryJSON = " [] "
+    }
+    val requestJson = "{ \"nomsId\" :  [\"$nomsId\"] }"
+    stubFor(
+      post("/licence/match").withRequestBody(
+        equalToJson(requestJson, true, true),
+      )
+        .willReturn(
+          if (status == 200 || status == 404) {
+            aResponse()
+              .withHeader("Content-Type", "application/json")
+              .withBody(
+                licenceSummaryJSON,
+              )
+              .withStatus(200)
+          } else {
+            aResponse()
+              .withHeader("Content-Type", "application/json")
+              .withBody("{\"Error\" : \"$status\"}")
+              .withStatus(status)
+          },
+        ),
+    )
+  }
 }

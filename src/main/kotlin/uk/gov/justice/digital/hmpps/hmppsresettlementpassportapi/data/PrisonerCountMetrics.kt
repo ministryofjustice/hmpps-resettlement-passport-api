@@ -36,3 +36,16 @@ data class PrisonerCounts(
   val inProgress: Int?,
   val done: Int?,
 )
+
+enum class LicenceTag(val label: String) {
+  STANDARD("Standard"),
+  OTHERS("Others"),
+}
+data class PopUserCountMetric(
+  val licenceType: LicenceTag,
+  val value: Double,
+)
+
+data class PopUserCountMetrics(
+  val metrics: MutableMap<Prison, List<PopUserCountMetric>> = mutableMapOf(),
+)

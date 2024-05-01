@@ -1,11 +1,11 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 
 import java.math.BigDecimal
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 data class IdApplicationPost(
   val idType: String? = null,
-  val applicationSubmittedDate: LocalDateTime? = null,
+  val applicationSubmittedDate: LocalDate? = null,
   val isPriorityApplication: Boolean? = null,
   var costOfApplication: BigDecimal? = null,
   var haveGro: Boolean? = null,
@@ -20,8 +20,7 @@ data class IdApplicationPost(
 data class IdApplicationPatch(
   var refundAmount: BigDecimal? = null,
   var isAddedToPersonalItems: Boolean? = null,
-  var addedToPersonalItemsDate: LocalDateTime? = null,
+  var addedToPersonalItemsDate: LocalDate? = null,
   var status: String? = null,
-  var statusUpdateDate: LocalDateTime? = null,
-  var dateIdReceived: LocalDateTime? = null,
+  var dateIdReceived: LocalDate? = null,
 )

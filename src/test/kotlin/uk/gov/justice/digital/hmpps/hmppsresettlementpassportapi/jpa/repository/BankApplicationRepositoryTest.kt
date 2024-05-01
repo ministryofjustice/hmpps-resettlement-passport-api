@@ -30,9 +30,9 @@ class BankApplicationRepositoryTest : RepositoryTestBase() {
     val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23"))
     prisonerRepository.save(prisoner)
 
-    val logs = setOf(BankApplicationStatusLogEntity(null, null, statusChangedTo = "Application Started", changedAtDate = LocalDateTime.now()))
+    val logs = setOf(BankApplicationStatusLogEntity(null, null, statusChangedTo = "Application Started", changedAtDate = LocalDate.now()))
 
-    val application = BankApplicationEntity(null, prisoner, logs, LocalDateTime.now(), LocalDateTime.now(), status = "Application Started", bankName = "Lloyds")
+    val application = BankApplicationEntity(null, prisoner, logs, LocalDateTime.now(), LocalDate.now(), status = "Application Started", bankName = "Lloyds")
 
     bankApplicationRepository.save(application)
 
@@ -46,11 +46,11 @@ class BankApplicationRepositoryTest : RepositoryTestBase() {
     val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23"))
     prisonerRepository.save(prisoner)
 
-    val logs1 = setOf(BankApplicationStatusLogEntity(null, null, statusChangedTo = "Application Started", changedAtDate = LocalDateTime.now()))
+    val logs1 = setOf(BankApplicationStatusLogEntity(null, null, statusChangedTo = "Application Started", changedAtDate = LocalDate.now()))
 
-    val application1 = BankApplicationEntity(null, prisoner, logs1, LocalDateTime.now(), LocalDateTime.now(), status = "Application Started", bankName = "Lloyds")
+    val application1 = BankApplicationEntity(null, prisoner, logs1, LocalDateTime.now(), LocalDate.now(), status = "Application Started", bankName = "Lloyds")
 
-    val application2 = BankApplicationEntity(null, prisoner, emptySet(), LocalDateTime.now(), LocalDateTime.now(), status = "Application Started", isDeleted = true, deletionDate = LocalDateTime.now(), bankName = "Lloyds")
+    val application2 = BankApplicationEntity(null, prisoner, emptySet(), LocalDateTime.now(), LocalDate.now(), status = "Application Started", isDeleted = true, deletionDate = LocalDateTime.now(), bankName = "Lloyds")
 
     bankApplicationRepository.save(application1)
     bankApplicationRepository.save(application2)

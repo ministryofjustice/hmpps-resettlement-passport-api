@@ -40,6 +40,7 @@ class BankApplicationServiceTest {
   private lateinit var bankApplicationStatusLogRepository: BankApplicationStatusLogRepository
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
+  private val fakeToday = LocalDate.parse("2023-08-17")
 
   @BeforeEach
   fun beforeEach() {
@@ -49,7 +50,7 @@ class BankApplicationServiceTest {
   @Test
   fun `test getBankApplicationById - returns bank application`() {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
-    val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity, emptySet(), fakeNow, fakeNow, status = "Pending", bankName = "Lloyds")
+    val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity, emptySet(), fakeNow, fakeToday, status = "Pending", bankName = "Lloyds")
     Mockito.`when`(bankApplicationRepository.findById(1)).thenReturn(Optional.of(bankApplicationEntity))
 
     val response = bankApplicationService.getBankApplicationById(1).get()
@@ -60,12 +61,12 @@ class BankApplicationServiceTest {
   @Test
   fun `test getBankApplicationByPrisoner - returns bank application`() {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
-    val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity, emptySet(), fakeNow, fakeNow, status = "Pending", isDeleted = false, bankName = "Lloyds")
+    val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity, emptySet(), fakeNow, fakeToday, status = "Pending", isDeleted = false, bankName = "Lloyds")
     val expectedResult = BankApplicationResponse(
       id = 1,
       prisoner = prisonerEntity,
       logs = emptyList(),
-      applicationSubmittedDate = fakeNow,
+      applicationSubmittedDate = fakeToday,
       currentStatus = "Pending",
       bankResponseDate = null,
       isAddedToPersonalItems = null,
@@ -94,13 +95,13 @@ class BankApplicationServiceTest {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
-    val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity, emptySet(), fakeNow, fakeNow, status = "Pending", bankName = "Lloyds")
+    val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity, emptySet(), fakeNow, fakeToday, status = "Pending", bankName = "Lloyds")
     val expectedBankApplicationEntity = BankApplicationEntity(
       1,
       prisonerEntity,
       emptySet(),
       fakeNow,
-      fakeNow,
+      fakeToday,
       status = "Pending",
       isDeleted = true,
       deletionDate = fakeNow,
@@ -118,11 +119,11 @@ class BankApplicationServiceTest {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
-    val bankApplication = BankApplication(applicationSubmittedDate = fakeNow, bankName = "Lloyds")
-    val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity, setOf(BankApplicationStatusLogEntity(null, null, "Pending", fakeNow)), fakeNow, fakeNow, status = "Pending", isDeleted = false, bankName = "Lloyds")
-    val logEntities = listOf(BankApplicationStatusLogEntity(1, bankApplicationEntity, "Pending", fakeNow))
-    val expectedBankApplicationEntity = BankApplicationEntity(null, prisonerEntity, emptySet(), fakeNow, fakeNow, status = "Pending", bankName = "Lloyds")
-    val expectedLogEntity = BankApplicationStatusLogEntity(null, expectedBankApplicationEntity, "Pending", fakeNow)
+    val bankApplication = BankApplication(applicationSubmittedDate = fakeToday, bankName = "Lloyds")
+    val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity, setOf(BankApplicationStatusLogEntity(null, null, "Pending", fakeToday)), fakeNow, fakeToday, status = "Pending", isDeleted = false, bankName = "Lloyds")
+    val logEntities = listOf(BankApplicationStatusLogEntity(1, bankApplicationEntity, "Pending", fakeToday))
+    val expectedBankApplicationEntity = BankApplicationEntity(null, prisonerEntity, emptySet(), fakeNow, fakeToday, status = "Pending", bankName = "Lloyds")
+    val expectedLogEntity = BankApplicationStatusLogEntity(null, expectedBankApplicationEntity, "Pending", fakeToday)
     Mockito.`when`(prisonerRepository.findByNomsId(any())).thenReturn(prisonerEntity)
     Mockito.`when`(bankApplicationRepository.findByPrisonerAndIsDeleted(any(), any())).thenReturn(bankApplicationEntity)
     Mockito.`when`(bankApplicationStatusLogRepository.findByBankApplication(any())).thenReturn(logEntities)
@@ -138,11 +139,11 @@ class BankApplicationServiceTest {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
-    val bankApplication = BankApplication(applicationSubmittedDate = fakeNow, bankName = "Lloyds")
-    val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity, setOf(BankApplicationStatusLogEntity(null, null, "Pending", fakeNow)), fakeNow, fakeNow, status = "Pending", isDeleted = false, bankName = "Lloyds")
-    val logEntities = listOf(BankApplicationStatusLogEntity(1, bankApplicationEntity, "Pending", fakeNow))
-    val expectedBankApplicationEntity = BankApplicationEntity(null, prisonerEntity, emptySet(), fakeNow, fakeNow, status = "Pending", bankName = "Lloyds")
-    val expectedLogEntity = BankApplicationStatusLogEntity(null, expectedBankApplicationEntity, "Pending", fakeNow)
+    val bankApplication = BankApplication(applicationSubmittedDate = fakeToday, bankName = "Lloyds")
+    val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity, setOf(BankApplicationStatusLogEntity(null, null, "Pending", fakeToday)), fakeNow, fakeToday, status = "Pending", isDeleted = false, bankName = "Lloyds")
+    val logEntities = listOf(BankApplicationStatusLogEntity(1, bankApplicationEntity, "Pending", fakeToday))
+    val expectedBankApplicationEntity = BankApplicationEntity(null, prisonerEntity, emptySet(), fakeNow, fakeToday, status = "Pending", bankName = "Lloyds")
+    val expectedLogEntity = BankApplicationStatusLogEntity(null, expectedBankApplicationEntity, "Pending", fakeToday)
     Mockito.`when`(prisonerRepository.findByNomsId(any())).thenReturn(prisonerEntity)
     Mockito.`when`(bankApplicationRepository.findByPrisonerAndIsDeleted(any(), any())).thenReturn(bankApplicationEntity)
     Mockito.`when`(bankApplicationStatusLogRepository.findByBankApplication(any())).thenReturn(logEntities)

@@ -4,14 +4,16 @@
     "id": 1,
     "nomsId": "123",
     "creationDate": "2023-08-16T12:21:38.709",
-    "crn": "abc"
+    "crn": "abc",
+    "prisonId": null,
+    "releaseDate": null
   },
   "idType": {
     "id": 1,
     "name": "Birth certificate"
   },
   "creationDate": "2023-08-17T12:00:01",
-  "applicationSubmittedDate": "2023-08-17T12:00:01",
+  "applicationSubmittedDate": "2023-08-17",
   "isPriorityApplication": false,
   "costOfApplication": 10.5,
   "refundAmount": null,
@@ -23,10 +25,10 @@
   "driversLicenceType": null,
   "driversLicenceApplicationMadeAt": null,
   "isAddedToPersonalItems": true,
-  "addedToPersonalItemsDate": "2023-08-17T12:00:01",
+  "addedToPersonalItemsDate": "2023-08-17",
   "status": "Accepted",
   "statusUpdateDate": "2023-08-17T12:00:01",
   "isDeleted": false,
   "deletionDate": null,
-  "dateIdReceived": "2023-08-17T12:00:01"
+  "dateIdReceived": "2023-08-17"
 }

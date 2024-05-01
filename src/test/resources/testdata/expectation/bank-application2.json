@@ -4,29 +4,31 @@
     "id": 1,
     "nomsId": "123",
     "creationDate": "2023-08-16T12:21:38.709",
-    "crn": "abc"
+    "crn": "abc",
+    "prisonId": null,
+    "releaseDate": null
   },
   "logs": [
     {
       "id": 1,
       "status": "Pending",
-      "changeDate": "2023-08-17T12:00:01"
+      "changeDate": "2023-08-17"
     },
     {
       "id": 2,
       "status": "Account resubmitted",
-      "changeDate": "2023-08-17T12:00:01"
+      "changeDate": "2023-08-17"
     },
     {
       "id": 3,
       "status": "Account opened",
-      "changeDate": "2023-08-17T12:00:01"
+      "changeDate": "2023-08-17"
     }
   ],
-  "applicationSubmittedDate": "2023-08-17T12:00:01",
+  "applicationSubmittedDate": "2023-08-17",
   "currentStatus": "Account opened",
   "bankName": "Lloyds",
-  "bankResponseDate": "2023-08-17T12:00:01",
+  "bankResponseDate": "2023-08-17",
   "isAddedToPersonalItems": null,
   "addedToPersonalItemsDate": null
 }

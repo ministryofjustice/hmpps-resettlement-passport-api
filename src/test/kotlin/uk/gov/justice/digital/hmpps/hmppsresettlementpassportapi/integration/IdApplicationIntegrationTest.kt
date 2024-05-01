@@ -7,11 +7,13 @@ import org.springframework.test.context.jdbc.Sql
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.IdApplicationPatch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.IdApplicationPost
 import java.math.BigDecimal
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 class IdApplicationIntegrationTest : IntegrationTestBase() {
 
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
+  private val fakeToday = LocalDate.parse("2023-08-17")
 
   @Test
   @Sql("classpath:testdata/sql/seed-bank-application.sql")
@@ -35,7 +37,7 @@ class IdApplicationIntegrationTest : IntegrationTestBase() {
       .bodyValue(
         IdApplicationPost(
           idType = "Birth certificate",
-          applicationSubmittedDate = fakeNow,
+          applicationSubmittedDate = fakeToday,
           isPriorityApplication = false,
           costOfApplication = BigDecimal(10.50),
           haveGro = true,
@@ -54,8 +56,8 @@ class IdApplicationIntegrationTest : IntegrationTestBase() {
       .bodyValue(
         IdApplicationPatch(
           status = "Accepted",
-          dateIdReceived = fakeNow,
-          addedToPersonalItemsDate = fakeNow,
+          dateIdReceived = fakeToday,
+          addedToPersonalItemsDate = fakeToday,
           isAddedToPersonalItems = true,
         ),
       )

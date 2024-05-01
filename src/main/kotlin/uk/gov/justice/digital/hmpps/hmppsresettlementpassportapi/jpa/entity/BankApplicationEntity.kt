@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Entity
@@ -30,10 +31,10 @@ data class BankApplicationEntity(
   val creationDate: LocalDateTime,
 
   @Column(name = "application_submitted_date")
-  val applicationSubmittedDate: LocalDateTime,
+  val applicationSubmittedDate: LocalDate,
 
   @Column(name = "bank_response_date")
-  var bankResponseDate: LocalDateTime? = null,
+  var bankResponseDate: LocalDate? = null,
 
   @Column(name = "status")
   var status: String,
@@ -45,7 +46,7 @@ data class BankApplicationEntity(
   var isAddedToPersonalItems: Boolean? = null,
 
   @Column(name = "added_to_personal_items_date")
-  var addedToPersonalItemsDate: LocalDateTime? = null,
+  var addedToPersonalItemsDate: LocalDate? = null,
 
   @Column(name = "is_deleted")
   var isDeleted: Boolean = false,

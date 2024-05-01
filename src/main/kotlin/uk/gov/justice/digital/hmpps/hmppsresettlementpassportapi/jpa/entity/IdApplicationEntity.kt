@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import java.math.BigDecimal
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Entity
@@ -31,7 +32,7 @@ data class IdApplicationEntity(
   val creationDate: LocalDateTime,
 
   @Column(name = "application_submitted_date")
-  val applicationSubmittedDate: LocalDateTime,
+  val applicationSubmittedDate: LocalDate,
 
   @Column(name = "priority_application")
   var isPriorityApplication: Boolean,
@@ -67,7 +68,7 @@ data class IdApplicationEntity(
   var isAddedToPersonalItems: Boolean? = null,
 
   @Column(name = "added_to_personal_items_date")
-  var addedToPersonalItemsDate: LocalDateTime? = null,
+  var addedToPersonalItemsDate: LocalDate? = null,
 
   @Column(name = "status")
   var status: String = "pending",
@@ -82,5 +83,5 @@ data class IdApplicationEntity(
   var deletionDate: LocalDateTime? = null,
 
   @Column(name = "date_id_received")
-  var dateIdReceived: LocalDateTime? = null,
+  var dateIdReceived: LocalDate? = null,
 )

@@ -37,6 +37,7 @@ class IdApplicationServiceTest {
   private lateinit var idTypeRepository: IdTypeRepository
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
+  private val fakeToday = LocalDate.parse("2023-08-17")
 
   @BeforeEach
   fun beforeEach() {
@@ -52,7 +53,7 @@ class IdApplicationServiceTest {
       prisonerEntity,
       IdTypeEntity(1, "Drivers Licence"),
       fakeNow,
-      fakeNow,
+      fakeToday,
       isPriorityApplication = false,
       BigDecimal(10.00),
     )
@@ -71,7 +72,7 @@ class IdApplicationServiceTest {
     val idTypeEntity = IdTypeEntity(1, "Drivers Licence")
     val idApplicationPost = IdApplicationPost(
       idType = "Drivers licence",
-      applicationSubmittedDate = fakeNow,
+      applicationSubmittedDate = fakeToday,
       costOfApplication = BigDecimal(10.00),
       isPriorityApplication = false,
       driversLicenceType = "Full",
@@ -85,7 +86,7 @@ class IdApplicationServiceTest {
       prisoner = prisonerEntity,
       idType = idTypeEntity,
       creationDate = fakeNow,
-      applicationSubmittedDate = fakeNow,
+      applicationSubmittedDate = fakeToday,
       isPriorityApplication = false,
       costOfApplication = BigDecimal(10.00),
       refundAmount = null,
@@ -119,7 +120,7 @@ class IdApplicationServiceTest {
     val idTypeEntity = IdTypeEntity(1, "Drivers Licence")
     val idApplicationPatchDTO = IdApplicationPatch(
       status = "Approved",
-      dateIdReceived = fakeNow,
+      dateIdReceived = fakeToday,
       isAddedToPersonalItems = false,
     )
 
@@ -128,7 +129,7 @@ class IdApplicationServiceTest {
       prisoner = prisonerEntity,
       idType = idTypeEntity,
       creationDate = fakeNow,
-      applicationSubmittedDate = fakeNow,
+      applicationSubmittedDate = fakeToday,
       isPriorityApplication = false,
       costOfApplication = BigDecimal(10.00),
       refundAmount = null,
@@ -152,7 +153,7 @@ class IdApplicationServiceTest {
       prisoner = prisonerEntity,
       idType = idTypeEntity,
       creationDate = fakeNow,
-      applicationSubmittedDate = fakeNow,
+      applicationSubmittedDate = fakeToday,
       isPriorityApplication = false,
       costOfApplication = BigDecimal(10.00),
       refundAmount = null,
@@ -169,7 +170,7 @@ class IdApplicationServiceTest {
       statusUpdateDate = fakeNow,
       isDeleted = false,
       deletionDate = null,
-      dateIdReceived = fakeNow,
+      dateIdReceived = fakeToday,
     )
 
     Mockito.`when`(idApplicationRepository.save(any())).thenReturn(expectedIdAssessment)
@@ -190,7 +191,7 @@ class IdApplicationServiceTest {
       prisoner = prisonerEntity,
       idType = idTypeEntity,
       creationDate = fakeNow,
-      applicationSubmittedDate = fakeNow,
+      applicationSubmittedDate = fakeToday,
       isPriorityApplication = false,
       costOfApplication = BigDecimal(10.00),
       deletionDate = null,
@@ -201,7 +202,7 @@ class IdApplicationServiceTest {
       prisoner = prisonerEntity,
       idType = idTypeEntity,
       creationDate = fakeNow,
-      applicationSubmittedDate = fakeNow,
+      applicationSubmittedDate = fakeToday,
       isPriorityApplication = false,
       costOfApplication = BigDecimal(10.00),
       deletionDate = fakeNow,
@@ -223,7 +224,7 @@ class IdApplicationServiceTest {
       prisonerEntity,
       IdTypeEntity(1, "Birth Certificate"),
       fakeNow,
-      fakeNow,
+      fakeToday,
       isPriorityApplication = false,
       BigDecimal(10.00),
     )
@@ -232,7 +233,7 @@ class IdApplicationServiceTest {
       prisonerEntity,
       IdTypeEntity(1, "Marriage Certificate"),
       fakeNow,
-      fakeNow,
+      fakeToday,
       isPriorityApplication = false,
       BigDecimal(10.00),
     )

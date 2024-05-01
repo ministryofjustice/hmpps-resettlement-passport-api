@@ -5,11 +5,13 @@ import io.mockk.mockkStatic
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplication
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 class BankApplicationIntegrationTest : IntegrationTestBase() {
 
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
+  private val fakeToday = LocalDate.parse("2023-08-17")
 
   @Test
   @Sql("classpath:testdata/sql/seed-bank-application.sql")
@@ -30,7 +32,7 @@ class BankApplicationIntegrationTest : IntegrationTestBase() {
     webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/bankapplication")
       .bodyValue(
-        BankApplication(applicationSubmittedDate = fakeNow, bankName = "Lloyds"),
+        BankApplication(applicationSubmittedDate = fakeToday, bankName = "Lloyds"),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
@@ -42,7 +44,7 @@ class BankApplicationIntegrationTest : IntegrationTestBase() {
     webTestClient.patch()
       .uri("/resettlement-passport/prisoner/$nomsId/bankapplication/1")
       .bodyValue(
-        BankApplication(resubmissionDate = fakeNow, bankResponseDate = fakeNow, status = "Account opened"),
+        BankApplication(resubmissionDate = fakeToday, bankResponseDate = fakeToday, status = "Account opened"),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()

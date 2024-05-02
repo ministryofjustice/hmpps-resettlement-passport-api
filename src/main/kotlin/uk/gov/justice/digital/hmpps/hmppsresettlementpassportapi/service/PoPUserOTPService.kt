@@ -47,6 +47,11 @@ class PoPUserOTPService(
   }
 
   @Transactional
+  fun deleteAllPoPUserOTP() {
+    popUserOTPRepository.deleteAll()
+  }
+
+  @Transactional
   fun createPoPUserOTP(prisoner: PrisonerEntity): PoPUserOTPEntity {
     val now = LocalDateTime.now()
     val popUserOTPExists = popUserOTPRepository.findByPrisoner(prisoner)

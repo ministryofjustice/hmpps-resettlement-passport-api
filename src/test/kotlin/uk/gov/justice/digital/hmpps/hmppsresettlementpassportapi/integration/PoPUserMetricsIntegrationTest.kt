@@ -5,16 +5,12 @@ import io.mockk.unmockkAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PoPUserOTPEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
+import org.springframework.test.context.jdbc.Sql
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PoPUserOTPRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.LicenceConditionService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PoPUserMetricsService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PoPUserOTPService
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.util.concurrent.atomic.AtomicLong
 
 class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
 
@@ -22,7 +18,7 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
   protected lateinit var popUsermetricsService: PoPUserMetricsService
 
   @Autowired
-  protected lateinit var pathwayStatusRepository: PathwayStatusRepository
+  protected lateinit var popUserOTPService: PoPUserOTPService
 
   @Autowired
   protected lateinit var popUserOTPRepository: PoPUserOTPRepository
@@ -35,14 +31,11 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
 
   private val fakeNow = LocalDate.parse("2023-01-01")
 
-  @Autowired
-  protected lateinit var licenceConditionService: LicenceConditionService
-
   @Test
+  @Sql("classpath:testdata/sql/seed-pop-user-otp-4.sql")
   fun `test collect metrics - happy path `() {
-    seedPopUserOTP()
     prisonRegisterApiMockServer.stubPrisonList(200)
-    cvlApiMockServer.stubFindLicencesByNomsId("G12345", 200)
+    cvlApiMockServer.stubFindLicencesByNomsId("G4161UF", 200)
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(101, 200)
     popUsermetricsService.recordProbationUsersLicenceConditionMetrics()
 
@@ -63,10 +56,10 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  @Sql("classpath:testdata/sql/seed-pop-user-otp-4.sql")
   fun `test collect metrics - happy path with no licence condition`() {
-    seedPopUserOTP()
     prisonRegisterApiMockServer.stubPrisonList(200)
-    cvlApiMockServer.stubFindNoLicencesByNomsId("G12345", 200)
+    cvlApiMockServer.stubFindNoLicencesByNomsId("G4161UF", 200)
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(102, 200)
     popUsermetricsService.recordProbationUsersLicenceConditionMetrics()
 
@@ -84,31 +77,5 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
         .value(),
     )
     unmockkAll()
-  }
-
-  private fun seedPopUserOTP() {
-    val uniqueId = AtomicLong()
-
-    val prisoner = prisonerRepository.save(
-      PrisonerEntity(
-        null,
-        "G12345",
-        LocalDateTime.now(),
-        "${uniqueId.incrementAndGet()}",
-        "MDI",
-        LocalDate.parse("2022-11-01"),
-      ),
-    )
-
-    val popUser = popUserOTPRepository.save(
-      PoPUserOTPEntity(
-        null,
-        prisoner,
-        LocalDateTime.now(),
-        LocalDateTime.now().plusDays(7),
-        "123",
-        LocalDate.parse("2000-11-30"),
-      ),
-    )
   }
 }

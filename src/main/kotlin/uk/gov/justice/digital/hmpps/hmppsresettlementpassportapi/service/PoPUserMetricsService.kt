@@ -36,6 +36,7 @@ class PoPUserMetricsService(
     if (popUserList != null) {
       totalPopUser = popUserList.size
     }
+
     val prisonList = prisonRegisterApiService.getActivePrisonsList()
     if (popUserList != null && totalPopUser > 0) {
       var percentStdLicenceCondition: Double
@@ -45,43 +46,46 @@ class PoPUserMetricsService(
         var otherLicenceConditionCount = 0
 
         try {
+          var popUserExists = false
+
           for (popUser in popUserList) {
             if (popUser.prisoner.prisonId.equals(prison.id)) {
+              popUserExists = true
               var licencesConditions: LicenceConditions
               try {
                 licencesConditions = licenceConditionService.getLicenceConditionsByNomsId(popUser.prisoner.nomsId)!!
+                if (!licencesConditions.standardLicenceConditions.isNullOrEmpty()) {
+                  stdLicenceConditionCount += 1
+                }
+                if (!licencesConditions.otherLicenseConditions.isNullOrEmpty()) {
+                  otherLicenceConditionCount += 1
+                }
               } catch (_: ResourceNotFoundException) {
                 continue
               }
-              val stdLicenceConditionList = licencesConditions?.standardLicenceConditions
-              val otherLicenceConditionList = licencesConditions?.otherLicenseConditions
-              if (!stdLicenceConditionList.isNullOrEmpty()) {
-                stdLicenceConditionCount += 1
-              }
-              if (!otherLicenceConditionList.isNullOrEmpty()) {
-                otherLicenceConditionCount += 1
-              }
             }
           }
-          percentStdLicenceCondition = calculatePercentage(stdLicenceConditionCount, totalPopUser)
-          percentOtherLicenceCondition = calculatePercentage(otherLicenceConditionCount, totalPopUser)
+          if (popUserExists) {
+            percentStdLicenceCondition = calculatePercentage(stdLicenceConditionCount, totalPopUser)
+            percentOtherLicenceCondition = calculatePercentage(otherLicenceConditionCount, totalPopUser)
 
-          val metrics = listOf(
-            PopUserCountMetric(LicenceTag.STANDARD, percentStdLicenceCondition),
-            PopUserCountMetric(LicenceTag.OTHERS, percentOtherLicenceCondition),
-          )
-          popUserCountMetrics.metrics[prison] = metrics
-          val prisonTag = Tags.of("prison", prison.name)
+            val metrics = listOf(
+              PopUserCountMetric(LicenceTag.STANDARD, percentStdLicenceCondition),
+              PopUserCountMetric(LicenceTag.OTHERS, percentOtherLicenceCondition),
+            )
+            popUserCountMetrics.metrics[prison] = metrics
+            val prisonTag = Tags.of("prison", prison.name)
 
-          popUserCountMetrics.metrics[prison]?.forEachIndexed { i, metric ->
-            registry.gauge(
-              "missing_licence_conditions_percentage",
-              prisonTag
-                .and("licenceType", metric.licenceType.label),
-              popUserCountMetrics,
-            ) {
-              it.metrics[prison]?.get(i)?.value?.toDouble()
-                ?: throw RuntimeException("Can't find value for metric $metric. This is likely a coding error!")
+            popUserCountMetrics.metrics[prison]?.forEachIndexed { i, metric ->
+              registry.gauge(
+                "missing_licence_conditions_percentage",
+                prisonTag
+                  .and("licenceType", metric.licenceType.label),
+                popUserCountMetrics,
+              ) {
+                it.metrics[prison]?.get(i)?.value?.toDouble()
+                  ?: throw RuntimeException("Can't find value for metric $metric. This is likely a coding error!")
+              }
             }
           }
         } catch (ex: Exception) {

@@ -63,12 +63,6 @@ class PoPUserMetricsService(
               } catch (_: ResourceNotFoundException) {
                 continue
               }
-              if (!stdLicenceConditionList.isNullOrEmpty()) {
-                stdLicenceConditionCount += 1
-              }
-              if (!otherLicenceConditionList.isNullOrEmpty()) {
-                otherLicenceConditionCount += 1
-              }
             }
           }
           if (popUserExists) {

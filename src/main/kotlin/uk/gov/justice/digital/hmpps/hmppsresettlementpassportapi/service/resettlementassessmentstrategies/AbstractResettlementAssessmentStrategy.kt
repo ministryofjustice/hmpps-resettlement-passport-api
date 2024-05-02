@@ -343,7 +343,9 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     }
   }
 
-  override fun getQuestionClass(): KClass<Q> = questionClass
+  override fun getQuestionById(id: String): IResettlementAssessmentQuestion {
+    return convertEnumStringToEnum(questionClass, GenericResettlementAssessmentQuestion::class, id)
+  }
 
   fun validateQuestionAndAnswerSet(
     assessment: ResettlementAssessmentCompleteRequest,

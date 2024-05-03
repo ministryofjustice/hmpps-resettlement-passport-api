@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CreateAppo
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.AppointmentDelius
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusCreateAppointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusCreateAppointmentType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDate
@@ -53,6 +54,7 @@ class AppointmentsService(
     nomsId: String,
     startDate: LocalDate,
     endDate: LocalDate,
+    includePreRelease: Boolean,
   ): AppointmentsList {
     if (nomsId.isBlank()) {
       throw NoDataWithCodeFoundException("Prisoner", nomsId)
@@ -61,10 +63,17 @@ class AppointmentsService(
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val crn = prisonerEntity.crn ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in database")
-
     val appointments = mapAppointmentsFromDeliusApi(rpDeliusApiService.fetchAppointments(nomsId, crn, startDate, endDate))
 
-    return AppointmentsList(appointments.sortedBy { LocalDateTime.of(it.date, it.time) })
+    return AppointmentsList(filterPreReleaseAppointments(appointments, prisonerEntity, includePreRelease).sortedBy { LocalDateTime.of(it.date, it.time) })
+  }
+
+  private fun filterPreReleaseAppointments(appointments: List<Appointment>, prisonerEntity: PrisonerEntity, includePreRelease: Boolean): List<Appointment> {
+    return if (!includePreRelease && prisonerEntity.releaseDate != null) {
+      appointments.filter { prisonerEntity.releaseDate!!.isBefore(it.date) }
+    } else {
+      appointments
+    }
   }
 
   private fun mapAppointmentsFromDeliusApi(appList: List<AppointmentDelius>): List<Appointment> {

@@ -7,7 +7,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 
-interface IResettlementAssessmentStrategy<Q : IResettlementAssessmentQuestion> {
+interface IResettlementAssessmentStrategy {
   fun appliesTo(pathway: Pathway): Boolean
   fun getNextPageId(
     assessment: ResettlementAssessmentRequest,

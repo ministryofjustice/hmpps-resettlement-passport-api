@@ -34,7 +34,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettl
 @RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class ResettlementAssessmentController(
-  private val resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy<*>>,
+  private val resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy>,
   private val resettlementAssessmentService: ResettlementAssessmentService,
 ) {
   @PostMapping("/{nomsId}/resettlement-assessment/{pathway}/next-page", produces = [MediaType.APPLICATION_JSON_VALUE])

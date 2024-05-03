@@ -129,7 +129,7 @@ class ResettlementAssessmentService(
     }
   }
 
-  fun getLatestResettlementAssessmentByNomsIdAndPathway(nomsId: String, pathway: Pathway, resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy<*>>): LatestResettlementAssessmentResponse {
+  fun getLatestResettlementAssessmentByNomsIdAndPathway(nomsId: String, pathway: Pathway, resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy>): LatestResettlementAssessmentResponse {
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
 
@@ -158,7 +158,7 @@ class ResettlementAssessmentService(
     }
   }
 
-  fun convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(resettlementAssessmentEntity: ResettlementAssessmentEntity, resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy<*>>): ResettlementAssessmentResponse {
+  fun convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(resettlementAssessmentEntity: ResettlementAssessmentEntity, resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy>): ResettlementAssessmentResponse {
     val resettlementStrategy = resettlementAssessmentStrategies.first { it.appliesTo(resettlementAssessmentEntity.pathway) }
 
     val questionsAndAnswers = resettlementAssessmentEntity.assessment.assessment.mapNotNull {

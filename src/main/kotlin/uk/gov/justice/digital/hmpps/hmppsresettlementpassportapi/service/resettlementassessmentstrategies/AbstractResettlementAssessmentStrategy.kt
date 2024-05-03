@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resett
 import com.fasterxml.jackson.annotation.JsonFormat
 import jakarta.transaction.Transactional
 import org.springframework.web.server.ServerWebInputException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentCompleteRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
@@ -35,13 +34,15 @@ import java.time.LocalDateTime
 import kotlin.reflect.KClass
 
 abstract class AbstractResettlementAssessmentStrategy<T, Q>(
-  private val resettlementAssessmentRepository: ResettlementAssessmentRepository,
-  private val prisonerRepository: PrisonerRepository,
-  private val pathwayStatusRepository: PathwayStatusRepository,
+  resettlementAssessmentRepository: ResettlementAssessmentRepository,
+  prisonerRepository: PrisonerRepository,
+  pathwayStatusRepository: PathwayStatusRepository,
   private val assessmentPageClass: KClass<T>,
   private val questionClass: KClass<Q>,
 ) :
-  IResettlementAssessmentStrategy<Q> where T : Enum<*>, T : IAssessmentPage, Q : Enum<*>, Q : IResettlementAssessmentQuestion {
+  IResettlementAssessmentStrategy where T : Enum<*>, T : IAssessmentPage, Q : Enum<*>, Q : IResettlementAssessmentQuestion {
+  // TODO: Inject me
+  private val assessmentDataService = AssessmentDataService(resettlementAssessmentRepository, prisonerRepository, pathwayStatusRepository)
 
   override fun getNextPageId(
     assessment: ResettlementAssessmentRequest,
@@ -69,12 +70,14 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     // Get the next page
     val nextPage: IAssessmentPage
 
-    val existingAssessment = getExistingAssessment(nomsId, pathway, assessmentType)
+    val existingAssessment = assessmentDataService.getExistingAssessment(nomsId, pathway, assessmentType)
 
     if (currentPageEnum == null) {
       // Option 1 - If the current page is null then send back the first page unless there is already an assessment completed, in which case go straight to CHECK_ANSWERS
       nextPage = if (existingAssessment == null) {
-        assessmentPageClass.java.enumConstants?.getOrNull(0) as IAssessmentPage? ?: throw UnsupportedOperationException("${assessmentPageClass.simpleName} has no constants")
+        assessmentPageClass.java.enumConstants?.getOrNull(0) as IAssessmentPage? ?: throw UnsupportedOperationException(
+          "${assessmentPageClass.simpleName} has no constants",
+        )
       } else {
         GenericAssessmentPage.CHECK_ANSWERS
       }
@@ -86,7 +89,11 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
       val questionLambda = getPageList(assessmentType).first { it.assessmentPage == currentPageEnum }
       val questions: List<ResettlementAssessmentQuestionAndAnswer> = assessment.questionsAndAnswers!!.map {
         ResettlementAssessmentQuestionAndAnswer(
-          convertEnumStringToEnum(enumClass = questionClass, secondaryEnumClass = GenericResettlementAssessmentQuestion::class, stringValue = it.question),
+          convertEnumStringToEnum(
+            enumClass = questionClass,
+            secondaryEnumClass = GenericResettlementAssessmentQuestion::class,
+            stringValue = it.question,
+          ),
           it.answer as Answer<*>,
         )
       }
@@ -97,29 +104,6 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
 
     return nextPage.id
   }
-  private fun getExistingAssessment(
-    nomsId: String,
-    pathway: Pathway,
-    assessmentType: ResettlementAssessmentType,
-  ): ResettlementAssessmentEntity? {
-    // Obtain prisoner from database, if exists
-    val prisonerEntity = loadPrisoner(nomsId)
-
-    // Obtain COMPLETE and SUBMITTED resettlement status entity from database
-    val resettlementAssessmentStatusEntities = listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED)
-
-    return resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-      prisonerEntity,
-      pathway,
-      assessmentType,
-      resettlementAssessmentStatusEntities,
-    )
-  }
-
-  private fun loadPrisoner(nomsId: String) = (
-    prisonerRepository.findByNomsId(nomsId)
-      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    )
 
   override fun getPageFromId(
     nomsId: String,
@@ -128,13 +112,13 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     assessmentType: ResettlementAssessmentType,
   ): ResettlementAssessmentResponsePage {
     // Get the latest complete assessment (if exists)
-    var existingAssessment = getExistingAssessment(nomsId, pathway, assessmentType)
+    var existingAssessment = assessmentDataService.getExistingAssessment(nomsId, pathway, assessmentType)
 
     val edit = existingAssessment?.assessmentStatus == ResettlementAssessmentStatus.SUBMITTED
 
     // If this is a RESETTLEMENT_PLAN (BCST3) type and there is not existing assessment we should use an existing BCST2 if available.
     if (existingAssessment == null && assessmentType == ResettlementAssessmentType.RESETTLEMENT_PLAN) {
-      existingAssessment = getExistingAssessment(nomsId, pathway, ResettlementAssessmentType.BCST2)
+      existingAssessment = assessmentDataService.getExistingAssessment(nomsId, pathway, ResettlementAssessmentType.BCST2)
 
       if (existingAssessment != null) {
         // remove SUPPORT_NEEDS and replace with SUPPORT_NEEDS_PRERELEASE which has more options
@@ -210,19 +194,12 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
           q.answer = existingAnswer.answer
         }
         if (q.question.id == GenericResettlementAssessmentQuestion.SUPPORT_NEEDS_PRERELEASE.id) {
-          q.answer = loadPathwayStatusAnswer(pathway, nomsId) ?: existingAnswer?.answer
+          q.answer = assessmentDataService.loadPathwayStatusAnswer(pathway, nomsId) ?: existingAnswer?.answer
         }
       }
     }
 
     return resettlementAssessmentResponsePage
-  }
-
-  private fun loadPathwayStatusAnswer(pathway: Pathway, nomsId: String): StringAnswer? {
-    val prisonerEntity = loadPrisoner(nomsId)
-    val pathwayStatus = pathwayStatusRepository.findByPathwayAndPrisoner(pathway, prisonerEntity) ?: return null
-
-    return StringAnswer(pathwayStatus.status.name)
   }
 
   override fun findPageIdFromQuestionId(questionId: String, assessmentType: ResettlementAssessmentType): String {
@@ -253,15 +230,17 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     val userId = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get sub from auth token")
 
     // Check if the latest assessment is submitted - if so this is an edit
-    val edit = getExistingAssessment(nomsId, pathway, assessmentType)?.assessmentStatus == ResettlementAssessmentStatus.SUBMITTED
+    val edit = assessmentDataService.getExistingAssessment(
+      nomsId,
+      pathway,
+      assessmentType,
+    )?.assessmentStatus == ResettlementAssessmentStatus.SUBMITTED
 
     // Check that question and answer set is valid
     validateQuestionAndAnswerSet(assessment, edit, assessmentType)
 
     // Obtain prisoner from database, if exists
-    val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
-      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-
+    val prisonerEntity = assessmentDataService.loadPrisoner(nomsId)
     // If it's not an edit then use COMPLETE status, else use SUBMITTED
     val resettlementAssessmentStatus = if (!edit) {
       ResettlementAssessmentStatus.COMPLETE
@@ -316,31 +295,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
       submissionDate = if (edit) LocalDateTime.now() else null,
     )
 
-    resettlementAssessmentRepository.save(resettlementAssessmentEntity)
-  }
-
-  private fun convertFromSupportNeedAnswerToStatus(supportNeed: Answer<*>?): Status {
-    if (supportNeed is StringAnswer) {
-      return when (supportNeed.answer) {
-        "SUPPORT_REQUIRED" -> Status.SUPPORT_REQUIRED
-        "SUPPORT_NOT_REQUIRED" -> Status.SUPPORT_NOT_REQUIRED
-        "SUPPORT_DECLINED" -> Status.SUPPORT_DECLINED
-        "NOT_STARTED" -> Status.NOT_STARTED
-        "IN_PROGRESS" -> Status.IN_PROGRESS
-        "DONE" -> Status.DONE
-        else -> throw ServerWebInputException("Support need [$supportNeed] is not a valid option")
-      }
-    } else {
-      throw ServerWebInputException("Support need [$supportNeed] must be a StringAnswer")
-    }
-  }
-
-  private fun convertFromStringAnswer(answer: Answer<*>?): String {
-    if (answer is StringAnswer) {
-      return answer.answer ?: throw ServerWebInputException("Answer [$answer] must not be null")
-    } else {
-      throw ServerWebInputException("Answer [$answer] must be a StringAnswer")
-    }
+    assessmentDataService.saveAssessment(resettlementAssessmentEntity)
   }
 
   override fun getQuestionById(id: String): IResettlementAssessmentQuestion {

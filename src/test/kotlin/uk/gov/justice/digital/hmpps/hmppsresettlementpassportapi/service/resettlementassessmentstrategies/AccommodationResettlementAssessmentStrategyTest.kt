@@ -12,9 +12,11 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentCompleteRequest
@@ -67,6 +69,12 @@ class AccommodationResettlementAssessmentStrategyTest {
       prisonerRepository,
       pathwayStatusRepository,
     )
+  }
+
+  private fun stubSave() {
+    given(resettlementAssessmentRepository.save(any())).willAnswer { mock ->
+      mock.arguments[0]
+    }
   }
 
   @ParameterizedTest
@@ -720,6 +728,7 @@ class AccommodationResettlementAssessmentStrategyTest {
     }
 
     if (expectedException == null) {
+      stubSave()
       resettlementAssessmentService.completeAssessment(nomsId, pathway, assessmentType, assessment, "string")
       Mockito.verify(resettlementAssessmentRepository).save(expectedEntity!!)
     } else {

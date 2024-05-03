@@ -97,7 +97,7 @@ class FinanceAndIdResettlementAssessmentStrategyTest {
       "HAS_BANK_ACCOUNT",
       "HELP_WITH_BANK_ACCOUNT",
     ),
-    // If the answer to HAS_BANK_ACCOUNT is YES, go to WHAT_ID_DOCUMENT
+    // If the answer to HAS_BANK_ACCOUNT is YES, go to WHAT_ID_DOCUMENTS
     Arguments.of(
       listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
         ResettlementAssessmentRequestQuestionAndAnswer("HAS_BANK_ACCOUNT", answer = StringAnswer("YES")),

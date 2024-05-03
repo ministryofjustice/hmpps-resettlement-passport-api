@@ -15,12 +15,7 @@ class AssessmentDataService(
   private val prisonerRepository: PrisonerRepository,
   private val pathwayStatusRepository: PathwayStatusRepository,
 ) {
-  fun saveAssessment(assessment: ResettlementAssessmentEntity): ResettlementAssessmentEntity {
-    println("$prisonerRepository, $assessment")
-    val save = resettlementAssessmentRepository.save(assessment)
-    println(save)
-    return save
-  }
+  fun saveAssessment(assessment: ResettlementAssessmentEntity): ResettlementAssessmentEntity = resettlementAssessmentRepository.save(assessment)
 
   fun loadPrisoner(nomsId: String) = (
     prisonerRepository.findByNomsId(nomsId)

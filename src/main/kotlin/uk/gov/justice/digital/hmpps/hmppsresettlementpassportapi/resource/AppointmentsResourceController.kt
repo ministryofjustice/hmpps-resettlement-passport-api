@@ -65,11 +65,13 @@ class AppointmentsResourceController(
     @Parameter(required = true, description = "All or Future only appointment flag")
     @RequestParam(defaultValue = "true")
     futureOnly: Boolean,
+    @RequestParam(defaultValue = "true", required = false)
+    includePreRelease: Boolean,
   ): AppointmentsList {
     return if (futureOnly) {
-      appointmentsService.getAppointmentsByNomsId(nomsId, LocalDate.now(), LocalDate.now().plusDays(365))
+      appointmentsService.getAppointmentsByNomsId(nomsId, LocalDate.now(), LocalDate.now().plusDays(365), includePreRelease)
     } else {
-      appointmentsService.getAppointmentsByNomsId(nomsId, LocalDate.now().minusDays(365), LocalDate.now().plusDays(365))
+      appointmentsService.getAppointmentsByNomsId(nomsId, LocalDate.now().minusDays(365), LocalDate.now().plusDays(365), includePreRelease)
     }
   }
 

@@ -70,6 +70,7 @@ class PoPUserOTPService(
     return popUserOTPEntity
   }
 
+  @Transactional
   fun getPoPUserVerified(oneLoginData: OneLoginData): PoPUserResponse? {
     if (oneLoginData.otp != null && oneLoginData.dob != null && oneLoginData.urn != null) {
       val popUserOTPEntityExists = popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(

@@ -132,9 +132,9 @@
     {
       "type": {
         "code": "CRSAPT",
-        "description": "Appointment with CRS Provider (NS)"
+        "description": "Post Release Appointment"
       },
-      "dateTime": "2023-08-31T11:09:00+01:00",
+      "dateTime": "2024-08-02T11:09:00+01:00",
       "duration": "PT25M",
       "staff": {
         "code": "CRSUATU",

@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.GenericResettlementAssessmentQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.IResettlementAssessmentStrategy
+import java.time.LocalDateTime
 
 @Service
 class ResettlementAssessmentService(
@@ -111,6 +112,7 @@ class ResettlementAssessmentService(
 
       // Update assessment status to SUBMITTED
       assessment.assessmentStatus = ResettlementAssessmentStatus.SUBMITTED
+      assessment.submissionDate = LocalDateTime.now()
       resettlementAssessmentRepository.save(assessment)
     }
   }

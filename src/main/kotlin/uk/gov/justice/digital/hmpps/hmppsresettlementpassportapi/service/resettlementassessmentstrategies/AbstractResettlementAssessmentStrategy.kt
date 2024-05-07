@@ -313,6 +313,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
       assessmentStatus = resettlementAssessmentStatus,
       caseNoteText = caseNoteText,
       createdByUserId = userId,
+      submissionDate = if (edit) LocalDateTime.now() else null,
     )
 
     resettlementAssessmentRepository.save(resettlementAssessmentEntity)

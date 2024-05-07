@@ -16,10 +16,9 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 @Service
 class PoPUserMetricsService(
   private val registry: MeterRegistry,
-  private val popUserOTPService: PoPUserOTPService,
   private val prisonRegisterApiService: PrisonRegisterApiService,
   private val licenceConditionService: LicenceConditionService,
-  private val poPUserApiService: PoPUserApiService,
+  private val popUserApiService: PoPUserApiService,
   private val prisonerRepository: PrisonerRepository,
 ) {
   private val popUserCountMetrics = PopUserCountMetrics()
@@ -34,7 +33,7 @@ class PoPUserMetricsService(
 
   fun recordProbationUsersLicenceConditionMetrics() {
     log.info("Started running scheduled POP User metrics job - LicenceCondition")
-    val popUserList = poPUserApiService.getAllVerifiedPopUsers()
+    val popUserList = popUserApiService.getAllVerifiedPopUsers()
     var totalPopUser = 0
     totalPopUser = popUserList.size
     if (totalPopUser > 0) {

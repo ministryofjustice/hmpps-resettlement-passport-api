@@ -190,7 +190,7 @@ class ResettlementAssessmentServiceTest {
     statusChangedTo = Status.NOT_STARTED,
     caseNoteText = "some case note text",
     createdByUserId = "USER_1",
-    submissionDate = null
+    submissionDate = null,
   )
 
   private fun createCompleteResettlementAssessmentEntity(id: Long, pathway: Pathway) = ResettlementAssessmentEntity(
@@ -205,6 +205,6 @@ class ResettlementAssessmentServiceTest {
     statusChangedTo = Status.SUPPORT_DECLINED,
     caseNoteText = "some case note text",
     createdByUserId = "USER_1",
-    submissionDate = null
+    submissionDate = null,
   )
 }

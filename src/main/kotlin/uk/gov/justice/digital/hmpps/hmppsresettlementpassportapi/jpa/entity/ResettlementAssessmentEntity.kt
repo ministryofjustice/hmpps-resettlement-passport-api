@@ -68,7 +68,11 @@ data class ResettlementAssessmentEntity(
 
   @Column(name = "created_by_user_id")
   val createdByUserId: String,
-) {
+
+  @Column(name = "submission_date")
+  var submissionDate: LocalDateTime?,
+)
+{
   val questionsAndAnswers: List<ResettlementAssessmentSimpleQuestionAndAnswer>
     get() = assessment.assessment
 }

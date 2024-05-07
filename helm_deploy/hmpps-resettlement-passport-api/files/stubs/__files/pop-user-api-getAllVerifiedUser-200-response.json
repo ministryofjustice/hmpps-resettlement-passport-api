@@ -1,0 +1,22 @@
+[
+  {
+  "id": 1,
+  "crn": "U416100",
+  "cprId": "NA",
+  "verified": true,
+  "creationDate": "2024-02-26T10:32:25.23756",
+  "modifiedDate": "2024-02-26T10:32:25.23756",
+  "nomsId": "G4161UF",
+  "oneLoginUrn": "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oFj9"
+  },
+  {
+    "id": 2,
+    "crn": "U416100",
+    "cprId": "NA",
+    "verified": true,
+    "creationDate": "2024-04-26T09:42:35.23756",
+    "modifiedDate": "2024-04-26T09:42:35.23756",
+    "nomsId": "A8731DY",
+    "oneLoginUrn": "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj9"
+  }
+]

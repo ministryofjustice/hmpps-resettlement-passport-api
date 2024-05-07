@@ -46,7 +46,7 @@ class PoPUserApiService(
     }
   }
 
-  fun getVerifiedPopUsers(): List<uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.PopUserData> {
+  fun getAllVerifiedPopUsers(): List<uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.PopUserData> {
     return popUserWebClientCredentials
       .get()
       .uri("/person-on-probation-user/users/all")

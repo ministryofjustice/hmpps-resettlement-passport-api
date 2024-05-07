@@ -291,4 +291,24 @@ class PoPUserOTPServiceTest {
     assertThrows<RuntimeException> { popUserOTPService.getPoPUserVerified(oneLoginUserData) }
     unmockkStatic(LocalDateTime::class)
   }
+
+  @Test
+  fun `test getAll PoP Verified User  - returns PoP Verified User  List`() {
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
+    val popUserOTPEntity = PoPUserOTPEntity(
+      null,
+      prisonerEntity,
+      fakeNow,
+      fakeNow.plusDays(7).withHour(11).withMinute(59).withSecond(59),
+      "1X3456",
+      LocalDate.parse("1982-10-24"),
+    )
+
+    val popUserOTPList = emptyList<PoPUserOTPEntity>().toMutableList()
+    popUserOTPList.add(popUserOTPEntity)
+
+    Mockito.`when`(popUserOTPRepository.findAll()).thenReturn(popUserOTPList)
+    val result = popUserOTPService.getAllOTPs()
+    Assertions.assertEquals(popUserOTPList, result)
+  }
 }

@@ -30,4 +30,45 @@ class PoPUserApiMockServer : WireMockServerBase(9106) {
         ),
     )
   }
+  fun stubGetPopUserVerifiedList(status: Int) {
+    val getAllVerifiedUserListJSON = readFile("testdata/pop-user-api/pop-user-verify-list-response.json")
+    stubFor(
+      get("/person-on-probation-user/users/all").willReturn(
+        if (status == 200) {
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody(
+              getAllVerifiedUserListJSON,
+            )
+            .withStatus(status)
+        } else {
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody("{\"Error\" : \"$status\"}")
+            .withStatus(status)
+        },
+      ),
+    )
+  }
+
+  fun stubGetPopUserVerifiedEmptyList(status: Int) {
+    val getAllVerifiedUserListJSON = readFile("testdata/pop-user-api/pop-user-verify-list-response.json")
+    stubFor(
+      get("/person-on-probation-user/users/all").willReturn(
+        if (status == 200) {
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody(
+              " [] ",
+            )
+            .withStatus(status)
+        } else {
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody("{\"Error\" : \"$status\"}")
+            .withStatus(status)
+        },
+      ),
+    )
+  }
 }

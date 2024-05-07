@@ -9,14 +9,17 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceCon
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceTag
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PopUserCountMetric
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PopUserCountMetrics
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PoPUserApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
 
 @Service
 class PoPUserMetricsService(
   private val registry: MeterRegistry,
-  private val popUserOTPService: PoPUserOTPService,
   private val prisonRegisterApiService: PrisonRegisterApiService,
   private val licenceConditionService: LicenceConditionService,
+  private val popUserApiService: PoPUserApiService,
+  private val prisonerRepository: PrisonerRepository,
 ) {
   private val popUserCountMetrics = PopUserCountMetrics()
 
@@ -30,30 +33,26 @@ class PoPUserMetricsService(
 
   fun recordProbationUsersLicenceConditionMetrics() {
     log.info("Started running scheduled POP User metrics job - LicenceCondition")
-    val popUserList = popUserOTPService.getAllOTPs()
-
+    val popUserList = popUserApiService.getAllVerifiedPopUsers()
     var totalPopUser = 0
-    if (popUserList != null) {
-      totalPopUser = popUserList.size
-    }
-
-    val prisonList = prisonRegisterApiService.getActivePrisonsList()
-    if (popUserList != null && totalPopUser > 0) {
+    totalPopUser = popUserList.size
+    if (totalPopUser > 0) {
+      val prisonList = prisonRegisterApiService.getActivePrisonsList()
       var percentStdLicenceCondition: Double
       var percentOtherLicenceCondition: Double
       for (prison in prisonList) {
         var stdLicenceConditionCount = 0
         var otherLicenceConditionCount = 0
-
+        val prisonersList = prisonerRepository.findByPrisonId(prison.id)
         try {
           var popUserExists = false
-
           for (popUser in popUserList) {
-            if (popUser.prisoner.prisonId.equals(prison.id)) {
+            val prisoner = prisonersList.filter { it.nomsId == popUser.nomsId }
+            if (prisoner.isNotEmpty() && prisoner.size == 1) {
               popUserExists = true
               var licencesConditions: LicenceConditions
               try {
-                licencesConditions = licenceConditionService.getLicenceConditionsByNomsId(popUser.prisoner.nomsId)!!
+                licencesConditions = licenceConditionService.getLicenceConditionsByNomsId(prisoner[0].nomsId)!!
                 if (!licencesConditions.standardLicenceConditions.isNullOrEmpty()) {
                   stdLicenceConditionCount += 1
                 }

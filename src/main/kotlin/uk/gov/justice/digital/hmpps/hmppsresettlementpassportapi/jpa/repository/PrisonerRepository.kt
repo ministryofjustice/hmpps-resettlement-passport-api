@@ -8,4 +8,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 interface PrisonerRepository : JpaRepository<PrisonerEntity, Long> {
 
   fun findByNomsId(nomsId: String): PrisonerEntity?
+
+  fun findByPrisonId(prisonId: String): List<PrisonerEntity>
 }

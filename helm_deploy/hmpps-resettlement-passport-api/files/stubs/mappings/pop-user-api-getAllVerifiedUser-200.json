@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/pop-user-api/person-on-probation-user/users/all "
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "pop-user-api-getAllVerifiedUser-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

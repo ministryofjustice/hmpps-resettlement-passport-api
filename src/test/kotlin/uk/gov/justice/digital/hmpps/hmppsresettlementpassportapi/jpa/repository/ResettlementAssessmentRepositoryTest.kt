@@ -42,6 +42,7 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       assessmentStatus = ResettlementAssessmentStatus.NOT_STARTED,
       caseNoteText = "Some case note text",
       createdByUserId = "JSMITH_GEN",
+      submissionDate = null,
     )
     resettlementAssessmentRepository.save(resettlementAssessmentQuestionAndAnswerList)
 
@@ -71,6 +72,7 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       assessmentStatus = ResettlementAssessmentStatus.NOT_STARTED,
       caseNoteText = "some case note text",
       createdByUserId = "JWILLIAMS_GEN",
+      submissionDate = null,
     )
     val resettlementAssessment2 = ResettlementAssessmentEntity(
       id = null,
@@ -89,6 +91,7 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       assessmentStatus = ResettlementAssessmentStatus.NOT_STARTED,
       caseNoteText = "Some case notes",
       createdByUserId = "ABC1234",
+      submissionDate = null,
     )
     resettlementAssessmentRepository.save(resettlementAssessment)
     resettlementAssessmentRepository.save(resettlementAssessment2)
@@ -167,5 +170,6 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       assessmentStatus = status,
       caseNoteText = "test",
       createdByUserId = "USER_1",
+      submissionDate = null,
     )
 }

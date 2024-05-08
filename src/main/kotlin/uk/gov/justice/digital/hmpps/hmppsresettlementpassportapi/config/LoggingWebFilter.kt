@@ -18,6 +18,11 @@ class LoggingWebFilter : WebFilter {
     if (log.isDebugEnabled) {
       log.debug("[{}] Request received for path [{}]", exchange.request.id, exchange.request.uri)
     }
+    val clientSessionId = exchange.request.headers.getFirst("SessionID")
+    if (clientSessionId != null) {
+      log.info("SessionID [{}]. [{}] Request received for path [{}]", clientSessionId, exchange.request.id, exchange.request.uri)
+    }
+
     return chain.filter(exchange)
   }
 }

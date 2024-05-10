@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserOTP
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.OneLoginData
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PoPUserOTPEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PoPUserOTPService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PrisonerService
 
@@ -70,7 +70,7 @@ class PopUserOTPResourceController(private val popUserOTPService: PoPUserOTPServ
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     nomsId: String,
-  ): PoPUserOTPEntity? {
+  ): PoPUserOTP? {
     val prisonerEntity = prisonerService.getPrisonerEntity(nomsId)
     return popUserOTPService.getOTPByPrisoner(prisonerEntity)
   }
@@ -109,7 +109,7 @@ class PopUserOTPResourceController(private val popUserOTPService: PoPUserOTPServ
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     nomsId: String,
-  ): PoPUserOTPEntity {
+  ): PoPUserOTP {
     val prisonerEntity = prisonerService.getPrisonerEntity(nomsId)
     return popUserOTPService.createPoPUserOTP(prisonerEntity)
   }
@@ -150,10 +150,7 @@ class PopUserOTPResourceController(private val popUserOTPService: PoPUserOTPServ
     nomsId: String,
   ) {
     val prisonerEntity = prisonerService.getPrisonerEntity(nomsId)
-    val popUserOTPEntity = popUserOTPService.getOTPByPrisoner(prisonerEntity) ?: throw NoDataWithCodeFoundException(
-      "PoPUser Id",
-      nomsId,
-    )
+    val popUserOTPEntity = popUserOTPService.getPoPUserOTPByPrisoner(prisonerEntity)
     popUserOTPService.deletePoPUserOTP(popUserOTPEntity)
   }
 

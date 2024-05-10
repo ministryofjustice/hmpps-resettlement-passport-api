@@ -66,9 +66,7 @@ class PoPUserOTPServiceTest {
 
     Mockito.`when`(popUserOTPRepository.findByPrisoner(any())).thenReturn(popUserOTPEntity)
     val result = popUserOTPService.getOTPByPrisoner(prisonerEntity)
-    if (result != null) {
-      Assertions.assertEquals(popUserOTPEntity.id, result.id)
-    }
+    Assertions.assertEquals(popUserOTPEntity.id, result!!.id)
   }
 
   @Test

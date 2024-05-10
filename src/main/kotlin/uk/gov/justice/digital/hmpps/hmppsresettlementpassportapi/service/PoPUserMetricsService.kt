@@ -5,13 +5,19 @@ import io.micrometer.core.instrument.Tags
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AppointmentsDataTag
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AppointmentsList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceConditions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceTag
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PopUserCountMetric
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.MissingFieldScore
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PopUserAppointmentCountMetric
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PopUserAppointmentCountMetrics
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PopUserCountMetrics
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PopUserLicenceCountMetric
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PoPUserApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
+import java.time.LocalDate
 
 @Service
 class PoPUserMetricsService(
@@ -20,8 +26,10 @@ class PoPUserMetricsService(
   private val licenceConditionService: LicenceConditionService,
   private val popUserApiService: PoPUserApiService,
   private val prisonerRepository: PrisonerRepository,
+  private val appointmentsService: AppointmentsService,
 ) {
-  private val popUserCountMetrics = PopUserCountMetrics()
+  private val popUserLicenceCountMetric = PopUserCountMetrics()
+  private val popUserAppointmentMetrics = PopUserAppointmentCountMetrics()
 
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -29,13 +37,13 @@ class PoPUserMetricsService(
 
   fun recordCustomMetrics() {
     recordProbationUsersLicenceConditionMetrics()
+    recordProbationUsersAppointmentsMetrics()
   }
 
   fun recordProbationUsersLicenceConditionMetrics() {
     log.info("Started running scheduled POP User metrics job - LicenceCondition")
     val popUserList = popUserApiService.getAllVerifiedPopUsers()
-    var totalPopUser = 0
-    totalPopUser = popUserList.size
+    val totalPopUser = popUserList.size
     if (totalPopUser > 0) {
       val prisonList = prisonRegisterApiService.getActivePrisonsList()
       var percentStdLicenceCondition: Double
@@ -53,36 +61,49 @@ class PoPUserMetricsService(
               var licencesConditions: LicenceConditions
               try {
                 licencesConditions = licenceConditionService.getLicenceConditionsByNomsId(prisoner[0].nomsId)!!
-                if (!licencesConditions.standardLicenceConditions.isNullOrEmpty()) {
+                if (licencesConditions.standardLicenceConditions.isNullOrEmpty()) {
                   stdLicenceConditionCount += 1
                 }
-                if (!licencesConditions.otherLicenseConditions.isNullOrEmpty()) {
+                if (licencesConditions.otherLicenseConditions.isNullOrEmpty()) {
                   otherLicenceConditionCount += 1
                 }
               } catch (_: ResourceNotFoundException) {
+                stdLicenceConditionCount += 1
+                otherLicenceConditionCount += 1
                 continue
               }
             }
           }
           if (popUserExists) {
-            percentStdLicenceCondition = calculatePercentage(stdLicenceConditionCount, totalPopUser)
-            percentOtherLicenceCondition = calculatePercentage(otherLicenceConditionCount, totalPopUser)
+            percentStdLicenceCondition = if (stdLicenceConditionCount > 0) {
+              calculatePercentage(stdLicenceConditionCount, totalPopUser)
+            } else {
+              0.0
+            }
+            percentOtherLicenceCondition = if (otherLicenceConditionCount > 0) {
+              calculatePercentage(otherLicenceConditionCount, totalPopUser)
+            } else {
+              0.0
+            }
 
             val metrics = listOf(
-              PopUserCountMetric(LicenceTag.STANDARD, percentStdLicenceCondition),
-              PopUserCountMetric(LicenceTag.OTHERS, percentOtherLicenceCondition),
+              PopUserLicenceCountMetric(LicenceTag.MISSING_STANDARD_PERCENTAGE, percentStdLicenceCondition),
+              PopUserLicenceCountMetric(LicenceTag.MISSING_OTHERS_PERCENTAGE, percentOtherLicenceCondition),
+              PopUserLicenceCountMetric(LicenceTag.MISSING_STANDARD_COUNT, stdLicenceConditionCount.toDouble()),
+              PopUserLicenceCountMetric(LicenceTag.MISSING_OTHERS_COUNT, otherLicenceConditionCount.toDouble()),
+
             )
-            popUserCountMetrics.metrics[prison] = metrics
+            popUserLicenceCountMetric.metrics[prison] = metrics
             val prisonTag = Tags.of("prison", prison.name)
 
-            popUserCountMetrics.metrics[prison]?.forEachIndexed { i, metric ->
+            popUserLicenceCountMetric.metrics[prison]?.forEachIndexed { i, metric ->
               registry.gauge(
-                "missing_licence_conditions_percentage",
+                "missing_licence_conditions",
                 prisonTag
-                  .and("licenceType", metric.licenceType.label),
-                popUserCountMetrics,
+                  .and("metricType", metric.licenceType.label),
+                popUserLicenceCountMetric,
               ) {
-                it.metrics[prison]?.get(i)?.value?.toDouble()
+                it.metrics[prison]?.get(i)?.value
                   ?: throw RuntimeException("Can't find value for metric $metric. This is likely a coding error!")
               }
             }
@@ -95,11 +116,162 @@ class PoPUserMetricsService(
     log.info("Finished running scheduled POP User metrics job - LicenceCondition")
   }
 
+  fun recordProbationUsersAppointmentsMetrics() {
+    log.info("Started running scheduled POP User metrics job - Appointments")
+    val popUserList = popUserApiService.getAllVerifiedPopUsers()
+    val totalPopUser = popUserList.size
+    if (totalPopUser > 0) {
+      val prisonList = prisonRegisterApiService.getActivePrisonsList()
+      var scoreDate: Int
+      var scoreTime: Int
+      var scoreType: Int
+      var scoreLocation: Int
+      var scorePO: Int
+      var scoreEmail: Int
+      var percentDate: Double
+      var percentTime: Double
+      var percentType: Double
+      var percentLocation: Double
+      var percentPO: Double
+      var percentEmail: Double
+
+      for (prison in prisonList) {
+        var missingDateCount = 0
+        var missingTimeCount = 0
+        var missingTypeCount = 0
+        var missingLocationCount = 0
+        var missingPOCount = 0
+        var missingEmailCount = 0
+        var totalAppointments = 0
+
+        val prisonersList = prisonerRepository.findByPrisonId(prison.id)
+        try {
+          var popUserExists = false
+          for (popUser in popUserList) {
+            val prisoner = prisonersList.filter { it.nomsId == popUser.nomsId }
+            log.info("Prisoner size $prisoner.size ")
+            if (prisoner.isNotEmpty() && prisoner.size == 1) {
+              popUserExists = true
+              var appointmentsList: AppointmentsList
+              try {
+                appointmentsList = appointmentsService.getAppointmentsByNomsId(prisoner[0].nomsId, LocalDate.now(), LocalDate.now().plusDays(365), false)
+                log.info("list details $appointmentsList")
+                log.info("Appointments list size ${appointmentsList.results.size}")
+                if (appointmentsList.results.isNotEmpty()) {
+                  totalAppointments += appointmentsList.results.size
+                  missingDateCount += appointmentsList.results.filter { it.date == null }.size
+                  missingTimeCount += appointmentsList.results.filter { it.time == null }.size
+                  missingTypeCount = appointmentsList.results.filter { it.type == null }.size
+                  missingLocationCount += appointmentsList.results.size - appointmentsList.results.filter { it.location != null && (it.location.postcode != null || it.location.streetName != null) }.size
+                  missingPOCount += appointmentsList.results.filter { it.contact == null }.size
+                  missingEmailCount += appointmentsList.results.filter { it.contactEmail == null }.size
+                } else {
+                  totalAppointments += 1
+                  missingDateCount += 1
+                  missingTimeCount += 1
+                  missingTypeCount += 1
+                  missingLocationCount += 1
+                  missingPOCount += 1
+                  missingEmailCount += 1
+                }
+              } catch (_: ResourceNotFoundException) {
+                log.info("Unable to get the appointments")
+                continue
+              }
+            }
+          }
+          if (popUserExists) {
+            scoreDate = missingDateCount * MissingFieldScore.TWO.score
+            scoreTime = missingTimeCount * MissingFieldScore.TWO.score
+            scoreType = missingTypeCount * MissingFieldScore.ONE.score
+            scoreLocation = missingLocationCount * MissingFieldScore.TWO.score
+            scorePO = missingPOCount * MissingFieldScore.ONE.score
+            scoreEmail = missingPOCount * MissingFieldScore.ONE.score
+            percentDate = if (missingDateCount in 1..totalAppointments) {
+              calculatePercentage(missingDateCount, totalAppointments)
+            } else {
+              0.0
+            }
+
+            percentTime = if (missingTimeCount in 1..totalAppointments) {
+              calculatePercentage(missingTimeCount, totalAppointments)
+            } else {
+              0.0
+            }
+
+            percentType = if (missingTypeCount in 1..totalAppointments) {
+              calculatePercentage(missingTypeCount, totalAppointments)
+            } else {
+              0.0
+            }
+
+            percentLocation = if (missingLocationCount in 1..totalAppointments) {
+              calculatePercentage(missingLocationCount, totalAppointments)
+            } else {
+              0.0
+            }
+
+            percentPO = if (missingPOCount in 1..totalAppointments) {
+              calculatePercentage(missingPOCount, totalAppointments)
+            } else {
+              0.0
+            }
+
+            percentEmail = if (missingEmailCount in 1..totalAppointments) {
+              calculatePercentage(missingEmailCount, totalAppointments)
+            } else {
+              0.0
+            }
+
+            val metrics = listOf(
+              PopUserAppointmentCountMetric(AppointmentsDataTag.MISSING_DATE_SCORE, scoreDate.toDouble()),
+              PopUserAppointmentCountMetric(AppointmentsDataTag.MISSING_TIME_SCORE, scoreTime.toDouble()),
+              PopUserAppointmentCountMetric(AppointmentsDataTag.MISSING_TYPE_SCORE, scoreType.toDouble()),
+              PopUserAppointmentCountMetric(AppointmentsDataTag.MISSING_LOCATION_SCORE, scoreLocation.toDouble()),
+              PopUserAppointmentCountMetric(AppointmentsDataTag.MISSING_PROBATION_OFFICER_SCORE, scorePO.toDouble()),
+              PopUserAppointmentCountMetric(AppointmentsDataTag.MISSING_EMAIL_SCORE, scoreEmail.toDouble()),
+              PopUserAppointmentCountMetric(AppointmentsDataTag.MISSING_DATE_PERCENTAGE, percentDate),
+              PopUserAppointmentCountMetric(AppointmentsDataTag.MISSING_TIME_PERCENTAGE, percentTime),
+              PopUserAppointmentCountMetric(AppointmentsDataTag.MISSING_TYPE_PERCENTAGE, percentType),
+              PopUserAppointmentCountMetric(AppointmentsDataTag.MISSING_LOCATION_PERCENTAGE, percentLocation),
+              PopUserAppointmentCountMetric(AppointmentsDataTag.MISSING_PROBATION_OFFICER_PERCENTAGE, percentPO),
+              PopUserAppointmentCountMetric(AppointmentsDataTag.MISSING_EMAIL_PERCENTAGE, percentEmail),
+              PopUserAppointmentCountMetric(AppointmentsDataTag.MISSING_DATE_COUNT, missingDateCount.toDouble()),
+              PopUserAppointmentCountMetric(AppointmentsDataTag.MISSING_TIME_COUNT, missingTimeCount.toDouble()),
+              PopUserAppointmentCountMetric(AppointmentsDataTag.MISSING_TYPE_COUNT, missingTypeCount.toDouble()),
+              PopUserAppointmentCountMetric(AppointmentsDataTag.MISSING_LOCATION_COUNT, missingLocationCount.toDouble()),
+              PopUserAppointmentCountMetric(AppointmentsDataTag.MISSING_PROBATION_OFFICER_COUNT, missingPOCount.toDouble()),
+              PopUserAppointmentCountMetric(AppointmentsDataTag.MISSING_EMAIL_COUNT, missingEmailCount.toDouble()),
+
+            )
+            popUserAppointmentMetrics.metrics[prison] = metrics
+            val prisonTag = Tags.of("prison", prison.name)
+
+            popUserAppointmentMetrics.metrics[prison]?.forEachIndexed { i, metric ->
+              registry.gauge(
+                "missing_appointments_data",
+                prisonTag
+                  .and("metricType", metric.appointmentFieldType.label),
+                popUserAppointmentMetrics,
+              ) {
+                it.metrics[prison]?.get(i)?.value
+                  ?: throw RuntimeException("Can't find value for metric $metric. This is likely a coding error!")
+              }
+            }
+          }
+        } catch (ex: Exception) {
+          log.warn("Error collecting metrics for popUser Missing Appointments ${prison.name}", ex)
+        }
+      }
+    }
+    log.info("Finished running scheduled POP User metrics job - Appointments")
+  }
+
   fun calculatePercentage(count: Int, total: Int): Double {
     return if (count > 0) {
-      100.00 - ((count.toDouble() / total) * 100)
+      ((count.toDouble() / total) * 100)
     } else {
-      100.00
+      0.0
     }
   }
 }

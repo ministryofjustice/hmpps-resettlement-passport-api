@@ -52,7 +52,6 @@ class PoPUserApiMockServer : WireMockServerBase(9106) {
   }
 
   fun stubGetPopUserVerifiedEmptyList(status: Int) {
-    val getAllVerifiedUserListJSON = readFile("testdata/pop-user-api/pop-user-verify-list-response.json")
     stubFor(
       get("/person-on-probation-user/users/all").willReturn(
         if (status == 200) {

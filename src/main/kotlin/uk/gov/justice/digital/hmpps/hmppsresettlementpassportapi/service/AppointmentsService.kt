@@ -118,6 +118,7 @@ class AppointmentsService(
         it.staff.email,
         duration?.inWholeMinutes,
       )
+      appointment.type = it.type.code
       appointmentList.add(appointment)
     }
     return appointmentList

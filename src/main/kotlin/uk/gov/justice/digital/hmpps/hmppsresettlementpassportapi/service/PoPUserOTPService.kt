@@ -5,6 +5,7 @@ import jakarta.validation.ValidationException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserOTP
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.OneLoginData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PoPUserOTPEntity
@@ -29,9 +30,19 @@ class PoPUserOTPService(
   }
 
   @Transactional
-  fun getOTPByPrisoner(prisoner: PrisonerEntity): PoPUserOTPEntity? {
-    val popUserOTP = popUserOTPRepository.findByPrisoner(prisoner)
+  fun getOTPByPrisoner(prisoner: PrisonerEntity): PoPUserOTP? {
+    val popUserOTP: PoPUserOTP
+    val popUserOTPEntity = popUserOTPRepository.findByPrisoner(prisoner)
       ?: throw ResourceNotFoundException("OTP for Prisoner with id ${prisoner.id} not found in database")
+    popUserOTP =
+      PoPUserOTP(
+        popUserOTPEntity.id,
+        popUserOTPEntity.creationDate,
+        popUserOTPEntity.expiryDate,
+        popUserOTPEntity.otp,
+
+      )
+
     return popUserOTP
   }
 
@@ -47,7 +58,7 @@ class PoPUserOTPService(
   }
 
   @Transactional
-  fun createPoPUserOTP(prisoner: PrisonerEntity): PoPUserOTPEntity {
+  fun createPoPUserOTP(prisoner: PrisonerEntity): PoPUserOTP {
     val now = LocalDateTime.now()
     val popUserOTPExists = popUserOTPRepository.findByPrisoner(prisoner)
     val prisonerDOB = prisonerSearchApiService.findPrisonerPersonalDetails(prisoner.nomsId).dateOfBirth
@@ -67,7 +78,15 @@ class PoPUserOTPService(
       dob = prisonerDOB,
     )
     popUserOTPRepository.save(popUserOTPEntity)
-    return popUserOTPEntity
+    val popUserOTP =
+      PoPUserOTP(
+        popUserOTPEntity.id,
+        popUserOTPEntity.creationDate,
+        popUserOTPEntity.expiryDate,
+        popUserOTPEntity.otp,
+
+      )
+    return popUserOTP
   }
 
   @Transactional
@@ -107,5 +126,11 @@ class PoPUserOTPService(
     log.info("Started running scheduled deleteExpiredPoPUserOTP job")
     popUserOTPRepository.deleteByExpiryDateIsLessThan(LocalDateTime.now())
     log.info("Finished running scheduled deleteExpiredPoPUserOTP job")
+  }
+
+  @Transactional
+  fun getPoPUserOTPByPrisoner(prisoner: PrisonerEntity): PoPUserOTPEntity {
+    val popUserOTP = popUserOTPRepository.findByPrisoner(prisoner) ?: throw ResourceNotFoundException("OTP for Prisoner with id ${prisoner.id} not found in database")
+    return popUserOTP
   }
 }

@@ -12,3 +12,10 @@ data class PoPUserResponse(
   val nomsId: String,
   val oneLoginUrn: String? = null,
 )
+
+data class PoPUserOTP(
+  val id: Long?,
+  val creationDate: LocalDateTime? = null,
+  val expiryDate: LocalDateTime? = null,
+  val otp: String,
+)

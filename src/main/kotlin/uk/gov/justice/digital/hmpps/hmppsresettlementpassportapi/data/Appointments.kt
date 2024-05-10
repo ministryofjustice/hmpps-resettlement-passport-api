@@ -14,6 +14,7 @@ data class Appointment(
   val contactEmail: String?,
   val duration: Long?,
   val note: String? = null,
+  var type: String? = null,
 )
 
 data class CreateAppointmentAddress(

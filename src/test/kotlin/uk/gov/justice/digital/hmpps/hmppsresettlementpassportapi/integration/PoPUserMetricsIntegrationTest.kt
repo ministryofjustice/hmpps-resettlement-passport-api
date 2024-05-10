@@ -24,7 +24,7 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-pop-user-otp-4.sql")
-  fun `test collect metrics - happy path `() {
+  fun `test collect licence conditions metrics - happy path `() {
     prisonRegisterApiMockServer.stubPrisonList(200)
     cvlApiMockServer.stubFindLicencesByNomsId("G4161UF", 200)
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(101, 200)
@@ -32,16 +32,30 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
     popUsermetricsService.recordProbationUsersLicenceConditionMetrics()
 
     Assertions.assertEquals(
-      50.0,
-      registry.get("missing_licence_conditions_percentage")
-        .tags("prison", "Moorland (HMP & YOI)", "licenceType", "Standard").gauge()
+      0.0,
+      registry.get("missing_licence_conditions")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Standard Percentage").gauge()
         .value(),
     )
 
     Assertions.assertEquals(
-      50.0,
-      registry.get("missing_licence_conditions_percentage")
-        .tags("prison", "Moorland (HMP & YOI)", "licenceType", "Others").gauge()
+      0.0,
+      registry.get("missing_licence_conditions")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Standard Count").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      0.0,
+      registry.get("missing_licence_conditions")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Others Percentage").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      0.0,
+      registry.get("missing_licence_conditions")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Others Count").gauge()
         .value(),
     )
     registry.clear()
@@ -50,24 +64,36 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-pop-user-otp-4.sql")
-  fun `test collect metrics - happy path with no licence condition`() {
+  fun `test collect licence conditions metrics - happy path with no licence condition`() {
     prisonRegisterApiMockServer.stubPrisonList(200)
     cvlApiMockServer.stubFindNoLicencesByNomsId("G4161UF", 200)
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(102, 200)
     popUserApiMockServer.stubGetPopUserVerifiedList(200)
     popUsermetricsService.recordProbationUsersLicenceConditionMetrics()
-
     Assertions.assertEquals(
-      100.0,
-      registry.get("missing_licence_conditions_percentage")
-        .tags("prison", "Moorland (HMP & YOI)", "licenceType", "Standard").gauge()
+      1.0,
+      registry.get("missing_licence_conditions")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Standard Count").gauge()
         .value(),
     )
 
     Assertions.assertEquals(
       100.0,
-      registry.get("missing_licence_conditions_percentage")
-        .tags("prison", "Moorland (HMP & YOI)", "licenceType", "Others").gauge()
+      registry.get("missing_licence_conditions")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Standard Percentage").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      1.0,
+      registry.get("missing_licence_conditions")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Others Count").gauge()
+        .value(),
+    )
+    Assertions.assertEquals(
+      100.0,
+      registry.get("missing_licence_conditions")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Others Percentage").gauge()
         .value(),
     )
     registry.clear()
@@ -75,11 +101,204 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `test collect metrics - happy path with no pop user`() {
+  fun `test collect licence conditions metrics - happy path with no pop user`() {
+    registry.clear()
     prisonRegisterApiMockServer.stubPrisonList(200)
     popUserApiMockServer.stubGetPopUserVerifiedEmptyList(200)
     popUsermetricsService.recordProbationUsersLicenceConditionMetrics()
-    assertThrows<MeterNotFoundException> { registry.get("missing_licence_conditions_percentage").gauges() }
+    assertThrows<MeterNotFoundException> { registry.get("missing_licence_conditions").gauges() }
+    unmockkAll()
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pop-user-otp-4.sql")
+  fun `test collect appointment metrics - happy path `() {
+    prisonRegisterApiMockServer.stubPrisonList(200)
+    val crn = "CRN1"
+    deliusApiMockServer.stubGetCrnFromNomsId("G4161UF", crn)
+    deliusApiMockServer.stubGetAppointmentsFromCRN(crn, 200)
+    popUserApiMockServer.stubGetPopUserVerifiedList(200)
+    popUsermetricsService.recordProbationUsersAppointmentsMetrics()
+
+    Assertions.assertEquals(
+      0.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Date Count").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      0.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Time Count").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      0.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Type Count").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      45.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Location Count").gauge()
+        .value(),
+    )
+    Assertions.assertEquals(
+      0.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Probation Officer Count").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      0.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Email Count").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      0.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Date Percentage").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      0.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Time Percentage").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      0.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Type Percentage").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      0.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Date Score").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      0.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Time Score").gauge()
+        .value(),
+    )
+    registry.clear()
+    unmockkAll()
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pop-user-otp-4.sql")
+  fun `test collect appointment metrics - happy path no appointments`() {
+    prisonRegisterApiMockServer.stubPrisonList(200)
+    val crn = "CRN1"
+    deliusApiMockServer.stubGetCrnFromNomsId("G4161UF", crn)
+    deliusApiMockServer.stubGetAppointmentsFromCRNNoResults(crn)
+    popUserApiMockServer.stubGetPopUserVerifiedList(200)
+    popUsermetricsService.recordProbationUsersAppointmentsMetrics()
+
+    Assertions.assertEquals(
+      1.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Date Count").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      1.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Time Count").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      1.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Type Count").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      1.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Location Count").gauge()
+        .value(),
+    )
+    Assertions.assertEquals(
+      1.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Probation Officer Count").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      1.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Email Count").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      100.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Date Percentage").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      100.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Time Percentage").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      100.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Type Percentage").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      2.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Date Score").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      2.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Time Score").gauge()
+        .value(),
+    )
+    registry.clear()
+    unmockkAll()
+  }
+
+  @Test
+  fun `test collect appointments  metrics - happy path with no pop user`() {
+    registry.clear()
+    prisonRegisterApiMockServer.stubPrisonList(200)
+    val crn = "CRN1"
+    deliusApiMockServer.stubGetCrnFromNomsId("G4161UF", crn)
+    deliusApiMockServer.stubGetAppointmentsFromCRN(crn, 200)
+    popUserApiMockServer.stubGetPopUserVerifiedEmptyList(200)
+    popUsermetricsService.recordProbationUsersAppointmentsMetrics()
+
+    assertThrows<MeterNotFoundException> { registry.get("missing_appointments_data").gauges() }
     unmockkAll()
   }
 }

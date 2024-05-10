@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
@@ -23,6 +24,7 @@ class DrugsAndAlcoholResettlementAssessmentStrategy(
   resettlementAssessmentRepository: ResettlementAssessmentRepository,
   prisonerRepository: PrisonerRepository,
   pathwayStatusRepository: PathwayStatusRepository,
+  @Value("\${resettlement-assessment.useYaml}") useYaml: Boolean,
 ) :
   AbstractResettlementAssessmentStrategy<DrugsAndAlcoholAssessmentPage, DrugsAndAlcoholResettlementAssessmentQuestion>(
     resettlementAssessmentRepository,
@@ -30,8 +32,9 @@ class DrugsAndAlcoholResettlementAssessmentStrategy(
     pathwayStatusRepository,
     DrugsAndAlcoholAssessmentPage::class,
     DrugsAndAlcoholResettlementAssessmentQuestion::class,
+    Pathway.DRUGS_AND_ALCOHOL,
+    useYaml,
   ) {
-  override fun appliesTo(pathway: Pathway) = pathway == Pathway.DRUGS_AND_ALCOHOL
 
   override fun getPageList(assessmentType: ResettlementAssessmentType): List<ResettlementAssessmentNode> = listOf(
     ResettlementAssessmentNode(

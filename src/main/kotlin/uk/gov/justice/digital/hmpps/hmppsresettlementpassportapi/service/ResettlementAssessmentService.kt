@@ -162,12 +162,12 @@ class ResettlementAssessmentService(
     val resettlementStrategy = resettlementAssessmentStrategies.first { it.appliesTo(resettlementAssessmentEntity.pathway) }
 
     val questionsAndAnswers = resettlementAssessmentEntity.assessment.assessment.mapNotNull {
-      val question = resettlementStrategy.getQuestionById(it.questionId)
+      val question = resettlementStrategy.getQuestionById(it.questionId, resettlementAssessmentEntity.pathway)
       if (question !in GenericResettlementAssessmentQuestion.entries) {
         LatestResettlementAssessmentResponseQuestionAndAnswer(
           questionTitle = question.title,
           answer = convertAnswerToString(question.options, it.answer),
-          originalPageId = resettlementStrategy.findPageIdFromQuestionId(it.questionId, resettlementAssessmentEntity.assessmentType),
+          originalPageId = resettlementStrategy.findPageIdFromQuestionId(it.questionId, resettlementAssessmentEntity.assessmentType, resettlementAssessmentEntity.pathway),
         )
       } else {
         null

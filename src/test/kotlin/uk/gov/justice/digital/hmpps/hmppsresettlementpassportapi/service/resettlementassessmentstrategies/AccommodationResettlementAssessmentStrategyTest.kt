@@ -68,6 +68,7 @@ class AccommodationResettlementAssessmentStrategyTest {
       resettlementAssessmentRepository,
       prisonerRepository,
       pathwayStatusRepository,
+      false,
     )
   }
 
@@ -991,7 +992,7 @@ class AccommodationResettlementAssessmentStrategyTest {
   @ParameterizedTest
   @MethodSource("test findPageIdFromQuestionId data")
   fun `test findPageIdFromQuestionId`(questionId: String, expectedPageId: String) {
-    Assertions.assertEquals(expectedPageId, resettlementAssessmentService.findPageIdFromQuestionId(questionId, ResettlementAssessmentType.BCST2))
+    Assertions.assertEquals(expectedPageId, resettlementAssessmentService.findPageIdFromQuestionId(questionId, ResettlementAssessmentType.BCST2, Pathway.ACCOMMODATION))
   }
 
   private fun `test findPageIdFromQuestionId data`() = Stream.of(

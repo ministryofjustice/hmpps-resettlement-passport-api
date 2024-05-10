@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resett
 import com.fasterxml.jackson.annotation.JsonFormat
 import jakarta.transaction.Transactional
 import org.springframework.web.server.ServerWebInputException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentCompleteRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
@@ -34,15 +35,27 @@ import java.time.LocalDateTime
 import kotlin.reflect.KClass
 
 abstract class AbstractResettlementAssessmentStrategy<T, Q>(
-  resettlementAssessmentRepository: ResettlementAssessmentRepository,
-  prisonerRepository: PrisonerRepository,
-  pathwayStatusRepository: PathwayStatusRepository,
+  private val resettlementAssessmentRepository: ResettlementAssessmentRepository,
+  private val prisonerRepository: PrisonerRepository,
+  private val pathwayStatusRepository: PathwayStatusRepository,
   private val assessmentPageClass: KClass<T>,
   private val questionClass: KClass<Q>,
+  private val pathway: Pathway,
+  private val useYaml: Boolean,
 ) :
   IResettlementAssessmentStrategy where T : Enum<*>, T : IAssessmentPage, Q : Enum<*>, Q : IResettlementAssessmentQuestion {
-  // TODO: Inject me
-  private val assessmentDataService = AssessmentDataService(resettlementAssessmentRepository, prisonerRepository, pathwayStatusRepository)
+
+  override fun appliesTo(pathway: Pathway): Boolean {
+    return if (useYaml) {
+      if (pathway == Pathway.ACCOMMODATION) {
+        false
+      } else {
+        pathway == this.pathway
+      }
+    } else {
+      pathway == this.pathway
+    }
+  }
 
   override fun getNextPageId(
     assessment: ResettlementAssessmentRequest,
@@ -70,7 +83,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     // Get the next page
     val nextPage: IAssessmentPage
 
-    val existingAssessment = assessmentDataService.getExistingAssessment(nomsId, pathway, assessmentType)
+    val existingAssessment = getExistingAssessment(nomsId, pathway, assessmentType)
 
     if (currentPageEnum == null) {
       // Option 1 - If the current page is null then send back the first page unless there is already an assessment completed, in which case go straight to CHECK_ANSWERS
@@ -112,13 +125,13 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     assessmentType: ResettlementAssessmentType,
   ): ResettlementAssessmentResponsePage {
     // Get the latest complete assessment (if exists)
-    var existingAssessment = assessmentDataService.getExistingAssessment(nomsId, pathway, assessmentType)
+    var existingAssessment = getExistingAssessment(nomsId, pathway, assessmentType)
 
     val edit = existingAssessment?.assessmentStatus == ResettlementAssessmentStatus.SUBMITTED
 
     // If this is a RESETTLEMENT_PLAN (BCST3) type and there is not existing assessment we should use an existing BCST2 if available.
     if (existingAssessment == null && assessmentType == ResettlementAssessmentType.RESETTLEMENT_PLAN) {
-      existingAssessment = assessmentDataService.getExistingAssessment(nomsId, pathway, ResettlementAssessmentType.BCST2)
+      existingAssessment = getExistingAssessment(nomsId, pathway, ResettlementAssessmentType.BCST2)
 
       if (existingAssessment != null) {
         // remove SUPPORT_NEEDS and replace with SUPPORT_NEEDS_PRERELEASE which has more options
@@ -182,7 +195,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
             ResettlementAssessmentResponseQuestionAndAnswer(
               question = getQuestionList().first { q -> q.id == it.questionId },
               answer = it.answer,
-              originalPageId = findPageIdFromQuestionId(it.questionId, assessmentType),
+              originalPageId = findPageIdFromQuestionId(it.questionId, assessmentType, pathway),
             )
           }.filter { it.question !in questionsToExclude }
         resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(resettlementAssessmentResponsePage.id, questionsAndAnswers = questionsAndAnswers)
@@ -194,7 +207,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
           q.answer = existingAnswer.answer
         }
         if (q.question.id == GenericResettlementAssessmentQuestion.SUPPORT_NEEDS_PRERELEASE.id) {
-          q.answer = assessmentDataService.loadPathwayStatusAnswer(pathway, nomsId) ?: existingAnswer?.answer
+          q.answer = loadPathwayStatusAnswer(pathway, nomsId) ?: existingAnswer?.answer
         }
       }
     }
@@ -202,7 +215,11 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     return resettlementAssessmentResponsePage
   }
 
-  override fun findPageIdFromQuestionId(questionId: String, assessmentType: ResettlementAssessmentType): String {
+  override fun findPageIdFromQuestionId(
+    questionId: String,
+    assessmentType: ResettlementAssessmentType,
+    pathway: Pathway,
+  ): String {
     val pageList = getPageList(assessmentType).map { it.assessmentPage } + GenericAssessmentPage.entries
     return pageList.firstOrNull { p -> (p.questionsAndAnswers.any { q -> q.question.id == questionId }) }?.id ?: throw RuntimeException("Cannot find page for question [$questionId] - check that the question is used in a page!")
   }
@@ -230,7 +247,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     val userId = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get sub from auth token")
 
     // Check if the latest assessment is submitted - if so this is an edit
-    val edit = assessmentDataService.getExistingAssessment(
+    val edit = getExistingAssessment(
       nomsId,
       pathway,
       assessmentType,
@@ -240,7 +257,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     validateQuestionAndAnswerSet(assessment, edit, assessmentType)
 
     // Obtain prisoner from database, if exists
-    val prisonerEntity = assessmentDataService.loadPrisoner(nomsId)
+    val prisonerEntity = loadPrisoner(nomsId)
     // If it's not an edit then use COMPLETE status, else use SUBMITTED
     val resettlementAssessmentStatus = if (!edit) {
       ResettlementAssessmentStatus.COMPLETE
@@ -295,10 +312,10 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
       submissionDate = if (edit) LocalDateTime.now() else null,
     )
 
-    assessmentDataService.saveAssessment(resettlementAssessmentEntity)
+    saveAssessment(resettlementAssessmentEntity)
   }
 
-  override fun getQuestionById(id: String): IResettlementAssessmentQuestion {
+  override fun getQuestionById(id: String, pathway: Pathway): IResettlementAssessmentQuestion {
     return convertEnumStringToEnum(questionClass, GenericResettlementAssessmentQuestion::class, id)
   }
 
@@ -357,6 +374,39 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     if (pageNumber != nodeToQuestionMap.size) {
       throw ServerWebInputException("Error validating questions and answers - incorrect number of pages found - expected [$pageNumber] but found [${nodeToQuestionMap.size}]")
     }
+  }
+
+  fun saveAssessment(assessment: ResettlementAssessmentEntity): ResettlementAssessmentEntity = resettlementAssessmentRepository.save(assessment)
+
+  fun loadPrisoner(nomsId: String) = (
+    prisonerRepository.findByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+    )
+
+  fun getExistingAssessment(
+    nomsId: String,
+    pathway: Pathway,
+    assessmentType: ResettlementAssessmentType,
+  ): ResettlementAssessmentEntity? {
+    // Obtain prisoner from database, if exists
+    val prisonerEntity = loadPrisoner(nomsId)
+
+    // Obtain COMPLETE and SUBMITTED resettlement status entity from database
+    val resettlementAssessmentStatusEntities = listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED)
+
+    return resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
+      prisonerEntity,
+      pathway,
+      assessmentType,
+      resettlementAssessmentStatusEntities,
+    )
+  }
+
+  fun loadPathwayStatusAnswer(pathway: Pathway, nomsId: String): StringAnswer? {
+    val prisonerEntity = loadPrisoner(nomsId)
+    val pathwayStatus = pathwayStatusRepository.findByPathwayAndPrisoner(pathway, prisonerEntity) ?: return null
+
+    return StringAnswer(pathwayStatus.status.name)
   }
 }
 

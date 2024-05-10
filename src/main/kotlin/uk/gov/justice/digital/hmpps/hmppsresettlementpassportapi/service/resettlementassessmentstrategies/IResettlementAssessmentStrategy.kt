@@ -25,6 +25,6 @@ interface IResettlementAssessmentStrategy {
   )
   fun getPageFromId(nomsId: String, pathway: Pathway, pageId: String, assessmentType: ResettlementAssessmentType): ResettlementAssessmentResponsePage
 
-  fun getQuestionById(id: String): IResettlementAssessmentQuestion
-  fun findPageIdFromQuestionId(questionId: String, assessmentType: ResettlementAssessmentType): String
+  fun getQuestionById(id: String, pathway: Pathway): IResettlementAssessmentQuestion
+  fun findPageIdFromQuestionId(questionId: String, assessmentType: ResettlementAssessmentType, pathway: Pathway): String
 }

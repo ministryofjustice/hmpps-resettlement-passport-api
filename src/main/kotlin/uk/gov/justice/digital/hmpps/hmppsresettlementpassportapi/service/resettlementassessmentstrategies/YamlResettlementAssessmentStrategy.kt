@@ -198,6 +198,7 @@ class YamlResettlementAssessmentStrategy(
       assessmentStatus = resettlementAssessmentStatus,
       caseNoteText = caseNoteText,
       createdByUserId = userId,
+      submissionDate = if (edit) LocalDateTime.now() else null,
     )
 
     assessmentDataService.saveAssessment(resettlementAssessmentEntity)

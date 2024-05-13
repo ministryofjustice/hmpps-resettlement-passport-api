@@ -27,6 +27,9 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PathwayAndStatusService
 import java.time.LocalDate
 import java.time.Period
+import org.springframework.web.server.ServerWebInputException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.WatchlistService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClaimFromJWTToken
 
 @Service
 class PrisonerSearchApiService(
@@ -39,6 +42,7 @@ class PrisonerSearchApiService(
   private val pathwayStatusRepository: PathwayStatusRepository,
   private val resettlementAssessmentRepository: ResettlementAssessmentRepository,
   private val deliusApiService: ResettlementPassportDeliusApiService,
+  private val watchlistService: WatchlistService,
 ) {
 
   companion object {
@@ -283,7 +287,7 @@ class PrisonerSearchApiService(
       .block() ?: throw RuntimeException("Unexpected null returned from request.")
   }
 
-  fun getPrisonerDetailsByNomsId(nomsId: String): Prisoner {
+  fun getPrisonerDetailsByNomsId(nomsId: String, auth: String): Prisoner {
     val prisonerSearch = findPrisonerPersonalDetails(nomsId)
     setDisplayedReleaseDate(prisonerSearch)
 
@@ -330,15 +334,16 @@ class PrisonerSearchApiService(
       personalDetails.contactDetails?.telephone,
       personalDetails.contactDetails?.email,
       prisonerSearch.prisonName,
-
     )
 
     val pathwayStatuses = getPathwayStatuses(prisonerEntity)
 
     val assessmentRequired = isAssessmentRequired(prisonerEntity, ResettlementAssessmentType.BCST2)
     val resettlementReviewAvailable = !assessmentRequired && isAssessmentRequired(prisonerEntity, ResettlementAssessmentType.RESETTLEMENT_PLAN)
+    val staffUsername = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get name from auth token")
+    val isInWatchlist = watchlistService.isPrisonerInWatchList(staffUsername, prisonerEntity)
 
-    return Prisoner(prisonerPersonal, pathwayStatuses, assessmentRequired, resettlementReviewAvailable)
+    return Prisoner(prisonerPersonal, pathwayStatuses, assessmentRequired, resettlementReviewAvailable, isInWatchlist)
   }
 
   protected fun getPathwayStatuses(

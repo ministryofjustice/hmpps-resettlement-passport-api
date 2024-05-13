@@ -52,7 +52,7 @@ class PrisonerService(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  fun getPrisonerDetailsByNomsId(nomsId: String) = prisonerSearchApiService.getPrisonerDetailsByNomsId(nomsId)
+  fun getPrisonerDetailsByNomsId(nomsId: String, auth: String) = prisonerSearchApiService.getPrisonerDetailsByNomsId(nomsId, auth)
 
   fun getPrisonerImageData(nomsId: String, imageId: Int): ByteArray? = prisonApiService.getPrisonerImageData(nomsId, imageId)
 

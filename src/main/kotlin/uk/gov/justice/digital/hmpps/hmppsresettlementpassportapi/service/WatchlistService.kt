@@ -12,11 +12,10 @@ import java.time.LocalDateTime
 @Service
 class WatchlistService(
   private val prisonerRepository: PrisonerRepository,
-  private val watchlistRepository: WatchlistRepository
+  private val watchlistRepository: WatchlistRepository,
 ) {
   @Transactional
   fun createWatchlist(nomsId: String, auth: String) {
-
     // using nomsId to find the prisoner entity
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
@@ -29,12 +28,10 @@ class WatchlistService(
       id = null,
       prisoner = prisoner,
       staffUsername = staffUsername,
-      creationDate = LocalDateTime.now()
+      creationDate = LocalDateTime.now(),
     )
 
-    // save the watchlist entity
+    // saving the watchlist entity
     watchlistRepository.save(watchlist)
-
   }
-
 }

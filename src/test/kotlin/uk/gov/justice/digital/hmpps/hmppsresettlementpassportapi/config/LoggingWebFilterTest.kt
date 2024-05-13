@@ -50,7 +50,7 @@ class LoggingWebFilterTest {
     val filter = LoggingWebFilter()
     val exchange = createMockExchange()
     `when`(webFilterChain.filter(exchange)).thenReturn(Mono.empty())
-    filter.filter(exchange, webFilterChain)
+    filter.filter(exchange, webFilterChain).block()
     verify(webFilterChain).filter(exchange)
     verify(mockLogger, times(0)).info(any())
   }
@@ -61,7 +61,7 @@ class LoggingWebFilterTest {
     val exchange = createMockExchangeWithSessionID("testSessionID")
     `when`(webFilterChain.filter(exchange)).thenReturn(Mono.empty())
 
-    filter.filter(exchange, webFilterChain)
+    filter.filter(exchange, webFilterChain).block()
 
     verify(webFilterChain).filter(exchange)
     verify(mockLogger).info(

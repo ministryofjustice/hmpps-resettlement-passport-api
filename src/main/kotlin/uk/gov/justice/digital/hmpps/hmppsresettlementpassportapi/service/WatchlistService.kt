@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Watc
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.WatchlistRepository
 import java.time.LocalDateTime
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 
 @Service
 class WatchlistService(
@@ -33,5 +34,9 @@ class WatchlistService(
 
     // saving the watchlist entity
     watchlistRepository.save(watchlist)
+  }
+
+  fun isPrisonerInWatchList(staffUsername: String, prisoner: PrisonerEntity): Boolean {
+    return watchlistRepository.findByPrisonerAndStaffUsername(prisoner, staffUsername) != null
   }
 }

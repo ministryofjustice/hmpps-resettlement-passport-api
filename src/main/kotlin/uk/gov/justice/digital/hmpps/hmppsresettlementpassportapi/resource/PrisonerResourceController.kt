@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -134,7 +135,9 @@ class PrisonerResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-  ): Prisoner = prisonerService.getPrisonerDetailsByNomsId(nomsId)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): Prisoner = prisonerService.getPrisonerDetailsByNomsId(nomsId, auth)
 
   @GetMapping(
     "/prisoner/{nomsId}/image/{id}",

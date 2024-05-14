@@ -63,8 +63,8 @@ data class LatestResettlementAssessmentResponseQuestionAndAnswer(
 )
 
 data class AssessmentSkipRequest(
-  val assessmentSkipReason: AssessmentSkipReason,
-  val moreInformation: String? = null,
+  val reason: AssessmentSkipReason,
+  val moreInfo: String? = null,
 )
 
 enum class AssessmentSkipReason {

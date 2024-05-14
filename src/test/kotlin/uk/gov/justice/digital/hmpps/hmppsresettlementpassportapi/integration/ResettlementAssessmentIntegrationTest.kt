@@ -1042,8 +1042,8 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .bodyValue(
         """
           {
-            "assessmentSkipReason": "COMPLETED_IN_OASYS",
-            "moreInformation": "something or other"
+            "reason": "COMPLETED_IN_OASYS",
+            "moreInfo": "something or other"
           }
         """,
       )
@@ -1072,8 +1072,8 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .bodyValue(
         """
           {
-            "assessmentSkipReason": "COMPLETED_IN_OASYS",
-            "moreInformation": "something or other"
+            "reason": "COMPLETED_IN_OASYS",
+            "moreInfo": "something or other"
           }
         """,
       )
@@ -1096,8 +1096,8 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .bodyValue(
         """
           {
-            "assessmentSkipReason": "COMPLETED_IN_OASYS",
-            "moreInformation": "something or other"
+            "reason": "COMPLETED_IN_OASYS",
+            "moreInfo": "something or other"
           }
         """,
       )
@@ -1116,8 +1116,8 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .bodyValue(
         """
           {
-            "assessmentSkipReason": "COMPLETED_IN_OASYS",
-            "moreInformation": "something or other"
+            "reason": "COMPLETED_IN_OASYS",
+            "moreInfo": "something or other"
           }
         """,
       )

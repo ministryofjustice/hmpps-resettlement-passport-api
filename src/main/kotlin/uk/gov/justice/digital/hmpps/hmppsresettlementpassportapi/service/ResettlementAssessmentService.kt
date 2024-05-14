@@ -228,8 +228,8 @@ class ResettlementAssessmentService(
       AssessmentSkipEntity(
         prisonerId = prisonerEntity.id!!,
         assessmentType = assessmentType,
-        reason = request.assessmentSkipReason,
-        moreInfo = request.moreInformation,
+        reason = request.reason,
+        moreInfo = request.moreInfo,
       ),
     )
   }

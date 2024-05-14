@@ -2,6 +2,8 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity
 
 import jakarta.persistence.Entity
 import jakarta.persistence.EntityListeners
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -21,6 +23,7 @@ data class AssessmentSkipEntity(
   val id: Long? = null,
   val assessmentType: ResettlementAssessmentType,
   val prisonerId: Long,
+  @Enumerated(EnumType.STRING)
   val reason: AssessmentSkipReason,
   val moreInfo: String? = null,
   @CreatedBy

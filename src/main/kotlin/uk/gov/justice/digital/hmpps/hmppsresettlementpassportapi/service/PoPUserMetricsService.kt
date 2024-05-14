@@ -38,6 +38,7 @@ class PoPUserMetricsService(
   fun recordCustomMetrics() {
     recordProbationUsersLicenceConditionMetrics()
     recordProbationUsersAppointmentsMetrics()
+    // recordReleaseDayProbationUserAppointmentsMetrics()
   }
 
   fun recordProbationUsersLicenceConditionMetrics() {
@@ -68,6 +69,7 @@ class PoPUserMetricsService(
                   otherLicenceConditionCount += 1
                 }
               } catch (_: ResourceNotFoundException) {
+                log.info("Unable to get the licence condition for nomsId ${prisoner[0].nomsId}")
                 stdLicenceConditionCount += 1
                 otherLicenceConditionCount += 1
                 continue
@@ -149,14 +151,11 @@ class PoPUserMetricsService(
           var popUserExists = false
           for (popUser in popUserList) {
             val prisoner = prisonersList.filter { it.nomsId == popUser.nomsId }
-            log.info("Prisoner size $prisoner.size ")
             if (prisoner.isNotEmpty() && prisoner.size == 1) {
               popUserExists = true
               var appointmentsList: AppointmentsList
               try {
                 appointmentsList = appointmentsService.getAppointmentsByNomsId(prisoner[0].nomsId, LocalDate.now(), LocalDate.now().plusDays(365), false)
-                log.info("list details $appointmentsList")
-                log.info("Appointments list size ${appointmentsList.results.size}")
                 if (appointmentsList.results.isNotEmpty()) {
                   totalAppointments += appointmentsList.results.size
                   missingDateCount += appointmentsList.results.filter { it.date == null }.size
@@ -175,7 +174,7 @@ class PoPUserMetricsService(
                   missingEmailCount += 1
                 }
               } catch (_: ResourceNotFoundException) {
-                log.info("Unable to get the appointments")
+                log.info("Unable to get the appointments for nomsId ${prisoner[0].nomsId}")
                 continue
               }
             }
@@ -265,6 +264,71 @@ class PoPUserMetricsService(
       }
     }
     log.info("Finished running scheduled POP User metrics job - Appointments")
+  }
+
+  fun recordReleaseDayProbationUserAppointmentsMetrics() {
+    log.info("Started running scheduled POP User metrics job - Release day Appointments")
+    val popUserList = prisonerRepository.findByReleaseDateGreaterThanEqualAndReleaseDateLessThanEqual(LocalDate.now(), LocalDate.now().plusDays(1))
+    val totalPopUser = popUserList.size
+    val versionRegex = "Initial Appointment".toRegex()
+    if (totalPopUser > 0) {
+      val prisonList = prisonRegisterApiService.getActivePrisonsList()
+      for (prison in prisonList) {
+        var zeroAnyAppointmentsCount = 0
+        var zeroProbationAppointmentsCount = 0
+        try {
+          var popUserExists = false
+          for (prisoner in popUserList) {
+            if (prisoner.prisonId.equals(prison.id)) {
+              popUserExists = true
+              var appointmentsList: AppointmentsList
+              try {
+                appointmentsList = appointmentsService.getAppointmentsByNomsId(
+                  prisoner.nomsId,
+                  LocalDate.now(),
+                  LocalDate.now().plusDays(365),
+                  false,
+                )
+                if (appointmentsList.results.isNotEmpty()) {
+                  if (!appointmentsList.results.any { versionRegex.matchesAt(it.title, 5) }) {
+                    zeroProbationAppointmentsCount += 1
+                  }
+                } else {
+                  zeroAnyAppointmentsCount += 1
+                  zeroProbationAppointmentsCount += 1
+                }
+              } catch (_: ResourceNotFoundException) {
+                log.info("Unable to get the appointments for nomsId ${prisoner.nomsId}")
+                continue
+              }
+            }
+          }
+          if (popUserExists) {
+            val metrics = listOf(
+              PopUserAppointmentCountMetric(AppointmentsDataTag.RELEASE_DAY_ZERO_COUNT, zeroAnyAppointmentsCount.toDouble()),
+              PopUserAppointmentCountMetric(AppointmentsDataTag.RELEASE_DAY_PROBATION_APPOINTMENTS_ZERO_COUNT, zeroProbationAppointmentsCount.toDouble()),
+            )
+            popUserAppointmentMetrics.metrics[prison] = metrics
+            val prisonTag = Tags.of("prison", prison.name)
+
+            popUserAppointmentMetrics.metrics[prison]?.forEachIndexed { i, metric ->
+              registry.gauge(
+                "release_day_appointments_data",
+                prisonTag
+                  .and("metricType", metric.appointmentFieldType.label),
+                popUserAppointmentMetrics,
+              ) {
+                it.metrics[prison]?.get(i)?.value
+                  ?: throw RuntimeException("Can't find value for metric $metric. This is likely a coding error!")
+              }
+            }
+          }
+        } catch (ex: Exception) {
+          log.warn("Error collecting metrics for popUser Release Day Appointments ${prison.name}", ex)
+        }
+      }
+    }
+    log.info("Finished running scheduled POP User metrics job - Release Day Appointments")
   }
 
   fun calculatePercentage(count: Int, total: Int): Double {

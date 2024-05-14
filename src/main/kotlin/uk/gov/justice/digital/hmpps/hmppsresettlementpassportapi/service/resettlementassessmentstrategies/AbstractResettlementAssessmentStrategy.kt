@@ -315,7 +315,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     saveAssessment(resettlementAssessmentEntity)
   }
 
-  override fun getQuestionById(id: String, pathway: Pathway): IResettlementAssessmentQuestion {
+  override fun getQuestionById(id: String, pathway: Pathway, assessmentType: ResettlementAssessmentType): IResettlementAssessmentQuestion {
     return convertEnumStringToEnum(questionClass, GenericResettlementAssessmentQuestion::class, id)
   }
 

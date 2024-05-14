@@ -50,6 +50,3 @@ feature:
 cron:
   release-dates:
     batch-size: 3
-
-resettlement-assessment:
-  useYaml: false

@@ -4,7 +4,20 @@ genericAssessmentVersion: 1
 pages:
   - id: "WHERE_DID_THEY_LIVE"
     questions:
-      - "WHERE_DID_THEY_LIVE"
+      - id: "WHERE_DID_THEY_LIVE"
+        title: "Where did the person in prison live before custody?"
+        type: "RADIO"
+        options:
+          - id: "PRIVATE_RENTED_HOUSING"
+            displayText: "Private rented housing"
+          - id: "SOCIAL_HOUSING"
+            displayText: "Social housing"
+          - id: "HOMEOWNER"
+            displayText: "Homeowner"
+          - id: "NO_PERMANENT_OR_FIXED"
+            displayText: "No permanent or fixed address"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
     nextPageLogic:
       - questionId: "WHERE_DID_THEY_LIVE"
         answers:
@@ -25,17 +38,39 @@ pages:
   - id: "WHERE_DID_THEY_LIVE_ADDRESS"
     title: "Where did the person in prison live before custody?"
     questions:
-      - "WHERE_DID_THEY_LIVE_ADDRESS"
+      - id: "WHERE_DID_THEY_LIVE_ADDRESS"
+        title: "Enter the address"
+        type: "ADDRESS"
     nextPageLogic:
       - nextPageId: "HELP_TO_KEEP_HOME"
   - id: "HELP_TO_KEEP_HOME"
     questions:
-      - "HELP_TO_KEEP_HOME"
+      - id: "HELP_TO_KEEP_HOME"
+        title: "Does the person in prison or their family need help to keep their home while they are in prison?"
+        type: "RADIO"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
     nextPageLogic:
       - nextPageId: "WHERE_WILL_THEY_LIVE_1"
   - id: "WHERE_WILL_THEY_LIVE_1"
     questions:
-      - "WHERE_WILL_THEY_LIVE_1"
+      - id: "WHERE_WILL_THEY_LIVE_1"
+        title: "Where will the person in prison live when they are released?"
+        type: "RADIO"
+        options:
+          - id: "RETURN_TO_PREVIOUS_ADDRESS"
+            displayText: "Return to their previous address"
+          - id: "MOVE_TO_NEW_ADDRESS"
+            displayText: "Move to a new address"
+          - id: "DOES_NOT_HAVE_ANYWHERE"
+            displayText: "Does not have anywhere to live"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
     nextPageLogic:
       - questionId: "WHERE_WILL_THEY_LIVE_1"
         answers:
@@ -53,7 +88,16 @@ pages:
         nextPageId: "FINAL_QUESTION_NEXT_PAGE"
   - id: "WHERE_WILL_THEY_LIVE_2"
     questions:
-      - "WHERE_WILL_THEY_LIVE_2"
+      - id: "WHERE_WILL_THEY_LIVE_2"
+        title: "Where will the person in prison live when they are released?"
+        type: "RADIO"
+        options:
+          - id: "MOVE_TO_NEW_ADDRESS"
+            displayText: "Move to a new address"
+          - id: "DOES_NOT_HAVE_ANYWHERE"
+            displayText: "Does not have anywhere to live"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
     nextPageLogic:
       - questionId: "WHERE_WILL_THEY_LIVE_2"
         answers:
@@ -68,60 +112,10 @@ pages:
             answer: "NO_ANSWER"
         nextPageId: "FINAL_QUESTION_NEXT_PAGE"
   - id: "WHERE_WILL_THEY_LIVE_ADDRESS"
+    title: "Where will the person in prison live when they are released?"
     questions:
-      - "WHERE_WILL_THEY_LIVE_ADDRESS"
+      - id: "WHERE_WILL_THEY_LIVE_ADDRESS"
+        title: "Enter the address"
+        type: "ADDRESS"
     nextPageLogic:
       - nextPageId: "FINAL_QUESTION_NEXT_PAGE"
-questions:
-  - id: "WHERE_DID_THEY_LIVE"
-    title: "Where did the person in prison live before custody?"
-    type: "RADIO"
-    options:
-      - id: "PRIVATE_RENTED_HOUSING"
-        displayText: "Private rented housing"
-      - id: "SOCIAL_HOUSING"
-        displayText: "Social housing"
-      - id: "HOMEOWNER"
-        displayText: "Homeowner"
-      - id: "NO_PERMANENT_OR_FIXED"
-        displayText: "No permanent or fixed address"
-      - id: "NO_ANSWER"
-        displayText: "No answer provided"
-  - id: "WHERE_DID_THEY_LIVE_ADDRESS"
-    title: "Enter the address"
-    type: "ADDRESS"
-  - id: "HELP_TO_KEEP_HOME"
-    title: "Does the person in prison or their family need help to keep their home while they are in prison?"
-    type: "RADIO"
-    options:
-      - id: "YES"
-        displayText: "Yes"
-      - id: "NO"
-        displayText: "No"
-      - id: "NO_ANSWER"
-        displayText: "No answer provided"
-  - id: "WHERE_WILL_THEY_LIVE_1"
-    title: "Where will the person in prison live when they are released?"
-    type: "RADIO"
-    options:
-      - id: "RETURN_TO_PREVIOUS_ADDRESS"
-        displayText: "Return to their previous address"
-      - id: "MOVE_TO_NEW_ADDRESS"
-        displayText: "Move to a new address"
-      - id: "DOES_NOT_HAVE_ANYWHERE"
-        displayText: "Does not have anywhere to live"
-      - id: "NO_ANSWER"
-        displayText: "No answer provided"
-  - id: "WHERE_WILL_THEY_LIVE_2"
-    title: "Where will the person in prison live when they are released?"
-    type: "RADIO"
-    options:
-      - id: "MOVE_TO_NEW_ADDRESS"
-        displayText: "Move to a new address"
-      - id: "DOES_NOT_HAVE_ANYWHERE"
-        displayText: "Does not have anywhere to live"
-      - id: "NO_ANSWER"
-        displayText: "No answer provided"
-  - id: "WHERE_WILL_THEY_LIVE_ADDRESS"
-    title: "Enter the address"
-    type: "ADDRESS"

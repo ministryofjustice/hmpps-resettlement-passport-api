@@ -70,7 +70,7 @@ class AppointmentsService(
 
   private fun filterPreReleaseAppointments(appointments: List<Appointment>, prisonerEntity: PrisonerEntity, includePreRelease: Boolean): List<Appointment> {
     return if (!includePreRelease && prisonerEntity.releaseDate != null) {
-      appointments.filter { prisonerEntity.releaseDate!!.isBefore(it.date) }
+      appointments.filter { prisonerEntity.releaseDate!! <= it.date }
     } else {
       appointments
     }

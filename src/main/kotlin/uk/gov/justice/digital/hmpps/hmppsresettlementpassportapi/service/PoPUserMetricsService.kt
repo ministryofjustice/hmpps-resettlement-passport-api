@@ -306,7 +306,7 @@ class PoPUserMetricsService(
           if (popUserExists) {
             val metrics = listOf(
               PopUserAppointmentCountMetric(AppointmentsDataTag.RELEASE_DAY_ZERO_COUNT, zeroAnyAppointmentsCount.toDouble()),
-              PopUserAppointmentCountMetric(AppointmentsDataTag.RELEASE_DAY_PROBATION_APPOINTMENTS_ZERO_COUNT, zeroProbationAppointmentsCount.toDouble()),
+              PopUserAppointmentCountMetric(AppointmentsDataTag.RELEASE_DAY_PROBATION_ZERO_COUNT, zeroProbationAppointmentsCount.toDouble()),
             )
             popUserAppointmentMetrics.metrics[prison] = metrics
             val prisonTag = Tags.of("prison", prison.name)

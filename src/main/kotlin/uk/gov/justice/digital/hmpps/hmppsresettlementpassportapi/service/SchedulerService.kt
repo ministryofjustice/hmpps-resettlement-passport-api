@@ -48,4 +48,9 @@ class SchedulerService(
   fun deleteExpiredOTPScheduledTask() {
     poPUserOTPService.deleteExpiredPoPUserOTP()
   }
+
+  @Scheduled(cron = "0 0 4 * * ?")
+  fun metricsProbationUsersScheduledTask() {
+    popUserMetricsService.recordReleaseDayProbationUserAppointmentsMetrics()
+  }
 }

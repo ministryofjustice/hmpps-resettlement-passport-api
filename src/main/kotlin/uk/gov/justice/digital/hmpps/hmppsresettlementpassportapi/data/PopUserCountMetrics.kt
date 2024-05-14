@@ -39,6 +39,8 @@ enum class AppointmentsDataTag(val label: String) {
   MISSING_LOCATION_COUNT("Location Count"),
   MISSING_PROBATION_OFFICER_COUNT("Probation Officer Count"),
   MISSING_EMAIL_COUNT("Email Count"),
+  RELEASE_DAY_ZERO_COUNT("Appointments Count"),
+  RELEASE_DAY_PROBATION_ZERO_COUNT("Probation Appointments Count"),
 }
 
 data class PopUserAppointmentCountMetric(

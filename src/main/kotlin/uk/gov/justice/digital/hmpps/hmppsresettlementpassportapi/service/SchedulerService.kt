@@ -20,13 +20,13 @@ class SchedulerService(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  @Scheduled(cron = "0 0/15 * * * ?")
+  @Scheduled(cron = "\${schedule.expression.custom-metrics}")
   fun metricsScheduledTask() {
     metricsService.recordCustomMetrics()
     popUserMetricsService.recordCustomMetrics()
   }
 
-  @Scheduled(cron = "0 0 2 * * *")
+  @Scheduled(cron = "\${schedule.expression.reconcile-release-dates}")
   fun reconcileReleaseDatesInDatabase() {
     log.info("Start updating prisoner entities with new release date")
 
@@ -44,12 +44,12 @@ class SchedulerService(
     log.info("Finished updating prisoner entities with new release date")
   }
 
-  @Scheduled(cron = "0 0 3 * * *")
+  @Scheduled(cron = "\${schedule.expression.delete-expired-otp}")
   fun deleteExpiredOTPScheduledTask() {
     poPUserOTPService.deleteExpiredPoPUserOTP()
   }
 
-  @Scheduled(cron = "0 0 4 * * ?")
+  @Scheduled(cron = "\${schedule.expression.release-day-metrics}")
   fun metricsProbationUsersScheduledTask() {
     popUserMetricsService.recordReleaseDayProbationUserAppointmentsMetrics()
   }

@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AssessmentSkipRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LatestResettlementAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LatestResettlementAssessmentResponseQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
@@ -17,8 +18,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.PrisonerResettlementAssessment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.AssessmentSkipEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentSkipRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.GenericResettlementAssessmentQuestion
@@ -31,19 +35,23 @@ class ResettlementAssessmentService(
   private val prisonerRepository: PrisonerRepository,
   private val caseNotesService: CaseNotesService,
   private val pathwayAndStatusService: PathwayAndStatusService,
+  private val assessmentSkipRepository: AssessmentSkipRepository,
 ) {
   @Transactional
   fun getResettlementAssessmentSummaryByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType): List<PrisonerResettlementAssessment> {
-    val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
-      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val pathways = Pathway.entries.toTypedArray()
-    return pathways.map {
-      val resettlementAssessmentForPathway =
-        resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(
-          prisonerEntity,
-          it,
-          assessmentType,
-        )
+    val prisonerEntity = getPrisonerEntityOrThrow(nomsId)
+    return getAssessmentSummary(prisonerEntity, assessmentType)
+  }
+
+  private fun getAssessmentSummary(
+    prisonerEntity: PrisonerEntity,
+    assessmentType: ResettlementAssessmentType,
+  ): List<PrisonerResettlementAssessment> {
+    val latestForEachPathway =
+      resettlementAssessmentRepository.findLatestForEachPathway(prisonerEntity, assessmentType)
+        .associateBy { it.pathway }
+    return Pathway.entries.map {
+      val resettlementAssessmentForPathway = latestForEachPathway[it]
       if (resettlementAssessmentForPathway == null) {
         PrisonerResettlementAssessment(it, ResettlementAssessmentStatus.NOT_STARTED)
       } else {
@@ -54,6 +62,11 @@ class ResettlementAssessmentService(
       }
     }
   }
+
+  private fun getPrisonerEntityOrThrow(nomsId: String) = (
+    prisonerRepository.findByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+    )
 
   @Transactional
   fun submitResettlementAssessmentByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType, auth: String) {
@@ -198,4 +211,26 @@ class ResettlementAssessmentService(
       .map { it.trim() }
       .map { element -> options?.find { it.id == element }?.displayText ?: element }
       .reduceOrNull { acc, value -> "$acc\n$value" } ?: ""
+
+  @Transactional
+  fun skipAssessment(nomsId: String, assessmentType: ResettlementAssessmentType, request: AssessmentSkipRequest) {
+    if (assessmentType != ResettlementAssessmentType.BCST2) {
+      throw ServerWebInputException("Only BCST2 assessment can currently be skipped")
+    }
+
+    val prisonerEntity = getPrisonerEntityOrThrow(nomsId)
+    val assessmentSummary = getAssessmentSummary(prisonerEntity, assessmentType)
+    if (assessmentSummary.any { it.assessmentStatus != ResettlementAssessmentStatus.NOT_STARTED }) {
+      throw ServerWebInputException("Cannot skip assessment that has already been started")
+    }
+
+    assessmentSkipRepository.save(
+      AssessmentSkipEntity(
+        prisonerId = prisonerEntity.id!!,
+        assessmentType = assessmentType,
+        reason = request.reason,
+        moreInfo = request.moreInfo,
+      ),
+    )
+  }
 }

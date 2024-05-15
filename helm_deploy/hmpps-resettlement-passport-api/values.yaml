@@ -20,6 +20,11 @@ generic-service:
     SPRING_PROFILES_ACTIVE: "logstash"
     APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=$(APPINSIGHTS_INSTRUMENTATIONKEY)"
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.json
+    SCHEDULE_EXPRESSION_CUSTOM-METRICS: 0 0/15 * * * ?
+    SCHEDULE_EXPRESSION_RELEASE-DAY-METRICS: 0 0 4 * * *
+    SCHEDULE_EXPRESSION_RECONCILE-RELEASE-DATES: 0 0 2 * * *
+    SCHEDULE_EXPRESSION_DELETE-EXPIRED-OTP: 0 0 3 * * *
+
 
   # Pre-existing kubernetes secrets to load as environment variables in the deployment.
   # namespace_secrets:

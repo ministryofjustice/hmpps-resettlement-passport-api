@@ -13,7 +13,7 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
   @Query(
     """
       select * from (
-        select *, rank() over (partition by pathway order by created_date desc) as rank from resettlement_assessment
+        select *, rank() over (partition by pathway order by id desc, created_date desc) as rank from resettlement_assessment
         where assessment_type = :#{#assessmentType.toString()}
         and prisoner_id = :#{#prisoner.id}
       ) by_pathway where rank = 1;
@@ -25,7 +25,7 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
   @Query(
     """
       select * from (
-        select *, rank() over (partition by pathway order by created_date desc) as rank from resettlement_assessment
+        select *, rank() over (partition by assessment_type,pathway order by id desc, created_date desc) as rank from resettlement_assessment
         where prisoner_id = :#{#prisoner.id}
       ) by_pathway where rank = 1;
     """,

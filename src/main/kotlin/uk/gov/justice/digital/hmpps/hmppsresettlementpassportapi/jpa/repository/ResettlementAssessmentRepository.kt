@@ -9,6 +9,30 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 
 interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmentEntity, Long> {
+
+  @Query(
+    """
+      select * from (
+        select *, rank() over (partition by pathway order by created_date desc) as rank from resettlement_assessment
+        where assessment_type = :#{#assessmentType.toString()}
+        and prisoner_id = :#{#prisoner.id}
+      ) by_pathway where rank = 1;
+    """,
+    nativeQuery = true,
+  )
+  fun findLatestForEachPathway(prisoner: PrisonerEntity, assessmentType: ResettlementAssessmentType): List<ResettlementAssessmentEntity>
+
+  @Query(
+    """
+      select * from (
+        select *, rank() over (partition by pathway order by created_date desc) as rank from resettlement_assessment
+        where prisoner_id = :#{#prisoner.id}
+      ) by_pathway where rank = 1;
+    """,
+    nativeQuery = true,
+  )
+  fun findLatestForEachPathwayAndType(prisoner: PrisonerEntity): List<ResettlementAssessmentEntity>
+
   fun findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisoner: PrisonerEntity, pathway: Pathway, assessmentType: ResettlementAssessmentType): ResettlementAssessmentEntity?
 
   fun findFirstByPrisonerAndPathwayAndAssessmentStatusOrderByCreationDateDesc(prisoner: PrisonerEntity, pathway: Pathway, assessmentStatus: ResettlementAssessmentStatus): ResettlementAssessmentEntity?

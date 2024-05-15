@@ -16,5 +16,7 @@ DELETE from id_application;
 ALTER SEQUENCE id_application_id_seq RESTART WITH 1;
 DELETE from delius_contact;
 ALTER SEQUENCE delius_contact_id_seq RESTART WITH 1;
+DELETE from assessment_skip;
+ALTER SEQUENCE assessment_skip_id_seq RESTART WITH 1;
 DELETE from prisoner;
 ALTER SEQUENCE prisoner_id_seq RESTART WITH 1;

@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config
 
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.server.ServerWebExchange
@@ -7,12 +8,13 @@ import org.springframework.web.server.WebFilter
 import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
 
-@Component
-class LoggingWebFilter : WebFilter {
+private val logInstance = LoggerFactory.getLogger(LoggingWebFilter::class.java)
 
-  companion object {
-    private val log = LoggerFactory.getLogger(this::class.java)
-  }
+@Component
+class LoggingWebFilter(
+  val log: Logger,
+) : WebFilter {
+  constructor() : this(logInstance)
 
   override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
     if (log.isDebugEnabled) {

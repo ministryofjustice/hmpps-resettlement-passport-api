@@ -62,4 +62,6 @@ data class Prisoner(
   var pathways: List<PathwayStatus>? = ArrayList(),
   val assessmentRequired: Boolean,
   val resettlementReviewAvailable: Boolean,
+  val immediateNeedsSubmitted: Boolean,
+  val preReleaseSubmitted: Boolean,
 )

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
@@ -24,6 +25,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentSkipRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import java.time.LocalDate
@@ -48,12 +50,21 @@ class ResettlementAssessmentServiceTest {
   private lateinit var pathwayAndStatusService: PathwayAndStatusService
 
   @Mock
+  private lateinit var assessmentSkipRepository: AssessmentSkipRepository
+
+  @Mock
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
   @BeforeEach
   fun beforeEach() {
-    resettlementAssessmentService = ResettlementAssessmentService(resettlementAssessmentRepository, prisonerRepository, caseNotesService, pathwayAndStatusService)
+    resettlementAssessmentService = ResettlementAssessmentService(
+      resettlementAssessmentRepository,
+      prisonerRepository,
+      caseNotesService,
+      pathwayAndStatusService,
+      assessmentSkipRepository,
+    )
   }
 
   @Test
@@ -61,17 +72,25 @@ class ResettlementAssessmentServiceTest {
     val nomsId = "GY3245"
     val assessmentType = ResettlementAssessmentType.BCST2
     val prisonerEntity = PrisonerEntity(1, "GY3245", testDate, "crn", "xyz1", LocalDate.parse("2025-01-23"))
-    val accommodationResettlementAssessmentEntity = createNotStartedResettlementAssessmentEntity(1, Pathway.ACCOMMODATION)
-    val attitudesResettlementAssessmentEntity = createNotStartedResettlementAssessmentEntity(2, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR)
-    val childrenFamiliesResettlementAssessmentEntity = createCompleteResettlementAssessmentEntity(3, Pathway.CHILDREN_FAMILIES_AND_COMMUNITY)
-    val drugsAlcoholResettlementAssessmentEntity = createNotStartedResettlementAssessmentEntity(4, Pathway.DRUGS_AND_ALCOHOL)
-    val educationSkillsResettlementAssessmentEntity = createNotStartedResettlementAssessmentEntity(5, Pathway.EDUCATION_SKILLS_AND_WORK)
+    val accommodationResettlementAssessmentEntity =
+      createNotStartedResettlementAssessmentEntity(1, Pathway.ACCOMMODATION)
+    val attitudesResettlementAssessmentEntity =
+      createNotStartedResettlementAssessmentEntity(2, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR)
+    val childrenFamiliesResettlementAssessmentEntity =
+      createCompleteResettlementAssessmentEntity(3, Pathway.CHILDREN_FAMILIES_AND_COMMUNITY)
+    val drugsAlcoholResettlementAssessmentEntity =
+      createNotStartedResettlementAssessmentEntity(4, Pathway.DRUGS_AND_ALCOHOL)
+    val educationSkillsResettlementAssessmentEntity =
+      createNotStartedResettlementAssessmentEntity(5, Pathway.EDUCATION_SKILLS_AND_WORK)
     val financeIdResettlementAssessmentEntity = createNotStartedResettlementAssessmentEntity(6, Pathway.FINANCE_AND_ID)
     val healthResettlementAssessmentEntity = createCompleteResettlementAssessmentEntity(7, Pathway.HEALTH)
 
     val prisonerResettlementAssessmentSummary = listOf(
       PrisonerResettlementAssessment(Pathway.ACCOMMODATION, ResettlementAssessmentStatus.NOT_STARTED),
-      PrisonerResettlementAssessment(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, ResettlementAssessmentStatus.NOT_STARTED),
+      PrisonerResettlementAssessment(
+        Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+        ResettlementAssessmentStatus.NOT_STARTED,
+      ),
       PrisonerResettlementAssessment(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, ResettlementAssessmentStatus.COMPLETE),
       PrisonerResettlementAssessment(Pathway.DRUGS_AND_ALCOHOL, ResettlementAssessmentStatus.NOT_STARTED),
       PrisonerResettlementAssessment(Pathway.EDUCATION_SKILLS_AND_WORK, ResettlementAssessmentStatus.NOT_STARTED),
@@ -80,15 +99,20 @@ class ResettlementAssessmentServiceTest {
     )
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
-    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, Pathway.ACCOMMODATION, assessmentType)).thenReturn(accommodationResettlementAssessmentEntity)
-    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, assessmentType)).thenReturn(attitudesResettlementAssessmentEntity)
-    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, assessmentType)).thenReturn(childrenFamiliesResettlementAssessmentEntity)
-    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, Pathway.DRUGS_AND_ALCOHOL, assessmentType)).thenReturn(drugsAlcoholResettlementAssessmentEntity)
-    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, Pathway.EDUCATION_SKILLS_AND_WORK, assessmentType)).thenReturn(educationSkillsResettlementAssessmentEntity)
-    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, Pathway.FINANCE_AND_ID, assessmentType)).thenReturn(financeIdResettlementAssessmentEntity)
-    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, Pathway.HEALTH, assessmentType)).thenReturn(healthResettlementAssessmentEntity)
-
-    val response = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId, ResettlementAssessmentType.BCST2)
+    given(resettlementAssessmentRepository.findLatestForEachPathway(prisonerEntity, assessmentType))
+      .willReturn(
+        listOf(
+          accommodationResettlementAssessmentEntity,
+          attitudesResettlementAssessmentEntity,
+          childrenFamiliesResettlementAssessmentEntity,
+          drugsAlcoholResettlementAssessmentEntity,
+          educationSkillsResettlementAssessmentEntity,
+          financeIdResettlementAssessmentEntity,
+          healthResettlementAssessmentEntity,
+        ),
+      )
+    val response =
+      resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId, ResettlementAssessmentType.BCST2)
     Assertions.assertEquals(prisonerResettlementAssessmentSummary, response)
   }
 
@@ -97,15 +121,22 @@ class ResettlementAssessmentServiceTest {
     val nomsId: String = "GY3245"
     val assessmentType = ResettlementAssessmentType.BCST2
     val prisonerEntity = PrisonerEntity(1, "GY3245", testDate, "crn", "xyz1", LocalDate.parse("2025-01-23"))
-    val accommodationResettlementAssessmentEntity = createNotStartedResettlementAssessmentEntity(1, Pathway.ACCOMMODATION)
-    val attitudesResettlementAssessmentEntity = createNotStartedResettlementAssessmentEntity(2, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR)
-    val drugsAlcoholResettlementAssessmentEntity = createNotStartedResettlementAssessmentEntity(4, Pathway.DRUGS_AND_ALCOHOL)
-    val educationSkillsResettlementAssessmentEntity = createNotStartedResettlementAssessmentEntity(5, Pathway.EDUCATION_SKILLS_AND_WORK)
+    val accommodationResettlementAssessmentEntity =
+      createNotStartedResettlementAssessmentEntity(1, Pathway.ACCOMMODATION)
+    val attitudesResettlementAssessmentEntity =
+      createNotStartedResettlementAssessmentEntity(2, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR)
+    val drugsAlcoholResettlementAssessmentEntity =
+      createNotStartedResettlementAssessmentEntity(4, Pathway.DRUGS_AND_ALCOHOL)
+    val educationSkillsResettlementAssessmentEntity =
+      createNotStartedResettlementAssessmentEntity(5, Pathway.EDUCATION_SKILLS_AND_WORK)
     val healthResettlementAssessmentEntity = createCompleteResettlementAssessmentEntity(7, Pathway.HEALTH)
 
     val prisonerResettlementAssessmentSummary = listOf(
       PrisonerResettlementAssessment(Pathway.ACCOMMODATION, ResettlementAssessmentStatus.NOT_STARTED),
-      PrisonerResettlementAssessment(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, ResettlementAssessmentStatus.NOT_STARTED),
+      PrisonerResettlementAssessment(
+        Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+        ResettlementAssessmentStatus.NOT_STARTED,
+      ),
       PrisonerResettlementAssessment(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, ResettlementAssessmentStatus.NOT_STARTED),
       PrisonerResettlementAssessment(Pathway.DRUGS_AND_ALCOHOL, ResettlementAssessmentStatus.NOT_STARTED),
       PrisonerResettlementAssessment(Pathway.EDUCATION_SKILLS_AND_WORK, ResettlementAssessmentStatus.NOT_STARTED),
@@ -114,15 +145,19 @@ class ResettlementAssessmentServiceTest {
     )
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
-    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, Pathway.ACCOMMODATION, assessmentType)).thenReturn(accommodationResettlementAssessmentEntity)
-    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, assessmentType)).thenReturn(attitudesResettlementAssessmentEntity)
-    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, assessmentType)).thenReturn(null)
-    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, Pathway.DRUGS_AND_ALCOHOL, assessmentType)).thenReturn(drugsAlcoholResettlementAssessmentEntity)
-    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, Pathway.EDUCATION_SKILLS_AND_WORK, assessmentType)).thenReturn(educationSkillsResettlementAssessmentEntity)
-    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, Pathway.FINANCE_AND_ID, assessmentType)).thenReturn(null)
-    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, Pathway.HEALTH, assessmentType)).thenReturn(healthResettlementAssessmentEntity)
+    given(resettlementAssessmentRepository.findLatestForEachPathway(prisonerEntity, assessmentType))
+      .willReturn(
+        listOf(
+          accommodationResettlementAssessmentEntity,
+          attitudesResettlementAssessmentEntity,
+          drugsAlcoholResettlementAssessmentEntity,
+          educationSkillsResettlementAssessmentEntity,
+          healthResettlementAssessmentEntity,
+        ),
+      )
 
-    val bcst2Response = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId, ResettlementAssessmentType.BCST2)
+    val bcst2Response =
+      resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId, ResettlementAssessmentType.BCST2)
     Assertions.assertEquals(prisonerResettlementAssessmentSummary, bcst2Response)
   }
 
@@ -131,15 +166,22 @@ class ResettlementAssessmentServiceTest {
     val nomsId: String = "GY3245"
     val assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN
     val prisonerEntity = PrisonerEntity(1, "GY3245", testDate, "crn", "xyz1", LocalDate.parse("2025-01-23"))
-    val accommodationResettlementAssessmentEntity = createNotStartedResettlementAssessmentEntity(1, Pathway.ACCOMMODATION)
-    val attitudesResettlementAssessmentEntity = createNotStartedResettlementAssessmentEntity(2, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR)
-    val drugsAlcoholResettlementAssessmentEntity = createNotStartedResettlementAssessmentEntity(4, Pathway.DRUGS_AND_ALCOHOL)
-    val educationSkillsResettlementAssessmentEntity = createNotStartedResettlementAssessmentEntity(5, Pathway.EDUCATION_SKILLS_AND_WORK)
+    val accommodationResettlementAssessmentEntity =
+      createNotStartedResettlementAssessmentEntity(1, Pathway.ACCOMMODATION)
+    val attitudesResettlementAssessmentEntity =
+      createNotStartedResettlementAssessmentEntity(2, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR)
+    val drugsAlcoholResettlementAssessmentEntity =
+      createNotStartedResettlementAssessmentEntity(4, Pathway.DRUGS_AND_ALCOHOL)
+    val educationSkillsResettlementAssessmentEntity =
+      createNotStartedResettlementAssessmentEntity(5, Pathway.EDUCATION_SKILLS_AND_WORK)
     val healthResettlementAssessmentEntity = createCompleteResettlementAssessmentEntity(7, Pathway.HEALTH)
 
     val prisonerResettlementAssessmentSummary = listOf(
       PrisonerResettlementAssessment(Pathway.ACCOMMODATION, ResettlementAssessmentStatus.NOT_STARTED),
-      PrisonerResettlementAssessment(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, ResettlementAssessmentStatus.NOT_STARTED),
+      PrisonerResettlementAssessment(
+        Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+        ResettlementAssessmentStatus.NOT_STARTED,
+      ),
       PrisonerResettlementAssessment(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, ResettlementAssessmentStatus.NOT_STARTED),
       PrisonerResettlementAssessment(Pathway.DRUGS_AND_ALCOHOL, ResettlementAssessmentStatus.NOT_STARTED),
       PrisonerResettlementAssessment(Pathway.EDUCATION_SKILLS_AND_WORK, ResettlementAssessmentStatus.NOT_STARTED),
@@ -148,15 +190,21 @@ class ResettlementAssessmentServiceTest {
     )
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
-    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, Pathway.ACCOMMODATION, assessmentType)).thenReturn(accommodationResettlementAssessmentEntity)
-    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, assessmentType)).thenReturn(attitudesResettlementAssessmentEntity)
-    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, assessmentType)).thenReturn(null)
-    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, Pathway.DRUGS_AND_ALCOHOL, assessmentType)).thenReturn(drugsAlcoholResettlementAssessmentEntity)
-    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, Pathway.EDUCATION_SKILLS_AND_WORK, assessmentType)).thenReturn(educationSkillsResettlementAssessmentEntity)
-    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, Pathway.FINANCE_AND_ID, assessmentType)).thenReturn(null)
-    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerEntity, Pathway.HEALTH, assessmentType)).thenReturn(healthResettlementAssessmentEntity)
+    given(resettlementAssessmentRepository.findLatestForEachPathway(prisonerEntity, assessmentType))
+      .willReturn(
+        listOf(
+          accommodationResettlementAssessmentEntity,
+          attitudesResettlementAssessmentEntity,
+          drugsAlcoholResettlementAssessmentEntity,
+          educationSkillsResettlementAssessmentEntity,
+          healthResettlementAssessmentEntity,
+        ),
+      )
 
-    val resettlementResponse = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId, ResettlementAssessmentType.RESETTLEMENT_PLAN)
+    val resettlementResponse = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(
+      nomsId,
+      ResettlementAssessmentType.RESETTLEMENT_PLAN,
+    )
     Assertions.assertEquals(prisonerResettlementAssessmentSummary, resettlementResponse)
   }
 
@@ -169,12 +217,31 @@ class ResettlementAssessmentServiceTest {
   private fun `test convertAnswerToString data`() = Stream.of(
     Arguments.of(null, StringAnswer("My answer"), "My answer"),
     Arguments.of(null, StringAnswer("My answer"), "My answer"),
-    Arguments.of(listOf(Option("MY_ANSWER", "My answer"), Option("OTHER_OPTION", "Other option")), StringAnswer("MY_ANSWER"), "My answer"),
+    Arguments.of(
+      listOf(Option("MY_ANSWER", "My answer"), Option("OTHER_OPTION", "Other option")),
+      StringAnswer("MY_ANSWER"),
+      "My answer",
+    ),
     Arguments.of(null, StringAnswer("MY_ANSWER"), "MY_ANSWER"),
-    Arguments.of(null, MapAnswer(listOf(mapOf("Address line 1" to "123 Main Street"), mapOf("Address line 2" to "Leeds"), mapOf("County" to "West Yorkshire"), mapOf("Postcode" to "LS1 1AB", "Country" to "United Kingdom"))), "123 Main Street\nLeeds\nWest Yorkshire\nLS1 1AB\nUnited Kingdom"),
+    Arguments.of(
+      null,
+      MapAnswer(
+        listOf(
+          mapOf("Address line 1" to "123 Main Street"),
+          mapOf("Address line 2" to "Leeds"),
+          mapOf("County" to "West Yorkshire"),
+          mapOf("Postcode" to "LS1 1AB", "Country" to "United Kingdom"),
+        ),
+      ),
+      "123 Main Street\nLeeds\nWest Yorkshire\nLS1 1AB\nUnited Kingdom",
+    ),
     Arguments.of(null, MapAnswer(listOf(mapOf(), mapOf(), mapOf(), mapOf())), ""),
     Arguments.of(null, MapAnswer(listOf()), ""),
-    Arguments.of(listOf(Option("ANSWER_1", "Answer 1"), Option("ANSWER_2", "Answer 2")), ListAnswer(listOf("ANSWER_1", "ANSWER_2", "ANSWER_3")), "Answer 1\nAnswer 2\nANSWER_3"),
+    Arguments.of(
+      listOf(Option("ANSWER_1", "Answer 1"), Option("ANSWER_2", "Answer 2")),
+      ListAnswer(listOf("ANSWER_1", "ANSWER_2", "ANSWER_3")),
+      "Answer 1\nAnswer 2\nANSWER_3",
+    ),
     Arguments.of(null, ListAnswer(listOf()), ""),
   )
 

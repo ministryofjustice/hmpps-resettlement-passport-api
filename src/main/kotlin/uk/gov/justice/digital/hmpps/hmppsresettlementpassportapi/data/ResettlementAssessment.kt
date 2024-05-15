@@ -61,3 +61,16 @@ data class LatestResettlementAssessmentResponseQuestionAndAnswer(
   val answer: String?,
   val originalPageId: String,
 )
+
+data class AssessmentSkipRequest(
+  val reason: AssessmentSkipReason,
+  val moreInfo: String? = null,
+)
+
+enum class AssessmentSkipReason {
+  COMPLETED_IN_OASYS,
+  COMPLETED_IN_ANOTHER_PRISON,
+  EARLY_RELEASE,
+  TRANSFER,
+  OTHER,
+}

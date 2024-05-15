@@ -33,6 +33,10 @@ services:
       - API_BASE_URL_CASE-NOTES=https://dev.offender-case-notes.service.justice.gov.uk
       - API_BASE_URL_KEY-WORKER=http://wiremock:8080/key-wprler-api-
       - API_BASE_URL_ALLOCATION-MANAGER=http://wiremock:8080/allocation-manager-api
+      - SCHEDULE_EXPRESSION_CUSTOM-METRICS=0 0/15 * * * ?
+      - SCHEDULE_EXPRESSION_RELEASED-DAY-METRICS=0 0 2 * * *
+      - SCHEDULE_EXPRESSION_RECONCILE-RELEASE-DATES=0 0 2 * * *
+      - SCHEDULE_EXPRESSION_DELETE-EXPIRED-OTP=0 0 3 * * *
 
 networks:
   hmpps:

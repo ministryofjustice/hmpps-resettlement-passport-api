@@ -107,6 +107,20 @@ class AppointmentsServiceTest {
   }
 
   @Test
+  fun `getAppointmentsByNomsId filter appointments same day as release date`() {
+    val appointmentSameDayAsRelease = createTestDeliusAppointment("2024-05-02T00:00:00Z")
+    val appointmentBeforeRelease1 = createTestDeliusAppointment("2024-05-01T10:00:00Z")
+    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz", LocalDate.of(2024, 5, 2))
+    Mockito.`when`(prisonerRepository.findByNomsId(nomisId)).thenReturn(prisonerEntity)
+    Mockito.`when`(rpDeliusApiService.fetchAppointments(eq(nomisId), any(), any(), any())).thenReturn(listOf(appointmentSameDayAsRelease, appointmentBeforeRelease1))
+
+    val appointments = appointmentsService.getAppointmentsByNomsId(nomisId, LocalDate.MIN, LocalDate.MAX, false)
+    Assertions.assertTrue(appointments.results.size == 1)
+    Assertions.assertEquals("2024-05-02", appointments.results[0].date.toString())
+    Assertions.assertEquals("00:00", appointments.results[0].time.toString())
+  }
+
+  @Test
   fun createFieldsFromNotes() {
     val testAppointment = createTestAppointment()
     val parsedNotes =

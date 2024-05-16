@@ -54,5 +54,6 @@
     }
   ],
   "assessmentRequired": true,
-  "resettlementReviewAvailable":false
+  "resettlementReviewAvailable":false,
+  "isInWatchlist": false
 }

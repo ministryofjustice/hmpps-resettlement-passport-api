@@ -202,12 +202,12 @@ class PoPUserOTPServiceTest {
       dateOfBirth = LocalDate.parse("1982-10-24"),
       releaseDate = testDate.toLocalDate().plusMonths(6),
     )
-    val prisonerSearch = Prisoner(prisonerPersonal, null, false, false)
+    val prisonerSearch = Prisoner(prisonerPersonal, null, false, false, false)
 
     Mockito.`when`(prisoner.id?.let { prisonerRepository.findById(it) }).thenReturn(Optional.of(prisoner))
     Mockito.lenient().`when`(popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(oneLoginUserData.otp, LocalDate.parse("1982-10-24"), LocalDateTime.now())).thenReturn(popUserOTPEntity)
     Mockito.`when`(prisonerSearchApiService.findPrisonerPersonalDetails(prisoner.nomsId)).thenReturn(prisonerResponse)
-    Mockito.lenient().`when`(prisonerSearchApiService.getPrisonerDetailsByNomsId(prisoner.nomsId)).thenReturn(prisonerSearch)
+    Mockito.lenient().`when`(prisonerSearchApiService.getPrisonerDetailsByNomsId(Mockito.eq(prisoner.nomsId), Mockito.any())).thenReturn(prisonerSearch)
     Mockito.`when`(popUserApiService.postPoPUserVerification(oneLoginUserData, Optional.of(prisoner), prisonerResponse)).thenReturn(popUserResponse)
     val result = popUserOTPService.getPoPUserVerified(oneLoginUserData)
     Mockito.verify(popUserOTPRepository).delete(popUserOTPEntity)
@@ -281,12 +281,12 @@ class PoPUserOTPServiceTest {
       dateOfBirth = LocalDate.parse("1982-10-24"),
       releaseDate = testDate.toLocalDate().plusMonths(6),
     )
-    val prisonerSearch = Prisoner(prisonerPersonal, null, false, false)
+    val prisonerSearch = Prisoner(prisonerPersonal, null, false, false, false)
 
     Mockito.`when`(prisoner.id?.let { prisonerRepository.findById(it) }).thenReturn(Optional.of(prisoner))
     Mockito.lenient().`when`(popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(oneLoginUserData.otp, LocalDate.parse("1982-10-24"), LocalDateTime.now())).thenReturn(popUserOTPEntity)
     Mockito.`when`(prisonerSearchApiService.findPrisonerPersonalDetails(prisoner.nomsId)).thenReturn(prisonerResponse)
-    Mockito.lenient().`when`(prisonerSearchApiService.getPrisonerDetailsByNomsId(prisoner.nomsId)).thenReturn(prisonerSearch)
+    Mockito.lenient().`when`(prisonerSearchApiService.getPrisonerDetailsByNomsId(Mockito.eq(prisoner.nomsId), Mockito.any())).thenReturn(prisonerSearch)
     Mockito.`when`(popUserApiService.postPoPUserVerification(oneLoginUserData, Optional.of(prisoner), prisonerResponse)).thenReturn(null)
     assertThrows<RuntimeException> { popUserOTPService.getPoPUserVerified(oneLoginUserData) }
     unmockkStatic(LocalDateTime::class)

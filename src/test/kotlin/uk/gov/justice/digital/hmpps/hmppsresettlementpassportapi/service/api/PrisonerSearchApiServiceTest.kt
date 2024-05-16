@@ -28,6 +28,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PathwayAndStatusService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.WatchlistService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
@@ -63,6 +64,9 @@ class PrisonerSearchApiServiceTest {
   @Mock
   private lateinit var deliusApiService: ResettlementPassportDeliusApiService
 
+  @Mock
+  private lateinit var watchlistService: WatchlistService
+
   @BeforeEach
   fun beforeEach() {
     mockWebServer.start()
@@ -76,6 +80,7 @@ class PrisonerSearchApiServiceTest {
       pathwayStatusRepository,
       resettlementAssessmentRepository,
       deliusApiService,
+      watchlistService,
     )
   }
 
@@ -1000,16 +1005,6 @@ class PrisonerSearchApiServiceTest {
     prisonerSearchApiService.sortPrisoners(null, prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
-
-  private fun createPrisoner(prisonId: String) = PrisonersSearch(
-    prisonerNumber = "A123456",
-    firstName = "firstName",
-    lastName = "lastName",
-    prisonId = prisonId,
-    prisonName = "prisonName",
-    cellLocation = null,
-    youthOffender = false,
-  )
 }
 
 private fun createPrisonerNumber(prisonerNumber: String) =

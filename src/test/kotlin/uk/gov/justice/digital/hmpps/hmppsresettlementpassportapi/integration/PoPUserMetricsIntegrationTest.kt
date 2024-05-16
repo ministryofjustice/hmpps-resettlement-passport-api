@@ -64,6 +64,14 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
         .tags("prison", "Moorland (HMP & YOI)", "metricType", "Others Count").gauge()
         .value(),
     )
+
+    Assertions.assertEquals(
+      0.0,
+      registry.get("missing_licence_conditions")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "No Licence User Count").gauge()
+        .value(),
+    )
+
     registry.clear()
     unmockkAll()
   }
@@ -102,6 +110,14 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
         .tags("prison", "Moorland (HMP & YOI)", "metricType", "Others Percentage").gauge()
         .value(),
     )
+
+    Assertions.assertEquals(
+      1.0,
+      registry.get("missing_licence_conditions")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "No Licence User Count").gauge()
+        .value(),
+    )
+
     registry.clear()
     unmockkAll()
   }
@@ -166,6 +182,13 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
       0.0,
       registry.get("missing_appointments_data")
         .tags("prison", "Moorland (HMP & YOI)", "metricType", "Email Count").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      0.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "No Appointments User Count").gauge()
         .value(),
     )
 
@@ -255,6 +278,13 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
       1.0,
       registry.get("missing_appointments_data")
         .tags("prison", "Moorland (HMP & YOI)", "metricType", "Email Count").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      1.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "No Appointments User Count").gauge()
         .value(),
     )
 

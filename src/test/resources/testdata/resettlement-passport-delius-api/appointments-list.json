@@ -19,7 +19,7 @@
         "code": "CRSEXTL",
         "description": "CRS Provider Location"
       },
-      "description": "Appointment with CRS Staff (NS)",
+      "description": "COAI Initial Appointment - In office (NS)",
       "outcome": {
         "code": "RSSR",
         "description": "Rescheduled - Service Request"

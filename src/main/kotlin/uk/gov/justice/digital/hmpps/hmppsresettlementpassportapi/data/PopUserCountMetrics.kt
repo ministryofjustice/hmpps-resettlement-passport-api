@@ -9,6 +9,7 @@ enum class LicenceTag(val label: String) {
   MISSING_OTHERS_PERCENTAGE("Others Percentage"),
   MISSING_STANDARD_COUNT("Standard Count"),
   MISSING_OTHERS_COUNT("Others Count"),
+  NO_LICENCE_USER_COUNT("No Licence User Count"),
 }
 data class PopUserLicenceCountMetric(
   val licenceType: LicenceTag,
@@ -41,6 +42,7 @@ enum class AppointmentsDataTag(val label: String) {
   MISSING_EMAIL_COUNT("Email Count"),
   RELEASE_DAY_ZERO_COUNT("No Appointments Count"),
   RELEASE_DAY_PROBATION_ZERO_COUNT("No Probation Appointments Count"),
+  NO_APPOINTMENTS_USER_COUNT("No Appointments User Count"),
 }
 
 data class PopUserAppointmentCountMetric(

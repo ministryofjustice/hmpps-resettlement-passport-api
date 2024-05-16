@@ -38,7 +38,6 @@ class PoPUserMetricsService(
   fun recordCustomMetrics() {
     recordProbationUsersLicenceConditionMetrics()
     recordProbationUsersAppointmentsMetrics()
-    // recordReleaseDayProbationUserAppointmentsMetrics()
   }
 
   fun recordProbationUsersLicenceConditionMetrics() {

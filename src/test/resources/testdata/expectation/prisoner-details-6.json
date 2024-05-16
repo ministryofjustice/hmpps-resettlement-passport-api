@@ -11,49 +11,49 @@
     "age": REPLACE_WITH_AGE,
     "location": "K-3-011",
     "facialImageId": "1313058",
-    "mobile": "0000000000",
-    "telephone": "000000000",
-    "email": "john.smith@test.com",
+    "mobile": null,
+    "telephone": null,
+    "email": null,
     "prisonName": "Moorland (HMP & YOI)"
   },
   "pathways": [
     {
       "pathway": "ACCOMMODATION",
       "status": "NOT_STARTED",
-      "lastDateChange": "2023-08-16"
+      "lastDateChange": null
     },
     {
       "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-      "status": "IN_PROGRESS",
-      "lastDateChange": "2023-08-17"
+      "status": "NOT_STARTED",
+      "lastDateChange": null
     },
     {
       "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
-      "status": "SUPPORT_NOT_REQUIRED",
-      "lastDateChange": "2023-08-17"
+      "status": "NOT_STARTED",
+      "lastDateChange": null
     },
     {
       "pathway": "DRUGS_AND_ALCOHOL",
-      "status": "SUPPORT_DECLINED",
-      "lastDateChange": "2023-08-17"
+      "status": "NOT_STARTED",
+      "lastDateChange": null
     },
     {
       "pathway": "EDUCATION_SKILLS_AND_WORK",
-      "status": "DONE",
-      "lastDateChange": "2023-08-17"
+      "status": "NOT_STARTED",
+      "lastDateChange": null
     },
     {
       "pathway": "FINANCE_AND_ID",
-      "status": "IN_PROGRESS",
-      "lastDateChange": "2023-08-17"
+      "status": "NOT_STARTED",
+      "lastDateChange": null
     },
     {
       "pathway": "HEALTH",
-      "status": "SUPPORT_NOT_REQUIRED",
-      "lastDateChange": "2023-08-17"
+      "status": "NOT_STARTED",
+      "lastDateChange": null
     }
   ],
-  "assessmentRequired": false,
+  "assessmentRequired": true,
   "resettlementReviewAvailable":false,
-  "isInWatchlist": false
+  "isInWatchlist": true
 }

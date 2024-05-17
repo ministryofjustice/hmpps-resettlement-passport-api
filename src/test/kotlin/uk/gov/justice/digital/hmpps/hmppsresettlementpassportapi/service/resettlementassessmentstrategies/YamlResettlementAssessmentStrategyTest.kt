@@ -17,7 +17,9 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.web.server.ServerWebInputException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResettlementAssessmentConfig
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentCompleteRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
@@ -48,8 +50,8 @@ import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension::class)
-class AccommodationResettlementAssessmentStrategyTest {
-  private lateinit var resettlementAssessmentService: AccommodationResettlementAssessmentStrategy
+class YamlResettlementAssessmentStrategyTest {
+  private lateinit var resettlementAssessmentService: YamlResettlementAssessmentStrategy
 
   @Mock
   private lateinit var prisonerRepository: PrisonerRepository
@@ -64,13 +66,18 @@ class AccommodationResettlementAssessmentStrategyTest {
 
   @BeforeEach
   fun beforeEach() {
-    resettlementAssessmentService = AccommodationResettlementAssessmentStrategy(
+    resettlementAssessmentService = YamlResettlementAssessmentStrategy(
+      getTestConfig(),
       resettlementAssessmentRepository,
       prisonerRepository,
       pathwayStatusRepository,
-      false,
+      true,
     )
   }
+
+  private fun getTestConfig() = ResettlementAssessmentConfig().assessmentQuestionSets(
+    PathMatchingResourcePatternResolver(),
+  )
 
   private fun stubSave() {
     given(resettlementAssessmentRepository.save(any())).willAnswer { mock ->
@@ -579,12 +586,30 @@ class AccommodationResettlementAssessmentStrategyTest {
       id = "CHECK_ANSWERS",
       questionsAndAnswers = mutableListOf(
         ResettlementAssessmentResponseQuestionAndAnswer(
-          AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE,
+          AssessmentConfigQuestion(
+            id = "WHERE_DID_THEY_LIVE",
+            title = "Where did the person in prison live before custody?",
+            subTitle = null,
+            type = TypeOfQuestion.RADIO,
+            options = listOf(
+              Option(id = "PRIVATE_RENTED_HOUSING", displayText = "Private rented housing"),
+              Option(id = "SOCIAL_HOUSING", displayText = "Social housing"),
+              Option(id = "HOMEOWNER", displayText = "Homeowner"),
+              Option(id = "NO_PERMANENT_OR_FIXED", displayText = "No permanent or fixed address"),
+              Option(id = "NO_ANSWER", displayText = "No answer provided"),
+            ),
+          ),
           answer = StringAnswer("SOCIAL_HOUSING"),
           originalPageId = "WHERE_DID_THEY_LIVE",
         ),
         ResettlementAssessmentResponseQuestionAndAnswer(
-          AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE_ADDRESS,
+          AssessmentConfigQuestion(
+            id = "WHERE_DID_THEY_LIVE_ADDRESS",
+            title = "Enter the address",
+            subTitle = null,
+            type = TypeOfQuestion.ADDRESS,
+            options = null,
+          ),
           answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123"))),
           originalPageId = "WHERE_DID_THEY_LIVE_ADDRESS",
         ),
@@ -619,12 +644,30 @@ class AccommodationResettlementAssessmentStrategyTest {
       id = "CHECK_ANSWERS",
       questionsAndAnswers = mutableListOf(
         ResettlementAssessmentResponseQuestionAndAnswer(
-          AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE,
+          AssessmentConfigQuestion(
+            id = "WHERE_DID_THEY_LIVE",
+            title = "Where did the person in prison live before custody?",
+            subTitle = null,
+            type = TypeOfQuestion.RADIO,
+            options = listOf(
+              Option(id = "PRIVATE_RENTED_HOUSING", displayText = "Private rented housing"),
+              Option(id = "SOCIAL_HOUSING", displayText = "Social housing"),
+              Option(id = "HOMEOWNER", displayText = "Homeowner"),
+              Option(id = "NO_PERMANENT_OR_FIXED", displayText = "No permanent or fixed address"),
+              Option(id = "NO_ANSWER", displayText = "No answer provided"),
+            ),
+          ),
           answer = StringAnswer("SOCIAL_HOUSING"),
           originalPageId = "WHERE_DID_THEY_LIVE",
         ),
         ResettlementAssessmentResponseQuestionAndAnswer(
-          AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE_ADDRESS,
+          AssessmentConfigQuestion(
+            id = "WHERE_DID_THEY_LIVE_ADDRESS",
+            title = "Enter the address",
+            subTitle = null,
+            type = TypeOfQuestion.ADDRESS,
+            options = null,
+          ),
           answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123"))),
           originalPageId = "WHERE_DID_THEY_LIVE_ADDRESS",
         ),
@@ -675,22 +718,58 @@ class AccommodationResettlementAssessmentStrategyTest {
       id = "CHECK_ANSWERS",
       questionsAndAnswers = mutableListOf(
         ResettlementAssessmentResponseQuestionAndAnswer(
-          AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE,
+          AssessmentConfigQuestion(
+            id = "WHERE_DID_THEY_LIVE",
+            title = "Where did the person in prison live before custody?",
+            subTitle = null,
+            type = TypeOfQuestion.RADIO,
+            options = listOf(
+              Option(id = "PRIVATE_RENTED_HOUSING", displayText = "Private rented housing"),
+              Option(id = "SOCIAL_HOUSING", displayText = "Social housing"),
+              Option(id = "HOMEOWNER", displayText = "Homeowner"),
+              Option(id = "NO_PERMANENT_OR_FIXED", displayText = "No permanent or fixed address"),
+              Option(id = "NO_ANSWER", displayText = "No answer provided"),
+            ),
+          ),
           answer = StringAnswer("SOCIAL_HOUSING"),
           originalPageId = "WHERE_DID_THEY_LIVE",
         ),
         ResettlementAssessmentResponseQuestionAndAnswer(
-          AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE_ADDRESS,
+          AssessmentConfigQuestion(
+            id = "WHERE_DID_THEY_LIVE_ADDRESS",
+            title = "Enter the address",
+            subTitle = null,
+            type = TypeOfQuestion.ADDRESS,
+            options = null,
+          ),
           answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123"))),
           originalPageId = "WHERE_DID_THEY_LIVE_ADDRESS",
         ),
         ResettlementAssessmentResponseQuestionAndAnswer(
-          GenericResettlementAssessmentQuestion.SUPPORT_NEEDS_PRERELEASE,
+          AssessmentConfigQuestion(
+            id = "SUPPORT_NEEDS_PRERELEASE",
+            title = "",
+            subTitle = null,
+            type = TypeOfQuestion.RADIO,
+            options = listOf(
+              Option(id = "SUPPORT_REQUIRED", displayText = "Support required", description = "a need for support has been identified and is accepted"),
+              Option(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
+              Option(id = "SUPPORT_DECLINED", displayText = "Support declined", description = "a need has been identified but support is declined"),
+              Option(id = "IN_PROGRESS", displayText = "In progress", description = "work is ongoing"),
+              Option(id = "DONE", displayText = "Done", description = "all required work has been completed successfully"),
+            ),
+          ),
           answer = StringAnswer(answer = null),
           originalPageId = "PRERELEASE_ASSESSMENT_SUMMARY",
         ),
         ResettlementAssessmentResponseQuestionAndAnswer(
-          GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY,
+          AssessmentConfigQuestion(
+            id = "CASE_NOTE_SUMMARY",
+            title = "Add a case note summary",
+            subTitle = "This will be displayed as a case note in both DPS and nDelius",
+            type = TypeOfQuestion.LONG_TEXT,
+            options = null,
+          ),
           answer = StringAnswer(answer = null),
           originalPageId = "PRERELEASE_ASSESSMENT_SUMMARY",
         ),
@@ -708,7 +787,7 @@ class AccommodationResettlementAssessmentStrategyTest {
 
   @ParameterizedTest
   @MethodSource("test complete assessment data")
-  fun `test complete assessment`(assessment: ResettlementAssessmentCompleteRequest, expectedEntity: ResettlementAssessmentEntity?, expectedException: Throwable?, existingAssessment: ResettlementAssessmentEntity?) {
+  fun `test complete assessment`(assessmentType: ResettlementAssessmentType, assessment: ResettlementAssessmentCompleteRequest, expectedEntity: ResettlementAssessmentEntity?, expectedException: Throwable?, existingAssessment: ResettlementAssessmentEntity?) {
     mockkStatic(::getClaimFromJWTToken)
     every { getClaimFromJWTToken("string", "name") } returns "System user"
     every { getClaimFromJWTToken("string", "auth_source") } returns "nomis"
@@ -718,7 +797,6 @@ class AccommodationResettlementAssessmentStrategyTest {
 
     val nomsId = "abc"
     val pathway = Pathway.ACCOMMODATION
-    val assessmentType = ResettlementAssessmentType.BCST2
 
     val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23"))
 
@@ -746,6 +824,7 @@ class AccommodationResettlementAssessmentStrategyTest {
   private fun `test complete assessment data`() = Stream.of(
     // Throw exception if SUPPORT_NEEDS question not answered
     Arguments.of(
+      ResettlementAssessmentType.BCST2,
       ResettlementAssessmentCompleteRequest(questionsAndAnswers = listOf()),
       null,
       ServerWebInputException("Error validating questions and answers - error validating page flow [400 BAD_REQUEST \"Error validating questions and answers - expected page [WHERE_DID_THEY_LIVE] is different to actual page [null] at index [0]\"]"),
@@ -753,6 +832,7 @@ class AccommodationResettlementAssessmentStrategyTest {
     ),
     // Throw exception if SUPPORT_NEEDS answer in wrong format
     Arguments.of(
+      ResettlementAssessmentType.BCST2,
       ResettlementAssessmentCompleteRequest(
         questionsAndAnswers = listOf(
           ResettlementAssessmentRequestQuestionAndAnswer(
@@ -779,6 +859,7 @@ class AccommodationResettlementAssessmentStrategyTest {
     ),
     // Throw exception if SUPPORT_NEEDS answer is null
     Arguments.of(
+      ResettlementAssessmentType.BCST2,
       ResettlementAssessmentCompleteRequest(
         questionsAndAnswers = listOf(
           ResettlementAssessmentRequestQuestionAndAnswer(
@@ -805,6 +886,7 @@ class AccommodationResettlementAssessmentStrategyTest {
     ),
     // Throw exception if SUPPORT_NEEDS answer is not a valid option
     Arguments.of(
+      ResettlementAssessmentType.BCST2,
       ResettlementAssessmentCompleteRequest(
         questionsAndAnswers = listOf(
           ResettlementAssessmentRequestQuestionAndAnswer(
@@ -831,6 +913,7 @@ class AccommodationResettlementAssessmentStrategyTest {
     ),
     // Throw exception if CASE_NOTE_SUMMARY question not answered
     Arguments.of(
+      ResettlementAssessmentType.BCST2,
       ResettlementAssessmentCompleteRequest(
         questionsAndAnswers = listOf(
           ResettlementAssessmentRequestQuestionAndAnswer(
@@ -853,6 +936,7 @@ class AccommodationResettlementAssessmentStrategyTest {
     ),
     // Throw exception if CASE_NOTE_SUMMARY answer in wrong format
     Arguments.of(
+      ResettlementAssessmentType.BCST2,
       ResettlementAssessmentCompleteRequest(
         questionsAndAnswers = listOf(
           ResettlementAssessmentRequestQuestionAndAnswer(
@@ -879,6 +963,7 @@ class AccommodationResettlementAssessmentStrategyTest {
     ),
     // Throw exception if CASE_NOTE_SUMMARY is null
     Arguments.of(
+      ResettlementAssessmentType.BCST2,
       ResettlementAssessmentCompleteRequest(
         questionsAndAnswers = listOf(
           ResettlementAssessmentRequestQuestionAndAnswer(
@@ -903,8 +988,9 @@ class AccommodationResettlementAssessmentStrategyTest {
       ServerWebInputException("Answer [StringAnswer(answer=null)] must not be null"),
       null,
     ),
-    // Happy path - no existing assessment
+    // Happy path - BCST2 and no existing assessment
     Arguments.of(
+      ResettlementAssessmentType.BCST2,
       ResettlementAssessmentCompleteRequest(
         questionsAndAnswers = listOf(
           ResettlementAssessmentRequestQuestionAndAnswer(
@@ -929,8 +1015,36 @@ class AccommodationResettlementAssessmentStrategyTest {
       null,
       null,
     ),
+    // Happy path - RESETTLEMENT_PLAN and no existing assessment
+    Arguments.of(
+      ResettlementAssessmentType.RESETTLEMENT_PLAN,
+      ResettlementAssessmentCompleteRequest(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE",
+            answer = StringAnswer("NO_PERMANENT_OR_FIXED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_2",
+            answer = StringAnswer("DOES_NOT_HAVE_ANYWHERE"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "SUPPORT_NEEDS_PRERELEASE",
+            answer = StringAnswer("SUPPORT_REQUIRED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "CASE_NOTE_SUMMARY",
+            answer = StringAnswer("My case note summary..."),
+          ),
+        ),
+      ),
+      ResettlementAssessmentEntity(id = null, prisoner = PrisonerEntity(id = 1, nomsId = "abc", creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000"), crn = "abc", prisonId = "ABC", releaseDate = LocalDate.parse("2025-01-23")), pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_REQUIRED, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = ResettlementAssessmentQuestionAndAnswerList(mutableListOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "NO_PERMANENT_OR_FIXED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_2", answer = StringAnswer(answer = "DOES_NOT_HAVE_ANYWHERE")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS_PRERELEASE", answer = StringAnswer(answer = "SUPPORT_REQUIRED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "CASE_NOTE_SUMMARY", answer = StringAnswer(answer = "My case note summary...")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = "My case note summary...", createdByUserId = "USER_1", submissionDate = null),
+      null,
+      null,
+    ),
     // Happy path - existing COMPLETE assessment
     Arguments.of(
+      ResettlementAssessmentType.BCST2,
       ResettlementAssessmentCompleteRequest(
         questionsAndAnswers = listOf(
           ResettlementAssessmentRequestQuestionAndAnswer(
@@ -957,6 +1071,7 @@ class AccommodationResettlementAssessmentStrategyTest {
     ),
     // Happy path - existing SUBMITTED assessment
     Arguments.of(
+      ResettlementAssessmentType.BCST2,
       ResettlementAssessmentCompleteRequest(
         questionsAndAnswers = listOf(
           ResettlementAssessmentRequestQuestionAndAnswer(
@@ -996,29 +1111,25 @@ class AccommodationResettlementAssessmentStrategyTest {
   }
 
   private fun `test findPageIdFromQuestionId data`() = Stream.of(
-    Arguments.of(AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE.id, AccommodationAssessmentPage.WHERE_DID_THEY_LIVE.id),
-    Arguments.of(AccommodationResettlementAssessmentQuestion.WHERE_DID_THEY_LIVE_ADDRESS.id, AccommodationAssessmentPage.WHERE_DID_THEY_LIVE_ADDRESS.id),
-    Arguments.of(AccommodationResettlementAssessmentQuestion.HELP_TO_KEEP_HOME.id, AccommodationAssessmentPage.HELP_TO_KEEP_HOME.id),
-    Arguments.of(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_1.id, AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_1.id),
-    Arguments.of(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_ADDRESS.id, AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_ADDRESS.id),
-    Arguments.of(AccommodationResettlementAssessmentQuestion.WHERE_WILL_THEY_LIVE_2.id, AccommodationAssessmentPage.WHERE_WILL_THEY_LIVE_2.id),
-    Arguments.of(GenericResettlementAssessmentQuestion.SUPPORT_NEEDS.id, GenericAssessmentPage.ASSESSMENT_SUMMARY.id),
-    Arguments.of(GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY.id, GenericAssessmentPage.ASSESSMENT_SUMMARY.id),
+    Arguments.of("WHERE_DID_THEY_LIVE", "WHERE_DID_THEY_LIVE"),
+    Arguments.of("WHERE_DID_THEY_LIVE_ADDRESS", "WHERE_DID_THEY_LIVE_ADDRESS"),
+    Arguments.of("HELP_TO_KEEP_HOME", "HELP_TO_KEEP_HOME"),
+    Arguments.of("WHERE_WILL_THEY_LIVE_1", "WHERE_WILL_THEY_LIVE_1"),
+    Arguments.of("WHERE_WILL_THEY_LIVE_ADDRESS", "WHERE_WILL_THEY_LIVE_ADDRESS"),
+    Arguments.of("WHERE_WILL_THEY_LIVE_2", "WHERE_WILL_THEY_LIVE_2"),
+    Arguments.of("SUPPORT_NEEDS", "ASSESSMENT_SUMMARY"),
+    Arguments.of("CASE_NOTE_SUMMARY", "ASSESSMENT_SUMMARY"),
   )
-
-  @Test
-  fun `test getQuestionList`() {
-    Assertions.assertEquals(AccommodationResettlementAssessmentQuestion.entries + GenericResettlementAssessmentQuestion.entries, resettlementAssessmentService.getQuestionList())
-  }
 
   @ParameterizedTest
   @MethodSource("test validateQuestionAndAnswerSet data")
   fun `test validateQuestionAndAnswerSet`(assessment: ResettlementAssessmentCompleteRequest, valid: Boolean) {
     if (valid) {
-      resettlementAssessmentService.validateQuestionAndAnswerSet(assessment, false)
+      resettlementAssessmentService.validateQuestionAndAnswerSet(Pathway.ACCOMMODATION, assessment, false)
     } else {
       assertThrows<ServerWebInputException> {
         resettlementAssessmentService.validateQuestionAndAnswerSet(
+          Pathway.ACCOMMODATION,
           assessment,
           false,
         )
@@ -1330,5 +1441,36 @@ class AccommodationResettlementAssessmentStrategyTest {
       ),
       false,
     ),
+  )
+
+  @ParameterizedTest
+  @MethodSource("test appliesTo data")
+  fun `test appliesTo`(pathway: Pathway, useYaml: Boolean, expectation: Boolean) {
+    resettlementAssessmentService = YamlResettlementAssessmentStrategy(
+      getTestConfig(),
+      resettlementAssessmentRepository,
+      prisonerRepository,
+      pathwayStatusRepository,
+      useYaml,
+    )
+
+    Assertions.assertEquals(expectation, resettlementAssessmentService.appliesTo(pathway))
+  }
+
+  private fun `test appliesTo data`() = Stream.of(
+    Arguments.of(Pathway.ACCOMMODATION, true, true),
+    Arguments.of(Pathway.ACCOMMODATION, false, false),
+    Arguments.of(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, true, false),
+    Arguments.of(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, false, false),
+    Arguments.of(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, true, false),
+    Arguments.of(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, false, false),
+    Arguments.of(Pathway.DRUGS_AND_ALCOHOL, true, false),
+    Arguments.of(Pathway.DRUGS_AND_ALCOHOL, false, false),
+    Arguments.of(Pathway.EDUCATION_SKILLS_AND_WORK, true, false),
+    Arguments.of(Pathway.EDUCATION_SKILLS_AND_WORK, false, false),
+    Arguments.of(Pathway.FINANCE_AND_ID, true, false),
+    Arguments.of(Pathway.FINANCE_AND_ID, false, false),
+    Arguments.of(Pathway.HEALTH, true, false),
+    Arguments.of(Pathway.HEALTH, false, false),
   )
 }

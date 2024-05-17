@@ -1,0 +1,37 @@
+{
+  "id": "HELP_TO_MANAGE_ANGER",
+  "title": null,
+  "questionsAndAnswers": [
+    {
+      "question": {
+        "id": "HELP_TO_MANAGE_ANGER",
+        "title": "Does the person in prison want support managing their emotions?",
+        "subTitle": null,
+        "type": "RADIO",
+        "options": [
+          {
+            "id": "YES",
+            "displayText": "Yes",
+            "description": null,
+            "exclusive": false
+          },
+          {
+            "id": "NO",
+            "displayText": "No",
+            "description": null,
+            "exclusive": false
+          },
+          {
+            "id": "NO_ANSWER",
+            "displayText": "No answer provided",
+            "description": null,
+            "exclusive": false
+          }
+        ],
+        "validationType": "MANDATORY"
+      },
+      "answer": null,
+      "originalPageId": "HELP_TO_MANAGE_ANGER"
+    }
+  ]
+}

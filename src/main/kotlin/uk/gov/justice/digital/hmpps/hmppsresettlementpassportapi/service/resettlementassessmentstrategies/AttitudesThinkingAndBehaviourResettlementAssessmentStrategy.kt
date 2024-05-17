@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IAssessmentPage
@@ -22,6 +23,7 @@ class AttitudesThinkingAndBehaviourResettlementAssessmentStrategy(
   resettlementAssessmentRepository: ResettlementAssessmentRepository,
   prisonerRepository: PrisonerRepository,
   pathwayStatusRepository: PathwayStatusRepository,
+  @Value("\${resettlement-assessment.useYaml}") useYaml: Boolean,
 ) :
   AbstractResettlementAssessmentStrategy<AttitudesThinkingAndBehaviourAssessmentPage, AttitudesThinkingAndBehaviourResettlementAssessmentQuestion>(
     resettlementAssessmentRepository,
@@ -29,8 +31,9 @@ class AttitudesThinkingAndBehaviourResettlementAssessmentStrategy(
     pathwayStatusRepository,
     AttitudesThinkingAndBehaviourAssessmentPage::class,
     AttitudesThinkingAndBehaviourResettlementAssessmentQuestion::class,
+    Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+    useYaml,
   ) {
-  override fun appliesTo(pathway: Pathway) = pathway == Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR
 
   override fun getPageList(assessmentType: ResettlementAssessmentType): List<ResettlementAssessmentNode> = listOf(
     ResettlementAssessmentNode(

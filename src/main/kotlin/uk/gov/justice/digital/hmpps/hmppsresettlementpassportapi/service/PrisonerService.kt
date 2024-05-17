@@ -35,6 +35,8 @@ class PrisonerService(
     page: Int,
     size: Int,
     sort: String,
+    watchList: Boolean?,
+    auth: String
   ): PrisonersList {
     if (pathwayStatus != null && pathwayView == null) {
       throw ServerWebInputException("pathwayStatus cannot be used without pathwayView")
@@ -45,7 +47,9 @@ class PrisonerService(
     if (assessmentRequired != null && pathwayView != null) {
       throw ServerWebInputException("pathwayView cannot be used in conjunction with assessmentRequired")
     }
-    return prisonerSearchApiService.getPrisonersByPrisonId(term, prisonId, days, pathwayView, pathwayStatus, assessmentRequired, page, size, sort)
+    val staffUsername = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get name from auth token")
+
+    return prisonerSearchApiService.getPrisonersByPrisonId(term, prisonId, days, pathwayView, pathwayStatus, assessmentRequired, page, size, sort, watchList, staffUsername)
   }
 
   companion object {

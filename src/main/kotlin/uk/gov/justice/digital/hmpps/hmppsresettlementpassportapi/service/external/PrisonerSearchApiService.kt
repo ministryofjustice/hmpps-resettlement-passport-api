@@ -93,6 +93,8 @@ class PrisonerSearchApiService(
     pageNumber: Int,
     pageSize: Int,
     sort: String?,
+    watchList: Boolean?,
+    staffUsername: String
   ): PrisonersList {
     val prisoners = mutableListOf<PrisonersSearch>()
     if (prisonId.isBlank() || prisonId.isEmpty()) {
@@ -130,7 +132,7 @@ class PrisonerSearchApiService(
       )
     }
 
-    val fullList = objectMapper(prisoners, pathwayView, pathwayStatus, prisonId, assessmentRequired)
+    val fullList = objectMapper(prisoners, pathwayView, pathwayStatus, prisonId, assessmentRequired, watchList, staffUsername)
 
     sortPrisoners(sort, fullList)
 
@@ -198,6 +200,8 @@ class PrisonerSearchApiService(
     pathwayStatusToFilter: Status?,
     prisonId: String,
     assessmentRequiredFilter: Boolean?,
+    watchListFilter: Boolean?,
+    staffUsername: String
   ): MutableList<Prisoners> {
     val prisonersList = mutableListOf<Prisoners>()
 
@@ -217,6 +221,11 @@ class PrisonerSearchApiService(
       val sortedPathwayStatuses: List<PathwayStatus>?
       val pathwayStatus: Status?
       val lastUpdatedDate: LocalDate?
+      val isInWatchList = watchlistService.isPrisonerInWatchList(staffUsername, prisonerEntity)
+
+      if (watchListFilter == true && !isInWatchList) {
+        return@forEach
+      }
 
       if (prisonerEntity != null) {
         pathwayStatuses = if (pathwayView == null) pathwayStatusesEntities.map { PathwayStatus(pathway = it.pathway, status = it.status, lastDateChange = it.updatedDate?.toLocalDate()) }.sortedBy { it.pathway } else null

@@ -7,5 +7,5 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Watc
 
 @Repository
 interface WatchlistRepository : JpaRepository<WatchlistEntity, Long> {
-  fun findByPrisonerAndStaffUsername(prisoner: PrisonerEntity, staffUsername: String): WatchlistEntity?
+  fun findByPrisonerAndStaffUsername(prisoner: PrisonerEntity?, staffUsername: String): WatchlistEntity?
 }

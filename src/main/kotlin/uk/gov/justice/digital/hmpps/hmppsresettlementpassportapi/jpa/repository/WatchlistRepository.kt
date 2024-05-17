@@ -5,4 +5,6 @@ import org.springframework.stereotype.Repository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.WatchlistEntity
 
 @Repository
-interface WatchlistRepository : JpaRepository<WatchlistEntity, Long>
+interface WatchlistRepository : JpaRepository<WatchlistEntity, Long> {
+  fun deleteByNomsIdAndStaffUsername(nomsId: String, staffUsername: String)
+}

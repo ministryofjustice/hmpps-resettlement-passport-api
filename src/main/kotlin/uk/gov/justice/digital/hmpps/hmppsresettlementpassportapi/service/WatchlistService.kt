@@ -15,13 +15,12 @@ class WatchlistService(
   private val watchlistRepository: WatchlistRepository,
 ) {
   @Transactional
-  fun createWatchlist(nomsId: String, auth: String) {
+  fun createWatchlist(nomsId: String, auth: String): WatchlistEntity {
     // using nomsId to find the prisoner entity
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
 
-    // getting staff username from auth
-    val staffUsername = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get name from auth token")
+    val staffUsername = getStaffUsernameFromAuth(auth)
 
     // associating the prisoner with the staff username
     val watchlist = WatchlistEntity(
@@ -32,6 +31,17 @@ class WatchlistService(
     )
 
     // saving the watchlist entity
-    watchlistRepository.save(watchlist)
+    return watchlistRepository.save(watchlist)
+  }
+
+  @Transactional
+  fun deleteWatchlist(nomsId: String, auth: String) {
+    val staffUsername = getStaffUsernameFromAuth(auth)
+    watchlistRepository.deleteByNomsIdAndStaffUsername(nomsId, staffUsername)
+  }
+
+  private fun getStaffUsernameFromAuth(auth: String): String {
+    return getClaimFromJWTToken(auth, "sub")
+      ?: throw ServerWebInputException("Cannot get name from auth token")
   }
 }

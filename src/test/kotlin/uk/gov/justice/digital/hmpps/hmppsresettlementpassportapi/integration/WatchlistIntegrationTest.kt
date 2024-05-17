@@ -31,9 +31,7 @@ class WatchlistIntegrationTest : IntegrationTestBase() {
     val nomsId = "G1458GV"
     webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/watch")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
-      .expectStatus().is4xxClientError
-      .expectHeader().contentType("application/json")
+      .expectStatus().isUnauthorized
   }
 }

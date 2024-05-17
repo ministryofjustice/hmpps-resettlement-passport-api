@@ -1,21 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment
 
-import com.fasterxml.jackson.annotation.JsonSubTypes
-import com.fasterxml.jackson.annotation.JsonTypeInfo
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.AccommodationResettlementAssessmentQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.FinanceAndIdResettlementAssessmentQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.GenericResettlementAssessmentQuestion
-
-@JsonTypeInfo(
-  use = JsonTypeInfo.Id.NAME,
-  include = JsonTypeInfo.As.PROPERTY,
-  property = "@class",
-)
-@JsonSubTypes(
-  JsonSubTypes.Type(value = AccommodationResettlementAssessmentQuestion::class),
-  JsonSubTypes.Type(value = FinanceAndIdResettlementAssessmentQuestion::class),
-  JsonSubTypes.Type(value = GenericResettlementAssessmentQuestion::class),
-)
 interface IResettlementAssessmentQuestion {
   val id: String
   val title: String

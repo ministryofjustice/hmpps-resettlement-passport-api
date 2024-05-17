@@ -55,6 +55,7 @@ class DrugsAndAlcoholResettlementAssessmentStrategyTest {
       resettlementAssessmentRepository,
       prisonerRepository,
       pathwayStatusRepository,
+      false,
     )
   }
 

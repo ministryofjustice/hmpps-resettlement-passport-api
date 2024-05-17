@@ -61,7 +61,38 @@ VALUES
         }
       ]
     }'::jsonb, 'NOT_STARTED', '2023-10-10 15:54:02.235', 'Prison Officer'),
-    (2, 1, 'ATTITUDES_THINKING_AND_BEHAVIOUR', 'SUBMITTED', 'BCST2', '{"assessment": []}'::jsonb, 'NOT_STARTED', '2023-10-16 12:21:38.709', 'Prison Officer'),
+    (2, 1, 'ATTITUDES_THINKING_AND_BEHAVIOUR', 'SUBMITTED', 'BCST2', '{
+      "assessment": [
+        {
+          "answer": {
+            "@class": "StringAnswer",
+            "answer": "NO_ANSWER"
+          },
+          "questionId": "HELP_TO_MANAGE_ANGER"
+        },
+        {
+          "answer": {
+            "@class": "StringAnswer",
+            "answer": "YES"
+          },
+          "questionId": "ISSUES_WITH_GAMBLING"
+        },
+        {
+          "answer": {
+            "@class": "StringAnswer",
+            "answer": "SUPPORT_REQUIRED"
+          },
+          "questionId": "SUPPORT_NEEDS"
+        },
+        {
+          "answer": {
+            "@class": "StringAnswer",
+            "answer": "Case note summary text."
+          },
+          "questionId": "CASE_NOTE_SUMMARY"
+        }
+      ]
+    }'::jsonb, 'NOT_STARTED', '2023-10-16 12:21:38.709', 'Prison Officer'),
     (3, 1, 'CHILDREN_FAMILIES_AND_COMMUNITY', 'SUBMITTED', 'BCST2', '{"assessment": []}'::jsonb, 'NOT_STARTED', '2023-10-16 12:21:38.709', 'Prison Officer'),
     (4, 1, 'DRUGS_AND_ALCOHOL', 'SUBMITTED', 'BCST2', '{"assessment": []}'::jsonb, 'NOT_STARTED', '2023-10-16 12:21:38.709', 'Prison Officer'),
     (5, 1, 'EDUCATION_SKILLS_AND_WORK', 'SUBMITTED', 'BCST2', '{"assessment": []}'::jsonb, 'NOT_STARTED', '2023-10-16 12:21:38.709', 'Prison Officer'),
@@ -69,3 +100,4 @@ VALUES
     (7, 1, 'HEALTH', 'SUBMITTED', 'BCST2', '{"assessment": []}'::jsonb, 'NOT_STARTED', '2023-10-16 12:21:38.709', 'Prison Officer');
 
 INSERT INTO pathway_status (id, prisoner_id, pathway, status, updated_date) VALUES (1, 1, 'ACCOMMODATION', 'DONE', '2024-04-02 09:25:01.126170 +00:00');
+INSERT INTO pathway_status (id, prisoner_id, pathway, status, updated_date) VALUES (2, 1, 'ATTITUDES_THINKING_AND_BEHAVIOUR', 'DONE', '2024-04-02 09:25:01.126170 +00:00');

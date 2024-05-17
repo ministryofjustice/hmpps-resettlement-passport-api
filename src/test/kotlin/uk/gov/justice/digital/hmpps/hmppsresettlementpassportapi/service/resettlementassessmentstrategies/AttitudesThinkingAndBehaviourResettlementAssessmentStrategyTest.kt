@@ -55,6 +55,7 @@ class AttitudesThinkingAndBehaviourResettlementAssessmentStrategyTest {
       resettlementAssessmentRepository,
       prisonerRepository,
       pathwayStatusRepository,
+      false,
     )
   }
 

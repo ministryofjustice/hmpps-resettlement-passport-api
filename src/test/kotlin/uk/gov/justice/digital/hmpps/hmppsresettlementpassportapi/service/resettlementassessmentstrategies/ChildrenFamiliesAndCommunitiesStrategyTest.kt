@@ -58,6 +58,7 @@ class ChildrenFamiliesAndCommunitiesStrategyTest {
       resettlementAssessmentRepository,
       prisonerRepository,
       pathwayStatusRepository,
+      false,
     )
   }
 

@@ -6,9 +6,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
-import kotlin.reflect.KClass
 
-interface IResettlementAssessmentStrategy<Q> where Q : Enum<*>, Q : IResettlementAssessmentQuestion {
+interface IResettlementAssessmentStrategy {
   fun appliesTo(pathway: Pathway): Boolean
   fun getNextPageId(
     assessment: ResettlementAssessmentRequest,
@@ -26,6 +25,6 @@ interface IResettlementAssessmentStrategy<Q> where Q : Enum<*>, Q : IResettlemen
   )
   fun getPageFromId(nomsId: String, pathway: Pathway, pageId: String, assessmentType: ResettlementAssessmentType): ResettlementAssessmentResponsePage
 
-  fun getQuestionClass(): KClass<Q>
-  fun findPageIdFromQuestionId(questionId: String, assessmentType: ResettlementAssessmentType): String
+  fun getQuestionById(id: String, pathway: Pathway, assessmentType: ResettlementAssessmentType): IResettlementAssessmentQuestion
+  fun findPageIdFromQuestionId(questionId: String, assessmentType: ResettlementAssessmentType, pathway: Pathway): String
 }

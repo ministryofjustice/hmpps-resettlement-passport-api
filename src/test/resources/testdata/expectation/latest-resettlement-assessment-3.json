@@ -1,0 +1,20 @@
+{
+  "originalAssessment": null,
+  "latestAssessment": {
+    "assessmentType": "BCST2",
+    "lastUpdated": "2023-10-16T12:21:38.709",
+    "updatedBy": "Prison Officer",
+    "questionsAndAnswers": [
+      {
+        "questionTitle": "Does the person in prison want support managing their emotions?",
+        "answer": "No answer provided",
+        "originalPageId": "HELP_TO_MANAGE_ANGER"
+      },
+      {
+        "questionTitle": "Does the person in prison want support with gambling issues?",
+        "answer": "Yes",
+        "originalPageId": "ISSUES_WITH_GAMBLING"
+      }
+    ]
+  }
+}

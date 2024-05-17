@@ -12,7 +12,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayAnd
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.MapAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
@@ -25,7 +24,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentSkipRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.GenericResettlementAssessmentQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.IResettlementAssessmentStrategy
 import java.time.LocalDateTime
 
@@ -130,7 +128,7 @@ class ResettlementAssessmentService(
     }
   }
 
-  fun getLatestResettlementAssessmentByNomsIdAndPathway(nomsId: String, pathway: Pathway, resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy<*>>): LatestResettlementAssessmentResponse {
+  fun getLatestResettlementAssessmentByNomsIdAndPathway(nomsId: String, pathway: Pathway, resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy>): LatestResettlementAssessmentResponse {
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
 
@@ -159,17 +157,16 @@ class ResettlementAssessmentService(
     }
   }
 
-  fun convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(resettlementAssessmentEntity: ResettlementAssessmentEntity, resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy<*>>): ResettlementAssessmentResponse {
+  fun convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(resettlementAssessmentEntity: ResettlementAssessmentEntity, resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy>): ResettlementAssessmentResponse {
     val resettlementStrategy = resettlementAssessmentStrategies.first { it.appliesTo(resettlementAssessmentEntity.pathway) }
 
-    val questionClass = resettlementStrategy.getQuestionClass()
     val questionsAndAnswers = resettlementAssessmentEntity.assessment.assessment.mapNotNull {
-      val question = convertEnumStringToEnum(questionClass, GenericResettlementAssessmentQuestion::class, it.questionId) as IResettlementAssessmentQuestion
-      if (question !in GenericResettlementAssessmentQuestion.entries) {
+      val question = resettlementStrategy.getQuestionById(it.questionId, resettlementAssessmentEntity.pathway, resettlementAssessmentEntity.assessmentType)
+      if (question.id !in listOf("SUPPORT_NEEDS", "SUPPORT_NEEDS_PRERELEASE", "CASE_NOTE_SUMMARY")) {
         LatestResettlementAssessmentResponseQuestionAndAnswer(
           questionTitle = question.title,
           answer = convertAnswerToString(question.options, it.answer),
-          originalPageId = resettlementStrategy.findPageIdFromQuestionId(it.questionId, resettlementAssessmentEntity.assessmentType),
+          originalPageId = resettlementStrategy.findPageIdFromQuestionId(it.questionId, resettlementAssessmentEntity.assessmentType, resettlementAssessmentEntity.pathway),
         )
       } else {
         null

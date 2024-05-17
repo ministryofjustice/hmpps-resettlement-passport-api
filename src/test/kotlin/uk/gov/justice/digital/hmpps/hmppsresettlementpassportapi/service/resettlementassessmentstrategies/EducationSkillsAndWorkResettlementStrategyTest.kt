@@ -57,6 +57,7 @@ class EducationSkillsAndWorkResettlementStrategyTest {
       resettlementAssessmentRepository,
       prisonerRepository,
       pathwayStatusRepository,
+      false,
     )
   }
 

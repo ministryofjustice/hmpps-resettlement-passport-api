@@ -14,7 +14,7 @@ class ResettlementAssessmentConfig {
   @Bean
   fun assessmentQuestionSets(resourcePatternResolver: ResourcePatternResolver): AssessmentQuestionSets {
     val yamlMapper = YAMLMapper().registerKotlinModule()
-    val configFiles = resourcePatternResolver.getResources("classpath:/assessment-config/**/*.yml").map { it.file }
+    val configFiles = resourcePatternResolver.getResources("classpath*:/assessment-config/**/*.yml").map { it.inputStream }
     return AssessmentQuestionSets(configFiles.map { yamlMapper.readValue(it, AssessmentQuestionSet::class.java) })
   }
 }

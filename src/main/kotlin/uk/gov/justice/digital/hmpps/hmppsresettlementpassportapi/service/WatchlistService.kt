@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.WatchlistEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.WatchlistRepository
@@ -17,10 +18,9 @@ class WatchlistService(
   @Transactional
   fun createWatchlist(nomsId: String, auth: String): WatchlistEntity {
     // using nomsId to find the prisoner entity
-    val prisoner = prisonerRepository.findByNomsId(nomsId)
-      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+    val prisoner = findPrisonerByNomsId(nomsId)
 
-    val staffUsername = getStaffUsernameFromAuth(auth)
+    val staffUsername = findStaffUsernameFromAuth(auth)
 
     // associating the prisoner with the staff username
     val watchlist = WatchlistEntity(
@@ -36,12 +36,20 @@ class WatchlistService(
 
   @Transactional
   fun deleteWatchlist(nomsId: String, auth: String) {
-    val staffUsername = getStaffUsernameFromAuth(auth)
+    findPrisonerByNomsId(nomsId)
+    val staffUsername = findStaffUsernameFromAuth(auth)
     watchlistRepository.deleteByNomsIdAndStaffUsername(nomsId, staffUsername)
   }
 
-  private fun getStaffUsernameFromAuth(auth: String): String {
+  private fun findStaffUsernameFromAuth(auth: String): String {
     return getClaimFromJWTToken(auth, "sub")
       ?: throw ServerWebInputException("Cannot get name from auth token")
+  }
+
+  fun findPrisonerByNomsId(nomsId: String): PrisonerEntity {
+    val prisoner = prisonerRepository.findByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+
+    return prisoner
   }
 }

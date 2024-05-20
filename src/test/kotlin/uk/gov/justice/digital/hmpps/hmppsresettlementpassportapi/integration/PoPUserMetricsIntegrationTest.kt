@@ -64,6 +64,14 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
         .tags("prison", "Moorland (HMP & YOI)", "metricType", "Others Count").gauge()
         .value(),
     )
+
+    Assertions.assertEquals(
+      0.0,
+      registry.get("missing_licence_conditions")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "No Licence User Count").gauge()
+        .value(),
+    )
+
     registry.clear()
     unmockkAll()
   }
@@ -102,6 +110,14 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
         .tags("prison", "Moorland (HMP & YOI)", "metricType", "Others Percentage").gauge()
         .value(),
     )
+
+    Assertions.assertEquals(
+      1.0,
+      registry.get("missing_licence_conditions")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "No Licence User Count").gauge()
+        .value(),
+    )
+
     registry.clear()
     unmockkAll()
   }
@@ -166,6 +182,13 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
       0.0,
       registry.get("missing_appointments_data")
         .tags("prison", "Moorland (HMP & YOI)", "metricType", "Email Count").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      0.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "No Appointments User Count").gauge()
         .value(),
     )
 
@@ -259,6 +282,13 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
     )
 
     Assertions.assertEquals(
+      1.0,
+      registry.get("missing_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "No Appointments User Count").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
       100.0,
       registry.get("missing_appointments_data")
         .tags("prison", "Moorland (HMP & YOI)", "metricType", "Date Percentage").gauge()
@@ -312,7 +342,7 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-pop-user-otp-4.sql")
-  fun `test collect release day appointment metrics -  no probation appointments `() {
+  fun `test collect release day appointment metrics -  happy path no zero appointments and no zero probation appointments `() {
     mockkStatic(LocalDate::class)
     every { LocalDate.now() } returns fakeNow
     prisonRegisterApiMockServer.stubPrisonList(200)
@@ -324,14 +354,44 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
     Assertions.assertEquals(
       0.0,
       registry.get("release_day_appointments_data")
-        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Appointments Count").gauge()
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "No Appointments Count").gauge()
+        .value(),
+    )
+
+    Assertions.assertEquals(
+      0.0,
+      registry.get("release_day_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "No Probation Appointments Count").gauge()
+        .value(),
+    )
+
+    registry.clear()
+    unmockkAll()
+    unmockkStatic(LocalDate::class)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pop-user-otp-4.sql")
+  fun `test collect release day appointment metrics -  zero probation appointments `() {
+    mockkStatic(LocalDate::class)
+    every { LocalDate.now() } returns fakeNow
+    prisonRegisterApiMockServer.stubPrisonList(200)
+    val crn = "CRN1"
+    deliusApiMockServer.stubGetCrnFromNomsId("G4161UF", crn)
+    deliusApiMockServer.stubGetAppointmentsFromCRNNoProbationAppointment(crn, 200)
+    popUsermetricsService.recordReleaseDayProbationUserAppointmentsMetrics()
+
+    Assertions.assertEquals(
+      0.0,
+      registry.get("release_day_appointments_data")
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "No Appointments Count").gauge()
         .value(),
     )
 
     Assertions.assertEquals(
       1.0,
       registry.get("release_day_appointments_data")
-        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Probation Appointments Count").gauge()
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "No Probation Appointments Count").gauge()
         .value(),
     )
 
@@ -354,14 +414,14 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
     Assertions.assertEquals(
       1.0,
       registry.get("release_day_appointments_data")
-        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Appointments Count").gauge()
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "No Appointments Count").gauge()
         .value(),
     )
 
     Assertions.assertEquals(
       1.0,
       registry.get("release_day_appointments_data")
-        .tags("prison", "Moorland (HMP & YOI)", "metricType", "Probation Appointments Count").gauge()
+        .tags("prison", "Moorland (HMP & YOI)", "metricType", "No Probation Appointments Count").gauge()
         .value(),
     )
 

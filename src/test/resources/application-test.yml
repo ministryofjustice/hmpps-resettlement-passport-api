@@ -23,6 +23,13 @@ api:
       interventions-service: http://localhost:9105
       pop-user-service: http://localhost:9106
 
+schedule:
+  expression:
+    custom-metrics: 0 0/15 * * * ?
+    release-day-metrics: 0 0 12 * * *
+    reconcile-release-dates: 0 0 2 * * *
+    delete-expired-otp: 0 0 3 * * *
+
 spring:
   devtools:
     add-properties: true

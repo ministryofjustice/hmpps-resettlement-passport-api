@@ -10,7 +10,7 @@
   "occurrenceDateTime": "{{now}}",
   "authorName": "User, Api",
   "authorUserId": "123456",
-  "text": "{{jsonPath request.body '$.text'}}",
+  "text": "something",
   "locationId": "MDI",
   "eventId": "{{randomValue length=8 type='NUMERIC'}}",
   "sensitive": false,

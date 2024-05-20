@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
@@ -23,15 +24,16 @@ class AccommodationResettlementAssessmentStrategy(
   resettlementAssessmentRepository: ResettlementAssessmentRepository,
   prisonerRepository: PrisonerRepository,
   pathwayStatusRepository: PathwayStatusRepository,
+  @Value("\${resettlement-assessment.useYaml}") useYaml: Boolean,
 ) : AbstractResettlementAssessmentStrategy<AccommodationAssessmentPage, AccommodationResettlementAssessmentQuestion>(
   resettlementAssessmentRepository,
   prisonerRepository,
   pathwayStatusRepository,
   AccommodationAssessmentPage::class,
   AccommodationResettlementAssessmentQuestion::class,
+  Pathway.ACCOMMODATION,
+  useYaml,
 ) {
-  override fun appliesTo(pathway: Pathway) = pathway == Pathway.ACCOMMODATION
-
   override fun getPageList(assessmentType: ResettlementAssessmentType): List<ResettlementAssessmentNode> = listOf(
     ResettlementAssessmentNode(
       AccommodationAssessmentPage.WHERE_DID_THEY_LIVE,

@@ -34,6 +34,14 @@ api:
       #pop-user-service: http://localhost:9193/pop-user-api
       pop-user-service: https://person-on-probation-user-api-dev.hmpps.service.justice.gov.uk
 
+schedule:
+  expression:
+    custom-metrics: 0 0/15 * * * ?
+    release-day-metrics: 0 0 12 * * *
+    reconcile-release-dates: 0 0 2 * * *
+    delete-expired-otp: 0 0 3 * * *
+
+
 management.endpoint:
   health.cache.time-to-live: 0
   info.cache.time-to-live: 0
@@ -67,6 +75,3 @@ spring:
 
   feature-toggles:
     afine: true
-
-aws:
-  case-notes-queue-name: test-case-notes-queue

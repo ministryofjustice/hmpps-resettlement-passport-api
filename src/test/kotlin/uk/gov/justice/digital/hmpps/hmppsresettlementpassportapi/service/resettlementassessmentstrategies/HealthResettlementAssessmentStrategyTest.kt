@@ -56,6 +56,7 @@ class HealthResettlementAssessmentStrategyTest {
       resettlementAssessmentRepository,
       prisonerRepository,
       pathwayStatusRepository,
+      false,
     )
   }
 

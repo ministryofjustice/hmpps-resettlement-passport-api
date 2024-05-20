@@ -347,12 +347,18 @@ class PrisonerSearchApiService(
 
     val pathwayStatuses = getPathwayStatuses(prisonerEntity)
 
-    val assessmentRequired = isAssessmentRequired(prisonerEntity, ResettlementAssessmentType.BCST2)
-    val resettlementReviewAvailable = !assessmentRequired && isAssessmentRequired(prisonerEntity, ResettlementAssessmentType.RESETTLEMENT_PLAN)
+    val assessmentStatus = isAssessmentRequired(prisonerEntity)
     val staffUsername = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get name from auth token")
     val isInWatchlist = watchlistService.isPrisonerInWatchList(staffUsername, prisonerEntity)
-
-    return Prisoner(prisonerPersonal, pathwayStatuses, assessmentRequired, resettlementReviewAvailable, isInWatchlist)
+    return Prisoner(
+      personalDetails = prisonerPersonal,
+      pathways = pathwayStatuses,
+      assessmentRequired = assessmentStatus.assessmentRequired,
+      resettlementReviewAvailable = assessmentStatus.resettlementReviewAvailable,
+      immediateNeedsSubmitted = assessmentStatus.immediateNeedsSubmitted,
+      preReleaseSubmitted = assessmentStatus.preReleaseSubmitted,
+      isInWatchlist = isInWatchlist
+    )
   }
 
   protected fun getPathwayStatuses(
@@ -436,9 +442,30 @@ class PrisonerSearchApiService(
     return releaseEligibilityType
   }
 
-  fun isAssessmentRequired(prisonerEntity: PrisonerEntity, type: ResettlementAssessmentType): Boolean {
+  private fun isAssessmentRequired(prisonerEntity: PrisonerEntity): AssessmentRequiredResult {
     // Assessment required we don't have all pathways in submitted
-    val pathwaysInSubmittedCount = resettlementAssessmentRepository.countByNomsIdAndAssessmentTypeAndAssessmentStatus(prisonerEntity.nomsId, type, ResettlementAssessmentStatus.SUBMITTED)
-    return (pathwaysInSubmittedCount != Pathway.entries.size)
+    val statusByType = resettlementAssessmentRepository.findLatestForEachPathwayAndType(prisonerEntity)
+      .groupBy { it.assessmentType }
+
+    val iNeedsSubmitted =
+      statusByType[ResettlementAssessmentType.BCST2]?.all { it.assessmentStatus == ResettlementAssessmentStatus.SUBMITTED }
+        ?: false
+    val preRelease = statusByType[ResettlementAssessmentType.RESETTLEMENT_PLAN]
+    val preReleaseSubmitted = preRelease?.all { it.assessmentStatus === ResettlementAssessmentStatus.SUBMITTED } ?: false
+    val preReleaseInProgress = preRelease?.any { it.assessmentStatus === ResettlementAssessmentStatus.COMPLETE } ?: false
+
+    return AssessmentRequiredResult(
+      assessmentRequired = !iNeedsSubmitted && !preReleaseInProgress,
+      resettlementReviewAvailable = (iNeedsSubmitted || preReleaseInProgress) && !preReleaseSubmitted,
+      immediateNeedsSubmitted = iNeedsSubmitted,
+      preReleaseSubmitted = preReleaseSubmitted,
+    )
   }
 }
+
+private data class AssessmentRequiredResult(
+  val assessmentRequired: Boolean,
+  val resettlementReviewAvailable: Boolean,
+  val immediateNeedsSubmitted: Boolean,
+  val preReleaseSubmitted: Boolean,
+)

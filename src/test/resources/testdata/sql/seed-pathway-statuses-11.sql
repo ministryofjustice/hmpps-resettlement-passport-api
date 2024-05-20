@@ -8,13 +8,6 @@ INSERT INTO prisoner
 (id, noms_id, creation_date, crn, prison_id, release_date)
 VALUES(3, '789', '2023-08-17 12:26:03.441', 'ghi', 'xyz', '2026-10-30');
 
-INSERT INTO watchlist
-(id, prisoner_id, staff_username, creation_date)
-VALUES
-    (1, 1, 'RESETTLEMENTPASSPORT_ADM', '2023-08-16 12:21:38.709'),
-    (2, 2, 'staff2', '2023-08-17 12:25:45.306'),
-    (3, 3, 'staff3', '2023-08-17 12:26:03.441');
-
 INSERT INTO pathway_status
 (id, prisoner_id, pathway, status, updated_date)
 VALUES(1, 1, 'ACCOMMODATION', 'NOT_STARTED', '2023-08-16 12:21:44.234');
@@ -57,3 +50,25 @@ VALUES(13, 2, 'FINANCE_AND_ID', 'IN_PROGRESS', '2023-08-17 12:30:03.855');
 INSERT INTO pathway_status
 (id, prisoner_id, pathway, status, updated_date)
 VALUES(14, 2, 'HEALTH', 'SUPPORT_NOT_REQUIRED', '2023-08-17 12:30:03.858');
+
+INSERT INTO resettlement_assessment
+(id, prisoner_id, pathway, assessment_status, assessment_type, assessment, status_changed_to, created_date, created_by)
+VALUES(8, 1, 'ACCOMMODATION', 'COMPLETE', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'NOT_STARTED', '2023-10-16 12:21:38.709','Prison Officer');
+INSERT INTO resettlement_assessment
+(id, prisoner_id, pathway, assessment_status, assessment_type, assessment, status_changed_to, created_date, created_by)
+VALUES(9, 1, 'ATTITUDES_THINKING_AND_BEHAVIOUR', 'COMPLETE', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'NOT_STARTED', '2023-10-16 12:21:38.709','Prison Officer');
+INSERT INTO resettlement_assessment
+(id, prisoner_id, pathway, assessment_status, assessment_type, assessment, status_changed_to, created_date, created_by)
+VALUES(11, 1, 'CHILDREN_FAMILIES_AND_COMMUNITY', 'COMPLETE', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'NOT_STARTED', '2023-10-16 12:21:38.709','Prison Officer');
+INSERT INTO resettlement_assessment
+(id, prisoner_id, pathway, assessment_status, assessment_type, assessment, status_changed_to, created_date, created_by)
+VALUES(12, 1, 'DRUGS_AND_ALCOHOL', 'COMPLETE', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'NOT_STARTED', '2023-10-16 12:21:38.709','Prison Officer');
+INSERT INTO resettlement_assessment
+(id, prisoner_id, pathway, assessment_status, assessment_type, assessment, status_changed_to, created_date, created_by)
+VALUES(13, 1, 'EDUCATION_SKILLS_AND_WORK', 'COMPLETE', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'NOT_STARTED', '2023-10-16 12:21:38.709','Prison Officer');
+INSERT INTO resettlement_assessment
+(id, prisoner_id, pathway, assessment_status, assessment_type, assessment, status_changed_to, created_date, created_by)
+VALUES(14, 1, 'FINANCE_AND_ID', 'COMPLETE', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'NOT_STARTED', '2023-10-16 12:21:38.709','Prison Officer');
+INSERT INTO resettlement_assessment
+(id, prisoner_id, pathway, assessment_status, assessment_type, assessment, status_changed_to, created_date, created_by)
+VALUES(15, 1, 'HEALTH', 'COMPLETE', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'NOT_STARTED', '2023-10-16 12:21:38.709','Prison Officer');

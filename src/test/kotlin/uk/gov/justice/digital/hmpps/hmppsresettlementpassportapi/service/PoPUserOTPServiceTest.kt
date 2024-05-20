@@ -202,7 +202,15 @@ class PoPUserOTPServiceTest {
       dateOfBirth = LocalDate.parse("1982-10-24"),
       releaseDate = testDate.toLocalDate().plusMonths(6),
     )
-    val prisonerSearch = Prisoner(prisonerPersonal, null, false, false, false)
+    val prisonerSearch = Prisoner(
+      prisonerPersonal,
+      null,
+      assessmentRequired = false,
+      resettlementReviewAvailable = false,
+      immediateNeedsSubmitted = true,
+      preReleaseSubmitted = true,
+    false,
+    )
 
     Mockito.`when`(prisoner.id?.let { prisonerRepository.findById(it) }).thenReturn(Optional.of(prisoner))
     Mockito.lenient().`when`(popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(oneLoginUserData.otp, LocalDate.parse("1982-10-24"), LocalDateTime.now())).thenReturn(popUserOTPEntity)
@@ -281,7 +289,14 @@ class PoPUserOTPServiceTest {
       dateOfBirth = LocalDate.parse("1982-10-24"),
       releaseDate = testDate.toLocalDate().plusMonths(6),
     )
-    val prisonerSearch = Prisoner(prisonerPersonal, null, false, false, false)
+    val prisonerSearch = Prisoner(
+      prisonerPersonal,
+      null,
+      false,
+      resettlementReviewAvailable = false,
+      immediateNeedsSubmitted = true,
+      preReleaseSubmitted = true,
+    )
 
     Mockito.`when`(prisoner.id?.let { prisonerRepository.findById(it) }).thenReturn(Optional.of(prisoner))
     Mockito.lenient().`when`(popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(oneLoginUserData.otp, LocalDate.parse("1982-10-24"), LocalDateTime.now())).thenReturn(popUserOTPEntity)

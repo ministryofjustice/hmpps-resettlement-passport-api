@@ -38,7 +38,6 @@ class PoPUserMetricsService(
   fun recordCustomMetrics() {
     recordProbationUsersLicenceConditionMetrics()
     recordProbationUsersAppointmentsMetrics()
-    // recordReleaseDayProbationUserAppointmentsMetrics()
   }
 
   fun recordProbationUsersLicenceConditionMetrics() {
@@ -52,6 +51,7 @@ class PoPUserMetricsService(
       for (prison in prisonList) {
         var stdLicenceConditionCount = 0
         var otherLicenceConditionCount = 0
+        var noLicenceUserCount = 0
         val prisonersList = prisonerRepository.findByPrisonId(prison.id)
         try {
           var popUserExists = false
@@ -62,6 +62,9 @@ class PoPUserMetricsService(
               var licencesConditions: LicenceConditions
               try {
                 licencesConditions = licenceConditionService.getLicenceConditionsByNomsId(prisoner[0].nomsId)!!
+                if (licencesConditions.standardLicenceConditions.isNullOrEmpty() || licencesConditions.otherLicenseConditions.isNullOrEmpty()) {
+                  noLicenceUserCount += 1
+                }
                 if (licencesConditions.standardLicenceConditions.isNullOrEmpty()) {
                   stdLicenceConditionCount += 1
                 }
@@ -72,6 +75,7 @@ class PoPUserMetricsService(
                 log.info("Unable to get the licence condition for nomsId ${prisoner[0].nomsId}")
                 stdLicenceConditionCount += 1
                 otherLicenceConditionCount += 1
+                noLicenceUserCount += 1
                 continue
               }
             }
@@ -93,6 +97,7 @@ class PoPUserMetricsService(
               PopUserLicenceCountMetric(LicenceTag.MISSING_OTHERS_PERCENTAGE, percentOtherLicenceCondition),
               PopUserLicenceCountMetric(LicenceTag.MISSING_STANDARD_COUNT, stdLicenceConditionCount.toDouble()),
               PopUserLicenceCountMetric(LicenceTag.MISSING_OTHERS_COUNT, otherLicenceConditionCount.toDouble()),
+              PopUserLicenceCountMetric(LicenceTag.NO_LICENCE_USER_COUNT, noLicenceUserCount.toDouble()),
 
             )
             popUserLicenceCountMetric.metrics[prison] = metrics
@@ -145,6 +150,7 @@ class PoPUserMetricsService(
         var missingPOCount = 0
         var missingEmailCount = 0
         var totalAppointments = 0
+        var noAppointmentsUserCount = 0
 
         val prisonersList = prisonerRepository.findByPrisonId(prison.id)
         try {
@@ -172,6 +178,7 @@ class PoPUserMetricsService(
                   missingLocationCount += 1
                   missingPOCount += 1
                   missingEmailCount += 1
+                  noAppointmentsUserCount += 1
                 }
               } catch (_: ResourceNotFoundException) {
                 log.info("Unable to get the appointments for nomsId ${prisoner[0].nomsId}")
@@ -241,7 +248,7 @@ class PoPUserMetricsService(
               PopUserAppointmentCountMetric(AppointmentsDataTag.MISSING_LOCATION_COUNT, missingLocationCount.toDouble()),
               PopUserAppointmentCountMetric(AppointmentsDataTag.MISSING_PROBATION_OFFICER_COUNT, missingPOCount.toDouble()),
               PopUserAppointmentCountMetric(AppointmentsDataTag.MISSING_EMAIL_COUNT, missingEmailCount.toDouble()),
-
+              PopUserAppointmentCountMetric(AppointmentsDataTag.NO_APPOINTMENTS_USER_COUNT, noAppointmentsUserCount.toDouble()),
             )
             popUserAppointmentMetrics.metrics[prison] = metrics
             val prisonTag = Tags.of("prison", prison.name)

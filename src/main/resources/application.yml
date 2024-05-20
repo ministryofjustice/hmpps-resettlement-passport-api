@@ -113,3 +113,6 @@ management:
         time-to-live: 2000ms
     prometheus:
       enabled: true
+
+resettlement-assessment:
+  useYaml: true

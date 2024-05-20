@@ -21,10 +21,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `Get Prisoner Details happy path - blank database`() {
-    var expectedOutput = readFile("testdata/expectation/prisoner-details-2.json")
-    val dob = LocalDate.of(1982, 10, 24)
-    val age = Period.between(dob, LocalDate.now()).years
-    expectedOutput = expectedOutput.replace("REPLACE_WITH_AGE", "$age")
+    val expectedOutput = readFileAndReplaceAge("testdata/expectation/prisoner-details-2.json")
     val nomsId = "123"
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
@@ -49,10 +46,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
   fun `Get Prisoner Details happy path - database seeded`() {
-    var expectedOutput = readFile("testdata/expectation/prisoner-details-1.json")
-    val dob = LocalDate.of(1982, 10, 24)
-    val age = Period.between(dob, LocalDate.now()).years
-    expectedOutput = expectedOutput.replace("REPLACE_WITH_AGE", "$age")
+    val expectedOutput = readFileAndReplaceAge("testdata/expectation/prisoner-details-1.json")
     val nomsId = "123"
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
@@ -75,7 +69,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  @Sql("classpath:testdata/sql/seed-pathway-statuses-11.sql")
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-12.sql")
   fun `Get Prisoner Details happy path - add in watchlist flag`() {
     var expectedOutput = readFile("testdata/expectation/prisoner-details-6.json")
     val dob = LocalDate.of(1982, 10, 24)
@@ -256,10 +250,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-8.sql")
   fun `Get Prisoner Details happy path - database seeded with assessments submitted`() {
-    var expectedOutput = readFile("testdata/expectation/prisoner-details-3.json")
-    val dob = LocalDate.of(1982, 10, 24)
-    val age = Period.between(dob, LocalDate.now()).years
-    expectedOutput = expectedOutput.replace("REPLACE_WITH_AGE", "$age")
+    val expectedOutput = readFileAndReplaceAge("testdata/expectation/prisoner-details-3.json")
     val nomsId = "123"
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
@@ -284,10 +275,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-10.sql")
   fun `Get Prisoner Details happy path - database seeded with assessments and resettlement review submitted`() {
-    var expectedOutput = readFile("testdata/expectation/prisoner-details-4.json")
-    val dob = LocalDate.of(1982, 10, 24)
-    val age = Period.between(dob, LocalDate.now()).years
-    expectedOutput = expectedOutput.replace("REPLACE_WITH_AGE", "$age")
+    val expectedOutput = readFileAndReplaceAge("testdata/expectation/prisoner-details-4.json")
     val nomsId = "123"
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
@@ -307,5 +295,35 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     val expectedPrisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), "abc", "xyz", LocalDate.parse("2025-01-23"))
     assertThat(expectedPrisonerEntity).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java)
       .ignoringFields("id").isEqualTo(prisonerEntity)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-11.sql")
+  fun `Get Prisoner Details - resettlement plan in progress, with no BCST2`() {
+    val nomsId = "123"
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
+    deliusApiMockServer.stubGetPersonalDetailsFromCrn("abc", 200)
+    prisonRegisterApiMockServer.stubPrisonList(200)
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("$.assessmentRequired").isEqualTo(false)
+      .jsonPath("$.resettlementReviewAvailable").isEqualTo(true)
+      .jsonPath("$.immediateNeedsSubmitted").isEqualTo(false)
+      .jsonPath("$.preReleaseSubmitted").isEqualTo(false)
+  }
+
+  private fun readFileAndReplaceAge(resourceName: String): String {
+    val prisonerJson = readFile(resourceName)
+    val dob = LocalDate.of(1982, 10, 24)
+    val age = Period.between(dob, LocalDate.now()).years
+    return prisonerJson.replace("REPLACE_WITH_AGE", "$age")
   }
 }

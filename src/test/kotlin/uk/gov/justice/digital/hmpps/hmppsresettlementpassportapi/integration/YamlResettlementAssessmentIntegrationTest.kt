@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.context.jdbc.Sql
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AssessmentSkipReason
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
@@ -21,12 +22,13 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentSimpleQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentSkipRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
+class YamlResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
@@ -36,6 +38,10 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
   @Autowired
   private lateinit var pathwayStatusRepository: PathwayStatusRepository
 
+  @Autowired
+  private lateinit var assessmentSkipRepository: AssessmentSkipRepository
+
+  // Tests using ACCOMMODATION Pathway - i.e. using new YamlResettlementAssessmentStrategy
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
   fun `Post get next assessment page happy path`() {
@@ -645,5 +651,101 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody()
       .json(expectedOutput)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-2.sql")
+  fun `Can skip BCST2 assessment when it is not started`() {
+    val nomsId = "G4161UF"
+
+    webTestClient.post()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/skip?assessmentType=BCST2")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .header("Content-Type", "application/json")
+      .bodyValue(
+        """
+          {
+            "reason": "COMPLETED_IN_OASYS",
+            "moreInfo": "something or other"
+          }
+        """,
+      )
+      .exchange()
+      .expectStatus().isNoContent
+
+    val savedSkip = assessmentSkipRepository.getReferenceById(1)
+
+    assertThat(savedSkip.assessmentType).isEqualTo(ResettlementAssessmentType.BCST2)
+    assertThat(savedSkip.prisonerId).isEqualTo(1)
+    assertThat(savedSkip.reason).isEqualTo(AssessmentSkipReason.COMPLETED_IN_OASYS)
+    assertThat(savedSkip.moreInfo).isEqualTo("something or other")
+    assertThat(savedSkip.createdBy).isEqualTo("RESETTLEMENTPASSPORT_ADM")
+    assertThat(savedSkip.creationDate).isNotNull()
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-7.sql")
+  fun `Cannot skip BCST2 when it is started`() {
+    val nomsId = "G4161UF"
+
+    webTestClient.post()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/skip?assessmentType=BCST2")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .header("Content-Type", "application/json")
+      .bodyValue(
+        """
+          {
+            "reason": "COMPLETED_IN_OASYS",
+            "moreInfo": "something or other"
+          }
+        """,
+      )
+      .exchange()
+      .expectStatus()
+      .isBadRequest()
+      .expectBody()
+      .jsonPath("$.developerMessage")
+      .value { message: String -> assertThat(message).contains("Cannot skip assessment that has already been started") }
+  }
+
+  @Test
+  fun `Skip assessment requires edit role`() {
+    val nomsId = "G4161UF"
+
+    webTestClient.post()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/skip?assessmentType=BCST2")
+      .headers(setAuthorisation(roles = listOf("BAD_ROLE")))
+      .header("Content-Type", "application/json")
+      .bodyValue(
+        """
+          {
+            "reason": "COMPLETED_IN_OASYS",
+            "moreInfo": "something or other"
+          }
+        """,
+      )
+      .exchange()
+      .expectStatus()
+      .isForbidden()
+  }
+
+  @Test
+  fun `Skip assessment requires auth`() {
+    val nomsId = "G4161UF"
+
+    webTestClient.post()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/skip?assessmentType=BCST2")
+      .header("Content-Type", "application/json")
+      .bodyValue(
+        """
+          {
+            "reason": "COMPLETED_IN_OASYS",
+            "moreInfo": "something or other"
+          }
+        """,
+      )
+      .exchange()
+      .expectStatus()
+      .isUnauthorized()
   }
 }

@@ -23,6 +23,12 @@ generic-service:
     API_BASE_URL_CIAG: https://ciag-induction-api-preprod.hmpps.service.justice.gov.uk
     API_BASE_URL_INTERVENTIONS-SERVICE: https://hmpps-interventions-service-preprod.apps.live-1.cloud-platform.service.justice.gov.uk
     API_BASE_URL_POP-USER-SERVICE: https://person-on-probation-user-api-preprod.hmpps.service.justice.gov.uk
+    SCHEDULE_EXPRESSION_CUSTOM-METRICS: 0 0/15 * * * ?
+    SCHEDULE_EXPRESSION_RELEASE-DAY-METRICS: 0 0 8 * * *
+    SCHEDULE_EXPRESSION_RECONCILE-RELEASE-DATES: 0 0 2 * * *
+    SCHEDULE_EXPRESSION_DELETE-EXPIRED-OTP: 0 0 3 * * *
+
+
 
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack

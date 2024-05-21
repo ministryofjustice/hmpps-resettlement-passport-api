@@ -296,6 +296,7 @@ class PoPUserOTPServiceTest {
       resettlementReviewAvailable = false,
       immediateNeedsSubmitted = true,
       preReleaseSubmitted = true,
+      isInWatchlist = false
     )
 
     Mockito.`when`(prisoner.id?.let { prisonerRepository.findById(it) }).thenReturn(Optional.of(prisoner))

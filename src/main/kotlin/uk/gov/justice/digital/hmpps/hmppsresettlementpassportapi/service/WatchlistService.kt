@@ -52,4 +52,8 @@ class WatchlistService(
 
     return prisoner
   }
+
+  fun isPrisonerInWatchList(staffUsername: String, prisoner: PrisonerEntity?): Boolean {
+    return watchlistRepository.findByPrisonerAndStaffUsername(prisoner, staffUsername) != null
+  }
 }

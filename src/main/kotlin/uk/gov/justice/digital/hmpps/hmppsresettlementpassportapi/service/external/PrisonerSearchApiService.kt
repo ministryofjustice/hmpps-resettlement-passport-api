@@ -94,7 +94,7 @@ class PrisonerSearchApiService(
     pageSize: Int,
     sort: String?,
     watchList: Boolean?,
-    staffUsername: String
+    staffUsername: String,
   ): PrisonersList {
     val prisoners = mutableListOf<PrisonersSearch>()
     if (prisonId.isBlank() || prisonId.isEmpty()) {
@@ -201,7 +201,7 @@ class PrisonerSearchApiService(
     prisonId: String,
     assessmentRequiredFilter: Boolean?,
     watchListFilter: Boolean?,
-    staffUsername: String
+    staffUsername: String,
   ): MutableList<Prisoners> {
     val prisonersList = mutableListOf<Prisoners>()
 
@@ -357,7 +357,7 @@ class PrisonerSearchApiService(
       resettlementReviewAvailable = assessmentStatus.resettlementReviewAvailable,
       immediateNeedsSubmitted = assessmentStatus.immediateNeedsSubmitted,
       preReleaseSubmitted = assessmentStatus.preReleaseSubmitted,
-      isInWatchlist = isInWatchlist
+      isInWatchlist = isInWatchlist,
     )
   }
 

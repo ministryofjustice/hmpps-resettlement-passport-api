@@ -36,7 +36,7 @@ class PrisonerService(
     size: Int,
     sort: String,
     watchList: Boolean?,
-    auth: String
+    auth: String,
   ): PrisonersList {
     if (pathwayStatus != null && pathwayView == null) {
       throw ServerWebInputException("pathwayStatus cannot be used without pathwayView")

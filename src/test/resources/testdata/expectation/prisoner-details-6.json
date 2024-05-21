@@ -53,9 +53,9 @@
       "lastDateChange": "2023-08-17"
     }
   ],
-  "assessmentRequired": false,
-  "resettlementReviewAvailable":true,
-  "immediateNeedsSubmitted": true,
+  "assessmentRequired": true,
+  "resettlementReviewAvailable": false,
+  "immediateNeedsSubmitted": false,
   "preReleaseSubmitted": false,
-  "isInWatchlist": false
+  "isInWatchlist": true
 }

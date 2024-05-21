@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
+import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
@@ -25,6 +26,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PathwayAndStatusService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.WatchlistService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClaimFromJWTToken
 import java.time.LocalDate
 import java.time.Period
 
@@ -39,6 +42,7 @@ class PrisonerSearchApiService(
   private val pathwayStatusRepository: PathwayStatusRepository,
   private val resettlementAssessmentRepository: ResettlementAssessmentRepository,
   private val deliusApiService: ResettlementPassportDeliusApiService,
+  private val watchlistService: WatchlistService,
 ) {
 
   companion object {
@@ -89,6 +93,8 @@ class PrisonerSearchApiService(
     pageNumber: Int,
     pageSize: Int,
     sort: String?,
+    watchList: Boolean?,
+    staffUsername: String,
   ): PrisonersList {
     val prisoners = mutableListOf<PrisonersSearch>()
     if (prisonId.isBlank() || prisonId.isEmpty()) {
@@ -126,7 +132,7 @@ class PrisonerSearchApiService(
       )
     }
 
-    val fullList = objectMapper(prisoners, pathwayView, pathwayStatus, prisonId, assessmentRequired)
+    val fullList = objectMapper(prisoners, pathwayView, pathwayStatus, prisonId, assessmentRequired, watchList, staffUsername)
 
     sortPrisoners(sort, fullList)
 
@@ -194,6 +200,8 @@ class PrisonerSearchApiService(
     pathwayStatusToFilter: Status?,
     prisonId: String,
     assessmentRequiredFilter: Boolean?,
+    watchListFilter: Boolean?,
+    staffUsername: String,
   ): MutableList<Prisoners> {
     val prisonersList = mutableListOf<Prisoners>()
 
@@ -213,6 +221,11 @@ class PrisonerSearchApiService(
       val sortedPathwayStatuses: List<PathwayStatus>?
       val pathwayStatus: Status?
       val lastUpdatedDate: LocalDate?
+      val isInWatchList = watchlistService.isPrisonerInWatchList(staffUsername, prisonerEntity)
+
+      if (watchListFilter == true && !isInWatchList) {
+        return@forEach
+      }
 
       if (prisonerEntity != null) {
         pathwayStatuses = if (pathwayView == null) pathwayStatusesEntities.map { PathwayStatus(pathway = it.pathway, status = it.status, lastDateChange = it.updatedDate?.toLocalDate()) }.sortedBy { it.pathway } else null
@@ -283,7 +296,7 @@ class PrisonerSearchApiService(
       .block() ?: throw RuntimeException("Unexpected null returned from request.")
   }
 
-  fun getPrisonerDetailsByNomsId(nomsId: String): Prisoner {
+  fun getPrisonerDetailsByNomsId(nomsId: String, auth: String): Prisoner {
     val prisonerSearch = findPrisonerPersonalDetails(nomsId)
     setDisplayedReleaseDate(prisonerSearch)
 
@@ -330,13 +343,13 @@ class PrisonerSearchApiService(
       personalDetails.contactDetails?.telephone,
       personalDetails.contactDetails?.email,
       prisonerSearch.prisonName,
-
     )
 
     val pathwayStatuses = getPathwayStatuses(prisonerEntity)
 
     val assessmentStatus = isAssessmentRequired(prisonerEntity)
-
+    val staffUsername = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get name from auth token")
+    val isInWatchlist = watchlistService.isPrisonerInWatchList(staffUsername, prisonerEntity)
     return Prisoner(
       personalDetails = prisonerPersonal,
       pathways = pathwayStatuses,
@@ -344,6 +357,7 @@ class PrisonerSearchApiService(
       resettlementReviewAvailable = assessmentStatus.resettlementReviewAvailable,
       immediateNeedsSubmitted = assessmentStatus.immediateNeedsSubmitted,
       preReleaseSubmitted = assessmentStatus.preReleaseSubmitted,
+      isInWatchlist = isInWatchlist,
     )
   }
 

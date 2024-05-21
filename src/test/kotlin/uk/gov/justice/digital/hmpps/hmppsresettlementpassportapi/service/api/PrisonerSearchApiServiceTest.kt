@@ -203,7 +203,7 @@ class PrisonerSearchApiServiceTest {
       10,
       "releaseDate,DESC",
       false,
-      "123"
+      "123",
     )
 
     Assertions.assertEquals(getExpectedPrisonersPathwayView(), prisoners)
@@ -228,7 +228,7 @@ class PrisonerSearchApiServiceTest {
       10,
       "releaseDate,DESC",
       false,
-      "123"
+      "123",
     )
 
     Assertions.assertEquals(getExpectedPrisonersPathwayViewAndPathwayStatus(), prisoners)

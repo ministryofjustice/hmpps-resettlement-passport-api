@@ -9,9 +9,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Watc
 
 @Repository
 interface WatchlistRepository : JpaRepository<WatchlistEntity, Long> {
+<<<<<<< HEAD
+  fun findByPrisonerAndStaffUsername(prisoner: PrisonerEntity?, staffUsername: String): WatchlistEntity?
+=======
   @Modifying
   @Query("DELETE FROM WatchlistEntity w WHERE w.prisoner.nomsId = :nomsId and w.staffUsername = :staffUsername")
   fun deleteByNomsIdAndStaffUsername(nomsId: String, staffUsername: String)
-
-  fun findByPrisonerAndStaffUsername(prisoner: PrisonerEntity?, staffUsername: String): WatchlistEntity?
+>>>>>>> main
 }

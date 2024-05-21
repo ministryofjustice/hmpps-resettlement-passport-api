@@ -5,7 +5,7 @@
         "code": "CRSSAA",
         "description": "Community Work"
       },
-      "dateTime": "2024-09-18T09:00:00+01:00",
+      "dateTime": {{now timezone='Europe/London' format='yyyy-MM-dd HH:mm:ssZ'}},
       "duration": "PT30M",
       "staff": {
         "code": "CRSUATU",
@@ -35,7 +35,7 @@
         "code": "CRSSAA",
         "description": "Jobs centre plus"
       },
-      "dateTime": "2024-09-18T14:46:00+01:00",
+      "dateTime": {{now offset='1 days' timezone='Europe/London' format='yyyy-MM-dd HH:mm:ssZ'}},
       "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",

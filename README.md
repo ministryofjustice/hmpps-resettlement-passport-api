@@ -42,3 +42,8 @@ The `rename-project.bash` script takes a single argument - the name of the proje
 * The main package name (project name with hyphens removed)
 
 It then performs a search and replace and directory renames so the project is ready to be used.
+
+## Testing wiremock stubs locally
+- build the docker image: `docker build -f stubs.Dockerfile -t stubs .`
+- run the stubs locally on port 8080: `docker run -p 8080:8080 stubs `
+- test it, for example: `http://localhost:8080/resettlement-passport-and-delius-api/appointments/U328968`

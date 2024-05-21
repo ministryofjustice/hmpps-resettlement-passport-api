@@ -1,0 +1,98 @@
+{
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "type" : "object",
+  "properties" : {
+    "generic" : {
+      "type" : "boolean"
+    },
+    "genericAssessmentVersion" : {
+      "type" : "integer"
+    },
+    "pages" : {
+      "type" : "array",
+      "items" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "nextPageLogic" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "properties" : {
+                "answers" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object"
+                  }
+                },
+                "nextPageId" : {
+                  "type" : "string"
+                },
+                "questionId" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "questions" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "properties" : {
+                "id" : {
+                  "type" : "string"
+                },
+                "options" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "description" : {
+                        "type" : "string"
+                      },
+                      "displayText" : {
+                        "type" : "string"
+                      },
+                      "exclusive" : {
+                        "type" : "boolean"
+                      },
+                      "id" : {
+                        "type" : "string"
+                      }
+                    }
+                  }
+                },
+                "subTitle" : {
+                  "type" : "string"
+                },
+                "title" : {
+                  "type" : "string",
+                },
+                "type" : {
+                  "type" : "string",
+                  "enum" : [ "RADIO", "SHORT_TEXT", "LONG_TEXT", "ADDRESS", "CHECKBOX" ]
+                },
+                "validationType" : {
+                  "type" : "string",
+                  "enum" : [ "MANDATORY", "OPTIONAL" ]
+                }
+              }
+            }
+          },
+          "title" : {
+            "type" : "string"
+          }
+        }
+      }
+    },
+    "pathway" : {
+      "type" : "string",
+      "enum" : [ "ACCOMMODATION", "ATTITUDES_THINKING_AND_BEHAVIOUR", "CHILDREN_FAMILIES_AND_COMMUNITY", "DRUGS_AND_ALCOHOL", "EDUCATION_SKILLS_AND_WORK", "FINANCE_AND_ID", "HEALTH" ]
+    },
+    "version" : {
+      "type" : "integer"
+    }
+  }
+}

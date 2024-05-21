@@ -77,6 +77,7 @@ dependencies {
   testImplementation("com.squareup.okhttp3:okhttp:4.12.0")
   testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
   testImplementation("io.mockk:mockk:1.13.10")
+  testImplementation("com.github.victools:jsonschema-generator:4.35.0")
 
   if (project.hasProperty("docs")) {
     implementation("com.h2database:h2")

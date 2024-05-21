@@ -48,11 +48,47 @@ class WatchlistIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `Create watchlist - Cannot get name from auth token`() {
+  fun `Create watchlist - cannot get name from auth token (not permitted)`() {
     val nomsId = "ABC1234"
     webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/watch")
       .exchange()
       .expectStatus().isUnauthorized
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-watchlist.sql")
+  fun `Delete watchlist - happy path`() {
+    val nomsId = "ABC1234"
+
+    webTestClient.delete()
+      .uri("/resettlement-passport/prisoner/$nomsId/watch")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+
+    val actualWatchlistEntry = watchlistRepository.findAll()
+    assertThat(actualWatchlistEntry).isEmpty()
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-watchlist.sql")
+  fun `Delete watchlist - cannot get name from auth token (not permitted)`() {
+    val nomsId = "ABC1234"
+
+    webTestClient.delete()
+      .uri("/resettlement-passport/prisoner/$nomsId/watch")
+      .exchange()
+      .expectStatus().isUnauthorized
+  }
+
+  @Test
+  fun `Delete watchlist - nomsId not found in database`() {
+    val nomsId = "ABC1234"
+    webTestClient.delete()
+      .uri("/resettlement-passport/prisoner/$nomsId/watch")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isNotFound
   }
 }

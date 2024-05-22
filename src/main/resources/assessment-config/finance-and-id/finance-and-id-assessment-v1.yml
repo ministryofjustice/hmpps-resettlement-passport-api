@@ -21,6 +21,14 @@ pages:
             answer: "YES"
         nextPageId: WHAT_ID_DOCUMENTS
       - questionId: HAS_BANK_ACCOUNT
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO"
+        nextPageId: HELP_WITH_BANK_ACCOUNT
+      - questionId: HAS_BANK_ACCOUNT
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
         nextPageId: HELP_WITH_BANK_ACCOUNT
 
   - id: HELP_WITH_BANK_ACCOUNT
@@ -101,8 +109,15 @@ pages:
             answer: "YES"
         nextPageId: SELECT_BENEFITS
       - questionId: RECEIVING_BENEFITS
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO"
         nextPageId: DEBTS_OR_ARREARS
-
+      - questionId: RECEIVING_BENEFITS
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
+        nextPageId: DEBTS_OR_ARREARS
   - id: SELECT_BENEFITS
     questions:
       - id: SELECT_BENEFITS
@@ -149,7 +164,16 @@ pages:
           - "@class": "StringAnswer"
             answer: "YES"
         nextPageId: HELP_MANAGE_DEBTS
-      - nextPageId: FINAL_QUESTION_NEXT_PAGE
+      - questionId: DEBTS_OR_ARREARS
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO"
+        nextPageId: FINAL_QUESTION_NEXT_PAGE
+      - questionId: DEBTS_OR_ARREARS
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
+        nextPageId: FINAL_QUESTION_NEXT_PAGE
 
   - id: HELP_MANAGE_DEBTS
     questions:

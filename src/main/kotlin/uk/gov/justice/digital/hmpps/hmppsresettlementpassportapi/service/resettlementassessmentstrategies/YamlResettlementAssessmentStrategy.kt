@@ -107,7 +107,6 @@ class YamlResettlementAssessmentStrategy(
       pageConfig.nextPageLogic[0].nextPageId
     } else {
       pageConfig.nextPageLogic?.firstOrNull { npl -> npl.answers?.contains(questionsAndAnswers.first { it.question == npl.questionId }.answer) == true }?.nextPageId
-        ?: pageConfig.nextPageLogic?.firstOrNull { logic -> logic.answers == null }?.nextPageId
     }
 
     if (nextPageId == null) {

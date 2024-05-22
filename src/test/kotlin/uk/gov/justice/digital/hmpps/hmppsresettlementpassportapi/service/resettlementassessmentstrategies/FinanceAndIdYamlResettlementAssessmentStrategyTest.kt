@@ -67,7 +67,7 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest {
     PathMatchingResourcePatternResolver(),
   )
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "page: {1}")
   @MethodSource("test next page function flow - no existing assessment data")
   fun `test next page function flow - no existing assessment`(
     questionsAndAnswers: List<ResettlementAssessmentRequestQuestionAndAnswer<*>>,
@@ -240,7 +240,7 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest {
     ),
   )
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "start: {0}")
   @MethodSource("test get page from Id - no existing assessment data")
   fun `test get page from Id - no existing assessment`(pageIdInput: String, expectedPage: ResettlementAssessmentResponsePage) {
     val nomsId = "123"

@@ -12,7 +12,7 @@ generic-service:
     API_BASE_URL_PRISONER-SEARCH: https://prisoner-search.prison.service.justice.gov.uk
     API_BASE_URL_CVL: https://create-and-vary-a-licence-api.hmpps.service.justice.gov.uk
     API_BASE_URL_ARN: https://assess-risks-and-needs.hmpps.service.justice.gov.uk
-    API_BASE_URL_PRISON: https://api.prison.service.justice.gov.uk
+    API_BASE_URL_PRISON: https://prison-api.prison.service.justice.gov.uk
     API_BASE_URL_CASE-NOTES: https://offender-case-notes.service.justice.gov.uk
     API_BASE_URL_KEY-WORKER: https://keyworker-api.prison.service.justice.gov.uk
     API_BASE_URL_ALLOCATION-MANAGER: https://allocation-manager-production.apps.live.cloud-platform.service.justice.gov.uk

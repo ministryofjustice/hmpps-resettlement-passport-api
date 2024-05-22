@@ -38,7 +38,9 @@ class YamlResettlementAssessmentStrategy(
   private val pathwayStatusRepository: PathwayStatusRepository,
   @Value("\${resettlement-assessment.useYaml}") private val useYaml: Boolean,
 ) : IResettlementAssessmentStrategy {
-  override fun appliesTo(pathway: Pathway): Boolean = useYaml && pathway == Pathway.ACCOMMODATION // For now can only be used for ACCOMMODATION
+  private val availablePathways: Set<Pathway> = config.questionSets.mapNotNull { it.pathway }.toSet()
+
+  override fun appliesTo(pathway: Pathway): Boolean = useYaml && pathway in availablePathways
 
   fun getConfig(pathway: Pathway, assessmentType: ResettlementAssessmentType, version: Int = 1): AssessmentQuestionSet {
     val pathwayConfig = config.questionSets.first { it.pathway == pathway && it.version == version }

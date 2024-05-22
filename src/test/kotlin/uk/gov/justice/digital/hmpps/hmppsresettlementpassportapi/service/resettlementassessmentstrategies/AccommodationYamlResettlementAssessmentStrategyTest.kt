@@ -50,7 +50,7 @@ import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension::class)
-class YamlResettlementAssessmentStrategyTest {
+class AccommodationYamlResettlementAssessmentStrategyTest {
   private lateinit var resettlementAssessmentService: YamlResettlementAssessmentStrategy
 
   @Mock
@@ -1468,7 +1468,7 @@ class YamlResettlementAssessmentStrategyTest {
     Arguments.of(Pathway.DRUGS_AND_ALCOHOL, false, false),
     Arguments.of(Pathway.EDUCATION_SKILLS_AND_WORK, true, false),
     Arguments.of(Pathway.EDUCATION_SKILLS_AND_WORK, false, false),
-    Arguments.of(Pathway.FINANCE_AND_ID, true, false),
+    Arguments.of(Pathway.FINANCE_AND_ID, true, true),
     Arguments.of(Pathway.FINANCE_AND_ID, false, false),
     Arguments.of(Pathway.HEALTH, true, false),
     Arguments.of(Pathway.HEALTH, false, false),

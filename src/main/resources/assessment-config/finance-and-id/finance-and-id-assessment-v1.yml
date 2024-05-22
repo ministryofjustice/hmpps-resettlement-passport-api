@@ -1,0 +1,184 @@
+version: 1
+pathway: "FINANCE_AND_ID"
+genericAssessmentVersion: 1
+pages:
+  - id: HAS_BANK_ACCOUNT
+    questions:
+      - id: HAS_BANK_ACCOUNT
+        title: "Does the person in prison have a bank account?"
+        type: "RADIO"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - questionId: HAS_BANK_ACCOUNT
+        answers:
+          - "@class": "StringAnswer"
+            answer: "YES"
+        nextPageId: WHAT_ID_DOCUMENTS
+      - questionId: HAS_BANK_ACCOUNT
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO"
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
+        nextPageId: HELP_WITH_BANK_ACCOUNT
+
+  - id: HELP_WITH_BANK_ACCOUNT
+    questions:
+      - id: HELP_WITH_BANK_ACCOUNT
+        title: "Does the person in prison want help to apply for a bank account?"
+        type: "RADIO"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - nextPageId: WHAT_ID_DOCUMENTS
+
+  - id: WHAT_ID_DOCUMENTS
+    questions:
+      - id: WHAT_ID_DOCUMENTS
+        title: "What ID documents does the person in prison have?"
+        type: CHECKBOX
+        options:
+          - id: "BIRTH_CERTIFICATE"
+            displayText: "Birth or adoption certificate"
+          - id: "PASSPORT"
+            displayText: "Passport"
+          - id: "DRIVING_LICENCE"
+            displayText: "Driving licence"
+          - id: "MARRIAGE_CERTIFICATE"
+            displayText: "Marriage or civil partnership certificate"
+          - id: "DIVORCE_CERTIFICATE"
+            displayText: "Divorce decree absolute certificate"
+          - id: "BIOMETRIC_RESIDENCE_PERMIT"
+            displayText: "Biometric residence permit"
+          - id: "DEED_POLL_CERTIFICATE"
+            displayText: "Deed poll certificate"
+          - id: "NO_ID_DOCUMENTS"
+            displayText: "No ID documents"
+            exclusive: true
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+            exclusive: true
+    nextPageLogic:
+      - nextPageId: HELP_APPLY_FOR_ID
+
+  - id: HELP_APPLY_FOR_ID
+    questions:
+      - id: HELP_APPLY_FOR_ID
+        title: "Does the person leaving prison want help to apply for ID?"
+        type: RADIO
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - nextPageId: RECEIVING_BENEFITS
+
+  - id: RECEIVING_BENEFITS
+    questions:
+      - id: RECEIVING_BENEFITS
+        title: "Was the person in prison receiving benefits before custody?"
+        type: RADIO
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - questionId: RECEIVING_BENEFITS
+        answers:
+          - "@class": "StringAnswer"
+            answer: "YES"
+        nextPageId: SELECT_BENEFITS
+      - questionId: RECEIVING_BENEFITS
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO"
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
+        nextPageId: DEBTS_OR_ARREARS
+  - id: SELECT_BENEFITS
+    questions:
+      - id: SELECT_BENEFITS
+        title: "Select benefits the person in prison received before custody"
+        type: CHECKBOX
+        options:
+          - id: "ESA"
+            displayText: "Employment and support allowance (ESA)"
+          - id: "HOUSING_BENEFIT"
+            displayText: "Housing benefit"
+          - id: "UNIVERSAL_CREDIT_HOUSING_ELEMENT"
+            displayText: "Universal credit housing element"
+          - id: "UNIVERSAL_CREDIT"
+            displayText: "Universal credit"
+          - id: "PIP"
+            displayText: "Personal independence payment (PIP)"
+          - id: "STATE_PENSION"
+            displayText: "State pension"
+          - id: "NO_BENEFITS"
+            displayText: "No benefits"
+          - id: "OTHER"
+            displayText: "Other"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+            exclusive: true
+    nextPageLogic:
+      - nextPageId: DEBTS_OR_ARREARS
+
+  - id: DEBTS_OR_ARREARS
+    questions:
+      - id: DEBTS_OR_ARREARS
+        title: "Does the person in prison have any debts or arrears?"
+        type: RADIO
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - questionId: DEBTS_OR_ARREARS
+        answers:
+          - "@class": "StringAnswer"
+            answer: "YES"
+        nextPageId: HELP_MANAGE_DEBTS
+      - questionId: DEBTS_OR_ARREARS
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO"
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
+        nextPageId: FINAL_QUESTION_NEXT_PAGE
+
+  - id: HELP_MANAGE_DEBTS
+    questions:
+      - id: HELP_MANAGE_DEBTS
+        title: "Does the person in prison want support to manage their debts or arrears?"
+        type: RADIO
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - nextPageId: FINAL_QUESTION_NEXT_PAGE
+
+

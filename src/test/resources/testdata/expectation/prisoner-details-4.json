@@ -56,5 +56,6 @@
   "assessmentRequired": false,
   "resettlementReviewAvailable":false,
   "immediateNeedsSubmitted": true,
-  "preReleaseSubmitted": true
+  "preReleaseSubmitted": true,
+  "isInWatchlist": false
 }

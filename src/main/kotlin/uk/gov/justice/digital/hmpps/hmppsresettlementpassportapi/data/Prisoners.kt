@@ -64,4 +64,5 @@ data class Prisoner(
   val resettlementReviewAvailable: Boolean,
   val immediateNeedsSubmitted: Boolean,
   val preReleaseSubmitted: Boolean,
+  val isInWatchlist: Boolean,
 )

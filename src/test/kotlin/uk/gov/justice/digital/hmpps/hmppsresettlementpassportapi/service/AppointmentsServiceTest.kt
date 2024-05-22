@@ -145,7 +145,7 @@ class AppointmentsServiceTest {
     Assertions.assertEquals(parsedNotes, response)
   }
 
-  private fun createTestDeliusAppointment(appointmentDate: String = "2024-05-02T10:00:00Z"): AppointmentDelius {
+  private fun createTestDeliusAppointment(appointmentDate: String = "2024-05-22T09:40:06+01:00"): AppointmentDelius {
     val info = Info(code = "APPOINTMENT_TYPE_CODE", description = "Appointment Type Description")
     val staffInfo = StaffInfo(code = "STAFF_CODE", name = Fullname(forename = "John", surname = "Doe"), email = "john.doe@example.com")
     val locationInfo = LocationInfo(code = "LOCATION_CODE", description = "Location Description", address = Address(buildingName = "Building Name", buildingNumber = "123", streetName = "Street Name", district = "District", town = "Town", county = "County", postcode = "Postcode"))

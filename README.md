@@ -29,3 +29,8 @@ Add it as a JSON schema mapping in Languages and Frameworks -> Schemas and DTDs 
 
 ### Regenerating the schema
 If the yaml structure changes, rerun the `GenerateAssessmentSchema` file and commit the changes.
+
+## Testing wiremock stubs locally
+- build the docker image: `docker build -f stubs.Dockerfile -t stubs .`
+- run the stubs locally on port 8080: `docker run -p 8080:8080 stubs `
+- test it, for example: `http://localhost:8080/resettlement-passport-and-delius-api/appointments/U328968`

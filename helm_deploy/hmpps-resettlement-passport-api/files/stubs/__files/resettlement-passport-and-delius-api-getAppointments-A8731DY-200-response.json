@@ -5,7 +5,7 @@
         "code": "CRSSAA",
         "description": "Community Work"
       },
-      "dateTime": "2024-05-22T09:00:00+01:00",
+      "dateTime": "{{now format='yyyy-MM-dd\'T\'HH:mm:ss'}}+01:00",
       "duration": "PT30M",
       "staff": {
         "code": "CRSUATU",
@@ -35,7 +35,7 @@
         "code": "CRSSAA",
         "description": "Jobs centre plus"
       },
-      "dateTime": "2024-09-18T14:46:00+01:00",
+      "dateTime": "{{now offset='1 days' format='yyyy-MM-dd\'T\'HH:mm:ss'}}+01:00",
       "duration": "PT1H",
       "staff": {
         "code": "CRSUATU",
@@ -65,7 +65,7 @@
         "code": "CRSSAA",
         "description": "Appointment with CRS Staff (NS)"
       },
-      "dateTime": "2024-09-14T14:05:00+01:00",
+      "dateTime": "{{now offset='-5 days' format='yyyy-MM-dd\'T\'HH:mm:ss'}}+01:00",
       "duration": "PT2XXXH",
       "staff": {
         "code": "CRSUATU",
@@ -97,7 +97,7 @@
     {
       "type": {
         "code": "CRSSAA",
-        "description": "'';!--\"<XSS>=&{()}"
+        "description": "description"
     },
     "dateTime": "2024-09-14T14:05:00+01:00",
     "duration": "PT2XXXH",
@@ -131,17 +131,17 @@
     {
       "type": {
         "code": "CRSSAA",
-        "description": "\";alert('XSS');//"
+        "description": "description"
       },
       "dateTime": "2024-09-14T14:05:00+01:00",
       "duration": "PT2XXXH",
       "staff": {
         "code": "CRSUATU",
         "name": {
-          "forename": "\";alert('XSS');//",
-          "surname": "\";alert('XSS');//"
+          "forename": "Bob",
+          "surname": "Jones"
         },
-        "email": "\";alert('XSS');//"
+        "email": "description"
       },
       "location": {
         "code": "CRSEXTL",
@@ -175,7 +175,7 @@
           "forename": "CRSUATU",
           "surname": "Staff"
         },
-        "email": "<;? echo(';<;SCR)';;"
+        "email": "email@test.com"
       },
       "location": {
         "code": "CRSEXTL",
@@ -216,7 +216,7 @@
         "description": "CRS Provider Location",
         "address": {
           "buildingName": "",
-          "buildingNumber": "<IMG SRC=\"jav&#x0A;ascript:alert(<WBR>'XSS');\">",
+          "buildingNumber": "2",
           "streetName": "High Street",
           "district": "",
           "town": "EDINBURGH",
@@ -250,7 +250,7 @@
         "address": {
           "buildingName": "",
           "buildingNumber": "77",
-          "streetName": "'';!--\"&lt;XSS&gt;=&{()}",
+          "streetName": "London Road",
           "district": "",
           "town": "EDINBURGH",
           "county": "",
@@ -286,7 +286,7 @@
           "buildingNumber": "77",
           "streetName": "High Street",
           "district": "",
-          "town": "'';!--\"<XSS>=&{()}",
+          "town": "London",
     "county": "",
     "postcode": "EH50 2GR"
     }
@@ -355,7 +355,7 @@
           "district": "",
           "town": "EDINBURGH",
           "county": "",
-          "postcode": "‘)alert(1);//"
+          "postcode": "SW1"
         }
       },
       "description": "Appointment with CRS Staff (NS)",

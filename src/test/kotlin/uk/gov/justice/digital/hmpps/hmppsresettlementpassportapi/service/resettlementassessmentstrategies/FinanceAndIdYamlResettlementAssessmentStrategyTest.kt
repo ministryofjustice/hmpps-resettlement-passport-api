@@ -67,7 +67,7 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest {
     PathMatchingResourcePatternResolver(),
   )
 
-  @ParameterizedTest(name = "page: {1}")
+  @ParameterizedTest(name = "current: {1}, expected: {2}")
   @MethodSource("test next page function flow - no existing assessment data")
   fun `test next page function flow - no existing assessment`(
     questionsAndAnswers: List<ResettlementAssessmentRequestQuestionAndAnswer<*>>,

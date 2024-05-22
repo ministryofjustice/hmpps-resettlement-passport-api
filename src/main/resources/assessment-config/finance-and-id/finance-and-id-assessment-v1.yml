@@ -24,9 +24,6 @@ pages:
         answers:
           - "@class": "StringAnswer"
             answer: "NO"
-        nextPageId: HELP_WITH_BANK_ACCOUNT
-      - questionId: HAS_BANK_ACCOUNT
-        answers:
           - "@class": "StringAnswer"
             answer: "NO_ANSWER"
         nextPageId: HELP_WITH_BANK_ACCOUNT
@@ -112,9 +109,6 @@ pages:
         answers:
           - "@class": "StringAnswer"
             answer: "NO"
-        nextPageId: DEBTS_OR_ARREARS
-      - questionId: RECEIVING_BENEFITS
-        answers:
           - "@class": "StringAnswer"
             answer: "NO_ANSWER"
         nextPageId: DEBTS_OR_ARREARS
@@ -168,9 +162,6 @@ pages:
         answers:
           - "@class": "StringAnswer"
             answer: "NO"
-        nextPageId: FINAL_QUESTION_NEXT_PAGE
-      - questionId: DEBTS_OR_ARREARS
-        answers:
           - "@class": "StringAnswer"
             answer: "NO_ANSWER"
         nextPageId: FINAL_QUESTION_NEXT_PAGE

@@ -32,7 +32,7 @@ import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension::class)
-class ChildrenFamiliesAndCommunitiesYamlStrategyTest: YamlResettlementStrategyTest() {
+class ChildrenFamiliesAndCommunitiesYamlStrategyTest : YamlResettlementStrategyTest() {
 
   @ParameterizedTest
   @MethodSource("test next page function flow - no existing assessment data")

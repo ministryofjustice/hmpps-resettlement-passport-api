@@ -43,7 +43,7 @@ import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension::class)
-class AccommodationYamlResettlementAssessmentStrategyTest: YamlResettlementStrategyTest(){
+class AccommodationYamlResettlementAssessmentStrategyTest : YamlResettlementStrategyTest() {
 
   private fun stubSave() {
     given(resettlementAssessmentRepository.save(any())).willAnswer { mock ->

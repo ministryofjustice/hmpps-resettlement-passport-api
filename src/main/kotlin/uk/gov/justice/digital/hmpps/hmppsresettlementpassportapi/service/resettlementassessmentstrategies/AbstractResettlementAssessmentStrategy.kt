@@ -34,7 +34,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClai
 import java.time.LocalDateTime
 import kotlin.reflect.KClass
 
-private val yamlPathways = setOf(Pathway.ACCOMMODATION, Pathway.FINANCE_AND_ID)
+private val yamlPathways = setOf(Pathway.ACCOMMODATION, Pathway.FINANCE_AND_ID, Pathway.CHILDREN_FAMILIES_AND_COMMUNITY)
 
 abstract class AbstractResettlementAssessmentStrategy<T, Q>(
   private val resettlementAssessmentRepository: ResettlementAssessmentRepository,

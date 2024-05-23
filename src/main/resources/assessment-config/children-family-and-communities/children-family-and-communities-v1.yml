@@ -1,0 +1,202 @@
+version: 1
+pathway: "CHILDREN_FAMILIES_AND_COMMUNITY"
+genericAssessmentVersion: 1
+pages:
+  - id: PARTNER_OR_SPOUSE
+    questions:
+      - id: PARTNER_OR_SPOUSE
+        title: "Does the person in prison have a partner or spouse?"
+        type: "RADIO"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - nextPageId: PRIMARY_CARER_FOR_CHILDREN
+
+  - id: PRIMARY_CARER_FOR_CHILDREN
+    questions:
+      - id: PRIMARY_CARER_FOR_CHILDREN
+        title: "Is the person in prison the primary carer for any children?"
+        type: "RADIO"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - questionId: PRIMARY_CARER_FOR_CHILDREN
+        answers:
+          - "@class": "StringAnswer"
+            answer: "YES"
+        nextPageId: CHILDREN_SERVICES_INVOLVED
+      - questionId: PRIMARY_CARER_FOR_CHILDREN
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO"
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
+        nextPageId: CARING_FOR_ADULT
+
+  - id: CHILDREN_SERVICES_INVOLVED
+    questions:
+      - id: CHILDREN_SERVICES_INVOLVED
+        title: "Are children's services involved with the person in prison and the children they look after?"
+        type: "RADIO"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - questionId: CHILDREN_SERVICES_INVOLVED
+        answers:
+          - "@class": "StringAnswer"
+            answer: "YES"
+        nextPageId: SUPPORT_MEETING_CHILDREN_SERVICES
+      - questionId: CHILDREN_SERVICES_INVOLVED
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO"
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
+        nextPageId: CARING_FOR_ADULT
+
+  - id: SUPPORT_MEETING_CHILDREN_SERVICES
+    questions:
+      - id: SUPPORT_MEETING_CHILDREN_SERVICES
+        title: "Does the person in prison want support when they meet with children's services?"
+        type: RADIO
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - nextPageId: CARING_FOR_ADULT
+
+  - id: CARING_FOR_ADULT
+    questions:
+      - id: CARING_FOR_ADULT
+        title: "Does the person in prison have caring responsibilities for any adults?"
+        type: RADIO
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - questionId: CARING_FOR_ADULT
+        answers:
+          - "@class": "StringAnswer"
+            answer: "YES"
+        nextPageId: SOCIAL_SERVICES_INVOLVED_FOR_ADULT
+      - questionId: CARING_FOR_ADULT
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO"
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
+        nextPageId: SUPPORT_FROM_SOCIAL_SERVICES
+
+  - id: SOCIAL_SERVICES_INVOLVED_FOR_ADULT
+    questions:
+      - id: SOCIAL_SERVICES_INVOLVED_FOR_ADULT
+        title: "Are social services involved with the person in prison and the adult they provide care for?"
+        type: RADIO
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - nextPageId: SUPPORT_FROM_SOCIAL_SERVICES
+
+  - id: SUPPORT_FROM_SOCIAL_SERVICES
+    questions:
+      - id: SUPPORT_FROM_SOCIAL_SERVICES
+        title: "Has the person in prison themselves ever received support from social services?"
+        type: RADIO
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - nextPageId: FRIEND_FAMILY_COMMUNITY_SUPPORT
+
+  - id: FRIEND_FAMILY_COMMUNITY_SUPPORT
+    questions:
+      - id: FRIEND_FAMILY_COMMUNITY_SUPPORT
+        title: "Will the person in prison have support from family, friends or their community outside of prison?"
+        type: RADIO
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - nextPageId: INVOLVEMENT_IN_GANG_ACTIVITY
+
+  - id: INVOLVEMENT_IN_GANG_ACTIVITY
+    questions:
+      - id: INVOLVEMENT_IN_GANG_ACTIVITY
+        title: "Has the person in prison had any involvement in gang activity?"
+        type: RADIO
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - nextPageId: UNDER_THREAT_OUTSIDE
+
+  - id: UNDER_THREAT_OUTSIDE
+    questions:
+      - id: UNDER_THREAT_OUTSIDE
+        title: "Is the person in prison under threat outside of prison?"
+        type: RADIO
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - nextPageId: COMMUNITY_ORGANISATION_SUPPORT
+
+  - id: COMMUNITY_ORGANISATION_SUPPORT
+    questions:
+      - id: COMMUNITY_ORGANISATION_SUPPORT
+        title: "Does the person in prison need support from community organisations outside of prison?"
+        type: RADIO
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - nextPageId: FINAL_QUESTION_NEXT_PAGE
+

@@ -184,7 +184,8 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
       if (resettlementAssessmentResponsePage.id == GenericAssessmentPage.CHECK_ANSWERS.id) {
         // If the existing assessment is submitted we are in an edit and don't want to send back the ASSESSMENT_SUMMARY questions
         val questionsToExclude = if (edit) {
-          GenericAssessmentPage.ASSESSMENT_SUMMARY.questionsAndAnswers.map { it.question }
+          GenericAssessmentPage.ASSESSMENT_SUMMARY.questionsAndAnswers + GenericAssessmentPage.PRERELEASE_ASSESSMENT_SUMMARY.questionsAndAnswers
+            .map { it.question }
         } else {
           listOf()
         }

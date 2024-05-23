@@ -151,17 +151,71 @@ class LegacyResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val sampleAssessment = ResettlementAssessmentQuestionAndAnswerList(assessment = mutableListOf())
 
     val expectedResettlementAssessments = listOf(
-      ResettlementAssessmentEntity(id = 2, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, statusChangedTo = Status.SUPPORT_DECLINED, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = sampleAssessment, creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = "Some case notes", createdByUserId = "JSMITH_GEN", submissionDate = null),
       ResettlementAssessmentEntity(
-        id = 1, prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-17T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")), pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, statusChangedTo = Status.SUPPORT_REQUIRED, assessmentType = ResettlementAssessmentType.BCST2,
-        assessment = ResettlementAssessmentQuestionAndAnswerList(
-          mutableListOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "HELP_TO_MANAGE_ANGER", answer = StringAnswer(answer = "NO")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "ISSUES_WITH_GAMBLING", answer = StringAnswer(answer = "YES")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "CASE_NOTE_SUMMARY", answer = StringAnswer(answer = "My case note summary..."))),
+        id = 2,
+        prisoner = PrisonerEntity(
+          id = 1,
+          nomsId = "ABC1234",
+          creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"),
+          crn = "123",
+          prisonId = "MDI",
+          releaseDate = LocalDate.parse("2030-09-12"),
         ),
-        creationDate = LocalDateTime.parse("2024-01-16T14:42:27.905483"), createdBy = "RESETTLEMENTPASSPORT_ADM", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = "My case note summary...", createdByUserId = "RESETTLEMENTPASSPORT_ADM", submissionDate = null,
+        pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+        statusChangedTo = Status.SUPPORT_DECLINED,
+        assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN,
+        assessment = sampleAssessment,
+        creationDate = LocalDateTime.parse("2023-01-09T19:02:45"),
+        createdBy = "A User",
+        assessmentStatus = ResettlementAssessmentStatus.COMPLETE,
+        caseNoteText = "Some case notes",
+        createdByUserId = "JSMITH_GEN",
+        submissionDate = null,
+      ),
+      ResettlementAssessmentEntity(
+        id = 1,
+        prisoner = PrisonerEntity(
+          id = 1,
+          nomsId = "ABC1234",
+          creationDate = LocalDateTime.parse("2023-08-17T12:21:38.709"),
+          crn = "123",
+          prisonId = "MDI",
+          releaseDate = LocalDate.parse("2030-09-12"),
+        ),
+        pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+        statusChangedTo = Status.SUPPORT_REQUIRED,
+        assessmentType = ResettlementAssessmentType.BCST2,
+        assessment = ResettlementAssessmentQuestionAndAnswerList(
+          mutableListOf(
+            ResettlementAssessmentSimpleQuestionAndAnswer(
+              questionId = "HELP_TO_MANAGE_ANGER",
+              answer = StringAnswer(answer = "NO"),
+            ),
+            ResettlementAssessmentSimpleQuestionAndAnswer(
+              questionId = "ISSUES_WITH_GAMBLING",
+              answer = StringAnswer(answer = "YES"),
+            ),
+            ResettlementAssessmentSimpleQuestionAndAnswer(
+              questionId = "SUPPORT_NEEDS",
+              answer = StringAnswer(answer = "SUPPORT_REQUIRED"),
+            ),
+            ResettlementAssessmentSimpleQuestionAndAnswer(
+              questionId = "CASE_NOTE_SUMMARY",
+              answer = StringAnswer(answer = "My case note summary..."),
+            ),
+          ),
+        ),
+        creationDate = LocalDateTime.parse("2024-01-16T14:42:27.905483"),
+        createdBy = "RESETTLEMENTPASSPORT_ADM",
+        assessmentStatus = ResettlementAssessmentStatus.COMPLETE,
+        caseNoteText = "My case note summary...",
+        createdByUserId = "RESETTLEMENTPASSPORT_ADM",
+        submissionDate = null,
       ),
     )
     val actualResettlementAssessments = resettlementAssessmentRepository.findAll()
-    assertThat(actualResettlementAssessments).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedResettlementAssessments)
+    assertThat(actualResettlementAssessments).usingRecursiveComparison()
+      .ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedResettlementAssessments)
   }
 
   @Test
@@ -231,7 +285,13 @@ class LegacyResettlementAssessmentIntegrationTest : IntegrationTestBase() {
         }
         """.trimIndent(),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), user = "System User", authSource = "nomis"))
+      .headers(
+        setAuthorisation(
+          roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"),
+          user = "System User",
+          authSource = "nomis",
+        ),
+      )
       .exchange()
       .expectStatus().isNotFound
       .expectHeader().contentType("application/json")
@@ -315,5 +375,30 @@ class LegacyResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody()
       .json(expectedOutput)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-10-post-submit-all.sql")
+  fun `Check your answers response for post submit of RESETTLEMENT_PLAN`() {
+    val nomsId = "ABC1234"
+    val pathway = "DRUGS_AND_ALCOHOL"
+    val assessmentType = "RESETTLEMENT_PLAN"
+    val page = "CHECK_ANSWERS"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/page/$page?assessmentType=$assessmentType")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("questionsAndAnswers[*].originalPageId")
+      .value { pageIds: List<String> ->
+        assertThat(pageIds).containsExactly(
+          "DRUG_ISSUES",
+          "SUPPORT_WITH_DRUG_ISSUES",
+          "ALCOHOL_ISSUES",
+        ).doesNotContain("PRERELEASE_ASSESSMENT_SUMMARY")
+      }
   }
 }

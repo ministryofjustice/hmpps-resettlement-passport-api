@@ -70,7 +70,7 @@ open class YamlResettlementStrategyTest {
     Arguments.of(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, false, false),
     Arguments.of(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, true, true),
     Arguments.of(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, false, false),
-    Arguments.of(Pathway.DRUGS_AND_ALCOHOL, true, false),
+    Arguments.of(Pathway.DRUGS_AND_ALCOHOL, true, true),
     Arguments.of(Pathway.DRUGS_AND_ALCOHOL, false, false),
     Arguments.of(Pathway.EDUCATION_SKILLS_AND_WORK, true, false),
     Arguments.of(Pathway.EDUCATION_SKILLS_AND_WORK, false, false),

@@ -284,7 +284,7 @@ class YamlResettlementAssessmentStrategy(
   ): ResettlementAssessmentResponsePage {
     // Get the latest complete assessment (if exists)
     var existingAssessment = getExistingAssessment(nomsId, pathway, assessmentType)
-
+    var resettlementPlanCopy = false
     val edit = existingAssessment?.assessmentStatus == ResettlementAssessmentStatus.SUBMITTED
 
     // If this is a RESETTLEMENT_PLAN (BCST3) type and there is not existing assessment we should use an existing BCST2 if available.
@@ -292,6 +292,7 @@ class YamlResettlementAssessmentStrategy(
       existingAssessment = getExistingAssessment(nomsId, pathway, ResettlementAssessmentType.BCST2)
 
       if (existingAssessment != null) {
+        resettlementPlanCopy = true
         // remove SUPPORT_NEEDS and replace with SUPPORT_NEEDS_PRERELEASE which has more options
         val questions = existingAssessment.questionsAndAnswers.toMutableList()
         questions.removeIf { it.questionId == "SUPPORT_NEEDS" }
@@ -362,7 +363,8 @@ class YamlResettlementAssessmentStrategy(
 
       resettlementAssessmentResponsePage.questionsAndAnswers.forEach { q ->
         val existingAnswer = existingAssessment.assessment.assessment.find { it.questionId == q.question.id }
-        if (existingAnswer != null && q.question.id != "CASE_NOTE_SUMMARY") {
+        // Copy in existing answers _but_ we don't want to copy case notes from BCST2 to RESETTLEMENT_PLAN
+        if (existingAnswer != null && !(resettlementPlanCopy && q.question.id == GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY.id)) {
           q.answer = existingAnswer.answer
         }
         if (q.question.id == "SUPPORT_NEEDS_PRERELEASE") {

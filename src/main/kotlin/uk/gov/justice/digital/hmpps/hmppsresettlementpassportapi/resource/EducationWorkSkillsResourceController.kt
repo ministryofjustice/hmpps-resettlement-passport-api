@@ -25,7 +25,7 @@ class EducationWorkSkillsResourceController(
   private val educationWorkSkillsService: EducationWorkSkillsService,
 ) {
   @GetMapping("/{nomsId}/work-readiness")
-  @Operation(summary = "Get work readiness data", description = "Get work readiness data status and data Education Employment API and CIAG API")
+  @Operation(summary = "Get work readiness data", description = "Get work readiness data status and data Education Employment API")
   @ApiResponses(
     value = [
       ApiResponse(

@@ -1407,4 +1407,5 @@ class AccommodationYamlResettlementAssessmentStrategyTest : YamlResettlementStra
       ),
       false,
     ),
-  )}
+  )
+}

@@ -1,17 +1,13 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies
 
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResettlementAssessmentConfig
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponsePage
@@ -29,43 +25,12 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension::class)
-class FinanceAndIdYamlResettlementAssessmentStrategyTest {
-  private lateinit var resettlementAssessmentService: YamlResettlementAssessmentStrategy
-
-  @Mock
-  private lateinit var prisonerRepository: PrisonerRepository
-
-  @Mock
-  private lateinit var resettlementAssessmentRepository: ResettlementAssessmentRepository
-
-  @Mock
-  private lateinit var pathwayStatusRepository: PathwayStatusRepository
-
-  private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
-
-  @BeforeEach
-  fun beforeEach() {
-    resettlementAssessmentService = YamlResettlementAssessmentStrategy(
-      getTestConfig(),
-      resettlementAssessmentRepository,
-      prisonerRepository,
-      pathwayStatusRepository,
-      true,
-    )
-  }
-
-  private fun getTestConfig() = ResettlementAssessmentConfig().assessmentQuestionSets(
-    PathMatchingResourcePatternResolver(),
-  )
+class FinanceAndIdYamlResettlementAssessmentStrategyTest : YamlResettlementStrategyTest() {
 
   @ParameterizedTest(name = "current: {1}, expected: {2}")
   @MethodSource("test next page function flow - no existing assessment data")

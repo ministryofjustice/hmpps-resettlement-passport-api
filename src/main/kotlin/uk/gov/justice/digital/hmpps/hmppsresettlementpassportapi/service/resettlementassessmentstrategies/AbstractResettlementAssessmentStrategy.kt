@@ -34,6 +34,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClai
 import java.time.LocalDateTime
 import kotlin.reflect.KClass
 
+private val yamlPathways = setOf(Pathway.ACCOMMODATION, Pathway.FINANCE_AND_ID)
+
 abstract class AbstractResettlementAssessmentStrategy<T, Q>(
   private val resettlementAssessmentRepository: ResettlementAssessmentRepository,
   private val prisonerRepository: PrisonerRepository,
@@ -47,13 +49,9 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
 
   override fun appliesTo(pathway: Pathway): Boolean {
     return if (useYaml) {
-      if (pathway == Pathway.ACCOMMODATION) {
-        false
-      } else {
-        pathway == this.pathway
-      }
+      pathway !in yamlPathways && this.pathway == pathway
     } else {
-      pathway == this.pathway
+      this.pathway == pathway
     }
   }
 

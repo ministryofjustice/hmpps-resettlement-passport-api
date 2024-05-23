@@ -13,8 +13,7 @@ class EducationWorkSkillsService(
 
     return WorkReadinessStatusAndDetails(
       workReadinessStatus = getLabelFromEnum(readinessProfile.profileData?.status),
-      workReadinessStatusLastUpdated = readinessProfile.profileData?.statusChangeDate?.toLocalDate()
+      workReadinessStatusLastUpdated = readinessProfile.profileData?.statusChangeDate?.toLocalDate(),
     )
   }
-
 }

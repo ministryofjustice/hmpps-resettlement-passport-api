@@ -378,7 +378,7 @@ class LegacyResettlementAssessmentIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  @Sql("classpath:testdata/sql/seed-resettlement-assessment-10-post-submit-all.sql")
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-11-bcst2-complete.sql")
   fun `Check your answers response for post submit of RESETTLEMENT_PLAN`() {
     val nomsId = "ABC1234"
     val pathway = "DRUGS_AND_ALCOHOL"
@@ -400,5 +400,43 @@ class LegacyResettlementAssessmentIntegrationTest : IntegrationTestBase() {
           "ALCOHOL_ISSUES",
         ).doesNotContain("PRERELEASE_ASSESSMENT_SUMMARY")
       }
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-12-drugs-and-alcohol.sql")
+  fun `Should not have case notes answer when getting the assessment summary page on a prepopulated RESETTLEMENT plan`() {
+    val nomsId = "ABC1234"
+    val pathway = "DRUGS_AND_ALCOHOL"
+    val assessmentType = "RESETTLEMENT_PLAN"
+    val page = "PRERELEASE_ASSESSMENT_SUMMARY"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/page/$page?assessmentType=$assessmentType")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("questionsAndAnswers[?(@.question.id == 'CASE_NOTE_SUMMARY')].answer").isEqualTo(null)
+      .jsonPath("questionsAndAnswers[?(@.question.id == 'SUPPORT_NEEDS_PRERELEASE')].answer.answer").isEqualTo("DONE")
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-12-drugs-and-alcohol.sql")
+  fun `Should have case notes answer when getting the assessment summary page on BCST2`() {
+    val nomsId = "ABC1234"
+    val pathway = "DRUGS_AND_ALCOHOL"
+    val assessmentType = "BCST2"
+    val page = "ASSESSMENT_SUMMARY"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/page/$page?assessmentType=$assessmentType")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("questionsAndAnswers[?(@.question.id == 'CASE_NOTE_SUMMARY')].answer.answer")
+      .isEqualTo("Carefully crafted case note answer")
   }
 }

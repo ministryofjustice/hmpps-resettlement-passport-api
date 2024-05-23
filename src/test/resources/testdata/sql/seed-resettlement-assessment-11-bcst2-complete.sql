@@ -377,35 +377,7 @@ VALUES (31, 1, 'BCST2', '{
   ]
 }', '2024-05-22 15:47:28.145149 +00:00', 'Matthew Kerry', 'dfdfd', 'MKERRY_GEN', 'HEALTH', 'SUBMITTED',
         'SUPPORT_DECLINED', '2024-05-22 15:47:31.469644 +00:00');
-INSERT INTO resettlement_assessment (id, prisoner_id, assessment_type, assessment, created_date, created_by,
-                                            case_note_text, created_by_user_id, pathway, assessment_status,
-                                            status_changed_to, submission_date)
-VALUES (39, 1, 'BCST2', '{
-  "assessment": [
-    {
-      "answer": {
-        "@class": "StringAnswer",
-        "answer": "YES"
-      },
-      "questionId": "DRUG_ISSUES"
-    },
-    {
-      "answer": {
-        "@class": "StringAnswer",
-        "answer": "NO"
-      },
-      "questionId": "SUPPORT_WITH_DRUG_ISSUES"
-    },
-    {
-      "answer": {
-        "@class": "StringAnswer",
-        "answer": "NO"
-      },
-      "questionId": "ALCOHOL_ISSUES"
-    }
-  ]
-}', '2024-05-22 15:54:35.535989 +00:00', 'Matthew Kerry', null, 'MKERRY_GEN', 'DRUGS_AND_ALCOHOL', 'SUBMITTED', null,
-        '2024-05-22 15:54:35.535994 +00:00');
+
 INSERT INTO resettlement_assessment (id, prisoner_id, assessment_type, assessment, created_date, created_by,
                                             case_note_text, created_by_user_id, pathway, assessment_status,
                                             status_changed_to, submission_date)

@@ -27,8 +27,6 @@ api:
       #https://resettlement-passport-and-delius-dev.hmpps.service.justice.gov.uk
       education-employment: http://localhost:9193/education-employment-api
       #https://education-employment-api-dev.hmpps.service.justice.gov.uk
-      ciag: http://localhost:9193/ciag-api
-      #https://ciag-induction-api-dev.hmpps.service.justice.gov.uk
       interventions-service: http://localhost:9193/interventions-service-api
       #https://hmpps-interventions-service-dev.apps.live-1.cloud-platform.service.justice.gov.uk
       #pop-user-service: http://localhost:9193/pop-user-api

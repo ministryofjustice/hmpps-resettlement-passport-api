@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.WorkReadinessStatusAndDetails
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.WorkReadinessStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.EducationWorkSkillsService
 
 @RestController
@@ -54,5 +54,5 @@ class EducationWorkSkillsResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-  ): WorkReadinessStatusAndDetails = educationWorkSkillsService.getWorkReadinessData(nomsId)
+  ): WorkReadinessStatus = educationWorkSkillsService.getWorkReadinessData(nomsId)
 }

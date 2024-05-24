@@ -49,7 +49,7 @@ open class YamlResettlementStrategyTest {
     PathMatchingResourcePatternResolver(),
   )
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "{0} - useYaml: {1}")
   @MethodSource("test appliesTo data")
   fun `test appliesTo`(pathway: Pathway, useYaml: Boolean, expectation: Boolean) {
     resettlementAssessmentService = YamlResettlementAssessmentStrategy(
@@ -76,7 +76,7 @@ open class YamlResettlementStrategyTest {
     Arguments.of(Pathway.EDUCATION_SKILLS_AND_WORK, false, false),
     Arguments.of(Pathway.FINANCE_AND_ID, true, true),
     Arguments.of(Pathway.FINANCE_AND_ID, false, false),
-    Arguments.of(Pathway.HEALTH, true, false),
+    Arguments.of(Pathway.HEALTH, true, true),
     Arguments.of(Pathway.HEALTH, false, false),
   )
 }

@@ -1,0 +1,89 @@
+version: 1
+pathway: "HEALTH"
+genericAssessmentVersion: 1
+pages:
+  - id: REGISTERED_WITH_GP
+    questions:
+      - id: REGISTERED_WITH_GP
+        title: "Is the person in prison registered with a GP surgery outside of prison?"
+        type: RADIO
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - questionId: REGISTERED_WITH_GP
+        answers:
+        - "@class": "StringAnswer"
+          answer: "YES"
+        nextPageId: MEET_HEALTHCARE_TEAM
+
+      - questionId: REGISTERED_WITH_GP
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO"
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
+        nextPageId: HELP_REGISTERING_GP
+
+  - id: HELP_REGISTERING_GP
+    questions:
+      - id: HELP_REGISTERING_GP
+        title: "Does the person in prison want help registering with a GP surgery?"
+        type: RADIO
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - nextPageId: MEET_HEALTHCARE_TEAM
+
+  - id: MEET_HEALTHCARE_TEAM
+    questions:
+      - id: MEET_HEALTHCARE_TEAM
+        title: Does the person in prison want to meet with a prison healthcare team?
+        type: RADIO
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+
+    nextPageLogic:
+      - questionId: MEET_HEALTHCARE_TEAM
+        answers:
+          - "@class": "StringAnswer"
+            answer: "YES"
+        nextPageId: WHAT_HEALTH_NEED
+
+      - questionId: MEET_HEALTHCARE_TEAM
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO"
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
+        nextPageId: FINAL_QUESTION_NEXT_PAGE
+
+  - id: WHAT_HEALTH_NEED
+    questions:
+      - id: WHAT_HEALTH_NEED
+        title: "What health need is this related to?"
+        type: CHECKBOX
+        options:
+          - id: PHYSICAL_HEALTH
+            displayText: "Physical health"
+          - id: MENTAL_HEALTH
+            displayText: "Mental health"
+          - id: NO_ANSWER
+            displayText: "No answer provided"
+            exclusive: true
+    nextPageLogic:
+      - nextPageId: FINAL_QUESTION_NEXT_PAGE

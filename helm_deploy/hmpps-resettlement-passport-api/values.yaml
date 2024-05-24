@@ -43,9 +43,6 @@ generic-service:
       SPRING_FLYWAY_PASSWORD: "database_password"
       DATABASE_NAME: "database_name"
       DATABASE_ENDPOINT: "rds_instance_endpoint"
-    backend-elasticache-redis:
-      SPRING_DATA_REDIS_HOST: "primary_endpoint_address"
-      SPRING_DATA_REDIS_PASSWORD: "auth_token"
 
   allowlist:
     groups:

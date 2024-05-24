@@ -13,8 +13,10 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CreateAppo
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.AppointmentDelius
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusCreateAppointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusCreateAppointmentType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.interventionsapi.CRSAppointmentsDTO
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.InterventionsApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -31,6 +33,8 @@ import kotlin.time.toJavaDuration
 class AppointmentsService(
   private val prisonerRepository: PrisonerRepository,
   private val rpDeliusApiService: ResettlementPassportDeliusApiService,
+  private val interventionsApiService: InterventionsApiService,
+
 ) {
 
   companion object {
@@ -63,8 +67,8 @@ class AppointmentsService(
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val crn = prisonerEntity.crn ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in database")
-    val appointments = mapAppointmentsFromDeliusApi(rpDeliusApiService.fetchAppointments(nomsId, crn, startDate, endDate))
-
+    val crsAppointments = interventionsApiService.fetchCRSAppointments(crn)
+    val appointments = mapAppointmentsFromDeliusApi(rpDeliusApiService.fetchAppointments(nomsId, crn, startDate, endDate), crsAppointments)
     return AppointmentsList(filterPreReleaseAppointments(appointments, prisonerEntity, includePreRelease).sortedBy { LocalDateTime.of(it.date, it.time) })
   }
 
@@ -76,9 +80,9 @@ class AppointmentsService(
     }
   }
 
-  private fun mapAppointmentsFromDeliusApi(appList: List<AppointmentDelius>): List<Appointment> {
+  private fun mapAppointmentsFromDeliusApi(appList: List<AppointmentDelius>, crsAppointments: List<CRSAppointmentsDTO>): List<Appointment> {
     val appointmentList = mutableListOf<Appointment>()
-    appList.forEach {
+    appList.forEach { it ->
       val appointment: Appointment?
       val duration: Duration? = try {
         it.duration?.let { it1 -> Duration.parseIsoString(it1) }
@@ -86,9 +90,10 @@ class AppointmentsService(
         log.warn("Unable to parse the duration value  " + it.duration)
         null
       }
-
-      val addressInfo: Address = if (it.location?.address != null) {
-        Address(
+      var addressInfo = Address(null, null, null, null, null, null, null, null)
+      val appointmentDateTime = it.dateTime
+      if (it.location?.address?.postcode != null && it.location.address.streetName != null) {
+        addressInfo = Address(
           it.location.address.buildingName,
           it.location.address.buildingNumber,
           it.location.address.streetName,
@@ -98,8 +103,19 @@ class AppointmentsService(
           it.location.address.postcode,
           null,
         )
+      } else if (it.description.contains("Appointment with CRS") || it.type.description?.contains("Appointment with CRS") == true) {
+        val appointmentFound = crsAppointments.filter { it2 -> it2.appointmentDateTime.equals(appointmentDateTime) }
+        if (appointmentFound.isNotEmpty()) {
+          val address = appointmentFound[0]
+          addressInfo = Address(
+            null, null, address.appointmentDeliveryFirstAddressLine, address.appointmentDeliverySecondAddressLine, address.appointmentDeliveryTownCity, address.appointmentDeliveryCounty,
+            address.appointmentDeliveryPostCode, it.location?.description,
+          )
+        } else {
+          addressInfo = Address(null, null, null, null, null, null, null, it.location?.description)
+        }
       } else {
-        Address(null, null, null, null, null, null, null, it.location?.description)
+        addressInfo = Address(null, null, null, null, null, null, null, it.location?.description)
       }
 
       var formattedDateVal: LocalDate? = null

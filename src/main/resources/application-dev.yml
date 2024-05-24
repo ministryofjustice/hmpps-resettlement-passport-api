@@ -73,3 +73,8 @@ spring:
 
   feature-toggles:
     afine: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6380

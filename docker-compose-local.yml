@@ -24,5 +24,15 @@ services:
     volumes:
       - "./helm_deploy/hmpps-resettlement-passport-api/files/stubs:/home/wiremock:ro"
 
+  redis:
+    image: 'redis:7.0'
+    networks:
+      - hmpps
+    container_name: redis-be
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - '6380:6379'
+
 networks:
   hmpps:

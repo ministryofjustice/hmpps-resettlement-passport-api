@@ -9,7 +9,6 @@ class EducationWorkSkillsIntegrationTest : IntegrationTestBase() {
     val expectedOutput = readFile("testdata/expectation/work-readiness.json")
 
     educationEmploymentApiMockServer.stubGet("/readiness-profiles/$nomsId", 200, "testdata/education-employment-api/readiness-profile.json")
-    ciagApiMockServer.stubGet("/ciag/induction/$nomsId", 200, "testdata/ciag-api/ciag-induction.json")
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/work-readiness")
@@ -27,7 +26,6 @@ class EducationWorkSkillsIntegrationTest : IntegrationTestBase() {
     val expectedOutput = readFile("testdata/expectation/work-readiness-no-data.json")
 
     educationEmploymentApiMockServer.stubGet("/readiness-profiles/$nomsId", 404, null)
-    ciagApiMockServer.stubGet("/ciag/induction/$nomsId", 404, null)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/work-readiness")

@@ -19,7 +19,6 @@ api:
       allocation-manager: http://localhost:9101
       resettlement-passport-delius: http://localhost:9102
       education-employment: http://localhost:9103
-      ciag: http://localhost:9104
       interventions-service: http://localhost:9105
       pop-user-service: http://localhost:9106
 

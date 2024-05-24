@@ -35,7 +35,9 @@ import java.time.LocalDateTime
 import kotlin.reflect.KClass
 
 private val yamlPathways = setOf(
-  Pathway.ACCOMMODATION, Pathway.FINANCE_AND_ID, Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
+  Pathway.ACCOMMODATION,
+  Pathway.FINANCE_AND_ID,
+  Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
   Pathway.DRUGS_AND_ALCOHOL,
 )
 

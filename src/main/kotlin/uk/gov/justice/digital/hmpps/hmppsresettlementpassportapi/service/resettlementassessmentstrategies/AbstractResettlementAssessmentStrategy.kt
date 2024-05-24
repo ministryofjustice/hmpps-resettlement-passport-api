@@ -158,17 +158,12 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
             ),
           )
         }
-        existingAssessment =
-          existingAssessment.copy(assessment = ResettlementAssessmentQuestionAndAnswerList(questions.toList()))
+        existingAssessment = existingAssessment.copy(assessment = ResettlementAssessmentQuestionAndAnswerList(questions.toList()))
       }
     }
 
     // Get the current page
-    val page = convertEnumStringToEnum(
-      enumClass = assessmentPageClass,
-      secondaryEnumClass = GenericAssessmentPage::class,
-      stringValue = pageId,
-    )
+    val page = convertEnumStringToEnum(enumClass = assessmentPageClass, secondaryEnumClass = GenericAssessmentPage::class, stringValue = pageId)
 
     // Convert to ResettlementAssessmentPage DTO
     var resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(
@@ -209,10 +204,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
               originalPageId = findPageIdFromQuestionId(it.questionId, assessmentType, pathway),
             )
           }.filter { it.question !in questionsToExclude }
-        resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(
-          resettlementAssessmentResponsePage.id,
-          questionsAndAnswers = questionsAndAnswers,
-        )
+        resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(resettlementAssessmentResponsePage.id, questionsAndAnswers = questionsAndAnswers)
       }
 
       resettlementAssessmentResponsePage.questionsAndAnswers.forEach { q ->
@@ -236,14 +228,12 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     pathway: Pathway,
   ): String {
     val pageList = getPageList(assessmentType).map { it.assessmentPage } + GenericAssessmentPage.entries
-    return pageList.firstOrNull { p -> (p.questionsAndAnswers.any { q -> q.question.id == questionId }) }?.id
-      ?: throw RuntimeException("Cannot find page for question [$questionId] - check that the question is used in a page!")
+    return pageList.firstOrNull { p -> (p.questionsAndAnswers.any { q -> q.question.id == questionId }) }?.id ?: throw RuntimeException("Cannot find page for question [$questionId] - check that the question is used in a page!")
   }
 
   abstract fun getPageList(assessmentType: ResettlementAssessmentType): List<ResettlementAssessmentNode>
 
-  fun getQuestionList(): List<IResettlementAssessmentQuestion> =
-    questionClass.java.enumConstants.asList() + GenericResettlementAssessmentQuestion.entries
+  fun getQuestionList(): List<IResettlementAssessmentQuestion> = questionClass.java.enumConstants.asList() + GenericResettlementAssessmentQuestion.entries
 
   @Transactional
   override fun completeAssessment(
@@ -332,11 +322,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     saveAssessment(resettlementAssessmentEntity)
   }
 
-  override fun getQuestionById(
-    id: String,
-    pathway: Pathway,
-    assessmentType: ResettlementAssessmentType,
-  ): IResettlementAssessmentQuestion {
+  override fun getQuestionById(id: String, pathway: Pathway, assessmentType: ResettlementAssessmentType): IResettlementAssessmentQuestion {
     return convertEnumStringToEnum(questionClass, GenericResettlementAssessmentQuestion::class, id)
   }
 
@@ -352,16 +338,11 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
           .firstOrNull { n ->
             qa.question in n.assessmentPage.questionsAndAnswers
               .map { q -> q.question.id }
-          }
-          ?: throw ServerWebInputException("Error validating questions and answers - cannot find a node with question [${qa.question}]")
+          } ?: throw ServerWebInputException("Error validating questions and answers - cannot find a node with question [${qa.question}]")
       }
       .mapValues { entry ->
         entry.value.map {
-          ResettlementAssessmentQuestionAndAnswer(
-            getQuestionList().firstOrNull { q -> q.id == it.question }
-              ?: throw ServerWebInputException("Error validating questions and answers - cannot find a question with id [${it.question}]"),
-            it.answer,
-          )
+          ResettlementAssessmentQuestionAndAnswer(getQuestionList().firstOrNull { q -> q.id == it.question } ?: throw ServerWebInputException("Error validating questions and answers - cannot find a question with id [${it.question}]"), it.answer)
         }
       }
 
@@ -382,8 +363,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
       try {
         val actualPage: IAssessmentPage? = nodeToQuestionMap.keys.elementAtOrNull(pageNumber)?.assessmentPage
         val expectedPage: IAssessmentPage =
-          currentNode?.nextPage?.invoke(NextPageContext(nodeToQuestionMap[currentNode]!!, edit, assessmentType))
-            ?: getPageList(assessmentType)[0].assessmentPage
+          currentNode?.nextPage?.invoke(NextPageContext(nodeToQuestionMap[currentNode]!!, edit, assessmentType)) ?: getPageList(assessmentType)[0].assessmentPage
         if (expectedPage == GenericAssessmentPage.CHECK_ANSWERS) {
           break
         }
@@ -403,8 +383,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     }
   }
 
-  fun saveAssessment(assessment: ResettlementAssessmentEntity): ResettlementAssessmentEntity =
-    resettlementAssessmentRepository.save(assessment)
+  fun saveAssessment(assessment: ResettlementAssessmentEntity): ResettlementAssessmentEntity = resettlementAssessmentRepository.save(assessment)
 
   fun loadPrisoner(nomsId: String) = (
     prisonerRepository.findByNomsId(nomsId)
@@ -420,8 +399,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     val prisonerEntity = loadPrisoner(nomsId)
 
     // Obtain COMPLETE and SUBMITTED resettlement status entity from database
-    val resettlementAssessmentStatusEntities =
-      listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED)
+    val resettlementAssessmentStatusEntities = listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED)
 
     return resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
       prisonerEntity,
@@ -550,7 +528,6 @@ fun assessmentSummaryNode(assessmentType: ResettlementAssessmentType): Resettlem
         return GenericAssessmentPage.CHECK_ANSWERS
       },
     )
-
     ResettlementAssessmentType.RESETTLEMENT_PLAN -> ResettlementAssessmentNode(
       assessmentPage = GenericAssessmentPage.PRERELEASE_ASSESSMENT_SUMMARY,
       nextPage = fun(_: NextPageContext): IAssessmentPage {

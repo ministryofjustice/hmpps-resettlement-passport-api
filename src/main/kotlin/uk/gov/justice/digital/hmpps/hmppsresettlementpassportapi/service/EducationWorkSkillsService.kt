@@ -8,7 +8,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 class EducationWorkSkillsService(
   val educationEmploymentApiService: EducationEmploymentApiService,
 ) {
-  fun getWorkReadinessData(nomsId: String): WorkReadinessStatus{
+  fun getWorkReadinessData(nomsId: String): WorkReadinessStatus {
     val readinessProfile = educationEmploymentApiService.getReadinessProfileByNomsId(nomsId)
 
     return WorkReadinessStatus(

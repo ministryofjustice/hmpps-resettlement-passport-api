@@ -1,0 +1,86 @@
+version: 1
+pathway: "DRUGS_AND_ALCOHOL"
+genericAssessmentVersion: 1
+pages:
+  - id: DRUG_ISSUES
+    questions:
+      - id: DRUG_ISSUES
+        title: "Does the person in prison have any previous or current drug misuse issues?"
+        type: "RADIO"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - questionId: DRUG_ISSUES
+        answers:
+          - "@class": "StringAnswer"
+            answer: "YES"
+        nextPageId: SUPPORT_WITH_DRUG_ISSUES
+      - questionId: DRUG_ISSUES
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO"
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
+        nextPageId: ALCOHOL_ISSUES
+
+  - id: SUPPORT_WITH_DRUG_ISSUES
+    questions:
+      - id: SUPPORT_WITH_DRUG_ISSUES
+        title: "Does the person in prison want support with drug issues from the drug and alcohol team to help them prepare for release?"
+        type: "RADIO"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - nextPageId: ALCOHOL_ISSUES
+
+  - id: ALCOHOL_ISSUES
+    questions:
+      - id: ALCOHOL_ISSUES
+        title: "Does the person in prison have any previous or current alcohol misuse issues?"
+        type: "RADIO"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - questionId: ALCOHOL_ISSUES
+        answers:
+          - "@class": "StringAnswer"
+            answer: "YES"
+        nextPageId: SUPPORT_WITH_ALCOHOL_ISSUES
+      - questionId: ALCOHOL_ISSUES
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO"
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
+        nextPageId: FINAL_QUESTION_NEXT_PAGE
+
+  - id: SUPPORT_WITH_ALCOHOL_ISSUES
+    questions:
+      - id: SUPPORT_WITH_ALCOHOL_ISSUES
+        title: "Does the person in prison want support with alcohol issues from the drug and alcohol team to help them prepare for release?"
+        type: RADIO
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - nextPageId: FINAL_QUESTION_NEXT_PAGE
+

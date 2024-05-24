@@ -22,6 +22,7 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
     val crn = "CRN1"
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetAllAppointmentsFromCRN(crn, 200)
+    interventionsServiceApiMockServer.stubGetCRSAppointmentsFromCRN(crn, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/appointments?futureOnly=false&page=0&size=50")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -139,6 +140,7 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
     val crn = "CRN1"
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetAppointmentsFromCRN(crn, 200)
+    interventionsServiceApiMockServer.stubGetCRSAppointmentsFromCRN(crn, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/appointments?page=0&size=50")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -266,6 +268,7 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
     val crn = "CRN1"
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetAppointmentsFromCRN(crn, 200)
+    interventionsServiceApiMockServer.stubGetCRSAppointmentsFromCRN(crn, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/appointments")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))

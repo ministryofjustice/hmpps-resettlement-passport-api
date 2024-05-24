@@ -1,0 +1,17 @@
+[
+  {
+    "crn": "U416100",
+    "referral": [
+      "Financial Services"
+    ],
+    "appointment_id": "SD1234567",
+    "appointment_date_time": "2024-08-20T11:33:00.000Z",
+    "appointment_duration_in_minutes": "60",
+    "superseded_indicator": false,
+    "appointment_delivery_first_address_line": "11",
+    "appointment_delivery_second_address_line": "Downing Street",
+    "appointment_delivery_town_city": "Gwent",
+    "appointment_delivery_county": "The Forward Trust",
+    "appointment_delivery_postcode": "S1 2NP"
+  }
+]

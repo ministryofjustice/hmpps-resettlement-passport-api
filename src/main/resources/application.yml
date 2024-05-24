@@ -14,7 +14,10 @@ spring:
   mvc:
     async:
       request-timeout: 1m
-
+  data:
+    redis:
+      repositories:
+        enabled: false
   security:
     oauth2:
       resourceserver:

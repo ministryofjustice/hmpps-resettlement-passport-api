@@ -1,3 +1,5 @@
+DELETE from licence_conditions_change_audit;
+ALTER SEQUENCE licence_conditions_change_audit_id_seq RESTART WITH 1;
 DELETE from person_on_probation_user_otp;
 ALTER SEQUENCE person_on_probation_user_otp_id_seq RESTART WITH 1;
 DELETE from resettlement_assessment;

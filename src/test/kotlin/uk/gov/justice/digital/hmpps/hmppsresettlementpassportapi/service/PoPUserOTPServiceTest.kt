@@ -14,8 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoner
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerPersonal
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.OneLoginData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PoPUserOTPEntity
@@ -193,24 +191,6 @@ class PoPUserOTPServiceTest {
       "123457",
       LocalDate.parse("1982-10-24"),
     )
-    val prisonerPersonal = PrisonerPersonal(
-      prisonerNumber = "A123456",
-      firstName = "firstName",
-      lastName = "lastName",
-      prisonId = "MDI",
-      age = 20,
-      dateOfBirth = LocalDate.parse("1982-10-24"),
-      releaseDate = testDate.toLocalDate().plusMonths(6),
-    )
-    val prisonerSearch = Prisoner(
-      prisonerPersonal,
-      null,
-      assessmentRequired = false,
-      resettlementReviewAvailable = false,
-      immediateNeedsSubmitted = true,
-      preReleaseSubmitted = true,
-      false,
-    )
 
     Mockito.`when`(prisoner.id?.let { prisonerRepository.findById(it) }).thenReturn(Optional.of(prisoner))
     Mockito.`when`(popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(oneLoginUserData.otp, LocalDate.parse("1982-10-24"), LocalDateTime.now())).thenReturn(popUserOTPEntity)
@@ -278,24 +258,6 @@ class PoPUserOTPServiceTest {
       fakeNow.plusDays(7).withHour(23).withMinute(59).withSecond(59),
       "123457",
       LocalDate.parse("1982-10-24"),
-    )
-    val prisonerPersonal = PrisonerPersonal(
-      prisonerNumber = "A123456",
-      firstName = "firstName",
-      lastName = "lastName",
-      prisonId = "MDI",
-      age = 20,
-      dateOfBirth = LocalDate.parse("1982-10-24"),
-      releaseDate = testDate.toLocalDate().plusMonths(6),
-    )
-    val prisonerSearch = Prisoner(
-      prisonerPersonal,
-      null,
-      false,
-      resettlementReviewAvailable = false,
-      immediateNeedsSubmitted = true,
-      preReleaseSubmitted = true,
-      isInWatchlist = false,
     )
 
     Mockito.`when`(prisoner.id?.let { prisonerRepository.findById(it) }).thenReturn(Optional.of(prisoner))

@@ -1,0 +1,1 @@
+ALTER TABLE licence_conditions_change_audit rename COLUMN licence_conditions_json to licence_conditions_hash;

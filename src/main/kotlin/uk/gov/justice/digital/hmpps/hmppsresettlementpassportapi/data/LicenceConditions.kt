@@ -7,6 +7,7 @@ data class LicenceConditions(
 
   var standardLicenceConditions: List<Conditions>? = emptyList(),
   var otherLicenseConditions: List<Conditions>? = emptyList(),
+  var changeStatus: Boolean? = false,
 )
 
 data class Conditions(

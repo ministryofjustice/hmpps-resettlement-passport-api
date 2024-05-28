@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AppointmentsService.Companion.SECTION_DELIMITER
 import java.lang.IllegalArgumentException
+import java.security.MessageDigest
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.reflect.KClass
 import kotlin.streams.asSequence
@@ -124,3 +125,10 @@ fun randomAlphaNumericString(): String {
 fun extractCaseNoteTypeFromBcstCaseNote(text: String) = CaseNoteType.getByDisplayName(BCST_CASE_NOTE_REGEX.find(text)?.groups?.get(1)?.value)
 
 fun getFirstLineOfBcstCaseNote(pathway: Pathway, type: ResettlementAssessmentType) = "$BCST_CASE_NOTE_PREFIX ${pathway.displayName} ${type.displayName} $BCST_CASE_NOTE_POSTFIX"
+
+fun toMD5(sourceString: String): String {
+  val md = MessageDigest.getInstance("MD5")
+  val digest = md.digest(sourceString.toByteArray())
+  val hexString = digest.joinToString("") { "%02x".format(it) }
+  return hexString
+}

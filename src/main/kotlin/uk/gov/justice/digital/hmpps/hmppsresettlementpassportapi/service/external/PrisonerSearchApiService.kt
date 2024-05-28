@@ -212,6 +212,7 @@ class PrisonerSearchApiService(
     val prisonerPathwayStatusesFromDatabase = pathwayStatusRepository.findByPrison(prisonId)
 
     val defaultPathwayStatuses = getDefaultPathwayStatuses()
+    val watchedOffenders = watchlistService.findAllWatchedPrisonerForStaff(staffUsername)
     searchList.forEach { prisonersSearch ->
 
       val pathwayStatusesEntities = prisonerPathwayStatusesFromDatabase.filter { it.prisoner.nomsId == prisonersSearch.prisonerNumber }
@@ -221,7 +222,7 @@ class PrisonerSearchApiService(
       val sortedPathwayStatuses: List<PathwayStatus>?
       val pathwayStatus: Status?
       val lastUpdatedDate: LocalDate?
-      val isInWatchList = watchlistService.isPrisonerInWatchList(staffUsername, prisonerEntity)
+      val isInWatchList = watchedOffenders.contains(prisonerEntity)
 
       if (watchListFilter == true && !isInWatchList) {
         return@forEach

@@ -15,5 +15,5 @@ interface WatchlistRepository : JpaRepository<WatchlistEntity, Long> {
 
   fun findByPrisonerAndStaffUsername(prisoner: PrisonerEntity?, staffUsername: String): WatchlistEntity?
 
-  fun findAllByStaffUsername(staffUsername: String): List<WatchlistEntity>
+  fun findAllByStaffUsername(staffUsername: String): Set<WatchlistEntity>
 }

@@ -53,9 +53,9 @@ class WatchlistService(
     return prisoner
   }
 
-  fun findAllWatchedPrisonerForStaff(staffUsername: String): List<PrisonerEntity> {
+  fun findAllWatchedPrisonerForStaff(staffUsername: String): Set<PrisonerEntity> {
     val watchList = watchlistRepository.findAllByStaffUsername(staffUsername)
-    return watchList.map { wl -> wl.prisoner }
+    return watchList.map { wl -> wl.prisoner }.toSet()
   }
 
   fun isPrisonerInWatchList(staffUsername: String, prisoner: PrisonerEntity?): Boolean {

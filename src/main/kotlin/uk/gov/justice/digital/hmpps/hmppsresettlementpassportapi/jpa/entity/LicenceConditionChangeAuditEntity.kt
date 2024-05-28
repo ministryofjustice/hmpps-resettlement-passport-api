@@ -22,8 +22,8 @@ data class LicenceConditionChangeAuditEntity(
   @JoinColumn(name = "prisoner_id", referencedColumnName = "id")
   val prisoner: PrisonerEntity,
 
-  @Column(columnDefinition = "TEXT", name = "licence_conditions_json")
-  val licenceConditionsJson: String,
+  @Column(columnDefinition = "TEXT", name = "licence_conditions_hash")
+  val licenceConditionsHash: String,
 
   @Column(name = "creation_date")
   val creationDate: LocalDateTime,

@@ -45,7 +45,7 @@ class LicenceConditionService(
 
     val licenceConditionsChangeAuditEntity = licenceConditionsChangeAuditRepository.findByPrisoner(prisoner)
     if (licenceConditionsChangeAuditEntity == null ||
-      !licenceConditionsChangeAuditEntity.licenceConditionsJson.equals(hashedString)
+      !licenceConditionsChangeAuditEntity.licenceConditionsHash.equals(hashedString)
     ) {
       val newLicenceConditionChangeAuditEntity = LicenceConditionChangeAuditEntity(
         null,

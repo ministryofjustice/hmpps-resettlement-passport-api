@@ -1,0 +1,33 @@
+version: 1
+pathway: ATTITUDES_THINKING_AND_BEHAVIOUR
+genericAssessmentVersion: 1
+
+pages:
+  - id: HELP_TO_MANAGE_ANGER
+    questions:
+      - id: HELP_TO_MANAGE_ANGER
+        title: "Does the person in prison want support managing their emotions?"
+        type: RADIO
+        options:
+          - id: YES
+            displayText: "Yes"
+          - id: NO
+            displayText: "No"
+          - id: NO_ANSWER
+            displayText: "No answer provided"
+    nextPageLogic:
+      - nextPageId: ISSUES_WITH_GAMBLING
+  - id: ISSUES_WITH_GAMBLING
+    questions:
+      - id: ISSUES_WITH_GAMBLING
+        title: "Does the person in prison want support with gambling issues?"
+        type: RADIO
+        options:
+          - id: YES
+            displayText: "Yes"
+          - id: NO
+            displayText: "No"
+          - id: NO_ANSWER
+            displayText: "No answer provided"
+    nextPageLogic:
+      - nextPageId: FINAL_QUESTION_NEXT_PAGE

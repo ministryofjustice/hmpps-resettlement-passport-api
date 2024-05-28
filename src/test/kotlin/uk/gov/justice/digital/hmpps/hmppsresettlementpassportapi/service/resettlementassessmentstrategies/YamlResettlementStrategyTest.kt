@@ -66,7 +66,7 @@ open class YamlResettlementStrategyTest {
   private fun `test appliesTo data`() = Stream.of(
     Arguments.of(Pathway.ACCOMMODATION, true, true),
     Arguments.of(Pathway.ACCOMMODATION, false, false),
-    Arguments.of(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, true, false),
+    Arguments.of(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, true, true),
     Arguments.of(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, false, false),
     Arguments.of(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, true, true),
     Arguments.of(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, false, false),

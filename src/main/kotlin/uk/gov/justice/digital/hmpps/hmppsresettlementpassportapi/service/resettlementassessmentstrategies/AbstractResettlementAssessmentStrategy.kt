@@ -36,6 +36,7 @@ import kotlin.reflect.KClass
 
 private val yamlPathways = setOf(
   Pathway.ACCOMMODATION,
+  Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
   Pathway.FINANCE_AND_ID,
   Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
   Pathway.DRUGS_AND_ALCOHOL,

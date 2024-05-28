@@ -120,7 +120,7 @@ class WebClientConfiguration(
       .clientConnector(ReactorClientHttpConnector(httpClient))
       .filter(oauth2Client)
       .codecs { codecs ->
-        codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024)
+        codecs.defaultCodecs().maxInMemorySize(5 * 1024 * 1024)
         codecs.defaultCodecs().jackson2JsonEncoder(
           Jackson2JsonEncoder(
             objectMapper,

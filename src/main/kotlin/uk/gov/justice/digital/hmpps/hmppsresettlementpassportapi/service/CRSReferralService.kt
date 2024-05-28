@@ -43,7 +43,7 @@ class CRSReferralService(
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val crn = prisonerEntity.crn ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in database")
 
-    val referrals = interventionsApiService.fetchProbationCaseReferrals(crn)
+    val referrals = interventionsApiService.fetchProbationCaseReferrals(nomsId, crn)
     return objectMapper(referrals, pathways, nomsId)
   }
 

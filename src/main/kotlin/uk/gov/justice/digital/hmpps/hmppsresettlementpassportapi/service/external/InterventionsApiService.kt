@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external
 
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -12,8 +11,7 @@ class InterventionsApiService(
   private val interventionsWebClientCredentials: WebClient,
 ) {
 
-  @Cacheable("interventions-api-fetch-probation-case-referrals")
-  fun fetchProbationCaseReferrals(crn: String): List<ReferralDTO> = interventionsWebClientCredentials.get()
+  fun fetchProbationCaseReferrals(nomsId: String, crn: String): List<ReferralDTO> = interventionsWebClientCredentials.get()
     .uri("/probation-case/$crn/referral")
     .retrieve()
     .bodyToFlux(ReferralDTO::class.java)

@@ -65,7 +65,7 @@ class LicenceConditionResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-  ): LicenceConditions? = licenceConditionService.getLicenceConditionsByNomsId(nomsId)
+  ): LicenceConditions? = licenceConditionService.getLicenceConditionsByNomsId(nomsId, false)
 
   @GetMapping(
     "/{nomsId}/licence-condition/id/{licenceId}/condition/{conditionId}/image",

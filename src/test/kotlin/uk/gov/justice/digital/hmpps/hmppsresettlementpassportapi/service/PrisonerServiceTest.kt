@@ -1,8 +1,13 @@
-package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.api
+package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import okhttp3.internal.immutableListOf
-import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import io.mockk.every
+import io.mockk.mockkStatic
+import io.mockk.unmockkAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -12,7 +17,6 @@ import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
-import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
@@ -20,6 +24,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersL
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
@@ -27,10 +32,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PathwayAndStatusService
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.WatchlistService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonApiService
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDate
@@ -38,9 +40,11 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @ExtendWith(MockitoExtension::class)
-class PrisonerSearchApiServiceTest {
+class PrisonerServiceTest {
 
-  private val mockWebServer: MockWebServer = MockWebServer()
+  private lateinit var prisonerService: PrisonerService
+
+  @Mock
   private lateinit var prisonerSearchApiService: PrisonerSearchApiService
 
   @Mock
@@ -48,9 +52,6 @@ class PrisonerSearchApiServiceTest {
 
   @Mock
   private lateinit var pathwayAndStatusService: PathwayAndStatusService
-
-  @Mock
-  private lateinit var prisonRegisterApiService: PrisonRegisterApiService
 
   @Mock
   private lateinit var pathwayStatusRepository: PathwayStatusRepository
@@ -69,24 +70,23 @@ class PrisonerSearchApiServiceTest {
 
   @BeforeEach
   fun beforeEach() {
-    mockWebServer.start()
-    val webClient = WebClient.create(mockWebServer.url("/").toUrl().toString())
-    prisonerSearchApiService = PrisonerSearchApiService(
-      prisonerRepository,
-      webClient,
-      pathwayAndStatusService,
-      prisonRegisterApiService,
+    prisonerService = PrisonerService(
+      prisonerSearchApiService,
       prisonApiService,
+      prisonerRepository,
       pathwayStatusRepository,
       resettlementAssessmentRepository,
-      deliusApiService,
       watchlistService,
+      pathwayAndStatusService,
+      deliusApiService,
     )
+    mockkStatic(::getClaimFromJWTToken)
+    every { getClaimFromJWTToken("123", "sub") } returns "ABC11D"
   }
 
   @AfterEach
   fun afterEach() {
-    mockWebServer.shutdown()
+    unmockkAll()
   }
 
   @Test
@@ -96,10 +96,23 @@ class PrisonerSearchApiServiceTest {
     val prisonId = "MDI"
     val expectedPrisonerId = "A8339DY"
 
-    val mockedJsonResponse = readFile("testdata/prisoner-search-api/prisoner-search-1.json")
-    mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
+    val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-1.json")
+    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
+
     val prisonersList =
-      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 10, "releaseDate,DESC", false, "123")
+      prisonerService.getPrisonersByPrisonId(
+        "",
+        prisonId,
+        0,
+        null,
+        null,
+        null,
+        0,
+        10,
+        "releaseDate,DESC",
+        false,
+        "123",
+      )
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
 
@@ -109,10 +122,23 @@ class PrisonerSearchApiServiceTest {
 
     val prisonId = "MDI"
 
-    val mockedJsonResponse = readFile("testdata/prisoner-search-api/prisoner-search-2.json")
-    mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
+    val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-2.json")
+    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
+
     val prisoners =
-      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 10, "releaseDate,DESC", false, "123")
+      prisonerService.getPrisonersByPrisonId(
+        "",
+        prisonId,
+        0,
+        null,
+        null,
+        null,
+        0,
+        10,
+        "releaseDate,DESC",
+        false,
+        "123",
+      )
 
     Assertions.assertEquals(getExpectedPrisonersListReleaseDateDesc(), prisoners)
   }
@@ -124,10 +150,23 @@ class PrisonerSearchApiServiceTest {
     val prisonId = "MDI"
     val expectedPrisonerId = "A8339DY"
 
-    val mockedJsonResponse = readFile("testdata/prisoner-search-api/prisoner-search-1.json")
-    mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
+    val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-1.json")
+    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
+
     val prisonersList =
-      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 20, "releaseDate,ASC", false, "123")
+      prisonerService.getPrisonersByPrisonId(
+        "",
+        prisonId,
+        0,
+        null,
+        null,
+        null,
+        0,
+        20,
+        "releaseDate,ASC",
+        false,
+        "123",
+      )
     Assertions.assertEquals(
       expectedPrisonerId,
       prisonersList.content?.get((prisonersList.content!!.toList().size - 1))?.prisonerNumber
@@ -142,10 +181,23 @@ class PrisonerSearchApiServiceTest {
     val prisonId = "MDI"
     val expectedPrisonerId = "G1458GV"
 
-    val mockedJsonResponse = readFile("testdata/prisoner-search-api/prisoner-search-1.json")
-    mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
+    val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-1.json")
+    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
+
     val prisonersList =
-      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 10, "name,ASC", false, "123")
+      prisonerService.getPrisonersByPrisonId(
+        "",
+        prisonId,
+        0,
+        null,
+        null,
+        null,
+        0,
+        10,
+        "name,ASC",
+        false,
+        "123",
+      )
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
 
@@ -156,10 +208,11 @@ class PrisonerSearchApiServiceTest {
     val prisonId = "MDI"
     val expectedPageSize = 3
 
-    val mockedJsonResponse = readFile("testdata/prisoner-search-api/prisoner-search-1.json")
-    mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
+    val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-1.json")
+    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
+
     val prisonersList =
-      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 5, "name,ASC", false, "123")
+      prisonerService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 5, "name,ASC", false, "123")
     Assertions.assertEquals(expectedPageSize, prisonersList.pageSize)
     prisonersList.content?.toList()?.let { Assertions.assertEquals(expectedPageSize, it.size) }
   }
@@ -173,14 +226,29 @@ class PrisonerSearchApiServiceTest {
     val days = 84
     val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val releaseDate = LocalDate.now().minusDays(days.toLong())
-    var mockedJsonResponse = readFile("testdata/prisoner-search-api/prisoner-search-1.json")
-    mockedJsonResponse = mockedJsonResponse.replace(
+
+    var mockedJsonResponseString = readFile("testdata/prisoner-search-api/prisoner-search-1.json")
+    mockedJsonResponseString = mockedJsonResponseString.replace(
       "\"releaseDate\": \"2024-07-31\",",
       "\"releaseDate\": \"" + releaseDate.format(pattern) + "\",",
     )
-    mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
+
+    val mockedJsonResponse: PrisonersSearchList = readStringAsObject(mockedJsonResponseString)
+    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
     val prisonersList =
-      prisonerSearchApiService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 10, "name,ASC", false, "123")
+      prisonerService.getPrisonersByPrisonId(
+        "",
+        prisonId,
+        0,
+        null,
+        null,
+        null,
+        0,
+        10,
+        "name,ASC",
+        false,
+        "123",
+      )
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
 
@@ -190,9 +258,10 @@ class PrisonerSearchApiServiceTest {
 
     val prisonId = "MDI"
 
-    val mockedJsonResponse = readFile("testdata/prisoner-search-api/prisoner-search-2.json")
-    mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisoners = prisonerSearchApiService.getPrisonersByPrisonId(
+    val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-2.json")
+    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
+
+    val prisoners = prisonerService.getPrisonersByPrisonId(
       "",
       prisonId,
       0,
@@ -215,9 +284,10 @@ class PrisonerSearchApiServiceTest {
 
     val prisonId = "MDI"
 
-    val mockedJsonResponse = readFile("testdata/prisoner-search-api/prisoner-search-2.json")
-    mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisoners = prisonerSearchApiService.getPrisonersByPrisonId(
+    val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-2.json")
+    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
+
+    val prisoners = prisonerService.getPrisonersByPrisonId(
       "",
       prisonId,
       0,
@@ -274,7 +344,14 @@ class PrisonerSearchApiServiceTest {
     val status4 = Status.SUPPORT_DECLINED
     val status5 = Status.DONE
 
-    `when`(resettlementAssessmentRepository.findPrisonersWithAllAssessmentsInStatus("MDI", ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED, Pathway.entries.size))
+    `when`(
+      resettlementAssessmentRepository.findPrisonersWithAllAssessmentsInStatus(
+        "MDI",
+        ResettlementAssessmentType.BCST2,
+        ResettlementAssessmentStatus.SUBMITTED,
+        Pathway.entries.size,
+      ),
+    )
       .thenReturn(listOf(mockPrisonerEntity1, mockPrisonerEntity2, mockPrisonerEntity3))
 
     `when`(pathwayStatusRepository.findByPrison("MDI")).thenReturn(
@@ -492,7 +569,7 @@ class PrisonerSearchApiServiceTest {
       createPrisonerName("ZACHARY", "SMITH"),
       createPrisonerName("TOM", "WILLIAMSON"),
     )
-    prisonerSearchApiService.sortPrisonersByField("name,ASC", prisoners)
+    prisonerService.sortPrisonersByField("name,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -520,7 +597,7 @@ class PrisonerSearchApiServiceTest {
       createPrisonerName("BERTRAND", "ANDERSON"),
       createPrisonerName("ANDY", "ANDERSON"),
     )
-    prisonerSearchApiService.sortPrisonersByField("name,DESC", prisoners)
+    prisonerService.sortPrisonersByField("name,DESC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -529,13 +606,13 @@ class PrisonerSearchApiServiceTest {
     val prisoner = (
       createPrisonerPEDandHDCED(LocalDate.parse("2029-08-30"), null)
       )
-    val releaseEligibilityDate = prisonerSearchApiService.getDisplayedReleaseEligibilityDate(prisoner)
+    val releaseEligibilityDate = prisonerService.getDisplayedReleaseEligibilityDate(prisoner)
     Assertions.assertEquals(LocalDate.parse("2029-08-30"), releaseEligibilityDate)
   }
 
   @Test
   fun `Prisoner List- get release eligibility date from PED and HDCED`() {
-    val prisoners = immutableListOf(
+    val prisoners = listOf(
       createPrisonerPEDandHDCED(LocalDate.parse("2029-08-30"), null),
       createPrisonerPEDandHDCED(null, null),
       createPrisonerPEDandHDCED(null, LocalDate.parse("2037-01-01")),
@@ -551,88 +628,328 @@ class PrisonerSearchApiServiceTest {
     )
 
     val prisonersMapped = mutableListOf(
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2029-08-30"), null, LocalDate.parse("2029-08-30"), "HDCED"),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2029-08-30"),
+        null,
+        LocalDate.parse("2029-08-30"),
+        "HDCED",
+      ),
       createPrisonerReleaseEligibilityDateAndType(null, null, null, null),
-      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2037-01-01"), LocalDate.parse("2037-01-01"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2028-11-11"), null, LocalDate.parse("2028-11-11"), "HDCED"),
-      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2024-12-08"), LocalDate.parse("2024-12-08"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2026-07-21"), LocalDate.parse("2026-07-21"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2078-04-03"), LocalDate.parse("2036-04-03"), LocalDate.parse("2036-04-03"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2078-12-03"), LocalDate.parse("2046-12-03"), LocalDate.parse("2046-12-03"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(
+        null,
+        LocalDate.parse("2037-01-01"),
+        LocalDate.parse("2037-01-01"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2028-11-11"),
+        null,
+        LocalDate.parse("2028-11-11"),
+        "HDCED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        null,
+        LocalDate.parse("2024-12-08"),
+        LocalDate.parse("2024-12-08"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        null,
+        LocalDate.parse("2026-07-21"),
+        LocalDate.parse("2026-07-21"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2078-04-03"),
+        LocalDate.parse("2036-04-03"),
+        LocalDate.parse("2036-04-03"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2078-12-03"),
+        LocalDate.parse("2046-12-03"),
+        LocalDate.parse("2046-12-03"),
+        "PED",
+      ),
       createPrisonerReleaseEligibilityDateAndType(null, null, null, null),
-      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2026-02-01"), LocalDate.parse("2026-02-01"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2026-07-24"), null, LocalDate.parse("2026-07-24"), "HDCED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2024-12-09"), null, LocalDate.parse("2024-12-09"), "HDCED"),
+      createPrisonerReleaseEligibilityDateAndType(
+        null,
+        LocalDate.parse("2026-02-01"),
+        LocalDate.parse("2026-02-01"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2026-07-24"),
+        null,
+        LocalDate.parse("2026-07-24"),
+        "HDCED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2024-12-09"),
+        null,
+        LocalDate.parse("2024-12-09"),
+        "HDCED",
+      ),
     )
-    val actualPrisoners = prisonerSearchApiService.objectMapper(prisoners, null, null, "MDI", null, false, "123")
+    val actualPrisoners = prisonerService.objectMapper(prisoners, null, null, "MDI", null, false, "123")
     Assertions.assertEquals(prisonersMapped, actualPrisoners)
   }
 
   @Test
   fun `sort prisoners by release eligibility date- ascending`() {
     val prisoners = mutableListOf(
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2029-08-30"), null, LocalDate.parse("2029-08-30"), "HDCED"),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2029-08-30"),
+        null,
+        LocalDate.parse("2029-08-30"),
+        "HDCED",
+      ),
       createPrisonerReleaseEligibilityDateAndType(null, null, null, null),
-      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2037-01-01"), LocalDate.parse("2037-01-01"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2028-11-11"), null, LocalDate.parse("2028-11-11"), "HDCED"),
-      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2024-12-08"), LocalDate.parse("2024-12-08"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2026-07-21"), LocalDate.parse("2026-07-21"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2078-04-03"), LocalDate.parse("2036-04-03"), LocalDate.parse("2036-04-03"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2078-12-03"), LocalDate.parse("2046-12-03"), LocalDate.parse("2046-12-03"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(
+        null,
+        LocalDate.parse("2037-01-01"),
+        LocalDate.parse("2037-01-01"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2028-11-11"),
+        null,
+        LocalDate.parse("2028-11-11"),
+        "HDCED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        null,
+        LocalDate.parse("2024-12-08"),
+        LocalDate.parse("2024-12-08"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        null,
+        LocalDate.parse("2026-07-21"),
+        LocalDate.parse("2026-07-21"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2078-04-03"),
+        LocalDate.parse("2036-04-03"),
+        LocalDate.parse("2036-04-03"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2078-12-03"),
+        LocalDate.parse("2046-12-03"),
+        LocalDate.parse("2046-12-03"),
+        "PED",
+      ),
       createPrisonerReleaseEligibilityDateAndType(null, null, null, null),
-      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2026-02-01"), LocalDate.parse("2026-02-01"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2026-07-24"), null, LocalDate.parse("2026-07-24"), "HDCED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2024-12-09"), null, LocalDate.parse("2024-12-09"), "HDCED"),
+      createPrisonerReleaseEligibilityDateAndType(
+        null,
+        LocalDate.parse("2026-02-01"),
+        LocalDate.parse("2026-02-01"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2026-07-24"),
+        null,
+        LocalDate.parse("2026-07-24"),
+        "HDCED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2024-12-09"),
+        null,
+        LocalDate.parse("2024-12-09"),
+        "HDCED",
+      ),
     )
 
     val sortedPrisoners = mutableListOf(
-      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2024-12-08"), LocalDate.parse("2024-12-08"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2024-12-09"), null, LocalDate.parse("2024-12-09"), "HDCED"),
-      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2026-02-01"), LocalDate.parse("2026-02-01"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2026-07-21"), LocalDate.parse("2026-07-21"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2026-07-24"), null, LocalDate.parse("2026-07-24"), "HDCED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2028-11-11"), null, LocalDate.parse("2028-11-11"), "HDCED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2029-08-30"), null, LocalDate.parse("2029-08-30"), "HDCED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2078-04-03"), LocalDate.parse("2036-04-03"), LocalDate.parse("2036-04-03"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2037-01-01"), LocalDate.parse("2037-01-01"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2078-12-03"), LocalDate.parse("2046-12-03"), LocalDate.parse("2046-12-03"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(
+        null,
+        LocalDate.parse("2024-12-08"),
+        LocalDate.parse("2024-12-08"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2024-12-09"),
+        null,
+        LocalDate.parse("2024-12-09"),
+        "HDCED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        null,
+        LocalDate.parse("2026-02-01"),
+        LocalDate.parse("2026-02-01"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        null,
+        LocalDate.parse("2026-07-21"),
+        LocalDate.parse("2026-07-21"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2026-07-24"),
+        null,
+        LocalDate.parse("2026-07-24"),
+        "HDCED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2028-11-11"),
+        null,
+        LocalDate.parse("2028-11-11"),
+        "HDCED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2029-08-30"),
+        null,
+        LocalDate.parse("2029-08-30"),
+        "HDCED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2078-04-03"),
+        LocalDate.parse("2036-04-03"),
+        LocalDate.parse("2036-04-03"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        null,
+        LocalDate.parse("2037-01-01"),
+        LocalDate.parse("2037-01-01"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2078-12-03"),
+        LocalDate.parse("2046-12-03"),
+        LocalDate.parse("2046-12-03"),
+        "PED",
+      ),
       createPrisonerReleaseEligibilityDateAndType(null, null, null, null),
       createPrisonerReleaseEligibilityDateAndType(null, null, null, null),
     )
-    prisonerSearchApiService.sortPrisoners("releaseEligibilityDate,ASC", prisoners)
+    prisonerService.sortPrisoners("releaseEligibilityDate,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
   @Test
   fun `sort prisoners by release eligibility date- descending`() {
     val prisoners = mutableListOf(
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2029-08-30"), null, LocalDate.parse("2029-08-30"), "HDCED"),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2029-08-30"),
+        null,
+        LocalDate.parse("2029-08-30"),
+        "HDCED",
+      ),
       createPrisonerReleaseEligibilityDateAndType(null, null, null, null),
-      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2037-01-01"), LocalDate.parse("2037-01-01"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2028-11-11"), null, LocalDate.parse("2028-11-11"), "HDCED"),
-      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2024-12-08"), LocalDate.parse("2024-12-08"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2026-07-21"), LocalDate.parse("2026-07-21"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2078-04-03"), LocalDate.parse("2036-04-03"), LocalDate.parse("2036-04-03"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2078-12-03"), LocalDate.parse("2046-12-03"), LocalDate.parse("2046-12-03"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(
+        null,
+        LocalDate.parse("2037-01-01"),
+        LocalDate.parse("2037-01-01"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2028-11-11"),
+        null,
+        LocalDate.parse("2028-11-11"),
+        "HDCED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        null,
+        LocalDate.parse("2024-12-08"),
+        LocalDate.parse("2024-12-08"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        null,
+        LocalDate.parse("2026-07-21"),
+        LocalDate.parse("2026-07-21"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2078-04-03"),
+        LocalDate.parse("2036-04-03"),
+        LocalDate.parse("2036-04-03"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2078-12-03"),
+        LocalDate.parse("2046-12-03"),
+        LocalDate.parse("2046-12-03"),
+        "PED",
+      ),
       createPrisonerReleaseEligibilityDateAndType(null, null, null, null),
-      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2026-02-01"), LocalDate.parse("2026-02-01"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2024-12-09"), null, LocalDate.parse("2024-12-09"), "HDCED"),
+      createPrisonerReleaseEligibilityDateAndType(
+        null,
+        LocalDate.parse("2026-02-01"),
+        LocalDate.parse("2026-02-01"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2024-12-09"),
+        null,
+        LocalDate.parse("2024-12-09"),
+        "HDCED",
+      ),
     )
 
     val sortedPrisoners = mutableListOf(
       createPrisonerReleaseEligibilityDateAndType(null, null, null, null),
       createPrisonerReleaseEligibilityDateAndType(null, null, null, null),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2078-12-03"), LocalDate.parse("2046-12-03"), LocalDate.parse("2046-12-03"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2037-01-01"), LocalDate.parse("2037-01-01"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2078-04-03"), LocalDate.parse("2036-04-03"), LocalDate.parse("2036-04-03"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2029-08-30"), null, LocalDate.parse("2029-08-30"), "HDCED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2028-11-11"), null, LocalDate.parse("2028-11-11"), "HDCED"),
-      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2026-07-21"), LocalDate.parse("2026-07-21"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2026-02-01"), LocalDate.parse("2026-02-01"), "PED"),
-      createPrisonerReleaseEligibilityDateAndType(LocalDate.parse("2024-12-09"), null, LocalDate.parse("2024-12-09"), "HDCED"),
-      createPrisonerReleaseEligibilityDateAndType(null, LocalDate.parse("2024-12-08"), LocalDate.parse("2024-12-08"), "PED"),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2078-12-03"),
+        LocalDate.parse("2046-12-03"),
+        LocalDate.parse("2046-12-03"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        null,
+        LocalDate.parse("2037-01-01"),
+        LocalDate.parse("2037-01-01"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2078-04-03"),
+        LocalDate.parse("2036-04-03"),
+        LocalDate.parse("2036-04-03"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2029-08-30"),
+        null,
+        LocalDate.parse("2029-08-30"),
+        "HDCED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2028-11-11"),
+        null,
+        LocalDate.parse("2028-11-11"),
+        "HDCED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        null,
+        LocalDate.parse("2026-07-21"),
+        LocalDate.parse("2026-07-21"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        null,
+        LocalDate.parse("2026-02-01"),
+        LocalDate.parse("2026-02-01"),
+        "PED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        LocalDate.parse("2024-12-09"),
+        null,
+        LocalDate.parse("2024-12-09"),
+        "HDCED",
+      ),
+      createPrisonerReleaseEligibilityDateAndType(
+        null,
+        LocalDate.parse("2024-12-08"),
+        LocalDate.parse("2024-12-08"),
+        "PED",
+      ),
     )
-    prisonerSearchApiService.sortPrisoners("releaseEligibilityDate,DESC", prisoners)
+    prisonerService.sortPrisoners("releaseEligibilityDate,DESC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -667,7 +984,7 @@ class PrisonerSearchApiServiceTest {
       createPrisonerReleaseDate(LocalDate.parse("2024-12-09")),
       createPrisonerReleaseDate(LocalDate.parse("2024-12-08")),
     )
-    prisonerSearchApiService.sortPrisonersByField("releaseDate,DESC", prisoners)
+    prisonerService.sortPrisonersByField("releaseDate,DESC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -702,7 +1019,7 @@ class PrisonerSearchApiServiceTest {
       createPrisonerReleaseDate(null),
       createPrisonerReleaseDate(null),
     )
-    prisonerSearchApiService.sortPrisonersByField("releaseDate,ASC", prisoners)
+    prisonerService.sortPrisonersByField("releaseDate,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -737,7 +1054,7 @@ class PrisonerSearchApiServiceTest {
       createPrisonerReleaseOnTempLicenceDate(null),
       createPrisonerReleaseOnTempLicenceDate(null),
     )
-    prisonerSearchApiService.sortPrisoners("releaseOnTemporaryLicenceDate,ASC", prisoners)
+    prisonerService.sortPrisoners("releaseOnTemporaryLicenceDate,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -772,7 +1089,7 @@ class PrisonerSearchApiServiceTest {
       createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2024-12-09")),
       createPrisonerReleaseOnTempLicenceDate(LocalDate.parse("2024-12-08")),
     )
-    prisonerSearchApiService.sortPrisoners("releaseOnTemporaryLicenceDate,DESC", prisoners)
+    prisonerService.sortPrisoners("releaseOnTemporaryLicenceDate,DESC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -793,7 +1110,7 @@ class PrisonerSearchApiServiceTest {
       createPrisonerPathwayStatus(Status.SUPPORT_DECLINED),
       createPrisonerPathwayStatus(Status.DONE),
     )
-    prisonerSearchApiService.sortPrisonersByField("pathwayStatus,ASC", prisoners)
+    prisonerService.sortPrisonersByField("pathwayStatus,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -814,7 +1131,7 @@ class PrisonerSearchApiServiceTest {
       createPrisonerPathwayStatus(Status.IN_PROGRESS),
       createPrisonerPathwayStatus(Status.NOT_STARTED),
     )
-    prisonerSearchApiService.sortPrisonersByField("pathwayStatus,DESC", prisoners)
+    prisonerService.sortPrisonersByField("pathwayStatus,DESC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -844,7 +1161,7 @@ class PrisonerSearchApiServiceTest {
       createPrisonerLastUpdatedDate(Status.SUPPORT_NOT_REQUIRED, LocalDate.parse("2023-08-03")),
       createPrisonerLastUpdatedDate(Status.IN_PROGRESS, LocalDate.parse("2023-05-08")),
     )
-    prisonerSearchApiService.sortPrisonersByField("lastUpdatedDate,DESC", prisoners)
+    prisonerService.sortPrisonersByField("lastUpdatedDate,DESC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -873,7 +1190,7 @@ class PrisonerSearchApiServiceTest {
       createPrisonerLastUpdatedDate(Status.NOT_STARTED, null),
       createPrisonerLastUpdatedDate(Status.NOT_STARTED, null),
     )
-    prisonerSearchApiService.sortPrisonersByField("lastUpdatedDate,ASC", prisoners)
+    prisonerService.sortPrisonersByField("lastUpdatedDate,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -906,7 +1223,7 @@ class PrisonerSearchApiServiceTest {
       createPrisonerNumber("Y945849"),
 
     )
-    prisonerSearchApiService.sortPrisoners("prisonerNumber,ASC", prisoners)
+    prisonerService.sortPrisoners("prisonerNumber,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -944,7 +1261,7 @@ class PrisonerSearchApiServiceTest {
       createPrisonerNameAndNumber("Y945849", "ZACHARY", "SMITH"),
       createPrisonerNameAndNumber("E394839", "TOM", "WILLIAMSON"),
     )
-    prisonerSearchApiService.sortPrisoners("name,ASC", prisoners)
+    prisonerService.sortPrisoners("name,ASC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -982,7 +1299,7 @@ class PrisonerSearchApiServiceTest {
       createPrisonerNameAndNumber("A123456", "BERTRAND", "ANDERSON"),
       createPrisonerNameAndNumber("G394839", "ANDY", "ANDERSON"),
     )
-    prisonerSearchApiService.sortPrisoners("name,DESC", prisoners)
+    prisonerService.sortPrisoners("name,DESC", prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
@@ -1006,71 +1323,106 @@ class PrisonerSearchApiServiceTest {
       createPrisonerNumber("G567809"),
       createPrisonerNumber("G678952"),
     )
-    prisonerSearchApiService.sortPrisoners(null, prisoners)
+    prisonerService.sortPrisoners(null, prisoners)
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
+
+  private fun createPrisonerNumber(prisonerNumber: String) =
+    Prisoners(
+      prisonerNumber = prisonerNumber,
+      firstName = "firstName",
+      lastName = "lastName",
+      pathwayStatus = null,
+      assessmentRequired = true,
+    )
+
+  private fun createPrisonerName(firstName: String, lastName: String) =
+    Prisoners(
+      prisonerNumber = "A123456",
+      firstName = firstName,
+      lastName = lastName,
+      pathwayStatus = null,
+      assessmentRequired = true,
+    )
+
+  private fun createPrisonerNameAndNumber(prisonerNumber: String, firstName: String, lastName: String) =
+    Prisoners(
+      prisonerNumber = prisonerNumber,
+      firstName = firstName,
+      lastName = lastName,
+      pathwayStatus = null,
+      assessmentRequired = true,
+    )
+
+  private fun createPrisonerPEDandHDCED(
+    homeDetentionCurfewEligibilityDate: LocalDate?,
+    paroleEligibilityDate: LocalDate?,
+  ) = PrisonersSearch(
+    prisonerNumber = "A123456",
+    firstName = "SIMON",
+    lastName = "BAMFORD",
+    homeDetentionCurfewEligibilityDate = homeDetentionCurfewEligibilityDate,
+    paroleEligibilityDate = paroleEligibilityDate,
+    youthOffender = true,
+    prisonId = "MDI",
+    prisonName = "Midlands",
+    cellLocation = "2A",
+  )
+
+  private fun createPrisonerReleaseEligibilityDateAndType(
+    homeDetentionCurfewEligibilityDate: LocalDate?,
+    paroleEligibilityDate: LocalDate?,
+    releaseEligibilityDate: LocalDate?,
+    releaseEligibilityType: String?,
+  ) = Prisoners(
+    prisonerNumber = "A123456",
+    firstName = "SIMON",
+    lastName = "BAMFORD",
+    pathwayStatus = null,
+    homeDetentionCurfewEligibilityDate = homeDetentionCurfewEligibilityDate,
+    paroleEligibilityDate = paroleEligibilityDate,
+    releaseEligibilityDate = releaseEligibilityDate,
+    releaseEligibilityType = releaseEligibilityType,
+    assessmentRequired = true,
+    status = Pathway.entries.map { PathwayStatus(it, Status.NOT_STARTED) },
+  )
+
+  private fun createPrisonerReleaseDate(releaseDate: LocalDate?) = Prisoners(
+    prisonerNumber = "A123456",
+    firstName = "PATRICK",
+    lastName = "WICKENDEN",
+    pathwayStatus = null,
+    releaseDate = releaseDate,
+    assessmentRequired = true,
+  )
+
+  private fun createPrisonerReleaseOnTempLicenceDate(releaseOnTempLicenceDate: LocalDate?) = Prisoners(
+    prisonerNumber = "A123456",
+    firstName = "PATRICK",
+    lastName = "WICKENDEN",
+    pathwayStatus = null,
+    releaseOnTemporaryLicenceDate = releaseOnTempLicenceDate,
+    assessmentRequired = true,
+  )
+
+  private fun createPrisonerPathwayStatus(pathwayStatus: Status) =
+    Prisoners(
+      prisonerNumber = "A123456",
+      firstName = "BORIS",
+      lastName = "FRANKLIN",
+      pathwayStatus = pathwayStatus,
+      assessmentRequired = true,
+    )
+
+  private fun createPrisonerLastUpdatedDate(pathwayStatus: Status, lastUpdatedDate: LocalDate?) = Prisoners(
+    prisonerNumber = "A123456",
+    firstName = "OLIVER",
+    lastName = "HAYES",
+    pathwayStatus = pathwayStatus,
+    lastUpdatedDate = lastUpdatedDate,
+    assessmentRequired = true,
+  )
+
+  private inline fun <reified T> readFileAsObject(filename: String): T = readStringAsObject(readFile(filename))
+  private inline fun <reified T> readStringAsObject(string: String): T = jacksonObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).registerKotlinModule().registerModule(JavaTimeModule()).readValue(string)
 }
-
-private fun createPrisonerNumber(prisonerNumber: String) =
-  Prisoners(prisonerNumber = prisonerNumber, firstName = "firstName", lastName = "lastName", pathwayStatus = null, assessmentRequired = true)
-
-private fun createPrisonerName(firstName: String, lastName: String) =
-  Prisoners(prisonerNumber = "A123456", firstName = firstName, lastName = lastName, pathwayStatus = null, assessmentRequired = true)
-
-private fun createPrisonerNameAndNumber(prisonerNumber: String, firstName: String, lastName: String) =
-  Prisoners(prisonerNumber = prisonerNumber, firstName = firstName, lastName = lastName, pathwayStatus = null, assessmentRequired = true)
-
-private fun createPrisonerPEDandHDCED(homeDetentionCurfewEligibilityDate: LocalDate?, paroleEligibilityDate: LocalDate?) = PrisonersSearch(
-  prisonerNumber = "A123456",
-  firstName = "SIMON",
-  lastName = "BAMFORD",
-  homeDetentionCurfewEligibilityDate = homeDetentionCurfewEligibilityDate,
-  paroleEligibilityDate = paroleEligibilityDate,
-  youthOffender = true,
-  prisonId = "MDI",
-  prisonName = "Midlands",
-  cellLocation = "2A",
-)
-
-private fun createPrisonerReleaseEligibilityDateAndType(homeDetentionCurfewEligibilityDate: LocalDate?, paroleEligibilityDate: LocalDate?, releaseEligibilityDate: LocalDate?, releaseEligibilityType: String?) = Prisoners(
-  prisonerNumber = "A123456",
-  firstName = "SIMON",
-  lastName = "BAMFORD",
-  pathwayStatus = null,
-  homeDetentionCurfewEligibilityDate = homeDetentionCurfewEligibilityDate,
-  paroleEligibilityDate = paroleEligibilityDate,
-  releaseEligibilityDate = releaseEligibilityDate,
-  releaseEligibilityType = releaseEligibilityType,
-  assessmentRequired = true,
-  status = Pathway.entries.map { PathwayStatus(it, Status.NOT_STARTED) },
-)
-
-private fun createPrisonerReleaseDate(releaseDate: LocalDate?) = Prisoners(
-  prisonerNumber = "A123456",
-  firstName = "PATRICK",
-  lastName = "WICKENDEN",
-  pathwayStatus = null,
-  releaseDate = releaseDate,
-  assessmentRequired = true,
-)
-
-private fun createPrisonerReleaseOnTempLicenceDate(releaseOnTempLicenceDate: LocalDate?) = Prisoners(
-  prisonerNumber = "A123456",
-  firstName = "PATRICK",
-  lastName = "WICKENDEN",
-  pathwayStatus = null,
-  releaseOnTemporaryLicenceDate = releaseOnTempLicenceDate,
-  assessmentRequired = true,
-)
-
-private fun createPrisonerPathwayStatus(pathwayStatus: Status) =
-  Prisoners(prisonerNumber = "A123456", firstName = "BORIS", lastName = "FRANKLIN", pathwayStatus = pathwayStatus, assessmentRequired = true)
-
-private fun createPrisonerLastUpdatedDate(pathwayStatus: Status, lastUpdatedDate: LocalDate?) = Prisoners(
-  prisonerNumber = "A123456",
-  firstName = "OLIVER",
-  lastName = "HAYES",
-  pathwayStatus = pathwayStatus,
-  lastUpdatedDate = lastUpdatedDate,
-  assessmentRequired = true,
-)

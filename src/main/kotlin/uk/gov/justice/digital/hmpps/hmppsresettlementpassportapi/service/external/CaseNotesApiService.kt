@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external
 
+import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -19,6 +21,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNotes
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseNotesClientCredentialsService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.enumIncludes
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.exponentialBackOffRetry
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.extractCaseNoteTypeFromBcstCaseNote
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -168,23 +171,26 @@ class CaseNotesApiService(
     val type = DpsCaseNoteType.RESET
     val prisonCode = prisonerSearchApiService.findPrisonerPersonalDetails(nomsId).prisonId
 
-    return caseNotesClientCredentialsService.getAuthorizedClient(userId).post()
-      .uri(
-        "/case-notes/{nomsId}",
-        nomsId,
-      ).contentType(MediaType.APPLICATION_JSON)
-      .bodyValue(
-        mapOf(
-          "locationId" to prisonCode,
-          "type" to type,
-          "subType" to subType,
-          "text" to caseNotesText,
-        ),
-      )
-      .retrieve()
-      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found when posting case note of type $type and subtype $subType") })
-      .bodyToMono<CaseNote>()
-      .block()
+    return runBlocking {
+      caseNotesClientCredentialsService.getAuthorizedClient(userId).post()
+        .uri(
+          "/case-notes/{nomsId}",
+          nomsId,
+        ).contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(
+          mapOf(
+            "locationId" to prisonCode,
+            "type" to type,
+            "subType" to subType,
+            "text" to caseNotesText,
+          ),
+        )
+        .retrieve()
+        .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found when posting case note of type $type and subtype $subType") })
+        .bodyToMono<CaseNote>()
+        .exponentialBackOffRetry()
+        .awaitSingle()
+    }
   }
 
   fun convertCaseNoteTypeToCaseNoteSubType(caseNoteType: CaseNoteType) = when (caseNoteType) {

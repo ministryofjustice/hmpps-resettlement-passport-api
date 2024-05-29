@@ -3,9 +3,11 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 import com.google.common.io.Resources
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+import org.springframework.cache.CacheManager
 import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.jdbc.Sql
@@ -38,6 +40,14 @@ abstract class IntegrationTestBase : TestBase() {
 
   @Autowired
   protected lateinit var jwtAuthHelper: JwtAuthHelper
+
+  @Autowired
+  lateinit var cacheManager: CacheManager
+
+  @BeforeEach
+  fun beforeEach() {
+    cacheManager.cacheNames.forEach { cacheManager.getCache(it)?.clear() }
+  }
 
   companion object {
 

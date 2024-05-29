@@ -82,27 +82,65 @@ class AppointmentsService(
 
   private fun mapAppointmentsFromDeliusApi(appList: List<AppointmentDelius>, crsAppointments: List<CRSAppointmentsDTO>): List<Appointment> {
     val appointmentList = mutableListOf<Appointment>()
-    appList.forEach { it ->
+    val deliusAppointments = appList.filter{ !it.description.contains("Appointment with CRS")}
+    deliusAppointments.forEach { deliusAppointment ->
       val appointment: Appointment?
       val duration: Duration? = try {
-        it.duration?.let { it1 -> Duration.parseIsoString(it1) }
+        deliusAppointment.duration?.let { it1 -> Duration.parseIsoString(it1) }
       } catch (ex: IllegalArgumentException) {
-        log.warn("Unable to parse the duration value  " + it.duration)
+        log.warn("Unable to parse the duration value  " + deliusAppointment.duration)
         null
       }
-      var addressInfo = Address(null, null, null, null, null, null, null, null)
-      val appointmentDateTime = it.dateTime
-      if (it.location?.address?.postcode != null && it.location.address.streetName != null) {
-        addressInfo = Address(
-          it.location.address.buildingName,
-          it.location.address.buildingNumber,
-          it.location.address.streetName,
-          it.location.address.district,
-          it.location.address.town,
-          it.location.address.county,
-          it.location.address.postcode,
+      val addressInfo: Address = if (deliusAppointment.location?.address != null) {
+        Address(
+          deliusAppointment.location.address.buildingName,
+          deliusAppointment.location.address.buildingNumber,
+          deliusAppointment.location.address.streetName,
+          deliusAppointment.location.address.district,
+          deliusAppointment.location.address.town,
+          deliusAppointment.location.address.county,
+          deliusAppointment.location.address.postcode,
           null,
         )
+      } else {
+        Address(null, null, null, null, null, null, null, deliusAppointment.location?.description)
+      }
+
+      var formattedDateVal: LocalDate? = null
+      var formattedTimeVal: LocalTime? = null
+      if (deliusAppointment.dateTime != null) {
+        formattedDateVal = OffsetDateTime.parse(deliusAppointment.dateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toLocalDate()
+        formattedTimeVal = OffsetDateTime.parse(deliusAppointment.dateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toLocalTime()
+      }
+
+      appointment = Appointment(
+        deliusAppointment.description,
+        deliusAppointment.staff.name.forename + " " + it.staff.name.surname,
+        formattedDateVal,
+        formattedTimeVal,
+        addressInfo,
+        it.staff.email,
+        duration?.inWholeMinutes,
+      )
+      appointment.type = it.type.code
+      appointmentList.add(appointment)
+    }
+    crsAppointments.forEach { it ->
+      val referrals = it.referral
+      referrals.forEach {
+        val appointmentList = it.appointment
+        appointmentList.forEach{
+          val addressInfo = Address(
+            null, null, it.appointmentDeliveryFirstAddressLine, it.appointmentDeliverySecondAddressLine, it.appointmentDeliveryTownCity, it.appointmentDeliveryCounty,
+            it.appointmentDeliveryPostCode, it.location?.description,
+          )
+      }
+
+
+    }
+
+
+
       } else if (it.description.contains("Appointment with CRS") || it.type.description?.contains("Appointment with CRS") == true) {
         val appointmentFound = crsAppointments.filter { it2 -> it2.appointmentDateTime.equals(appointmentDateTime) }
         if (appointmentFound.isNotEmpty()) {

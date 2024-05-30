@@ -41,6 +41,7 @@ private val yamlPathways = setOf(
   Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
   Pathway.DRUGS_AND_ALCOHOL,
   Pathway.HEALTH,
+  Pathway.EDUCATION_SKILLS_AND_WORK,
 )
 
 abstract class AbstractResettlementAssessmentStrategy<T, Q>(

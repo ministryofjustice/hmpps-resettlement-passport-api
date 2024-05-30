@@ -1,0 +1,303 @@
+version: 1
+pathway: "EDUCATION_SKILLS_AND_WORK"
+genericAssessmentVersion: 1
+pages:
+  - id: JOB_BEFORE_CUSTODY
+    questions:
+      - id: JOB_BEFORE_CUSTODY
+        title: "Did the person in prison have a job before custody?"
+        type: "RADIO"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - questionId: JOB_BEFORE_CUSTODY
+        answers:
+          - "@class": "StringAnswer"
+            answer: "YES"
+        nextPageId: TYPE_OF_EMPLOYMENT_CONTRACT
+      - questionId: JOB_BEFORE_CUSTODY
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO"
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
+        nextPageId: HAVE_A_JOB_AFTER_RELEASE
+
+  - id: TYPE_OF_EMPLOYMENT_CONTRACT
+    questions:
+      - id: TYPE_OF_EMPLOYMENT_CONTRACT
+        title: "Type of employment contract"
+        type: "CHECKBOX"
+        options:
+          - id: FULL_TIME_CONTRACT
+            displayText: "Full-time contract"
+          - id: PART_TIME_CONTRACT
+            displayText: "Part-time contract"
+          - id: PERMANENT_CONTRACT
+            displayText: "Permanent contract"
+          - id: TEMPORARY_CONTRACT
+            displayText: "Temporary contract"
+          - id: FIXED_TERM_CONTRACT
+            displayText: "Fixed-term contract"
+          - id: ZERO_HOURS_CONTRACT
+            displayText: "Zero hours contract"
+          - id: NO_ANSWER
+            displayText: "No answer provided"
+            exclusive: true
+    nextPageLogic:
+      - nextPageId: RETURN_TO_JOB_AFTER_RELEASE
+
+  - id: RETURN_TO_JOB_AFTER_RELEASE
+    questions:
+      - id: RETURN_TO_JOB_AFTER_RELEASE
+        title: "Can the person in prison return to this job after release?"
+        type: "RADIO"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - questionId: RETURN_TO_JOB_AFTER_RELEASE
+        answers:
+          - "@class": "StringAnswer"
+            answer: "YES"
+        nextPageId: HELP_CONTACTING_EMPLOYER
+      - questionId: RETURN_TO_JOB_AFTER_RELEASE
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO"
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
+        nextPageId: HAVE_A_JOB_AFTER_RELEASE
+
+  - id: HAVE_A_JOB_AFTER_RELEASE
+    questions:
+      - id: HAVE_A_JOB_AFTER_RELEASE
+        title: "Does the person in prison have a job when they are released?"
+        type: "RADIO"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - questionId: HAVE_A_JOB_AFTER_RELEASE
+        answers:
+          - "@class": "StringAnswer"
+            answer: "YES"
+        nextPageId: HELP_CONTACTING_EMPLOYER
+      - questionId: HAVE_A_JOB_AFTER_RELEASE
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO"
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
+        nextPageId: SUPPORT_TO_FIND_JOB
+
+  - id: HELP_CONTACTING_EMPLOYER
+    questions:
+      - id: HELP_CONTACTING_EMPLOYER
+        title: "Does the person in prison need help contacting the employer?"
+        type: "RADIO"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - questionId: HELP_CONTACTING_EMPLOYER
+        answers:
+          - "@class": "StringAnswer"
+            answer: "YES"
+        nextPageId: EMPLOYMENT_DETAILS_BEFORE_CUSTODY
+      - questionId: HELP_CONTACTING_EMPLOYER
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO"
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
+        nextPageId: IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY
+
+  - id: EMPLOYMENT_DETAILS_BEFORE_CUSTODY
+    title: "Employment before custody"
+    questions:
+      - id: EMPLOYMENT_TITLE_BEFORE_CUSTODY
+        title: "Job title"
+        type: "SHORT_TEXT"
+      - id: NAME_OF_EMPLOYER
+        title: "Employer"
+        type: "SHORT_TEXT"
+      - id: ADDRESS_OF_EMPLOYER
+        title: "Employer address"
+        type: "ADDRESS"
+    nextPageLogic:
+      - nextPageId: IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY
+
+  - id: SUPPORT_TO_FIND_JOB
+    questions:
+      - id: SUPPORT_TO_FIND_JOB
+        title: "Does the person in prison want support to find a job when they are released?"
+        type: RADIO
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - nextPageId: IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY
+
+  - id: IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY
+    questions:
+      - id: IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY
+        title: "Was the person in prison in education or training before custody?"
+        type: RADIO
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - questionId: IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY
+        answers:
+          - "@class": "StringAnswer"
+            answer: "YES"
+        nextPageId: RETURN_TO_EDUCATION_OR_TRAINING_AFTER_RELEASE
+      - questionId: IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO"
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
+        nextPageId: WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE
+
+  - id: RETURN_TO_EDUCATION_OR_TRAINING_AFTER_RELEASE
+    questions:
+      - id: RETURN_TO_EDUCATION_OR_TRAINING_AFTER_RELEASE
+        title: "Can the person in prison return to this education or training after release?"
+        type: RADIO
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - questionId: RETURN_TO_EDUCATION_OR_TRAINING_AFTER_RELEASE
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO"
+        nextPageId: WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE
+      - questionId: RETURN_TO_EDUCATION_OR_TRAINING_AFTER_RELEASE
+        answers:
+          - "@class": "StringAnswer"
+            answer: "YES"
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
+        nextPageId: HELP_CONTACTING_EDUCATION_PROVIDER
+
+  - id: WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE
+    questions:
+      - id: WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE
+        title: "Does the person in prison want to start education or training after release?"
+        type: RADIO
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - questionId: WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE
+        answers:
+          - "@class": "StringAnswer"
+            answer: "YES"
+        nextPageId: BURSARIES_AND_GRANTS
+      - questionId: WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO"
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
+        nextPageId: FINAL_QUESTION_NEXT_PAGE
+
+  - id: HELP_CONTACTING_EDUCATION_PROVIDER
+    questions:
+      - id: HELP_CONTACTING_EDUCATION_PROVIDER
+        title: "Does the person in prison want help contacting an education or training provider?"
+        type: "RADIO"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - questionId: HELP_CONTACTING_EDUCATION_PROVIDER
+        answers:
+          - "@class": "StringAnswer"
+            answer: "YES"
+        nextPageId: TRAINING_PROVIDER_DETAILS
+      - questionId: HELP_CONTACTING_EDUCATION_PROVIDER
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO"
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
+        nextPageId: BURSARIES_AND_GRANTS
+
+  - id: TRAINING_PROVIDER_DETAILS
+    title: "Education or training before custody"
+    questions:
+      - id: NAME_OF_TRAINING_PROVIDER
+        title: "Education or training provider"
+        type: "SHORT_TEXT"
+      - id: ADDRESS_OF_TRAINING_PROVIDER
+        title: "Education or training provider address"
+        type: "ADDRESS"
+    nextPageLogic:
+      - nextPageId: BURSARIES_AND_GRANTS
+
+  - id: BURSARIES_AND_GRANTS
+    questions:
+      - id: BURSARIES_AND_GRANTS
+        title: "Does the person in prison want to find out about bursaries and grants for courses or training?"
+        type: RADIO
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - nextPageId: FINAL_QUESTION_NEXT_PAGE
+
+
+
+
+
+
+
+
+
+
+

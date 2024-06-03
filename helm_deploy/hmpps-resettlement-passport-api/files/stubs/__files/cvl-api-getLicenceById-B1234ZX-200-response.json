@@ -1,0 +1,257 @@
+{
+  "id": 101,
+  "typeCode": "AP_PSS",
+  "version": "2.1",
+  "statusCode": "ACTIVE",
+  "nomsId": "B1234ZX",
+  "bookingNo": "W75142",
+  "bookingId": 1138305,
+  "crn": "U338861",
+  "pnc": "2788/75034",
+  "cro": "2/26639",
+  "prisonCode": "MDI",
+  "prisonDescription": "Moorland (HMP & YOI)",
+  "prisonTelephone": "933 555 38416",
+  "forename": "Josh",
+  "middleNames": "Michael",
+  "surname": "Taylor",
+  "dateOfBirth": "24/10/1982",
+  "conditionalReleaseDate": "21/08/2023",
+  "actualReleaseDate": "20/08/2023",
+  "sentenceStartDate": "25/11/2016",
+  "sentenceEndDate": "01/05/2030",
+  "licenceStartDate": "20/08/2023",
+  "licenceExpiryDate": "12/07/2024",
+  "topupSupervisionStartDate": "13/07/2023",
+  "topupSupervisionExpiryDate": "16/07/2023",
+  "comUsername": "CVL_COM",
+  "comStaffId": 3000,
+  "comEmail": "cvl_com@probation.gov.uk",
+  "probationAreaCode": "N03",
+  "probationAreaDescription": "Midlands",
+  "probationPduCode": "N55PDU",
+  "probationPduDescription": "Nottingham",
+  "probationLauCode": "N55LAU",
+  "probationLauDescription": "Nottingham South",
+  "probationTeamCode": "cvl",
+  "probationTeamDescription": "Licence Team",
+  "appointmentPerson": "dsadsadsa",
+  "appointmentTime": "18/08/2023 01:01",
+  "appointmentAddress": "dsds, dsd, dsds, dsds, SN17AH",
+  "appointmentContact": "01632 960901",
+  "spoDiscussion": null,
+  "vloDiscussion": null,
+  "approvedDate": null,
+  "approvedByUsername": null,
+  "approvedByName": null,
+  "supersededDate": "13/07/2023 14:00:38",
+  "dateCreated": "13/07/2023 10:06:31",
+  "createdByUsername": "CVL_COM",
+  "dateLastUpdated": "13/07/2023 14:00:38",
+  "updatedByUsername": "CVL_COM",
+  "standardLicenceConditions": [
+    {
+      "id": 1001,
+      "code": "9ce9d594-e346-4785-9642-c87e764bee37",
+      "sequence": 0,
+      "text": "Be of good behaviour and not behave in a way which undermines the purpose of the licence period."
+    },
+    {
+      "id": 1002,
+      "code": "3b19fdb0-4ca3-4615-9fdd-61fabc1587af",
+      "sequence": 1,
+      "text": "Not commit any offence."
+    },
+    {
+      "id": 1003,
+      "code": "3361683a-504a-4357-ae22-6aa01b370b4a",
+      "sequence": 2,
+      "text": "Keep in touch with the supervising officer in accordance with instructions given by the supervising officer."
+    }
+  ],
+  "standardPssConditions": [
+    {
+      "id": 1004,
+      "code": "b3cd4a30-11fd-4715-9ebb-ed89f5386e1f",
+      "sequence": 0,
+      "text": "Be of good behaviour and not behave in a way that undermines the rehabilitative purpose of the supervision period."
+    },
+    {
+      "id": 1005,
+      "code": "b950407d-2270-45b8-9666-3ad58a17d0be",
+      "sequence": 1,
+      "text": "Not commit any offence."
+    },
+    {
+      "id": 1006,
+      "code": "93413832-9954-4907-a64d-eb8a56e34afb",
+      "sequence": 2,
+      "text": "Keep in touch with your supervisor in accordance with instructions given by your supervisor."
+    }
+  ],
+  "additionalLicenceConditions": [
+    {
+      "id": 1007,
+      "code": "5db26ab3-9b6f-4bee-b2aa-53aa3f3be7dd",
+      "version": "2.1",
+      "category": "Residence at a specific place",
+      "sequence": 0,
+      "text": "You must reside overnight within [REGION] probation region while of no fixed abode, unless otherwise approved by your supervising officer.",
+      "expandedText": "You must reside overnight within Greater Manchester probation region while of no fixed abode, unless otherwise approved by your supervising officer.",
+      "data": [
+        {
+          "id": 3072,
+          "field": "probationRegion",
+          "value": "London",
+          "sequence": 0
+        }
+      ],
+      "uploadSummary": []
+    },
+    {
+      "id": 1008,
+      "code": "0f9a20f4-35c7-4c77-8af8-f200f153fa11",
+      "version": "2.1",
+      "category": "Freedom of movement",
+      "sequence": 7,
+      "text": "Not to enter the area of [CLEARLY SPECIFIED AREA], as defined by the attached map, without the prior approval of your supervising officer.",
+      "expandedText": "Not to enter the area of Leeds City Centre, as defined by the attached map, without the prior approval of your supervising officer.",
+      "data": [
+        {
+          "id": 3079,
+          "field": "outOfBoundArea",
+          "value": "dsdsds",
+          "sequence": 0
+        },
+        {
+          "id": 3080,
+          "field": "outOfBoundFilename",
+          "value": "sample.pdf",
+          "sequence": 1
+        }
+      ],
+      "uploadSummary": [
+        {
+          "id": 261,
+          "filename": "sample.pdf",
+          "fileType": "application/pdf",
+          "fileSize": 3028,
+          "uploadedTime": "13/07/2023 13:22",
+          "description": " Simple PDF File 2 \n ...continued from page 1. Yet more text. And more text. And more text. \n And more text. And more text. And more text. And more text. And more \n text. Oh, how boring typing this stuff. But not as boring as watching \n paint dry. And more text. And more text. And more text. And more text. \n Boring.  More, a little more text. The end, and just as well. \n",
+          "thumbnailImage": "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pLm6kknl3AkN5aqpYggE9MhQQSqjI2g0p9k7fYoIZJJgf3V1IMorqQcqoK5AJKjgnqTkmtuigDl4tCuoorQpZWge2llURPfTuskTxFfnYj52LBfvqwCjjkCtB9L3RW8DWaPG0vnTF7uQtE2Q2EYjLLnIx8o28YwcVsUUAYiWF49w91PBCk3mk+WbyWeN0AXbgEKsbblU8KcbSeSxIZZ6RIogaayjiaCM7CmozSFm3NhWJUF0wQRuzgkgLxk71FAGKmmzCf5rGApdrm7c3khMbLkoIxt7HuCmDlgM1K1hJP8ALJa2sOxiFKsZFKZA+6AvJjUD2yR8y/e1aKAIba3jtYRDEGCKSQGYt1OepJPepqKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/Z",
+          "uploadDetailId": 261
+        }
+      ]
+    },
+    {
+      "id": 1009,
+      "code": "4673ebe4-9fc0-4e48-87c9-eb17d5280867",
+      "version": "2.1",
+      "category": "Supervision in the community",
+      "sequence": 8,
+      "text": "Report to staff at [NAME OF APPROVED PREMISES] at [TIME / DAILY], unless otherwise authorised by your supervising officer. This condition will be reviewed by your supervising officer on a [WEEKLY / MONTHLY / ETC] basis and may be amended or removed if it is felt that the level of risk you present has reduced appropriately.",
+      "expandedText": "Report to staff at Victoria Park Probation Centre at 10:30am daily, unless otherwise authorised by your supervising officer. This condition will be reviewed by your supervising officer on a monthly basis and may be amended or removed if it is felt that the level of risk you present has reduced appropriately.",
+      "data": [
+        {
+          "id": 3081,
+          "field": "approvedPremises",
+          "value": "sasasa",
+          "sequence": 0
+        },
+        {
+          "id": 3082,
+          "field": "reportingFrequency",
+          "value": "Daily",
+          "sequence": 1
+        },
+        {
+          "id": 3083,
+          "field": "numberOfReportingTimes",
+          "value": "Twice a day",
+          "sequence": 2
+        },
+        {
+          "id": 3084,
+          "field": "reportingTime1",
+          "value": "01:01 am",
+          "sequence": 3
+        },
+        {
+          "id": 3085,
+          "field": "reportingTime2",
+          "value": "01:01 am",
+          "sequence": 4
+        },
+        {
+          "id": 3086,
+          "field": "reviewPeriod",
+          "value": "Monthly",
+          "sequence": 5
+        }
+      ],
+      "uploadSummary": []
+    }
+  ],
+  "additionalPssConditions": [
+    {
+      "id": 2793,
+      "code": "7a9ca3bb-922a-433a-9601-1e475c6c0095",
+      "version": "2.1",
+      "category": "Restriction of conduct or acts",
+      "sequence": 9,
+      "text": "Not to participate directly or indirectly in organising and/or contributing to any demonstration, meeting, gathering or website without the prior approval of your supervising officer. This condition will be reviewed on a monthly basis and may be amended or removed if your risk is assessed as having changed.",
+      "expandedText": "Not to participate directly or indirectly in organising and/or contributing to any demonstration, meeting, gathering or website without the prior approval of your supervising officer. This condition will be reviewed on a monthly basis and may be amended or removed if your risk is assessed as having changed.",
+      "data": [],
+      "uploadSummary": []
+    },
+    {
+      "id": 2794,
+      "code": "86f8b3d6-be31-48b2-a29e-5cf662c95ad1",
+      "version": "2.1",
+      "category": "Extremism",
+      "sequence": 10,
+      "text": "Not to contact directly or indirectly any person whom you know or believe to have been charged or convicted of any extremist related offence, without the prior approval of your supervising officer.",
+      "expandedText": "Not to contact directly or indirectly any person whom you know or believe to have been charged or convicted of any extremist related offence, without the prior approval of your supervising officer.",
+      "data": [],
+      "uploadSummary": []
+    },
+    {
+      "id": 2795,
+      "code": "1dc7ee29-df47-48a8-90b6-69e286692d8a",
+      "version": "2.1",
+      "category": "Polygraph",
+      "sequence": 11,
+      "text": "To comply with any instruction given by your supervising officer requiring you to attend polygraph testing. To participate in polygraph sessions and examinations as instructed by or under the authority of your supervising officer and to comply with any instruction given to you during a polygraph session by the person conducting the polygraph.",
+      "expandedText": "To comply with any instruction given by your supervising officer requiring you to attend polygraph testing. To participate in polygraph sessions and examinations as instructed by or under the authority of your supervising officer and to comply with any instruction given to you during a polygraph session by the person conducting the polygraph.",
+      "data": [],
+      "uploadSummary": []
+    }
+  ],
+  "bespokeConditions": [
+    {
+      "id": 1010,
+      "sequence": 12,
+      "text": "Attend a location, as required by your supervising officer, to give a sample of oral fluid / urine in order to test whether you have any specified Class A and specified Class B drugs in your body, for the purpose of ensuring that you are complying with the condition of your licence requiring you to be of good behaviour. Do not take any action that could hamper or frustrate the drug testing process."
+    },
+    {
+      "id": 1011,
+      "sequence": 13,
+      "text" : "Allow person(s) as designated by your supervising officer to install an electronic monitoring tag on you and access to install any associated equipment in your property, and for the purpose of ensuring that equipment is functioning correctly. You must not damage or tamper with these devices and ensure that the tag is charged, and report to your supervising officer and the EM provider immediately if the tag or the associated equipment are not working correctly. This will be for the purpose of monitoring your freedom of movement licence condition(s) unless otherwise authorised by your supervising officer."
+    },
+    {
+      "id": 1012,
+      "sequence": 14,
+      "text" : "You will be subject to trail monitoring. Your whereabouts will be electronically monitored by GPS Satellite Tagging, ending on {{now offset='10 days' format='dd MMMM yyyy'}}, and you must cooperate with the monitoring as directed by your supervising officer unless otherwise authorised by your supervising officer."
+    },
+    {
+      "id": 1013,
+      "sequence": 15,
+      "text": "You must let the police search you if they ask. You must also let them search a vehicle you are with, like a car or a motorbike."
+    }
+  ],
+  "isVariation": false,
+  "variationOf": null,
+  "createdByFullName": "CVL COM",
+  "isInPssPeriod": false,
+  "isActivatedInPssPeriod": false
+}

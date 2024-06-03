@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/key-worker-api/key-worker/offender/B1234ZX"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "key-worker-api-getKeyWorkerByNomsId-B1234ZX-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

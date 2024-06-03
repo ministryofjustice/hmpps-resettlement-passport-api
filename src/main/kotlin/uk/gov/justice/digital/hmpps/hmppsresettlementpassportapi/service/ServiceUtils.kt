@@ -19,7 +19,7 @@ val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 const val STRING_LENGTH = 6
 const val BCST_CASE_NOTE_PREFIX = "Case note summary from"
 const val BCST_CASE_NOTE_POSTFIX = "report"
-val BCST_CASE_NOTE_REGEX = Regex("$BCST_CASE_NOTE_PREFIX (.*) (${ResettlementAssessmentType.entries.joinToString("|") { it.displayName }}) $BCST_CASE_NOTE_POSTFIX")
+val BCST_CASE_NOTE_REGEX = Regex("$BCST_CASE_NOTE_PREFIX (.*) (${ResettlementAssessmentType.entries.flatMap { listOfNotNull(it.displayName, it.alternativeDisplayName) }.joinToString("|")}) $BCST_CASE_NOTE_POSTFIX")
 
 fun <T : Enum<*>> convertStringToEnum(enumClass: KClass<T>, stringValue: String?): T? {
   val enum = enumClass.java.enumConstants.firstOrNull { it.name.fuzzyMatch(stringValue) }

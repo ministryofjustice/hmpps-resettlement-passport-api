@@ -1,12 +1,28 @@
 {
   "content": [
     {
-      "caseNoteId": "db-6",
-      "pathway": "FINANCE_AND_ID",
-      "creationDateTime": "2023-12-08T16:33:09.109",
-      "occurenceDateTime": "2023-12-08T16:33:09.109",
-      "createdBy": "Probation User 2",
-      "text": "text text text"
+      "caseNoteId": "47028563",
+      "pathway": "ACCOMMODATION",
+      "creationDateTime": "2024-01-12T12:01:09",
+      "occurenceDateTime": "2024-01-12T12:01:09",
+      "createdBy": "A User",
+      "text": "Case note summary from Accommodation Immediate needs report\\n\\nNew style\\n\\nSome text after\\n\\nDetails of case note etc"
+    },
+    {
+      "caseNoteId": "47028562",
+      "pathway": "ACCOMMODATION",
+      "creationDateTime": "2024-01-12T11:01:02",
+      "occurenceDateTime": "2024-01-12T11:01:02",
+      "createdBy": "A User",
+      "text": "Case note summary from Accommodation Pre-release report\\n\\nCase note details here"
+    },
+    {
+      "caseNoteId": "47028559",
+      "pathway": "ACCOMMODATION",
+      "creationDateTime": "2024-01-12T11:01:01",
+      "occurenceDateTime": "2024-01-12T11:01:01",
+      "createdBy": "A User",
+      "text": "Case note summary from Accommodation BCST2 report\\n\\nSome text after\\n\\nDetails of case note etc"
     },
     {
       "caseNoteId": "db-1",
@@ -15,30 +31,6 @@
       "occurenceDateTime": "2023-12-05T17:44:30.091",
       "createdBy": "John Williams",
       "text": "This is some case note text."
-    },
-    {
-      "caseNoteId": "db-2",
-      "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-      "creationDateTime": "2023-11-05T15:02:23.081",
-      "occurenceDateTime": "2023-11-05T15:02:23.081",
-      "createdBy": "Simon Johnson",
-      "text": "Some text related to case note."
-    },
-    {
-      "caseNoteId": "db-3",
-      "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
-      "creationDateTime": "2023-10-01T09:53:01.001",
-      "occurenceDateTime": "2023-10-01T09:53:01.001",
-      "createdBy": "Julie Davis",
-      "text": "Random string."
-    },
-    {
-      "caseNoteId": "47028578",
-      "pathway": "OTHER",
-      "creationDateTime": "2023-09-06T12:18:50.386747825",
-      "occurenceDateTime": "2023-09-06T12:17:00",
-      "createdBy": "James Smith",
-      "text": "Resettlement status set to: Done \\n This is a test case note from resettlement passport"
     },
     {
       "caseNoteId": "47028491",
@@ -61,109 +53,13 @@
       "pathway": "ACCOMMODATION",
       "creationDateTime": "2023-09-05T14:03:18.14468552",
       "occurenceDateTime": "2023-09-05T07:00:48",
-      "createdBy": "James Smith",
+      "createdBy": "Paul Smith",
       "text": "This is a 2nd test case note message from Resettlement Passport"
-    },
-    {
-      "caseNoteId": "47028550",
-      "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-      "creationDateTime": "2023-09-06T10:22:05.21868982",
-      "occurenceDateTime": "2023-08-28T07:00:48",
-      "createdBy": "James Smith",
-      "text": "Resettlement status set to: Done \n This is a test case note message from Resettlement Passport"
-    },
-    {
-      "caseNoteId": "47028551",
-      "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
-      "creationDateTime": "2023-09-06T10:23:44.475117334",
-      "occurenceDateTime": "2023-08-26T07:00:48",
-      "createdBy": "James Smith",
-      "text": "Resettlement status set to: Done \n This is a test case note message from Resettlement Passport"
-    },
-    {
-      "caseNoteId": "47028563",
-      "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
-      "creationDateTime": "2023-09-06T11:11:27.007398442",
-      "occurenceDateTime": "2023-08-11T07:00:48",
-      "createdBy": "James Smith",
-      "text": "Resettlement status set to:In progress \n This is a test case note message from Resettlement Passport, general message"
-    },
-    {
-      "caseNoteId": "47028553",
-      "pathway": "FINANCE_AND_ID",
-      "creationDateTime": "2023-09-06T11:06:28.04675538",
-      "occurenceDateTime": "2023-08-10T07:00:48",
-      "createdBy": "James Smith",
-      "text": "Resettlement status set to:In progress \n This is a test case note message from Resettlement Passport"
-    },
-    {
-      "caseNoteId": "47028557",
-      "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
-      "creationDateTime": "2023-09-06T11:11:05.636580772",
-      "occurenceDateTime": "2023-08-10T07:00:48",
-      "createdBy": "James Smith",
-      "text": "Resettlement status set to: Done \n This is a test case note message from Resettlement Passport, general message"
-    },
-    {
-      "caseNoteId": "47028555",
-      "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-      "creationDateTime": "2023-09-06T11:10:52.893484381",
-      "occurenceDateTime": "2023-08-10T07:00:48",
-      "createdBy": "James Smith",
-      "text": "Resettlement status set to: Done \n This is a test case note message from Resettlement Passport, general message"
-    },
-    {
-      "caseNoteId": "47028552",
-      "pathway": "EDUCATION_SKILLS_AND_WORK",
-      "creationDateTime": "2023-09-06T11:06:04.049008019",
-      "occurenceDateTime": "2023-07-26T07:00:48",
-      "createdBy": "James Smith",
-      "text": "Resettlement status set to:Done \n This is a test case note message from Resettlement Passport"
-    },
-    {
-      "caseNoteId": "47028554",
-      "pathway": "OTHER",
-      "creationDateTime": "2023-09-06T11:06:04.049008019",
-      "occurenceDateTime": "2023-07-26T07:00:48",
-      "createdBy": "James Smith",
-      "text": "Resettlement status set to:Done \n This is a test case note message from Resettlement Passport"
-    },
-    {
-      "caseNoteId": "db-5",
-      "pathway": "EDUCATION_SKILLS_AND_WORK",
-      "creationDateTime": "2022-02-12T21:01:11.234",
-      "occurenceDateTime": "2022-02-12T21:01:11.234",
-      "createdBy": "Probation User 1",
-      "text": "Insert case note information here"
-    },
-    {
-      "caseNoteId": "db-4",
-      "pathway": "DRUGS_AND_ALCOHOL",
-      "creationDateTime": "2021-09-30T11:13:59.673",
-      "occurenceDateTime": "2021-09-30T11:13:59.673",
-      "createdBy": "System User",
-      "text": "Some text. Some text. Some text."
-    },
-    {
-      "caseNoteId": "db-7",
-      "pathway": "HEALTH",
-      "creationDateTime": "2020-01-09T02:09:23.476",
-      "occurenceDateTime": "2020-01-09T02:09:23.476",
-      "createdBy": "Jim White",
-      "text": "string test string"
-    },
-    {
-      "caseNoteId": "db-8",
-      "pathway": "HEALTH",
-      "creationDateTime": "2020-01-09T02:09:23.476",
-      "occurenceDateTime": "2020-01-09T02:09:23.476",
-      "createdBy": "Liz Murphy",
-      "text": "string test string - another health case note"
     }
   ],
-  "pageSize": 20,
+  "pageSize": 7,
   "page": 0,
   "sortName": "occurenceDateTime,DESC",
-  "totalElements": 20,
+  "totalElements": 7,
   "last": true
 }

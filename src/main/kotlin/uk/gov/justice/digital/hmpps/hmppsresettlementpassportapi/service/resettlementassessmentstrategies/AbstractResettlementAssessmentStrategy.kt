@@ -34,6 +34,16 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClai
 import java.time.LocalDateTime
 import kotlin.reflect.KClass
 
+private val yamlPathways = setOf(
+  Pathway.ACCOMMODATION,
+  Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+  Pathway.FINANCE_AND_ID,
+  Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
+  Pathway.DRUGS_AND_ALCOHOL,
+  Pathway.HEALTH,
+  Pathway.EDUCATION_SKILLS_AND_WORK,
+)
+
 abstract class AbstractResettlementAssessmentStrategy<T, Q>(
   private val resettlementAssessmentRepository: ResettlementAssessmentRepository,
   private val prisonerRepository: PrisonerRepository,
@@ -47,13 +57,9 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
 
   override fun appliesTo(pathway: Pathway): Boolean {
     return if (useYaml) {
-      if (pathway == Pathway.ACCOMMODATION) {
-        false
-      } else {
-        pathway == this.pathway
-      }
+      pathway !in yamlPathways && this.pathway == pathway
     } else {
-      pathway == this.pathway
+      this.pathway == pathway
     }
   }
 
@@ -126,6 +132,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
   ): ResettlementAssessmentResponsePage {
     // Get the latest complete assessment (if exists)
     var existingAssessment = getExistingAssessment(nomsId, pathway, assessmentType)
+    var resettlementPlanCopy = false
 
     val edit = existingAssessment?.assessmentStatus == ResettlementAssessmentStatus.SUBMITTED
 
@@ -134,6 +141,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
       existingAssessment = getExistingAssessment(nomsId, pathway, ResettlementAssessmentType.BCST2)
 
       if (existingAssessment != null) {
+        resettlementPlanCopy = true
         // remove SUPPORT_NEEDS and replace with SUPPORT_NEEDS_PRERELEASE which has more options
         val questions = existingAssessment.questionsAndAnswers.toMutableList()
         questions.removeIf { it.questionId == GenericResettlementAssessmentQuestion.SUPPORT_NEEDS.id }
@@ -186,7 +194,8 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
       if (resettlementAssessmentResponsePage.id == GenericAssessmentPage.CHECK_ANSWERS.id) {
         // If the existing assessment is submitted we are in an edit and don't want to send back the ASSESSMENT_SUMMARY questions
         val questionsToExclude = if (edit) {
-          GenericAssessmentPage.ASSESSMENT_SUMMARY.questionsAndAnswers.map { it.question }
+          GenericAssessmentPage.ASSESSMENT_SUMMARY.questionsAndAnswers + GenericAssessmentPage.PRERELEASE_ASSESSMENT_SUMMARY.questionsAndAnswers
+            .map { it.question }
         } else {
           listOf()
         }
@@ -203,7 +212,8 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
 
       resettlementAssessmentResponsePage.questionsAndAnswers.forEach { q ->
         val existingAnswer = existingAssessment.assessment.assessment.find { it.questionId == q.question.id }
-        if (existingAnswer != null && q.question.id != GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY.id) {
+        // Copy in existing answers _but_ we don't want to copy case notes from BCST2 to RESETTLEMENT_PLAN
+        if (existingAnswer != null && !(resettlementPlanCopy && q.question.id == GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY.id)) {
           q.answer = existingAnswer.answer
         }
         if (q.question.id == GenericResettlementAssessmentQuestion.SUPPORT_NEEDS_PRERELEASE.id) {
@@ -434,14 +444,6 @@ enum class GenericAssessmentPage(
       ResettlementAssessmentQuestionAndAnswer(GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY),
     ),
   ),
-  ;
-
-  companion object {
-    fun entriesFor(assessmentType: ResettlementAssessmentType): Iterable<GenericAssessmentPage> = when (assessmentType) {
-      ResettlementAssessmentType.RESETTLEMENT_PLAN -> listOf(CHECK_ANSWERS, PRERELEASE_ASSESSMENT_SUMMARY)
-      ResettlementAssessmentType.BCST2 -> listOf(CHECK_ANSWERS, ASSESSMENT_SUMMARY)
-    }
-  }
 }
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)

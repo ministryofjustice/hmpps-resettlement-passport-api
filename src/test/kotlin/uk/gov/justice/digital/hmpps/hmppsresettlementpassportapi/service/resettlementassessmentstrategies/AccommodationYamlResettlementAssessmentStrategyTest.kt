@@ -4,7 +4,6 @@ import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
@@ -13,13 +12,10 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.BDDMockito.given
-import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.web.server.ServerWebInputException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResettlementAssessmentConfig
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentCompleteRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
@@ -40,9 +36,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentSimpleQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClaimFromJWTToken
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -50,34 +43,7 @@ import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension::class)
-class YamlResettlementAssessmentStrategyTest {
-  private lateinit var resettlementAssessmentService: YamlResettlementAssessmentStrategy
-
-  @Mock
-  private lateinit var prisonerRepository: PrisonerRepository
-
-  @Mock
-  private lateinit var resettlementAssessmentRepository: ResettlementAssessmentRepository
-
-  @Mock
-  private lateinit var pathwayStatusRepository: PathwayStatusRepository
-
-  private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
-
-  @BeforeEach
-  fun beforeEach() {
-    resettlementAssessmentService = YamlResettlementAssessmentStrategy(
-      getTestConfig(),
-      resettlementAssessmentRepository,
-      prisonerRepository,
-      pathwayStatusRepository,
-      true,
-    )
-  }
-
-  private fun getTestConfig() = ResettlementAssessmentConfig().assessmentQuestionSets(
-    PathMatchingResourcePatternResolver(),
-  )
+class AccommodationYamlResettlementAssessmentStrategyTest : YamlResettlementStrategyTest() {
 
   private fun stubSave() {
     given(resettlementAssessmentRepository.save(any())).willAnswer { mock ->
@@ -1441,36 +1407,5 @@ class YamlResettlementAssessmentStrategyTest {
       ),
       false,
     ),
-  )
-
-  @ParameterizedTest
-  @MethodSource("test appliesTo data")
-  fun `test appliesTo`(pathway: Pathway, useYaml: Boolean, expectation: Boolean) {
-    resettlementAssessmentService = YamlResettlementAssessmentStrategy(
-      getTestConfig(),
-      resettlementAssessmentRepository,
-      prisonerRepository,
-      pathwayStatusRepository,
-      useYaml,
-    )
-
-    Assertions.assertEquals(expectation, resettlementAssessmentService.appliesTo(pathway))
-  }
-
-  private fun `test appliesTo data`() = Stream.of(
-    Arguments.of(Pathway.ACCOMMODATION, true, true),
-    Arguments.of(Pathway.ACCOMMODATION, false, false),
-    Arguments.of(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, true, false),
-    Arguments.of(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, false, false),
-    Arguments.of(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, true, false),
-    Arguments.of(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, false, false),
-    Arguments.of(Pathway.DRUGS_AND_ALCOHOL, true, false),
-    Arguments.of(Pathway.DRUGS_AND_ALCOHOL, false, false),
-    Arguments.of(Pathway.EDUCATION_SKILLS_AND_WORK, true, false),
-    Arguments.of(Pathway.EDUCATION_SKILLS_AND_WORK, false, false),
-    Arguments.of(Pathway.FINANCE_AND_ID, true, false),
-    Arguments.of(Pathway.FINANCE_AND_ID, false, false),
-    Arguments.of(Pathway.HEALTH, true, false),
-    Arguments.of(Pathway.HEALTH, false, false),
   )
 }

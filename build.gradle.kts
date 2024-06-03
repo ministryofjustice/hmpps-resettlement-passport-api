@@ -33,6 +33,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+  implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
@@ -77,6 +78,7 @@ dependencies {
   testImplementation("com.squareup.okhttp3:okhttp:4.12.0")
   testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
   testImplementation("io.mockk:mockk:1.13.10")
+  testImplementation("com.github.victools:jsonschema-generator:4.35.0")
 
   if (project.hasProperty("docs")) {
     implementation("com.h2database:h2")

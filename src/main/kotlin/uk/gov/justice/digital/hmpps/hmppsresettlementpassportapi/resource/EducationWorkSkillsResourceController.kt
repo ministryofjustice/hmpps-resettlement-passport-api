@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.WorkReadinessStatusAndDetails
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.WorkReadinessStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.EducationWorkSkillsService
 
 @RestController
@@ -25,7 +25,7 @@ class EducationWorkSkillsResourceController(
   private val educationWorkSkillsService: EducationWorkSkillsService,
 ) {
   @GetMapping("/{nomsId}/work-readiness")
-  @Operation(summary = "Get work readiness data", description = "Get work readiness data status and data Education Employment API and CIAG API")
+  @Operation(summary = "Get work readiness data", description = "Get work readiness data status and data Education Employment API")
   @ApiResponses(
     value = [
       ApiResponse(
@@ -54,5 +54,5 @@ class EducationWorkSkillsResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-  ): WorkReadinessStatusAndDetails = educationWorkSkillsService.getWorkReadinessData(nomsId)
+  ): WorkReadinessStatus = educationWorkSkillsService.getWorkReadinessData(nomsId)
 }

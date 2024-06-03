@@ -3,11 +3,11 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 import com.google.common.io.Resources
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+import org.springframework.cache.CacheManager
 import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.jdbc.Sql
@@ -18,7 +18,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBas
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.AllocationManagerApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ArnApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CaseNotesApiMockServer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CiagApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CvlApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.EducationEmploymentApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.HmppsAuthMockServer
@@ -42,8 +41,15 @@ abstract class IntegrationTestBase : TestBase() {
   @Autowired
   protected lateinit var jwtAuthHelper: JwtAuthHelper
 
+  @Autowired
+  lateinit var cacheManager: CacheManager
+
+  @BeforeEach
+  fun beforeEach() {
+    cacheManager.cacheNames.forEach { cacheManager.getCache(it)?.clear() }
+  }
+
   companion object {
-    val log: Logger = LoggerFactory.getLogger(this::class.java)
 
     @JvmField
     val prisonRegisterApiMockServer = PrisonRegisterApiMockServer()
@@ -79,9 +85,6 @@ abstract class IntegrationTestBase : TestBase() {
     val educationEmploymentApiMockServer = EducationEmploymentApiMockServer()
 
     @JvmField
-    val ciagApiMockServer = CiagApiMockServer()
-
-    @JvmField
     val interventionsServiceApiMockServer = InterventionsServiceApiMockServer()
 
     @JvmField
@@ -102,7 +105,6 @@ abstract class IntegrationTestBase : TestBase() {
       allocationManagerApiMockServer.start()
       deliusApiMockServer.start()
       educationEmploymentApiMockServer.start()
-      ciagApiMockServer.start()
       interventionsServiceApiMockServer.start()
       popUserApiMockServer.start()
     }
@@ -121,7 +123,6 @@ abstract class IntegrationTestBase : TestBase() {
       allocationManagerApiMockServer.stop()
       deliusApiMockServer.stop()
       educationEmploymentApiMockServer.stop()
-      ciagApiMockServer.stop()
       interventionsServiceApiMockServer.stop()
     }
   }

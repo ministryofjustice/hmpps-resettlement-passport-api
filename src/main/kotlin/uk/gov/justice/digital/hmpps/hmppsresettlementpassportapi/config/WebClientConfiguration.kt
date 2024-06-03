@@ -22,7 +22,6 @@ import java.time.Duration
 @Configuration
 @EnableScheduling
 class WebClientConfiguration(
-  @Value("\${api.base.url.oauth}") val authBaseUri: String,
   @Value("\${api.base.url.prison-register}") private val prisonRegisterRootUri: String,
   @Value("\${api.base.url.prisoner-search}") private val prisonerSearchRootUri: String,
   @Value("\${api.base.url.cvl}") private val cvlRootUri: String,
@@ -33,7 +32,6 @@ class WebClientConfiguration(
   @Value("\${api.base.url.allocation-manager}") private val allocationManagerRootUri: String,
   @Value("\${api.base.url.resettlement-passport-delius}") private val rpDeliusRootUri: String,
   @Value("\${api.base.url.education-employment}") private val educationEmploymentRootUri: String,
-  @Value("\${api.base.url.ciag}") private val ciagRootUri: String,
   @Value("\${api.base.url.interventions-service}") private val interventionsRootUri: String,
   @Value("\${api.base.url.pop-user-service}") private val popUserRootUri: String,
   private val objectMapper: ObjectMapper,
@@ -108,11 +106,6 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun ciagWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, ciagRootUri)
-  }
-
-  @Bean
   fun interventionsWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
     return getWebClientCredentials(authorizedClientManager, interventionsRootUri)
   }
@@ -127,7 +120,7 @@ class WebClientConfiguration(
       .clientConnector(ReactorClientHttpConnector(httpClient))
       .filter(oauth2Client)
       .codecs { codecs ->
-        codecs.defaultCodecs().maxInMemorySize(2 * 1024 * 1024)
+        codecs.defaultCodecs().maxInMemorySize(5 * 1024 * 1024)
         codecs.defaultCodecs().jackson2JsonEncoder(
           Jackson2JsonEncoder(
             objectMapper,

@@ -5,6 +5,7 @@ import org.apache.commons.text.WordUtils
 import org.slf4j.LoggerFactory
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusAuthor
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AppointmentsService.Companion.SECTION_DELIMITER
 import java.lang.IllegalArgumentException
@@ -131,4 +132,13 @@ fun toMD5(sourceString: String): String {
   val digest = md.digest(sourceString.toByteArray())
   val hexString = digest.joinToString("") { "%02x".format(it) }
   return hexString
+}
+
+fun convertFromNameToDeliusAuthor(prisonCode: String, name: String): DeliusAuthor {
+  val splitName = name.trim().split("\\s+(?=\\S*+\$)")
+  return DeliusAuthor(
+    prisonCode = prisonCode,
+    forename = splitName.firstOrNull() ?: "unknown user", // TODO is this the right behaviour if we can't get a forename or surname from the name in the DB?
+    surname = splitName.lastOrNull() ?: "unknown user",
+  )
 }

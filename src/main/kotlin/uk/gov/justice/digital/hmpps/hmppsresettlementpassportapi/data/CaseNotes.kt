@@ -68,4 +68,11 @@ enum class DpsCaseNoteSubType {
   GEN,
   RESET,
   BCST,
+  INR,
+  PRR,
+}
+
+enum class DeliusCaseNoteType {
+  IMMEDIATE_NEEDS_REPORT,
+  PRE_RELEASE_REPORT,
 }

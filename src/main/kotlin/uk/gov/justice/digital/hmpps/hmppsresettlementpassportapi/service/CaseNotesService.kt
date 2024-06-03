@@ -6,10 +6,15 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWi
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesMeta
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DpsCaseNoteSubType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusAuthor
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CaseNotesApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
+import java.time.OffsetDateTime
 import java.util.Objects
 
 @Service
@@ -18,6 +23,7 @@ class CaseNotesService(
   val deliusContactService: DeliusContactService,
   val objectMapper: ObjectMapper,
   val prisonerRepository: PrisonerRepository,
+  val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
 ) {
   fun getCaseNotesByNomsId(nomsId: String, page: Int, size: Int, sort: String, days: Int, caseNoteType: CaseNoteType, createdByUserId: Int): CaseNotesList {
     if (page < 0 || size <= 0) {
@@ -92,12 +98,32 @@ class CaseNotesService(
   // Remove duplicates based on the createdBy + text + creationDate + occurrenceDate + pathway
   fun removeDuplicates(caseNotes: List<PathwayCaseNote>) = caseNotes.distinctBy { Objects.hash(it.createdBy, it.text, it.creationDateTime.toLocalDate(), it.occurenceDateTime.toLocalDate(), it.pathway) }.toMutableList()
 
-  fun postBCSTCaseNoteToDps(nomsId: String, notes: String, userId: String) {
+  fun postBCSTCaseNoteToDps(
+    nomsId: String,
+    notes: String,
+    userId: String,
+    subType: DpsCaseNoteSubType,
+  ) {
     caseNotesApiService.postCaseNote(
       nomsId = nomsId,
       caseNotesText = notes,
       userId = userId,
-      subType = DpsCaseNoteSubType.BCST,
+      subType = subType,
+    )
+  }
+
+  fun postBCSTCaseNoteToDelius(crn: String, prisonCode: String, notes: String, name: String, assessmentType: ResettlementAssessmentType) {
+    val type = when(assessmentType) {
+      ResettlementAssessmentType.BCST2 -> DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT
+      ResettlementAssessmentType.RESETTLEMENT_PLAN -> DeliusCaseNoteType.PRE_RELEASE_REPORT
+    }
+
+    resettlementPassportDeliusApiService.createContact(
+      crn = crn,
+      type = type,
+      dateTime = OffsetDateTime.now(),
+      notes = notes,
+      author = convertFromNameToDeliusAuthor(prisonCode, name),
     )
   }
 }

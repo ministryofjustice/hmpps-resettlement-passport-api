@@ -212,7 +212,7 @@ class CaseNotesApiService(
     DpsCaseNoteSubType.ED_SKL_WRK -> CaseNotePathway.EDUCATION_SKILLS_AND_WORK
     DpsCaseNoteSubType.FINANCE_ID -> CaseNotePathway.FINANCE_AND_ID
     DpsCaseNoteSubType.HEALTH -> CaseNotePathway.HEALTH
-    DpsCaseNoteSubType.GEN, DpsCaseNoteSubType.RESET, DpsCaseNoteSubType.BCST -> CaseNotePathway.OTHER
+    DpsCaseNoteSubType.GEN, DpsCaseNoteSubType.RESET, DpsCaseNoteSubType.BCST, DpsCaseNoteSubType.INR, DpsCaseNoteSubType.PRR -> CaseNotePathway.OTHER
   }
 
   fun convertPathwayToCaseNoteSubType(pathway: Pathway) = when (pathway) {

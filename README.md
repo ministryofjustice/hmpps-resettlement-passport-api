@@ -6,9 +6,9 @@
 # Resettlement Passport API
 
 This is a Backend-For-Frontend style API that support both the
-[Prepare someone for release](https://github.com/ministryofjustice/hmpps-resettlement-passport-ui) 
-and [Plan your future](https://github.com/ministryofjustice/hmpps-resettlement-passport-person-on-probation-ui) 
-frontends 
+[Prepare someone for release](https://github.com/ministryofjustice/hmpps-resettlement-passport-ui)
+and [Plan your future](https://github.com/ministryofjustice/hmpps-resettlement-passport-person-on-probation-ui)
+frontends
 
 ## Running locally
 

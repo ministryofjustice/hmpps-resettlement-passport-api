@@ -1,6 +1,14 @@
 {
   "content": [
     {
+      "caseNoteId": "47028563",
+      "pathway": "ACCOMMODATION",
+      "creationDateTime": "2024-01-12T12:01:09",
+      "occurenceDateTime": "2024-01-12T12:01:09",
+      "createdBy": "A User",
+      "text": "Case note summary from Accommodation Immediate needs report\\n\\nNew style\\n\\nSome text after\\n\\nDetails of case note etc"
+    },
+    {
       "caseNoteId": "47028562",
       "pathway": "ACCOMMODATION",
       "creationDateTime": "2024-01-12T11:01:02",
@@ -49,9 +57,9 @@
       "text": "This is a 2nd test case note message from Resettlement Passport"
     }
   ],
-  "pageSize": 6,
+  "pageSize": 7,
   "page": 0,
   "sortName": "occurenceDateTime,DESC",
-  "totalElements": 6,
+  "totalElements": 7,
   "last": true
 }

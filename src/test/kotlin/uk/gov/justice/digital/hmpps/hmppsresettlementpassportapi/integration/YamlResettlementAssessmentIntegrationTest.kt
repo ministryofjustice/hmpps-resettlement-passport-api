@@ -438,13 +438,13 @@ class YamlResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val assessmentType = "BCST2"
 
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
-    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "BCST", "Case note summary from Accommodation BCST2 report\\n\\nCase note related to accommodation", "MDI", 200)
-    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "BCST", "Case note summary from Attitudes, thinking and behaviour BCST2 report\\n\\nCase note related to Attitudes, thinking and behaviour", "MDI", 200)
-    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "BCST", "Case note summary from Children, families and communities BCST2 report\\n\\nCase note related to Children, family and communities", "MDI", 200)
-    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "BCST", "Case note summary from Drugs and alcohol BCST2 report\\n\\nCase note related to Drugs and alcohol", "MDI", 200)
-    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "BCST", "Case note summary from Education, skills and work BCST2 report\\n\\nCase note related to education, skills and work", "MDI", 200)
-    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "BCST", "Case note summary from Finance and ID BCST2 report\\n\\nCase note related to Finance and ID", "MDI", 200)
-    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "BCST", "Case note summary from Health BCST2 report\\n\\nCase note related to Health", "MDI", 200)
+    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "BCST", "Case note summary from Accommodation Immediate needs report\\n\\nCase note related to accommodation", "MDI", 200)
+    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "BCST", "Case note summary from Attitudes, thinking and behaviour Immediate needs report\\n\\nCase note related to Attitudes, thinking and behaviour", "MDI", 200)
+    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "BCST", "Case note summary from Children, families and communities Immediate needs report\\n\\nCase note related to Children, family and communities", "MDI", 200)
+    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "BCST", "Case note summary from Drugs and alcohol Immediate needs report\\n\\nCase note related to Drugs and alcohol", "MDI", 200)
+    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "BCST", "Case note summary from Education, skills and work Immediate needs report\\n\\nCase note related to education, skills and work", "MDI", 200)
+    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "BCST", "Case note summary from Finance and ID Immediate needs report\\n\\nCase note related to Finance and ID", "MDI", 200)
+    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "BCST", "Case note summary from Health Immediate needs report\\n\\nCase note related to Health", "MDI", 200)
 
     webTestClient.post()
       .uri("resettlement-passport/prisoner/$nomsId/resettlement-assessment/submit?assessmentType=$assessmentType")

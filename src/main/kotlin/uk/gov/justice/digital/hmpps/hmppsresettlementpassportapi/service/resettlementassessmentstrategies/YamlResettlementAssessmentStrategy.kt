@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
@@ -30,6 +31,23 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClaimFromJWTToken
 import java.time.LocalDateTime
 
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+enum class GenericResettlementAssessmentQuestion(
+  override val id: String,
+  override val title: String,
+  override val subTitle: String? = null,
+  override val type: TypeOfQuestion,
+  override val options: List<Option>? = null,
+  override val validationType: ValidationType = ValidationType.MANDATORY,
+) : IResettlementAssessmentQuestion {
+  CASE_NOTE_SUMMARY(
+    id = "CASE_NOTE_SUMMARY",
+    title = "Add a case note summary",
+    subTitle = "This will be displayed as a case note in both DPS and nDelius",
+    type = TypeOfQuestion.LONG_TEXT,
+  ),
+}
+
 @Service
 class YamlResettlementAssessmentStrategy(
   private val config: AssessmentQuestionSets,
@@ -42,7 +60,7 @@ class YamlResettlementAssessmentStrategy(
 
   override fun appliesTo(pathway: Pathway): Boolean = useYaml && pathway in availablePathways
 
-  fun getConfig(pathway: Pathway, assessmentType: ResettlementAssessmentType, version: Int = 1): AssessmentQuestionSet {
+  private fun getConfig(pathway: Pathway, assessmentType: ResettlementAssessmentType, version: Int = 1): AssessmentQuestionSet {
     val pathwayConfig = config.questionSets.first { it.pathway == pathway && it.version == version }
     val genericConfig = config.questionSets.first { it.generic && it.version == pathwayConfig.genericAssessmentVersion }
 
@@ -386,14 +404,14 @@ class YamlResettlementAssessmentStrategy(
 
   private fun getQuestionList(pathway: Pathway, assessmentType: ResettlementAssessmentType): List<IResettlementAssessmentQuestion> = getConfig(pathway, assessmentType).pages.filter { it.questions != null }.flatMap { it.questions!! }
 
-  fun saveAssessment(assessment: ResettlementAssessmentEntity): ResettlementAssessmentEntity = resettlementAssessmentRepository.save(assessment)
+  private fun saveAssessment(assessment: ResettlementAssessmentEntity): ResettlementAssessmentEntity = resettlementAssessmentRepository.save(assessment)
 
-  fun loadPrisoner(nomsId: String) = (
+  private fun loadPrisoner(nomsId: String) = (
     prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     )
 
-  fun getExistingAssessment(
+  private fun getExistingAssessment(
     nomsId: String,
     pathway: Pathway,
     assessmentType: ResettlementAssessmentType,
@@ -412,7 +430,7 @@ class YamlResettlementAssessmentStrategy(
     )
   }
 
-  fun loadPathwayStatusAnswer(pathway: Pathway, nomsId: String): StringAnswer? {
+  private fun loadPathwayStatusAnswer(pathway: Pathway, nomsId: String): StringAnswer? {
     val prisonerEntity = loadPrisoner(nomsId)
     val pathwayStatus = pathwayStatusRepository.findByPathwayAndPrisoner(pathway, prisonerEntity) ?: return null
 

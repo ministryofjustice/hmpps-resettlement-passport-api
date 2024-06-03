@@ -107,6 +107,24 @@
       "eventId": 47028557,
       "sensitive": false,
       "amendments": []
+    },
+    {
+      "caseNoteId": "47028563",
+      "offenderIdentifier": "A3426DZ",
+      "type": "RESET",
+      "typeDescription": "Resettlement",
+      "subType": "BCST",
+      "subTypeDescription": "BCST",
+      "source": "INST",
+      "creationDateTime": "2024-01-12T12:01:09",
+      "occurrenceDateTime": "2024-01-12T12:01:09",
+      "authorName": "A User",
+      "authorUserId": "12367",
+      "text": "Case note summary from Accommodation Immediate needs report\\n\\nNew style\\n\\nSome text after\\n\\nDetails of case note etc",
+      "locationId": "MDI",
+      "eventId": 47028558,
+      "sensitive": false,
+      "amendments": []
     }
   ],
   "pageable": {
@@ -122,7 +140,7 @@
     "unpaged": false
   },
   "totalPages": 1,
-  "totalElements": 6,
+  "totalElements": 7,
   "last": true,
   "size": 10,
   "number": 0,
@@ -132,6 +150,6 @@
     "unsorted": false
   },
   "first": true,
-  "numberOfElements": 6,
+  "numberOfElements": 7,
   "empty": false
 }

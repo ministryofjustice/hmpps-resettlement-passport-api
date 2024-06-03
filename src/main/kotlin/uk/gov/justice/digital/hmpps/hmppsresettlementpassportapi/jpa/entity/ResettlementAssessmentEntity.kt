@@ -76,8 +76,8 @@ data class ResettlementAssessmentEntity(
     get() = assessment.assessment
 }
 
-enum class ResettlementAssessmentType(val displayName: String) {
-  BCST2("BCST2"),
+enum class ResettlementAssessmentType(val displayName: String, val alternativeDisplayName: String? = null) {
+  BCST2("Immediate needs", "BCST2"),
   RESETTLEMENT_PLAN("Pre-release"),
 }
 

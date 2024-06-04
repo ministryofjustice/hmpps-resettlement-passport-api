@@ -50,6 +50,8 @@ class AppointmentsService(
     private const val TOWN = "  Town"
     private const val COUNTY = "  County"
     private const val POSTCODE = "  Postcode"
+    private const val CRS_APPOINTMENT_DEFAULT_TITLE = "Resettlement appointment"
+    private const val CRS_APPOINTMENT_DEFAULT_CONTACT = "Not provided"
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
@@ -82,7 +84,7 @@ class AppointmentsService(
 
   private fun mapAppointmentsFromDeliusApi(appList: List<AppointmentDelius>, crsAppointments: List<CRSAppointmentsDTO>): List<Appointment> {
     val appointmentList = mutableListOf<Appointment>()
-    val deliusAppointments = appList.filter{ !it.description.contains("Appointment with CRS")}
+    val deliusAppointments = appList.filter { !it.description.contains("Appointment with CRS") }
     deliusAppointments.forEach { deliusAppointment ->
       val appointment: Appointment?
       val duration: Duration? = try {
@@ -115,65 +117,53 @@ class AppointmentsService(
 
       appointment = Appointment(
         deliusAppointment.description,
-        deliusAppointment.staff.name.forename + " " + it.staff.name.surname,
+        deliusAppointment.staff.name.forename + " " + deliusAppointment.staff.name.surname,
         formattedDateVal,
         formattedTimeVal,
         addressInfo,
-        it.staff.email,
+        deliusAppointment.staff.email,
         duration?.inWholeMinutes,
       )
-      appointment.type = it.type.code
+      appointment.type = deliusAppointment.type.code
       appointmentList.add(appointment)
     }
     crsAppointments.forEach { it ->
       val referrals = it.referral
-      referrals.forEach {
-        val appointmentList = it.appointment
-        appointmentList.forEach{
+      referrals.forEach { referral ->
+        val referralAppointments = referral.appointment
+        referralAppointments.forEach {
+          val appointment: Appointment?
           val addressInfo = Address(
-            null, null, it.appointmentDeliveryFirstAddressLine, it.appointmentDeliverySecondAddressLine, it.appointmentDeliveryTownCity, it.appointmentDeliveryCounty,
-            it.appointmentDeliveryPostCode, it.location?.description,
+            null,
+            it.appointmentDeliveryFirstAddressLine,
+            it.appointmentDeliverySecondAddressLine,
+            null,
+            it.appointmentDeliveryTownCity,
+            it.appointmentDeliveryCounty,
+            it.appointmentDeliveryPostCode,
+            null,
           )
-      }
-
-
-    }
-
-
-
-      } else if (it.description.contains("Appointment with CRS") || it.type.description?.contains("Appointment with CRS") == true) {
-        val appointmentFound = crsAppointments.filter { it2 -> it2.appointmentDateTime.equals(appointmentDateTime) }
-        if (appointmentFound.isNotEmpty()) {
-          val address = appointmentFound[0]
-          addressInfo = Address(
-            null, null, address.appointmentDeliveryFirstAddressLine, address.appointmentDeliverySecondAddressLine, address.appointmentDeliveryTownCity, address.appointmentDeliveryCounty,
-            address.appointmentDeliveryPostCode, it.location?.description,
+          var formattedDateVal: LocalDate? = null
+          var formattedTimeVal: LocalTime? = null
+          if (it.appointmentDateTime != null) {
+            formattedDateVal =
+              OffsetDateTime.parse(it.appointmentDateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toLocalDate()
+            formattedTimeVal =
+              OffsetDateTime.parse(it.appointmentDateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toLocalTime()
+          }
+          appointment = Appointment(
+            CRS_APPOINTMENT_DEFAULT_TITLE,
+            CRS_APPOINTMENT_DEFAULT_CONTACT,
+            formattedDateVal,
+            formattedTimeVal,
+            addressInfo,
+            null,
+            it.appointmentDurationInMinutes.toLong(),
           )
-        } else {
-          addressInfo = Address(null, null, null, null, null, null, null, it.location?.description)
+          appointment.type = ""
+          appointmentList.add(appointment)
         }
-      } else {
-        addressInfo = Address(null, null, null, null, null, null, null, it.location?.description)
       }
-
-      var formattedDateVal: LocalDate? = null
-      var formattedTimeVal: LocalTime? = null
-      if (it.dateTime != null) {
-        formattedDateVal = OffsetDateTime.parse(it.dateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toLocalDate()
-        formattedTimeVal = OffsetDateTime.parse(it.dateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toLocalTime()
-      }
-
-      appointment = Appointment(
-        it.description,
-        it.staff.name.forename + " " + it.staff.name.surname,
-        formattedDateVal,
-        formattedTimeVal,
-        addressInfo,
-        it.staff.email,
-        duration?.inWholeMinutes,
-      )
-      appointment.type = it.type.code
-      appointmentList.add(appointment)
     }
     return appointmentList
   }

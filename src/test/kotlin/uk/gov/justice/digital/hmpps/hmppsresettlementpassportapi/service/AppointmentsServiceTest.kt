@@ -17,7 +17,9 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.Info
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.LocationInfo
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.StaffInfo
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.interventionsapi.CRSAppointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.interventionsapi.CRSAppointmentsDTO
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.interventionsapi.ReferralAppointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Category
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
@@ -127,10 +129,9 @@ class AppointmentsServiceTest {
 
   @Test
   fun `getAppointmentsByNomsId with CRS appointments address from intervention service `() {
-    val appointmentWithBlankAddress = createTestDeliusAppointmentWithAddressBlank("2024-05-02T10:00:00Z")
     val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz", LocalDate.MIN)
     Mockito.`when`(prisonerRepository.findByNomsId(nomisId)).thenReturn(prisonerEntity)
-    Mockito.`when`(rpDeliusApiService.fetchAppointments(eq(nomisId), any(), any(), any())).thenReturn(listOf(appointmentWithBlankAddress))
+    Mockito.`when`(rpDeliusApiService.fetchAppointments(eq(nomisId), any(), any(), any())).thenReturn(listOf())
     Mockito.`when`(interventionsApiService.fetchCRSAppointments("crn")).thenReturn(listOf(createCRSAppointments()))
     val appointments = appointmentsService.getAppointmentsByNomsId(nomisId, LocalDate.MIN, LocalDate.MAX, true)
     Assertions.assertTrue(appointments.results.size == 1)
@@ -259,9 +260,10 @@ class AppointmentsServiceTest {
   }
 
   private fun createCRSAppointments(): CRSAppointmentsDTO {
-    val testAppointment = CRSAppointmentsDTO(
-      "U20002",
-      listOf("ACCOMMODATION"),
+    val referral = mutableListOf<ReferralAppointment>()
+
+    val appointmentList = mutableListOf<CRSAppointment>()
+    var appointment = CRSAppointment(
       "SD123456",
       "2024-05-02T10:00:00Z",
       60,
@@ -273,6 +275,18 @@ class AppointmentsServiceTest {
       "PO5 3CO",
 
     )
+    appointmentList.add(appointment)
+    var referralAppointment = ReferralAppointment(
+      "eee-ddd-ffff",
+      appointmentList,
+    )
+    referral.add(referralAppointment)
+
+    val testAppointment = CRSAppointmentsDTO(
+      "U20002",
+      referral,
+    )
+
     return testAppointment
   }
 }

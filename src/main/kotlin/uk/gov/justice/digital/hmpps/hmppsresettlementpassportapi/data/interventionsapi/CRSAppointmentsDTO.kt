@@ -12,7 +12,7 @@ data class ReferralAppointment(
   @JsonProperty("referral_number")
   val referralNumber: String,
   @JsonProperty("appointment")
-  val appointment: List<CRSAppointment>
+  val appointment: List<CRSAppointment>,
 )
 
 data class CRSAppointment(
@@ -35,4 +35,4 @@ data class CRSAppointment(
   @JsonProperty("appointment_delivery_postcode")
   val appointmentDeliveryPostCode: String,
 
-  )
+)

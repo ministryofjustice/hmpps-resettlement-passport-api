@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/pop-user-api/person-on-probation-user/user"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "pop-user-api-postPoPUserOTPVerified-B1234ZX-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+    "crn": "U338861",
+    "name": {
+        "forename": "Test",
+        "surname": "User024"
+    },
+    "dateOfBirth": "1982-10-24",
+    "contactDetails": {
+        "telephone": "000000000",
+        "mobile": "0000000000",
+        "email": "josh.taylor@test.com"
+    }
+}

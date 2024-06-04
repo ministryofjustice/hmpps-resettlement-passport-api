@@ -104,6 +104,17 @@ class AppointmentsService(
           deliusAppointment.location.address.postcode,
           null,
         )
+      } else if (it.description.contains("Appointment with CRS") || it.type.description?.contains("Appointment with CRS") == true) {
+        val appointmentFound = crsAppointments.filter { it2 -> it2.appointmentDateTime.equals(appointmentDateTime) }
+        if (appointmentFound.isNotEmpty()) {
+          val address = appointmentFound[0]
+          addressInfo = Address(
+            null, null, address.appointmentDeliveryFirstAddressLine, address.appointmentDeliverySecondAddressLine, address.appointmentDeliveryTownCity, address.appointmentDeliveryCounty,
+            address.appointmentDeliveryPostCode, it.location?.description,
+          )
+        } else {
+          addressInfo = Address(null, null, null, null, null, null, null, it.location?.description)
+        }
       } else {
         Address(null, null, null, null, null, null, null, deliusAppointment.location?.description)
       }

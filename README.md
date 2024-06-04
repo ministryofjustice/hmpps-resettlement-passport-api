@@ -32,5 +32,5 @@ If the yaml structure changes, rerun the `GenerateAssessmentSchema` file and com
 
 ## Testing wiremock stubs locally
 - build the docker image: `docker build -f stubs.Dockerfile -t stubs .`
-- run the stubs locally on port 8080: `docker run -p 8080:8080 stubs `
-- test it, for example: `http://localhost:8080/resettlement-passport-and-delius-api/appointments/U328968`
+- run the stubs locally on port 8080: `docker run -p 8080:8080 stubs`
+- test it, for example: `http://localhost:8080/resettlement-passport-and-delius-api/appointments/U338861`

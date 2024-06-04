@@ -1,0 +1,23 @@
+{
+  "level": 1,
+  "levelDescription": "MAPPA Level 1",
+  "category": 3,
+  "categoryDescription": "MAPPA Cat 3",
+  "startDate": "2023-01-27",
+  "reviewDate": "2023-04-27",
+  "team": {
+    "Code": "ABC123",
+    "Description": "Some description"
+  },
+  "officer": {
+    "code": "AN001A",
+    "forenames": "Sheila Linda",
+    "surname": "Hancock",
+    "unallocated": true
+  },
+  "probationArea": {
+    "Code": "ABC123",
+    "Description": "Some description"
+  },
+  "notes": "string"
+}

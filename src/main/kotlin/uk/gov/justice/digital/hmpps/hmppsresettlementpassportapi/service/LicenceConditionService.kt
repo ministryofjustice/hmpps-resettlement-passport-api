@@ -19,14 +19,14 @@ class LicenceConditionService(
 
 ) {
 
-  fun getLicenceConditionsByNomsId(nomsId: String, isForMetric: Boolean): LicenceConditions? {
+  fun getLicenceConditionsByNomsId(nomsId: String, includeChangeNotify: Boolean, isForMetric: Boolean): LicenceConditions? {
     val licence = cvlApiService.getLicenceByNomsId(nomsId) ?: throw NoDataWithCodeFoundException(
       "Prisoner",
       nomsId,
     )
     val licenceConditions = cvlApiService.getLicenceConditionsByLicenceId(licence.licenceId)
 
-    if (!isForMetric) {
+    if (!isForMetric && includeChangeNotify) {
       val changeStatus = compareAndSave(licenceConditions.toString(), nomsId)
       licenceConditions.changeStatus = changeStatus
     }

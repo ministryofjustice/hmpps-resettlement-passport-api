@@ -131,6 +131,24 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
+  fun `Get licence condition from cvl happy path with includeChangeNotify`() {
+    val nomsId = "G4161UF"
+    val expectedOutput = readFile("testdata/expectation/licence-condition-1.json")
+    expectedOutput.replace("Active", "InActive", true)
+    val licenceId = 101
+    cvlApiMockServer.stubFindLicencesByNomsId(nomsId, 200)
+    cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 200)
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/licence-condition?includeChangeNotify=true")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput)
+  }
+
+  @Test
   fun `Get licence condition from cvl unauthorized`() {
     val nomsId = "abc"
 

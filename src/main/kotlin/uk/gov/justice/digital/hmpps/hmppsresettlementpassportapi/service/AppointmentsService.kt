@@ -50,7 +50,6 @@ class AppointmentsService(
     private const val TOWN = "  Town"
     private const val COUNTY = "  County"
     private const val POSTCODE = "  Postcode"
-    private const val CRS_APPOINTMENT_DEFAULT_TITLE = "Resettlement appointment"
     private const val CRS_APPOINTMENT_DEFAULT_CONTACT = "Not provided"
     private val log = LoggerFactory.getLogger(this::class.java)
   }
@@ -152,7 +151,7 @@ class AppointmentsService(
               OffsetDateTime.parse(it.appointmentDateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toLocalTime()
           }
           appointment = Appointment(
-            CRS_APPOINTMENT_DEFAULT_TITLE,
+            referral.interventionTitle,
             CRS_APPOINTMENT_DEFAULT_CONTACT,
             formattedDateVal,
             formattedTimeVal,

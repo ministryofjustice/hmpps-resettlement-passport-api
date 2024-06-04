@@ -276,8 +276,9 @@ class AppointmentsServiceTest {
 
     )
     appointmentList.add(appointment)
-    var referralAppointment = ReferralAppointment(
+    val referralAppointment = ReferralAppointment(
       "eee-ddd-ffff",
+      interventionTitle = "Accommodation Services",
       appointmentList,
     )
     referral.add(referralAppointment)

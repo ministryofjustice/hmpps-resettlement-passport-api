@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/cvl-api/exclusion-zone/id/101/condition/id/1008/full-size-image"
+    "urlPath": "/cvl-api/exclusion-zone/id/201/condition/id/1008/full-size-image"
   },
   "response": {
     "status": 200,

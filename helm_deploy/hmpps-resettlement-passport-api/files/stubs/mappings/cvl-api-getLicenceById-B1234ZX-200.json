@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/cvl-api/licence/id/101"
+    "urlPath": "/cvl-api/licence/id/201"
   },
   "response": {
     "status": 200,

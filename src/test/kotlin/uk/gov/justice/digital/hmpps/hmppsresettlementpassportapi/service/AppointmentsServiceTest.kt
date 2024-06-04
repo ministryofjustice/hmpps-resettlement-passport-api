@@ -128,14 +128,24 @@ class AppointmentsServiceTest {
   }
 
   @Test
-  fun `getAppointmentsByNomsId with CRS appointments address from intervention service `() {
+  fun `getAppointmentsByNomsId with CRS appointments from intervention service `() {
     val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz", LocalDate.MIN)
     Mockito.`when`(prisonerRepository.findByNomsId(nomisId)).thenReturn(prisonerEntity)
     Mockito.`when`(rpDeliusApiService.fetchAppointments(eq(nomisId), any(), any(), any())).thenReturn(listOf())
-    Mockito.`when`(interventionsApiService.fetchCRSAppointments("crn")).thenReturn(listOf(createCRSAppointments()))
-    val appointments = appointmentsService.getAppointmentsByNomsId(nomisId, LocalDate.MIN, LocalDate.MAX, true)
+    Mockito.`when`(interventionsApiService.fetchCRSAppointments("crn")).thenReturn(createCRSAppointments())
+    val appointments = appointmentsService.getAppointmentsByNomsId(nomisId, LocalDate.MIN.plusDays(1), LocalDate.MAX.minusDays(1), true)
     Assertions.assertTrue(appointments.results.size == 1)
     Assertions.assertTrue(appointments.results[0].location?.postcode != null)
+  }
+
+  @Test
+  fun `getAppointmentsByNomsId with CRS appointments from intervention service in date range `() {
+    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz", LocalDate.MIN)
+    Mockito.`when`(prisonerRepository.findByNomsId(nomisId)).thenReturn(prisonerEntity)
+    Mockito.`when`(rpDeliusApiService.fetchAppointments(eq(nomisId), any(), any(), any())).thenReturn(listOf())
+    Mockito.`when`(interventionsApiService.fetchCRSAppointments("crn")).thenReturn(createCRSAppointments())
+    val appointments = appointmentsService.getAppointmentsByNomsId(nomisId, LocalDate.now(), LocalDate.now().plusDays(1), true)
+    Assertions.assertTrue(appointments.results.isEmpty())
   }
 
   @Test
@@ -242,21 +252,6 @@ class AppointmentsServiceTest {
       """.trimIndent()
     val actualNotes = appointmentsService.createNotes(testAppointment)
     Assertions.assertEquals(expectedNotes, actualNotes)
-  }
-
-  private fun createTestDeliusAppointmentWithAddressBlank(appointmentDate: String = "2024-05-02T10:00:00Z"): AppointmentDelius {
-    val info = Info(code = "APPOINTMENT_TYPE_CODE", description = "Appointment with CRS")
-    val staffInfo = StaffInfo(code = "STAFF_CODE", name = Fullname(forename = "John", surname = "Doe"), email = "john.doe@example.com")
-    val locationInfo = LocationInfo(code = "LOCATION_CODE", description = "Location Description", address = Address(buildingName = null, buildingNumber = null, streetName = null, district = null, town = null, county = null, postcode = null))
-    return AppointmentDelius(
-      type = info,
-      dateTime = appointmentDate,
-      duration = "PT1H30M",
-      staff = staffInfo,
-      location = locationInfo,
-      description = "This is a sample appointment description.",
-      outcome = null,
-    )
   }
 
   private fun createCRSAppointments(): CRSAppointmentsDTO {

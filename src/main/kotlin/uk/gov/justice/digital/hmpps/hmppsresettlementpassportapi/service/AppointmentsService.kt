@@ -69,7 +69,7 @@ class AppointmentsService(
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val crn = prisonerEntity.crn ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in database")
     val crsAppointments = interventionsApiService.fetchCRSAppointments(crn)
-    val appointments = mapAppointmentsFromDeliusApi(rpDeliusApiService.fetchAppointments(nomsId, crn, startDate, endDate), crsAppointments)
+    val appointments = mapAppointmentsFromDeliusAndInterventionsApi(rpDeliusApiService.fetchAppointments(nomsId, crn, startDate, endDate), crsAppointments, startDate, endDate)
     return AppointmentsList(filterPreReleaseAppointments(appointments, prisonerEntity, includePreRelease).sortedBy { LocalDateTime.of(it.date, it.time) })
   }
 
@@ -81,9 +81,9 @@ class AppointmentsService(
     }
   }
 
-  private fun mapAppointmentsFromDeliusApi(appList: List<AppointmentDelius>, crsAppointments: List<CRSAppointmentsDTO>): List<Appointment> {
+  private fun mapAppointmentsFromDeliusAndInterventionsApi(appList: List<AppointmentDelius>, crsAppointments: CRSAppointmentsDTO, startDate: LocalDate, endDate: LocalDate): List<Appointment> {
     val appointmentList = mutableListOf<Appointment>()
-    val deliusAppointments = appList.filter { !it.description.contains("Appointment with CRS") }
+    val deliusAppointments = appList.filter { delius -> !delius.description.contains("Appointment with CRS") }
     deliusAppointments.forEach { deliusAppointment ->
       val appointment: Appointment?
       val duration: Duration? = try {
@@ -126,41 +126,47 @@ class AppointmentsService(
       appointment.type = deliusAppointment.type.code
       appointmentList.add(appointment)
     }
-    crsAppointments.forEach { it ->
-      val referrals = it.referral
+
+    if (crsAppointments != null) {
+      val referrals = crsAppointments.referral
       referrals.forEach { referral ->
         val referralAppointments = referral.appointment
-        referralAppointments.forEach {
-          val appointment: Appointment?
-          val addressInfo = Address(
-            null,
-            it.appointmentDeliveryFirstAddressLine,
-            it.appointmentDeliverySecondAddressLine,
-            null,
-            it.appointmentDeliveryTownCity,
-            it.appointmentDeliveryCounty,
-            it.appointmentDeliveryPostCode,
-            null,
-          )
+        referralAppointments.forEach { crsAppointment ->
           var formattedDateVal: LocalDate? = null
           var formattedTimeVal: LocalTime? = null
-          if (it.appointmentDateTime != null) {
+          if (crsAppointment.appointmentDateTime != null) {
             formattedDateVal =
-              OffsetDateTime.parse(it.appointmentDateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toLocalDate()
+              OffsetDateTime.parse(crsAppointment.appointmentDateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+                .toLocalDate()
             formattedTimeVal =
-              OffsetDateTime.parse(it.appointmentDateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toLocalTime()
+              OffsetDateTime.parse(crsAppointment.appointmentDateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+                .toLocalTime()
           }
-          appointment = Appointment(
-            referral.interventionTitle,
-            CRS_APPOINTMENT_DEFAULT_CONTACT,
-            formattedDateVal,
-            formattedTimeVal,
-            addressInfo,
-            null,
-            it.appointmentDurationInMinutes.toLong(),
-          )
-          appointment.type = ""
-          appointmentList.add(appointment)
+          if (formattedDateVal?.isAfter(startDate.minusDays(1)) == true && formattedDateVal?.isBefore(endDate.plusDays(1)) == true) {
+            val appointment: Appointment?
+            val addressInfo = Address(
+              null,
+              crsAppointment.appointmentDeliveryFirstAddressLine,
+              crsAppointment.appointmentDeliverySecondAddressLine,
+              null,
+              crsAppointment.appointmentDeliveryTownCity,
+              crsAppointment.appointmentDeliveryCounty,
+              crsAppointment.appointmentDeliveryPostCode,
+              null,
+            )
+
+            appointment = Appointment(
+              referral.interventionTitle,
+              CRS_APPOINTMENT_DEFAULT_CONTACT,
+              formattedDateVal,
+              formattedTimeVal,
+              addressInfo,
+              null,
+              crsAppointment.appointmentDurationInMinutes.toLong(),
+            )
+            appointment.type = ""
+            appointmentList.add(appointment)
+          }
         }
       }
     }

@@ -1,6 +1,10 @@
 generic-service:
   nameOverride: hmpps-resettlement-passport-api
-
+  resources:
+    requests:
+      memory: 1G
+    limits:
+      memory: 2G
   replicaCount: 5
 
   image:

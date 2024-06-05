@@ -22,7 +22,6 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
     val crn = "CRN1"
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetAllAppointmentsFromCRN(crn, 200)
-    interventionsServiceApiMockServer.stubGetCRSAppointmentsFromCRN(crn, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/appointments?futureOnly=false&page=0&size=50")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -140,7 +139,6 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
     val crn = "CRN1"
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetAppointmentsFromCRN(crn, 200)
-    interventionsServiceApiMockServer.stubGetCRSAppointmentsFromCRN(crn, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/appointments?page=0&size=50")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -268,29 +266,6 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
     val crn = "CRN1"
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetAppointmentsFromCRN(crn, 200)
-    interventionsServiceApiMockServer.stubGetCRSAppointmentsFromCRN(crn, 200)
-    webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$nomsId/appointments")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
-      .expectStatus().isOk
-      .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput)
-  }
-
-  @Test
-  @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
-  fun `Get All Appointments when no results available`() {
-    val expectedOutput = "{" +
-      "\"results\"" +
-      ":" +
-      "[]" +
-      "}"
-    val nomsId = "G1458GV"
-    val crn = "CRN1"
-    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
-    deliusApiMockServer.stubGetAppointmentsFromCRNNoResults(crn)
-    interventionsServiceApiMockServer.stubGetCRSAppointmentsFromCRNNoResults(crn, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/appointments")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))

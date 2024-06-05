@@ -39,7 +39,6 @@ schedule:
     reconcile-release-dates: 0 0 2 * * *
     delete-expired-otp: 0 0 3 * * *
 
-
 management.endpoint:
   health.cache.time-to-live: 0
   info.cache.time-to-live: 0
@@ -80,3 +79,6 @@ spring:
       port: 6380
       ssl:
         enabled: false
+
+interventions-api-integration:
+  crsAppointmentsEnabled: true

@@ -31,12 +31,10 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pop-user-otp-4.sql")
   fun `test collect licence conditions metrics - happy path `() {
-    val crn = "CRN1"
     prisonRegisterApiMockServer.stubPrisonList(200)
     cvlApiMockServer.stubFindLicencesByNomsId("G4161UF", 200)
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(101, 200)
     popUserApiMockServer.stubGetPopUserVerifiedList(200)
-    interventionsServiceApiMockServer.stubGetCRSAppointmentsFromCRN(crn, 200)
     popUsermetricsService.recordProbationUsersLicenceConditionMetrics()
 
     Assertions.assertEquals(
@@ -81,12 +79,10 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pop-user-otp-4.sql")
   fun `test collect licence conditions metrics - happy path with no licence condition`() {
-    val crn = "CRN1"
     prisonRegisterApiMockServer.stubPrisonList(200)
     cvlApiMockServer.stubFindNoLicencesByNomsId("G4161UF", 200)
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(102, 200)
     popUserApiMockServer.stubGetPopUserVerifiedList(200)
-    interventionsServiceApiMockServer.stubGetCRSAppointmentsFromCRN(crn, 200)
     popUsermetricsService.recordProbationUsersLicenceConditionMetrics()
     Assertions.assertEquals(
       1.0,
@@ -146,7 +142,6 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
     deliusApiMockServer.stubGetCrnFromNomsId("G4161UF", crn)
     deliusApiMockServer.stubGetAppointmentsFromCRN(crn, 200)
     popUserApiMockServer.stubGetPopUserVerifiedList(200)
-    interventionsServiceApiMockServer.stubGetCRSAppointmentsFromCRN(crn, 200)
     popUsermetricsService.recordProbationUsersAppointmentsMetrics()
 
     Assertions.assertEquals(
@@ -184,7 +179,7 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
     )
 
     Assertions.assertEquals(
-      1.0,
+      0.0,
       registry.get("missing_appointments_data")
         .tags("prison", "Moorland (HMP & YOI)", "metricType", "Email Count").gauge()
         .value(),
@@ -243,7 +238,6 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
     deliusApiMockServer.stubGetCrnFromNomsId("G4161UF", crn)
     deliusApiMockServer.stubGetAppointmentsFromCRNNoResults(crn)
     popUserApiMockServer.stubGetPopUserVerifiedList(200)
-    interventionsServiceApiMockServer.stubGetCRSAppointmentsFromCRNNoResults(crn, 200)
     popUsermetricsService.recordProbationUsersAppointmentsMetrics()
 
     Assertions.assertEquals(
@@ -355,7 +349,6 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
     val crn = "CRN1"
     deliusApiMockServer.stubGetCrnFromNomsId("G4161UF", crn)
     deliusApiMockServer.stubGetAppointmentsFromCRN(crn, 200)
-    interventionsServiceApiMockServer.stubGetCRSAppointmentsFromCRN(crn, 200)
     popUsermetricsService.recordReleaseDayProbationUserAppointmentsMetrics()
 
     Assertions.assertEquals(
@@ -386,7 +379,6 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
     val crn = "CRN1"
     deliusApiMockServer.stubGetCrnFromNomsId("G4161UF", crn)
     deliusApiMockServer.stubGetAppointmentsFromCRNNoProbationAppointment(crn, 200)
-    interventionsServiceApiMockServer.stubGetCRSAppointmentsFromCRN(crn, 200)
     popUsermetricsService.recordReleaseDayProbationUserAppointmentsMetrics()
 
     Assertions.assertEquals(
@@ -417,7 +409,6 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
     val crn = "CRN1"
     deliusApiMockServer.stubGetCrnFromNomsId("G4161UF", crn)
     deliusApiMockServer.stubGetAppointmentsFromCRNNoResults(crn)
-    interventionsServiceApiMockServer.stubGetCRSAppointmentsFromCRNNoResults(crn, 200)
     popUsermetricsService.recordReleaseDayProbationUserAppointmentsMetrics()
 
     Assertions.assertEquals(

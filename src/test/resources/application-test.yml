@@ -49,3 +49,6 @@ feature:
 cron:
   release-dates:
     batch-size: 3
+
+interventions-api-integration:
+  crsAppointmentsEnabled: true

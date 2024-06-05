@@ -8,7 +8,7 @@ class InterventionsServiceApiMockServer : WireMockServerBase(9105) {
   fun stubGetCRSAppointmentsFromCRN(crn: String, status: Int) {
     val appointmentsListJSON = readFile("testdata/interventions-service-api/crs-appointments.json")
     stubFor(
-      WireMock.get("/appointments-location/$crn").willReturn(
+      WireMock.get("/probation-case/$crn/appointments").willReturn(
         if (status == 200) {
           WireMock.aResponse()
             .withHeader("Content-Type", "application/json")
@@ -32,7 +32,7 @@ class InterventionsServiceApiMockServer : WireMockServerBase(9105) {
       "  \"referral\": []" +
       " }"
     stubFor(
-      WireMock.get("/appointments-location/$crn").willReturn(
+      WireMock.get("/probation-case/$crn/appointments").willReturn(
         if (status == 200) {
           WireMock.aResponse()
             .withHeader("Content-Type", "application/json")

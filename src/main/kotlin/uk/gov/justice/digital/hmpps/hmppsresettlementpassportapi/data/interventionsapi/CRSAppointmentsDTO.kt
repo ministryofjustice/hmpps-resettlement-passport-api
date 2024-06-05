@@ -11,8 +11,6 @@ data class CRSAppointmentsDTO(
 data class ReferralAppointment(
   @JsonProperty("referral_number")
   val referralNumber: String,
-  @JsonProperty("intervention_title")
-  val interventionTitle: String,
   @JsonProperty("appointment")
   val appointment: List<CRSAppointment>,
 )

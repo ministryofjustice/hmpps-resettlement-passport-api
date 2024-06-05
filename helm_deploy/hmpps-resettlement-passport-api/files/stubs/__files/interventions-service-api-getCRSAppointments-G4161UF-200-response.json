@@ -7,7 +7,7 @@
       "appointment": [
         {
           "appointment_id": "SD1234567",
-          "appointment_date_time": "2024-08-20T11:33:00.000Z",
+          "appointment_date_time": "{{now offset='1 days' format='yyyy-MM-dd\'T\'HH:mm:ss'}}+01:00",
           "appointment_duration_in_minutes": "60",
           "superseded_indicator": false,
           "appointment_delivery_first_address_line": "11",

@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/interventions-service-api/referral/249b9dba-ad0d-420f-8733-015f0863257a/delivery-session-appointments"
+    "urlPath": "/appointments-location/U416100"
   },
   "response": {
     "status": 200,

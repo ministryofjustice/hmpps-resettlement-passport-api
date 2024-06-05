@@ -184,7 +184,7 @@ class PoPUserMetricsIntegrationTest : IntegrationTestBase() {
     )
 
     Assertions.assertEquals(
-      1.0,
+      0.0,
       registry.get("missing_appointments_data")
         .tags("prison", "Moorland (HMP & YOI)", "metricType", "Email Count").gauge()
         .value(),

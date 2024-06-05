@@ -135,10 +135,10 @@ fun toMD5(sourceString: String): String {
 }
 
 fun convertFromNameToDeliusAuthor(prisonCode: String, name: String): DeliusAuthor {
-  val splitName = name.trim().split("\\s+(?=\\S*+\$)")
+  val splitName = name.trim().split(Regex("\\s+(?=\\S*+\$)"))
   return DeliusAuthor(
     prisonCode = prisonCode,
-    forename = splitName.firstOrNull() ?: "unknown user", // TODO is this the right behaviour if we can't get a forename or surname from the name in the DB?
-    surname = splitName.lastOrNull() ?: "unknown user",
+    forename = splitName.first(),
+    surname = if (splitName.size != 1) splitName.last() else "",
   )
 }

@@ -28,7 +28,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.IResettlementAssessmentStrategy
 import java.time.LocalDateTime
-import kotlin.math.log
 
 @Service
 class ResettlementAssessmentService(
@@ -140,40 +139,92 @@ class ResettlementAssessmentService(
 
     // New way - combine and send case note to DPS and Delius
     if (sendCombinedCaseNotes) {
-      val groupedAssessments = processAndGroupAssessmentCaseNotes(assessmentList)
       val dpsSubType = when (assessmentType) {
         ResettlementAssessmentType.BCST2 -> DpsCaseNoteSubType.INR
         ResettlementAssessmentType.RESETTLEMENT_PLAN -> DpsCaseNoteSubType.PRR
       }
 
-      caseNotesService.postBCSTCaseNoteToDps(
-        nomsId = prisonerEntity.nomsId,
-        notes = caseNotesText,
-        userId = assessment.createdByUserId,
-        subType = dpsSubType,
-      )
+      val groupedAssessmentsDps = processAndGroupAssessmentCaseNotes(assessmentList, true)
+      groupedAssessmentsDps.forEach {
+        caseNotesService.postBCSTCaseNoteToDps(
+          nomsId = prisonerEntity.nomsId,
+          notes = it.caseNoteText,
+          userId = it.user.userId,
+          subType = dpsSubType,
+        )
+      }
 
       if (prisonerEntity.crn != null) {
-        caseNotesService.postBCSTCaseNoteToDelius(
-          crn = prisonerEntity.crn!!,
-          prisonCode = prisonerEntity.prisonId!!, // TODO - this is sometimes wrong due to transfers also why is this nullable in the database?
-          notes = caseNotesText,
-          name = assessment.createdBy,
-          assessmentType = assessmentType,
-        )
+        val groupedAssessmentsDelius = processAndGroupAssessmentCaseNotes(assessmentList, false)
+        groupedAssessmentsDelius.forEach {
+          caseNotesService.postBCSTCaseNoteToDelius(
+            crn = prisonerEntity.crn!!,
+            prisonCode = prisonerEntity.prisonId!!, // TODO - this is sometimes wrong due to transfers also why is this nullable in the database?
+            notes = it.caseNoteText,
+            name = it.user.name,
+            assessmentType = assessmentType,
+          )
+        }
       } else {
-        log.warn("Cannot send report case note to Delius as no CRN is available for prisoner ${prisonerEntity.nomsId}.")
+        throw RuntimeException("Cannot send report case note to Delius as no CRN is available for prisoner ${prisonerEntity.nomsId}.")
       }
     }
   }
 
   fun processAndGroupAssessmentCaseNotes(assessmentList: List<ResettlementAssessmentEntity>, limitChars: Boolean): List<UserAndCaseNote> {
-    TODO()
+    val maxCaseNoteLength = if (limitChars) {
+      4000 - (2 * (Pathway.entries.size - 1))
+    } else {
+      Int.MAX_VALUE
+    }
+
+    val userToCaseNoteMap = assessmentList.map {
+      UserAndCaseNote(
+        user = User(userId = it.createdByUserId, name = it.createdBy),
+        caseNoteText = "${getFirstLineOfBcstCaseNote(it.pathway, it.assessmentType)}\n\n${it.caseNoteText}",
+      )
+    }.groupBy { it.user }
+
+    return userToCaseNoteMap.flatMap { e ->
+      val combinedCaseNotes = splitToCharLimit(e.value.map { it.caseNoteText }, maxCaseNoteLength)
+      combinedCaseNotes.map {
+        UserAndCaseNote(
+          user = e.key,
+          caseNoteText = it
+        )
+      }
+    }
+  }
+
+  fun splitToCharLimit(caseNotes: List<String>, maxCaseNoteLength: Int): List<String> {
+    val splitCaseNotes = mutableListOf<List<String>>()
+    var currentCaseNote = mutableListOf<String>()
+
+    caseNotes.forEach {
+      if ((currentCaseNote.joinToString("").length + it.length) <= maxCaseNoteLength) {
+        currentCaseNote.add(it)
+      } else {
+        splitCaseNotes.add(currentCaseNote)
+        currentCaseNote = mutableListOf()
+        currentCaseNote.add(it)
+      }
+    }
+
+    if (currentCaseNote.isNotEmpty()) {
+      splitCaseNotes.add(currentCaseNote)
+    }
+
+    return splitCaseNotes.map { it.joinToString("\n\n") }
   }
 
   data class UserAndCaseNote(
-    val userId: String
-    val name: String
+    val user: User,
+    val caseNoteText: String,
+  )
+
+  data class User(
+    val userId: String,
+    val name: String,
   )
 
   fun getLatestResettlementAssessmentByNomsIdAndPathway(nomsId: String, pathway: Pathway, resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy>): LatestResettlementAssessmentResponse {

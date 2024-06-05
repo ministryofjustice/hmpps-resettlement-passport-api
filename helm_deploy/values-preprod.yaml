@@ -26,6 +26,7 @@ generic-service:
     SCHEDULE_EXPRESSION_RELEASE-DAY-METRICS: 0 0 8 * * *
     SCHEDULE_EXPRESSION_RECONCILE-RELEASE-DATES: 0 0 2 * * *
     SCHEDULE_EXPRESSION_DELETE-EXPIRED-OTP: 0 0 3 * * *
+    interventions-api-integration_crsAppointmentsEnabled: true
 
 
 

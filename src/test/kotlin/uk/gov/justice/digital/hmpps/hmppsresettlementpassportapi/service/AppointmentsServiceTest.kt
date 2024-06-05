@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import org.hibernate.query.sqm.tree.SqmNode.log
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -17,9 +18,13 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.Info
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.LocationInfo
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.StaffInfo
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.interventionsapi.CRSAppointment
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.interventionsapi.CRSAppointmentsDTO
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.interventionsapi.ReferralAppointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Category
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.InterventionsApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -35,11 +40,16 @@ class AppointmentsServiceTest {
   @Mock
   private lateinit var rpDeliusApiService: ResettlementPassportDeliusApiService
 
+  @Mock
+  private lateinit var interventionsApiService: InterventionsApiService
+
+  private val crsAppointmentIntegrationEnabled: Boolean = true
+
   private val nomisId = "ABC123"
 
   @BeforeEach
   fun beforeEach() {
-    appointmentsService = AppointmentsService(prisonerRepository, rpDeliusApiService)
+    appointmentsService = AppointmentsService(prisonerRepository, rpDeliusApiService, interventionsApiService, crsAppointmentIntegrationEnabled)
   }
 
   @Test
@@ -47,7 +57,7 @@ class AppointmentsServiceTest {
     val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz", LocalDate.MIN)
     Mockito.`when`(prisonerRepository.findByNomsId(nomisId)).thenReturn(prisonerEntity)
     Mockito.`when`(rpDeliusApiService.fetchAppointments(eq(nomisId), any(), any(), any())).thenReturn(listOf(createTestDeliusAppointment()))
-
+    Mockito.`when`(interventionsApiService.fetchCRSAppointments("crn")).thenReturn(createEmptyCRSAppointments())
     val appointments = appointmentsService.getAppointmentsByNomsId(nomisId, LocalDate.MIN, LocalDate.MAX, true)
     Assertions.assertTrue(appointments.results.size == 1)
   }
@@ -57,7 +67,7 @@ class AppointmentsServiceTest {
     val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz", LocalDate.MAX)
     Mockito.`when`(prisonerRepository.findByNomsId(nomisId)).thenReturn(prisonerEntity)
     Mockito.`when`(rpDeliusApiService.fetchAppointments(eq(nomisId), any(), any(), any())).thenReturn(listOf(createTestDeliusAppointment()))
-
+    Mockito.`when`(interventionsApiService.fetchCRSAppointments("crn")).thenReturn(createEmptyCRSAppointments())
     val appointments = appointmentsService.getAppointmentsByNomsId(nomisId, LocalDate.MIN, LocalDate.MAX, false)
     Assertions.assertTrue(appointments.results.isEmpty())
   }
@@ -67,7 +77,7 @@ class AppointmentsServiceTest {
     val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz", null)
     Mockito.`when`(prisonerRepository.findByNomsId(nomisId)).thenReturn(prisonerEntity)
     Mockito.`when`(rpDeliusApiService.fetchAppointments(eq(nomisId), any(), any(), any())).thenReturn(listOf(createTestDeliusAppointment()))
-
+    Mockito.`when`(interventionsApiService.fetchCRSAppointments("crn")).thenReturn(createEmptyCRSAppointments())
     val appointments = appointmentsService.getAppointmentsByNomsId(nomisId, LocalDate.MIN, LocalDate.MAX, false)
     Assertions.assertTrue(appointments.results.size == 1)
   }
@@ -80,7 +90,7 @@ class AppointmentsServiceTest {
     val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz", LocalDate.MIN)
     Mockito.`when`(prisonerRepository.findByNomsId(nomisId)).thenReturn(prisonerEntity)
     Mockito.`when`(rpDeliusApiService.fetchAppointments(eq(nomisId), any(), any(), any())).thenReturn(listOf(appointment1, appointment2, appointment3))
-
+    Mockito.`when`(interventionsApiService.fetchCRSAppointments("crn")).thenReturn(createEmptyCRSAppointments())
     val appointments = appointmentsService.getAppointmentsByNomsId(nomisId, LocalDate.MIN, LocalDate.MAX, true)
     Assertions.assertTrue(appointments.results.size == 3)
     Assertions.assertEquals("2024-05-01", appointments.results[0].date.toString())
@@ -99,7 +109,7 @@ class AppointmentsServiceTest {
     val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz", LocalDate.of(2024, 5, 2))
     Mockito.`when`(prisonerRepository.findByNomsId(nomisId)).thenReturn(prisonerEntity)
     Mockito.`when`(rpDeliusApiService.fetchAppointments(eq(nomisId), any(), any(), any())).thenReturn(listOf(appointmentAfterRelease, appointmentBeforeRelease1, appointmentBeforeRelease2))
-
+    Mockito.`when`(interventionsApiService.fetchCRSAppointments("crn")).thenReturn(createEmptyCRSAppointments())
     val appointments = appointmentsService.getAppointmentsByNomsId(nomisId, LocalDate.MIN, LocalDate.MAX, false)
     Assertions.assertTrue(appointments.results.size == 1)
     Assertions.assertEquals("2024-05-03", appointments.results[0].date.toString())
@@ -113,11 +123,33 @@ class AppointmentsServiceTest {
     val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz", LocalDate.of(2024, 5, 2))
     Mockito.`when`(prisonerRepository.findByNomsId(nomisId)).thenReturn(prisonerEntity)
     Mockito.`when`(rpDeliusApiService.fetchAppointments(eq(nomisId), any(), any(), any())).thenReturn(listOf(appointmentSameDayAsRelease, appointmentBeforeRelease1))
-
+    Mockito.`when`(interventionsApiService.fetchCRSAppointments("crn")).thenReturn(createEmptyCRSAppointments())
     val appointments = appointmentsService.getAppointmentsByNomsId(nomisId, LocalDate.MIN, LocalDate.MAX, false)
     Assertions.assertTrue(appointments.results.size == 1)
     Assertions.assertEquals("2024-05-02", appointments.results[0].date.toString())
     Assertions.assertEquals("00:00", appointments.results[0].time.toString())
+  }
+
+  @Test
+  fun `getAppointmentsByNomsId with CRS appointments from intervention service `() {
+    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz", LocalDate.MIN)
+    Mockito.`when`(prisonerRepository.findByNomsId(nomisId)).thenReturn(prisonerEntity)
+    Mockito.`when`(rpDeliusApiService.fetchAppointments(eq(nomisId), any(), any(), any())).thenReturn(listOf())
+    Mockito.`when`(interventionsApiService.fetchCRSAppointments("crn")).thenReturn(createCRSAppointments())
+    val appointments = appointmentsService.getAppointmentsByNomsId(nomisId, LocalDate.MIN.plusDays(1), LocalDate.MAX.minusDays(1), true)
+    log.info("Result size ${appointments.results.size }")
+    Assertions.assertTrue(appointments.results.size == 1)
+    Assertions.assertTrue(appointments.results[0].location?.postcode != null)
+  }
+
+  @Test
+  fun `getAppointmentsByNomsId with CRS appointments from intervention service in date range `() {
+    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz", LocalDate.MIN)
+    Mockito.`when`(prisonerRepository.findByNomsId(nomisId)).thenReturn(prisonerEntity)
+    Mockito.`when`(rpDeliusApiService.fetchAppointments(eq(nomisId), any(), any(), any())).thenReturn(listOf())
+    Mockito.`when`(interventionsApiService.fetchCRSAppointments("crn")).thenReturn(createCRSAppointments())
+    val appointments = appointmentsService.getAppointmentsByNomsId(nomisId, LocalDate.now(), LocalDate.now().plusDays(1), true)
+    Assertions.assertTrue(appointments.results.isEmpty())
   }
 
   @Test
@@ -224,5 +256,46 @@ class AppointmentsServiceTest {
       """.trimIndent()
     val actualNotes = appointmentsService.createNotes(testAppointment)
     Assertions.assertEquals(expectedNotes, actualNotes)
+  }
+
+  private fun createCRSAppointments(): CRSAppointmentsDTO {
+    val referral = mutableListOf<ReferralAppointment>()
+
+    val appointmentList = mutableListOf<CRSAppointment>()
+    val appointment = CRSAppointment(
+      "SD123456",
+      "2024-05-02T10:00:00Z",
+      60,
+      false,
+      "First line address",
+      "Second line address",
+      "town and city",
+      "county",
+      "PO5 3CO",
+
+    )
+    appointmentList.add(appointment)
+    val referralAppointment = ReferralAppointment(
+      "eee-ddd-ffff",
+      interventionTitle = "Accommodation Services",
+      appointmentList,
+    )
+    referral.add(referralAppointment)
+
+    val testAppointment = CRSAppointmentsDTO(
+      "U20002",
+      referral,
+    )
+
+    return testAppointment
+  }
+
+  private fun createEmptyCRSAppointments(): CRSAppointmentsDTO {
+    val referral = mutableListOf<ReferralAppointment>()
+    val testAppointment = CRSAppointmentsDTO(
+      "U20002",
+      referral,
+    )
+    return testAppointment
   }
 }

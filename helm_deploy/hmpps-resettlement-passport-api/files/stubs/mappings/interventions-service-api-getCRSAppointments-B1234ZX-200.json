@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/interventions-service-api/appointments-location/U338861"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "interventions-service-api-getCRSAppointments-B1234ZX-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

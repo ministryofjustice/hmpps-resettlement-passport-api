@@ -304,10 +304,10 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
   @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
   fun `Get All Appointments when no referrals available`() {
     val expectedOutput = "{ " +
-            "\"results\"" +
-            ":" +
-            "[]" +
-            "}"
+      "\"results\"" +
+      ":" +
+      "[]" +
+      "}"
 
     val nomsId = "G1458GV"
     val crn = "CRN1"

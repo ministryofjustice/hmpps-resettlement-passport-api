@@ -139,7 +139,7 @@ class AppointmentsService(
     }
 
     var referrals = listOf<ReferralAppointment>()
-    if (crsAppointments.referral!=null) {
+    if (crsAppointments.referral != null) {
       referrals = crsAppointments.referral
     }
 

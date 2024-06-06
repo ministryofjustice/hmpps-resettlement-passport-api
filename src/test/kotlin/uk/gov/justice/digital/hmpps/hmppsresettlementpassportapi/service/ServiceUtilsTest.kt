@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusAuthor
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import java.util.stream.Stream
 
@@ -349,6 +350,20 @@ class ServiceUtilsTest {
     Arguments.of(Pathway.EDUCATION_SKILLS_AND_WORK, ResettlementAssessmentType.BCST2, "Case note summary from Education, skills and work Immediate needs report"),
     Arguments.of(Pathway.FINANCE_AND_ID, ResettlementAssessmentType.BCST2, "Case note summary from Finance and ID Immediate needs report"),
     Arguments.of(Pathway.HEALTH, ResettlementAssessmentType.BCST2, "Case note summary from Health Immediate needs report"),
+  )
+
+  @ParameterizedTest
+  @MethodSource("test convertFromNameToDeliusAuthor data")
+  fun `test convertFromNameToDeliusAuthor`(name: String, expectedDeliusAuthor: DeliusAuthor) {
+    Assertions.assertEquals(expectedDeliusAuthor, convertFromNameToDeliusAuthor("MDI", name))
+  }
+
+  private fun `test convertFromNameToDeliusAuthor data`() = Stream.of(
+    Arguments.of("", DeliusAuthor("MDI", "", "")),
+    Arguments.of("John Smith", DeliusAuthor("MDI", "John", "Smith")),
+    Arguments.of("Mary Williams-Smith", DeliusAuthor("MDI", "Mary", "Williams-Smith")),
+    Arguments.of("Mary Jane Miller", DeliusAuthor("MDI", "Mary Jane", "Miller")),
+    Arguments.of("Chris", DeliusAuthor("MDI", "Chris", "")),
   )
 }
 

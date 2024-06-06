@@ -260,10 +260,12 @@ class ResettlementAssessmentController(
     nomsId: String,
     @RequestParam("assessmentType")
     assessmentType: ResettlementAssessmentType,
+    @RequestParam("sendCombinedCaseNotes")
+    sendCombinedCaseNotes: Boolean = false,
     @RequestHeader("Authorization")
     auth: String,
   ): ResponseEntity<Void> {
-    resettlementAssessmentService.submitResettlementAssessmentByNomsId(nomsId, assessmentType, auth)
+    resettlementAssessmentService.submitResettlementAssessmentByNomsId(nomsId, assessmentType, auth, sendCombinedCaseNotes)
     return ResponseEntity.ok().build()
   }
 

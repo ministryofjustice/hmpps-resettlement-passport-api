@@ -12,7 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class DeliusCaseNoteRepositoryTest : RepositoryTestBase() {
+class DeliusContactRepositoryTest : RepositoryTestBase() {
   @Autowired
   lateinit var deliusContactRepository: DeliusContactRepository
 

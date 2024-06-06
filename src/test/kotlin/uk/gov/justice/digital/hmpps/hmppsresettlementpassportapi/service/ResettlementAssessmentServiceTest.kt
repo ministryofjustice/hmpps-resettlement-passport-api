@@ -29,6 +29,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentSkipRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.stream.Stream
@@ -54,6 +56,12 @@ class ResettlementAssessmentServiceTest {
   private lateinit var assessmentSkipRepository: AssessmentSkipRepository
 
   @Mock
+  private lateinit var prisonerSearchApiService: PrisonerSearchApiService
+
+  @Mock
+  private lateinit var resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService
+
+  @Mock
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
@@ -65,6 +73,8 @@ class ResettlementAssessmentServiceTest {
       caseNotesService,
       pathwayAndStatusService,
       assessmentSkipRepository,
+      prisonerSearchApiService,
+      resettlementPassportDeliusApiService,
     )
   }
 
@@ -301,7 +311,7 @@ class ResettlementAssessmentServiceTest {
     createSubmittedResettlementAssessmentEntity(Pathway.HEALTH, user, "${Pathway.HEALTH.displayName} case note - $caseNotePostfix"),
   )
 
-  private fun getExpectedCaseNotesText(pathway: Pathway, caseNotePostfix: String) = "Case note summary from ${pathway.displayName} BCST2 report\n\n${pathway.displayName} case note - $caseNotePostfix"
+  private fun getExpectedCaseNotesText(pathway: Pathway, caseNotePostfix: String) = "${pathway.displayName}\n\n${pathway.displayName} case note - $caseNotePostfix"
 
   @Test
   fun `test processAndGroupAssessmentCaseNotes - short text, no limit chars`() {
@@ -312,8 +322,8 @@ class ResettlementAssessmentServiceTest {
     val expectedUserAndCaseNotes = listOf(
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user, user),
-        caseNoteText = "${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}"
-      )
+        caseNoteText = "${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
+      ),
     )
 
     Assertions.assertEquals(expectedUserAndCaseNotes, resettlementAssessmentService.processAndGroupAssessmentCaseNotes(assessmentList, false))
@@ -328,8 +338,8 @@ class ResettlementAssessmentServiceTest {
     val expectedUserAndCaseNotes = listOf(
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user, user),
-        caseNoteText = "${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}"
-      )
+        caseNoteText = "${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
+      ),
     )
 
     Assertions.assertEquals(expectedUserAndCaseNotes, resettlementAssessmentService.processAndGroupAssessmentCaseNotes(assessmentList, true))
@@ -344,8 +354,8 @@ class ResettlementAssessmentServiceTest {
     val expectedUserAndCaseNotes = listOf(
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user, user),
-        caseNoteText = "${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}"
-      )
+        caseNoteText = "${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
+      ),
     )
 
     Assertions.assertEquals(expectedUserAndCaseNotes, resettlementAssessmentService.processAndGroupAssessmentCaseNotes(assessmentList, false))
@@ -360,15 +370,15 @@ class ResettlementAssessmentServiceTest {
     val expectedUserAndCaseNotes = listOf(
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user, user),
-        caseNoteText = "${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}"
+        caseNoteText = "Part 1 of 3\n\n${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}",
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user, user),
-        caseNoteText = "${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}"
+        caseNoteText = "Part 2 of 3\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}",
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user, user),
-        caseNoteText = getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)
+        caseNoteText = "Part 3 of 3\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
       ),
     )
 
@@ -395,15 +405,15 @@ class ResettlementAssessmentServiceTest {
     val expectedUserAndCaseNotes = listOf(
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user1, user1),
-        caseNoteText = "${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}"
+        caseNoteText = "Part 1 of 3\n\n${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user2, user2),
-        caseNoteText = "${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}"
+        caseNoteText = "Part 2 of 3\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}",
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user3, user3),
-        caseNoteText = getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)
+        caseNoteText = "Part 3 of 3\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}",
       ),
     )
 
@@ -430,19 +440,19 @@ class ResettlementAssessmentServiceTest {
     val expectedUserAndCaseNotes = listOf(
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user1, user1),
-        caseNoteText = "${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}"
+        caseNoteText = "Part 1 of 4\n\n${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}",
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user1, user1),
-        caseNoteText = getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)
+        caseNoteText = "Part 2 of 4\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user2, user2),
-        caseNoteText = "${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}"
+        caseNoteText = "Part 3 of 4\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}",
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user3, user3),
-        caseNoteText = getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)
+        caseNoteText = "Part 4 of 4\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}",
       ),
     )
 
@@ -460,10 +470,10 @@ class ResettlementAssessmentServiceTest {
     Arguments.of(listOf<String>(), 10, listOf<String>()),
     Arguments.of(listOf("ninechars"), 10, listOf("ninechars")),
     Arguments.of(listOf("tenchars.."), 10, listOf("tenchars..")),
-    Arguments.of(listOf("one", "two"), 10, listOf("one\n\ntwo")),
+    Arguments.of(listOf("one", "two"), 10, listOf("one\n\n\ntwo")),
     Arguments.of(listOf("long text", "something"), 10, listOf("long text", "something")),
-    Arguments.of(listOf("text1", "text2", "text3"), 10, listOf("text1\n\ntext2", "text3")),
-    Arguments.of(listOf("this", "is a", "sentence", "to", "be split", "up"), 10, listOf("this\n\nis a", "sentence\n\nto", "be split\n\nup")),
-    Arguments.of(listOf("this", "is a", "sentence", "to", "be split", "up"), 100, listOf("this\n\nis a\n\nsentence\n\nto\n\nbe split\n\nup")),
+    Arguments.of(listOf("text1", "text2", "text3"), 10, listOf("text1\n\n\ntext2", "text3")),
+    Arguments.of(listOf("this", "is a", "sentence", "to", "be split", "up"), 10, listOf("this\n\n\nis a", "sentence\n\n\nto", "be split\n\n\nup")),
+    Arguments.of(listOf("this", "is a", "sentence", "to", "be split", "up"), 100, listOf("this\n\n\nis a\n\n\nsentence\n\n\nto\n\n\nbe split\n\n\nup")),
   )
 }

@@ -26,6 +26,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentSkipRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.IResettlementAssessmentStrategy
 import java.time.LocalDateTime
 
@@ -36,6 +38,8 @@ class ResettlementAssessmentService(
   private val caseNotesService: CaseNotesService,
   private val pathwayAndStatusService: PathwayAndStatusService,
   private val assessmentSkipRepository: AssessmentSkipRepository,
+  private val prisonerSearchApiService: PrisonerSearchApiService,
+  private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
 ) {
 
   companion object {
@@ -154,26 +158,30 @@ class ResettlementAssessmentService(
         )
       }
 
-      if (prisonerEntity.crn != null) {
+      val crn = resettlementPassportDeliusApiService.getCrn(nomsId)
+
+      if (crn != null) {
         val groupedAssessmentsDelius = processAndGroupAssessmentCaseNotes(assessmentList, false)
         groupedAssessmentsDelius.forEach {
           caseNotesService.postBCSTCaseNoteToDelius(
-            crn = prisonerEntity.crn!!,
-            prisonCode = prisonerEntity.prisonId!!, // TODO - this is sometimes wrong due to transfers also why is this nullable in the database?
+            crn = crn,
+            prisonCode = prisonerSearchApiService.findPrisonerPersonalDetails(prisonerEntity.nomsId).prisonId,
             notes = it.caseNoteText,
             name = it.user.name,
             assessmentType = assessmentType,
           )
         }
       } else {
-        throw RuntimeException("Cannot send report case note to Delius as no CRN is available for prisoner ${prisonerEntity.nomsId}.")
+        // TODO PSFR-1386 Add retry mechanism if we fail to send the case note
+        log.warn("Cannot send report case note to Delius as no CRN is available for prisoner ${prisonerEntity.nomsId}.")
       }
     }
   }
 
   fun processAndGroupAssessmentCaseNotes(assessmentList: List<ResettlementAssessmentEntity>, limitChars: Boolean): List<UserAndCaseNote> {
     val maxCaseNoteLength = if (limitChars) {
-      4000 - (2 * (Pathway.entries.size - 1))
+      // Limit for DPS is 4000 but set this lower to account for line breaks between each pathway and the Part x of y text at the start (should be about 25 chars)
+      3950
     } else {
       Int.MAX_VALUE
     }
@@ -181,18 +189,29 @@ class ResettlementAssessmentService(
     val userToCaseNoteMap = assessmentList.map {
       UserAndCaseNote(
         user = User(userId = it.createdByUserId, name = it.createdBy),
-        caseNoteText = "${getFirstLineOfBcstCaseNote(it.pathway, it.assessmentType)}\n\n${it.caseNoteText}",
+        caseNoteText = "${it.pathway.displayName}\n\n${it.caseNoteText}",
       )
     }.groupBy { it.user }
 
-    return userToCaseNoteMap.flatMap { e ->
+    val caseNoteList = userToCaseNoteMap.flatMap { e ->
       val combinedCaseNotes = splitToCharLimit(e.value.map { it.caseNoteText }, maxCaseNoteLength)
       combinedCaseNotes.map {
         UserAndCaseNote(
           user = e.key,
-          caseNoteText = it
+          caseNoteText = it,
         )
       }
+    }
+
+    return if (caseNoteList.size > 1) {
+      caseNoteList.mapIndexed { index, caseNote ->
+        UserAndCaseNote(
+          user = caseNote.user,
+          caseNoteText = "Part ${index + 1} of ${caseNoteList.size}\n\n${caseNote.caseNoteText}",
+        )
+      }
+    } else {
+      caseNoteList
     }
   }
 
@@ -214,7 +233,7 @@ class ResettlementAssessmentService(
       splitCaseNotes.add(currentCaseNote)
     }
 
-    return splitCaseNotes.map { it.joinToString("\n\n") }
+    return splitCaseNotes.map { it.joinToString("\n\n\n") }
   }
 
   data class UserAndCaseNote(

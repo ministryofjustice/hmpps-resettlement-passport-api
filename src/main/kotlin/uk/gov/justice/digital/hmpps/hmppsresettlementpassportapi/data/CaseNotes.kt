@@ -50,6 +50,8 @@ enum class CaseNotePathway {
   FINANCE_AND_ID,
   HEALTH,
   OTHER, // Any other case notes e.g. GEN/RESET or RESET/BCST not related to a pathway or anything else in RESET type
+  IMMEDIATE_NEEDS_REPORT,
+  PRE_RELEASE_REPORT,
 }
 
 enum class DpsCaseNoteType {

@@ -10,11 +10,14 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import org.springframework.web.reactive.function.client.awaitBodilessEntity
 import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.MappaData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.AccommodationsDelius
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.AppointmentDelius
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.AppointmentsDeliusList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.CaseIdentifiers
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusAuthor
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusCaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusCreateAppointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.Manager
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.MappaDetail
@@ -22,6 +25,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.convertNameToTitleCase
 import java.time.LocalDate
+import java.time.OffsetDateTime
 
 @Service
 class ResettlementPassportDeliusApiService(
@@ -160,6 +164,28 @@ class ResettlementPassportDeliusApiService(
       } catch (e: WebClientResponseException) {
         log.error("Error calling create appointment delius api {}, {}", e.statusCode, e.responseBodyAsString)
         throw e
+      }
+    }
+  }
+
+  fun createContact(crn: String, type: DeliusCaseNoteType, dateTime: OffsetDateTime, notes: String, author: DeliusAuthor) {
+    runBlocking {
+      try {
+        rpDeliusWebClientCredentials.post()
+          .uri("/nomis-case-note/$crn")
+          .bodyValue(
+            DeliusCaseNote(
+              type = type,
+              dateTime = dateTime,
+              notes = notes,
+              author = author,
+            ),
+          )
+          .retrieve()
+          .awaitBodilessEntity()
+      } catch (e: WebClientResponseException) {
+        // TODO PSFR-1386 Add retry mechanism if we fail to send the case note
+        log.warn("Error calling post case note delius api {}, {}", e.statusCode, e.responseBodyAsString)
       }
     }
   }

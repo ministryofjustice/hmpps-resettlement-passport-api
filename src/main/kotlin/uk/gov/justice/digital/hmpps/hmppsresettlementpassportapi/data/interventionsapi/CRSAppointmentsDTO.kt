@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class CRSAppointmentsDTO(
   val crn: String,
-  val referral: List<ReferralAppointment>,
+  val referral: List<ReferralAppointment>?,
 
 )
 

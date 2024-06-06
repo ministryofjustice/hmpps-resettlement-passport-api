@@ -299,4 +299,27 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody().json(expectedOutput)
   }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
+  fun `Get All Appointments when no referrals available`() {
+    val expectedOutput = "{ " +
+            "\"results\"" +
+            ":" +
+            "[]" +
+            "}"
+
+    val nomsId = "G1458GV"
+    val crn = "CRN1"
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
+    deliusApiMockServer.stubGetAppointmentsFromCRNNoResults(crn)
+    interventionsServiceApiMockServer.stubGetCRSAppointmentsFromCRNNoReferrals(crn, 200)
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/appointments")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput)
+  }
 }

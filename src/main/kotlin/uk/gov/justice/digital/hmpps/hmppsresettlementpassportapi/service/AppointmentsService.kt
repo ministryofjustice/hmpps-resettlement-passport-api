@@ -138,7 +138,11 @@ class AppointmentsService(
       appointmentList.add(appointment)
     }
 
-    val referrals = crsAppointments.referral
+    var referrals = listOf<ReferralAppointment>()
+    if (crsAppointments.referral!=null) {
+      referrals = crsAppointments.referral
+    }
+
     referrals.forEach { referral ->
       val referralAppointments = referral.appointment
       referralAppointments.forEach { crsAppointment ->

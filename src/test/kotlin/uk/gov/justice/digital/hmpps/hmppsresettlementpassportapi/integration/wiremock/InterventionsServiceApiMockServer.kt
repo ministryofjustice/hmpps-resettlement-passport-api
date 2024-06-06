@@ -46,4 +46,27 @@ class InterventionsServiceApiMockServer : WireMockServerBase(9105) {
       ),
     )
   }
+
+  fun stubGetCRSAppointmentsFromCRNNoReferrals(crn: String, status: Int) {
+    val appointmentsListJSON = "{\n" +
+            "  \"crn\": \"U416100\"" +
+            " }"
+    stubFor(
+      WireMock.get("/appointments-location/$crn").willReturn(
+        if (status == 200) {
+          WireMock.aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody(
+              appointmentsListJSON,
+            )
+            .withStatus(status)
+        } else {
+          WireMock.aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody("{\"Error\" : \"$status\"}")
+            .withStatus(status)
+        },
+      ),
+    )
+  }
 }

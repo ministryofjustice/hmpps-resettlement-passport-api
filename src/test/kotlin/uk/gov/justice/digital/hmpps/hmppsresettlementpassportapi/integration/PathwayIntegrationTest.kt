@@ -48,14 +48,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
     val expectedPathwayStatus =
       PathwayStatusEntity(
         1,
-        PrisonerEntity(
-          1,
-          "G4274GN",
-          LocalDateTime.parse("2023-08-16T12:21:38.709"),
-          "123",
-          "MDI",
-          LocalDate.parse("2030-09-12"),
-        ),
+        1,
         Pathway.ACCOMMODATION,
         Status.IN_PROGRESS,
         LocalDateTime.now(),
@@ -97,7 +90,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
     val expectedPathwayStatus =
       PathwayStatusEntity(
         1,
-        expectedPrisoner,
+        1,
         Pathway.ACCOMMODATION,
         Status.IN_PROGRESS,
         LocalDateTime.now(),

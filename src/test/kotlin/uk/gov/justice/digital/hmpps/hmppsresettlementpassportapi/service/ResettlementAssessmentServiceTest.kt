@@ -110,7 +110,7 @@ class ResettlementAssessmentServiceTest {
     )
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
-    given(resettlementAssessmentRepository.findLatestForEachPathway(prisonerEntity, assessmentType))
+    given(resettlementAssessmentRepository.findLatestForEachPathway(prisonerEntity.id(), assessmentType))
       .willReturn(
         listOf(
           accommodationResettlementAssessmentEntity,
@@ -156,7 +156,7 @@ class ResettlementAssessmentServiceTest {
     )
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
-    given(resettlementAssessmentRepository.findLatestForEachPathway(prisonerEntity, assessmentType))
+    given(resettlementAssessmentRepository.findLatestForEachPathway(prisonerEntity.id(), assessmentType))
       .willReturn(
         listOf(
           accommodationResettlementAssessmentEntity,
@@ -201,7 +201,7 @@ class ResettlementAssessmentServiceTest {
     )
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
-    given(resettlementAssessmentRepository.findLatestForEachPathway(prisonerEntity, assessmentType))
+    given(resettlementAssessmentRepository.findLatestForEachPathway(prisonerEntity.id(), assessmentType))
       .willReturn(
         listOf(
           accommodationResettlementAssessmentEntity,
@@ -258,7 +258,7 @@ class ResettlementAssessmentServiceTest {
 
   private fun createNotStartedResettlementAssessmentEntity(id: Long, pathway: Pathway) = ResettlementAssessmentEntity(
     id = id,
-    prisoner = PrisonerEntity(1, "GY3245", testDate, "crn", "xyz1", LocalDate.parse("2025-01-23")),
+    prisonerId = 1,
     pathway = pathway,
     assessmentType = ResettlementAssessmentType.BCST2,
     assessmentStatus = ResettlementAssessmentStatus.NOT_STARTED,
@@ -273,7 +273,7 @@ class ResettlementAssessmentServiceTest {
 
   private fun createCompleteResettlementAssessmentEntity(id: Long, pathway: Pathway) = ResettlementAssessmentEntity(
     id = id,
-    prisoner = PrisonerEntity(1, "GY3245", testDate, "crn", "xyz1", LocalDate.parse("2025-01-23")),
+    prisonerId = 1,
     pathway = pathway,
     assessmentType = ResettlementAssessmentType.BCST2,
     assessmentStatus = ResettlementAssessmentStatus.COMPLETE,
@@ -288,7 +288,7 @@ class ResettlementAssessmentServiceTest {
 
   private fun createSubmittedResettlementAssessmentEntity(pathway: Pathway, user: String, caseNoteText: String) = ResettlementAssessmentEntity(
     id = null,
-    prisoner = PrisonerEntity(1, "GY3245", testDate, "crn", "xyz1", LocalDate.parse("2025-01-23")),
+    prisonerId = 1,
     pathway = pathway,
     assessmentType = ResettlementAssessmentType.BCST2,
     assessmentStatus = ResettlementAssessmentStatus.SUBMITTED,

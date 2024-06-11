@@ -57,7 +57,7 @@ class ResettlementAssessmentService(
     assessmentType: ResettlementAssessmentType,
   ): List<PrisonerResettlementAssessment> {
     val latestForEachPathway =
-      resettlementAssessmentRepository.findLatestForEachPathway(prisonerEntity, assessmentType)
+      resettlementAssessmentRepository.findLatestForEachPathway(prisonerEntity.id(), assessmentType)
         .associateBy { it.pathway }
     return Pathway.entries.map {
       val resettlementAssessmentForPathway = latestForEachPathway[it]
@@ -92,8 +92,8 @@ class ResettlementAssessmentService(
 
     // For each pathway, get the latest complete assessment
     Pathway.entries.forEach { pathway ->
-      val resettlementAssessment = resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-        prisoner = prisonerEntity,
+      val resettlementAssessment = resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
+        prisonerId = prisonerEntity.id(),
         pathway = pathway,
         assessmentType = assessmentType,
         assessmentStatus = listOf(ResettlementAssessmentStatus.COMPLETE),
@@ -251,13 +251,13 @@ class ResettlementAssessmentService(
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
 
     val latestResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
-      resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentStatusOrderByCreationDateDesc(prisonerEntity, pathway, ResettlementAssessmentStatus.SUBMITTED)
+      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusOrderByCreationDateDesc(prisonerEntity.id(), pathway, ResettlementAssessmentStatus.SUBMITTED)
         ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"),
       resettlementAssessmentStrategies,
     )
 
     val originalResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
-      resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentStatusOrderByCreationDateAsc(prisonerEntity, pathway, ResettlementAssessmentStatus.SUBMITTED)
+      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusOrderByCreationDateAsc(prisonerEntity.id(), pathway, ResettlementAssessmentStatus.SUBMITTED)
         ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"),
       resettlementAssessmentStrategies,
     )

@@ -309,7 +309,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     // Create new resettlement assessment entity and save to database
     val resettlementAssessmentEntity = ResettlementAssessmentEntity(
       id = null,
-      prisoner = prisonerEntity,
+      prisonerId = prisonerEntity.id(),
       pathway = pathway,
       statusChangedTo = status,
       assessmentType = assessmentType,
@@ -404,8 +404,8 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
     // Obtain COMPLETE and SUBMITTED resettlement status entity from database
     val resettlementAssessmentStatusEntities = listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED)
 
-    return resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-      prisonerEntity,
+    return resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
+      prisonerEntity.id(),
       pathway,
       assessmentType,
       resettlementAssessmentStatusEntities,
@@ -414,7 +414,7 @@ abstract class AbstractResettlementAssessmentStrategy<T, Q>(
 
   fun loadPathwayStatusAnswer(pathway: Pathway, nomsId: String): StringAnswer? {
     val prisonerEntity = loadPrisoner(nomsId)
-    val pathwayStatus = pathwayStatusRepository.findByPathwayAndPrisoner(pathway, prisonerEntity) ?: return null
+    val pathwayStatus = pathwayStatusRepository.findByPathwayAndPrisonerId(pathway, prisonerEntity.id()) ?: return null
 
     return StringAnswer(pathwayStatus.status.name)
   }

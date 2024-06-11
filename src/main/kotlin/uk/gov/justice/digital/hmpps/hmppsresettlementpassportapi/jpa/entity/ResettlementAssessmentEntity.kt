@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.persistence.AttributeConverter
-import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Convert
 import jakarta.persistence.Converter
@@ -13,8 +12,6 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.type.SqlTypes
@@ -33,9 +30,7 @@ data class ResettlementAssessmentEntity(
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   val id: Long?,
 
-  @ManyToOne(cascade = [CascadeType.MERGE])
-  @JoinColumn(name = "prisoner_id", referencedColumnName = "id")
-  val prisoner: PrisonerEntity,
+  val prisonerId: Long,
 
   @Enumerated(EnumType.STRING)
   val pathway: Pathway,

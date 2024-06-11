@@ -24,8 +24,7 @@ class WatchlistService(
 
     // associating the prisoner with the staff username
     val watchlist = WatchlistEntity(
-      id = null,
-      prisoner = prisoner,
+      prisonerId = prisoner.id(),
       staffUsername = staffUsername,
       creationDate = LocalDateTime.now(),
     )
@@ -53,12 +52,12 @@ class WatchlistService(
     return prisoner
   }
 
-  fun findAllWatchedPrisonerForStaff(staffUsername: String): Set<PrisonerEntity> {
+  fun findAllWatchedPrisonerForStaff(staffUsername: String): Set<Long> {
     val watchList = watchlistRepository.findAllByStaffUsername(staffUsername)
-    return watchList.map { wl -> wl.prisoner }.toSet()
+    return watchList.map { wl -> wl.prisonerId }.toSet()
   }
 
-  fun isPrisonerInWatchList(staffUsername: String, prisoner: PrisonerEntity?): Boolean {
-    return watchlistRepository.findByPrisonerAndStaffUsername(prisoner, staffUsername) != null
+  fun isPrisonerInWatchList(staffUsername: String, prisoner: PrisonerEntity): Boolean {
+    return watchlistRepository.findByPrisonerIdAndStaffUsername(prisoner.id(), staffUsername) != null
   }
 }

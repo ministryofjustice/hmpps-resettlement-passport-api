@@ -14,7 +14,7 @@ import java.time.LocalDateTime
 data class PrisonerEntity(
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  val id: Long?,
+  val id: Long? = null,
 
   @Column(name = "noms_id")
   val nomsId: String,
@@ -30,4 +30,6 @@ data class PrisonerEntity(
 
   @Column(name = "release_date")
   var releaseDate: LocalDate?,
-)
+) {
+  fun id() = id ?: throw IllegalStateException("Tried to get id before saving")
+}

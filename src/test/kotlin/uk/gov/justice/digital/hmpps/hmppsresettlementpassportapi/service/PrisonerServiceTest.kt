@@ -26,11 +26,10 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerWithStatusProjection
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
@@ -305,39 +304,57 @@ class PrisonerServiceTest {
   }
 
   private fun mockDatabaseCalls() {
-    val mockPrisonerEntity1 =
-      PrisonerEntity(1, "G1458GV", LocalDateTime.now(), "test", "xyz", LocalDate.parse("2025-01-23"))
-    val mockPrisonerEntity2 =
-      PrisonerEntity(2, "A8339DY", LocalDateTime.now(), "test", "xyz", LocalDate.parse("2025-01-23"))
-    val mockPrisonerEntity3 =
-      PrisonerEntity(3, "A8229DY", LocalDateTime.now(), "test", "xyz", LocalDate.parse("2025-01-23"))
-
-    val pathway1 = Pathway.ACCOMMODATION
-    val pathway2 = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR
-    val pathway3 = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY
-
-    val status = Status.NOT_STARTED
-
     val mockPathwayStatusEntities = listOf(
-      PathwayStatusEntity(1, mockPrisonerEntity2, pathway1, status, LocalDateTime.now()),
-      PathwayStatusEntity(2, mockPrisonerEntity2, pathway2, status, LocalDateTime.now()),
-      PathwayStatusEntity(3, mockPrisonerEntity3, pathway2, status, LocalDateTime.now()),
-      PathwayStatusEntity(4, mockPrisonerEntity3, pathway3, status, LocalDateTime.now()),
-      PathwayStatusEntity(5, mockPrisonerEntity1, pathway3, status, LocalDateTime.now()),
-      PathwayStatusEntity(6, mockPrisonerEntity1, pathway1, status, LocalDateTime.now()),
+      aPrisonerWithStatusResult(
+        prisonerId = 1,
+        nomsId = "G1458GV",
+        pathway = Pathway.ACCOMMODATION,
+        pathwayStatus = Status.NOT_STARTED,
+      ),
+      aPrisonerWithStatusResult(
+        prisonerId = 1,
+        nomsId = "G1458GV",
+        pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
+        pathwayStatus = Status.NOT_STARTED,
+      ),
+      aPrisonerWithStatusResult(
+        prisonerId = 2,
+        nomsId = "A8339DY",
+        pathway = Pathway.ACCOMMODATION,
+        pathwayStatus = Status.NOT_STARTED,
+      ),
+      aPrisonerWithStatusResult(
+        prisonerId = 2,
+        nomsId = "A8339DY",
+        pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+        pathwayStatus = Status.NOT_STARTED,
+      ),
+      aPrisonerWithStatusResult(
+        prisonerId = 3,
+        nomsId = "A8229DY",
+        pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+        pathwayStatus = Status.NOT_STARTED,
+      ),
+      aPrisonerWithStatusResult(
+        prisonerId = 3,
+        nomsId = "A8229DY",
+        pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
+        pathwayStatus = Status.NOT_STARTED,
+      ),
     )
 
     `when`(pathwayStatusRepository.findByPrison(any())).thenReturn(mockPathwayStatusEntities)
   }
 
-  private fun mockDatabaseCallsForPathwayView() {
-    val mockPrisonerEntity1 =
-      PrisonerEntity(1, "A8229DY", LocalDateTime.now(), "1", "MDI", LocalDate.parse("2025-01-23"))
-    val mockPrisonerEntity2 =
-      PrisonerEntity(2, "G1458GV", LocalDateTime.now(), "2", "MDI", LocalDate.parse("2025-01-23"))
-    val mockPrisonerEntity3 =
-      PrisonerEntity(3, "A8339DY", LocalDateTime.now(), "3", "MDI", LocalDate.parse("2025-01-23"))
+  private fun aPrisonerWithStatusResult(prisonerId: Long, nomsId: String, pathway: Pathway, pathwayStatus: Status) = object : PrisonerWithStatusProjection {
+    override val prisonerId = prisonerId
+    override val nomsId = nomsId
+    override val pathway = pathway
+    override var pathwayStatus = pathwayStatus
+    override var updatedDate = LocalDateTime.now()
+  }
 
+  private fun mockDatabaseCallsForPathwayView() {
     val pathway = Pathway.ACCOMMODATION
 
     val status1 = Status.NOT_STARTED
@@ -351,14 +368,13 @@ class PrisonerServiceTest {
         ResettlementAssessmentStatus.SUBMITTED,
         Pathway.entries.size,
       ),
-    )
-      .thenReturn(listOf(mockPrisonerEntity1, mockPrisonerEntity2, mockPrisonerEntity3))
+    ).thenReturn(setOf(1, 2, 3))
 
     `when`(pathwayStatusRepository.findByPrison("MDI")).thenReturn(
       listOf(
-        PathwayStatusEntity(1, mockPrisonerEntity1, pathway, status1, LocalDateTime.now()),
-        PathwayStatusEntity(8, mockPrisonerEntity2, pathway, status4, LocalDateTime.now()),
-        PathwayStatusEntity(15, mockPrisonerEntity3, pathway, status5, LocalDateTime.now()),
+        aPrisonerWithStatusResult(prisonerId = 1, nomsId = "A8229DY", pathway = pathway, pathwayStatus = status1),
+        aPrisonerWithStatusResult(prisonerId = 2, nomsId = "G1458GV", pathway = pathway, pathwayStatus = status4),
+        aPrisonerWithStatusResult(prisonerId = 3, nomsId = "A8339DY", pathway = pathway, pathwayStatus = status5),
       ),
     )
   }

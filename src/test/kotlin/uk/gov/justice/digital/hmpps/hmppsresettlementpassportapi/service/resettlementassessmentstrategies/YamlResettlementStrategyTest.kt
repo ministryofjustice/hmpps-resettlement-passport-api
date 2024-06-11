@@ -111,6 +111,7 @@ open class YamlResettlementStrategyTest {
     Arguments.of(
       emptyList<ResettlementAssessmentRequestQuestionAndAnswer<*>>(),
       ResettlementAssessmentRequest(emptyList()),
+      Pathway.ACCOMMODATION,
       ResettlementAssessmentType.BCST2,
       "CHECK_ANSWERS",
       "Cannot get the next question from CHECK_ANSWERS as this is the end of the flow for this pathway.",

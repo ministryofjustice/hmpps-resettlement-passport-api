@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceConditions
@@ -65,7 +66,9 @@ class LicenceConditionResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-  ): LicenceConditions? = licenceConditionService.getLicenceConditionsByNomsId(nomsId, false)
+    @RequestParam(defaultValue = "false", required = false)
+    includeChangeNotify: Boolean,
+  ): LicenceConditions? = licenceConditionService.getLicenceConditionsByNomsId(nomsId, includeChangeNotify, false)
 
   @GetMapping(
     "/{nomsId}/licence-condition/id/{licenceId}/condition/{conditionId}/image",

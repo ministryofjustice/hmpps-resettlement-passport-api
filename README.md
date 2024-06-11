@@ -6,9 +6,9 @@
 # Resettlement Passport API
 
 This is a Backend-For-Frontend style API that support both the
-[Prepare someone for release](https://github.com/ministryofjustice/hmpps-resettlement-passport-ui) 
-and [Plan your future](https://github.com/ministryofjustice/hmpps-resettlement-passport-person-on-probation-ui) 
-frontends 
+[Prepare someone for release](https://github.com/ministryofjustice/hmpps-resettlement-passport-ui)
+and [Plan your future](https://github.com/ministryofjustice/hmpps-resettlement-passport-person-on-probation-ui)
+frontends
 
 ## Running locally
 
@@ -32,5 +32,5 @@ If the yaml structure changes, rerun the `GenerateAssessmentSchema` file and com
 
 ## Testing wiremock stubs locally
 - build the docker image: `docker build -f stubs.Dockerfile -t stubs .`
-- run the stubs locally on port 8080: `docker run -p 8080:8080 stubs `
-- test it, for example: `http://localhost:8080/resettlement-passport-and-delius-api/appointments/U328968`
+- run the stubs locally on port 8080: `docker run -p 8080:8080 stubs`
+- test it, for example: `http://localhost:8080/resettlement-passport-and-delius-api/appointments/U338861`

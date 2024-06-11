@@ -1,10 +1,12 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import jakarta.transaction.Transactional
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AssessmentSkipRequest
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DpsCaseNoteSubType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LatestResettlementAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LatestResettlementAssessmentResponseQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
@@ -25,6 +27,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.YamlResettlementAssessmentStrategy
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDateTime
 
 @Service
@@ -34,7 +38,14 @@ class ResettlementAssessmentService(
   private val caseNotesService: CaseNotesService,
   private val pathwayAndStatusService: PathwayAndStatusService,
   private val assessmentSkipRepository: AssessmentSkipRepository,
+  private val prisonerSearchApiService: PrisonerSearchApiService,
+  private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
 ) {
+
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+  }
+
   @Transactional
   fun getResettlementAssessmentSummaryByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType): List<PrisonerResettlementAssessment> {
     val prisonerEntity = getPrisonerEntityOrThrow(nomsId)
@@ -67,7 +78,7 @@ class ResettlementAssessmentService(
     )
 
   @Transactional
-  fun submitResettlementAssessmentByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType, auth: String) {
+  fun submitResettlementAssessmentByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType, auth: String, sendCombinedCaseNotes: Boolean) {
     // Check auth - must be NOMIS
     val authSource = getClaimFromJWTToken(auth, "auth_source")?.lowercase()
     if (authSource != "nomis") {
@@ -108,12 +119,15 @@ class ResettlementAssessmentService(
       // Add templated first line to case note before posting
       val caseNotesText = "${getFirstLineOfBcstCaseNote(assessment.pathway, assessment.assessmentType)}\n\n${assessment.caseNoteText}"
 
-      // Post case note to DPS
-      caseNotesService.postBCSTCaseNoteToDps(
-        nomsId = prisonerEntity.nomsId,
-        notes = caseNotesText,
-        userId = assessment.createdByUserId,
-      )
+      // Old way - post case note to DPS
+      if (!sendCombinedCaseNotes) {
+        caseNotesService.postBCSTCaseNoteToDps(
+          nomsId = prisonerEntity.nomsId,
+          notes = caseNotesText,
+          userId = assessment.createdByUserId,
+          subType = DpsCaseNoteSubType.BCST,
+        )
+      }
 
       // Update pathway status
       pathwayAndStatusService.updatePathwayStatus(
@@ -126,7 +140,111 @@ class ResettlementAssessmentService(
       assessment.submissionDate = LocalDateTime.now()
       resettlementAssessmentRepository.save(assessment)
     }
+
+    // New way - combine and send case note to DPS and Delius
+    if (sendCombinedCaseNotes) {
+      val dpsSubType = when (assessmentType) {
+        ResettlementAssessmentType.BCST2 -> DpsCaseNoteSubType.INR
+        ResettlementAssessmentType.RESETTLEMENT_PLAN -> DpsCaseNoteSubType.PRR
+      }
+
+      val groupedAssessmentsDps = processAndGroupAssessmentCaseNotes(assessmentList, true)
+      groupedAssessmentsDps.forEach {
+        caseNotesService.postBCSTCaseNoteToDps(
+          nomsId = prisonerEntity.nomsId,
+          notes = it.caseNoteText,
+          userId = it.user.userId,
+          subType = dpsSubType,
+        )
+      }
+
+      val crn = resettlementPassportDeliusApiService.getCrn(nomsId)
+
+      if (crn != null) {
+        val groupedAssessmentsDelius = processAndGroupAssessmentCaseNotes(assessmentList, false)
+        groupedAssessmentsDelius.forEach {
+          caseNotesService.postBCSTCaseNoteToDelius(
+            crn = crn,
+            prisonCode = prisonerSearchApiService.findPrisonerPersonalDetails(prisonerEntity.nomsId).prisonId,
+            notes = it.caseNoteText,
+            name = it.user.name,
+            assessmentType = assessmentType,
+          )
+        }
+      } else {
+        // TODO PSFR-1386 Add retry mechanism if we fail to send the case note
+        log.warn("Cannot send report case note to Delius as no CRN is available for prisoner ${prisonerEntity.nomsId}.")
+      }
+    }
   }
+
+  fun processAndGroupAssessmentCaseNotes(assessmentList: List<ResettlementAssessmentEntity>, limitChars: Boolean): List<UserAndCaseNote> {
+    val maxCaseNoteLength = if (limitChars) {
+      // Limit for DPS is 4000 but set this lower to account for line breaks between each pathway and the Part x of y text at the start (should be about 25 chars)
+      3950
+    } else {
+      Int.MAX_VALUE
+    }
+
+    val userToCaseNoteMap = assessmentList.map {
+      UserAndCaseNote(
+        user = User(userId = it.createdByUserId, name = it.createdBy),
+        caseNoteText = "${it.pathway.displayName}\n\n${it.caseNoteText}",
+      )
+    }.groupBy { it.user }
+
+    val caseNoteList = userToCaseNoteMap.flatMap { e ->
+      val combinedCaseNotes = splitToCharLimit(e.value.map { it.caseNoteText }, maxCaseNoteLength)
+      combinedCaseNotes.map {
+        UserAndCaseNote(
+          user = e.key,
+          caseNoteText = it,
+        )
+      }
+    }
+
+    return if (caseNoteList.size > 1) {
+      caseNoteList.mapIndexed { index, caseNote ->
+        UserAndCaseNote(
+          user = caseNote.user,
+          caseNoteText = "Part ${index + 1} of ${caseNoteList.size}\n\n${caseNote.caseNoteText}",
+        )
+      }
+    } else {
+      caseNoteList
+    }
+  }
+
+  fun splitToCharLimit(caseNotes: List<String>, maxCaseNoteLength: Int): List<String> {
+    val splitCaseNotes = mutableListOf<List<String>>()
+    var currentCaseNote = mutableListOf<String>()
+
+    caseNotes.forEach {
+      if ((currentCaseNote.joinToString("").length + it.length) <= maxCaseNoteLength) {
+        currentCaseNote.add(it)
+      } else {
+        splitCaseNotes.add(currentCaseNote)
+        currentCaseNote = mutableListOf()
+        currentCaseNote.add(it)
+      }
+    }
+
+    if (currentCaseNote.isNotEmpty()) {
+      splitCaseNotes.add(currentCaseNote)
+    }
+
+    return splitCaseNotes.map { it.joinToString("\n\n\n") }
+  }
+
+  data class UserAndCaseNote(
+    val user: User,
+    val caseNoteText: String,
+  )
+
+  data class User(
+    val userId: String,
+    val name: String,
+  )
 
   fun getLatestResettlementAssessmentByNomsIdAndPathway(nomsId: String, pathway: Pathway, resettlementAssessmentStrategies: YamlResettlementAssessmentStrategy): LatestResettlementAssessmentResponse {
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)

@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock
 
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import com.github.tomakehurst.wiremock.client.WireMock.equalToJson
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
@@ -189,6 +190,35 @@ class ResettlementPassportDeliusApiMockServer : WireMockServerBase(9102) {
             .withStatus(status)
         },
       ),
+    )
+  }
+
+  fun stubPostCaseNote(crn: String, type: String, prisonId: String, forename: String, surname: String, caseNoteText: String, fakeNow: String) {
+    stubFor(
+      post("/nomis-case-note/$crn")
+        .withRequestBody(
+          equalToJson(
+            """
+            {
+              "type": "$type",
+              "dateTime": "$fakeNow",
+              "notes": "$caseNoteText",
+              "author": {
+                "prisonCode": "$prisonId",
+                "forename": "$forename",
+                "surname": "$surname"
+              }
+            }
+            """.trimIndent(),
+          ),
+        ).willReturn(aResponse().withStatus(200)),
+    )
+  }
+
+  fun stubPostCaseNoteError(crn: String, errorCode: Int) {
+    stubFor(
+      post("/nomis-case-note/$crn")
+        .willReturn(aResponse().withStatus(errorCode)),
     )
   }
 }

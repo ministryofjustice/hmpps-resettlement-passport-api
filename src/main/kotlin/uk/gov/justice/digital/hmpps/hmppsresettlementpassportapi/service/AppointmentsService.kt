@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
@@ -13,8 +14,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CreateAppo
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.AppointmentDelius
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusCreateAppointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusCreateAppointmentType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.interventionsapi.CRSAppointmentsDTO
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.interventionsapi.ReferralAppointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.InterventionsApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -31,6 +35,8 @@ import kotlin.time.toJavaDuration
 class AppointmentsService(
   private val prisonerRepository: PrisonerRepository,
   private val rpDeliusApiService: ResettlementPassportDeliusApiService,
+  private val interventionsApiService: InterventionsApiService,
+  @Value("\${interventions-api-integration.crsAppointmentsEnabled}") private val crsAppointmentIntegrationEnabled: Boolean,
 ) {
 
   companion object {
@@ -46,6 +52,7 @@ class AppointmentsService(
     private const val TOWN = "  Town"
     private const val COUNTY = "  County"
     private const val POSTCODE = "  Postcode"
+    private const val CRS_APPOINTMENT_DEFAULT_CONTACT = "Not provided"
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
@@ -63,7 +70,16 @@ class AppointmentsService(
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val crn = prisonerEntity.crn ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in database")
-    val appointments = mapAppointmentsFromDeliusApi(rpDeliusApiService.fetchAppointments(nomsId, crn, startDate, endDate))
+    val crsAppointments: CRSAppointmentsDTO
+    var deliusAppointments = rpDeliusApiService.fetchAppointments(nomsId, crn, startDate, endDate)
+
+    if (crsAppointmentIntegrationEnabled) {
+      crsAppointments = interventionsApiService.fetchCRSAppointments(crn)
+      deliusAppointments = deliusAppointments.filter { it -> !it.description.contains("Appointment with CRS") }
+    } else {
+      crsAppointments = CRSAppointmentsDTO(crn, listOf<ReferralAppointment>())
+    }
+    val appointments = mapAppointmentsFromDeliusAndInterventionsApi(deliusAppointments, crsAppointments, startDate, endDate)
 
     return AppointmentsList(filterPreReleaseAppointments(appointments, prisonerEntity, includePreRelease).sortedBy { LocalDateTime.of(it.date, it.time) })
   }
@@ -76,7 +92,7 @@ class AppointmentsService(
     }
   }
 
-  private fun mapAppointmentsFromDeliusApi(appList: List<AppointmentDelius>): List<Appointment> {
+  private fun mapAppointmentsFromDeliusAndInterventionsApi(appList: List<AppointmentDelius>, crsAppointments: CRSAppointmentsDTO, startDate: LocalDate, endDate: LocalDate): List<Appointment> {
     val appointmentList = mutableListOf<Appointment>()
     appList.forEach {
       val appointment: Appointment?
@@ -120,6 +136,52 @@ class AppointmentsService(
       )
       appointment.type = it.type.code
       appointmentList.add(appointment)
+    }
+
+    var referrals = listOf<ReferralAppointment>()
+    if (crsAppointments.referral != null) {
+      referrals = crsAppointments.referral
+    }
+
+    referrals.forEach { referral ->
+      val referralAppointments = referral.appointment
+      referralAppointments.forEach { crsAppointment ->
+        var formattedDateVal: LocalDate? = null
+        var formattedTimeVal: LocalTime? = null
+        if (crsAppointment.appointmentDateTime != null) {
+          formattedDateVal =
+            OffsetDateTime.parse(crsAppointment.appointmentDateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+              .toLocalDate()
+          formattedTimeVal =
+            OffsetDateTime.parse(crsAppointment.appointmentDateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+              .toLocalTime()
+        }
+        if (formattedDateVal?.isAfter(startDate.minusDays(1)) == true && formattedDateVal?.isBefore(endDate.plusDays(1)) == true) {
+          val appointment: Appointment?
+          val addressInfo = Address(
+            null,
+            crsAppointment.appointmentDeliveryFirstAddressLine,
+            crsAppointment.appointmentDeliverySecondAddressLine,
+            null,
+            crsAppointment.appointmentDeliveryTownCity,
+            crsAppointment.appointmentDeliveryCounty,
+            crsAppointment.appointmentDeliveryPostCode,
+            null,
+          )
+
+          appointment = Appointment(
+            referral.interventionTitle,
+            CRS_APPOINTMENT_DEFAULT_CONTACT,
+            formattedDateVal,
+            formattedTimeVal,
+            addressInfo,
+            null,
+            crsAppointment.appointmentDurationInMinutes.toLong(),
+          )
+          appointment.type = ""
+          appointmentList.add(appointment)
+        }
+      }
     }
     return appointmentList
   }

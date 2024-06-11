@@ -5,6 +5,7 @@ import org.apache.commons.text.WordUtils
 import org.slf4j.LoggerFactory
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusAuthor
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AppointmentsService.Companion.SECTION_DELIMITER
 import java.lang.IllegalArgumentException
@@ -19,7 +20,7 @@ val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 const val STRING_LENGTH = 6
 const val BCST_CASE_NOTE_PREFIX = "Case note summary from"
 const val BCST_CASE_NOTE_POSTFIX = "report"
-val BCST_CASE_NOTE_REGEX = Regex("$BCST_CASE_NOTE_PREFIX (.*) (${ResettlementAssessmentType.entries.joinToString("|") { it.displayName }}) $BCST_CASE_NOTE_POSTFIX")
+val BCST_CASE_NOTE_REGEX = Regex("$BCST_CASE_NOTE_PREFIX (.*) (${ResettlementAssessmentType.entries.flatMap { listOfNotNull(it.displayName, it.alternativeDisplayName) }.joinToString("|")}) $BCST_CASE_NOTE_POSTFIX")
 
 fun <T : Enum<*>> convertStringToEnum(enumClass: KClass<T>, stringValue: String?): T? {
   val enum = enumClass.java.enumConstants.firstOrNull { it.name.fuzzyMatch(stringValue) }
@@ -131,4 +132,13 @@ fun toMD5(sourceString: String): String {
   val digest = md.digest(sourceString.toByteArray())
   val hexString = digest.joinToString("") { "%02x".format(it) }
   return hexString
+}
+
+fun convertFromNameToDeliusAuthor(prisonCode: String, name: String): DeliusAuthor {
+  val splitName = name.trim().split(Regex("\\s+(?=\\S*+\$)"))
+  return DeliusAuthor(
+    prisonCode = prisonCode,
+    forename = splitName.first(),
+    surname = if (splitName.size != 1) splitName.last() else "",
+  )
 }

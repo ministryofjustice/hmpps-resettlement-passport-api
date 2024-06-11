@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusAuthor
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import java.util.stream.Stream
 
@@ -318,14 +319,14 @@ class ServiceUtilsTest {
   private fun `test extractCaseNoteTypeFromBcstCaseNote data`() = Stream.of(
     Arguments.of("", null),
     Arguments.of("Some random text", null),
-    Arguments.of("Case note summary from Accommodation BCST2 report", CaseNoteType.ACCOMMODATION),
-    Arguments.of("Case note summary from Accommodation BCST2 report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.ACCOMMODATION),
-    Arguments.of("Case note summary from Attitudes, thinking and behaviour BCST2 report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR),
-    Arguments.of("Case note summary from Children, families and communities BCST2 report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY),
-    Arguments.of("Case note summary from Drugs and alcohol BCST2 report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.DRUGS_AND_ALCOHOL),
-    Arguments.of("Case note summary from Education, skills and work BCST2 report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.EDUCATION_SKILLS_AND_WORK),
-    Arguments.of("Case note summary from Finance and ID BCST2 report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.FINANCE_AND_ID),
-    Arguments.of("Case note summary from Health BCST2 report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.HEALTH),
+    Arguments.of("Case note summary from Accommodation Immediate needs report", CaseNoteType.ACCOMMODATION),
+    Arguments.of("Case note summary from Accommodation Immediate needs report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.ACCOMMODATION),
+    Arguments.of("Case note summary from Attitudes, thinking and behaviour Immediate needs report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR),
+    Arguments.of("Case note summary from Children, families and communities Immediate needs report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY),
+    Arguments.of("Case note summary from Drugs and alcohol Immediate needs report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.DRUGS_AND_ALCOHOL),
+    Arguments.of("Case note summary from Education, skills and work Immediate needs report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.EDUCATION_SKILLS_AND_WORK),
+    Arguments.of("Case note summary from Finance and ID Immediate needs report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.FINANCE_AND_ID),
+    Arguments.of("Case note summary from Health Immediate needs report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.HEALTH),
     Arguments.of("Case note summary from Accommodation Pre-release report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.ACCOMMODATION),
     Arguments.of("Case note summary from Attitudes, thinking and behaviour Pre-release report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR),
     Arguments.of("Case note summary from Children, families and communities Pre-release report\n\nSome text after\n\nDetails of case note etc", CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY),
@@ -342,13 +343,27 @@ class ServiceUtilsTest {
   }
 
   private fun `test getFirstLineOfBcstCaseNote data`() = Stream.of(
-    Arguments.of(Pathway.ACCOMMODATION, ResettlementAssessmentType.BCST2, "Case note summary from Accommodation BCST2 report"),
-    Arguments.of(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, ResettlementAssessmentType.BCST2, "Case note summary from Attitudes, thinking and behaviour BCST2 report"),
-    Arguments.of(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, ResettlementAssessmentType.BCST2, "Case note summary from Children, families and communities BCST2 report"),
-    Arguments.of(Pathway.DRUGS_AND_ALCOHOL, ResettlementAssessmentType.BCST2, "Case note summary from Drugs and alcohol BCST2 report"),
-    Arguments.of(Pathway.EDUCATION_SKILLS_AND_WORK, ResettlementAssessmentType.BCST2, "Case note summary from Education, skills and work BCST2 report"),
-    Arguments.of(Pathway.FINANCE_AND_ID, ResettlementAssessmentType.BCST2, "Case note summary from Finance and ID BCST2 report"),
-    Arguments.of(Pathway.HEALTH, ResettlementAssessmentType.BCST2, "Case note summary from Health BCST2 report"),
+    Arguments.of(Pathway.ACCOMMODATION, ResettlementAssessmentType.BCST2, "Case note summary from Accommodation Immediate needs report"),
+    Arguments.of(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, ResettlementAssessmentType.BCST2, "Case note summary from Attitudes, thinking and behaviour Immediate needs report"),
+    Arguments.of(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, ResettlementAssessmentType.BCST2, "Case note summary from Children, families and communities Immediate needs report"),
+    Arguments.of(Pathway.DRUGS_AND_ALCOHOL, ResettlementAssessmentType.BCST2, "Case note summary from Drugs and alcohol Immediate needs report"),
+    Arguments.of(Pathway.EDUCATION_SKILLS_AND_WORK, ResettlementAssessmentType.BCST2, "Case note summary from Education, skills and work Immediate needs report"),
+    Arguments.of(Pathway.FINANCE_AND_ID, ResettlementAssessmentType.BCST2, "Case note summary from Finance and ID Immediate needs report"),
+    Arguments.of(Pathway.HEALTH, ResettlementAssessmentType.BCST2, "Case note summary from Health Immediate needs report"),
+  )
+
+  @ParameterizedTest
+  @MethodSource("test convertFromNameToDeliusAuthor data")
+  fun `test convertFromNameToDeliusAuthor`(name: String, expectedDeliusAuthor: DeliusAuthor) {
+    Assertions.assertEquals(expectedDeliusAuthor, convertFromNameToDeliusAuthor("MDI", name))
+  }
+
+  private fun `test convertFromNameToDeliusAuthor data`() = Stream.of(
+    Arguments.of("", DeliusAuthor("MDI", "", "")),
+    Arguments.of("John Smith", DeliusAuthor("MDI", "John", "Smith")),
+    Arguments.of("Mary Williams-Smith", DeliusAuthor("MDI", "Mary", "Williams-Smith")),
+    Arguments.of("Mary Jane Miller", DeliusAuthor("MDI", "Mary Jane", "Miller")),
+    Arguments.of("Chris", DeliusAuthor("MDI", "Chris", "")),
   )
 }
 

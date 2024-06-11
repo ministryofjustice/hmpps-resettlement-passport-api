@@ -68,7 +68,11 @@ class LicenceConditionResourceController(
     nomsId: String,
     @RequestParam(defaultValue = "false", required = false)
     includeChangeNotify: Boolean,
-  ): LicenceConditions? = licenceConditionService.getLicenceConditionsByNomsId(nomsId, includeChangeNotify, false)
+  ): LicenceConditions? = if (includeChangeNotify) {
+    licenceConditionService.getLicenceConditionsAndUpdateAudit(nomsId)
+  } else {
+    licenceConditionService.getLicenceConditionsByNomsId(nomsId)
+  }
 
   @GetMapping(
     "/{nomsId}/licence-condition/id/{licenceId}/condition/{conditionId}/image",

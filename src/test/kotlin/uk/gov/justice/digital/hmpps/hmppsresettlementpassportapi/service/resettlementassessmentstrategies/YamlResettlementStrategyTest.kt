@@ -154,7 +154,7 @@ open class YamlResettlementStrategyTest {
 
   @Test
   fun `test get config for invalid pathway`() {
-    val invalidPathway = "INVALID_PATHWAY" // an invalid pathway
+    val invalidPathway = "INVALID_PATHWAY"
     Assertions.assertThrows(IllegalArgumentException::class.java) {
       resettlementAssessmentService.getConfig(Pathway.valueOf(invalidPathway), ResettlementAssessmentType.BCST2)
     }

@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies
 
-import com.fasterxml.jackson.annotation.JsonFormat
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
@@ -31,36 +29,16 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClaimFromJWTToken
 import java.time.LocalDateTime
 
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
-enum class GenericResettlementAssessmentQuestion(
-  override val id: String,
-  override val title: String,
-  override val subTitle: String? = null,
-  override val type: TypeOfQuestion,
-  override val options: List<Option>? = null,
-  override val validationType: ValidationType = ValidationType.MANDATORY,
-) : IResettlementAssessmentQuestion {
-  CASE_NOTE_SUMMARY(
-    id = "CASE_NOTE_SUMMARY",
-    title = "Add a case note summary",
-    subTitle = "This will be displayed as a case note in both DPS and nDelius",
-    type = TypeOfQuestion.LONG_TEXT,
-  ),
-}
-
 @Service
 class YamlResettlementAssessmentStrategy(
   private val config: AssessmentQuestionSets,
   private val resettlementAssessmentRepository: ResettlementAssessmentRepository,
   private val prisonerRepository: PrisonerRepository,
   private val pathwayStatusRepository: PathwayStatusRepository,
-  @Value("\${resettlement-assessment.useYaml}") private val useYaml: Boolean,
-) : IResettlementAssessmentStrategy {
-  private val availablePathways: Set<Pathway> = config.questionSets.mapNotNull { it.pathway }.toSet()
 
-  override fun appliesTo(pathway: Pathway): Boolean = useYaml && pathway in availablePathways
+) {
 
-  private fun getConfig(pathway: Pathway, assessmentType: ResettlementAssessmentType, version: Int = 1): AssessmentQuestionSet {
+  fun getConfig(pathway: Pathway, assessmentType: ResettlementAssessmentType, version: Int = 1): AssessmentQuestionSet {
     val pathwayConfig = config.questionSets.first { it.pathway == pathway && it.version == version }
     val genericConfig = config.questionSets.first { it.generic && it.version == pathwayConfig.genericAssessmentVersion }
 
@@ -79,7 +57,7 @@ class YamlResettlementAssessmentStrategy(
     )
   }
 
-  override fun getNextPageId(
+  fun getNextPageId(
     assessment: ResettlementAssessmentRequest,
     nomsId: String,
     pathway: Pathway,
@@ -148,7 +126,7 @@ class YamlResettlementAssessmentStrategy(
     }
   }
 
-  override fun completeAssessment(
+  fun completeAssessment(
     nomsId: String,
     pathway: Pathway,
     assessmentType: ResettlementAssessmentType,
@@ -294,7 +272,7 @@ class YamlResettlementAssessmentStrategy(
     }
   }
 
-  override fun getPageFromId(
+  fun getPageFromId(
     nomsId: String,
     pathway: Pathway,
     pageId: String,
@@ -382,7 +360,7 @@ class YamlResettlementAssessmentStrategy(
       resettlementAssessmentResponsePage.questionsAndAnswers.forEach { q ->
         val existingAnswer = existingAssessment.assessment.assessment.find { it.questionId == q.question.id }
         // Copy in existing answers _but_ we don't want to copy case notes from BCST2 to RESETTLEMENT_PLAN
-        if (existingAnswer != null && !(resettlementPlanCopy && q.question.id == GenericResettlementAssessmentQuestion.CASE_NOTE_SUMMARY.id)) {
+        if (existingAnswer != null && !(resettlementPlanCopy && q.question.id == "CASE_NOTE_SUMMARY")) {
           q.answer = existingAnswer.answer
         }
         if (q.question.id == "SUPPORT_NEEDS_PRERELEASE") {
@@ -394,11 +372,11 @@ class YamlResettlementAssessmentStrategy(
     return resettlementAssessmentResponsePage
   }
 
-  override fun getQuestionById(id: String, pathway: Pathway, assessmentType: ResettlementAssessmentType): IResettlementAssessmentQuestion {
+  fun getQuestionById(id: String, pathway: Pathway, assessmentType: ResettlementAssessmentType): IResettlementAssessmentQuestion {
     return getQuestionList(pathway, assessmentType).first { it.id == id }
   }
 
-  override fun findPageIdFromQuestionId(questionId: String, assessmentType: ResettlementAssessmentType, pathway: Pathway): String {
+  fun findPageIdFromQuestionId(questionId: String, assessmentType: ResettlementAssessmentType, pathway: Pathway): String {
     return getConfig(pathway, assessmentType).pages.firstOrNull { p -> (p.questions?.any { q -> q.id == questionId } == true) }?.id ?: throw RuntimeException("Cannot find page for question [$questionId] - check that the question is used in a page!")
   }
 

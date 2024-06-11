@@ -27,14 +27,14 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettlementAssessmentService
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.IResettlementAssessmentStrategy
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.YamlResettlementAssessmentStrategy
 
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class ResettlementAssessmentController(
-  private val resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy>,
+  private val resettlementAssessmentStrategies: YamlResettlementAssessmentStrategy,
   private val resettlementAssessmentService: ResettlementAssessmentService,
 ) {
   @PostMapping("/{nomsId}/resettlement-assessment/{pathway}/next-page", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -80,7 +80,7 @@ class ResettlementAssessmentController(
     @RequestBody
     resettlementAssessment: ResettlementAssessmentRequest,
   ): ResettlementAssessmentNextPage {
-    val assessmentStrategy = resettlementAssessmentStrategies.first { it.appliesTo(pathway) }
+    val assessmentStrategy = resettlementAssessmentStrategies
     return ResettlementAssessmentNextPage(nextPageId = assessmentStrategy.getNextPageId(resettlementAssessment, nomsId, pathway, assessmentType, currentPage))
   }
 
@@ -125,7 +125,7 @@ class ResettlementAssessmentController(
     @RequestParam("assessmentType")
     assessmentType: ResettlementAssessmentType,
   ): ResettlementAssessmentResponsePage {
-    val assessmentStrategy = resettlementAssessmentStrategies.first { it.appliesTo(pathway) }
+    val assessmentStrategy = resettlementAssessmentStrategies
     return assessmentStrategy.getPageFromId(nomsId, pathway, pageId, assessmentType)
   }
 
@@ -220,7 +220,7 @@ class ResettlementAssessmentController(
     @RequestHeader("Authorization")
     auth: String,
   ): ResponseEntity<Void> {
-    resettlementAssessmentStrategies.first { it.appliesTo(pathway) }.completeAssessment(nomsId, pathway, assessmentType, resettlementAssessmentCompleteRequest, auth)
+    resettlementAssessmentStrategies.completeAssessment(nomsId, pathway, assessmentType, resettlementAssessmentCompleteRequest, auth)
     return ResponseEntity.ok().build()
   }
 

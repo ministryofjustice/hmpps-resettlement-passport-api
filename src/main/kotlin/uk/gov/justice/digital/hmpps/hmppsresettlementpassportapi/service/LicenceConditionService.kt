@@ -9,7 +9,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Lice
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.LicenceConditionsChangeAuditRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CvlApiService
-import java.time.LocalDateTime
 
 @Service
 class LicenceConditionService(
@@ -30,36 +29,31 @@ class LicenceConditionService(
   @Transactional
   fun getLicenceConditionsAndUpdateAudit(nomsId: String): LicenceConditions? {
     val licenceConditions = getLicenceConditionsByNomsId(nomsId) ?: return null
-    val changeStatus = compareAndSave(licenceConditions.toString(), nomsId)
-    licenceConditions.changeStatus = changeStatus
-    return licenceConditions
+    val changeStatus = compareAndSave(licenceConditions, nomsId)
+
+    return licenceConditions.copy(changeStatus = changeStatus)
   }
 
   fun getImageFromLicenceIdAndConditionId(licenceId: String, conditionId: String): ByteArray = cvlApiService.getImageFromLicenceIdAndConditionId(licenceId, conditionId)
 
   @Transactional
-  fun compareAndSave(licenceConditions: String, nomsId: String): Boolean? {
+  fun compareAndSave(licenceConditions: LicenceConditions, nomsId: String): Boolean? {
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException(
         "Prisoner with id $nomsId not found",
       )
+    val prisonerId = prisoner.id!!
 
-    val now = LocalDateTime.now()
-    val hashedString = toMD5(licenceConditions)
+    val licenceConditionsChangeAuditEntity = licenceConditionsChangeAuditRepository.findFirstByPrisonerIdOrderByCreationDateDesc(prisonerId)
 
-    val licenceConditionsChangeAuditEntity = licenceConditionsChangeAuditRepository.findByPrisoner(prisoner)
-    if (licenceConditionsChangeAuditEntity == null ||
-      !licenceConditionsChangeAuditEntity.licenceConditionsHash.equals(hashedString)
-    ) {
+    val existingLicenseConditions = licenceConditionsChangeAuditEntity?.licenceConditions
+    println(licenceConditions)
+    println(existingLicenseConditions)
+    if (licenceConditionsChangeAuditEntity == null || existingLicenseConditions != licenceConditions) {
       val newLicenceConditionChangeAuditEntity = LicenceConditionChangeAuditEntity(
-        null,
-        prisoner,
-        hashedString,
-        creationDate = now,
+        prisonerId = prisonerId,
+        licenceConditions = licenceConditions,
       )
-      if (licenceConditionsChangeAuditEntity != null) {
-        licenceConditionsChangeAuditRepository.delete(licenceConditionsChangeAuditEntity)
-      }
       licenceConditionsChangeAuditRepository.save(newLicenceConditionChangeAuditEntity)
       return true
     }

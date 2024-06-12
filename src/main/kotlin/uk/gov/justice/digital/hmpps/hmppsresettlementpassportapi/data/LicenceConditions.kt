@@ -1,18 +1,19 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
-data class LicenceConditions(
-  var licenceId: Long?,
-  var status: String?,
-  var startDate: String?,
-  var expiryDate: String?,
 
-  var standardLicenceConditions: List<Conditions>? = emptyList(),
-  var otherLicenseConditions: List<Conditions>? = emptyList(),
-  var changeStatus: Boolean? = false,
+data class LicenceConditions(
+  val licenceId: Long?,
+  val status: String? = null,
+  val startDate: String? = null,
+  val expiryDate: String? = null,
+
+  val standardLicenceConditions: List<Conditions>? = emptyList(),
+  val otherLicenseConditions: List<Conditions>? = emptyList(),
+  val changeStatus: Boolean? = false,
 )
 
 data class Conditions(
-  var id: Long? = null,
-  var image: Boolean,
-  var text: String? = null,
-  var sequence: Int? = null,
+  val id: Long? = null,
+  val image: Boolean,
+  val text: String? = null,
+  val sequence: Int? = null,
 )

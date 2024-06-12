@@ -79,8 +79,6 @@ class CvlApiService(
 
   fun getLicenceConditionsByLicenceId(licenceId: Long): LicenceConditions {
     val licence = fetchLicenceConditionsByLicenceId(licenceId)
-    val licenceConditions = LicenceConditions(licenceId, "", licence.licenceStartDate, licence.licenceExpiryDate, emptyList(), emptyList())
-    licenceConditions.status = licence.statusCode
 
     val standardConditionList = mutableListOf<Conditions>()
     val otherConditionList = mutableListOf<Conditions>()
@@ -102,10 +100,14 @@ class CvlApiService(
       otherConditionList.add(Conditions(item.id, false, item.text, item.sequence))
     }
 
-    licenceConditions.standardLicenceConditions = standardConditionList
-    licenceConditions.otherLicenseConditions = otherConditionList
-
-    return licenceConditions
+    return LicenceConditions(
+      licenceId = licenceId,
+      status = licence.statusCode,
+      startDate = licence.licenceStartDate,
+      expiryDate = licence.licenceExpiryDate,
+      standardLicenceConditions = standardConditionList,
+      otherLicenseConditions = otherConditionList,
+    )
   }
 
   fun getImageFromLicenceIdAndConditionId(licenceId: String, conditionId: String): ByteArray {

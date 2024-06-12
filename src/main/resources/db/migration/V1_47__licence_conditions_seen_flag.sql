@@ -1,0 +1,4 @@
+ALTER TABLE licence_conditions_change_audit add column licence_conditions jsonb;
+ALTER TABLE licence_conditions_change_audit add column seen boolean not null default false;
+ALTER TABLE licence_conditions_change_audit drop constraint licence_conditions_change_audit_prisoner_id_key;
+CREATE INDEX licence_conditions_change_audit_pid ON licence_conditions_change_audit(prisoner_id);

@@ -8,6 +8,7 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceConditions
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceConditionsMetadata
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.LicenceConditionChangeAuditEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.LicenceConditionsChangeAuditRepository
@@ -34,7 +35,8 @@ class LicenceConditionServiceTest {
 
   @BeforeEach
   fun beforeEach() {
-    licenceConditionService = LicenceConditionService(cvlApiService, licenceConditionsChangeAuditRepository, prisonerRepository)
+    licenceConditionService =
+      LicenceConditionService(cvlApiService, licenceConditionsChangeAuditRepository, prisonerRepository)
   }
 
   @Test
@@ -45,30 +47,45 @@ class LicenceConditionServiceTest {
 
     val response = licenceConditionService.compareAndSave(LicenceConditions(1), "acb")
 
-    assertThat(response).isTrue()
+    assertThat(response).isEqualTo(LicenceConditionsMetadata(true, 1))
   }
 
   @Test
   fun `test verifyCompareAndSave not first time but no data change - returns compare status`() {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
-    val licenceConditionChangeAuditEntity = LicenceConditionChangeAuditEntity(1, prisonerEntity.id!!, LicenceConditions(1), fakeNow)
+    val licenceConditionChangeAuditEntity = LicenceConditionChangeAuditEntity(
+      id = 1,
+      prisonerId = prisonerEntity.id!!,
+      licenceConditions = LicenceConditions(1),
+      creationDate = fakeNow,
+    )
     whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
-    whenever(licenceConditionsChangeAuditRepository.findFirstByPrisonerIdOrderByCreationDateDesc(1)).thenReturn(licenceConditionChangeAuditEntity)
+    whenever(licenceConditionsChangeAuditRepository.findFirstByPrisonerIdOrderByCreationDateDesc(1)).thenReturn(
+      licenceConditionChangeAuditEntity,
+    )
 
     val response = licenceConditionService.compareAndSave(LicenceConditions(1), "acb")
 
-    assertThat(response).isFalse()
+    assertThat(response).isEqualTo(LicenceConditionsMetadata(false, 1))
   }
 
   @Test
   fun `test verifyCompareAndSave not first time but data changed- returns compare status`() {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
-    val licenceConditionChangeAuditEntity = LicenceConditionChangeAuditEntity(1, prisonerEntity.id!!, LicenceConditions(1), fakeNow)
+    val licenceConditionChangeAuditEntity =
+      LicenceConditionChangeAuditEntity(
+        id = 1,
+        prisonerId = prisonerEntity.id!!,
+        licenceConditions = LicenceConditions(1),
+        creationDate = fakeNow,
+      )
     whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
-    whenever(licenceConditionsChangeAuditRepository.findFirstByPrisonerIdOrderByCreationDateDesc(1)).thenReturn(licenceConditionChangeAuditEntity)
+    whenever(licenceConditionsChangeAuditRepository.findFirstByPrisonerIdOrderByCreationDateDesc(1)).thenReturn(
+      licenceConditionChangeAuditEntity,
+    )
 
     val response = licenceConditionService.compareAndSave(LicenceConditions(2), "acb")
 
-    assertThat(response).isTrue()
+    assertThat(response).isEqualTo(LicenceConditionsMetadata(true, 2))
   }
 }

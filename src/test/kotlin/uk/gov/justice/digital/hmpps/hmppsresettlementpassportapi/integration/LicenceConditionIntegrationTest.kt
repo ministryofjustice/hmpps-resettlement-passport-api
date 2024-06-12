@@ -213,6 +213,7 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectBody().json(expectedOutput)
       .jsonPath("$.changeStatus").isEqualTo(false)
+      .jsonPath("$.version").isEqualTo(1)
   }
 
   @Test
@@ -233,6 +234,7 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectBody()
       .jsonPath("$.changeStatus").isEqualTo(true)
+      .jsonPath("$.version").isEqualTo(2)
       .jsonPath("$.otherLicenseConditions[?(@.id == 1009)].text")
       .value { conditionText: List<String> ->
         assertThat(conditionText.firstOrNull()).contains("Report to staff at Rasasa at 04:01 am")

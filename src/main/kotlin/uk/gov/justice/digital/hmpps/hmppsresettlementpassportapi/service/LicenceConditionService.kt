@@ -5,7 +5,8 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceConditions
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceConditionsResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceConditionsMetadata
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceConditionsWithMetaData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.LicenceConditionChangeAuditEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.LicenceConditionsChangeAuditRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
@@ -19,28 +20,26 @@ class LicenceConditionService(
 
 ) {
 
-  fun getLicenceConditionsByNomsId(nomsId: String): LicenceConditionsResponse? {
+  fun getLicenceConditionsByNomsId(nomsId: String): LicenceConditions {
     val licence = cvlApiService.getLicenceByNomsId(nomsId) ?: throw NoDataWithCodeFoundException(
       "Prisoner",
       nomsId,
     )
-    val licenceConditions = cvlApiService.getLicenceConditionsByLicenceId(licence.licenceId)
-
-    return LicenceConditionsResponse(licenceConditions, false)
+    return cvlApiService.getLicenceConditionsByLicenceId(licence.licenceId)
   }
 
   @Transactional
-  fun getLicenceConditionsAndUpdateAudit(nomsId: String): LicenceConditionsResponse? {
-    val (licenceConditions, _) = getLicenceConditionsByNomsId(nomsId) ?: return null
-    val changeStatus = compareAndSave(licenceConditions, nomsId)
+  fun getLicenceConditionsAndUpdateAudit(nomsId: String): LicenceConditionsWithMetaData? {
+    val licenceConditions = getLicenceConditionsByNomsId(nomsId)
+    val metadata = compareAndSave(licenceConditions, nomsId)
 
-    return LicenceConditionsResponse(licenceConditions, changeStatus)
+    return LicenceConditionsWithMetaData(licenceConditions, metadata)
   }
 
   fun getImageFromLicenceIdAndConditionId(licenceId: String, conditionId: String): ByteArray = cvlApiService.getImageFromLicenceIdAndConditionId(licenceId, conditionId)
 
   @Transactional
-  fun compareAndSave(licenceConditions: LicenceConditions, nomsId: String): Boolean? {
+  internal fun compareAndSave(licenceConditions: LicenceConditions, nomsId: String): LicenceConditionsMetadata {
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException(
         "Prisoner with id $nomsId not found",
@@ -50,16 +49,16 @@ class LicenceConditionService(
     val licenceConditionsChangeAuditEntity = licenceConditionsChangeAuditRepository.findFirstByPrisonerIdOrderByCreationDateDesc(prisonerId)
 
     val existingLicenseConditions = licenceConditionsChangeAuditEntity?.licenceConditions
-    println(licenceConditions)
-    println(existingLicenseConditions)
+
     if (licenceConditionsChangeAuditEntity == null || existingLicenseConditions != licenceConditions) {
       val newLicenceConditionChangeAuditEntity = LicenceConditionChangeAuditEntity(
         prisonerId = prisonerId,
         licenceConditions = licenceConditions,
+        version = licenceConditionsChangeAuditEntity?.version?.plus(1) ?: 1,
       )
       licenceConditionsChangeAuditRepository.save(newLicenceConditionChangeAuditEntity)
-      return true
+      return LicenceConditionsMetadata(changeStatus = true, newLicenceConditionChangeAuditEntity.version)
     }
-    return false
+    return LicenceConditionsMetadata(changeStatus = false, version = licenceConditionsChangeAuditEntity.version)
   }
 }

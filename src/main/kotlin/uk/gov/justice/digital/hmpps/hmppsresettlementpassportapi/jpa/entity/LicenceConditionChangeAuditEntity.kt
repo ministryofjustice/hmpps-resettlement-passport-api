@@ -26,6 +26,8 @@ data class LicenceConditionChangeAuditEntity(
 
   @Column
   val prisonerId: Long,
+  @Column
+  val version: Int = 1,
 
   @Column(name = "licence_conditions")
   @JdbcTypeCode(SqlTypes.JSON)

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceConditionsResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceConditionsWithMetaData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.LicenceConditionService
 
 @RestController
@@ -68,10 +68,10 @@ class LicenceConditionResourceController(
     nomsId: String,
     @RequestParam(defaultValue = "false", required = false)
     includeChangeNotify: Boolean,
-  ): LicenceConditionsResponse? = if (includeChangeNotify) {
+  ): LicenceConditionsWithMetaData? = if (includeChangeNotify) {
     licenceConditionService.getLicenceConditionsAndUpdateAudit(nomsId)
   } else {
-    licenceConditionService.getLicenceConditionsByNomsId(nomsId)
+    LicenceConditionsWithMetaData(licenceConditionService.getLicenceConditionsByNomsId(nomsId))
   }
 
   @GetMapping(

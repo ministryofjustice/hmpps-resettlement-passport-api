@@ -80,8 +80,7 @@ class ResettlementAssessmentController(
     @RequestBody
     resettlementAssessment: ResettlementAssessmentRequest,
   ): ResettlementAssessmentNextPage {
-    val assessmentStrategy = resettlementAssessmentStrategies
-    return ResettlementAssessmentNextPage(nextPageId = assessmentStrategy.getNextPageId(resettlementAssessment, nomsId, pathway, assessmentType, currentPage))
+    return ResettlementAssessmentNextPage(nextPageId = resettlementAssessmentStrategies.getNextPageId(resettlementAssessment, nomsId, pathway, assessmentType, currentPage))
   }
 
   @GetMapping("/{nomsId}/resettlement-assessment/{pathway}/page/{pageId}", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -125,8 +124,7 @@ class ResettlementAssessmentController(
     @RequestParam("assessmentType")
     assessmentType: ResettlementAssessmentType,
   ): ResettlementAssessmentResponsePage {
-    val assessmentStrategy = resettlementAssessmentStrategies
-    return assessmentStrategy.getPageFromId(nomsId, pathway, pageId, assessmentType)
+    return resettlementAssessmentStrategies.getPageFromId(nomsId, pathway, pageId, assessmentType)
   }
 
   @GetMapping("/{nomsId}/resettlement-assessment/summary", produces = [MediaType.APPLICATION_JSON_VALUE])

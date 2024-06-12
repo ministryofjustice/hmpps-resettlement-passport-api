@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
+import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CvlApiMockServer.Companion.TEST_IMAGE_BASE64
 import java.util.Base64
@@ -105,10 +106,7 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
     val licenceId = 101
     cvlApiMockServer.stubFindLicencesByNomsId(nomsId, 200)
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 200)
-    webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$nomsId/licence-condition")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
+    getLicenceConditions(nomsId)
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
       .expectBody().json(expectedOutput)
@@ -123,10 +121,7 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
     val licenceId = 101
     cvlApiMockServer.stubFindLicencesByNomsId(nomsId, 200)
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 200)
-    webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$nomsId/licence-condition")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
+    getLicenceConditions(nomsId)
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
       .expectBody().json(expectedOutput)
@@ -141,10 +136,7 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
     val licenceId = 101
     cvlApiMockServer.stubFindLicencesByNomsId(nomsId, 200)
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 200)
-    webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$nomsId/licence-condition?includeChangeNotify=true")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
+    getConditionsWithChangeNotify(nomsId)
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
       .expectBody().json(expectedOutput)
@@ -179,10 +171,7 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
 
     cvlApiMockServer.stubFindLicencesByNomsId(nomsId, 500)
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 500)
-    webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$nomsId/licence-condition")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
+    getLicenceConditions(nomsId)
       .expectStatus().isEqualTo(500)
       .expectHeader().contentType("application/json")
       .expectBody()
@@ -194,15 +183,18 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
     val nomsId = "abc"
 
     cvlApiMockServer.stubFindLicencesByNomsId(nomsId, responseBody = "[]")
+    getLicenceConditions(nomsId)
+      .expectStatus().isEqualTo(404)
+      .expectBody()
+      .jsonPath("status").isEqualTo(404)
+  }
+
+  private fun getLicenceConditions(nomsId: String): WebTestClient.ResponseSpec =
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/licence-condition")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
-      .expectStatus().isEqualTo(404)
       .expectHeader().contentType("application/json")
-      .expectBody()
-      .jsonPath("status").isEqualTo(404)
-  }
 
   @Test
   @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
@@ -212,21 +204,13 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
     val licenceId = 101
     cvlApiMockServer.stubFindLicencesByNomsId(nomsId, 200)
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 200)
-    webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$nomsId/licence-condition?includeChangeNotify=true")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
+    getConditionsWithChangeNotify(nomsId)
       .expectStatus().isOk
-      .expectHeader().contentType("application/json")
       .expectBody().json(expectedOutput)
       .jsonPath("$.changeStatus").isEqualTo(true)
 
-    webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$nomsId/licence-condition?includeChangeNotify=true")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
+    getConditionsWithChangeNotify(nomsId)
       .expectStatus().isOk
-      .expectHeader().contentType("application/json")
       .expectBody().json(expectedOutput)
       .jsonPath("$.changeStatus").isEqualTo(false)
   }
@@ -238,23 +222,15 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
     val licenceId = 101
     cvlApiMockServer.stubFindLicencesByNomsId(nomsId, 200)
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 200)
-    webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$nomsId/licence-condition?includeChangeNotify=true")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
+    getConditionsWithChangeNotify(nomsId)
       .expectStatus().isOk
-      .expectHeader().contentType("application/json")
       .expectBody().json(readFile("testdata/expectation/licence-condition.json"))
       .jsonPath("$.changeStatus").isEqualTo(true)
 
     cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 200, readFile("testdata/cvl-api/licence-changed.json"))
 
-    webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$nomsId/licence-condition?includeChangeNotify=true")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
+    getConditionsWithChangeNotify(nomsId)
       .expectStatus().isOk
-      .expectHeader().contentType("application/json")
       .expectBody()
       .jsonPath("$.changeStatus").isEqualTo(true)
       .jsonPath("$.otherLicenseConditions[?(@.id == 1009)].text")
@@ -262,4 +238,11 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
         assertThat(conditionText.firstOrNull()).contains("Report to staff at Rasasa at 04:01 am")
       }
   }
+
+  private fun getConditionsWithChangeNotify(@Suppress("SameParameterValue") nomsId: String): WebTestClient.ResponseSpec =
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/licence-condition?includeChangeNotify=true")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectHeader().contentType("application/json")
 }

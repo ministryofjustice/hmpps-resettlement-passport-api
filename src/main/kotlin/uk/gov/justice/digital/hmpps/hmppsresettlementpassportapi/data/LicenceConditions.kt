@@ -1,5 +1,13 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 
+import com.fasterxml.jackson.annotation.JsonUnwrapped
+
+data class LicenceConditionsResponse(
+  @field:JsonUnwrapped
+  val licenceConditions: LicenceConditions,
+  val changeStatus: Boolean?,
+)
+
 data class LicenceConditions(
   val licenceId: Long?,
   val status: String? = null,
@@ -8,7 +16,6 @@ data class LicenceConditions(
 
   val standardLicenceConditions: List<Conditions>? = emptyList(),
   val otherLicenseConditions: List<Conditions>? = emptyList(),
-  val changeStatus: Boolean? = false,
 )
 
 data class Conditions(

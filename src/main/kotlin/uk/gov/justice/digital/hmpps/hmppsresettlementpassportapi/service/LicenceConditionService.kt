@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceConditions
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceConditionsResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.LicenceConditionChangeAuditEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.LicenceConditionsChangeAuditRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
@@ -18,20 +19,22 @@ class LicenceConditionService(
 
 ) {
 
-  fun getLicenceConditionsByNomsId(nomsId: String): LicenceConditions? {
+  fun getLicenceConditionsByNomsId(nomsId: String): LicenceConditionsResponse? {
     val licence = cvlApiService.getLicenceByNomsId(nomsId) ?: throw NoDataWithCodeFoundException(
       "Prisoner",
       nomsId,
     )
-    return cvlApiService.getLicenceConditionsByLicenceId(licence.licenceId)
+    val licenceConditions = cvlApiService.getLicenceConditionsByLicenceId(licence.licenceId)
+
+    return LicenceConditionsResponse(licenceConditions, false)
   }
 
   @Transactional
-  fun getLicenceConditionsAndUpdateAudit(nomsId: String): LicenceConditions? {
-    val licenceConditions = getLicenceConditionsByNomsId(nomsId) ?: return null
+  fun getLicenceConditionsAndUpdateAudit(nomsId: String): LicenceConditionsResponse? {
+    val (licenceConditions, _) = getLicenceConditionsByNomsId(nomsId) ?: return null
     val changeStatus = compareAndSave(licenceConditions, nomsId)
 
-    return licenceConditions.copy(changeStatus = changeStatus)
+    return LicenceConditionsResponse(licenceConditions, changeStatus)
   }
 
   fun getImageFromLicenceIdAndConditionId(licenceId: String, conditionId: String): ByteArray = cvlApiService.getImageFromLicenceIdAndConditionId(licenceId, conditionId)

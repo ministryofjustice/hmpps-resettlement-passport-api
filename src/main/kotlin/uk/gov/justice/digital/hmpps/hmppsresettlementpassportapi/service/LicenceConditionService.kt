@@ -29,14 +29,15 @@ class LicenceConditionService(
   }
 
   @Transactional
-  fun getLicenceConditionsAndUpdateAudit(nomsId: String): LicenceConditionsWithMetaData? {
+  fun getLicenceConditionsAndUpdateAudit(nomsId: String): LicenceConditionsWithMetaData {
     val licenceConditions = getLicenceConditionsByNomsId(nomsId)
     val metadata = compareAndSave(licenceConditions, nomsId)
 
     return LicenceConditionsWithMetaData(licenceConditions, metadata)
   }
 
-  fun getImageFromLicenceIdAndConditionId(licenceId: String, conditionId: String): ByteArray = cvlApiService.getImageFromLicenceIdAndConditionId(licenceId, conditionId)
+  fun getImageFromLicenceIdAndConditionId(licenceId: String, conditionId: String): ByteArray =
+    cvlApiService.getImageFromLicenceIdAndConditionId(licenceId, conditionId)
 
   @Transactional
   internal fun compareAndSave(licenceConditions: LicenceConditions, nomsId: String): LicenceConditionsMetadata {
@@ -46,7 +47,8 @@ class LicenceConditionService(
       )
     val prisonerId = prisoner.id!!
 
-    val licenceConditionsChangeAuditEntity = licenceConditionsChangeAuditRepository.findFirstByPrisonerIdOrderByCreationDateDesc(prisonerId)
+    val licenceConditionsChangeAuditEntity =
+      licenceConditionsChangeAuditRepository.findFirstByPrisonerIdOrderByCreationDateDesc(prisonerId)
 
     val existingLicenseConditions = licenceConditionsChangeAuditEntity?.licenceConditions
 
@@ -59,6 +61,19 @@ class LicenceConditionService(
       licenceConditionsChangeAuditRepository.save(newLicenceConditionChangeAuditEntity)
       return LicenceConditionsMetadata(changeStatus = true, newLicenceConditionChangeAuditEntity.version)
     }
-    return LicenceConditionsMetadata(changeStatus = false, version = licenceConditionsChangeAuditEntity.version)
+    return LicenceConditionsMetadata(
+      changeStatus = !licenceConditionsChangeAuditEntity.seen,
+      version = licenceConditionsChangeAuditEntity.version,
+    )
+  }
+
+  @Transactional
+  fun markConditionsSeen(nomsId: String, version: Int) {
+    val licenceConditionChangeAuditEntity =
+      (
+        licenceConditionsChangeAuditRepository.getByNomsIdAndVersion(nomsId, version)
+          ?: throw ResourceNotFoundException("No licence conditions record found for $nomsId / $version")
+        )
+    licenceConditionsChangeAuditRepository.save(licenceConditionChangeAuditEntity.copy(seen = true))
   }
 }

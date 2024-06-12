@@ -212,13 +212,13 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
     getConditionsWithChangeNotify(nomsId)
       .expectStatus().isOk
       .expectBody().json(expectedOutput)
-      .jsonPath("$.changeStatus").isEqualTo(false)
+      .jsonPath("$.changeStatus").isEqualTo(true)
       .jsonPath("$.version").isEqualTo(1)
   }
 
   @Test
   @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
-  fun `Get licence condition with change will update the changeStatus flag`() {
+  fun `Get licence condition with change will generate a new version`() {
     val nomsId = "G4161UF"
     val licenceId = 101
     cvlApiMockServer.stubFindLicencesByNomsId(nomsId, 200)
@@ -247,4 +247,32 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectHeader().contentType("application/json")
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
+  fun `Patch licence condition when seen`() {
+    val nomsId = "G4161UF"
+    val licenceId = 101
+    cvlApiMockServer.stubFindLicencesByNomsId(nomsId, 200)
+    cvlApiMockServer.stubFetchLicenceConditionsByLicenceId(licenceId, 200)
+
+    getConditionsWithChangeNotify(nomsId)
+      .expectStatus().isOk
+      .expectBody()
+      .jsonPath("$.changeStatus").isEqualTo(true)
+      .jsonPath("$.version").isEqualTo(1)
+
+    webTestClient.patch()
+      .uri("/resettlement-passport/prisoner/$nomsId/licence-condition/seen?version=1")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus()
+      .isOk()
+
+    // Change status now shows as false
+    getConditionsWithChangeNotify(nomsId)
+      .expectStatus().isOk
+      .expectBody()
+      .jsonPath("$.changeStatus").isEqualTo(false)
+  }
 }

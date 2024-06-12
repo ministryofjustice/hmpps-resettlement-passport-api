@@ -10,6 +10,7 @@ import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -134,4 +135,47 @@ class LicenceConditionResourceController(
     @Parameter(required = true)
     conditionId: String,
   ): ByteArray = licenceConditionService.getImageFromLicenceIdAndConditionId(licenceId, conditionId)
+
+  @Operation(
+    summary = "Mark licence conditions as seen for one person",
+  )
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "400",
+        description = "Missing request information",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "404",
+        description = "No record found for user/version",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  @PatchMapping(
+    "/{nomsId}/licence-condition/seen",
+    produces = [MediaType.IMAGE_JPEG_VALUE, MediaType.APPLICATION_JSON_VALUE],
+  )
+  fun markLicenceConditionsSeen(
+    @PathVariable("nomsId")
+    @Parameter(required = true)
+    nomsId: String,
+    @RequestParam(required = true)
+    version: Int,
+  ) = licenceConditionService.markConditionsSeen(nomsId, version)
 }

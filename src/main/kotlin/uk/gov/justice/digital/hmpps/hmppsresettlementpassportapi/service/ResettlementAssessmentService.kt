@@ -28,7 +28,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.IResettlementAssessmentStrategy
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.YamlResettlementAssessmentStrategy
 import java.time.LocalDateTime
 
 @Service
@@ -246,7 +246,7 @@ class ResettlementAssessmentService(
     val name: String,
   )
 
-  fun getLatestResettlementAssessmentByNomsIdAndPathway(nomsId: String, pathway: Pathway, resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy>): LatestResettlementAssessmentResponse {
+  fun getLatestResettlementAssessmentByNomsIdAndPathway(nomsId: String, pathway: Pathway, resettlementAssessmentStrategies: YamlResettlementAssessmentStrategy): LatestResettlementAssessmentResponse {
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
 
@@ -275,16 +275,14 @@ class ResettlementAssessmentService(
     }
   }
 
-  fun convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(resettlementAssessmentEntity: ResettlementAssessmentEntity, resettlementAssessmentStrategies: List<IResettlementAssessmentStrategy>): ResettlementAssessmentResponse {
-    val resettlementStrategy = resettlementAssessmentStrategies.first { it.appliesTo(resettlementAssessmentEntity.pathway) }
-
+  fun convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(resettlementAssessmentEntity: ResettlementAssessmentEntity, resettlementAssessmentStrategies: YamlResettlementAssessmentStrategy): ResettlementAssessmentResponse {
     val questionsAndAnswers = resettlementAssessmentEntity.assessment.assessment.mapNotNull {
-      val question = resettlementStrategy.getQuestionById(it.questionId, resettlementAssessmentEntity.pathway, resettlementAssessmentEntity.assessmentType)
+      val question = resettlementAssessmentStrategies.getQuestionById(it.questionId, resettlementAssessmentEntity.pathway, resettlementAssessmentEntity.assessmentType)
       if (question.id !in listOf("SUPPORT_NEEDS", "SUPPORT_NEEDS_PRERELEASE", "CASE_NOTE_SUMMARY")) {
         LatestResettlementAssessmentResponseQuestionAndAnswer(
           questionTitle = question.title,
           answer = convertAnswerToString(question.options, it.answer),
-          originalPageId = resettlementStrategy.findPageIdFromQuestionId(it.questionId, resettlementAssessmentEntity.assessmentType, resettlementAssessmentEntity.pathway),
+          originalPageId = resettlementAssessmentStrategies.findPageIdFromQuestionId(it.questionId, resettlementAssessmentEntity.assessmentType, resettlementAssessmentEntity.pathway),
         )
       } else {
         null

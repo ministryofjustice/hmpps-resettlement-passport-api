@@ -5,6 +5,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceConditions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.LicenceConditionChangeAuditEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import java.time.LocalDate
@@ -26,10 +27,9 @@ class LicenceConditionChangeAuditRepositoryTest : RepositoryTestBase() {
 
   @Test
   fun `test persist new licence condition change audit`() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23"))
-    prisonerRepository.save(prisoner)
+    val prisoner = prisonerRepository.save(PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23")))
 
-    val licenceConditionChangeAuditEntity = LicenceConditionChangeAuditEntity(null, prisoner, "Licence Conditions", LocalDateTime.now())
+    val licenceConditionChangeAuditEntity = LicenceConditionChangeAuditEntity(prisonerId = prisoner.id!!, licenceConditions = LicenceConditions(1))
 
     licenceConditionsChangeAuditRepository.save(licenceConditionChangeAuditEntity)
 

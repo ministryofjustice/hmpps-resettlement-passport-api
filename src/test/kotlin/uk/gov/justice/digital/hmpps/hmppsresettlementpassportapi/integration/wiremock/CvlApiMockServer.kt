@@ -32,22 +32,18 @@ class CvlApiMockServer : WireMockServerBase(9095) {
       ),
     )
   }
-  fun stubFindLicencesByNomsId(nomsId: String, status: Int) {
-    var licenceSummaryJSON = readFile("testdata/cvl-api/licence-summary.json")
-    if (status == 404) {
-      licenceSummaryJSON = " [] "
-    }
+  fun stubFindLicencesByNomsId(nomsId: String, status: Int = 200, responseBody: String = readFile("testdata/cvl-api/licence-summary.json")) {
     val requestJson = "{ \"nomsId\" :  [\"$nomsId\"] }"
     stubFor(
       post("/licence/match").withRequestBody(
         equalToJson(requestJson, true, true),
       )
         .willReturn(
-          if (status == 200 || status == 404) {
+          if (status == 200) {
             aResponse()
               .withHeader("Content-Type", "application/json")
               .withBody(
-                licenceSummaryJSON,
+                responseBody,
               )
               .withStatus(200)
           } else {
@@ -60,8 +56,7 @@ class CvlApiMockServer : WireMockServerBase(9095) {
     )
   }
 
-  fun stubFetchLicenceConditionsByLicenceId(licenceId: Int, status: Int) {
-    val licenceJSON = readFile("testdata/cvl-api/licence.json")
+  fun stubFetchLicenceConditionsByLicenceId(licenceId: Int, status: Int, licenceJSON: String = readFile("testdata/cvl-api/licence.json")) {
     licenceJSON.replace("Active", "InActive")
     stubFor(
       get("/licence/id/$licenceId").willReturn(

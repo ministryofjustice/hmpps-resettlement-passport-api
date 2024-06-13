@@ -897,6 +897,7 @@ class YamlResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val assessmentType = "RESETTLEMENT_PLAN"
     val page = "PRERELEASE_ASSESSMENT_SUMMARY"
 
+    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/page/$page?assessmentType=$assessmentType")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))

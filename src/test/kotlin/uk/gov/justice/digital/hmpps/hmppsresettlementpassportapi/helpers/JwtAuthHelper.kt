@@ -12,15 +12,15 @@ import java.time.Duration
 import java.util.Date
 import java.util.UUID
 
+private fun createKeyPair(): KeyPair {
+  val gen = KeyPairGenerator.getInstance("RSA")
+  gen.initialize(2048)
+  return gen.generateKeyPair()
+}
+
 @Component
 class JwtAuthHelper {
-  private val keyPair: KeyPair
-
-  init {
-    val gen = KeyPairGenerator.getInstance("RSA")
-    gen.initialize(2048)
-    keyPair = gen.generateKeyPair()
-  }
+  private val keyPair: KeyPair = createKeyPair()
 
   @Bean
   fun jwtDecoder(): NimbusJwtDecoder = NimbusJwtDecoder.withPublicKey(keyPair.public as RSAPublicKey).build()

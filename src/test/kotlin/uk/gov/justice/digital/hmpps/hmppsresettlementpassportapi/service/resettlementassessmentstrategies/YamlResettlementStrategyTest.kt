@@ -61,10 +61,9 @@ open class YamlResettlementStrategyTest {
     PathMatchingResourcePatternResolver(),
   )
 
-  @ParameterizedTest(name = "{0} - currentPage: {1}")
+  @ParameterizedTest(name = "{3} -> {4}")
   @MethodSource("test getNextPageId data")
   fun `test getNextPageId`(
-    questionsAndAnswers: List<ResettlementAssessmentRequestQuestionAndAnswer<*>>,
     assessment: ResettlementAssessmentRequest,
     pathway: Pathway,
     assessmentType: ResettlementAssessmentType,
@@ -80,8 +79,8 @@ open class YamlResettlementStrategyTest {
         resettlementAssessmentService.getNextPageId(
           assessment = assessment,
           nomsId = nomsId,
-          pathway = Pathway.ACCOMMODATION,
-          assessmentType = ResettlementAssessmentType.BCST2,
+          pathway = pathway,
+          assessmentType = assessmentType,
           currentPage = currentPage,
         )
       }
@@ -91,8 +90,8 @@ open class YamlResettlementStrategyTest {
     val nextPageId = resettlementAssessmentService.getNextPageId(
       assessment = assessment,
       nomsId = nomsId,
-      pathway = Pathway.ACCOMMODATION,
-      assessmentType = ResettlementAssessmentType.BCST2,
+      pathway = pathway,
+      assessmentType = assessmentType,
       currentPage = currentPage,
     )
 
@@ -101,7 +100,6 @@ open class YamlResettlementStrategyTest {
 
   private fun `test getNextPageId data`() = Stream.of(
     Arguments.of(
-      emptyList<ResettlementAssessmentRequestQuestionAndAnswer<*>>(),
       ResettlementAssessmentRequest(emptyList()),
       Pathway.ACCOMMODATION,
       ResettlementAssessmentType.BCST2,
@@ -109,7 +107,6 @@ open class YamlResettlementStrategyTest {
       "WHERE_DID_THEY_LIVE",
     ),
     Arguments.of(
-      emptyList<ResettlementAssessmentRequestQuestionAndAnswer<*>>(),
       ResettlementAssessmentRequest(emptyList()),
       Pathway.ACCOMMODATION,
       ResettlementAssessmentType.BCST2,
@@ -117,9 +114,6 @@ open class YamlResettlementStrategyTest {
       "Cannot get the next question from CHECK_ANSWERS as this is the end of the flow for this pathway.",
     ),
     Arguments.of(
-      listOf(
-        ResettlementAssessmentRequestQuestionAndAnswer("Sample Question", StringAnswer("Sample Answer")),
-      ),
       ResettlementAssessmentRequest(
         listOf(
           ResettlementAssessmentRequestQuestionAndAnswer("Sample Question", StringAnswer("Sample Answer")),

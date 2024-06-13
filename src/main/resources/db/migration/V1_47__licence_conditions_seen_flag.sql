@@ -1,4 +1,4 @@
-alter table licence_conditions_change_audit add column licence_conditions jsonb;
+alter table licence_conditions_change_audit add column licence_conditions jsonb default '{}'::jsonb;
 alter table licence_conditions_change_audit add column seen boolean not null default false;
 alter table licence_conditions_change_audit drop constraint licence_conditions_change_audit_prisoner_id_key;
 create index licence_conditions_change_audit_pid on licence_conditions_change_audit(prisoner_id);

@@ -61,7 +61,7 @@ class PoPUserMetricsService(
               popUserExists = true
               var licencesConditions: LicenceConditions
               try {
-                licencesConditions = licenceConditionService.getLicenceConditionsByNomsId(prisoner[0].nomsId, false, true)!!
+                licencesConditions = licenceConditionService.getLicenceConditionsByNomsId(prisoner[0].nomsId)
                 if (licencesConditions.standardLicenceConditions.isNullOrEmpty() || licencesConditions.otherLicenseConditions.isNullOrEmpty()) {
                   noLicenceUserCount += 1
                 }

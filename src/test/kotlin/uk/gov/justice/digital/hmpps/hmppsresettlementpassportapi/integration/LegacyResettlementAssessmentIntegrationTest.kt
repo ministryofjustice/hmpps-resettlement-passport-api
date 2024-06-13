@@ -17,7 +17,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentSimpleQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -26,9 +25,6 @@ class LegacyResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
   @Autowired
   private lateinit var resettlementAssessmentRepository: ResettlementAssessmentRepository
-
-  @Autowired
-  private lateinit var pathwayStatusRepository: PathwayStatusRepository
 
   // Tests using ATTITUDES_THINKING_AND_BEHAVIOUR Pathway - i.e. using old AbstractResettlementAssessmentStrategy
   @Test
@@ -410,6 +406,7 @@ class LegacyResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val assessmentType = "RESETTLEMENT_PLAN"
     val page = "PRERELEASE_ASSESSMENT_SUMMARY"
 
+    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/page/$page?assessmentType=$assessmentType")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))

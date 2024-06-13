@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import jakarta.persistence.Version
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.type.SqlTypes
 import org.springframework.stereotype.Component
@@ -27,6 +28,7 @@ data class LicenceConditionChangeAuditEntity(
   @Column
   val prisonerId: Long,
   @Column
+  @Version
   val version: Int = 1,
 
   @Column(name = "licence_conditions")

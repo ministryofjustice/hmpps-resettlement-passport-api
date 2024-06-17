@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.mockkClass
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.TestInstance
@@ -21,7 +20,7 @@ class CaseNotesServiceTest {
   @ParameterizedTest
   @MethodSource("test remove duplicates data")
   fun `test remove duplicates`(inputList: List<PathwayCaseNote>, expectedList: List<PathwayCaseNote>) {
-    val caseNotesService = CaseNotesService(mockkClass(CaseNotesApiService::class), mockkClass(DeliusContactService::class), mockkClass(ObjectMapper::class), mockkClass(PrisonerRepository::class), mockkClass(ResettlementPassportDeliusApiService::class))
+    val caseNotesService = CaseNotesService(mockkClass(CaseNotesApiService::class), mockkClass(DeliusContactService::class), mockkClass(PrisonerRepository::class), mockkClass(ResettlementPassportDeliusApiService::class))
     Assertions.assertEquals(expectedList, caseNotesService.removeDuplicates(inputList))
   }
 

@@ -9,12 +9,14 @@ import org.junit.jupiter.api.Test
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prison
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PrisonerService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
 
 class PrisonRegisterApiServiceTest {
 
   private val mockWebServer: MockWebServer = MockWebServer()
   private lateinit var prisonRegisterApiService: PrisonRegisterApiService
+  private lateinit var prisonerService: PrisonerService
 
   @BeforeEach
   fun beforeEach() {
@@ -34,7 +36,7 @@ class PrisonRegisterApiServiceTest {
     val mockedJsonResponse =
       readFile("testdata/prison-register-api/prison.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisonList = prisonRegisterApiService.getActivePrisonsList()
+    val prisonList = prisonerService.getActivePrisonsList()
     Assertions.assertEquals(expectedPrisonList, prisonList)
   }
 }

@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external
 
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -19,7 +20,8 @@ class CvlApiService(
   private val cvlWebClientClientCredentials: WebClient,
 ) {
 
-  private fun findLicencesByNomsId(nomsId: List<String>): List<LicenceSummary> =
+  @Cacheable("cvl-api-find-licences-by-noms-id")
+  fun findLicencesByNomsId(nomsId: List<String>): List<LicenceSummary> =
     cvlWebClientClientCredentials.post()
       .uri("/licence/match")
       .bodyValue(
@@ -32,6 +34,7 @@ class CvlApiService(
       .collectList()
       .block() ?: throw RuntimeException("Unexpected null returned from request.")
 
+  @Cacheable("cvl-api-get-licence-by-noms-id")
   fun getLicenceByNomsId(nomsId: String): LicenceSummary? {
     val nomsIdList = ArrayList<String>()
     nomsIdList.add(nomsId)
@@ -65,7 +68,7 @@ class CvlApiService(
     }
   }
 
-  private fun fetchLicenceConditionsByLicenceId(licenceId: Long): Licence =
+  fun fetchLicenceConditionsByLicenceId(licenceId: Long): Licence =
     cvlWebClientClientCredentials.get()
       .uri(
         "/licence/id/{licenceId}",
@@ -77,6 +80,7 @@ class CvlApiService(
       .bodyToMono<Licence>()
       .block() ?: throw RuntimeException("Unexpected null returned from request.")
 
+  @Cacheable("cvl-api-get-licence-conditions-by-licence-id")
   fun getLicenceConditionsByLicenceId(licenceId: Long): LicenceConditions {
     val licence = fetchLicenceConditionsByLicenceId(licenceId)
 
@@ -110,6 +114,7 @@ class CvlApiService(
     )
   }
 
+  @Cacheable("cvl-api-get-image-from-licence-id-and-condition-id")
   fun getImageFromLicenceIdAndConditionId(licenceId: String, conditionId: String): ByteArray {
     return cvlWebClientClientCredentials
       .get()

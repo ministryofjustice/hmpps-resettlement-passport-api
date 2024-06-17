@@ -29,6 +29,7 @@ class InterventionsApiService(
     )
     .block() ?: throw RuntimeException("Unexpected null returned from request.")
 
+  @Cacheable("interventions-api-fetch-crs-appointments")
   fun fetchCRSAppointments(crn: String): CRSAppointmentsDTO {
     return interventionsWebClientCredentials.get()
       .uri("/appointments-location/$crn")

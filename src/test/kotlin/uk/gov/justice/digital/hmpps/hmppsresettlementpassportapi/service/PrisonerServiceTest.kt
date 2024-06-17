@@ -33,6 +33,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDate
@@ -68,6 +69,9 @@ class PrisonerServiceTest {
   @Mock
   private lateinit var watchlistService: WatchlistService
 
+  @Mock
+  private lateinit var prisonRegisterApiService: PrisonRegisterApiService
+
   @BeforeEach
   fun beforeEach() {
     prisonerService = PrisonerService(
@@ -79,6 +83,7 @@ class PrisonerServiceTest {
       watchlistService,
       pathwayAndStatusService,
       deliusApiService,
+      prisonRegisterApiService,
     )
     mockkStatic(::getClaimFromJWTToken)
     every { getClaimFromJWTToken("123", "sub") } returns "ABC11D"

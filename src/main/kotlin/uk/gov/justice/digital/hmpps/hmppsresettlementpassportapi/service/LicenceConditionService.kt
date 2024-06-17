@@ -17,11 +17,12 @@ class LicenceConditionService(
   val cvlApiService: CvlApiService,
   private val licenceConditionsChangeAuditRepository: LicenceConditionsChangeAuditRepository,
   private val prisonerRepository: PrisonerRepository,
+  private val cvlService: CvlService,
 
 ) {
 
   fun getLicenceConditionsByNomsId(nomsId: String): LicenceConditions {
-    val licence = cvlApiService.getLicenceByNomsId(nomsId) ?: throw NoDataWithCodeFoundException(
+    val licence = cvlService.getLicenceByNomsId(nomsId) ?: throw NoDataWithCodeFoundException(
       "Prisoner",
       nomsId,
     )

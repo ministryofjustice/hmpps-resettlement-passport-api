@@ -12,8 +12,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceCon
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.cvlapi.Licence
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.cvlapi.LicenceRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.cvlapi.LicenceSummary
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 @Service
 class CvlApiService(
@@ -33,40 +31,6 @@ class CvlApiService(
       .bodyToFlux<LicenceSummary>()
       .collectList()
       .block() ?: throw RuntimeException("Unexpected null returned from request.")
-
-  @Cacheable("cvl-api-get-licence-by-noms-id")
-  fun getLicenceByNomsId(nomsId: String): LicenceSummary? {
-    val nomsIdList = ArrayList<String>()
-    nomsIdList.add(nomsId)
-    val licenceList = findLicencesByNomsId(nomsIdList)
-    val licences = mutableListOf<LicenceSummary>()
-    if (licenceList.size == 1) {
-      licences.addAll(licenceList)
-    } else if (licenceList.toList().size > 1) {
-      var breakFlag = false
-      val pattern = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
-      licenceList.forEach {
-        if (it.dateCreated != null) {
-          val dateCreated = LocalDateTime.parse(it.dateCreated, pattern)
-          if (licences.isEmpty()) {
-            licences.add(0, it)
-          } else {
-            if (it.licenceStatus == "ACTIVE") {
-              licences.add(0, it)
-              breakFlag = true
-            } else if (!breakFlag && dateCreated.isAfter(LocalDateTime.parse(it.dateCreated, pattern))) {
-              licences.add(0, it)
-            }
-          }
-        }
-      }
-    }
-    return if (licences.isEmpty()) {
-      null
-    } else {
-      licences[0]
-    }
-  }
 
   fun fetchLicenceConditionsByLicenceId(licenceId: Long): Licence =
     cvlWebClientClientCredentials.get()

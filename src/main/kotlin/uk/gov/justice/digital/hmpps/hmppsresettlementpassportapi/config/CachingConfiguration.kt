@@ -30,7 +30,6 @@ class CachingConfiguration {
       .withCacheConfiguration("arn-api-get-risk-scores-by-crn", getCacheConfiguration(Duration.ofHours(4)))
       .withCacheConfiguration("arn-api-get-rosh-data-by-crn", getCacheConfiguration(Duration.ofHours(4)))
       .withCacheConfiguration("cvl-api-find-licences-by-noms-id", getCacheConfiguration(Duration.ofHours(4)))
-      .withCacheConfiguration("cvl-api-get-licence-by-noms-id", getCacheConfiguration(Duration.ofHours(4)))
       .withCacheConfiguration("cvl-api-get-licence-conditions-by-licence-id", getCacheConfiguration(Duration.ofHours(4)))
       .withCacheConfiguration("cvl-api-get-image-from-licence-id-and-condition-id", getCacheConfiguration(Duration.ofHours(4)))
       .withCacheConfiguration("education-employment-api-get-readiness-profile-by-noms-id", getCacheConfiguration(Duration.ofHours(2)))

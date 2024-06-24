@@ -1,8 +1,8 @@
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-  val kotlinVersion = "1.9.23"
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "5.15.6"
+  val kotlinVersion = "2.0.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "6.0.1"
   id("org.springdoc.openapi-gradle-plugin") version "1.8.0"
   id("jacoco")
   id("org.sonarqube") version "4.0.0.2929"
@@ -35,6 +35,8 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:4.0.1")
+
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
@@ -43,6 +45,7 @@ dependencies {
 
   runtimeOnly("org.springframework.boot:spring-boot-starter-jdbc")
   runtimeOnly("org.postgresql:postgresql:42.7.3")
+  runtimeOnly("org.flywaydb:flyway-database-postgresql")
 
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
 
@@ -93,14 +96,6 @@ openApi {
 
 java {
   toolchain.languageVersion.set(JavaLanguageVersion.of(21))
-}
-
-tasks {
-  withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-      jvmTarget = "21"
-    }
-  }
 }
 
 // Fix issue with springdoc-openapi-gradle-plugin https://github.com/springdoc/springdoc-openapi-gradle-plugin/issues/128

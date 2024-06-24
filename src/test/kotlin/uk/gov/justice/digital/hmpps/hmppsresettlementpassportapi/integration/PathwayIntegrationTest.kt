@@ -236,10 +236,11 @@ class PathwayIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(400)
       .jsonPath("errorCode").isEmpty
       .jsonPath("userMessage").isEqualTo("Validation failure - please check request parameters and try again")
-      .jsonPath("developerMessage").isEqualTo(
-        "Cannot deserialize value of type `uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway` from String \"FAKE_PATHWAY\": not one of the values accepted for Enum class: [ACCOMMODATION, CHILDREN_FAMILIES_AND_COMMUNITY, FINANCE_AND_ID, DRUGS_AND_ALCOHOL, ATTITUDES_THINKING_AND_BEHAVIOUR, EDUCATION_SKILLS_AND_WORK, HEALTH]\n" +
-          " at [Source: (org.springframework.util.StreamUtils\$NonClosingInputStream); line: 2, column: 14] (through reference chain: uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatusAndCaseNote[\"pathway\"])",
-      )
+      .jsonPath("developerMessage").value { message: String ->
+        assertThat(message).contains(
+          """Cannot deserialize value of type `uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway` from String "FAKE_PATHWAY": not one of the values accepted for Enum class: [ACCOMMODATION, CHILDREN_FAMILIES_AND_COMMUNITY, FINANCE_AND_ID, DRUGS_AND_ALCOHOL, ATTITUDES_THINKING_AND_BEHAVIOUR, EDUCATION_SKILLS_AND_WORK, HEALTH]""",
+        )
+      }
       .jsonPath("moreInfo").isEmpty
   }
 }

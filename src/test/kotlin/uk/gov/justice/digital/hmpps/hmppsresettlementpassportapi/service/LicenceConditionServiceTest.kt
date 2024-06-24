@@ -25,9 +25,6 @@ class LicenceConditionServiceTest {
   private lateinit var cvlApiService: CvlApiService
 
   @Mock
-  private lateinit var cvlService: CvlService
-
-  @Mock
   private lateinit var prisonerRepository: PrisonerRepository
 
   @Mock
@@ -39,7 +36,7 @@ class LicenceConditionServiceTest {
   @BeforeEach
   fun beforeEach() {
     licenceConditionService =
-      LicenceConditionService(cvlApiService, licenceConditionsChangeAuditRepository, prisonerRepository, cvlService)
+      LicenceConditionService(cvlApiService, licenceConditionsChangeAuditRepository, prisonerRepository)
   }
 
   @Test

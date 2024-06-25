@@ -50,7 +50,6 @@ class PrisonerService(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  // added from PrisonerRegisterApiService
   fun getActivePrisonsList(): MutableList<Prison> {
     val prisons = prisonRegisterApiService.getPrisons()
 

@@ -15,7 +15,6 @@ class InterventionsApiService(
   private val interventionsWebClientCredentials: WebClient,
 ) {
 
-  @Cacheable("interventions-api-fetch-probation-case-referrals")
   fun fetchProbationCaseReferrals(crn: String): List<ReferralDTO> = interventionsWebClientCredentials.get()
     .uri("/probation-case/$crn/referral")
     .retrieve()
@@ -29,7 +28,6 @@ class InterventionsApiService(
     )
     .block() ?: throw RuntimeException("Unexpected null returned from request.")
 
-  @Cacheable("interventions-api-fetch-crs-appointments")
   fun fetchCRSAppointments(crn: String): CRSAppointmentsDTO {
     return interventionsWebClientCredentials.get()
       .uri("/appointments-location/$crn")

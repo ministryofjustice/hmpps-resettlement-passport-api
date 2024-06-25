@@ -5,11 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.micrometer.observation.ObservationRegistry
-import org.slf4j.LoggerFactory
-import org.springframework.cache.Cache
 import org.springframework.cache.annotation.EnableCaching
-import org.springframework.cache.interceptor.CacheErrorHandler
-import org.springframework.cache.interceptor.SimpleCacheErrorHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.cache.RedisCacheConfiguration
@@ -53,24 +49,5 @@ class CachingConfiguration {
       .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jackson2JsonRedisSerializer))
       .prefixCacheNameWith(this.javaClass.packageName + ".")
       .entryTtl(ttl)
-  }
-
-  @Bean
-  fun cacheErrorHandler(): CacheErrorHandler {
-    return CustomCacheErrorHandler()
-  }
-
-  class CustomCacheErrorHandler : SimpleCacheErrorHandler() {
-
-    companion object {
-      private val log = LoggerFactory.getLogger(this::class.java)
-    }
-    override fun handleCacheGetError(exception: RuntimeException, cache: Cache, key: Any) {
-      log.warn("Error handling cache get $key", exception)
-    }
-
-    override fun handleCachePutError(exception: RuntimeException, cache: Cache, key: Any, value: Any?) {
-      log.warn("Error handling cache put $key", exception)
-    }
   }
 }

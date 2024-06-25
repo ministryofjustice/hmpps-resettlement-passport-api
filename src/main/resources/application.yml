@@ -20,6 +20,8 @@ spring:
         enabled: false
       ssl:
         enabled: true
+      connect-timeout: 5s
+
   security:
     oauth2:
       resourceserver:

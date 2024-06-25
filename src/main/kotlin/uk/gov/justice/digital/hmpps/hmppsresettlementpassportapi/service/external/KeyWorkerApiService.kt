@@ -15,7 +15,7 @@ class KeyWorkerApiService(val keyWorkerWebClientCredentials: WebClient) {
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  @Cacheable("key-worker-api-get-key-worker-name")
+  @Cacheable("key-worker-api-get-key-worker-name", unless = "#result == null")
   fun getKeyWorkerName(nomsId: String): String? {
     val keyWorker = keyWorkerWebClientCredentials.get()
       .uri("/key-worker/offender/$nomsId")

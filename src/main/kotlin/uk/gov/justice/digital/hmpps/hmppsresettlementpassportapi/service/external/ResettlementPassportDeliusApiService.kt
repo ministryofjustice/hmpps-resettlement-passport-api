@@ -42,7 +42,7 @@ class ResettlementPassportDeliusApiService(
     return prisonerRepository.findByNomsId(nomsId)?.crn
   }
 
-  @Cacheable("resettlement-passport-delius-api-get-crn")
+  @Cacheable("resettlement-passport-delius-api-get-crn", unless = "#result == null")
   fun getCrn(nomsId: String): String? {
     val prisonersDetails = rpDeliusWebClientCredentials.get()
       .uri("/probation-cases/$nomsId/crn")
@@ -82,7 +82,7 @@ class ResettlementPassportDeliusApiService(
     )
   }
 
-  @Cacheable("resettlement-passport-delius-api-get-com-by-noms-id")
+  @Cacheable("resettlement-passport-delius-api-get-com-by-noms-id", unless = "#result == null")
   fun getComByNomsId(nomsId: String): String? {
     val crn = findCrn(nomsId) ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $nomsId in database")
 

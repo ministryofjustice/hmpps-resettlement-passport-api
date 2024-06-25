@@ -46,7 +46,7 @@ class MetricsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `test get metrics - happy path`() {
+  fun `test get metrics - happy path - with caching`() {
     val prisonId = "MDI"
     val expectedOutput = readFile("testdata/expectation/prisoner-counts.json")
 
@@ -58,6 +58,18 @@ class MetricsIntegrationTest : IntegrationTestBase() {
     prisonRegisterApiMockServer.stubPrisonList(200)
     prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-3.json", prisonId, "", 500, 0, 200)
 
+    getAndAssert(prisonId, expectedOutput)
+
+    // Reset mocks to ensure it uses the cache
+    prisonRegisterApiMockServer.resetAll()
+    prisonerSearchApiMockServer.resetAll()
+
+    getAndAssert(prisonId, expectedOutput)
+
+    unmockkAll()
+  }
+
+  fun getAndAssert(prisonId: String, expectedOutput: String) {
     webTestClient.get()
       .uri("/resettlement-passport/metrics/prisoner-counts?prisonId=$prisonId")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -161,8 +173,6 @@ class MetricsIntegrationTest : IntegrationTestBase() {
         .tags("prison", "Moorland (HMP & YOI)", "status", "Done", "releaseDate", "24 Weeks")
         .gauge().value(),
     )
-
-    unmockkAll()
   }
 
   @Test

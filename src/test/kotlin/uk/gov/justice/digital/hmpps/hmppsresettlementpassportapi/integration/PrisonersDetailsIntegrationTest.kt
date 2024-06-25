@@ -20,14 +20,13 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
   lateinit var prisonerRepository: PrisonerRepository
 
   @Test
-  fun `Get Prisoner Details happy path - blank database`() {
+  fun `Get Prisoner Details happy path - blank database - with caching`() {
     val expectedOutput = readFileAndReplaceAge("testdata/expectation/prisoner-details-2.json")
     val nomsId = "123"
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
     deliusApiMockServer.stubGetPersonalDetailsFromCrn("abc", 200)
-    prisonRegisterApiMockServer.stubPrisonList(200)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId")
@@ -37,10 +36,28 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody().json(expectedOutput, true)
 
-    val prisonerEntity = prisonerRepository.findByNomsId("123")
-    val expectedPrisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), "abc", "MDI", LocalDate.parse("2023-08-20"))
-    assertThat(expectedPrisonerEntity).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java)
-      .ignoringFields("id").isEqualTo(prisonerEntity)
+    val prisonerEntity1 = prisonerRepository.findByNomsId("123")
+    val expectedPrisonerEntity1 = PrisonerEntity(null, nomsId, LocalDateTime.now(), "abc", "MDI", LocalDate.parse("2023-08-20"))
+    assertThat(expectedPrisonerEntity1).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java)
+      .ignoringFields("id").isEqualTo(prisonerEntity1)
+
+    // Reset mocks to ensure it uses the cache
+    prisonerSearchApiMockServer.resetAll()
+    prisonApiMockServer.resetAll()
+    deliusApiMockServer.resetAll()
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput, true)
+
+    val prisonerEntity2 = prisonerRepository.findByNomsId("123")
+    val expectedPrisonerEntity2 = PrisonerEntity(null, nomsId, LocalDateTime.now(), "abc", "MDI", LocalDate.parse("2023-08-20"))
+    assertThat(expectedPrisonerEntity2).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java)
+      .ignoringFields("id").isEqualTo(prisonerEntity2)
   }
 
   @Test
@@ -52,7 +69,6 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
     deliusApiMockServer.stubGetPersonalDetailsFromCrn("abc", 200)
-    prisonRegisterApiMockServer.stubPrisonList(200)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId")
@@ -80,7 +96,6 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
     deliusApiMockServer.stubGetPersonalDetailsFromCrn("abc", 200)
-    prisonRegisterApiMockServer.stubPrisonList(200)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId")
@@ -108,7 +123,6 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
     deliusApiMockServer.stubGet("/probation-cases/$nomsId/crn", 404, null)
     deliusApiMockServer.stubGet("/probation-cases/$crn", 404, null)
-    prisonRegisterApiMockServer.stubPrisonList(200)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId")
@@ -136,7 +150,6 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
     deliusApiMockServer.stubGetPersonalDetailsFromCrn("abc", 200)
-    prisonRegisterApiMockServer.stubPrisonList(200)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId")
@@ -188,13 +201,26 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `Get image for Prisoner happy path`() {
+  fun `Get image for Prisoner happy path - with caching`() {
     val nomsId = "abc"
     val imageId = "1313058"
     val expectedOutput = Base64.getDecoder().decode(CvlApiMockServer.TEST_IMAGE_BASE64)
 
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
     prisonApiMockServer.stubGetPrisonerFacialImage(imageId, 200)
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/image/$imageId")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("image/jpeg")
+      .expectBody<ByteArray>().consumeWith {
+        Assertions.assertArrayEquals(expectedOutput, it.responseBody)
+      }
+
+    // Reset mocks to ensure it uses the cache
+    prisonApiMockServer.resetAll()
+
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/image/$imageId")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -256,7 +282,6 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
     deliusApiMockServer.stubGetPersonalDetailsFromCrn("abc", 200)
-    prisonRegisterApiMockServer.stubPrisonList(200)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId")
@@ -281,7 +306,6 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
     deliusApiMockServer.stubGetPersonalDetailsFromCrn("abc", 200)
-    prisonRegisterApiMockServer.stubPrisonList(200)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId")
@@ -305,7 +329,6 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
     prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
     deliusApiMockServer.stubGetPersonalDetailsFromCrn("abc", 200)
-    prisonRegisterApiMockServer.stubPrisonList(200)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId")

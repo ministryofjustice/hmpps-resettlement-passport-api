@@ -15,6 +15,7 @@ class InterventionsApiService(
   private val interventionsWebClientCredentials: WebClient,
 ) {
 
+  @Cacheable("interventions-api-fetch-probation-case-referrals")
   fun fetchProbationCaseReferrals(crn: String): List<ReferralDTO> = interventionsWebClientCredentials.get()
     .uri("/probation-case/$crn/referral")
     .retrieve()

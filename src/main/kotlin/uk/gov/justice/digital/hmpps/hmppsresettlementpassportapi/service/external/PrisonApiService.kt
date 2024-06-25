@@ -12,7 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersa
 @Service
 class PrisonApiService(val prisonWebClientCredentials: WebClient) {
 
-  @Cacheable("prison-api-get-prisoner-image-data")
+  @Cacheable("prison-api-get-prisoner-image-data", unless = "#result == null")
   fun getPrisonerImageData(nomsId: String, imageId: Int): ByteArray? {
     var image: ByteArray? = null
     val prisonerImageDetailsList = findPrisonerImageDetails(nomsId)

@@ -5,7 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.micrometer.observation.ObservationRegistry
+import org.slf4j.LoggerFactory
+import org.springframework.cache.Cache
 import org.springframework.cache.annotation.EnableCaching
+import org.springframework.cache.interceptor.CacheErrorHandler
+import org.springframework.cache.interceptor.SimpleCacheErrorHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.cache.RedisCacheConfiguration
@@ -29,9 +33,6 @@ class CachingConfiguration {
       .withCacheConfiguration("allocation-manager-api-get-poms-by-noms-id", getCacheConfiguration(Duration.ofHours(2)))
       .withCacheConfiguration("arn-api-get-risk-scores-by-crn", getCacheConfiguration(Duration.ofHours(4)))
       .withCacheConfiguration("arn-api-get-rosh-data-by-crn", getCacheConfiguration(Duration.ofHours(4)))
-      .withCacheConfiguration("cvl-api-find-licences-by-noms-id", getCacheConfiguration(Duration.ofHours(4)))
-      .withCacheConfiguration("cvl-api-get-licence-conditions-by-licence-id", getCacheConfiguration(Duration.ofHours(4)))
-      .withCacheConfiguration("cvl-api-get-image-from-licence-id-and-condition-id", getCacheConfiguration(Duration.ofHours(4)))
       .withCacheConfiguration("education-employment-api-get-readiness-profile-by-noms-id", getCacheConfiguration(Duration.ofHours(2)))
       .withCacheConfiguration("key-worker-api-get-key-worker-name", getCacheConfiguration(Duration.ofHours(2)))
       .withCacheConfiguration("prison-register-api-get-prisons", getCacheConfiguration(Duration.ofDays(7)))
@@ -52,6 +53,24 @@ class CachingConfiguration {
       .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jackson2JsonRedisSerializer))
       .prefixCacheNameWith(this.javaClass.packageName + ".")
       .entryTtl(ttl)
-      .disableCachingNullValues()
+  }
+
+  @Bean
+  fun cacheErrorHandler(): CacheErrorHandler {
+    return CustomCacheErrorHandler()
+  }
+
+  class CustomCacheErrorHandler : SimpleCacheErrorHandler() {
+
+    companion object {
+      private val log = LoggerFactory.getLogger(this::class.java)
+    }
+    override fun handleCacheGetError(exception: RuntimeException, cache: Cache, key: Any) {
+      log.warn("Error handling cache get $key", exception)
+    }
+
+    override fun handleCachePutError(exception: RuntimeException, cache: Cache, key: Any, value: Any?) {
+      log.warn("Error handling cache put $key", exception)
+    }
   }
 }

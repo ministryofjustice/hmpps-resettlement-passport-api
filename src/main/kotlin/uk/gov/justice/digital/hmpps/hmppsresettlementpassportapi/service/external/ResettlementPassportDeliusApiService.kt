@@ -61,7 +61,7 @@ class ResettlementPassportDeliusApiService(
   }
 
   @Cacheable("resettlement-passport-delius-api-get-mappa-data-by-noms-id")
-  fun getMappaDataByNomsId(nomsId: String): MappaData? {
+  fun getMappaDataByNomsId(nomsId: String): MappaData {
     val crn = findCrn(nomsId) ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $nomsId in database")
     val mappaDetail = rpDeliusWebClientCredentials.get()
       .uri("/probation-cases/$crn/mappa")
@@ -141,7 +141,7 @@ class ResettlementPassportDeliusApiService(
       .block() ?: throw RuntimeException("Unexpected null returned from request.")
   }
 
-  @Cacheable("resettlement-passport-delius-api-get-personal-details")
+  @Cacheable("resettlement-passport-delius-api-get-personal-details", unless = "#result == null")
   fun getPersonalDetails(nomsId: String, crn: String): PersonalDetail? {
     val prisonersDetails = rpDeliusWebClientCredentials.get()
       .uri("/probation-cases/$crn")

@@ -25,7 +25,7 @@ repositories {
 }
 
 dependencies {
-
+  annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
   implementation("javax.servlet:javax.servlet-api:4.0.1")
 
   implementation("org.springframework.boot:spring-boot-starter-webflux")
@@ -60,12 +60,12 @@ dependencies {
   implementation("commons-codec:commons-codec")
   implementation("com.google.code.gson:gson")
   implementation("org.json:json:20240303")
-
+  implementation("io.github.oshai:kotlin-logging-jvm:6.0.9")
   implementation("com.pauldijou:jwt-core_2.11:5.0.0")
 
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 
-  implementation(platform("org.testcontainers:testcontainers-bom:1.19.7"))
+  implementation(platform("org.testcontainers:testcontainers-bom:1.19.8"))
   testImplementation("org.awaitility:awaitility-kotlin")
   testImplementation("io.jsonwebtoken:jjwt-impl:0.12.5")
   testImplementation("io.jsonwebtoken:jjwt-jackson:0.12.5")
@@ -74,6 +74,7 @@ dependencies {
   testImplementation("org.springframework.security:spring-security-test")
   testImplementation("org.wiremock:wiremock-standalone:3.5.3")
   testImplementation("org.testcontainers:postgresql")
+  testImplementation("org.testcontainers:localstack")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("javax.xml.bind:jaxb-api:2.3.1")

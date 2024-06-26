@@ -16,17 +16,16 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PopUserCou
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PopUserLicenceCountMetric
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PoPUserApiService
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
 import java.time.LocalDate
 
 @Service
 class PoPUserMetricsService(
   private val registry: MeterRegistry,
-  private val prisonRegisterApiService: PrisonRegisterApiService,
   private val licenceConditionService: LicenceConditionService,
   private val popUserApiService: PoPUserApiService,
   private val prisonerRepository: PrisonerRepository,
   private val appointmentsService: AppointmentsService,
+  private val prisonerService: PrisonerService,
 ) {
   private val popUserLicenceCountMetric = PopUserCountMetrics()
   private val popUserAppointmentMetrics = PopUserAppointmentCountMetrics()
@@ -45,7 +44,7 @@ class PoPUserMetricsService(
     val popUserList = popUserApiService.getAllVerifiedPopUsers()
     val totalPopUser = popUserList.size
     if (totalPopUser > 0) {
-      val prisonList = prisonRegisterApiService.getActivePrisonsList()
+      val prisonList = prisonerService.getActivePrisonsList()
       var percentStdLicenceCondition: Double
       var percentOtherLicenceCondition: Double
       for (prison in prisonList) {
@@ -128,7 +127,7 @@ class PoPUserMetricsService(
     val popUserList = popUserApiService.getAllVerifiedPopUsers()
     val totalPopUser = popUserList.size
     if (totalPopUser > 0) {
-      val prisonList = prisonRegisterApiService.getActivePrisonsList()
+      val prisonList = prisonerService.getActivePrisonsList()
       var scoreDate: Int
       var scoreTime: Int
       var scoreType: Int
@@ -168,7 +167,7 @@ class PoPUserMetricsService(
                   missingTimeCount += appointmentsList.results.filter { it.time == null }.size
                   missingTypeCount = appointmentsList.results.filter { it.type == null }.size
                   missingLocationCount += appointmentsList.results.size - appointmentsList.results.filter { it.location != null && (it.location.postcode != null || it.location.streetName != null) }.size
-                  missingPOCount += appointmentsList.results.filter { it.contact == null }.size
+                  missingPOCount += appointmentsList.results.filter { false }.size
                   missingEmailCount += appointmentsList.results.filter { it.contactEmail == null }.size
                 } else {
                   totalAppointments += 1
@@ -279,7 +278,7 @@ class PoPUserMetricsService(
     val totalPopUser = popUserList.size
     val versionRegex = "Initial Appointment".toRegex()
     if (totalPopUser > 0) {
-      val prisonList = prisonRegisterApiService.getActivePrisonsList()
+      val prisonList = prisonerService.getActivePrisonsList()
       for (prison in prisonList) {
         var zeroAnyAppointmentsCount = 0
         var zeroProbationAppointmentsCount = 0

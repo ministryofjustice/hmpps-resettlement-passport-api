@@ -64,7 +64,7 @@ class RiskResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-  ): RiskScore? = riskService.getRiskScoresByNomsId(nomsId)
+  ): RiskScore = riskService.getRiskScoresByNomsId(nomsId)
 
   @GetMapping("{nomsId}/risk/rosh", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
@@ -103,7 +103,7 @@ class RiskResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-  ): RoshData? = riskService.getRoshDataByNomsId(nomsId)
+  ): RoshData = riskService.getRoshDataByNomsId(nomsId)
 
   @GetMapping("{nomsId}/risk/mappa", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
@@ -142,5 +142,5 @@ class RiskResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-  ): MappaData? = riskService.getMappaDataByNomsId(nomsId)
+  ): MappaData = riskService.getMappaDataByNomsId(nomsId)
 }

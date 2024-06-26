@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external
 
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -22,7 +23,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.convert
 @Service
 class ArnApiService(private val arnWebClientClientCredentials: WebClient) {
 
-  fun getRiskScoresByCrn(crn: String): RiskScore? {
+  @Cacheable("arn-api-get-risk-scores-by-crn")
+  fun getRiskScoresByCrn(crn: String): RiskScore {
     // Use CRN to get risk scores from ARN
     val riskScoresDtoList = arnWebClientClientCredentials.get()
       .uri("/risks/crn/$crn/predictors/all")
@@ -77,7 +79,8 @@ class ArnApiService(private val arnWebClientClientCredentials: WebClient) {
 
   fun List<RiskScoresDto>.getMostRecentRiskScore() = this.sortedBy { it.completedDate }.last()
 
-  fun getRoshDataByCrn(crn: String): RoshData? {
+  @Cacheable("arn-api-get-rosh-data-by-crn")
+  fun getRoshDataByCrn(crn: String): RoshData {
     // Use CRN to get risk scores from ARN
     val allRoshRiskData = arnWebClientClientCredentials.get()
       .uri("/risks/crn/$crn")

@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.extern
 
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -41,6 +42,7 @@ class ResettlementPassportDeliusApiService(
     return prisonerRepository.findByNomsId(nomsId)?.crn
   }
 
+  @Cacheable("resettlement-passport-delius-api-get-crn", unless = "#result == null")
   fun getCrn(nomsId: String): String? {
     val prisonersDetails = rpDeliusWebClientCredentials.get()
       .uri("/probation-cases/$nomsId/crn")
@@ -58,7 +60,8 @@ class ResettlementPassportDeliusApiService(
     return prisonersDetails?.crn
   }
 
-  fun getMappaDataByNomsId(nomsId: String): MappaData? {
+  @Cacheable("resettlement-passport-delius-api-get-mappa-data-by-noms-id")
+  fun getMappaDataByNomsId(nomsId: String): MappaData {
     val crn = findCrn(nomsId) ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $nomsId in database")
     val mappaDetail = rpDeliusWebClientCredentials.get()
       .uri("/probation-cases/$crn/mappa")
@@ -79,6 +82,7 @@ class ResettlementPassportDeliusApiService(
     )
   }
 
+  @Cacheable("resettlement-passport-delius-api-get-com-by-noms-id", unless = "#result == null")
   fun getComByNomsId(nomsId: String): String? {
     val crn = findCrn(nomsId) ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $nomsId in database")
 
@@ -122,6 +126,7 @@ class ResettlementPassportDeliusApiService(
     return appointments.results
   }
 
+  @Cacheable("resettlement-passport-delius-api-fetch-accommodation")
   fun fetchAccommodation(nomsId: String, crn: String): AccommodationsDelius {
     return rpDeliusWebClientCredentials.get()
       .uri(
@@ -136,6 +141,7 @@ class ResettlementPassportDeliusApiService(
       .block() ?: throw RuntimeException("Unexpected null returned from request.")
   }
 
+  @Cacheable("resettlement-passport-delius-api-get-personal-details", unless = "#result == null")
   fun getPersonalDetails(nomsId: String, crn: String): PersonalDetail? {
     val prisonersDetails = rpDeliusWebClientCredentials.get()
       .uri("/probation-cases/$crn")

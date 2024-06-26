@@ -11,14 +11,12 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerCo
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerCounts
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ReleaseDateTag
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.StatusTag
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import java.time.LocalDate
 
 @Service
 class MetricsService(
   private val prisonerSearchApiService: PrisonerSearchApiService,
-  private val prisonRegisterApiService: PrisonRegisterApiService,
   private val prisonerService: PrisonerService,
   private val registry: MeterRegistry,
 ) {
@@ -44,7 +42,7 @@ class MetricsService(
     val latestRD12Weeks = LocalDate.now().plusDays(84)
     val latestRD24Weeks = LocalDate.now().plusDays(168)
 
-    val prisonList = prisonRegisterApiService.getActivePrisonsList()
+    val prisonList = prisonerService.getActivePrisonsList()
 
     for (prison in prisonList) {
       try {

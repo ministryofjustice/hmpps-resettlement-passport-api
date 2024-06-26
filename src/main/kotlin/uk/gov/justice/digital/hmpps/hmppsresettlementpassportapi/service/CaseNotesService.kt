@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
@@ -20,7 +19,6 @@ import java.util.Objects
 class CaseNotesService(
   val caseNotesApiService: CaseNotesApiService,
   val deliusContactService: DeliusContactService,
-  val objectMapper: ObjectMapper,
   val prisonerRepository: PrisonerRepository,
   val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
 ) {

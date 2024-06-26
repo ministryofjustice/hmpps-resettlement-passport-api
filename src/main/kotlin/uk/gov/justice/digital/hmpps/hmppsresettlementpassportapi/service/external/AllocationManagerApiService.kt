@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external
 
 import org.slf4j.LoggerFactory
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientException
@@ -16,6 +17,7 @@ class AllocationManagerApiService(val allocationManagerWebClientCredentials: Web
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
+  @Cacheable("allocation-manager-api-get-poms-by-noms-id")
   fun getPomsByNomsId(nomsId: String): Poms {
     val allocations = allocationManagerWebClientCredentials.get()
       .uri("/api/allocation/$nomsId")

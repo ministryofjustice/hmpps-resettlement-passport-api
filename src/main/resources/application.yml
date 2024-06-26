@@ -20,6 +20,7 @@ spring:
         enabled: false
       ssl:
         enabled: true
+
   security:
     oauth2:
       resourceserver:

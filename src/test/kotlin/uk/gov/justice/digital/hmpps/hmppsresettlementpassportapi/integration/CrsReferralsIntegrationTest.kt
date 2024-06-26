@@ -8,7 +8,7 @@ import java.time.Period
 class CrsReferralsIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
-  fun `Get All CRS Referrals happy path`() {
+  fun `Get All CRS Referrals happy path - with caching`() {
     var expectedOutput = readFile("testdata/expectation/crs-referrals.json")
     val dob = LocalDate.of(1982, 10, 24)
     val age = Period.between(dob, LocalDate.now()).years
@@ -19,6 +19,19 @@ class CrsReferralsIntegrationTest : IntegrationTestBase() {
     interventionsServiceApiMockServer.stubGet("/probation-case/$crn/referral", 200, "testdata/interventions-service-api/crs-referrals.json")
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetComByCrn(crn, 200)
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/crs-referrals")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput, true)
+
+    // Reset mocks to ensure it uses the cache
+    prisonerSearchApiMockServer.resetAll()
+    interventionsServiceApiMockServer.resetAll()
+    deliusApiMockServer.resetAll()
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/crs-referrals")

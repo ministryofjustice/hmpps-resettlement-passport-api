@@ -6,13 +6,25 @@ import org.springframework.test.context.jdbc.Sql
 class AccommodationIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
-  fun `Get Accommodation with noFixAbode true happy path`() {
+  fun `Get Accommodation with noFixAbode true happy path - with caching`() {
     val expectedOutput = readFile("testdata/expectation/accommodation-1.json")
     val nomsId = "G1458GV"
     val crn = "CRN1"
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetAccommodationFromCRN(crn, true, 200)
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/accommodation")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput)
+
+    // Reset mocks to ensure it uses the cache
+    prisonerSearchApiMockServer.resetAll()
+    deliusApiMockServer.resetAll()
+
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/accommodation")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))

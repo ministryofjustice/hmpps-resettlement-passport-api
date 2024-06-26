@@ -7,12 +7,24 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
-  fun `Get risk scores happy path 1`() {
+  fun `Get risk scores happy path 1 - with caching`() {
     val nomsId = "123"
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/risk-scores.json")
 
     arnApiMockServer.stubGet("/risks/crn/$crn/predictors/all", 200, "testdata/arn-api/crn-risk-predictors-1.json")
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/risk/scores")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
+
+    // Reset mocks to ensure it uses the cache
+    arnApiMockServer.resetAll()
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/risk/scores")
@@ -132,12 +144,24 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
-  fun `Get RoSH happy path`() {
+  fun `Get RoSH happy path - with caching`() {
     val nomsId = "123"
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/risk-rosh.json")
 
     arnApiMockServer.stubGet("/risks/crn/$crn", 200, "testdata/arn-api/crn-risks.json")
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/risk/rosh")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
+
+    // Reset mocks to ensure it uses the cache
+    arnApiMockServer.resetAll()
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/risk/rosh")
@@ -237,7 +261,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
-  fun `Get MAPPA happy path`() {
+  fun `Get MAPPA happy path - with caching`() {
     val nomsId = "123"
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/risk-mappa.json")
@@ -247,6 +271,18 @@ class RisksIntegrationTest : IntegrationTestBase() {
       200,
       "testdata/resettlement-passport-delius-api/delius-risk-mappa.json",
     )
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/risk/mappa")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
+
+    // Reset mocks to ensure it uses the cache
+    deliusApiMockServer.resetAll()
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/risk/mappa")

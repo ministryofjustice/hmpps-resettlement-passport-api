@@ -14,17 +14,17 @@ class RiskService(
   private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
 ) {
 
-  fun getRiskScoresByNomsId(nomsId: String): RiskScore? {
+  fun getRiskScoresByNomsId(nomsId: String): RiskScore {
     val crn = resettlementPassportDeliusApiService.findCrn(nomsId)
       ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $nomsId in database")
     return arnApiService.getRiskScoresByCrn(crn)
   }
 
-  fun getRoshDataByNomsId(nomsId: String): RoshData? {
+  fun getRoshDataByNomsId(nomsId: String): RoshData {
     val crn = resettlementPassportDeliusApiService.findCrn(nomsId)
       ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $nomsId in database")
     return arnApiService.getRoshDataByCrn(crn)
   }
 
-  fun getMappaDataByNomsId(nomsId: String): MappaData? = resettlementPassportDeliusApiService.getMappaDataByNomsId(nomsId)
+  fun getMappaDataByNomsId(nomsId: String): MappaData = resettlementPassportDeliusApiService.getMappaDataByNomsId(nomsId)
 }

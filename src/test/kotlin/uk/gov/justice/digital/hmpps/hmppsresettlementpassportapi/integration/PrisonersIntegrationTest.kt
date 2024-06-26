@@ -6,10 +6,21 @@ import org.springframework.test.context.jdbc.Sql
 class PrisonersIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-9.sql")
-  fun `Get All Prisoners happy path`() {
+  fun `Get All Prisoners happy path - with caching`() {
     val expectedOutput = readFile("testdata/expectation/prisoners.json")
     val prisonId = "MDI"
     prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 200)
+    webTestClient.get()
+      .uri("/resettlement-passport/prison/$prisonId/prisoners?term=&page=0&size=10&sort=releaseDate,DESC")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput, true)
+
+    // Reset mocks to ensure it uses the cache
+    prisonerSearchApiMockServer.resetAll()
+
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?term=&page=0&size=10&sort=releaseDate,DESC")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))

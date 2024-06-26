@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.web.reactive.function.client.WebClient
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prison
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonapi.Prison
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
 
@@ -30,11 +30,11 @@ class PrisonRegisterApiServiceTest {
 
   @Test
   fun `test get active Prisons happy path full json`() {
-    val expectedPrisonList = listOf(Prison("MDI", "Moorland (HMP & YOI)", true), Prison("SWI", "Swansea (HMP & YOI)", true))
+    val expectedPrisonList = listOf(Prison(prisonId = "AKI", prisonName = "Acklington (HMP)", active = false, male = false, female = false, contracted = false, types = listOf(), addresses = listOf(), operators = listOf()), Prison(prisonId = "MDI", prisonName = "Moorland (HMP & YOI)", active = true, male = false, female = false, contracted = false, types = listOf(), addresses = listOf(), operators = listOf()), Prison(prisonId = "SWI", prisonName = "Swansea (HMP & YOI)", active = true, male = false, female = false, contracted = false, types = listOf(), addresses = listOf(), operators = listOf()))
     val mockedJsonResponse =
       readFile("testdata/prison-register-api/prison.json")
     mockWebServer.enqueue(MockResponse().setBody(mockedJsonResponse).addHeader("Content-Type", "application/json"))
-    val prisonList = prisonRegisterApiService.getActivePrisonsList()
+    val prisonList = prisonRegisterApiService.getPrisons()
     Assertions.assertEquals(expectedPrisonList, prisonList)
   }
 }

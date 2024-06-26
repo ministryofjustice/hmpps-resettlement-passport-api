@@ -13,7 +13,10 @@ import java.time.ZonedDateTime
 private val logger = KotlinLogging.logger {}
 
 @Service
-class OffenderEventsListener(private val objectMapper: ObjectMapper, private val offenderEventsService: OffenderEventsService) {
+class OffenderEventsListener(
+  private val objectMapper: ObjectMapper,
+  private val offenderEventsService: OffenderEventsService,
+) {
 
   @SqsListener("inboundqueue", factory = "hmppsQueueContainerFactoryProxy")
   fun processMessage(message: Message) {
@@ -23,6 +26,7 @@ class OffenderEventsListener(private val objectMapper: ObjectMapper, private val
         val event = objectMapper.readValue<DomainEvent>(message.message)
         offenderEventsService.handleReceiveEvent(event)
       }
+
       else -> logger.debug { "Ignoring message ${message.messageId} with type $eventType" }
     }
   }
@@ -49,14 +53,14 @@ data class Message(
 
 data class DomainEvent(
   val eventType: String,
-  val version: Int,
-  val detailUrl: String? = null,
   val occurredAt: ZonedDateTime = ZonedDateTime.now(),
-  val description: String? = null,
   @JsonSetter(nulls = Nulls.SKIP)
   val additionalInformation: Map<String, Any?> = emptyMap(),
   val personReference: PersonReference = PersonReference(),
-)
+) {
+  fun movementReasonCode(): String? =
+    additionalInformation["nomisMovementReasonCode"]?.takeIf { it is String } as String?
+}
 
 data class PersonReference(val identifiers: List<PersonIdentifier> = listOf()) {
   fun findCrn() = get("CRN")

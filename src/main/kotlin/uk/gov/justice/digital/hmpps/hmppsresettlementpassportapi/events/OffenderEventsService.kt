@@ -7,12 +7,18 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 private val logger = KotlinLogging.logger {}
 
 private val RECALL_EVENT_CODES = setOf(
-  "Y", // Recall from DTO
-  "PD", // Post Recall Release
-  "ELR", // Recall from End of Custody Licence (ECL)
-  "B", // "Recall From HDC"
-  "24", // Recall From Intermittent Custody
-  "ETRLR", // Recall from Emergency Temporary Release
+  // Recall from DTO
+  "Y",
+  // Post Recall Release
+  "PD",
+  // Recall from End of Custody Licence (ECL)
+  "ELR",
+  // "Recall From HDC"
+  "B",
+  // Recall From Intermittent Custody
+  "24",
+  // Recall from Emergency Temporary Release
+  "ETRLR",
 )
 
 @Service

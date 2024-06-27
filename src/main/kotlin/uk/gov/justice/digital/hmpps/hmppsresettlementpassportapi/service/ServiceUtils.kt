@@ -4,12 +4,13 @@ import com.nimbusds.jwt.JWTParser
 import org.apache.commons.text.WordUtils
 import org.slf4j.LoggerFactory
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusAuthor
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AppointmentsService.Companion.SECTION_DELIMITER
 import java.lang.IllegalArgumentException
-import java.security.MessageDigest
+import java.time.LocalDateTime
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.reflect.KClass
 import kotlin.streams.asSequence
@@ -127,13 +128,6 @@ fun extractCaseNoteTypeFromBcstCaseNote(text: String) = CaseNoteType.getByDispla
 
 fun getFirstLineOfBcstCaseNote(pathway: Pathway, type: ResettlementAssessmentType) = "$BCST_CASE_NOTE_PREFIX ${pathway.displayName} ${type.displayName} $BCST_CASE_NOTE_POSTFIX"
 
-fun toMD5(sourceString: String): String {
-  val md = MessageDigest.getInstance("MD5")
-  val digest = md.digest(sourceString.toByteArray())
-  val hexString = digest.joinToString("") { "%02x".format(it) }
-  return hexString
-}
-
 fun convertFromNameToDeliusAuthor(prisonCode: String, name: String): DeliusAuthor {
   val splitName = name.trim().split(Regex("\\s+(?=\\S*+\$)"))
   return DeliusAuthor(
@@ -141,4 +135,9 @@ fun convertFromNameToDeliusAuthor(prisonCode: String, name: String): DeliusAutho
     forename = splitName.first(),
     surname = if (splitName.size != 1) splitName.last() else "",
   )
+}
+
+fun convertToDeliusCaseNoteType(assessmentType: ResettlementAssessmentType) = when (assessmentType) {
+  ResettlementAssessmentType.BCST2 -> DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT
+  ResettlementAssessmentType.RESETTLEMENT_PLAN -> DeliusCaseNoteType.PRE_RELEASE_REPORT
 }

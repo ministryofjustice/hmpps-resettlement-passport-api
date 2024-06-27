@@ -74,3 +74,7 @@ enum class AssessmentSkipReason {
   TRANSFER,
   OTHER,
 }
+
+data class ResettlementAssessmentSubmitResponse(
+  val deliusCaseNoteFailed: Boolean,
+)

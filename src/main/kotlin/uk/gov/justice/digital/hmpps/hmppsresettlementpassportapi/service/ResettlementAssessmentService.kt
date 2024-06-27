@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AssessmentSkipRequest
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DpsCaseNoteSubType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LatestResettlementAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LatestResettlementAssessmentResponseQuestionAndAnswer
@@ -13,6 +14,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayAndStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentSubmitResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.MapAnswer
@@ -20,10 +22,12 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.PrisonerResettlementAssessment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.AssessmentSkipEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseNoteRetryEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentSkipRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseNoteRetryRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
@@ -40,6 +44,7 @@ class ResettlementAssessmentService(
   private val assessmentSkipRepository: AssessmentSkipRepository,
   private val prisonerSearchApiService: PrisonerSearchApiService,
   private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
+  private val caseNoteRetryRepository: CaseNoteRetryRepository,
 ) {
 
   companion object {
@@ -78,7 +83,7 @@ class ResettlementAssessmentService(
     )
 
   @Transactional
-  fun submitResettlementAssessmentByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType, auth: String, sendCombinedCaseNotes: Boolean) {
+  fun submitResettlementAssessmentByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType, auth: String): ResettlementAssessmentSubmitResponse {
     // Check auth - must be NOMIS
     val authSource = getClaimFromJWTToken(auth, "auth_source")?.lowercase()
     if (authSource != "nomis") {
@@ -119,16 +124,6 @@ class ResettlementAssessmentService(
       // Add templated first line to case note before posting
       val caseNotesText = "${getFirstLineOfBcstCaseNote(assessment.pathway, assessment.assessmentType)}\n\n${assessment.caseNoteText}"
 
-      // Old way - post case note to DPS
-      if (!sendCombinedCaseNotes) {
-        caseNotesService.postBCSTCaseNoteToDps(
-          nomsId = prisonerEntity.nomsId,
-          notes = caseNotesText,
-          userId = assessment.createdByUserId,
-          subType = DpsCaseNoteSubType.BCST,
-        )
-      }
-
       // Update pathway status
       pathwayAndStatusService.updatePathwayStatus(
         nomsId = nomsId,
@@ -141,14 +136,14 @@ class ResettlementAssessmentService(
       resettlementAssessmentRepository.save(assessment)
     }
 
-    // New way - combine and send case note to DPS and Delius
-    if (sendCombinedCaseNotes) {
+    val failedCaseNotes = mutableListOf<UserAndCaseNote>()
+    val prisonCode = prisonerSearchApiService.findPrisonerPersonalDetails(prisonerEntity.nomsId).prisonId
       val dpsSubType = when (assessmentType) {
         ResettlementAssessmentType.BCST2 -> DpsCaseNoteSubType.INR
         ResettlementAssessmentType.RESETTLEMENT_PLAN -> DpsCaseNoteSubType.PRR
       }
 
-      val groupedAssessmentsDps = processAndGroupAssessmentCaseNotes(assessmentList, true, assessmentType)
+      val groupedAssessmentsDps = processAndGroupAssessmentCaseNotes(assessmentList, assessmentType, true)
       groupedAssessmentsDps.forEach {
         caseNotesService.postBCSTCaseNoteToDps(
           nomsId = prisonerEntity.nomsId,
@@ -159,26 +154,46 @@ class ResettlementAssessmentService(
       }
 
       val crn = resettlementPassportDeliusApiService.getCrn(nomsId)
+      val groupedAssessmentsDelius = processAndGroupAssessmentCaseNotes(assessmentList, assessmentType, false)
 
       if (crn != null) {
-        val groupedAssessmentsDelius = processAndGroupAssessmentCaseNotes(assessmentList, false, assessmentType)
         groupedAssessmentsDelius.forEach {
-          caseNotesService.postBCSTCaseNoteToDelius(
+          val success = caseNotesService.postBCSTCaseNoteToDelius(
             crn = crn,
-            prisonCode = prisonerSearchApiService.findPrisonerPersonalDetails(prisonerEntity.nomsId).prisonId,
+            prisonCode = prisonCode,
             notes = it.caseNoteText,
             name = it.user.name,
-            assessmentType = assessmentType,
+            deliusCaseNoteType = it.deliusCaseNoteType,
           )
+          if (!success) {
+            log.warn("Cannot send report case note to Delius due to error on API for prisoner ${prisonerEntity.nomsId}. Adding to failed case notes for retry.")
+            failedCaseNotes.add(it)
+          }
         }
       } else {
-        // TODO PSFR-1386 Add retry mechanism if we fail to send the case note
-        log.warn("Cannot send report case note to Delius as no CRN is available for prisoner ${prisonerEntity.nomsId}.")
+        log.warn("Cannot send report case notes to Delius as no CRN is available for prisoner ${prisonerEntity.nomsId}. Adding to failed case notes for retry.")
+        failedCaseNotes.addAll(groupedAssessmentsDelius)
       }
-    }
+
+      caseNoteRetryRepository.saveAll(failedCaseNotes.map { failedCaseNote ->
+        CaseNoteRetryEntity(
+          id = null,
+          prisoner = prisonerEntity,
+          type = failedCaseNote.deliusCaseNoteType,
+          notes = failedCaseNote.caseNoteText,
+          author = failedCaseNote.user.name,
+          prisonCode = prisonCode,
+          originalSubmissionDate = LocalDateTime.now(),
+          retryCount = 0,
+          nextRuntime = LocalDateTime.now() // Set this to now to retry on the next run of the retry cron job
+        )
+      })
+
+    return ResettlementAssessmentSubmitResponse(deliusCaseNoteFailed = failedCaseNotes.isNotEmpty())
   }
 
-  fun processAndGroupAssessmentCaseNotes(assessmentList: List<ResettlementAssessmentEntity>, limitChars: Boolean, assessmentType: ResettlementAssessmentType): List<UserAndCaseNote> {
+  fun processAndGroupAssessmentCaseNotes(assessmentList: List<ResettlementAssessmentEntity>, assessmentType: ResettlementAssessmentType, limitChars: Boolean): List<UserAndCaseNote> {
+    val deliusCaseNoteType = convertToDeliusCaseNoteType(assessmentType)
     val maxCaseNoteLength = if (limitChars) {
       // Limit for DPS is 4000 but set this lower to account for line breaks between each pathway and the Part x of y text at the start (should be about 25 chars)
       3950
@@ -190,17 +205,19 @@ class ResettlementAssessmentService(
       UserAndCaseNote(
         user = User(userId = it.createdByUserId, name = it.createdBy),
         caseNoteText = "${it.pathway.displayName}\n\n${it.caseNoteText}",
+        deliusCaseNoteType = deliusCaseNoteType
       )
     }.groupBy { it.user }
 
-    val caseNoteList = userToCaseNoteMap.flatMap { (user, notes) ->
-      val combinedCaseNotes = splitToCharLimit(notes.map { it.caseNoteText }, maxCaseNoteLength)
-      combinedCaseNotes.map { UserAndCaseNote(user = user, caseNoteText = it) }
-    }
-
-    val descriptionPrefix = when (assessmentType) {
-      ResettlementAssessmentType.BCST2 -> "NOMIS - Immediate needs report"
-      ResettlementAssessmentType.RESETTLEMENT_PLAN -> "NOMIS - Pre-release report"
+    val caseNoteList = userToCaseNoteMap.flatMap { e ->
+      val combinedCaseNotes = splitToCharLimit(e.value.map { it.caseNoteText }, maxCaseNoteLength)
+      combinedCaseNotes.map {
+        UserAndCaseNote(
+          user = e.key,
+          caseNoteText = it,
+          deliusCaseNoteType = deliusCaseNoteType
+        )
+      }
     }
 
     return if (caseNoteList.size > 1) {
@@ -208,6 +225,7 @@ class ResettlementAssessmentService(
         UserAndCaseNote(
           user = caseNote.user,
           caseNoteText = "Part ${index + 1} of ${caseNoteList.size}\n\n${caseNote.caseNoteText}",
+          deliusCaseNoteType = deliusCaseNoteType
           description = "$descriptionPrefix - Part ${index + 1} of ${caseNoteList.size}",
         )
       }
@@ -240,6 +258,7 @@ class ResettlementAssessmentService(
   data class UserAndCaseNote(
     val user: User,
     val caseNoteText: String,
+    val deliusCaseNoteType: DeliusCaseNoteType,
     val description: String? = null,
   )
 

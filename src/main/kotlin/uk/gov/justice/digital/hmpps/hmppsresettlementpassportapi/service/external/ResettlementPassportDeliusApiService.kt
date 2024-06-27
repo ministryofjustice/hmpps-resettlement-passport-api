@@ -174,7 +174,8 @@ class ResettlementPassportDeliusApiService(
     }
   }
 
-  fun createContact(crn: String, type: DeliusCaseNoteType, dateTime: OffsetDateTime, notes: String, author: DeliusAuthor) {
+  fun createContact(crn: String, type: DeliusCaseNoteType, dateTime: OffsetDateTime, notes: String, author: DeliusAuthor) : Boolean {
+    var success: Boolean
     runBlocking {
       try {
         rpDeliusWebClientCredentials.post()
@@ -189,10 +190,13 @@ class ResettlementPassportDeliusApiService(
           )
           .retrieve()
           .awaitBodilessEntity()
+        success = true
       } catch (e: WebClientResponseException) {
         // TODO PSFR-1386 Add retry mechanism if we fail to send the case note
         log.warn("Error calling post case note delius api {}, {}", e.statusCode, e.responseBodyAsString)
+        success = false
       }
     }
+    return success
   }
 }

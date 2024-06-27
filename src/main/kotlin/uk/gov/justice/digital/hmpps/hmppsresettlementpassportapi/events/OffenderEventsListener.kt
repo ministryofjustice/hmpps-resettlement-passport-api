@@ -20,11 +20,12 @@ class OffenderEventsListener(
 
   @SqsListener("inboundqueue", factory = "hmppsQueueContainerFactoryProxy")
   fun processMessage(message: Message) {
-    logger.debug { "Received message ${message.messageId} ${message.message}" }
-    when (val eventType = message.messageAttributes.eventType.value) {
+    val eventType = message.messageAttributes.eventType.value
+    logger.debug { "Received message ${message.messageId} $eventType" }
+    when (eventType) {
       "prison-offender-events.prisoner.received" -> {
         val event = objectMapper.readValue<DomainEvent>(message.message)
-        offenderEventsService.handleReceiveEvent(event)
+        offenderEventsService.handleReceiveEvent(message.messageId, event)
       }
 
       else -> logger.debug { "Ignoring message ${message.messageId} with type $eventType" }

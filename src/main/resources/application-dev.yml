@@ -87,5 +87,5 @@ hmpps.sqs:
   provider: localstack
   queues:
     inboundqueue:
-      queueName: inbound-queue
-      dlqName: inbound-dlq
+      queueName: offender-events-queue
+      dlqName: offender-events-dlq

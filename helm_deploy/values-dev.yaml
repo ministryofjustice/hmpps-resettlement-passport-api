@@ -27,8 +27,12 @@ generic-service:
     SCHEDULE_EXPRESSION_RECONCILE-RELEASE-DATES: 0 0 2 * * *
     SCHEDULE_EXPRESSION_DELETE-EXPIRED-OTP: 0 0 3 * * *
     interventions-api-integration_crsAppointmentsEnabled: true
+    SPRING_PROFILES_ACTIVE: "logstash,offender-events"
   
-
+  namespace_secrets:
+    sqs-prisoner-event-queue-secret:
+      OFFENDER_EVENT_QUEUE_NAME: "sqs_queue_name"
+      OFFENDER_EVENT_DLQ_NAME: "sqs_dlq_queue_name"
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts

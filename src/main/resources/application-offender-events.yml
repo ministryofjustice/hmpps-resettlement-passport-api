@@ -1,0 +1,5 @@
+hmpps.sqs:
+  queues:
+    inboundqueue:
+      queueName: ${OFFENDER_EVENT_QUEUE_NAME}
+      dlqName: ${OFFENDER_EVENT_DLQ_NAME}

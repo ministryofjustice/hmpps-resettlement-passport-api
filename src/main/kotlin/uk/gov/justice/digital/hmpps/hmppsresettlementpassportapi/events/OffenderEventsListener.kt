@@ -7,12 +7,14 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.awspring.cloud.sqs.annotation.SqsListener
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import java.time.ZonedDateTime
 
 private val logger = KotlinLogging.logger {}
 
 @Service
+@Profile("offender-events")
 class OffenderEventsListener(
   private val objectMapper: ObjectMapper,
   private val offenderEventsService: OffenderEventsService,

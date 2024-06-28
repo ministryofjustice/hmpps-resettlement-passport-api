@@ -82,3 +82,10 @@ spring:
 
 interventions-api-integration:
   crsAppointmentsEnabled: true
+
+hmpps.sqs:
+  provider: localstack
+  queues:
+    offender-events:
+      queueName: offender-events-queue
+      dlqName: offender-events-dlq

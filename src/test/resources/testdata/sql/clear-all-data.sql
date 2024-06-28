@@ -22,6 +22,8 @@ DELETE FROM watchlist;
 ALTER SEQUENCE watchlist_id_seq RESTART WITH 1;
 DELETE from assessment_skip;
 ALTER SEQUENCE assessment_skip_id_seq RESTART WITH 1;
+DELETE from case_note_retry;
+ALTER SEQUENCE case_note_retry_id_seq RESTART WITH 1;
 DELETE from offender_event;
 DELETE from prisoner;
 ALTER SEQUENCE prisoner_id_seq RESTART WITH 1;

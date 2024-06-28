@@ -16,7 +16,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "case_note_retry")
-data class CaseNoteRetryEntity (
+data class CaseNoteRetryEntity(
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   val id: Long?,

@@ -121,9 +121,6 @@ class ResettlementAssessmentService(
         throw RuntimeException("Can't submit assessment with id ${assessment.id} as caseNoteText is null")
       }
 
-      // Add templated first line to case note before posting
-      val caseNotesText = "${getFirstLineOfBcstCaseNote(assessment.pathway, assessment.assessmentType)}\n\n${assessment.caseNoteText}"
-
       // Update pathway status
       pathwayAndStatusService.updatePathwayStatus(
         nomsId = nomsId,
@@ -138,44 +135,45 @@ class ResettlementAssessmentService(
 
     val failedCaseNotes = mutableListOf<UserAndCaseNote>()
     val prisonCode = prisonerSearchApiService.findPrisonerPersonalDetails(prisonerEntity.nomsId).prisonId
-      val dpsSubType = when (assessmentType) {
-        ResettlementAssessmentType.BCST2 -> DpsCaseNoteSubType.INR
-        ResettlementAssessmentType.RESETTLEMENT_PLAN -> DpsCaseNoteSubType.PRR
-      }
+    val dpsSubType = when (assessmentType) {
+      ResettlementAssessmentType.BCST2 -> DpsCaseNoteSubType.INR
+      ResettlementAssessmentType.RESETTLEMENT_PLAN -> DpsCaseNoteSubType.PRR
+    }
 
-      val groupedAssessmentsDps = processAndGroupAssessmentCaseNotes(assessmentList, assessmentType, true)
-      groupedAssessmentsDps.forEach {
-        caseNotesService.postBCSTCaseNoteToDps(
-          nomsId = prisonerEntity.nomsId,
+    val groupedAssessmentsDps = processAndGroupAssessmentCaseNotes(assessmentList, assessmentType, true)
+    groupedAssessmentsDps.forEach {
+      caseNotesService.postBCSTCaseNoteToDps(
+        nomsId = prisonerEntity.nomsId,
+        notes = it.caseNoteText,
+        userId = it.user.userId,
+        subType = dpsSubType,
+      )
+    }
+
+    val crn = resettlementPassportDeliusApiService.getCrn(nomsId)
+    val groupedAssessmentsDelius = processAndGroupAssessmentCaseNotes(assessmentList, assessmentType, false)
+
+    if (crn != null) {
+      groupedAssessmentsDelius.forEach {
+        val success = caseNotesService.postBCSTCaseNoteToDelius(
+          crn = crn,
+          prisonCode = prisonCode,
           notes = it.caseNoteText,
-          userId = it.user.userId,
-          subType = dpsSubType,
+          name = it.user.name,
+          deliusCaseNoteType = it.deliusCaseNoteType,
         )
-      }
-
-      val crn = resettlementPassportDeliusApiService.getCrn(nomsId)
-      val groupedAssessmentsDelius = processAndGroupAssessmentCaseNotes(assessmentList, assessmentType, false)
-
-      if (crn != null) {
-        groupedAssessmentsDelius.forEach {
-          val success = caseNotesService.postBCSTCaseNoteToDelius(
-            crn = crn,
-            prisonCode = prisonCode,
-            notes = it.caseNoteText,
-            name = it.user.name,
-            deliusCaseNoteType = it.deliusCaseNoteType,
-          )
-          if (!success) {
-            log.warn("Cannot send report case note to Delius due to error on API for prisoner ${prisonerEntity.nomsId}. Adding to failed case notes for retry.")
-            failedCaseNotes.add(it)
-          }
+        if (!success) {
+          log.warn("Cannot send report case note to Delius due to error on API for prisoner ${prisonerEntity.nomsId}. Adding to failed case notes for retry.")
+          failedCaseNotes.add(it)
         }
-      } else {
-        log.warn("Cannot send report case notes to Delius as no CRN is available for prisoner ${prisonerEntity.nomsId}. Adding to failed case notes for retry.")
-        failedCaseNotes.addAll(groupedAssessmentsDelius)
       }
+    } else {
+      log.warn("Cannot send report case notes to Delius as no CRN is available for prisoner ${prisonerEntity.nomsId}. Adding to failed case notes for retry.")
+      failedCaseNotes.addAll(groupedAssessmentsDelius)
+    }
 
-      caseNoteRetryRepository.saveAll(failedCaseNotes.map { failedCaseNote ->
+    caseNoteRetryRepository.saveAll(
+      failedCaseNotes.map { failedCaseNote ->
         CaseNoteRetryEntity(
           id = null,
           prisoner = prisonerEntity,
@@ -185,9 +183,10 @@ class ResettlementAssessmentService(
           prisonCode = prisonCode,
           originalSubmissionDate = LocalDateTime.now(),
           retryCount = 0,
-          nextRuntime = LocalDateTime.now() // Set this to now to retry on the next run of the retry cron job
+          nextRuntime = LocalDateTime.now(), // Set this to now to retry on the next run of the retry cron job
         )
-      })
+      },
+    )
 
     return ResettlementAssessmentSubmitResponse(deliusCaseNoteFailed = failedCaseNotes.isNotEmpty())
   }
@@ -205,7 +204,7 @@ class ResettlementAssessmentService(
       UserAndCaseNote(
         user = User(userId = it.createdByUserId, name = it.createdBy),
         caseNoteText = "${it.pathway.displayName}\n\n${it.caseNoteText}",
-        deliusCaseNoteType = deliusCaseNoteType
+        deliusCaseNoteType = deliusCaseNoteType,
       )
     }.groupBy { it.user }
 
@@ -215,7 +214,7 @@ class ResettlementAssessmentService(
         UserAndCaseNote(
           user = e.key,
           caseNoteText = it,
-          deliusCaseNoteType = deliusCaseNoteType
+          deliusCaseNoteType = deliusCaseNoteType,
         )
       }
     }

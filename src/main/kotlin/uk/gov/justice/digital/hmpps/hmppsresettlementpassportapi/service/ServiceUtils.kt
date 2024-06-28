@@ -10,7 +10,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AppointmentsService.Companion.SECTION_DELIMITER
 import java.lang.IllegalArgumentException
-import java.time.LocalDateTime
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.reflect.KClass
 import kotlin.streams.asSequence

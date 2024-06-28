@@ -7,20 +7,26 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.awspring.cloud.sqs.annotation.SqsListener
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.springframework.context.annotation.Profile
+import jakarta.annotation.PostConstruct
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 import java.time.ZonedDateTime
 
 private val logger = KotlinLogging.logger {}
 
 @Service
-@Profile("offender-events")
+@ConditionalOnProperty("hmpps.sqs.queues.offender-events.queueName")
 class OffenderEventsListener(
   private val objectMapper: ObjectMapper,
   private val offenderEventsService: OffenderEventsService,
 ) {
 
-  @SqsListener("inboundqueue", factory = "hmppsQueueContainerFactoryProxy")
+  @PostConstruct
+  fun logStarted() {
+    logger.info { "Started offender events listener" }
+  }
+
+  @SqsListener("offender-events", factory = "hmppsQueueContainerFactoryProxy")
   fun processMessage(message: Message) {
     val eventType = message.messageAttributes.eventType.value
     logger.debug { "Received message ${message.messageId} $eventType" }

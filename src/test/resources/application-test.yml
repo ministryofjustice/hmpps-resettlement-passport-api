@@ -56,6 +56,6 @@ interventions-api-integration:
 hmpps.sqs:
   provider: localstack
   queues:
-    inboundqueue:
+    offender-events:
       queueName: offender-events-queue
       dlqName: offender-events-dlq

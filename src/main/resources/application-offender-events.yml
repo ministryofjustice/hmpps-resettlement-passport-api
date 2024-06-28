@@ -1,5 +1,5 @@
 hmpps.sqs:
   queues:
-    inboundqueue:
+    offender-events:
       queueName: ${OFFENDER_EVENT_QUEUE_NAME}
       dlqName: ${OFFENDER_EVENT_DLQ_NAME}

@@ -12,7 +12,7 @@ import org.springframework.security.web.SecurityFilterChain
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
-@EnableJpaRepositories("uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository")
+@EnableJpaRepositories("uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi")
 class ResourceServerConfiguration {
 
   @Bean

@@ -6,6 +6,8 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AnnotationTypeFilter
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.hmpps.sqs.HmppsQueueResource
+import uk.gov.justice.hmpps.sqs.HmppsReactiveQueueResource
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Method
 
@@ -39,6 +41,7 @@ class EndpointSecurityCheck {
     .findCandidateComponents("uk.gov.justice")
     .map { Class.forName(it.beanClassName) }
     .filter { !it.isProtectedByAnnotation() }
+    .filter { !it.isProtectedByIngress() }
     .map { ControllerInfo(it.toString(), it.getUnprotectedEndpoints()) }
     .filter { it.unprotectedEndpoints.isNotEmpty() }
 
@@ -61,3 +64,7 @@ class EndpointSecurityCheck {
     val ANNOTATIONS_THAT_DENOTE_EXCLUSION = setOf(ProtectedByIngress::class.java, PublicEndpoint::class.java)
   }
 }
+
+private val protectedByIngressEndpoints = setOf(HmppsQueueResource::class.java, HmppsReactiveQueueResource::class.java)
+
+private fun Class<*>.isProtectedByIngress(): Boolean = protectedByIngressEndpoints.contains(this)

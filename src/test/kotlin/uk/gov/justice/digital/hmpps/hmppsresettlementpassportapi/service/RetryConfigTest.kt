@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
+package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -10,7 +10,6 @@ import org.springframework.http.HttpMethod
 import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.exponentialBackOffRetry
 import java.net.URI
 
 class RetryConfigTest {

@@ -16,6 +16,13 @@ generic-service:
     enabled: true
     host: app-hostname.local # override per environment
     tlsSecretName: resettlement-passport-api-cert
+    annotations:
+      nginx.ingress.kubernetes.io/server-snippet: |
+        server_tokens off;
+        location /queue-admin/retry-all-dlqs {
+          deny all;
+          return 401;
+        }
 
   startupProbe:
     httpGet:

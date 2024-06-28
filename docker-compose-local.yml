@@ -34,5 +34,12 @@ services:
     ports:
       - '6380:6379'
 
+  localstack:
+    image: localstack/localstack:stable
+    networks:
+      - hmpps
+    container_name: localstack-resettlement-passport-api
+    ports:
+      - "4566:4566"
 networks:
   hmpps:

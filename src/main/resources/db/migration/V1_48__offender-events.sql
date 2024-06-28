@@ -12,3 +12,5 @@ create table offender_event
 
     creation_date timestamp with time zone not null default now()
 );
+
+create index offender_event_pid on offender_event(prisoner_id);

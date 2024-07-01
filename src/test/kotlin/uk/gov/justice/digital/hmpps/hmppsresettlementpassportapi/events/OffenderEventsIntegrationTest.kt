@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.hmpps.sqs.HmppsQueueService
 import uk.gov.justice.hmpps.sqs.MissingQueueException
 import kotlin.time.Duration.Companion.seconds
@@ -22,6 +23,9 @@ class OffenderEventsIntegrationTest : IntegrationTestBase() {
 
   @Autowired
   private lateinit var repository: OffenderEventRepository
+
+  @Autowired
+  private lateinit var prisonerRepository: PrisonerRepository
 
   private val offenderEventsQueue by lazy {
     hmppsQueueService.findByQueueId("offender-events") ?: throw MissingQueueException("Events queue not found")
@@ -57,6 +61,22 @@ class OffenderEventsIntegrationTest : IntegrationTestBase() {
 
     await.atMost(2.seconds.toJavaDuration()).untilAsserted {
       val saved = repository.findAllByPrisonerId(1)
+      assertThat(saved).hasSize(1)
+      assertThat(saved[0].reason).isNull()
+    }
+  }
+
+  @Test
+  fun `Admission event is processed on new prisoner`() = runBlocking {
+    offenderEventsQueue.sqsClient.sendMessage { builder ->
+      builder.queueUrl(offenderEventsQueue.queueUrl)
+        .messageBody(readFile("testdata/events/intake-event.json"))
+    }.await()
+
+    await.atMost(2.seconds.toJavaDuration()).untilAsserted {
+      val createdPrisoner = prisonerRepository.findByNomsId("A4092EA")
+      assertThat(createdPrisoner).isNotNull()
+      val saved = repository.findAllByPrisonerId(createdPrisoner?.id!!)
       assertThat(saved).hasSize(1)
       assertThat(saved[0].reason).isNull()
     }

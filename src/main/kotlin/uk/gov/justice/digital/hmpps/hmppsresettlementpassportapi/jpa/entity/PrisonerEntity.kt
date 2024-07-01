@@ -14,13 +14,13 @@ import java.time.LocalDateTime
 data class PrisonerEntity(
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  val id: Long?,
+  val id: Long? = null,
 
   @Column(name = "noms_id")
   val nomsId: String,
 
   @Column(name = "creation_date")
-  val creationDate: LocalDateTime,
+  val creationDate: LocalDateTime = LocalDateTime.now(),
 
   @Column(name = "crn")
   var crn: String?,

@@ -2,6 +2,8 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.events
 
 import jakarta.persistence.Entity
 import jakarta.persistence.EntityListeners
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.springframework.data.annotation.CreatedDate
@@ -19,8 +21,10 @@ data class OffenderEventEntity(
 
   val prisonerId: Long,
   val nomsId: String,
+  @Enumerated(EnumType.STRING)
   val type: OffenderEventType,
   val occurredAt: ZonedDateTime,
+  @Enumerated(EnumType.STRING)
   val reason: MovementReasonType? = null,
   val reasonCode: String? = null,
   @CreatedDate

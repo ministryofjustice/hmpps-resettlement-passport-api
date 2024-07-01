@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.events
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PathwayAndStatusService
 
 private val logger = KotlinLogging.logger {}
 
@@ -24,7 +24,7 @@ private val RECALL_EVENT_CODES = setOf(
 @Service
 class OffenderEventsService(
   private val offenderEventRepository: OffenderEventRepository,
-  private val prisonerRepository: PrisonerRepository,
+  private val pathwayAndStatusService: PathwayAndStatusService,
 ) {
 
   fun handleReceiveEvent(messageId: String, event: DomainEvent) {
@@ -33,11 +33,8 @@ class OffenderEventsService(
       logger.debug { "Ignoring $messageId as no nomsId" }
       return
     }
-    val prisoner = prisonerRepository.findByNomsId(nomsId)
-    if (prisoner == null) {
-      logger.debug { "Ignoring $messageId as prisoner not found" }
-      return
-    }
+    val prisonId = event.prisonId()
+    val prisoner = pathwayAndStatusService.getOrCreatePrisoner(nomsId = nomsId, prisonId = prisonId)
     val reasonCode = event.movementReasonCode()
 
     offenderEventRepository.save(

@@ -27,16 +27,16 @@ class OffenderEventsListener(
   }
 
   @SqsListener("offender-events", factory = "hmppsQueueContainerFactoryProxy")
-  fun processMessage(message: Message) {
-    val eventType = message.messageAttributes.eventType.value
-    logger.debug { "Received message ${message.messageId} $eventType" }
+  fun processMessage(envelope: MessageEnvelope) {
+    val eventType = envelope.messageAttributes.eventType.value
+    logger.debug { "Received message ${envelope.messageId} $eventType" }
     when (eventType) {
       "prison-offender-events.prisoner.received" -> {
-        val event = objectMapper.readValue<DomainEvent>(message.message)
-        offenderEventsService.handleReceiveEvent(message.messageId, event)
+        val event = objectMapper.readValue<DomainEvent>(envelope.message)
+        offenderEventsService.handleReceiveEvent(envelope.messageId, event)
       }
 
-      else -> logger.debug { "Ignoring message ${message.messageId} with type $eventType" }
+      else -> logger.debug { "Ignoring message ${envelope.messageId} with type $eventType" }
     }
   }
 }
@@ -51,7 +51,7 @@ data class EventType(
 
 data class MessageAttributes(val eventType: EventType)
 
-data class Message(
+data class MessageEnvelope(
   @JsonProperty("Message")
   val message: String,
   @JsonProperty("MessageId")
@@ -67,8 +67,8 @@ data class DomainEvent(
   val additionalInformation: Map<String, Any?> = emptyMap(),
   val personReference: PersonReference = PersonReference(),
 ) {
-  fun movementReasonCode(): String? =
-    additionalInformation["nomisMovementReasonCode"]?.takeIf { it is String } as String?
+  fun movementReasonCode(): String? = additionalInformation["nomisMovementReasonCode"] as String?
+  fun prisonId(): String? = additionalInformation["prisonId"] as String?
 }
 
 data class PersonReference(val identifiers: List<PersonIdentifier> = listOf()) {

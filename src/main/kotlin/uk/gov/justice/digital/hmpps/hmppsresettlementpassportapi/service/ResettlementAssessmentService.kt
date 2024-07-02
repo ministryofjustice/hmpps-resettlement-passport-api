@@ -148,7 +148,7 @@ class ResettlementAssessmentService(
         ResettlementAssessmentType.RESETTLEMENT_PLAN -> DpsCaseNoteSubType.PRR
       }
 
-      val groupedAssessmentsDps = processAndGroupAssessmentCaseNotes(assessmentList, true)
+      val groupedAssessmentsDps = processAndGroupAssessmentCaseNotes(assessmentList, true, assessmentType)
       groupedAssessmentsDps.forEach {
         caseNotesService.postBCSTCaseNoteToDps(
           nomsId = prisonerEntity.nomsId,
@@ -161,7 +161,7 @@ class ResettlementAssessmentService(
       val crn = resettlementPassportDeliusApiService.getCrn(nomsId)
 
       if (crn != null) {
-        val groupedAssessmentsDelius = processAndGroupAssessmentCaseNotes(assessmentList, false)
+        val groupedAssessmentsDelius = processAndGroupAssessmentCaseNotes(assessmentList, false, assessmentType)
         groupedAssessmentsDelius.forEach {
           caseNotesService.postBCSTCaseNoteToDelius(
             crn = crn,
@@ -178,7 +178,7 @@ class ResettlementAssessmentService(
     }
   }
 
-  fun processAndGroupAssessmentCaseNotes(assessmentList: List<ResettlementAssessmentEntity>, limitChars: Boolean): List<UserAndCaseNote> {
+  fun processAndGroupAssessmentCaseNotes(assessmentList: List<ResettlementAssessmentEntity>, limitChars: Boolean, assessmentType: ResettlementAssessmentType): List<UserAndCaseNote> {
     val maxCaseNoteLength = if (limitChars) {
       // Limit for DPS is 4000 but set this lower to account for line breaks between each pathway and the Part x of y text at the start (should be about 25 chars)
       3950
@@ -193,14 +193,14 @@ class ResettlementAssessmentService(
       )
     }.groupBy { it.user }
 
-    val caseNoteList = userToCaseNoteMap.flatMap { e ->
-      val combinedCaseNotes = splitToCharLimit(e.value.map { it.caseNoteText }, maxCaseNoteLength)
-      combinedCaseNotes.map {
-        UserAndCaseNote(
-          user = e.key,
-          caseNoteText = it,
-        )
-      }
+    val caseNoteList = userToCaseNoteMap.flatMap { (user, notes) ->
+      val combinedCaseNotes = splitToCharLimit(notes.map { it.caseNoteText }, maxCaseNoteLength)
+      combinedCaseNotes.map { UserAndCaseNote(user = user, caseNoteText = it) }
+    }
+
+    val descriptionPrefix = when (assessmentType) {
+      ResettlementAssessmentType.BCST2 -> "NOMIS - Immediate needs report"
+      ResettlementAssessmentType.RESETTLEMENT_PLAN -> "NOMIS - Pre-release report"
     }
 
     return if (caseNoteList.size > 1) {
@@ -208,6 +208,7 @@ class ResettlementAssessmentService(
         UserAndCaseNote(
           user = caseNote.user,
           caseNoteText = "Part ${index + 1} of ${caseNoteList.size}\n\n${caseNote.caseNoteText}",
+          description = "$descriptionPrefix - Part ${index + 1} of ${caseNoteList.size}",
         )
       }
     } else {
@@ -239,6 +240,7 @@ class ResettlementAssessmentService(
   data class UserAndCaseNote(
     val user: User,
     val caseNoteText: String,
+    val description: String? = null,
   )
 
   data class User(

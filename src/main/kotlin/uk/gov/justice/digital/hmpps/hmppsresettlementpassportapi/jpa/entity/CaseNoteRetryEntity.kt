@@ -38,9 +38,9 @@ data class CaseNoteRetryEntity(
   val originalSubmissionDate: LocalDateTime,
 
   @Column(name = "retry_count")
-  val retryCount: Int,
+  var retryCount: Int,
 
   @Column(name = "next_runtime")
-  val nextRuntime: LocalDateTime,
+  var nextRuntime: LocalDateTime?,
 
 )

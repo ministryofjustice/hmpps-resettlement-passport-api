@@ -140,3 +140,7 @@ fun convertToDeliusCaseNoteType(assessmentType: ResettlementAssessmentType) = wh
   ResettlementAssessmentType.BCST2 -> DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT
   ResettlementAssessmentType.RESETTLEMENT_PLAN -> DeliusCaseNoteType.PRE_RELEASE_REPORT
 }
+
+tailrec fun getFibonacciNumber(n: Int, a: Int = 0, b: Int = 1): Long {
+  return if (n == 0) a.toLong() else getFibonacciNumber(n - 1, b, a + b)
+}

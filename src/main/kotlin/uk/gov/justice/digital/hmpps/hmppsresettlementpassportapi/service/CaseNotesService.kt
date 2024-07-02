@@ -8,7 +8,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesM
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DpsCaseNoteSubType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CaseNotesApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
@@ -109,15 +108,10 @@ class CaseNotesService(
     )
   }
 
-  fun postBCSTCaseNoteToDelius(crn: String, prisonCode: String, notes: String, name: String, assessmentType: ResettlementAssessmentType) {
-    val type = when (assessmentType) {
-      ResettlementAssessmentType.BCST2 -> DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT
-      ResettlementAssessmentType.RESETTLEMENT_PLAN -> DeliusCaseNoteType.PRE_RELEASE_REPORT
-    }
-
-    resettlementPassportDeliusApiService.createContact(
+  fun postBCSTCaseNoteToDelius(crn: String, prisonCode: String, notes: String, name: String, deliusCaseNoteType: DeliusCaseNoteType): Boolean {
+    return resettlementPassportDeliusApiService.createContact(
       crn = crn,
-      type = type,
+      type = deliusCaseNoteType,
       dateTime = OffsetDateTime.now(),
       notes = notes,
       author = convertFromNameToDeliusAuthor(prisonCode, name),

@@ -1,12 +1,14 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusAuthor
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
@@ -357,6 +359,32 @@ class ServiceUtilsTest {
   fun `test convertFromNameToDeliusAuthor`(name: String, expectedDeliusAuthor: DeliusAuthor) {
     Assertions.assertEquals(expectedDeliusAuthor, convertFromNameToDeliusAuthor("MDI", name))
   }
+
+  @Test
+  fun `test convertToDeliusCaseNoteType`() {
+    Assertions.assertEquals(DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT, convertToDeliusCaseNoteType(ResettlementAssessmentType.BCST2))
+    Assertions.assertEquals(DeliusCaseNoteType.PRE_RELEASE_REPORT, convertToDeliusCaseNoteType(ResettlementAssessmentType.RESETTLEMENT_PLAN))
+  }
+
+  @ParameterizedTest
+  @MethodSource("test getFibonacciNumber data")
+  fun `test getFibonacciNumber`(input: Int, output: Long) {
+    Assertions.assertEquals(output, getFibonacciNumber(input))
+  }
+
+  private fun `test getFibonacciNumber data`() = Stream.of(
+    Arguments.of(0, 0),
+    Arguments.of(1, 1),
+    Arguments.of(2, 1),
+    Arguments.of(3, 2),
+    Arguments.of(4, 3),
+    Arguments.of(5, 5),
+    Arguments.of(6, 8),
+    Arguments.of(7, 13),
+    Arguments.of(8, 21),
+    Arguments.of(9, 34),
+    Arguments.of(10, 55),
+  )
 
   private fun `test convertFromNameToDeliusAuthor data`() = Stream.of(
     Arguments.of("", DeliusAuthor("MDI", "", "")),

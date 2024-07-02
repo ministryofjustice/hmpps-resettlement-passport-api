@@ -102,11 +102,13 @@ class ResettlementAssessmentServiceTest {
         user = ResettlementAssessmentService.User(user1, user1),
         caseNoteText = "Part 1 of 2\n\n${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 1 of 2",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user2, user2),
         caseNoteText = "Part 2 of 2\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 2 of 2",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
     )
 
@@ -125,11 +127,13 @@ class ResettlementAssessmentServiceTest {
         user = ResettlementAssessmentService.User(user1, user1),
         caseNoteText = "Part 1 of 2\n\n${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}",
         description = "NOMIS - Pre-release report - Part 1 of 2",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user2, user2),
         caseNoteText = "Part 2 of 2\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}",
         description = "NOMIS - Pre-release report - Part 2 of 2",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
     )
 
@@ -156,6 +160,7 @@ class ResettlementAssessmentServiceTest {
       user = ResettlementAssessmentService.User(user, user),
       caseNoteText = getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix),
       description = null,
+      deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
     )
 
     val processedCaseNotes = resettlementAssessmentService.processAndGroupAssessmentCaseNotes(assessmentList, false, ResettlementAssessmentType.BCST2)
@@ -415,7 +420,7 @@ class ResettlementAssessmentServiceTest {
       ),
     )
 
-    Assertions.assertEquals(expectedUserAndCaseNotes, resettlementAssessmentService.processAndGroupAssessmentCaseNotes(assessmentList, ResettlementAssessmentType.BCST2, false))
+    Assertions.assertEquals(expectedUserAndCaseNotes, resettlementAssessmentService.processAndGroupAssessmentCaseNotes(assessmentList, false, ResettlementAssessmentType.BCST2))
   }
 
   @Test
@@ -432,7 +437,7 @@ class ResettlementAssessmentServiceTest {
       ),
     )
 
-    Assertions.assertEquals(expectedUserAndCaseNotes, resettlementAssessmentService.processAndGroupAssessmentCaseNotes(assessmentList, ResettlementAssessmentType.BCST2, true))
+    Assertions.assertEquals(expectedUserAndCaseNotes, resettlementAssessmentService.processAndGroupAssessmentCaseNotes(assessmentList, true, ResettlementAssessmentType.BCST2))
   }
 
   @Test
@@ -449,7 +454,7 @@ class ResettlementAssessmentServiceTest {
       ),
     )
 
-    Assertions.assertEquals(expectedUserAndCaseNotes, resettlementAssessmentService.processAndGroupAssessmentCaseNotes(assessmentList, ResettlementAssessmentType.BCST2, false))
+    Assertions.assertEquals(expectedUserAndCaseNotes, resettlementAssessmentService.processAndGroupAssessmentCaseNotes(assessmentList, false, ResettlementAssessmentType.BCST2))
   }
 
   @Test
@@ -463,20 +468,23 @@ class ResettlementAssessmentServiceTest {
         user = ResettlementAssessmentService.User(user, user),
         caseNoteText = "Part 1 of 3\n\n${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 1 of 3",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user, user),
         caseNoteText = "Part 2 of 3\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 2 of 3",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user, user),
         caseNoteText = "Part 3 of 3\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 3 of 3",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
     )
 
-    Assertions.assertEquals(expectedUserAndCaseNotes, resettlementAssessmentService.processAndGroupAssessmentCaseNotes(assessmentList, ResettlementAssessmentType.BCST2, true))
+    Assertions.assertEquals(expectedUserAndCaseNotes, resettlementAssessmentService.processAndGroupAssessmentCaseNotes(assessmentList, true, ResettlementAssessmentType.BCST2))
   }
 
   @Test
@@ -501,20 +509,23 @@ class ResettlementAssessmentServiceTest {
         user = ResettlementAssessmentService.User(user1, user1),
         caseNoteText = "Part 1 of 3\n\n${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 1 of 3",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user2, user2),
         caseNoteText = "Part 2 of 3\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 2 of 3",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user3, user3),
         caseNoteText = "Part 3 of 3\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 3 of 3",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
     )
 
-    Assertions.assertEquals(expectedUserAndCaseNotes, resettlementAssessmentService.processAndGroupAssessmentCaseNotes(assessmentList, ResettlementAssessmentType.RESETTLEMENT_PLAN, false))
+    Assertions.assertEquals(expectedUserAndCaseNotes, resettlementAssessmentService.processAndGroupAssessmentCaseNotes(assessmentList, false, ResettlementAssessmentType.BCST2))
   }
 
   @Test
@@ -539,25 +550,29 @@ class ResettlementAssessmentServiceTest {
         user = ResettlementAssessmentService.User(user1, user1),
         caseNoteText = "Part 1 of 4\n\n${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 1 of 4",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user1, user1),
         caseNoteText = "Part 2 of 4\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 2 of 4",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user2, user2),
         caseNoteText = "Part 3 of 4\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 3 of 4",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user3, user3),
         caseNoteText = "Part 4 of 4\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 4 of 4",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
     )
 
-    Assertions.assertEquals(expectedUserAndCaseNotes, resettlementAssessmentService.processAndGroupAssessmentCaseNotes(assessmentList, ResettlementAssessmentType.RESETTLEMENT_PLAN, true))
+    Assertions.assertEquals(expectedUserAndCaseNotes, resettlementAssessmentService.processAndGroupAssessmentCaseNotes(assessmentList, true, ResettlementAssessmentType.BCST2))
   }
 
   @ParameterizedTest

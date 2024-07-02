@@ -3,6 +3,7 @@
 
 generic-service:
   replicaCount: 2
+  serviceAccountName: hmpps-resettlement-passport-preprod-irsa
 
   ingress:
     host: resettlement-passport-api-preprod.hmpps.service.justice.gov.uk

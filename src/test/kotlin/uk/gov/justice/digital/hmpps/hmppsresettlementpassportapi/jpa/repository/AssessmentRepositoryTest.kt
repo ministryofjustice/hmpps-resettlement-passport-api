@@ -18,13 +18,6 @@ class AssessmentRepositoryTest : RepositoryTestBase() {
   @Autowired
   lateinit var prisonerRepository: PrisonerRepository
 
-  @BeforeEach
-  @AfterEach
-  fun beforeEach() {
-    assessmentRepository.deleteAll()
-    prisonerRepository.deleteAll()
-  }
-
   @Test
   fun `test persist new assessment`() {
     val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23"))

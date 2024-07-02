@@ -8,5 +8,5 @@ CREATE TABLE case_note_retry
     prison_code              varchar(10) not null,
     original_submission_date timestamp with time zone not null,
     retry_count              integer not null,
-    next_runtime             timestamp with time zone not null
+    next_runtime             timestamp with time zone
 );

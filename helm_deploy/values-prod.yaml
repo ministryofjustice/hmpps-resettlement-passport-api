@@ -2,6 +2,8 @@
 # Per environment values which override defaults in hmpps-resettlement-passport-api/values.yaml
 
 generic-service:
+  serviceAccountName: hmpps-resettlement-passport-prod-irsa
+
   ingress:
     host: resettlement-passport-api.hmpps.service.justice.gov.uk
 

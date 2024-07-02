@@ -1,11 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository
 
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkAll
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
@@ -21,7 +16,6 @@ class CaseNoteRetryRepositoryTest : RepositoryTestBase() {
 
   @Test
   fun `test findByNextRuntimeBeforeAndRetryCountLessThan`() {
-
     // Entries to be returned (i.e. nextRuntime is before "now" and retryCount < 10)
     val caseNotesEntity1 = CaseNoteRetryEntity(
       id = 1,
@@ -32,7 +26,7 @@ class CaseNoteRetryRepositoryTest : RepositoryTestBase() {
       prisonCode = "ABC",
       originalSubmissionDate = LocalDateTime.parse("2024-07-01T08:12:23"),
       retryCount = 0,
-      nextRuntime = LocalDateTime.parse("2024-07-01T08:12:23")
+      nextRuntime = LocalDateTime.parse("2024-07-01T08:12:23"),
     )
     val caseNotesEntity2 = CaseNoteRetryEntity(
       id = 2,
@@ -43,7 +37,7 @@ class CaseNoteRetryRepositoryTest : RepositoryTestBase() {
       prisonCode = "EFG",
       originalSubmissionDate = LocalDateTime.parse("2024-07-01T08:12:23"),
       retryCount = 5,
-      nextRuntime = LocalDateTime.parse("2024-07-02T10:10:56")
+      nextRuntime = LocalDateTime.parse("2024-07-02T10:10:56"),
     )
     val caseNotesEntity3 = CaseNoteRetryEntity(
       id = 3,

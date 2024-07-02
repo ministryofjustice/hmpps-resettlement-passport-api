@@ -183,7 +183,8 @@ class ResettlementAssessmentService(
           prisonCode = prisonCode,
           originalSubmissionDate = LocalDateTime.now(),
           retryCount = 0,
-          nextRuntime = LocalDateTime.now(), // Set this to now to retry on the next run of the retry cron job
+          // Set this to now to retry on the next run of the retry cron job
+          nextRuntime = LocalDateTime.now(),
         )
       },
     )

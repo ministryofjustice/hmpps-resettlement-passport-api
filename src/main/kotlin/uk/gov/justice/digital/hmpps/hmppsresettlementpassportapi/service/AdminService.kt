@@ -49,7 +49,6 @@ class AdminService(
         log.warn("Retry failed for case note for ${caseNote.prisoner.nomsId} as no CRN found. Will schedule next retry.")
         scheduleNextRetry(caseNote)
       }
-
     }
   }
 
@@ -64,5 +63,4 @@ class AdminService(
     }
     caseNoteRetryRepository.save(caseNote)
   }
-
 }

@@ -61,7 +61,6 @@ class AdminServiceTest {
 
   @Test
   fun `test retryFailedDeliusCaseNotes`() {
-
     // Entry to be retried for first time
     val caseNotesEntity1 = CaseNoteRetryEntity(
       id = 1,
@@ -72,7 +71,7 @@ class AdminServiceTest {
       prisonCode = "ABC",
       originalSubmissionDate = LocalDateTime.parse("2024-07-01T08:12:23"),
       retryCount = 0,
-      nextRuntime = LocalDateTime.parse("2024-07-01T08:12:23")
+      nextRuntime = LocalDateTime.parse("2024-07-01T08:12:23"),
     )
 
     // Entry to be retried for fifth time
@@ -85,7 +84,7 @@ class AdminServiceTest {
       prisonCode = "EFG",
       originalSubmissionDate = LocalDateTime.parse("2024-07-01T08:12:23"),
       retryCount = 5,
-      nextRuntime = LocalDateTime.parse("2024-07-02T10:10:56")
+      nextRuntime = LocalDateTime.parse("2024-07-02T10:10:56"),
     )
 
     // Entry failed due to missing crn and more retries available
@@ -115,7 +114,7 @@ class AdminServiceTest {
     )
 
     Mockito.`when`(caseNoteRetryRepository.findByNextRuntimeBeforeAndRetryCountLessThan(fakeNow, 10)).thenReturn(
-      listOf(caseNotesEntity1, caseNotesEntity2, caseNotesEntity3, caseNotesEntity4)
+      listOf(caseNotesEntity1, caseNotesEntity2, caseNotesEntity3, caseNotesEntity4),
     )
 
     // Return CRN as per each test case
@@ -125,27 +124,33 @@ class AdminServiceTest {
     Mockito.`when`(resettlementPassportDeliusApiService.getCrn("A004ABC")).thenReturn("A000004")
 
     // Success or fail on posting case notes to Delius as per each test case
-    Mockito.`when`(caseNotesService.postBCSTCaseNoteToDelius(
-      crn = "A000001",
-      prisonCode = "ABC",
-      notes = "some notes to be sent",
-      name = "John Smith",
-      deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
-    )).thenReturn(true)
-    Mockito.`when`(caseNotesService.postBCSTCaseNoteToDelius(
-      crn = "A000002",
-      prisonCode = "EFG",
-      notes = "case notes text",
-      name = "Jane Smith",
-      deliusCaseNoteType = DeliusCaseNoteType.PRE_RELEASE_REPORT,
-    )).thenReturn(true)
-    Mockito.`when`(caseNotesService.postBCSTCaseNoteToDelius(
-      crn = "A000004",
-      prisonCode = "ABC",
-      notes = "case notes text here",
-      name = "Alan Johnson",
-      deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
-    )).thenReturn(false)
+    Mockito.`when`(
+      caseNotesService.postBCSTCaseNoteToDelius(
+        crn = "A000001",
+        prisonCode = "ABC",
+        notes = "some notes to be sent",
+        name = "John Smith",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
+      ),
+    ).thenReturn(true)
+    Mockito.`when`(
+      caseNotesService.postBCSTCaseNoteToDelius(
+        crn = "A000002",
+        prisonCode = "EFG",
+        notes = "case notes text",
+        name = "Jane Smith",
+        deliusCaseNoteType = DeliusCaseNoteType.PRE_RELEASE_REPORT,
+      ),
+    ).thenReturn(true)
+    Mockito.`when`(
+      caseNotesService.postBCSTCaseNoteToDelius(
+        crn = "A000004",
+        prisonCode = "ABC",
+        notes = "case notes text here",
+        name = "Alan Johnson",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
+      ),
+    ).thenReturn(false)
 
     // Run test
     adminService.retryFailedDeliusCaseNotes()
@@ -187,5 +192,4 @@ class AdminServiceTest {
   }
 
   private fun getTestPrisonerEntity(nomsId: String) = PrisonerEntity(1, nomsId, LocalDateTime.parse("2023-09-01T15:09:21"), "D567890", "MDI", LocalDate.parse("2027-01-01"))
-
 }

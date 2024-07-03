@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.events
 
 import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
 import kotlinx.coroutines.future.await
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.awaitility.kotlin.await
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -38,7 +38,7 @@ class OffenderEventsIntegrationTest : IntegrationTestBase() {
 
   @Sql("classpath:testdata/sql/seed-prisoners-for-events.sql")
   @Test
-  fun `Recall event is processed`() = runBlocking {
+  fun `Recall event is processed`() = runTest {
     offenderEventsQueue.sqsClient.sendMessage { builder ->
       builder.queueUrl(offenderEventsQueue.queueUrl)
         .messageBody(readFile("testdata/events/recall-event.json"))
@@ -49,11 +49,13 @@ class OffenderEventsIntegrationTest : IntegrationTestBase() {
       assertThat(saved).hasSize(1)
       assertThat(saved[0].reason).isEqualTo(MovementReasonType.RECALL)
     }
+    val prisoner = prisonerRepository.getReferenceById(1)
+    assertThat(prisoner.prisonId).describedAs { "Prison id should be updated" }.isEqualTo("SWI")
   }
 
   @Sql("classpath:testdata/sql/seed-prisoners-for-events.sql")
   @Test
-  fun `Admission event is processed`() = runBlocking {
+  fun `Admission event is processed`() = runTest {
     offenderEventsQueue.sqsClient.sendMessage { builder ->
       builder.queueUrl(offenderEventsQueue.queueUrl)
         .messageBody(readFile("testdata/events/intake-event.json"))
@@ -67,7 +69,7 @@ class OffenderEventsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `Admission event is processed on new prisoner`() = runBlocking {
+  fun `Admission event is processed on new prisoner`() = runTest {
     offenderEventsQueue.sqsClient.sendMessage { builder ->
       builder.queueUrl(offenderEventsQueue.queueUrl)
         .messageBody(readFile("testdata/events/intake-event.json"))

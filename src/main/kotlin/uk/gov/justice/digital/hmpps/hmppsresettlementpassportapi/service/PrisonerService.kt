@@ -334,10 +334,8 @@ class PrisonerService(
     )
   }
 
-  private fun hasHomeDetentionDates(prisonerSearch: PrisonersSearch): Boolean {
-    return prisonerSearch.homeDetentionCurfewActualDate != null ||
-      prisonerSearch.homeDetentionCurfewEligibilityDate != null
-  }
+  private fun hasHomeDetentionDates(prisonerSearch: PrisonersSearch): Boolean = prisonerSearch.homeDetentionCurfewActualDate != null ||
+    prisonerSearch.homeDetentionCurfewEligibilityDate != null
 
   protected fun getPathwayStatuses(
     prisonerEntity: PrisonerEntity,

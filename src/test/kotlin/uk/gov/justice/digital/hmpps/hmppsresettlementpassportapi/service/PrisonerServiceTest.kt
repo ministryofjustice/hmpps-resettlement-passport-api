@@ -96,7 +96,7 @@ class PrisonerServiceTest {
   }
 
   @Test
-  fun `getPrisonerDetailsByNomsId with isHomeDetention true`(){
+  fun `getPrisonerDetailsByNomsId with isHomeDetention true`() {
     mockDatabaseCalls(false)
     val expectedPrisonerId = "A8339DY"
     val mockEntity = PrisonerEntity(
@@ -105,23 +105,23 @@ class PrisonerServiceTest {
       prisonId = "MDI",
       id = 1L,
       crn = null,
-      releaseDate = null
+      releaseDate = null,
     )
 
     val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-1.json")
     `when`(prisonerSearchApiService.findPrisonerPersonalDetails(expectedPrisonerId)).thenReturn(mockedJsonResponse.content!![0])
     `when`(pathwayAndStatusService.getOrCreatePrisoner(eq(expectedPrisonerId), any(), any())).thenReturn(mockEntity)
     `when`(pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(any(), eq(mockEntity))).thenReturn(
-      PathwayStatusEntity(null, mockEntity, Pathway.ACCOMMODATION, Status.NOT_STARTED, null)
+      PathwayStatusEntity(null, mockEntity, Pathway.ACCOMMODATION, Status.NOT_STARTED, null),
     )
 
     val prisoner =
       prisonerService.getPrisonerDetailsByNomsId(
-        expectedPrisonerId, "123"
+        expectedPrisonerId,
+        "123",
       )
     Assertions.assertTrue(prisoner.personalDetails?.isHomeDetention!!)
   }
-
 
   @Test
   fun `test get PrisonersList happy path full json with sort releaseDate Descending - 1`() {
@@ -360,7 +360,7 @@ class PrisonerServiceTest {
       PathwayStatusEntity(5, mockPrisonerEntity1, pathway3, status, LocalDateTime.now()),
       PathwayStatusEntity(6, mockPrisonerEntity1, pathway1, status, LocalDateTime.now()),
     )
-    if(mockFindByPrison) {
+    if (mockFindByPrison) {
       `when`(pathwayStatusRepository.findByPrison(any())).thenReturn(mockPathwayStatusEntities)
     }
   }

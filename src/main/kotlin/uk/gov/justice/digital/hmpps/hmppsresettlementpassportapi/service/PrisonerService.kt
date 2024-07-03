@@ -315,6 +315,7 @@ class PrisonerService(
       personalDetails.contactDetails?.telephone,
       personalDetails.contactDetails?.email,
       prisonerSearch.prisonName,
+      hasHomeDetentionDates(prisonerSearch),
     )
 
     val pathwayStatuses = getPathwayStatuses(prisonerEntity)
@@ -331,6 +332,11 @@ class PrisonerService(
       preReleaseSubmitted = assessmentStatus.preReleaseSubmitted,
       isInWatchlist = isInWatchlist,
     )
+  }
+
+  private fun hasHomeDetentionDates(prisonerSearch: PrisonersSearch): Boolean {
+    return prisonerSearch.homeDetentionCurfewActualDate != null ||
+      prisonerSearch.homeDetentionCurfewEligibilityDate != null
   }
 
   protected fun getPathwayStatuses(

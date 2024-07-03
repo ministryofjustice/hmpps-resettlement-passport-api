@@ -96,6 +96,7 @@
   "licenceExpiryDate": "2030-05-15",
   "topupSupervisionStartDate": "2030-05-16",
   "topupSupervisionExpiryDate": "2030-05-16",
+  "homeDetentionCurfewEligibilityDate": "2023-10-04",
   "nonDtoReleaseDate": "2023-08-21",
   "nonDtoReleaseDateType": "CRD",
   "receptionDate": "2016-10-03",

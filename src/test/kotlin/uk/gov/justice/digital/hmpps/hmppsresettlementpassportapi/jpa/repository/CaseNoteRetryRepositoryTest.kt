@@ -21,11 +21,11 @@ class CaseNoteRetryRepositoryTest : RepositoryTestBase() {
   fun `test findByNextRuntimeBeforeAndRetryCountLessThan`() {
     // Entries to be returned (i.e. nextRuntime is before "now" and retryCount < 10)
     val prisoner = getTestPrisonerEntity("A001ABC")
-    prisonerRepository.saveAndFlush(prisoner)
+    val savedPrisoner = prisonerRepository.saveAndFlush(prisoner)
 
     val caseNotesEntity1 = CaseNoteRetryEntity(
       id = 1,
-      prisoner = prisoner,
+      prisoner = savedPrisoner,
       type = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       notes = "some notes to be sent",
       author = "John Smith",
@@ -36,7 +36,7 @@ class CaseNoteRetryRepositoryTest : RepositoryTestBase() {
     )
     val caseNotesEntity2 = CaseNoteRetryEntity(
       id = 2,
-      prisoner = prisoner,
+      prisoner = savedPrisoner,
       type = DeliusCaseNoteType.PRE_RELEASE_REPORT,
       notes = "case notes text",
       author = "Jane Smith",
@@ -47,7 +47,7 @@ class CaseNoteRetryRepositoryTest : RepositoryTestBase() {
     )
     val caseNotesEntity3 = CaseNoteRetryEntity(
       id = 3,
-      prisoner = prisoner,
+      prisoner = savedPrisoner,
       type = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       notes = "case notes text here",
       author = "Alan Johnson",
@@ -60,7 +60,7 @@ class CaseNoteRetryRepositoryTest : RepositoryTestBase() {
     // Entries not to be returned (i.e. nextRuntime is after "now" and/or retryCount >= 10)
     val caseNotesEntity4 = CaseNoteRetryEntity(
       id = 4,
-      prisoner = prisoner,
+      prisoner = savedPrisoner,
       type = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       notes = "some case note details",
       author = "Alan Johnson",
@@ -72,7 +72,7 @@ class CaseNoteRetryRepositoryTest : RepositoryTestBase() {
 
     val caseNotesEntity5 = CaseNoteRetryEntity(
       id = 5,
-      prisoner = prisoner,
+      prisoner = savedPrisoner,
       type = DeliusCaseNoteType.PRE_RELEASE_REPORT,
       notes = "case notes",
       author = "Paula Smith",

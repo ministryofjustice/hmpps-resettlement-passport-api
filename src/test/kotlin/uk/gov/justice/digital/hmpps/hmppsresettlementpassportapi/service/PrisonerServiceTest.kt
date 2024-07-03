@@ -110,7 +110,7 @@ class PrisonerServiceTest {
 
     val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-1.json")
     `when`(prisonerSearchApiService.findPrisonerPersonalDetails(expectedPrisonerId)).thenReturn(mockedJsonResponse.content!![0])
-    `when`(pathwayAndStatusService.getOrCreatePrisoner(eq(expectedPrisonerId), any(), any())).thenReturn(mockEntity)
+    `when`(pathwayAndStatusService.getOrCreatePrisoner(expectedPrisonerId, "MDI", LocalDate.parse("2099-09-12"), null)).thenReturn(mockEntity)
     `when`(pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(any(), eq(mockEntity))).thenReturn(
       PathwayStatusEntity(null, mockEntity, Pathway.ACCOMMODATION, Status.NOT_STARTED, null),
     )

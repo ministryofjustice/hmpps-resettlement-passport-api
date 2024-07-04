@@ -122,3 +122,8 @@ management:
 
 resettlement-assessment:
   useYaml: true
+
+hmpps.s3:
+  buckets:
+    document-management:
+      bucketName: ${S3_DOCUMENT_BUCKET_NAME}

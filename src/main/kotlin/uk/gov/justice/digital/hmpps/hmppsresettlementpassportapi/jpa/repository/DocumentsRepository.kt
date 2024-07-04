@@ -10,4 +10,5 @@ interface DocumentsRepository : JpaRepository<DocumentsEntity, Long> {
   fun findAllByPrisoner(prisoner: PrisonerEntity): DocumentsEntity?
 
   fun findByPrisonerAndDocumentKey(prisoner: PrisonerEntity, documentKey: String): DocumentsEntity?
+
 }

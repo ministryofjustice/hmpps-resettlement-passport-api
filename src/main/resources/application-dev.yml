@@ -99,9 +99,6 @@ hmpps.sqs:
 
 hmpps.s3:
   provider: localstack
-  buckets:
-    document-management:
-      bucketName: document-management
 
 clamav:
   virus:

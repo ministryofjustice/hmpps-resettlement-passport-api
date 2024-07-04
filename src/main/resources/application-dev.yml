@@ -107,3 +107,4 @@ clamav:
   virus:
     scan:
       enabled: false
+

@@ -59,3 +59,9 @@ hmpps.sqs:
     offender-events:
       queueName: offender-events-queue
       dlqName: offender-events-dlq
+
+hmpps.s3:
+  provider: localstack
+  buckets:
+    document-management:
+      bucketName: ${random.uuid}

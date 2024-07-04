@@ -36,6 +36,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:4.0.1")
+  implementation("io.awspring.cloud:spring-cloud-aws-starter-s3:3.0.0")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")

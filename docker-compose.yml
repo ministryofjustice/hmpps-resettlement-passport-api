@@ -50,5 +50,17 @@ services:
         limits:
           memory: 1G
 
+  clamav:
+    image: ghcr.io/ministryofjustice/hmpps-clamav-freshclammed
+    networks:
+      - hmpps
+    container_name: clamav-resettlement-passport-api
+    ports:
+      - "3310:3310"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
 networks:
   hmpps:

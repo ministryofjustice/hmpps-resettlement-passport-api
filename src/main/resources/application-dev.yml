@@ -84,6 +84,8 @@ spring:
       s3:
         endpoint: localhost:4566
         enabled: true
+      region:
+        static: eu-west-2
 
 interventions-api-integration:
   crsAppointmentsEnabled: true
@@ -97,7 +99,11 @@ hmpps.sqs:
 
 hmpps.s3:
   provider: localstack
-
   buckets:
     document-management:
       bucketName: document-management
+
+clamav:
+  virus:
+    scan:
+      enabled: false

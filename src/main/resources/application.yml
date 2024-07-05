@@ -120,6 +120,7 @@ management:
     prometheus:
       enabled: true
 
+
 resettlement-assessment:
   useYaml: true
 
@@ -127,3 +128,7 @@ hmpps.s3:
   buckets:
     document-management:
       bucketName: ${S3_DOCUMENT_BUCKET_NAME}
+
+clamav:
+  hostname: localhost
+  port: 3310

@@ -65,3 +65,8 @@ hmpps.s3:
   buckets:
     document-management:
       bucketName: ${random.uuid}
+
+clamav:
+  virus:
+    scan:
+      enabled: false

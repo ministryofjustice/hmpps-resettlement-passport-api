@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Lice
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.LicenceConditionsChangeAuditRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CvlApiService
+import java.time.LocalDateTime
 
 @Service
 class LicenceConditionService(
@@ -74,6 +75,6 @@ class LicenceConditionService(
         licenceConditionsChangeAuditRepository.getByNomsIdAndVersion(nomsId, version)
           ?: throw ResourceNotFoundException("No licence conditions record found for $nomsId / $version")
         )
-    licenceConditionsChangeAuditRepository.save(licenceConditionChangeAuditEntity.copy(seen = true))
+    licenceConditionsChangeAuditRepository.save(licenceConditionChangeAuditEntity.copy(seen = true, confirmationDate = LocalDateTime.now()))
   }
 }

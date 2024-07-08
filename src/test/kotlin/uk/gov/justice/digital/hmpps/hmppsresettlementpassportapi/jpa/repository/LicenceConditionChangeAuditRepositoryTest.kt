@@ -29,12 +29,14 @@ class LicenceConditionChangeAuditRepositoryTest : RepositoryTestBase() {
   fun `test persist new licence condition change audit`() {
     val prisoner = prisonerRepository.save(PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23")))
 
-    val licenceConditionChangeAuditEntity = LicenceConditionChangeAuditEntity(prisonerId = prisoner.id!!, licenceConditions = LicenceConditions(1), confirmationDate = null)
+    val licenceConditionChangeAuditEntity = LicenceConditionChangeAuditEntity(prisonerId = prisoner.id!!, licenceConditions = LicenceConditions(1), confirmationDate = LocalDateTime.of(2024, 1, 1, 0,0,0))
 
     licenceConditionsChangeAuditRepository.save(licenceConditionChangeAuditEntity)
 
     val assessmentFromDatabase = licenceConditionsChangeAuditRepository.findAll()[0]
 
     Assertions.assertThat(assessmentFromDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(licenceConditionChangeAuditEntity)
+
+    Assertions.assertThat(assessmentFromDatabase.confirmationDate).isEqualTo(LocalDateTime.of(2024, 1, 1, 0,0,0))
   }
 }

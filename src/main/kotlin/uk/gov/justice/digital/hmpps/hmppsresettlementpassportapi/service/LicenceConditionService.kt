@@ -65,7 +65,7 @@ class LicenceConditionService(
     return LicenceConditionsMetadata(
       changeStatus = !licenceConditionsChangeAuditEntity.seen,
       version = licenceConditionsChangeAuditEntity.version,
-      seen = licenceConditionsChangeAuditEntity.confirmationDate != null
+      seen = licenceConditionsChangeAuditEntity.confirmationDate != null,
     )
   }
 

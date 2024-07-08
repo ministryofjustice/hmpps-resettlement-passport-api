@@ -13,6 +13,7 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
@@ -27,6 +28,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentSkipRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseNoteRetryRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
@@ -62,6 +64,9 @@ class ResettlementAssessmentServiceTest {
   private lateinit var resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService
 
   @Mock
+  private lateinit var caseNoteRetryRepository: CaseNoteRetryRepository
+
+  @Mock
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
@@ -75,6 +80,7 @@ class ResettlementAssessmentServiceTest {
       assessmentSkipRepository,
       prisonerSearchApiService,
       resettlementPassportDeliusApiService,
+      caseNoteRetryRepository,
     )
   }
 
@@ -96,11 +102,13 @@ class ResettlementAssessmentServiceTest {
         user = ResettlementAssessmentService.User(user1, user1),
         caseNoteText = "Part 1 of 2\n\n${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 1 of 2",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user2, user2),
         caseNoteText = "Part 2 of 2\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 2 of 2",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
     )
 
@@ -119,11 +127,13 @@ class ResettlementAssessmentServiceTest {
         user = ResettlementAssessmentService.User(user1, user1),
         caseNoteText = "Part 1 of 2\n\n${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}",
         description = "NOMIS - Pre-release report - Part 1 of 2",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user2, user2),
         caseNoteText = "Part 2 of 2\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}",
         description = "NOMIS - Pre-release report - Part 2 of 2",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
     )
 
@@ -150,6 +160,7 @@ class ResettlementAssessmentServiceTest {
       user = ResettlementAssessmentService.User(user, user),
       caseNoteText = getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix),
       description = null,
+      deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
     )
 
     val processedCaseNotes = resettlementAssessmentService.processAndGroupAssessmentCaseNotes(assessmentList, false, ResettlementAssessmentType.BCST2)
@@ -405,6 +416,7 @@ class ResettlementAssessmentServiceTest {
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user, user),
         caseNoteText = "${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
     )
 
@@ -421,6 +433,7 @@ class ResettlementAssessmentServiceTest {
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user, user),
         caseNoteText = "${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
     )
 
@@ -437,6 +450,7 @@ class ResettlementAssessmentServiceTest {
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user, user),
         caseNoteText = "${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
     )
 
@@ -454,16 +468,19 @@ class ResettlementAssessmentServiceTest {
         user = ResettlementAssessmentService.User(user, user),
         caseNoteText = "Part 1 of 3\n\n${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 1 of 3",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user, user),
         caseNoteText = "Part 2 of 3\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 2 of 3",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user, user),
         caseNoteText = "Part 3 of 3\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 3 of 3",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
     )
 
@@ -492,16 +509,19 @@ class ResettlementAssessmentServiceTest {
         user = ResettlementAssessmentService.User(user1, user1),
         caseNoteText = "Part 1 of 3\n\n${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 1 of 3",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user2, user2),
         caseNoteText = "Part 2 of 3\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 2 of 3",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user3, user3),
         caseNoteText = "Part 3 of 3\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 3 of 3",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
     )
 
@@ -530,21 +550,25 @@ class ResettlementAssessmentServiceTest {
         user = ResettlementAssessmentService.User(user1, user1),
         caseNoteText = "Part 1 of 4\n\n${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 1 of 4",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user1, user1),
         caseNoteText = "Part 2 of 4\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 2 of 4",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user2, user2),
         caseNoteText = "Part 3 of 4\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 3 of 4",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user3, user3),
         caseNoteText = "Part 4 of 4\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 4 of 4",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
     )
 

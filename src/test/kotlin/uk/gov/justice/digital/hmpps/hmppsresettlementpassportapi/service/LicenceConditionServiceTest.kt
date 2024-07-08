@@ -59,6 +59,7 @@ class LicenceConditionServiceTest {
       licenceConditions = LicenceConditions(1),
       creationDate = fakeNow,
       seen = true,
+      confirmationDate = null,
     )
     whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
     whenever(licenceConditionsChangeAuditRepository.findFirstByPrisonerIdOrderByCreationDateDesc(1)).thenReturn(
@@ -79,6 +80,7 @@ class LicenceConditionServiceTest {
         prisonerId = prisonerEntity.id!!,
         licenceConditions = LicenceConditions(1),
         creationDate = fakeNow,
+        confirmationDate = null,
       )
     whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
     whenever(licenceConditionsChangeAuditRepository.findFirstByPrisonerIdOrderByCreationDateDesc(1)).thenReturn(

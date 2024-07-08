@@ -60,11 +60,12 @@ class LicenceConditionService(
         version = licenceConditionsChangeAuditEntity?.version?.plus(1) ?: 1,
       )
       licenceConditionsChangeAuditRepository.save(newLicenceConditionChangeAuditEntity)
-      return LicenceConditionsMetadata(changeStatus = true, newLicenceConditionChangeAuditEntity.version)
+      return LicenceConditionsMetadata(changeStatus = true, newLicenceConditionChangeAuditEntity.version, false)
     }
     return LicenceConditionsMetadata(
       changeStatus = !licenceConditionsChangeAuditEntity.seen,
       version = licenceConditionsChangeAuditEntity.version,
+      seen = licenceConditionsChangeAuditEntity.confirmationDate != null
     )
   }
 

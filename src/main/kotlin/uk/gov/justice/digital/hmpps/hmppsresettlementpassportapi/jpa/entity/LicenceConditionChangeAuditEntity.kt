@@ -43,7 +43,7 @@ data class LicenceConditionChangeAuditEntity(
   val seen: Boolean = false,
 
   @Column(name = "confirmation_date")
-  val confirmationDate: LocalDateTime?,
+  val confirmationDate: LocalDateTime? = null,
 )
 
 @Converter(autoApply = true)

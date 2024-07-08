@@ -58,7 +58,6 @@ class LicenceConditionService(
         prisonerId = prisonerId,
         licenceConditions = licenceConditions,
         version = licenceConditionsChangeAuditEntity?.version?.plus(1) ?: 1,
-        confirmationDate = null,
       )
       licenceConditionsChangeAuditRepository.save(newLicenceConditionChangeAuditEntity)
       return LicenceConditionsMetadata(changeStatus = true, newLicenceConditionChangeAuditEntity.version)

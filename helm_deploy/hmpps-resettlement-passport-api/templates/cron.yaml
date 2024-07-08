@@ -8,6 +8,8 @@ spec:
     spec:
       template:
         spec:
+          securityContext:
+            runAsUser: 1000
           containers:
             - name: curl
               image: alpine/curl

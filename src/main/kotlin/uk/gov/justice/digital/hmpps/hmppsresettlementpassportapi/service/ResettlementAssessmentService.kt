@@ -206,12 +206,21 @@ class ResettlementAssessmentService(
         user = User(userId = it.createdByUserId, name = it.createdBy),
         caseNoteText = "${it.pathway.displayName}\n\n${it.caseNoteText}",
         deliusCaseNoteType = deliusCaseNoteType,
+        description = ""
       )
     }.groupBy { it.user }
 
+
     val caseNoteList = userToCaseNoteMap.flatMap { (user, notes) ->
       val combinedCaseNotes = splitToCharLimit(notes.map { it.caseNoteText }, maxCaseNoteLength)
-      combinedCaseNotes.map { UserAndCaseNote(user = user, caseNoteText = it, deliusCaseNoteType = deliusCaseNoteType) }
+      combinedCaseNotes.map {
+        UserAndCaseNote(
+          user = user,
+          caseNoteText = it,
+          deliusCaseNoteType = deliusCaseNoteType,
+          description = ""
+        )
+      }
     }
 
     val descriptionPrefix = when (assessmentType) {
@@ -229,7 +238,14 @@ class ResettlementAssessmentService(
         )
       }
     } else {
-      caseNoteList
+      caseNoteList.map { caseNote ->
+        UserAndCaseNote(
+          user = caseNote.user,
+          caseNoteText = caseNote.caseNoteText,
+          deliusCaseNoteType = deliusCaseNoteType,
+          description = descriptionPrefix
+        )
+      }
     }
   }
 
@@ -258,7 +274,7 @@ class ResettlementAssessmentService(
     val user: User,
     val caseNoteText: String,
     val deliusCaseNoteType: DeliusCaseNoteType,
-    val description: String? = null,
+    val description: String,
   )
 
   data class User(

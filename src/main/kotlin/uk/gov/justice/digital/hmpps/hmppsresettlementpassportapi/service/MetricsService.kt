@@ -146,4 +146,8 @@ class MetricsService(
   }
 
   fun getNumberFromMetrics(metrics: List<PrisonerCountMetric>, releaseDateTag: ReleaseDateTag, statusTag: StatusTag): Int? = metrics.firstOrNull { it.releaseDate == releaseDateTag && it.status == statusTag }?.value
+
+  fun incrementCounter(metricName: String, vararg tags: String) {
+    registry.counter(metricName, *tags).increment()
+  }
 }

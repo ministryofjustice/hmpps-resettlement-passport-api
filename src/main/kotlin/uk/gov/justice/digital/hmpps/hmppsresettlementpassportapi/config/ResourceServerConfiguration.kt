@@ -23,7 +23,7 @@ class ResourceServerConfiguration {
         listOf(
           "/webjars/**", "/favicon.ico", "/csrf",
           "/health/**", "/info", "/prometheus", "/h2-console/**", "/prototype/**",
-          "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
+          "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/retry-failed-delius-case-notes",
         ).forEach { authorize(it, permitAll) }
         authorize("/queue-admin/retry-all-dlqs", hasRole("RESETTLEMENT_PASSPORT_EDIT"))
         authorize(anyRequest, authenticated)

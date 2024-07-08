@@ -41,5 +41,13 @@ services:
     container_name: localstack-resettlement-passport-api
     ports:
       - "4566:4566"
+  clamav:
+    image: ghcr.io/ministryofjustice/hmpps-clamav-freshclammed:latest
+    networks:
+      - hmpps
+    container_name: clamav
+    ports:
+      - "3310:3310"
+
 networks:
   hmpps:

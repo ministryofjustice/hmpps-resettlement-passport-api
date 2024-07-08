@@ -6,9 +6,9 @@ metadata:
   name: prometheus-custom-rules-resettlement-passport-api
 spec:
   groups:
-    - name: custom-application-rules
+    - name: hmpps-resettlement-passport-prototype-api-custom
       rules:
-        - alert: Delius case notes retry failed too many times in last hour
+        - alert: DeliusCaseNotesRetryFailedTooManyTimes
           expr: (delius_case_note_retry_give_up - delius_case_note_retry_give_up offset 1h) > 0
           for: 1m
           labels:

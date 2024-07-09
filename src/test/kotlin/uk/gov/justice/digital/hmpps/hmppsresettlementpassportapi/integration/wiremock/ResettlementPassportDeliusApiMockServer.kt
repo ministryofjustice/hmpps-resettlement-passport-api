@@ -73,6 +73,15 @@ class ResettlementPassportDeliusApiMockServer : WireMockServerBase(9102) {
     )
   }
 
+  fun stubGetCrnFromNomsIdNotFound(nomsId: String) {
+    stubFor(
+      get("/probation-cases/$nomsId/crn").willReturn(
+        aResponse()
+          .withStatus(404),
+      ),
+    )
+  }
+
   fun stubGetAccommodationFromCRN(crn: String, noFixAbode: Boolean, status: Int) {
     var dutyToReferNSIJSON = readFile("testdata/resettlement-passport-delius-api/duty-to-refer-nsi-abode-false.json")
     if (noFixAbode) {

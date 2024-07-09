@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    role: alert-rules
+  name: prometheus-custom-rules-resettlement-passport-api
+spec:
+  groups:
+    - name: hmpps-resettlement-passport-prototype-api-custom
+      rules:
+        - alert: DeliusCaseNotesRetryFailedTooManyTimes
+          expr: (delius_case_note_retry_give_up - delius_case_note_retry_give_up offset 1h) > 0
+          for: 1m
+          labels:
+            severity: {{ index .Values "generic-prometheus-alerts" "alertSeverity" }}
+          annotations:
+            message: A delius case notes retry failed too many times - manual intervention required. Check case_note_retry in database.
+            runbook_url: https://dsdmoj.atlassian.net/wiki/spaces/RR/pages/4985454697/Fix+failed+Delius+Case+note+retries
+            dashboard_url: https://grafana.live.cloud-platform.service.justice.gov.uk/d/fc317542-6db7-11ee-b962-0242ac120002/hmpps-resettlement-passport?orgId=1

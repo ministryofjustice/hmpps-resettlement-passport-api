@@ -9,5 +9,5 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 interface DocumentsRepository : JpaRepository<DocumentsEntity, Long> {
   fun findAllByPrisoner(prisoner: PrisonerEntity): DocumentsEntity?
 
-  fun findByPrisonerAndDocumentKey(prisoner: PrisonerEntity, documentKey: String): DocumentsEntity?
+  fun findByPrisonerAndOriginalDocumentKey(prisoner: PrisonerEntity, documentKey: String): DocumentsEntity?
 }

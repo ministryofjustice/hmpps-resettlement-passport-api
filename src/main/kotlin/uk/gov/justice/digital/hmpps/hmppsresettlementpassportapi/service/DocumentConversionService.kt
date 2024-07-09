@@ -1,21 +1,24 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.web.multipart.MultipartFile
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.DocumentsRepository
 import java.io.File
 import java.nio.file.Path
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 import kotlin.time.measureTime
+
+private val logger = KotlinLogging.logger {}
 
 class DocumentConversionService(
   private val tempDocumentDir: File,
   private val s3Client: S3Client,
-  private val documentsRepository: DocumentsRepository,
+  private val bucketName: String,
 ) {
 
-  fun convert(multipartFile: MultipartFile, originalBucketKey: String) {
+  fun convert(multipartFile: MultipartFile, originalBucketKey: String): UUID {
     val tempFile = tempDocumentDir.resolve(originalBucketKey)
     tempFile.outputStream().use { outputStream ->
       multipartFile.inputStream.use { inputStream ->
@@ -35,18 +38,21 @@ class DocumentConversionService(
         ),
       )
       process.waitFor(1, TimeUnit.MINUTES)
-      println(process.exitValue())
-      println(process.inputStream.readAllBytes().toString(Charsets.UTF_8))
-    }
-    println(elapsed)
 
-    val response = s3Client.putObject(
+      logger.info { "Converted document using libre office exit code: ${process.exitValue()}, stdout: ${process.inputStream.readAllBytes().toString(Charsets.UTF_8)}" }
+    }
+    logger.info { "document was processed in $elapsed" }
+
+    val convertedKey = UUID.randomUUID()
+    s3Client.putObject(
       { request: PutObjectRequest.Builder ->
-        request.key(originalBucketKey + "html")
+        request.bucket(bucketName)
+        request.key(convertedKey.toString())
       },
       Path.of(tempFile.absolutePath),
     )
 
     tempFile.delete()
+    return convertedKey
   }
 }

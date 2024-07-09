@@ -5,10 +5,12 @@ import org.springframework.web.multipart.MultipartFile
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
-import java.io.File
 import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.UUID
 import java.util.concurrent.TimeUnit
+import kotlin.io.path.deleteExisting
+import kotlin.io.path.pathString
 import kotlin.time.measureTimedValue
 
 private val logger = KotlinLogging.logger {}
@@ -18,18 +20,15 @@ interface DocumentConversionService {
 }
 
 class LibreOfficeDocumentConversionService(
-  private val tempDocumentDir: File,
+  private val tempDocumentDir: Path,
   private val s3Client: S3Client,
   private val bucketName: String,
 ) : DocumentConversionService {
 
   override fun convert(multipartFile: MultipartFile, originalBucketKey: String): UUID? {
     val tempFile = tempDocumentDir.resolve(originalBucketKey)
-    tempFile.outputStream().use { outputStream ->
-      multipartFile.inputStream.use { inputStream ->
-        inputStream.copyTo(outputStream)
-      }
-    }
+    multipartFile.transferTo(tempFile)
+
     val (exitCode, elapsed) = measureTimedValue {
       val process = Runtime.getRuntime().exec(
         arrayOf(
@@ -38,8 +37,8 @@ class LibreOfficeDocumentConversionService(
           "--convert-to",
           "html",
           "--outdir",
-          tempDocumentDir.absolutePath,
-          tempFile.absolutePath,
+          tempDocumentDir.pathString,
+          tempFile.pathString,
         ),
       )
       process.waitFor(1, TimeUnit.MINUTES)
@@ -55,16 +54,26 @@ class LibreOfficeDocumentConversionService(
     }
 
     val convertedKey = UUID.randomUUID()
+    val convertedPath = Paths.get(tempFile.pathString + ".html")
     s3Client.putObject(
       { request: PutObjectRequest.Builder ->
         request.bucket(bucketName)
         request.key(convertedKey.toString())
       },
-      Path.of(tempFile.absolutePath + ".html"),
+      convertedPath,
     )
 
-    tempFile.delete()
+    tempFile.cleanupQuietly()
+    convertedPath.cleanupQuietly()
     return convertedKey
+  }
+}
+
+private fun Path.cleanupQuietly() {
+  try {
+    this.deleteExisting()
+  } catch (e: Exception) {
+    logger.warn(e) { "Failed to cleanup ${this.pathString}" }
   }
 }
 

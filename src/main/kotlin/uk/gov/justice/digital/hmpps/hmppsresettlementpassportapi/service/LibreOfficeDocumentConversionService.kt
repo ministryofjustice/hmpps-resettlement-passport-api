@@ -21,6 +21,7 @@ interface DocumentConversionService {
 
 class LibreOfficeDocumentConversionService(
   private val tempDocumentDir: Path,
+
   private val s3Client: S3Client,
   private val bucketName: String,
 ) : DocumentConversionService {

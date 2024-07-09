@@ -13,6 +13,7 @@ import kotlin.io.path.createTempDirectory
 
 private val logger = KotlinLogging.logger {}
 
+
 @Configuration
 class DocumentConversionConfig {
   @Bean

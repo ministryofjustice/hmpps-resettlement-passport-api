@@ -63,7 +63,7 @@ class DocumentServiceTest {
       MediaType.TEXT_PLAIN_VALUE,
       "Hello, World!".toByteArray(),
     )
-
+    
     whenever(virusScanner.scan(file.bytes)).thenReturn(VirusScanResult.NoVirusFound)
     whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
     whenever(documentsRepository.save(any())).thenReturn(documentsEntity)

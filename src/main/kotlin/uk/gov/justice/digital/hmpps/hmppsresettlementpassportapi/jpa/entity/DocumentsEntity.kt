@@ -22,6 +22,7 @@ class DocumentsEntity(
   val originalDocumentKey: String,
 
   @Column(name = "html_document_key")
+
   val htmlDocumentKey: UUID?,
 
   @Column(name = "creation_date")

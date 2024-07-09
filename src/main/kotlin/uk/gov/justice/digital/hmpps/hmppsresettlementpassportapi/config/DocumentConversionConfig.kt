@@ -8,8 +8,8 @@ import software.amazon.awssdk.services.s3.S3Client
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.DocumentConversionService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.LibreOfficeDocumentConversionService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.StubDocumentConversionService
-import java.io.File
-import java.nio.file.Files
+import java.nio.file.Paths
+import kotlin.io.path.createTempDirectory
 
 private val logger = KotlinLogging.logger {}
 
@@ -28,11 +28,9 @@ class DocumentConversionConfig {
     }
 
     val tempDirFile = if (tempDirPath == "-") {
-      val tempDir = Files.createTempDirectory("docs").toFile()
-      tempDir.deleteOnExit()
-      tempDir
+      createTempDirectory("doc-converter")
     } else {
-      File(tempDirPath)
+      Paths.get(tempDirPath)
     }
     return LibreOfficeDocumentConversionService(tempDocumentDir = tempDirFile, s3Client = s3Client, bucketName = bucketName)
   }

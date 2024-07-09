@@ -68,6 +68,8 @@ generic-service:
     backend-elasticache-redis:
       SPRING_DATA_REDIS_HOST: "primary_endpoint_address"
       SPRING_DATA_REDIS_PASSWORD: "auth_token"
+    s3-bucket-output:
+      S3_DOCUMENT_BUCKET_NAME: bucket_name
     sqs-prisoner-event-queue-secret:
       OFFENDER_EVENT_QUEUE_NAME: "sqs_queue_name"
       OFFENDER_EVENT_DLQ_NAME: "sqs_dlq_queue_name"

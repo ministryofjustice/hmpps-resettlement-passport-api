@@ -52,7 +52,7 @@ class DocumentStorageResourceController(
     nomsId: String,
     @RequestParam("file")
     file: MultipartFile,
-  ) = uploadService.scanAndStoreDocument(nomsId, file)
+  ) = uploadService.processDocument(nomsId, file)
 
   @GetMapping("{nomsId}/download/{documentId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(

@@ -10,7 +10,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.LibreOf
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.StubDocumentConversionService
 import java.nio.file.Paths
 import kotlin.io.path.createTempDirectory
-
 private val logger = KotlinLogging.logger {}
 
 

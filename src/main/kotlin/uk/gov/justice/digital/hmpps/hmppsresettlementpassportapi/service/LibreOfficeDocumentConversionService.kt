@@ -21,7 +21,6 @@ interface DocumentConversionService {
 
 class LibreOfficeDocumentConversionService(
   private val tempDocumentDir: Path,
-
   private val s3Client: S3Client,
   private val bucketName: String,
 ) : DocumentConversionService {
@@ -29,7 +28,6 @@ class LibreOfficeDocumentConversionService(
   override fun convert(multipartFile: MultipartFile, originalBucketKey: String): UUID? {
     val tempFile = tempDocumentDir.resolve(originalBucketKey)
     multipartFile.transferTo(tempFile)
-
     val (exitCode, elapsed) = measureTimedValue {
       val process = Runtime.getRuntime().exec(
         arrayOf(

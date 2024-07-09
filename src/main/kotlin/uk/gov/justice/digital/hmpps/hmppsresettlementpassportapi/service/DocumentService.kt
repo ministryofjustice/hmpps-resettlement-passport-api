@@ -131,6 +131,7 @@ class DocumentService(
       ?: throw ResourceNotFoundException("$documentId does not have html available")
     val bytes = getDocument(key)
     return String(bytes, Charsets.UTF_8)
+  }
 
   private inline fun <reified T : Any?> forExistingPrisoner(nomsId: String, fn: () -> T): T {
     prisonerRepository.findByNomsId(nomsId)

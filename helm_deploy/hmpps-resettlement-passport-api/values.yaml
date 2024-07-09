@@ -24,6 +24,15 @@ generic-service:
           return 401;
         }
 
+  volumes:
+    - name: conversion-tmp
+      emptyDir:
+        sizeLimit: 2Gi
+
+  volumeMounts:
+    - mountPath: /conversion-tmp
+      name: conversion-tmp
+
   startupProbe:
     httpGet:
       path: /health/liveness
@@ -46,7 +55,7 @@ generic-service:
     SCHEDULE_EXPRESSION_DELETE-EXPIRED-OTP: 0 0 3 * * *
     CLAMAV_HOSTNAME: resettlement-passport-api-clamav
     CLAMAV_PORT: 3310
-
+    DOC_CONVERSION_TEMP_DIR_PATH: /conversion-tmp
 
   # Pre-existing kubernetes secrets to load as environment variables in the deployment.
   # namespace_secrets:

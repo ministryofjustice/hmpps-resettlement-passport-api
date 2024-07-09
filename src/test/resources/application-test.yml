@@ -70,3 +70,6 @@ clamav:
   virus:
     scan:
       enabled: false
+
+doc.conversion:
+  use.stub: true

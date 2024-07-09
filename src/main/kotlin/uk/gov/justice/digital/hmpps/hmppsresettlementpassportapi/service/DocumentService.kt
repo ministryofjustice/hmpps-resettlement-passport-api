@@ -58,7 +58,7 @@ class DocumentService(
     val convertedDocumentKey = documentConversionService.convert(document, key)
 
     val documents = DocumentsEntity(
-      prisoner = prisoner,
+      prisonerId = prisoner.id!!,
       originalDocumentKey = key,
       htmlDocumentKey = convertedDocumentKey,
       creationDate = LocalDateTime.now(),
@@ -95,7 +95,7 @@ class DocumentService(
 
   fun getDocumentByNomisIdAndDocumentId(nomsId: String, documentId: String): ByteArray {
     val prisoner = findPrisonerByNomsId(nomsId)
-    val document = documentsRepository.findByPrisonerAndOriginalDocumentKey(prisoner, documentId)
+    val document = documentsRepository.findByPrisonerIdAndOriginalDocumentKey(prisoner.id!!, documentId)
       ?: throw ResourceNotFoundException("Document with id $documentId and prisoner with id $nomsId not found in database")
 
     return getDocument(document.originalDocumentKey)

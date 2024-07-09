@@ -16,15 +16,11 @@ object LocalStackContainer {
   fun setLocalStackProperties(registry: DynamicPropertyRegistry) {
     registry.add("hmpps.sqs.localstackUrl") { instance?.getEndpointOverride(LocalStackContainer.Service.SNS) }
     registry.add("hmpps.sqs.region") { instance?.region }
-    registry.add("hmpps.s3.localstackUrl") { instance?.getEndpointOverride(LocalStackContainer.Service.S3).toString() }
+    registry.add("hmpps.s3.localstackUrl") { instance?.getEndpoint().toString() }
     registry.add("hmpps.s3.region") { instance?.region }
   }
 
   private fun startLocalstackIfNotRunning(): LocalStackContainer? {
-    if (localstackIsRunning()) {
-      log.warn("Using existing localstack instance")
-      return null
-    }
     log.info("Creating a localstack instance")
     val logConsumer = Slf4jLogConsumer(log).withPrefix("localstack")
     return LocalStackContainer(

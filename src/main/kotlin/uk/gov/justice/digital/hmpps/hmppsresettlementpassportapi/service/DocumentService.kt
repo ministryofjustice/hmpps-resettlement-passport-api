@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.VirusScanResult.NoVirusFound
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.VirusScanResult.VirusFound
 import java.time.LocalDateTime
+import java.util.*
 
 @Service
 class DocumentService(
@@ -50,8 +51,8 @@ class DocumentService(
   fun storeDocument(nomsId: String, document: MultipartFile): DocumentsEntity {
     // using nomsId to find the prisoner entity
     val prisoner = findPrisonerByNomsId(nomsId)
-    val time = System.currentTimeMillis()
-    val key = nomsId + "_" + time
+
+    val key = nomsId + "_" + UUID.randomUUID().toString()
 
     uploadDocumentToS3(document, bucketName, key)
     val documents = DocumentsEntity(

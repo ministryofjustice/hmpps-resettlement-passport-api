@@ -24,6 +24,8 @@ class HmppsS3Configuration(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
+  internal fun bucketName() = hmppsS3Properties.buckets["document-management"]!!.bucketName
+
   @Bean
   fun s3Client(): S3Client =
     with(hmppsS3Properties) {
@@ -59,20 +61,20 @@ class HmppsS3Configuration(
 
       buckets.values.onEach {
         try {
-          log.info("Checking for S3 bucket '${it.bucketName}'")
+          log.info("Checking for S3 bucket '${bucketName()}'")
 
           val headBucketRequest = HeadBucketRequest.builder()
-            .bucket(it.bucketName)
+            .bucket(bucketName())
             .build()
 
           client.headBucket(headBucketRequest)
 
-          log.info("S3 bucket '${it.bucketName}' found")
+          log.info("S3 bucket '${bucketName()}' found")
         } catch (e: NoSuchBucketException) {
-          log.info("Creating S3 bucket '${it.bucketName}' as it was not found")
+          log.info("Creating S3 bucket '${bucketName()}' as it was not found")
 
           val bucketRequest = CreateBucketRequest.builder()
-            .bucket(it.bucketName)
+            .bucket(bucketName())
             .build()
 
           client.createBucket(bucketRequest)

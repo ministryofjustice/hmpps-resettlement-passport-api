@@ -22,7 +22,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
 
 @ExtendWith(MockitoExtension::class)
 class DocumentServiceTest {
@@ -65,7 +64,7 @@ class DocumentServiceTest {
     Mockito.`when`(virusScanner.scan(file.bytes)).thenReturn(VirusScanResult.NoVirusFound)
     Mockito.`when`(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
     Mockito.`when`(documentsRepository.save(any())).thenReturn(documentsEntity)
-    val response = documentService.scanAndStoreDocument("acb", file)
+    val response = documentService.processDocument("acb", file)
     Assertions.assertEquals(documentsEntity, response.valueOrNull())
   }
 

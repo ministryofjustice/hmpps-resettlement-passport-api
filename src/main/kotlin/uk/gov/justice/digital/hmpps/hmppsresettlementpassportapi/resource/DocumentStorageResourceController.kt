@@ -95,4 +95,46 @@ class DocumentStorageResourceController(
     @Parameter(required = true)
     documentId: String,
   ): ByteArray = uploadService.getDocumentByNomisIdAndDocumentId(nomsId, documentId)
+
+  @GetMapping("{nomsId}/html/{documentId}", produces = [MediaType.TEXT_HTML_VALUE])
+  @Operation(
+    summary = "Get document  for a prisoner",
+    description = "Get Document for a given document Id and prisoner Id .",
+  )
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [
+          Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "404",
+        description = "No data found for given document id and prisoner id",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  fun getDocumentHtmlByNomsId(
+    @PathVariable("nomsId")
+    @Parameter(required = true)
+    nomsId: String,
+    @PathVariable("documentId")
+    @Parameter(required = true)
+    documentId: Long,
+  ): String = uploadService.getHtmlByNomisIdAndDocumentId(nomsId, documentId)
 }

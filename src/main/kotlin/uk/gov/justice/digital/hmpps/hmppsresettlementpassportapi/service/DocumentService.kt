@@ -101,6 +101,20 @@ class DocumentService(
     return getDocument(document.originalDocumentKey)
   }
 
+  fun getHtmlByNomisIdAndDocumentId(nomsId: String, documentId: Long): String {
+    val prisoner = findPrisonerByNomsId(nomsId)
+    val document = documentsRepository.getReferenceById(documentId)
+
+    if (prisoner.id != document.prisonerId) {
+      throw ResourceNotFoundException("Document with id $documentId not found")
+    }
+
+    val key = document.htmlDocumentKey?.toString()
+      ?: throw ResourceNotFoundException("$documentId does not have html available")
+    val bytes = getDocument(key)
+    return String(bytes, Charsets.UTF_8)
+  }
+
   private inline fun <reified T : Any?> forExistingPrisoner(nomsId: String, fn: () -> T): T {
     prisonerRepository.findByNomsId(nomsId)
     return fn()

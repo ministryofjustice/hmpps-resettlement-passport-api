@@ -60,7 +60,7 @@ class LibreOfficeDocumentConversionService(
         request.bucket(bucketName)
         request.key(convertedKey.toString())
       },
-      Path.of(tempFile.absolutePath),
+      Path.of(tempFile.absolutePath + ".html"),
     )
 
     tempFile.delete()

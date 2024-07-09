@@ -29,5 +29,4 @@ data class LicenceConditionsWithMetaData(
 data class LicenceConditionsMetadata(
   val changeStatus: Boolean?,
   val version: Int,
-  val seen: Boolean = false,
 )

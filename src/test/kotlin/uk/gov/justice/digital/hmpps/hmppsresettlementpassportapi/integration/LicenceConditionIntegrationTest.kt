@@ -208,14 +208,12 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectBody().json(expectedOutput)
       .jsonPath("$.changeStatus").isEqualTo(true)
-      .jsonPath("$.seen").isEqualTo(false)
 
     getConditionsWithChangeNotify(nomsId)
       .expectStatus().isOk
       .expectBody().json(expectedOutput)
       .jsonPath("$.changeStatus").isEqualTo(true)
       .jsonPath("$.version").isEqualTo(1)
-      .jsonPath("$.seen").isEqualTo(false)
   }
 
   @Test
@@ -263,7 +261,6 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .jsonPath("$.changeStatus").isEqualTo(true)
       .jsonPath("$.version").isEqualTo(1)
-      .jsonPath("$.seen").isEqualTo(false)
 
     webTestClient.patch()
       .uri("/resettlement-passport/prisoner/$nomsId/licence-condition/seen?version=1")
@@ -277,6 +274,5 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectBody()
       .jsonPath("$.changeStatus").isEqualTo(false)
-      .jsonPath("$.seen").isEqualTo(true)
   }
 }

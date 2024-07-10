@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteTy
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusAuthor
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AppointmentsService.Companion.SECTION_DELIMITER
 import java.lang.IllegalArgumentException
@@ -144,3 +145,6 @@ fun convertToDeliusCaseNoteType(assessmentType: ResettlementAssessmentType) = wh
 tailrec fun getFibonacciNumber(n: Int, a: Int = 0, b: Int = 1): Long {
   return if (n == 0) a.toLong() else getFibonacciNumber(n - 1, b, a + b)
 }
+
+fun searchTermMatchesPrisoner(searchTerm: String, prisoner: PrisonersSearch) = searchTerm == prisoner.prisonerNumber || searchTerm.lowercase() == prisoner.firstName.lowercase() || searchTerm.lowercase() == prisoner.lastName.lowercase()
+// TODO do we allow a partial match of the firstName or lastName?

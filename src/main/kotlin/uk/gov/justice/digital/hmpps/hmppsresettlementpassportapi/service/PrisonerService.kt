@@ -98,10 +98,15 @@ class PrisonerService(
         "Page $pageNumber and Size $pageSize",
       )
     }
-    prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, searchTerm).forEach {
+    prisonerSearchApiService.findPrisonersBySearchTerm(prisonId).forEach {
       setDisplayedReleaseDate(it)
       prisoners.add(it)
     }
+
+    if (searchTerm != null) {
+      prisoners.retainAll { searchTermMatchesPrisoner(searchTerm, it) }
+    }
+
     if (days > 0) {
       val earliestReleaseDate = LocalDate.now().minusDays(1)
       val latestReleaseDate = LocalDate.now().plusDays(days.toLong())

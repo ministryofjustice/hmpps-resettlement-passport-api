@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: retry-failed-delius-case-notes
 spec:
-  schedule: "@hourly"
+  schedule: "*/10 * * * *"
   jobTemplate:
     spec:
       template:

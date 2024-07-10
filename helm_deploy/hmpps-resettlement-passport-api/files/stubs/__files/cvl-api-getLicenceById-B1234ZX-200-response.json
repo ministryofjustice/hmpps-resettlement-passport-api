@@ -241,7 +241,7 @@
     {
       "id": 1012,
       "sequence": 14,
-      "text" : "You will be subject to trail monitoring. Your whereabouts will be electronically monitored by GPS Satellite Tagging, ending on {{now offset='3 days' format='dd MMMM yyyy'}}, and you must cooperate with the monitoring as directed by your supervising officer unless otherwise authorised by your supervising officer."
+      "text" : "You will be subject to trail monitoring. Your whereabouts will be electronically monitored by GPS Satellite Tagging, ending on {{now offset='3 days' format='dd MMMM yyyy HH'}}, and you must cooperate with the monitoring as directed by your supervising officer unless otherwise authorised by your supervising officer."
     },
     {
       "id": 1013,

@@ -69,7 +69,7 @@
   "imprisonmentStatus": "ADIMP_ORA",
   "imprisonmentStatusDescription": "ORA CJA03 Standard Determinate Sentence",
   "mostSeriousOffence": "Foreign national failing to register with the police",
-  "recall": false,
+  "recall": true,
   "indeterminateSentence": false,
   "sentenceStartDate": "2017-03-21",
   "releaseDate": "2027-04-18",

@@ -37,6 +37,7 @@ data class PrisonerPersonal(
   var email: String? = null,
   var prisonName: String? = null,
   var isHomeDetention: Boolean?,
+  var isRecall: Boolean?,
 )
 
 data class PathwayStatus(

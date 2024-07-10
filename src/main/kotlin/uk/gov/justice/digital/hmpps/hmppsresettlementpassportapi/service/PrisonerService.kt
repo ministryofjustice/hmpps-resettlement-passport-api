@@ -316,6 +316,7 @@ class PrisonerService(
       personalDetails.contactDetails?.email,
       prisonerSearch.prisonName,
       hasHomeDetentionDates(prisonerSearch),
+      isRecall = prisonerSearch.recall,
     )
 
     val pathwayStatuses = getPathwayStatuses(prisonerEntity)

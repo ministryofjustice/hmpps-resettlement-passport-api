@@ -15,7 +15,8 @@
     "telephone": null,
     "email": null,
     "prisonName": "Moorland (HMP & YOI)",
-    "isHomeDetention": false
+    "isHomeDetention": false,
+    "isRecall": false
   },
   "pathways": [
     {

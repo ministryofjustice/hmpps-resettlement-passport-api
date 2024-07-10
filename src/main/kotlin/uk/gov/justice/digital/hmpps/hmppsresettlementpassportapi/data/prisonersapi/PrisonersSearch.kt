@@ -23,6 +23,7 @@ data class PrisonersSearch(
   val prisonName: String,
   val cellLocation: String?,
   var displayReleaseDate: LocalDate? = null,
+  val recall: Boolean = false,
 )
 
 data class PrisonersSearchList(

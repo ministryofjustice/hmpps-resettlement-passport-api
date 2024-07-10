@@ -16,6 +16,8 @@ object LocalStackContainer {
   fun setLocalStackProperties(registry: DynamicPropertyRegistry) {
     registry.add("hmpps.sqs.localstackUrl") { instance?.getEndpointOverride(LocalStackContainer.Service.SNS) }
     registry.add("hmpps.sqs.region") { instance?.region }
+    registry.add("hmpps.s3.localstackUrl") { instance?.getEndpoint().toString() }
+    registry.add("hmpps.s3.region") { instance?.region }
   }
 
   private fun startLocalstackIfNotRunning(): LocalStackContainer? {
@@ -28,7 +30,7 @@ object LocalStackContainer {
     return LocalStackContainer(
       DockerImageName.parse("localstack/localstack").withTag("3"),
     ).apply {
-      withServices(LocalStackContainer.Service.SNS, LocalStackContainer.Service.SQS)
+      withServices(LocalStackContainer.Service.SNS, LocalStackContainer.Service.SQS, LocalStackContainer.Service.S3)
       withEnv("DEFAULT_REGION", "eu-west-2")
       waitingFor(
         Wait.forLogMessage(".*Ready.*", 1),

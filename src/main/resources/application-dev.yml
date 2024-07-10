@@ -79,6 +79,13 @@ spring:
       port: 6380
       ssl:
         enabled: false
+  cloud:
+    aws:
+      s3:
+        endpoint: localhost:4566
+        enabled: true
+      region:
+        static: eu-west-2
 
 interventions-api-integration:
   crsAppointmentsEnabled: true
@@ -89,3 +96,15 @@ hmpps.sqs:
     offender-events:
       queueName: offender-events-queue
       dlqName: offender-events-dlq
+
+hmpps.s3:
+  provider: localstack
+  buckets:
+    document-management:
+      bucketName: document-management
+
+clamav:
+  virus:
+    scan:
+      enabled: false
+

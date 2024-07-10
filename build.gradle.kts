@@ -36,6 +36,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:4.0.1")
+  implementation("software.amazon.awssdk:s3")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
@@ -52,6 +53,8 @@ dependencies {
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("io.micrometer:micrometer-registry-prometheus:1.11.4")
+  implementation("xyz.capybara:clamav-client:2.1.2")
+  implementation("dev.forkhandles:result4k:2.0.0.0")
 
   implementation("org.apache.commons:commons-lang3")
   implementation("org.apache.commons:commons-text:1.11.0")
@@ -81,6 +84,7 @@ dependencies {
   testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
   testImplementation("io.mockk:mockk:1.13.10")
   testImplementation("com.github.victools:jsonschema-generator:4.35.0")
+  testImplementation("com.natpryce:hamkrest:1.8.0.1")
 
   if (project.hasProperty("docs")) {
     implementation("com.h2database:h2")

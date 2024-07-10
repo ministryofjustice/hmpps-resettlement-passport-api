@@ -32,6 +32,9 @@ schedule:
 spring:
   devtools:
     add-properties: true
+  servlet:
+    multipart:
+      enabled: true
 
   flyway:
     url: jdbc:postgresql://localhost:5432/resettlement-passport?sslmode=prefer
@@ -59,3 +62,14 @@ hmpps.sqs:
     offender-events:
       queueName: offender-events-queue
       dlqName: offender-events-dlq
+
+hmpps.s3:
+  provider: localstack
+  buckets:
+    document-management:
+      bucketName: "test-bucket"
+
+clamav:
+  virus:
+    scan:
+      enabled: false

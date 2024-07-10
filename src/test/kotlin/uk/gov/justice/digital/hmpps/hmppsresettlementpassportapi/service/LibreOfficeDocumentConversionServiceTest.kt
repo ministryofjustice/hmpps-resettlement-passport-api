@@ -21,7 +21,7 @@ class LibreOfficeDocumentConversionServiceTest {
     tempDir.deleteOnExit()
     val s3Client = mockk<S3Client>()
     val documentConversionService = LibreOfficeDocumentConversionService(
-      tempDir,
+      tempDir.toPath(),
       s3Client,
       "bucket",
     )

@@ -20,5 +20,6 @@ class AdminService(private val caseNoteRetryService: CaseNoteRetryService, priva
     caseNotesToRetry.forEach { caseNote ->
       caseNoteRetryService.processDeliusCaseNote(caseNote)
     }
+    log.info("Finished retry failed delius case notes process")
   }
 }

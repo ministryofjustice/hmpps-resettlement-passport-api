@@ -44,6 +44,8 @@ generic-service:
     SCHEDULE_EXPRESSION_RELEASE-DAY-METRICS: 0 0 4 * * *
     SCHEDULE_EXPRESSION_RECONCILE-RELEASE-DATES: 0 0 2 * * *
     SCHEDULE_EXPRESSION_DELETE-EXPIRED-OTP: 0 0 3 * * *
+    CLAMAV_HOSTNAME: resettlement-passport-api-clamav
+    CLAMAV_PORT: 3310
 
 
   # Pre-existing kubernetes secrets to load as environment variables in the deployment.
@@ -69,6 +71,8 @@ generic-service:
     sqs-prisoner-event-queue-secret:
       OFFENDER_EVENT_QUEUE_NAME: "sqs_queue_name"
       OFFENDER_EVENT_DLQ_NAME: "sqs_dlq_queue_name"
+    s3-bucket-output:
+      S3_DOCUMENT_BUCKET_NAME: bucket_name
 
   allowlist:
     groups:
@@ -87,3 +91,5 @@ generic-prometheus-alerts:
 # Override in values-dev.yaml
 # Also update the environment variables to point the application to the mocked services (on port 80) e.g. http://cvl-stub-api
 deploy_stubs: false
+
+

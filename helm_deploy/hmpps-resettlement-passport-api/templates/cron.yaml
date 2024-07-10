@@ -17,7 +17,6 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - date && echo Running PUT /retry-failed-delius-case-notes on resettlement-passport-api
-                - curl -X PUT http://hmpps-resettlement-passport-api/retry-failed-delius-case-notes
+                - date && echo Running PUT /retry-failed-delius-case-notes on resettlement-passport-api && curl -v -X PUT http://hmpps-resettlement-passport-api/retry-failed-delius-case-notes
           restartPolicy: Never
   concurrencyPolicy: Forbid

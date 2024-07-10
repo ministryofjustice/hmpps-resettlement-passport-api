@@ -21,6 +21,10 @@ object LocalStackContainer {
   }
 
   private fun startLocalstackIfNotRunning(): LocalStackContainer? {
+    if (localstackIsRunning()) {
+      log.warn("Using existing localstack instance")
+      return null
+    }
     log.info("Creating a localstack instance")
     val logConsumer = Slf4jLogConsumer(log).withPrefix("localstack")
     return LocalStackContainer(

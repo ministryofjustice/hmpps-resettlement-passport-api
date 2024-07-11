@@ -222,7 +222,7 @@ class ResettlementAssessmentController(
     @RequestHeader("Authorization")
     auth: String,
   ): ResponseEntity<Void> {
-    resettlementAssessmentStrategies.completeAssessment(nomsId, pathway, assessmentType, resettlementAssessmentCompleteRequest, auth,)
+    resettlementAssessmentStrategies.completeAssessment(nomsId, pathway, assessmentType, resettlementAssessmentCompleteRequest, auth)
     return ResponseEntity.ok().build()
   }
 

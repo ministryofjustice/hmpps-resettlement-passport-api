@@ -255,7 +255,7 @@ class YamlResettlementAssessmentStrategy(
     while (true) {
       try {
         val actualPage: AssessmentConfigPage? = nodeToQuestionMap.keys.elementAtOrNull(pageNumber)
-        val expectedPage: String = if (currentNode != null) chooseNextPage(currentNode, assessment.questionsAndAnswers, edit, assessmentType) else getConfig(pathway, assessmentType, version,).pages[0].id
+        val expectedPage: String = if (currentNode != null) chooseNextPage(currentNode, assessment.questionsAndAnswers, edit, assessmentType) else getConfig(pathway, assessmentType, version).pages[0].id
         if (expectedPage == "CHECK_ANSWERS") {
           break
         }
@@ -281,7 +281,7 @@ class YamlResettlementAssessmentStrategy(
     pageId: String,
     assessmentType: ResettlementAssessmentType,
     version: Int = 1,
-    ): ResettlementAssessmentResponsePage {
+  ): ResettlementAssessmentResponsePage {
     // Get the latest complete assessment (if exists)
     var existingAssessment = getExistingAssessment(nomsId, pathway, assessmentType)
     var resettlementPlanCopy = false
@@ -317,7 +317,7 @@ class YamlResettlementAssessmentStrategy(
     }
 
     // Get the current page
-    val config = getConfig(pathway, assessmentType, version,)
+    val config = getConfig(pathway, assessmentType, version)
     val page = config.pages.first { it.id == pageId }
 
     // Convert to ResettlementAssessmentPage DTO
@@ -380,12 +380,16 @@ class YamlResettlementAssessmentStrategy(
     return getQuestionList(pathway, assessmentType).first { it.id == id }
   }
 
-  fun findPageIdFromQuestionId(questionId: String, assessmentType: ResettlementAssessmentType, pathway: Pathway, version: Int = 1,
+  fun findPageIdFromQuestionId(
+    questionId: String,
+    assessmentType: ResettlementAssessmentType,
+    pathway: Pathway,
+    version: Int = 1,
   ): String {
-    return getConfig(pathway, assessmentType, version,).pages.firstOrNull { p -> (p.questions?.any { q -> q.id == questionId } == true) }?.id ?: throw RuntimeException("Cannot find page for question [$questionId] - check that the question is used in a page!")
+    return getConfig(pathway, assessmentType, version).pages.firstOrNull { p -> (p.questions?.any { q -> q.id == questionId } == true) }?.id ?: throw RuntimeException("Cannot find page for question [$questionId] - check that the question is used in a page!")
   }
 
-  private fun getQuestionList(pathway: Pathway, assessmentType: ResettlementAssessmentType, version: Int = 1,): List<IResettlementAssessmentQuestion> = getConfig(pathway, assessmentType, version,).pages.filter { it.questions != null }.flatMap { it.questions!! }
+  private fun getQuestionList(pathway: Pathway, assessmentType: ResettlementAssessmentType, version: Int = 1): List<IResettlementAssessmentQuestion> = getConfig(pathway, assessmentType, version).pages.filter { it.questions != null }.flatMap { it.questions!! }
 
   private fun saveAssessment(assessment: ResettlementAssessmentEntity): ResettlementAssessmentEntity = resettlementAssessmentRepository.save(assessment)
 

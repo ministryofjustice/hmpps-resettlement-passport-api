@@ -15,7 +15,8 @@
     "telephone": "012345678",
     "email": "john.smith@test.com",
     "prisonName": "Moorland (HMP & YOI)",
-    "isHomeDetention": false
+    "isHomeDetention": false,
+    "isRecall": false
   },
   "pathways": [
     {

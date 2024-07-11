@@ -37,3 +37,12 @@ generic-prometheus-alerts:
   businessHoursOnly: true
 
 deploy_stubs: true
+
+clamav:
+  nameOverride: clamav
+  resources:
+    requests:
+      memory: 1G
+    limits:
+      memory: 2G
+  replicaCount: 1

@@ -46,7 +46,7 @@ class MetricsService(
 
     for (prison in prisonList) {
       try {
-        val prisoners = prisonerSearchApiService.findPrisonersBySearchTerm(prison.id, "")
+        val prisoners = prisonerSearchApiService.findPrisonersBySearchTerm(prison.id)
         prisoners.forEach { prisonerService.setDisplayedReleaseDate(it) }
 
         val allPrisonersPastCount = prisoners.filter { it.displayReleaseDate != null && it.displayReleaseDate!! < earliestFutureReleaseDate }.size

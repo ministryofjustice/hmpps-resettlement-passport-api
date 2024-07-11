@@ -22,7 +22,7 @@ class PrisonerSearchApiService(
     do {
       val data = prisonerSearchWebClientClientCredentials.get()
         .uri(
-          "/prison/{prisonId}/prisoners?term={term}&size={size}&page={page}&sort={sort}",
+          "/prison/{prisonId}/prisoners?size={size}&page={page}&sort={sort}",
           mapOf(
             "prisonId" to prisonId,
             // NB: API allows up 3,000 results per page

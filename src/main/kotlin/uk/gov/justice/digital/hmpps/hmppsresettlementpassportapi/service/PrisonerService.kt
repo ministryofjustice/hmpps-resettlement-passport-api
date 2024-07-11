@@ -103,7 +103,7 @@ class PrisonerService(
       prisoners.add(it)
     }
 
-    if (searchTerm != null) {
+    if (searchTerm?.isNotBlank() == true) {
       prisoners.retainAll { searchTermMatchesPrisoner(searchTerm, it) }
     }
 

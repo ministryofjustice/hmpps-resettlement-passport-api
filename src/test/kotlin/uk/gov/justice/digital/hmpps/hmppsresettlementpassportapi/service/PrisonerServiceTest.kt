@@ -131,7 +131,7 @@ class PrisonerServiceTest {
     val expectedPrisonerId = "A8339DY"
 
     val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-1.json")
-    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
+    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId)).thenReturn(mockedJsonResponse.content)
 
     val prisonersList =
       prisonerService.getPrisonersByPrisonId(
@@ -157,7 +157,7 @@ class PrisonerServiceTest {
     val prisonId = "MDI"
 
     val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-2.json")
-    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
+    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId)).thenReturn(mockedJsonResponse.content)
 
     val prisoners =
       prisonerService.getPrisonersByPrisonId(
@@ -185,7 +185,7 @@ class PrisonerServiceTest {
     val expectedPrisonerId = "A8339DY"
 
     val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-1.json")
-    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
+    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId)).thenReturn(mockedJsonResponse.content)
 
     val prisonersList =
       prisonerService.getPrisonersByPrisonId(
@@ -216,7 +216,7 @@ class PrisonerServiceTest {
     val expectedPrisonerId = "G1458GV"
 
     val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-1.json")
-    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
+    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId)).thenReturn(mockedJsonResponse.content)
 
     val prisonersList =
       prisonerService.getPrisonersByPrisonId(
@@ -243,7 +243,7 @@ class PrisonerServiceTest {
     val expectedPageSize = 3
 
     val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-1.json")
-    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
+    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId)).thenReturn(mockedJsonResponse.content)
 
     val prisonersList =
       prisonerService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 5, "name,ASC", false, "123")
@@ -268,7 +268,7 @@ class PrisonerServiceTest {
     )
 
     val mockedJsonResponse: PrisonersSearchList = readStringAsObject(mockedJsonResponseString)
-    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
+    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId)).thenReturn(mockedJsonResponse.content)
     val prisonersList =
       prisonerService.getPrisonersByPrisonId(
         "",
@@ -293,7 +293,7 @@ class PrisonerServiceTest {
     val prisonId = "MDI"
 
     val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-2.json")
-    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
+    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId)).thenReturn(mockedJsonResponse.content)
 
     val prisoners = prisonerService.getPrisonersByPrisonId(
       "",
@@ -319,7 +319,7 @@ class PrisonerServiceTest {
     val prisonId = "MDI"
 
     val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-2.json")
-    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
+    `when`(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId)).thenReturn(mockedJsonResponse.content)
 
     val prisoners = prisonerService.getPrisonersByPrisonId(
       "",

@@ -32,7 +32,7 @@ class ClamAVConfig(
     havingValue = "true",
     matchIfMissing = true,
   )
-  fun virusScanner(clamavClient: ClamavClient) : VirusScanner {
+  fun virusScanner(clamavClient: ClamavClient): VirusScanner {
     log.info("clamav hostname is  $clamavHost")
     return ClamavVirusScanner(clamavClient)
   }

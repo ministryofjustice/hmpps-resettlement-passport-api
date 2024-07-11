@@ -132,7 +132,7 @@ class CaseNoteRetryServiceTest {
         name = "John Smith",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
         description = null,
-        // TODO: this needs to be added into the database
+        //TODO: this needs to be added into the database
       ),
     ).thenReturn(true)
     Mockito.`when`(
@@ -143,7 +143,7 @@ class CaseNoteRetryServiceTest {
         name = "Jane Smith",
         deliusCaseNoteType = DeliusCaseNoteType.PRE_RELEASE_REPORT,
         description = null,
-        // TODO: this needs to be added into the database
+        //TODO: this needs to be added into the database
       ),
     ).thenReturn(true)
     Mockito.`when`(
@@ -154,7 +154,7 @@ class CaseNoteRetryServiceTest {
         name = "Alan Johnson",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
         description = null,
-        // TODO: this needs to be added into the database
+        //TODO: this needs to be added into the database
       ),
     ).thenReturn(false)
 

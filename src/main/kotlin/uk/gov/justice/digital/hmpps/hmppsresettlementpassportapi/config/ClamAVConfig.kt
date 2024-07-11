@@ -32,7 +32,10 @@ class ClamAVConfig(
     havingValue = "true",
     matchIfMissing = true,
   )
-  fun virusScanner(clamavClient: ClamavClient): VirusScanner = ClamavVirusScanner(clamavClient)
+  fun virusScanner(clamavClient: ClamavClient) : VirusScanner {
+    log.info("clamav hostname is  $clamavHost")
+    return ClamavVirusScanner(clamavClient)
+  }
 
   @Bean
   @ConditionalOnMissingBean

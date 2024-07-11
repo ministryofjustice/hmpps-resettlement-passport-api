@@ -14,7 +14,9 @@
     "mobile": "0778899665",
     "telephone": "012345678",
     "email": "john.smith@test.com",
-    "prisonName": "Moorland (HMP & YOI)"
+    "prisonName": "Moorland (HMP & YOI)",
+    "isHomeDetention": false,
+    "isRecall": false
   },
   "pathways": [
     {

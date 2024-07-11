@@ -17,6 +17,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
@@ -92,6 +93,34 @@ class PrisonerServiceTest {
   @AfterEach
   fun afterEach() {
     unmockkAll()
+  }
+
+  @Test
+  fun `getPrisonerDetailsByNomsId with isHomeDetention true`() {
+    mockDatabaseCalls(false)
+    val expectedPrisonerId = "A8339DY"
+    val mockEntity = PrisonerEntity(
+      nomsId = expectedPrisonerId,
+      creationDate = LocalDateTime.now(),
+      prisonId = "MDI",
+      id = 1L,
+      crn = null,
+      releaseDate = null,
+    )
+
+    val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-1.json")
+    `when`(prisonerSearchApiService.findPrisonerPersonalDetails(expectedPrisonerId)).thenReturn(mockedJsonResponse.content!![0])
+    `when`(pathwayAndStatusService.getOrCreatePrisoner(expectedPrisonerId, "MDI", LocalDate.parse("2099-09-12"), null)).thenReturn(mockEntity)
+    `when`(pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(any(), eq(mockEntity))).thenReturn(
+      PathwayStatusEntity(null, mockEntity, Pathway.ACCOMMODATION, Status.NOT_STARTED, null),
+    )
+
+    val prisoner =
+      prisonerService.getPrisonerDetailsByNomsId(
+        expectedPrisonerId,
+        "123",
+      )
+    Assertions.assertTrue(prisoner.personalDetails?.isHomeDetention!!)
   }
 
   @Test
@@ -309,7 +338,7 @@ class PrisonerServiceTest {
     Assertions.assertEquals(getExpectedPrisonersPathwayViewAndPathwayStatus(), prisoners)
   }
 
-  private fun mockDatabaseCalls() {
+  private fun mockDatabaseCalls(mockFindByPrison: Boolean = true) {
     val mockPrisonerEntity1 =
       PrisonerEntity(1, "G1458GV", LocalDateTime.now(), "test", "xyz", LocalDate.parse("2025-01-23"))
     val mockPrisonerEntity2 =
@@ -331,8 +360,9 @@ class PrisonerServiceTest {
       PathwayStatusEntity(5, mockPrisonerEntity1, pathway3, status, LocalDateTime.now()),
       PathwayStatusEntity(6, mockPrisonerEntity1, pathway1, status, LocalDateTime.now()),
     )
-
-    `when`(pathwayStatusRepository.findByPrison(any())).thenReturn(mockPathwayStatusEntities)
+    if (mockFindByPrison) {
+      `when`(pathwayStatusRepository.findByPrison(any())).thenReturn(mockPathwayStatusEntities)
+    }
   }
 
   private fun mockDatabaseCallsForPathwayView() {

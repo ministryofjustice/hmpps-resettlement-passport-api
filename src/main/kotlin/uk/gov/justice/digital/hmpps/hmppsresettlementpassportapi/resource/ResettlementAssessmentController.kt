@@ -263,14 +263,9 @@ class ResettlementAssessmentController(
     nomsId: String,
     @RequestParam("assessmentType")
     assessmentType: ResettlementAssessmentType,
-    @RequestParam("sendCombinedCaseNotes")
-    sendCombinedCaseNotes: Boolean = false,
     @RequestHeader("Authorization")
     auth: String,
-  ): ResponseEntity<Void> {
-    resettlementAssessmentService.submitResettlementAssessmentByNomsId(nomsId, assessmentType, auth, sendCombinedCaseNotes)
-    return ResponseEntity.ok().build()
-  }
+  ) = resettlementAssessmentService.submitResettlementAssessmentByNomsId(nomsId, assessmentType, auth)
 
   @GetMapping("/{nomsId}/resettlement-assessment/{pathway}/latest", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(

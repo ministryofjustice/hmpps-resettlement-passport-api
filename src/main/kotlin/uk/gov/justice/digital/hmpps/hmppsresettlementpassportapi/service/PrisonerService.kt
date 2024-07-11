@@ -275,14 +275,12 @@ class PrisonerService(
     setDisplayedReleaseDate(prisonerSearch)
 
     // Add initial pathway statuses if required
-    pathwayAndStatusService.addPrisonerAndInitialPathwayStatus(
+    val prisonerEntity = pathwayAndStatusService.getOrCreatePrisoner(
       nomsId,
       prisonerSearch.prisonId,
       prisonerSearch.displayReleaseDate,
     )
 
-    val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
-      ?: throw ResourceNotFoundException("Unable to find prisoner $nomsId in database.")
     val prisonerImageDetailsList = prisonApiService.findPrisonerImageDetails(nomsId)
     var prisonerImage: PrisonerImage? = null
     prisonerImageDetailsList.forEach {
@@ -317,6 +315,8 @@ class PrisonerService(
       personalDetails.contactDetails?.telephone,
       personalDetails.contactDetails?.email,
       prisonerSearch.prisonName,
+      hasHomeDetentionDates(prisonerSearch),
+      isRecall = prisonerSearch.recall,
     )
 
     val pathwayStatuses = getPathwayStatuses(prisonerEntity)
@@ -334,6 +334,9 @@ class PrisonerService(
       isInWatchlist = isInWatchlist,
     )
   }
+
+  private fun hasHomeDetentionDates(prisonerSearch: PrisonersSearch): Boolean = prisonerSearch.homeDetentionCurfewActualDate != null ||
+    prisonerSearch.homeDetentionCurfewEligibilityDate != null
 
   protected fun getPathwayStatuses(
     prisonerEntity: PrisonerEntity,
@@ -470,9 +473,7 @@ class PrisonerService(
     }
   }
 
-  fun getPrisonerEntity(nomsId: String): PrisonerEntity {
-    return prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Unable to find prisoner $nomsId in database.")
-  }
+  fun getPrisonerEntity(nomsId: String): PrisonerEntity = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Unable to find prisoner $nomsId in database.")
 }
 
 private data class AssessmentRequiredResult(

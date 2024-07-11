@@ -37,3 +37,6 @@ generic-prometheus-alerts:
   businessHoursOnly: true
 
 deploy_stubs: true
+
+clamav:
+  replicaCount: 1

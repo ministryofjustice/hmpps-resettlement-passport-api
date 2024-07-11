@@ -35,10 +35,4 @@ generic-prometheus-alerts:
   alertSeverity: hmpps-resettlement-passport-non-prod
 
 clamav:
-  nameOverride: clamav
-  resources:
-    requests:
-      memory: 1G
-    limits:
-      memory: 2G
   replicaCount: 1

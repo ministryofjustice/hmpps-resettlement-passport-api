@@ -12,6 +12,8 @@ generic-service:
     tag: app_version # override at deployment time
     port: 8080
 
+
+
   ingress:
     enabled: true
     host: app-hostname.local # override per environment
@@ -86,6 +88,15 @@ generic-service:
 
 generic-prometheus-alerts:
   targetApplication: hmpps-resettlement-passport-api
+
+clamav:
+  nameOverride: clamav
+  resources:
+    requests:
+      memory: 1G
+    limits:
+      memory: 2G
+  replicaCount: 2
 
 # Whether to deploy the stubs
 # Override in values-dev.yaml

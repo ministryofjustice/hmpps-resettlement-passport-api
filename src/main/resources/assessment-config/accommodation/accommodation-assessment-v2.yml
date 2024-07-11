@@ -1,8 +1,8 @@
-version: 1
+version: 2
 pathway: "ACCOMMODATION"
 genericAssessmentVersion: 1
 pages:
-  - id: "WHERE_DID_THEY_LIVE_VERSION_2"
+  - id: "PAST_AND_FUTURE_ACCOMMODATION"
     questions:
       - id: "WHERE_DID_THEY_LIVE"
         title: "Where did the person in prison live before custody?"

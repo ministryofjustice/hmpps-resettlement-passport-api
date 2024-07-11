@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import software.amazon.awssdk.services.sns.endpoints.internal.Value.Bool
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AssessmentSkipRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
@@ -77,10 +78,12 @@ class ResettlementAssessmentController(
     assessmentType: ResettlementAssessmentType,
     @RequestParam("currentPage")
     currentPage: String?,
+    @RequestParam("version")
+    version: Int = 1,
     @RequestBody
     resettlementAssessment: ResettlementAssessmentRequest,
   ): ResettlementAssessmentNextPage {
-    return ResettlementAssessmentNextPage(nextPageId = resettlementAssessmentStrategies.getNextPageId(resettlementAssessment, nomsId, pathway, assessmentType, currentPage))
+    return ResettlementAssessmentNextPage(nextPageId = resettlementAssessmentStrategies.getNextPageId(resettlementAssessment, nomsId, pathway, assessmentType, currentPage, version))
   }
 
   @GetMapping("/{nomsId}/resettlement-assessment/{pathway}/page/{pageId}", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -123,8 +126,10 @@ class ResettlementAssessmentController(
     pageId: String,
     @RequestParam("assessmentType")
     assessmentType: ResettlementAssessmentType,
+    @RequestParam("version")
+    version: Int = 1,
   ): ResettlementAssessmentResponsePage {
-    return resettlementAssessmentStrategies.getPageFromId(nomsId, pathway, pageId, assessmentType)
+    return resettlementAssessmentStrategies.getPageFromId(nomsId, pathway, pageId, assessmentType, version)
   }
 
   @GetMapping("/{nomsId}/resettlement-assessment/summary", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -218,7 +223,7 @@ class ResettlementAssessmentController(
     @RequestHeader("Authorization")
     auth: String,
   ): ResponseEntity<Void> {
-    resettlementAssessmentStrategies.completeAssessment(nomsId, pathway, assessmentType, resettlementAssessmentCompleteRequest, auth)
+    resettlementAssessmentStrategies.completeAssessment(nomsId, pathway, assessmentType, resettlementAssessmentCompleteRequest, auth,)
     return ResponseEntity.ok().build()
   }
 

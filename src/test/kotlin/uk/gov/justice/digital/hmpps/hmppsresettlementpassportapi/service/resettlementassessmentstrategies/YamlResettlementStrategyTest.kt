@@ -128,7 +128,7 @@ open class YamlResettlementStrategyTest {
 
   private fun setUpMocks(nomsId: String, returnResettlementAssessmentEntity: Boolean, assessment: ResettlementAssessmentQuestionAndAnswerList = ResettlementAssessmentQuestionAndAnswerList(mutableListOf())) {
     val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23"))
-    val resettlementAssessmentEntity = if (returnResettlementAssessmentEntity) ResettlementAssessmentEntity(1, prisonerEntity, Pathway.ACCOMMODATION, Status.NOT_STARTED, ResettlementAssessmentType.BCST2, assessment, testDate, "", ResettlementAssessmentStatus.COMPLETE, "some text", "USER_1", submissionDate = null) else null
+    val resettlementAssessmentEntity = if (returnResettlementAssessmentEntity) ResettlementAssessmentEntity(1, prisonerEntity, Pathway.ACCOMMODATION, Status.NOT_STARTED, ResettlementAssessmentType.BCST2, assessment, testDate, "", ResettlementAssessmentStatus.COMPLETE, "some text", "USER_1", submissionDate = null, version = 1,) else null
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
     Mockito.`when`(
       resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
@@ -142,7 +142,7 @@ open class YamlResettlementStrategyTest {
 
   @Test
   fun `test get config for valid pathway and assessment type`() {
-    val assessmentQuestionSet = resettlementAssessmentService.getConfig(Pathway.ACCOMMODATION, ResettlementAssessmentType.BCST2)
+    val assessmentQuestionSet = resettlementAssessmentService.getConfig(Pathway.ACCOMMODATION, ResettlementAssessmentType.BCST2, version = 1,)
     Assertions.assertNotNull(assessmentQuestionSet)
     Assertions.assertTrue(assessmentQuestionSet.pages.isNotEmpty())
   }
@@ -151,7 +151,7 @@ open class YamlResettlementStrategyTest {
   fun `test get config for invalid pathway`() {
     val invalidPathway = "INVALID_PATHWAY"
     Assertions.assertThrows(IllegalArgumentException::class.java) {
-      resettlementAssessmentService.getConfig(Pathway.valueOf(invalidPathway), ResettlementAssessmentType.BCST2)
+      resettlementAssessmentService.getConfig(Pathway.valueOf(invalidPathway), ResettlementAssessmentType.BCST2, version = 1,)
     }
   }
 }

@@ -1,0 +1,18 @@
+version: 2
+pathway: "ACCOMMODATION"
+genericAssessmentVersion: 1
+pages:
+  - id: "HELP_TO_KEEP_HOME_VERSION_2"
+    questions:
+      - id: "HELP_TO_KEEP_HOME"
+        title: "Does the person in prison or their family need help to keep their home while they are in prison?"
+        type: "RADIO"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - nextPageId: "FINAL_QUESTION_NEXT_PAGE"

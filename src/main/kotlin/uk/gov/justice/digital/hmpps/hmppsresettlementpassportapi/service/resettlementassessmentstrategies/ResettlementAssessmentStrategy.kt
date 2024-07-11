@@ -63,7 +63,7 @@ class YamlResettlementAssessmentStrategy(
     pathway: Pathway,
     assessmentType: ResettlementAssessmentType,
     currentPage: String?,
-    version: Int = 1,
+    version: Int,
   ): String {
     // Validate the request
     if (currentPage != null && assessment.questionsAndAnswers == null) {
@@ -280,7 +280,7 @@ class YamlResettlementAssessmentStrategy(
     pathway: Pathway,
     pageId: String,
     assessmentType: ResettlementAssessmentType,
-    version: Int = 1,
+    version: Int,
   ): ResettlementAssessmentResponsePage {
     // Get the latest complete assessment (if exists)
     var existingAssessment = getExistingAssessment(nomsId, pathway, assessmentType)

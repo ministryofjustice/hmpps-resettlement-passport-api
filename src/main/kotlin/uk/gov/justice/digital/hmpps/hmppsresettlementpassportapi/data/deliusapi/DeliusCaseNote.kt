@@ -8,6 +8,7 @@ data class DeliusCaseNote(
   val dateTime: OffsetDateTime,
   val notes: String,
   val author: DeliusAuthor,
+  val description: String?,
 )
 
 data class DeliusAuthor(

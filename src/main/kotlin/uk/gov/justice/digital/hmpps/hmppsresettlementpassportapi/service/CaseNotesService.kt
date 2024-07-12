@@ -108,13 +108,15 @@ class CaseNotesService(
     )
   }
 
-  fun postBCSTCaseNoteToDelius(crn: String, prisonCode: String, notes: String, name: String, deliusCaseNoteType: DeliusCaseNoteType): Boolean {
-    return resettlementPassportDeliusApiService.createContact(
+  fun postBCSTCaseNoteToDelius(crn: String, prisonCode: String, notes: String, name: String, deliusCaseNoteType: DeliusCaseNoteType, description: String?): Boolean {
+    return resettlementPassportDeliusApiService.createCaseNote(
       crn = crn,
       type = deliusCaseNoteType,
       dateTime = OffsetDateTime.now(),
       notes = notes,
       author = convertFromNameToDeliusAuthor(prisonCode, name),
+      description = description,
+
     )
   }
 }

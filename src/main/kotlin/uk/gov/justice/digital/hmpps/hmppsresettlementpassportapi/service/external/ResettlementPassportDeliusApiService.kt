@@ -174,7 +174,7 @@ class ResettlementPassportDeliusApiService(
     }
   }
 
-  fun createContact(crn: String, type: DeliusCaseNoteType, dateTime: OffsetDateTime, notes: String, author: DeliusAuthor): Boolean {
+  fun createCaseNote(crn: String, type: DeliusCaseNoteType, dateTime: OffsetDateTime, notes: String, author: DeliusAuthor, description: String?): Boolean {
     var success: Boolean
     runBlocking {
       try {
@@ -186,6 +186,7 @@ class ResettlementPassportDeliusApiService(
               dateTime = dateTime,
               notes = notes,
               author = author,
+              description = description,
             ),
           )
           .retrieve()

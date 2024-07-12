@@ -202,23 +202,41 @@ class ResettlementPassportDeliusApiMockServer : WireMockServerBase(9102) {
     )
   }
 
-  fun stubPostCaseNote(crn: String, type: String, prisonId: String, forename: String, surname: String, caseNoteText: String, fakeNow: String) {
+  fun stubPostCaseNote(crn: String, type: String, prisonId: String, forename: String, surname: String, caseNoteText: String, fakeNow: String, description: String? = null) {
+    val requestBodyJson = if (description != null) {
+      """
+      {
+        "type": "$type",
+        "description": "$description",
+        "dateTime": "$fakeNow",
+        "notes": "$caseNoteText",
+        "author": {
+         "prisonCode": "$prisonId",
+          "forename": "$forename",
+          "surname": "$surname"
+        }
+      }
+      """.trimIndent()
+    } else {
+      """
+      {
+        "type": "$type",
+        "dateTime": "$fakeNow",
+        "notes": "$caseNoteText",
+        "author": {
+         "prisonCode": "$prisonId",
+         "forename": "$forename",
+         "surname": "$surname"
+        }
+      }
+      """.trimIndent()
+    }
+
     stubFor(
       post("/nomis-case-note/$crn")
         .withRequestBody(
           equalToJson(
-            """
-            {
-              "type": "$type",
-              "dateTime": "$fakeNow",
-              "notes": "$caseNoteText",
-              "author": {
-                "prisonCode": "$prisonId",
-                "forename": "$forename",
-                "surname": "$surname"
-              }
-            }
-            """.trimIndent(),
+            requestBodyJson,
           ),
         ).willReturn(aResponse().withStatus(200)),
     )

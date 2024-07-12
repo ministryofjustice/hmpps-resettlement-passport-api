@@ -53,7 +53,7 @@ class DocumentService(
     // using nomsId to find the prisoner entity
     val prisoner = findPrisonerByNomsId(nomsId)
 
-    val key = nomsId + "_" + UUID.randomUUID().toString()
+    val key = nomsId + "_" + UUID.randomUUID()
 
     uploadDocumentToS3(document, bucketName, key)
     val convertedDocumentKey = documentConversionService.convert(document, key)
@@ -65,8 +65,15 @@ class DocumentService(
       creationDate = LocalDateTime.now(),
     )
 
+    val docEntity = documentsRepository.save(documents)
+    if (docEntity == null) {
+      log.info("Failed to create document")
+    } else {
+      log.info("Document key ${docEntity.originalDocumentKey} and id is ${docEntity.id}")
+    }
     // saving the documents entity
-    return documentsRepository.save(documents)
+    // return documentsRepository.save(documents)
+    return docEntity
   }
 
   fun findPrisonerByNomsId(nomsId: String): PrisonerEntity {
@@ -94,18 +101,28 @@ class DocumentService(
     return s3Client.getObject(request).readAllBytes()
   }
 
-  fun getDocumentByNomisIdAndDocumentId(nomsId: String, documentId: String): ByteArray {
+  fun getDocumentByNomisIdAndDocumentId(nomsId: String, documentId: Long): ByteArray {
     val prisoner = findPrisonerByNomsId(nomsId)
-    val document = documentsRepository.findByPrisonerIdAndOriginalDocumentKey(prisoner.id!!, documentId)
-      ?: throw ResourceNotFoundException("Document with id $documentId and prisoner with id $nomsId not found in database")
-
+    val document: DocumentsEntity
+    try {
+      document = documentsRepository.getReferenceById(documentId)
+    } catch (ex: Exception) {
+      throw ResourceNotFoundException("Document with id $documentId not found")
+    }
+    if (prisoner.id != document.prisonerId) {
+      throw ResourceNotFoundException("Document with id $documentId not found")
+    }
     return getDocument(document.originalDocumentKey)
   }
 
   fun getHtmlByNomisIdAndDocumentId(nomsId: String, documentId: Long): String {
     val prisoner = findPrisonerByNomsId(nomsId)
-    val document = documentsRepository.getReferenceById(documentId)
-
+    val document: DocumentsEntity
+    try {
+      document = documentsRepository.getReferenceById(documentId)
+    } catch (ex: Exception) {
+      throw ResourceNotFoundException("Document with id $documentId not found")
+    }
     if (prisoner.id != document.prisonerId) {
       throw ResourceNotFoundException("Document with id $documentId not found")
     }

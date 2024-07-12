@@ -93,9 +93,9 @@ class DocumentServiceTest {
       .build()
 
     whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
-    whenever(documentsRepository.findByPrisonerIdAndOriginalDocumentKey(1, "acb_123455")).thenReturn(documentsEntity)
+    whenever(documentsRepository.getReferenceById(1)).thenReturn(documentsEntity)
     whenever(s3Client.getObject(request)).thenReturn(res)
-    val response = documentService.getDocumentByNomisIdAndDocumentId("acb", "acb_123455")
+    val response = documentService.getDocumentByNomisIdAndDocumentId("acb", 1)
     Assertions.assertEquals(file.size.toInt(), response.size)
   }
 }

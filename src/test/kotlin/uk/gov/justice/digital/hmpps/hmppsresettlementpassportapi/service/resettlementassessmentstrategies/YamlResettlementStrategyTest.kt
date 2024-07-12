@@ -370,6 +370,148 @@ open class YamlResettlementStrategyTest {
   }
 
   @Test
+  fun `test get config for specific version`() {
+    val expectedPages = listOf(
+      AssessmentConfigPage(
+        id = "PAST_AND_FUTURE_ACCOMMODATION",
+        title = null,
+        questions = listOf(
+          AssessmentConfigQuestion(
+            id = "WHERE_DID_THEY_LIVE",
+            title = "Where did the person in prison live before custody?",
+            subTitle = null,
+            type = TypeOfQuestion.RADIO,
+            options = listOf(
+              Option(id = "PRIVATE_RENTED_HOUSING", displayText = "Private rented housing"),
+              Option(id = "PRIVATE_HOUSING_OWNED", displayText = "Private housing owned by them"),
+              Option(id = "FAMILY_OR_FRIENDS", displayText = "With family or friends"),
+              Option(id = "SOCIAL_HOUSING", displayText = "Social housing"),
+              Option(id = "LOCAL_AUTHORITY_OR_SUPPORTED_HOUSING", displayText = "Local authority care or supported housing"),
+              Option(id = "HOSTEL", displayText = "Hostel"),
+              Option(id = "APPROVED_PREMISES", displayText = "Approved premises"),
+              Option(id = "NO_PERMANENT_OR_FIXED", displayText = "No permanent or fixed address"),
+              Option(id = "NO_ANSWER", displayText = "No answer provided")
+            )
+          ),
+          AssessmentConfigQuestion(
+            id = "ADDITIONAL_INFORMATION_WHERE_DID_THEY_LIVE",
+            title = "Additional information",
+            subTitle = "Include details of who else lived at the address and how the accommodation was paid for. If no fixed address, specify the council area where they have a local connection.",
+            type = TypeOfQuestion.LONG_TEXT,
+            options = null
+          ),
+          AssessmentConfigQuestion(
+            id = "WHERE_WILL_THEY_LIVE",
+            title = "Where will the person in prison live when they are released?",
+            subTitle = null,
+            type = TypeOfQuestion.RADIO,
+            options = listOf(
+              Option(id = "RETURN_TO_PREVIOUS_ADDRESS", displayText = "Return to their previous address"),
+              Option(id = "MOVE_TO_NEW_ADDRESS", displayText = "Move to a new address"),
+              Option(id = "DOES_NOT_HAVE_ANYWHERE", displayText = "Does not have anywhere to live"),
+              Option(id = "NO_ANSWER", displayText = "No answer provided")
+            )
+          ),
+          AssessmentConfigQuestion(
+            id = "ADDITIONAL_INFORMATION_WHERE_WILL_THEY_LIVE",
+            title = "Additional information",
+            subTitle = "Include details of who else lived at the address and how the accommodation was paid for. If no fixed address, specify the council area where they have a local connection.",
+            type = TypeOfQuestion.LONG_TEXT,
+            options = null
+          )
+        ),
+        nextPageLogic = listOf(
+          AssessmentConfigNextPageOption(
+            questionId = "WHERE_WILL_THEY_LIVE",
+            nextPageId = "WHERE_WILL_THEY_LIVE_ADDRESS",
+            answers = listOf(
+              StringAnswer(answer = "MOVE_TO_NEW_ADDRESS")
+            )
+          ),
+          AssessmentConfigNextPageOption(
+            questionId = "WHERE_WILL_THEY_LIVE",
+            nextPageId = "FINAL_QUESTION_NEXT_PAGE",
+            answers = listOf(
+              StringAnswer(answer = "RETURN_TO_PREVIOUS_ADDRESS"),
+              StringAnswer(answer = "DOES_NOT_HAVE_ANYWHERE"),
+              StringAnswer(answer = "NO_ANSWER")
+            )
+          )
+        )
+      ),
+      AssessmentConfigPage(
+        id = "WHERE_WILL_THEY_LIVE_ADDRESS",
+        title = "Where will the person in prison live when they are released?",
+        questions = listOf(
+          AssessmentConfigQuestion(
+            id = "WHERE_WILL_THEY_LIVE_ADDRESS",
+            title = "Enter the address",
+            subTitle = null,
+            type = TypeOfQuestion.ADDRESS,
+            options = null
+          )
+        ),
+        nextPageLogic = listOf(
+          AssessmentConfigNextPageOption(
+            questionId = null,
+            nextPageId = "FINAL_QUESTION_NEXT_PAGE",
+            answers = null
+          )
+        )
+      ),
+      AssessmentConfigPage(
+        id = "ASSESSMENT_SUMMARY",
+        title = null,
+        questions = listOf(
+          AssessmentConfigQuestion(
+            id = "SUPPORT_NEEDS",
+            title = "",
+            subTitle = null,
+            type = TypeOfQuestion.RADIO,
+            options = listOf(
+              Option(id = "SUPPORT_REQUIRED", displayText = "Support required", description = "a need for support has been identified and is accepted"),
+              Option(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
+              Option(id = "SUPPORT_DECLINED", displayText = "Support declined", description = "a need has been identified but support is declined")
+            )
+          ),
+          AssessmentConfigQuestion(
+            id = "CASE_NOTE_SUMMARY",
+            title = "Add a case note summary",
+            subTitle = "This will be displayed as a case note in both DPS and nDelius",
+            type = TypeOfQuestion.LONG_TEXT,
+            options = null
+          )
+        ),
+        nextPageLogic = listOf(
+          AssessmentConfigNextPageOption(
+            questionId = null,
+            nextPageId = "CHECK_ANSWERS",
+            answers = null
+          )
+        )
+      ),
+      AssessmentConfigPage(
+        id = "CHECK_ANSWERS",
+        title = null,
+        questions = null,
+        nextPageLogic = null
+      )
+    )
+
+    val expectedQuestionSet = AssessmentQuestionSet(
+      version = 2,
+      generic = false,
+      pathway = Pathway.ACCOMMODATION,
+      genericAssessmentVersion = 1,
+      pages = expectedPages
+    )
+
+    val assessmentQuestionSet = resettlementAssessmentService.getConfig(Pathway.ACCOMMODATION, ResettlementAssessmentType.BCST2, version = 2)
+    Assertions.assertNotNull(assessmentQuestionSet)
+    Assertions.assertEquals(expectedQuestionSet, assessmentQuestionSet)
+  }
+
+  @Test
   fun `test get config for invalid pathway`() {
     val invalidPathway = "INVALID_PATHWAY"
     Assertions.assertThrows(IllegalArgumentException::class.java) {

@@ -92,7 +92,7 @@ class DocumentStorageResourceController(
     nomsId: String,
     @PathVariable("documentId")
     @Parameter(required = true)
-    documentId: String,
+    documentId: Long,
   ): ByteArray = uploadService.getDocumentByNomisIdAndDocumentId(nomsId, documentId)
 
   @GetMapping("{nomsId}/html/{documentId}", produces = [MediaType.TEXT_HTML_VALUE])

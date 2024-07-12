@@ -370,7 +370,7 @@ open class YamlResettlementStrategyTest {
   }
 
   @Test
-  fun `test get config for specific version`() {
+  fun `test get config for specific report version`() {
     val expectedPages = listOf(
       AssessmentConfigPage(
         id = "PAST_AND_FUTURE_ACCOMMODATION",

@@ -24,7 +24,6 @@ class DocumentsEntity(
   @Column(name = "html_document_key")
   val htmlDocumentKey: UUID?,
 
-
   @Column(name = "creation_date")
   val creationDate: LocalDateTime,
 )

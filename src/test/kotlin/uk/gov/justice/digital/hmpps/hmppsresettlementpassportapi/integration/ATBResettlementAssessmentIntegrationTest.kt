@@ -21,12 +21,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class LegacyResettlementAssessmentIntegrationTest : IntegrationTestBase() {
+class ATBResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
   @Autowired
   private lateinit var resettlementAssessmentRepository: ResettlementAssessmentRepository
 
-  // Tests using ATTITUDES_THINKING_AND_BEHAVIOUR Pathway - i.e. using old AbstractResettlementAssessmentStrategy
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
   fun `Post get next assessment page happy path`() {
@@ -167,6 +166,7 @@ class LegacyResettlementAssessmentIntegrationTest : IntegrationTestBase() {
         caseNoteText = "Some case notes",
         createdByUserId = "JSMITH_GEN",
         submissionDate = null,
+        version = 1,
       ),
       ResettlementAssessmentEntity(
         id = 1,
@@ -207,6 +207,7 @@ class LegacyResettlementAssessmentIntegrationTest : IntegrationTestBase() {
         caseNoteText = "My case note summary...",
         createdByUserId = "RESETTLEMENTPASSPORT_ADM",
         submissionDate = null,
+        version = 1,
       ),
     )
     val actualResettlementAssessments = resettlementAssessmentRepository.findAll()

@@ -40,14 +40,12 @@ class YamlResettlementAssessmentStrategy(
 
   fun getConfig(pathway: Pathway, assessmentType: ResettlementAssessmentType, version: Int): AssessmentQuestionSet {
     val pathwayConfig = config.questionSets.first { it.pathway == pathway && it.version == version }
-    val genericConfig = config.questionSets.first { it.generic && it.version == pathwayConfig.genericAssessmentVersion }
 
     return AssessmentQuestionSet(
       version = pathwayConfig.version,
-      genericAssessmentVersion = pathwayConfig.genericAssessmentVersion,
       pathway = pathwayConfig.pathway,
       // Need to remove either ASSESSMENT_SUMMARY or PRERELEASE_ASSESSMENT_SUMMARY page based on whether it's a BCST2 or RESETTLEMENT_PLAN
-      pages = pathwayConfig.pages + genericConfig.pages.filter {
+      pages = pathwayConfig.pages.filter {
         if (assessmentType == ResettlementAssessmentType.BCST2) {
           it.id != "PRERELEASE_ASSESSMENT_SUMMARY"
         } else {
@@ -431,9 +429,7 @@ data class AssessmentQuestionSets(
 
 data class AssessmentQuestionSet(
   val version: Int,
-  val generic: Boolean = false,
   val pathway: Pathway?,
-  val genericAssessmentVersion: Int?,
   val pages: List<AssessmentConfigPage>,
 )
 

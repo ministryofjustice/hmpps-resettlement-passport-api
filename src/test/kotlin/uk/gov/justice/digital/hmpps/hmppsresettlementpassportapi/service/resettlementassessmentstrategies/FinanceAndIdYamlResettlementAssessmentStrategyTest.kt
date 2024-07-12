@@ -389,11 +389,13 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : YamlResettlementStrat
       "ASSESSMENT_SUMMARY",
       ResettlementAssessmentResponsePage(
         id = "ASSESSMENT_SUMMARY",
+        title = "Finance and ID report summary",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
             question = ResettlementAssessmentResponseQuestion(
               id = "SUPPORT_NEEDS",
-              title = "",
+              title = "Finance and ID support needs",
+              subTitle = "Select one option.",
               type = TypeOfQuestion.RADIO,
               options = mutableListOf(
                 Option(

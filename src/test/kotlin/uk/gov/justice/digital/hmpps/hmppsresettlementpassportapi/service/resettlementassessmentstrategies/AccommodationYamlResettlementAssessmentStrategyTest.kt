@@ -447,11 +447,13 @@ class AccommodationYamlResettlementAssessmentStrategyTest : YamlResettlementStra
       "ASSESSMENT_SUMMARY",
       ResettlementAssessmentResponsePage(
         id = "ASSESSMENT_SUMMARY",
+        title = "Accommodation report summary",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
             question = ResettlementAssessmentResponseQuestion(
               id = "SUPPORT_NEEDS",
-              title = "",
+              title = "Accommodation support needs",
+              subTitle = "Select one option.",
               type = TypeOfQuestion.RADIO,
               options = mutableListOf(
                 Option(
@@ -714,8 +716,8 @@ class AccommodationYamlResettlementAssessmentStrategyTest : YamlResettlementStra
         ResettlementAssessmentResponseQuestionAndAnswer(
           AssessmentConfigQuestion(
             id = "SUPPORT_NEEDS_PRERELEASE",
-            title = "",
-            subTitle = null,
+            title = "Accommodation support needs",
+            subTitle = "Select one option.",
             type = TypeOfQuestion.RADIO,
             options = listOf(
               Option(id = "SUPPORT_REQUIRED", displayText = "Support required", description = "a need for support has been identified and is accepted"),

@@ -719,11 +719,13 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : YamlResettl
       "ASSESSMENT_SUMMARY",
       ResettlementAssessmentResponsePage(
         id = "ASSESSMENT_SUMMARY",
+        title = "Education, skills and work report summary",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
             question = ResettlementAssessmentResponseQuestion(
               id = "SUPPORT_NEEDS",
-              title = "",
+              title = "Education, skills and work support needs",
+              subTitle = "Select one option.",
               type = TypeOfQuestion.RADIO,
               options = mutableListOf(
                 Option(

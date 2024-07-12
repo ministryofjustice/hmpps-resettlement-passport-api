@@ -471,11 +471,13 @@ class ChildrenFamiliesAndCommunitiesYamlStrategyTest : YamlResettlementStrategyT
       "ASSESSMENT_SUMMARY",
       ResettlementAssessmentResponsePage(
         id = "ASSESSMENT_SUMMARY",
+        title = "Children, families and communities report summary",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
             question = ResettlementAssessmentResponseQuestion(
               id = "SUPPORT_NEEDS",
-              title = "",
+              title = "Children, families and communities support needs",
+              subTitle = "Select one option.",
               type = TypeOfQuestion.RADIO,
               options = mutableListOf(
                 Option(

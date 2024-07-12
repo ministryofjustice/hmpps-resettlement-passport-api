@@ -87,7 +87,7 @@
   "imprisonmentStatus": "SENT03",
   "imprisonmentStatusDescription": "Adult Imprisonment Without Option CJA03",
   "mostSeriousOffence": "Section 18 - grievous bodily harm with intent",
-  "recall": false,
+  "recall": true,
   "indeterminateSentence": false,
   "sentenceStartDate": "2016-11-25",
   "releaseDate": "2024-03-01",

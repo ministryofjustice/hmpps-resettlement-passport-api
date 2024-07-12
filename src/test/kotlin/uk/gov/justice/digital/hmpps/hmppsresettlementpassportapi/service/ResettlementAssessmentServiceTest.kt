@@ -159,8 +159,8 @@ class ResettlementAssessmentServiceTest {
     val expectedUserAndCaseNote = ResettlementAssessmentService.UserAndCaseNote(
       user = ResettlementAssessmentService.User(user, user),
       caseNoteText = getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix),
-      description = null,
       deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
+      description = null,
     )
 
     val processedCaseNotes = resettlementAssessmentService.processAndGroupAssessmentCaseNotes(assessmentList, false, ResettlementAssessmentType.BCST2)
@@ -168,7 +168,7 @@ class ResettlementAssessmentServiceTest {
     Assertions.assertEquals(1, processedCaseNotes.size)
     Assertions.assertEquals(expectedUserAndCaseNote.user, processedCaseNotes[0].user)
     Assertions.assertEquals(expectedUserAndCaseNote.caseNoteText, processedCaseNotes[0].caseNoteText)
-    Assertions.assertNull(processedCaseNotes[0].description)
+    Assertions.assertEquals(expectedUserAndCaseNote.description, processedCaseNotes[0].description)
   }
 
   @Test
@@ -417,6 +417,7 @@ class ResettlementAssessmentServiceTest {
         user = ResettlementAssessmentService.User(user, user),
         caseNoteText = "${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
+        description = null,
       ),
     )
 
@@ -434,6 +435,7 @@ class ResettlementAssessmentServiceTest {
         user = ResettlementAssessmentService.User(user, user),
         caseNoteText = "${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
+        description = null,
       ),
     )
 
@@ -451,6 +453,8 @@ class ResettlementAssessmentServiceTest {
         user = ResettlementAssessmentService.User(user, user),
         caseNoteText = "${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
+        description = null,
+
       ),
     )
 

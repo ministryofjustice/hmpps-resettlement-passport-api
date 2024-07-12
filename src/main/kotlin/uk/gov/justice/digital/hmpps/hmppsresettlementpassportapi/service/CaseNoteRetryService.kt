@@ -33,6 +33,8 @@ class CaseNoteRetryService(
         notes = caseNote.notes,
         name = caseNote.author,
         deliusCaseNoteType = caseNote.type,
+        description = null,
+        // TODO: this needs to be added into the database
       )
 
       if (!success) {

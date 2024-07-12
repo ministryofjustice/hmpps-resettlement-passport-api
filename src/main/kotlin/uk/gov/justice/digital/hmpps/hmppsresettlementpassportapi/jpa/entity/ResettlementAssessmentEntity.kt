@@ -69,6 +69,9 @@ data class ResettlementAssessmentEntity(
   @Column(name = "created_by_user_id")
   val createdByUserId: String,
 
+  @Column(name = "version")
+  val version: Int,
+
   @Column(name = "submission_date")
   var submissionDate: LocalDateTime?,
 ) {

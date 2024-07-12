@@ -77,10 +77,12 @@ class ResettlementAssessmentController(
     assessmentType: ResettlementAssessmentType,
     @RequestParam("currentPage")
     currentPage: String?,
+    @RequestParam("version")
+    version: Int = 1,
     @RequestBody
     resettlementAssessment: ResettlementAssessmentRequest,
   ): ResettlementAssessmentNextPage {
-    return ResettlementAssessmentNextPage(nextPageId = resettlementAssessmentStrategies.getNextPageId(resettlementAssessment, nomsId, pathway, assessmentType, currentPage))
+    return ResettlementAssessmentNextPage(nextPageId = resettlementAssessmentStrategies.getNextPageId(resettlementAssessment, nomsId, pathway, assessmentType, currentPage, version))
   }
 
   @GetMapping("/{nomsId}/resettlement-assessment/{pathway}/page/{pageId}", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -123,8 +125,10 @@ class ResettlementAssessmentController(
     pageId: String,
     @RequestParam("assessmentType")
     assessmentType: ResettlementAssessmentType,
+    @RequestParam("version")
+    version: Int = 1,
   ): ResettlementAssessmentResponsePage {
-    return resettlementAssessmentStrategies.getPageFromId(nomsId, pathway, pageId, assessmentType)
+    return resettlementAssessmentStrategies.getPageFromId(nomsId, pathway, pageId, assessmentType, version)
   }
 
   @GetMapping("/{nomsId}/resettlement-assessment/summary", produces = [MediaType.APPLICATION_JSON_VALUE])

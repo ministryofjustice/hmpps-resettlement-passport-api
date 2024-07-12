@@ -38,7 +38,7 @@ class YamlResettlementAssessmentStrategy(
 
 ) {
 
-  fun getConfig(pathway: Pathway, assessmentType: ResettlementAssessmentType, version: Int = 1): AssessmentQuestionSet {
+  fun getConfig(pathway: Pathway, assessmentType: ResettlementAssessmentType, version: Int): AssessmentQuestionSet {
     val pathwayConfig = config.questionSets.first { it.pathway == pathway && it.version == version }
     val genericConfig = config.questionSets.first { it.generic && it.version == pathwayConfig.genericAssessmentVersion }
 
@@ -63,6 +63,7 @@ class YamlResettlementAssessmentStrategy(
     pathway: Pathway,
     assessmentType: ResettlementAssessmentType,
     currentPage: String?,
+    version: Int = 1,
   ): String {
     // Validate the request
     if (currentPage != null && assessment.questionsAndAnswers == null) {
@@ -72,7 +73,7 @@ class YamlResettlementAssessmentStrategy(
     val existingAssessment = getExistingAssessment(nomsId, pathway, assessmentType)
     val edit = existingAssessment?.assessmentStatus == ResettlementAssessmentStatus.SUBMITTED
 
-    val config = getConfig(pathway, assessmentType)
+    val config = getConfig(pathway, assessmentType, version)
     return if (currentPage == null) {
       // Option 1 - If the current page is null then send back the first page unless there is already an assessment completed, in which case go straight to CHECK_ANSWERS
       if (existingAssessment == null) {
@@ -207,6 +208,7 @@ class YamlResettlementAssessmentStrategy(
       caseNoteText = caseNoteText,
       createdByUserId = userId,
       submissionDate = if (edit) LocalDateTime.now() else null,
+      version = assessment.version,
     )
 
     saveAssessment(resettlementAssessmentEntity)
@@ -217,11 +219,12 @@ class YamlResettlementAssessmentStrategy(
     assessment: ResettlementAssessmentCompleteRequest,
     edit: Boolean,
     assessmentType: ResettlementAssessmentType = ResettlementAssessmentType.BCST2,
+    version: Int = 1,
   ) {
     // Convert to Map of pages to List of questionsAndAnswers
     val nodeToQuestionMap = assessment.questionsAndAnswers
       .groupByTo(LinkedHashMap()) { qa ->
-        getConfig(pathway, assessmentType).pages
+        getConfig(pathway, assessmentType, version).pages
           .firstOrNull { configPage ->
             if (configPage.questions != null) {
               qa.question in configPage.questions.map { q -> q.id }
@@ -252,7 +255,7 @@ class YamlResettlementAssessmentStrategy(
     while (true) {
       try {
         val actualPage: AssessmentConfigPage? = nodeToQuestionMap.keys.elementAtOrNull(pageNumber)
-        val expectedPage: String = if (currentNode != null) chooseNextPage(currentNode, assessment.questionsAndAnswers, edit, assessmentType) else getConfig(pathway, assessmentType).pages[0].id
+        val expectedPage: String = if (currentNode != null) chooseNextPage(currentNode, assessment.questionsAndAnswers, edit, assessmentType) else getConfig(pathway, assessmentType, version).pages[0].id
         if (expectedPage == "CHECK_ANSWERS") {
           break
         }
@@ -277,6 +280,7 @@ class YamlResettlementAssessmentStrategy(
     pathway: Pathway,
     pageId: String,
     assessmentType: ResettlementAssessmentType,
+    version: Int = 1,
   ): ResettlementAssessmentResponsePage {
     // Get the latest complete assessment (if exists)
     var existingAssessment = getExistingAssessment(nomsId, pathway, assessmentType)
@@ -313,7 +317,7 @@ class YamlResettlementAssessmentStrategy(
     }
 
     // Get the current page
-    val config = getConfig(pathway, assessmentType)
+    val config = getConfig(pathway, assessmentType, version)
     val page = config.pages.first { it.id == pageId }
 
     // Convert to ResettlementAssessmentPage DTO
@@ -376,11 +380,16 @@ class YamlResettlementAssessmentStrategy(
     return getQuestionList(pathway, assessmentType).first { it.id == id }
   }
 
-  fun findPageIdFromQuestionId(questionId: String, assessmentType: ResettlementAssessmentType, pathway: Pathway): String {
-    return getConfig(pathway, assessmentType).pages.firstOrNull { p -> (p.questions?.any { q -> q.id == questionId } == true) }?.id ?: throw RuntimeException("Cannot find page for question [$questionId] - check that the question is used in a page!")
+  fun findPageIdFromQuestionId(
+    questionId: String,
+    assessmentType: ResettlementAssessmentType,
+    pathway: Pathway,
+    version: Int = 1,
+  ): String {
+    return getConfig(pathway, assessmentType, version).pages.firstOrNull { p -> (p.questions?.any { q -> q.id == questionId } == true) }?.id ?: throw RuntimeException("Cannot find page for question [$questionId] - check that the question is used in a page!")
   }
 
-  private fun getQuestionList(pathway: Pathway, assessmentType: ResettlementAssessmentType): List<IResettlementAssessmentQuestion> = getConfig(pathway, assessmentType).pages.filter { it.questions != null }.flatMap { it.questions!! }
+  private fun getQuestionList(pathway: Pathway, assessmentType: ResettlementAssessmentType, version: Int = 1): List<IResettlementAssessmentQuestion> = getConfig(pathway, assessmentType, version).pages.filter { it.questions != null }.flatMap { it.questions!! }
 
   private fun saveAssessment(assessment: ResettlementAssessmentEntity): ResettlementAssessmentEntity = resettlementAssessmentRepository.save(assessment)
 

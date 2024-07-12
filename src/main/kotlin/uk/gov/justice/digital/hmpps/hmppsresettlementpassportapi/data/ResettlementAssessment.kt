@@ -17,6 +17,7 @@ data class ResettlementAssessmentRequest(
 
 data class ResettlementAssessmentCompleteRequest(
   val questionsAndAnswers: List<ResettlementAssessmentRequestQuestionAndAnswer<*>>,
+  val version: Int = 1,
 )
 
 data class ResettlementAssessmentNextPage(

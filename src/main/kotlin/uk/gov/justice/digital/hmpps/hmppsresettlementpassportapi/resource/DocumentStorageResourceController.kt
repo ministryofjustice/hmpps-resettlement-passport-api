@@ -28,6 +28,33 @@ class DocumentStorageResourceController(
 ) {
 
   @PostMapping(
+    "/{nomsId}/verifyUpload",
+    produces = [MediaType.APPLICATION_JSON_VALUE],
+    consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+  )
+  @Operation(summary = "Upload Document with Scan", description = "Upload Documents With Scan")
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Document successfully added",
+      ),
+      ApiResponse(
+        responseCode = "404",
+        description = "Prisoner not found",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  fun handleDocumentScanAndUploadByNomsId(
+    @Schema(example = "AXXXS", required = true)
+    @PathVariable("nomsId")
+    nomsId: String,
+    @RequestParam("file")
+    file: MultipartFile,
+  ) = uploadService.scanAndStoreDocument(nomsId, file)
+
+  @PostMapping(
     "/{nomsId}/upload",
     produces = [MediaType.APPLICATION_JSON_VALUE],
     consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
@@ -52,7 +79,7 @@ class DocumentStorageResourceController(
     nomsId: String,
     @RequestParam("file")
     file: MultipartFile,
-  ) = uploadService.scanAndStoreDocument(nomsId, file)
+  ) = uploadService.storeDocument(nomsId, file)
 
   @GetMapping("{nomsId}/download/{documentId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(

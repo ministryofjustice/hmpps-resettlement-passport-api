@@ -26,34 +26,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.Documen
 class DocumentStorageResourceController(
   private val uploadService: DocumentService,
 ) {
-
-  @PostMapping(
-    "/{nomsId}/verifyUpload",
-    produces = [MediaType.APPLICATION_JSON_VALUE],
-    consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
-  )
-  @Operation(summary = "Upload Document with Scan", description = "Upload Documents With Scan")
-  @ApiResponses(
-    value = [
-      ApiResponse(
-        responseCode = "200",
-        description = "Document successfully added",
-      ),
-      ApiResponse(
-        responseCode = "404",
-        description = "Prisoner not found",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-    ],
-  )
-  fun handleDocumentScanAndUploadByNomsId(
-    @Schema(example = "AXXXS", required = true)
-    @PathVariable("nomsId")
-    nomsId: String,
-    @RequestParam("file")
-    file: MultipartFile,
-  ) = uploadService.scanAndStoreDocument(nomsId, file)
-
   @PostMapping(
     "/{nomsId}/upload",
     produces = [MediaType.APPLICATION_JSON_VALUE],
@@ -80,7 +52,6 @@ class DocumentStorageResourceController(
     @RequestParam("file")
     file: MultipartFile,
   ) = uploadService.processDocument(nomsId, file)
-
 
   @GetMapping("{nomsId}/download/{documentId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(

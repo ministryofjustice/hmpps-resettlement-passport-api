@@ -1,6 +1,5 @@
 version: 1
 pathway: "HEALTH"
-genericAssessmentVersion: 1
 pages:
   - id: REGISTERED_WITH_GP
     questions:
@@ -20,7 +19,6 @@ pages:
         - "@class": "StringAnswer"
           answer: "YES"
         nextPageId: MEET_HEALTHCARE_TEAM
-
       - questionId: REGISTERED_WITH_GP
         answers:
           - "@class": "StringAnswer"
@@ -28,7 +26,6 @@ pages:
           - "@class": "StringAnswer"
             answer: "NO_ANSWER"
         nextPageId: HELP_REGISTERING_GP
-
   - id: HELP_REGISTERING_GP
     questions:
       - id: HELP_REGISTERING_GP
@@ -43,7 +40,6 @@ pages:
             displayText: "No answer provided"
     nextPageLogic:
       - nextPageId: MEET_HEALTHCARE_TEAM
-
   - id: MEET_HEALTHCARE_TEAM
     questions:
       - id: MEET_HEALTHCARE_TEAM
@@ -56,14 +52,12 @@ pages:
             displayText: "No"
           - id: "NO_ANSWER"
             displayText: "No answer provided"
-
     nextPageLogic:
       - questionId: MEET_HEALTHCARE_TEAM
         answers:
           - "@class": "StringAnswer"
             answer: "YES"
         nextPageId: WHAT_HEALTH_NEED
-
       - questionId: MEET_HEALTHCARE_TEAM
         answers:
           - "@class": "StringAnswer"
@@ -71,7 +65,6 @@ pages:
           - "@class": "StringAnswer"
             answer: "NO_ANSWER"
         nextPageId: FINAL_QUESTION_NEXT_PAGE
-
   - id: WHAT_HEALTH_NEED
     questions:
       - id: WHAT_HEALTH_NEED
@@ -87,3 +80,57 @@ pages:
             exclusive: true
     nextPageLogic:
       - nextPageId: FINAL_QUESTION_NEXT_PAGE
+  # In subsequent versions do not change page and question ids below this point due to custom logic elsewhere in the code
+  - id: "ASSESSMENT_SUMMARY"
+    title: "Health report summary"
+    questions:
+      - id: "SUPPORT_NEEDS"
+        title: "Health support needs"
+        subTitle: "Select one option."
+        type: "RADIO"
+        options:
+          - id: "SUPPORT_REQUIRED"
+            displayText: "Support required"
+            description: "a need for support has been identified and is accepted"
+          - id: "SUPPORT_NOT_REQUIRED"
+            displayText: "Support not required"
+            description: "no need was identified"
+          - id: "SUPPORT_DECLINED"
+            displayText: "Support declined"
+            description: "a need has been identified but support is declined"
+      - id: "CASE_NOTE_SUMMARY"
+        title: "Add a case note summary"
+        subTitle: "This will be displayed as a case note in both DPS and nDelius"
+        type: "LONG_TEXT"
+    nextPageLogic:
+      - nextPageId: "CHECK_ANSWERS"
+  - id: "PRERELEASE_ASSESSMENT_SUMMARY"
+    title: "Health report summary"
+    questions:
+      - id: "SUPPORT_NEEDS_PRERELEASE"
+        title: "Health support needs"
+        subTitle: "Select one option."
+        type: "RADIO"
+        options:
+          - id: "SUPPORT_REQUIRED"
+            displayText: "Support required"
+            description: "a need for support has been identified and is accepted"
+          - id: "SUPPORT_NOT_REQUIRED"
+            displayText: "Support not required"
+            description: "no need was identified"
+          - id: "SUPPORT_DECLINED"
+            displayText: "Support declined"
+            description: "a need has been identified but support is declined"
+          - id: "IN_PROGRESS"
+            displayText: "In progress"
+            description: "work is ongoing"
+          - id: "DONE"
+            displayText: "Done"
+            description: "all required work has been completed successfully"
+      - id: "CASE_NOTE_SUMMARY"
+        title: "Add a case note summary"
+        subTitle: "This will be displayed as a case note in both DPS and nDelius"
+        type: "LONG_TEXT"
+    nextPageLogic:
+      - nextPageId: "CHECK_ANSWERS"
+  - id: "CHECK_ANSWERS"

@@ -1,6 +1,5 @@
 version: 1
 pathway: "CHILDREN_FAMILIES_AND_COMMUNITY"
-genericAssessmentVersion: 1
 pages:
   - id: PARTNER_OR_SPOUSE
     questions:
@@ -16,7 +15,6 @@ pages:
             displayText: "No answer provided"
     nextPageLogic:
       - nextPageId: PRIMARY_CARER_FOR_CHILDREN
-
   - id: PRIMARY_CARER_FOR_CHILDREN
     questions:
       - id: PRIMARY_CARER_FOR_CHILDREN
@@ -42,7 +40,6 @@ pages:
           - "@class": "StringAnswer"
             answer: "NO_ANSWER"
         nextPageId: CARING_FOR_ADULT
-
   - id: CHILDREN_SERVICES_INVOLVED
     questions:
       - id: CHILDREN_SERVICES_INVOLVED
@@ -68,7 +65,6 @@ pages:
           - "@class": "StringAnswer"
             answer: "NO_ANSWER"
         nextPageId: CARING_FOR_ADULT
-
   - id: SUPPORT_MEETING_CHILDREN_SERVICES
     questions:
       - id: SUPPORT_MEETING_CHILDREN_SERVICES
@@ -83,7 +79,6 @@ pages:
             displayText: "No answer provided"
     nextPageLogic:
       - nextPageId: CARING_FOR_ADULT
-
   - id: CARING_FOR_ADULT
     questions:
       - id: CARING_FOR_ADULT
@@ -109,7 +104,6 @@ pages:
           - "@class": "StringAnswer"
             answer: "NO_ANSWER"
         nextPageId: SUPPORT_FROM_SOCIAL_SERVICES
-
   - id: SOCIAL_SERVICES_INVOLVED_FOR_ADULT
     questions:
       - id: SOCIAL_SERVICES_INVOLVED_FOR_ADULT
@@ -124,7 +118,6 @@ pages:
             displayText: "No answer provided"
     nextPageLogic:
       - nextPageId: SUPPORT_FROM_SOCIAL_SERVICES
-
   - id: SUPPORT_FROM_SOCIAL_SERVICES
     questions:
       - id: SUPPORT_FROM_SOCIAL_SERVICES
@@ -139,7 +132,6 @@ pages:
             displayText: "No answer provided"
     nextPageLogic:
       - nextPageId: FRIEND_FAMILY_COMMUNITY_SUPPORT
-
   - id: FRIEND_FAMILY_COMMUNITY_SUPPORT
     questions:
       - id: FRIEND_FAMILY_COMMUNITY_SUPPORT
@@ -154,7 +146,6 @@ pages:
             displayText: "No answer provided"
     nextPageLogic:
       - nextPageId: INVOLVEMENT_IN_GANG_ACTIVITY
-
   - id: INVOLVEMENT_IN_GANG_ACTIVITY
     questions:
       - id: INVOLVEMENT_IN_GANG_ACTIVITY
@@ -169,7 +160,6 @@ pages:
             displayText: "No answer provided"
     nextPageLogic:
       - nextPageId: UNDER_THREAT_OUTSIDE
-
   - id: UNDER_THREAT_OUTSIDE
     questions:
       - id: UNDER_THREAT_OUTSIDE
@@ -184,7 +174,6 @@ pages:
             displayText: "No answer provided"
     nextPageLogic:
       - nextPageId: COMMUNITY_ORGANISATION_SUPPORT
-
   - id: COMMUNITY_ORGANISATION_SUPPORT
     questions:
       - id: COMMUNITY_ORGANISATION_SUPPORT
@@ -199,4 +188,57 @@ pages:
             displayText: "No answer provided"
     nextPageLogic:
       - nextPageId: FINAL_QUESTION_NEXT_PAGE
-
+  # In subsequent versions do not change page and question ids below this point due to custom logic elsewhere in the code
+  - id: "ASSESSMENT_SUMMARY"
+    title: "Children, families and communities report summary"
+    questions:
+      - id: "SUPPORT_NEEDS"
+        title: "Children, families and communities support needs"
+        subTitle: "Select one option."
+        type: "RADIO"
+        options:
+          - id: "SUPPORT_REQUIRED"
+            displayText: "Support required"
+            description: "a need for support has been identified and is accepted"
+          - id: "SUPPORT_NOT_REQUIRED"
+            displayText: "Support not required"
+            description: "no need was identified"
+          - id: "SUPPORT_DECLINED"
+            displayText: "Support declined"
+            description: "a need has been identified but support is declined"
+      - id: "CASE_NOTE_SUMMARY"
+        title: "Add a case note summary"
+        subTitle: "This will be displayed as a case note in both DPS and nDelius"
+        type: "LONG_TEXT"
+    nextPageLogic:
+      - nextPageId: "CHECK_ANSWERS"
+  - id: "PRERELEASE_ASSESSMENT_SUMMARY"
+    title: "Children, families and communities report summary"
+    questions:
+      - id: "SUPPORT_NEEDS_PRERELEASE"
+        title: "Children, families and communities support needs"
+        subTitle: "Select one option."
+        type: "RADIO"
+        options:
+          - id: "SUPPORT_REQUIRED"
+            displayText: "Support required"
+            description: "a need for support has been identified and is accepted"
+          - id: "SUPPORT_NOT_REQUIRED"
+            displayText: "Support not required"
+            description: "no need was identified"
+          - id: "SUPPORT_DECLINED"
+            displayText: "Support declined"
+            description: "a need has been identified but support is declined"
+          - id: "IN_PROGRESS"
+            displayText: "In progress"
+            description: "work is ongoing"
+          - id: "DONE"
+            displayText: "Done"
+            description: "all required work has been completed successfully"
+      - id: "CASE_NOTE_SUMMARY"
+        title: "Add a case note summary"
+        subTitle: "This will be displayed as a case note in both DPS and nDelius"
+        type: "LONG_TEXT"
+    nextPageLogic:
+      - nextPageId: "CHECK_ANSWERS"
+  - id: "CHECK_ANSWERS"

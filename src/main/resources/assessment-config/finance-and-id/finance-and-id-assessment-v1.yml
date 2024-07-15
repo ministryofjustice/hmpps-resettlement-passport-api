@@ -1,6 +1,5 @@
 version: 1
 pathway: "FINANCE_AND_ID"
-genericAssessmentVersion: 1
 pages:
   - id: HAS_BANK_ACCOUNT
     questions:
@@ -27,7 +26,6 @@ pages:
           - "@class": "StringAnswer"
             answer: "NO_ANSWER"
         nextPageId: HELP_WITH_BANK_ACCOUNT
-
   - id: HELP_WITH_BANK_ACCOUNT
     questions:
       - id: HELP_WITH_BANK_ACCOUNT
@@ -42,7 +40,6 @@ pages:
             displayText: "No answer provided"
     nextPageLogic:
       - nextPageId: WHAT_ID_DOCUMENTS
-
   - id: WHAT_ID_DOCUMENTS
     questions:
       - id: WHAT_ID_DOCUMENTS
@@ -71,7 +68,6 @@ pages:
             exclusive: true
     nextPageLogic:
       - nextPageId: HELP_APPLY_FOR_ID
-
   - id: HELP_APPLY_FOR_ID
     questions:
       - id: HELP_APPLY_FOR_ID
@@ -86,7 +82,6 @@ pages:
             displayText: "No answer provided"
     nextPageLogic:
       - nextPageId: RECEIVING_BENEFITS
-
   - id: RECEIVING_BENEFITS
     questions:
       - id: RECEIVING_BENEFITS
@@ -139,7 +134,6 @@ pages:
             exclusive: true
     nextPageLogic:
       - nextPageId: DEBTS_OR_ARREARS
-
   - id: DEBTS_OR_ARREARS
     questions:
       - id: DEBTS_OR_ARREARS
@@ -165,7 +159,6 @@ pages:
           - "@class": "StringAnswer"
             answer: "NO_ANSWER"
         nextPageId: FINAL_QUESTION_NEXT_PAGE
-
   - id: HELP_MANAGE_DEBTS
     questions:
       - id: HELP_MANAGE_DEBTS
@@ -180,5 +173,57 @@ pages:
             displayText: "No answer provided"
     nextPageLogic:
       - nextPageId: FINAL_QUESTION_NEXT_PAGE
-
-
+  # In subsequent versions do not change page and question ids below this point due to custom logic elsewhere in the code
+  - id: "ASSESSMENT_SUMMARY"
+    title: "Finance and ID report summary"
+    questions:
+      - id: "SUPPORT_NEEDS"
+        title: "Finance and ID support needs"
+        subTitle: "Select one option."
+        type: "RADIO"
+        options:
+          - id: "SUPPORT_REQUIRED"
+            displayText: "Support required"
+            description: "a need for support has been identified and is accepted"
+          - id: "SUPPORT_NOT_REQUIRED"
+            displayText: "Support not required"
+            description: "no need was identified"
+          - id: "SUPPORT_DECLINED"
+            displayText: "Support declined"
+            description: "a need has been identified but support is declined"
+      - id: "CASE_NOTE_SUMMARY"
+        title: "Add a case note summary"
+        subTitle: "This will be displayed as a case note in both DPS and nDelius"
+        type: "LONG_TEXT"
+    nextPageLogic:
+      - nextPageId: "CHECK_ANSWERS"
+  - id: "PRERELEASE_ASSESSMENT_SUMMARY"
+    title: "Finance and ID report summary"
+    questions:
+      - id: "SUPPORT_NEEDS_PRERELEASE"
+        title: "Finance and ID support needs"
+        subTitle: "Select one option."
+        type: "RADIO"
+        options:
+          - id: "SUPPORT_REQUIRED"
+            displayText: "Support required"
+            description: "a need for support has been identified and is accepted"
+          - id: "SUPPORT_NOT_REQUIRED"
+            displayText: "Support not required"
+            description: "no need was identified"
+          - id: "SUPPORT_DECLINED"
+            displayText: "Support declined"
+            description: "a need has been identified but support is declined"
+          - id: "IN_PROGRESS"
+            displayText: "In progress"
+            description: "work is ongoing"
+          - id: "DONE"
+            displayText: "Done"
+            description: "all required work has been completed successfully"
+      - id: "CASE_NOTE_SUMMARY"
+        title: "Add a case note summary"
+        subTitle: "This will be displayed as a case note in both DPS and nDelius"
+        type: "LONG_TEXT"
+    nextPageLogic:
+      - nextPageId: "CHECK_ANSWERS"
+  - id: "CHECK_ANSWERS"

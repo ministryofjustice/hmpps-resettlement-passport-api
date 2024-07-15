@@ -6,25 +6,19 @@ import org.testcontainers.containers.localstack.LocalStackContainer
 import org.testcontainers.containers.output.Slf4jLogConsumer
 import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.utility.DockerImageName
-import java.io.IOException
-import java.net.ServerSocket
 
 object LocalStackContainer {
   private val log = LoggerFactory.getLogger(this::class.java)
   val instance by lazy { startLocalstackIfNotRunning() }
 
   fun setLocalStackProperties(registry: DynamicPropertyRegistry) {
-    registry.add("hmpps.sqs.localstackUrl") { instance?.getEndpointOverride(LocalStackContainer.Service.SNS) }
-    registry.add("hmpps.sqs.region") { instance?.region }
-    registry.add("hmpps.s3.localstackUrl") { instance?.getEndpoint().toString() }
-    registry.add("hmpps.s3.region") { instance?.region }
+    registry.add("hmpps.sqs.localstackUrl") { instance.getEndpointOverride(LocalStackContainer.Service.SNS) }
+    registry.add("hmpps.sqs.region") { instance.region }
+    registry.add("hmpps.s3.localstackUrl") { instance.endpoint.toString() }
+    registry.add("hmpps.s3.region") { instance.region }
   }
 
-  private fun startLocalstackIfNotRunning(): LocalStackContainer? {
-    if (localstackIsRunning()) {
-      log.warn("Using existing localstack instance")
-      return null
-    }
+  private fun startLocalstackIfNotRunning(): LocalStackContainer {
     log.info("Creating a localstack instance")
     val logConsumer = Slf4jLogConsumer(log).withPrefix("localstack")
     return LocalStackContainer(
@@ -39,12 +33,4 @@ object LocalStackContainer {
       followOutput(logConsumer)
     }
   }
-
-  private fun localstackIsRunning(): Boolean =
-    try {
-      val serverSocket = ServerSocket(4566)
-      serverSocket.localPort == 0
-    } catch (e: IOException) {
-      true
-    }
 }

@@ -28,7 +28,6 @@ class LibreOfficeDocumentConversionService(
   override fun convert(multipartFile: MultipartFile, originalBucketKey: String): UUID? {
     val tempFile = tempDocumentDir.resolve(originalBucketKey)
     multipartFile.transferTo(tempFile)
-
     val (exitCode, elapsed) = measureTimedValue {
       val process = Runtime.getRuntime().exec(
         arrayOf(

@@ -18,22 +18,25 @@ class AuthAwareTokenConverter : Converter<Jwt, AuthAwareAuthenticationToken> {
     return AuthAwareAuthenticationToken(jwt, principal, authorities)
   }
 
-  private fun findPrincipal(claims: Map<String, Any?>): String {
-    return if (claims.containsKey("user_name")) {
-      claims["user_name"] as String
-    } else if (claims.containsKey("user_id")) {
-      claims["user_id"] as String
-    } else {
-      claims["client_id"] as String
-    }
+  private fun findPrincipal(claims: Map<String, Any?>): String = if (claims.containsKey("user_name")) {
+    claims["user_name"] as String
+  } else if (claims.containsKey("user_id")) {
+    claims["user_id"] as String
+  } else {
+    claims["client_id"] as String
   }
 
   private fun extractAuthorities(jwt: Jwt): Collection<GrantedAuthority> {
     val authorities = mutableListOf<GrantedAuthority>().apply { addAll(jwtGrantedAuthoritiesConverter.convert(jwt)!!) }
     if (jwt.claims.containsKey("authorities")) {
-      @Suppress("UNCHECKED_CAST")
-      val claimAuthorities = (jwt.claims["authorities"] as Collection<String>).toList()
-      authorities.addAll(claimAuthorities.map(::SimpleGrantedAuthority))
+      when (val claimAuthorities = jwt.claims["authorities"]) {
+        is Collection<*> -> {
+          authorities.addAll(claimAuthorities.map { SimpleGrantedAuthority(it as String) })
+        }
+        is String -> {
+          authorities.addAll(claimAuthorities.split(",").map { SimpleGrantedAuthority(it) })
+        }
+      }
     }
     return authorities.toSet()
   }
@@ -44,7 +47,5 @@ class AuthAwareAuthenticationToken(
   private val aPrincipal: String,
   authorities: Collection<GrantedAuthority>,
 ) : JwtAuthenticationToken(jwt, authorities) {
-  override fun getPrincipal(): String {
-    return aPrincipal
-  }
+  override fun getPrincipal(): String = aPrincipal
 }

@@ -25,21 +25,22 @@ import java.util.UUID
 @Service
 class DocumentService(
   private val s3Client: S3Client,
-  val prisonerRepository: PrisonerRepository,
-  val documentsRepository: DocumentsRepository,
+  private val prisonerRepository: PrisonerRepository,
+  private val documentsRepository: DocumentsRepository,
   private val virusScanner: VirusScanner,
+  private val documentConversionService: DocumentConversionService,
   @Value("\${hmpps.s3.buckets.document-management.bucketName}") private val bucketName: String,
 
 ) {
 
   @Transactional
-  fun scanAndStoreDocument(
+  fun processDocument(
     nomsId: String,
     document: MultipartFile,
   ): Result<DocumentsEntity, VirusFound> =
     forExistingPrisoner(nomsId) {
       when (val virusScanResult = virusScanner.scan(document.bytes)) {
-        NoVirusFound -> Success(storeDocument(nomsId, document))
+        NoVirusFound -> Success(convertAndStoreDocument(nomsId, document))
         is VirusFound -> {
           log.info(VirusFoundEvent(nomsId, virusScanResult.foundViruses).toString())
           Failure(virusScanResult)
@@ -48,22 +49,31 @@ class DocumentService(
     }
 
   @Transactional
-  fun storeDocument(nomsId: String, document: MultipartFile): DocumentsEntity {
+  fun convertAndStoreDocument(nomsId: String, document: MultipartFile): DocumentsEntity {
     // using nomsId to find the prisoner entity
     val prisoner = findPrisonerByNomsId(nomsId)
 
-    val key = nomsId + "_" + UUID.randomUUID().toString()
+    val key = nomsId + "_" + UUID.randomUUID()
 
     uploadDocumentToS3(document, bucketName, key)
+    val convertedDocumentKey = documentConversionService.convert(document, key)
+
     val documents = DocumentsEntity(
-      id = null,
-      prisoner = prisoner,
-      documentKey = key,
+      prisonerId = prisoner.id!!,
+      originalDocumentKey = key,
+      htmlDocumentKey = convertedDocumentKey,
       creationDate = LocalDateTime.now(),
     )
 
+    val docEntity = documentsRepository.save(documents)
+    if (docEntity == null) {
+      log.info("Failed to create document")
+    } else {
+      log.info("Document key ${docEntity.originalDocumentKey} and id is ${docEntity.id}")
+    }
     // saving the documents entity
-    return documentsRepository.save(documents)
+    // return documentsRepository.save(documents)
+    return docEntity
   }
 
   fun findPrisonerByNomsId(nomsId: String): PrisonerEntity {
@@ -91,12 +101,36 @@ class DocumentService(
     return s3Client.getObject(request).readAllBytes()
   }
 
-  fun getDocumentByNomisIdAndDocumentId(nomsId: String, documentId: String): ByteArray {
+  fun getDocumentByNomisIdAndDocumentId(nomsId: String, documentId: Long): ByteArray {
     val prisoner = findPrisonerByNomsId(nomsId)
-    val document = documentsRepository.findByPrisonerAndDocumentKey(prisoner, documentId)
-      ?: throw ResourceNotFoundException("Document with id $documentId and prisoner with id $nomsId not found in database")
+    val document: DocumentsEntity
+    try {
+      document = documentsRepository.getReferenceById(documentId)
+    } catch (ex: Exception) {
+      throw ResourceNotFoundException("Document with id $documentId not found")
+    }
+    if (prisoner.id != document.prisonerId) {
+      throw ResourceNotFoundException("Document with id $documentId not found")
+    }
+    return getDocument(document.originalDocumentKey)
+  }
 
-    return getDocument(document.documentKey)
+  fun getHtmlByNomisIdAndDocumentId(nomsId: String, documentId: Long): String {
+    val prisoner = findPrisonerByNomsId(nomsId)
+    val document: DocumentsEntity
+    try {
+      document = documentsRepository.getReferenceById(documentId)
+    } catch (ex: Exception) {
+      throw ResourceNotFoundException("Document with id $documentId not found")
+    }
+    if (prisoner.id != document.prisonerId) {
+      throw ResourceNotFoundException("Document with id $documentId not found")
+    }
+
+    val key = document.htmlDocumentKey?.toString()
+      ?: throw ResourceNotFoundException("$documentId does not have html available")
+    val bytes = getDocument(key)
+    return String(bytes, Charsets.UTF_8)
   }
 
   private inline fun <reified T : Any?> forExistingPrisoner(nomsId: String, fn: () -> T): T {

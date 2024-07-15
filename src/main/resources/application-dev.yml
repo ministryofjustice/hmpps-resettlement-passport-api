@@ -108,3 +108,5 @@ clamav:
     scan:
       enabled: false
 
+doc.conversion:
+  use.stub: false

@@ -51,11 +51,8 @@ class HmppsS3Configuration(
 
       val client = S3Client.builder()
         .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("any", "any")))
-        // Using localhost for other AWS clients works but throws dns errors with the S3Client, seemingly due to how the full URLs including the bucket are generated.
-        // There are two solutions, force path style or use the localhost IP instead. The latter is closer to the default
-        // .forcePathStyle(true)
-        // .endpointOverride(URI.create(localstackUrl))
-        .endpointOverride(URI.create(localstackUrl.replace("localhost", "127.0.0.1")))
+        .endpointOverride(URI.create(localstackUrl))
+        .forcePathStyle(true)
         .region(Region.of(region))
         .build()
 

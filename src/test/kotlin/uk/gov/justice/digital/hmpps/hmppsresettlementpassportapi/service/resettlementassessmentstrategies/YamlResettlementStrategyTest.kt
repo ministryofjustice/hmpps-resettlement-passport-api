@@ -1,19 +1,12 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies
 
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import org.mockito.Mock
 import org.mockito.Mockito
-import org.mockito.junit.jupiter.MockitoExtension
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.web.server.ServerWebInputException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResettlementAssessmentConfig
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
@@ -26,42 +19,10 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.util.stream.Stream
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ExtendWith(MockitoExtension::class)
-open class YamlResettlementStrategyTest {
-  lateinit var resettlementAssessmentService: YamlResettlementAssessmentStrategy
-
-  @Mock
-  lateinit var prisonerRepository: PrisonerRepository
-
-  @Mock
-  lateinit var resettlementAssessmentRepository: ResettlementAssessmentRepository
-
-  @Mock
-  lateinit var pathwayStatusRepository: PathwayStatusRepository
-
-  val testDate: LocalDateTime = LocalDateTime.parse("2023-08-16T12:00:00")
-
-  @BeforeEach
-  fun beforeEach() {
-    resettlementAssessmentService = YamlResettlementAssessmentStrategy(
-      getTestConfig(),
-      resettlementAssessmentRepository,
-      prisonerRepository,
-      pathwayStatusRepository,
-    )
-  }
-
-  private fun getTestConfig() = ResettlementAssessmentConfig().assessmentQuestionSets(
-    PathMatchingResourcePatternResolver(),
-  )
+class YamlResettlementStrategyTest : BaseYamlResettlementStrategyTest() {
 
   @ParameterizedTest(name = "{3} -> {4}")
   @MethodSource("test getNextPageId data")
@@ -319,12 +280,12 @@ open class YamlResettlementStrategyTest {
       ),
       AssessmentConfigPage(
         id = "ASSESSMENT_SUMMARY",
-        title = null,
+        title = "Accommodation report summary",
         questions = listOf(
           AssessmentConfigQuestion(
             id = "SUPPORT_NEEDS",
-            title = "",
-            subTitle = null,
+            title = "Accommodation support needs",
+            subTitle = "Select one option.",
             type = TypeOfQuestion.RADIO,
             options = listOf(
               Option(id = "SUPPORT_REQUIRED", displayText = "Support required", description = "a need for support has been identified and is accepted"),
@@ -358,14 +319,11 @@ open class YamlResettlementStrategyTest {
 
     val expectedQuestionSet = AssessmentQuestionSet(
       version = 1,
-      generic = false,
       pathway = Pathway.ACCOMMODATION,
-      genericAssessmentVersion = 1,
       pages = expectedPages,
     )
 
     val assessmentQuestionSet = resettlementAssessmentService.getConfig(Pathway.ACCOMMODATION, ResettlementAssessmentType.BCST2, version = 1)
-    Assertions.assertNotNull(assessmentQuestionSet)
     Assertions.assertEquals(expectedQuestionSet, assessmentQuestionSet)
   }
 
@@ -461,13 +419,28 @@ open class YamlResettlementStrategyTest {
       ),
       AssessmentConfigPage(
         id = "ASSESSMENT_SUMMARY",
-        title = null,
+        title = "Accommodation report summary",
         questions = listOf(
           AssessmentConfigQuestion(
+            id = "ACCOMMODATION_SUPPORT_NEEDS_CHECKBOXES",
+            title = "Support needs",
+            subTitle = "Select all that apply.",
+            type = TypeOfQuestion.CHECKBOX,
+            options = listOf(
+              Option(id = "HELP_TO_FIND_ACCOMMODATION", displayText = "Help to find accommodation"),
+              Option(id = "HOME_ADAPTATIONS", displayText = "Home adaptations"),
+              Option(id = "HELP_TO_KEEP_HOME", displayText = "Help to keep their home while in prison"),
+              Option(id = "HOMELESS_APPLICATION", displayText = "Homeless application"),
+              Option(id = "CANCEL_A_TENANCY", displayText = "Cancel a tenancy"),
+              Option(id = "SET_UP_RENT_ARREARS", displayText = "Set up rent arrears"),
+              Option(id = "ARRANGE_STORAGE", displayText = "Arrange storage for personal possessions"),
+            ),
+          ),
+          AssessmentConfigQuestion(
             id = "SUPPORT_NEEDS",
-            title = "",
-            subTitle = null,
+            title = "Accommodation resettlement status",
             type = TypeOfQuestion.RADIO,
+            subTitle = null,
             options = listOf(
               Option(id = "SUPPORT_REQUIRED", displayText = "Support required", description = "a need for support has been identified and is accepted"),
               Option(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
@@ -500,14 +473,11 @@ open class YamlResettlementStrategyTest {
 
     val expectedQuestionSet = AssessmentQuestionSet(
       version = 2,
-      generic = false,
       pathway = Pathway.ACCOMMODATION,
-      genericAssessmentVersion = 1,
       pages = expectedPages,
     )
 
     val assessmentQuestionSet = resettlementAssessmentService.getConfig(Pathway.ACCOMMODATION, ResettlementAssessmentType.BCST2, version = 2)
-    Assertions.assertNotNull(assessmentQuestionSet)
     Assertions.assertEquals(expectedQuestionSet, assessmentQuestionSet)
   }
 

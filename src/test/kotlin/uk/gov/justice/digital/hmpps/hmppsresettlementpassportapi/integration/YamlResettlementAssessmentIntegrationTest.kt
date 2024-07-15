@@ -861,7 +861,7 @@ class YamlResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val assessmentType = "RESETTLEMENT_PLAN"
     val page = "PRERELEASE_ASSESSMENT_SUMMARY"
 
-    val expectedOutput = readFile("testdata/expectation/pre-release-assessment-summary.json")
+    val expectedOutput = readFile("testdata/expectation/pre-release-assessment-summary-accommodation.json")
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/page/$page?assessmentType=$assessmentType")

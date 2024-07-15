@@ -1,6 +1,5 @@
 version: 1
 pathway: "ACCOMMODATION"
-genericAssessmentVersion: 1
 pages:
   - id: "WHERE_DID_THEY_LIVE"
     questions:
@@ -119,3 +118,57 @@ pages:
         type: "ADDRESS"
     nextPageLogic:
       - nextPageId: "FINAL_QUESTION_NEXT_PAGE"
+  # In subsequent versions do not change page and question ids below this point due to custom logic elsewhere in the code
+  - id: "ASSESSMENT_SUMMARY"
+    title: "Accommodation report summary"
+    questions:
+      - id: "SUPPORT_NEEDS"
+        title: "Accommodation support needs"
+        subTitle: "Select one option."
+        type: "RADIO"
+        options:
+          - id: "SUPPORT_REQUIRED"
+            displayText: "Support required"
+            description: "a need for support has been identified and is accepted"
+          - id: "SUPPORT_NOT_REQUIRED"
+            displayText: "Support not required"
+            description: "no need was identified"
+          - id: "SUPPORT_DECLINED"
+            displayText: "Support declined"
+            description: "a need has been identified but support is declined"
+      - id: "CASE_NOTE_SUMMARY"
+        title: "Add a case note summary"
+        subTitle: "This will be displayed as a case note in both DPS and nDelius"
+        type: "LONG_TEXT"
+    nextPageLogic:
+      - nextPageId: "CHECK_ANSWERS"
+  - id: "PRERELEASE_ASSESSMENT_SUMMARY"
+    title: "Accommodation report summary"
+    questions:
+      - id: "SUPPORT_NEEDS_PRERELEASE"
+        title: "Accommodation support needs"
+        subTitle: "Select one option."
+        type: "RADIO"
+        options:
+          - id: "SUPPORT_REQUIRED"
+            displayText: "Support required"
+            description: "a need for support has been identified and is accepted"
+          - id: "SUPPORT_NOT_REQUIRED"
+            displayText: "Support not required"
+            description: "no need was identified"
+          - id: "SUPPORT_DECLINED"
+            displayText: "Support declined"
+            description: "a need has been identified but support is declined"
+          - id: "IN_PROGRESS"
+            displayText: "In progress"
+            description: "work is ongoing"
+          - id: "DONE"
+            displayText: "Done"
+            description: "all required work has been completed successfully"
+      - id: "CASE_NOTE_SUMMARY"
+        title: "Add a case note summary"
+        subTitle: "This will be displayed as a case note in both DPS and nDelius"
+        type: "LONG_TEXT"
+    nextPageLogic:
+      - nextPageId: "CHECK_ANSWERS"
+  - id: "CHECK_ANSWERS"

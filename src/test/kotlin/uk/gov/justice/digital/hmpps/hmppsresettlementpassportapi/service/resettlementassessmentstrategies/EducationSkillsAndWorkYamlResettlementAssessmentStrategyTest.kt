@@ -1,13 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies
 
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.Mockito
-import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponsePage
@@ -29,9 +26,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import java.time.LocalDate
 import java.util.stream.Stream
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ExtendWith(MockitoExtension::class)
-class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : YamlResettlementStrategyTest() {
+class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlResettlementStrategyTest() {
 
   @ParameterizedTest
   @MethodSource("test next page function flow - no existing assessment data")
@@ -719,11 +714,13 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : YamlResettl
       "ASSESSMENT_SUMMARY",
       ResettlementAssessmentResponsePage(
         id = "ASSESSMENT_SUMMARY",
+        title = "Education, skills and work report summary",
         questionsAndAnswers = mutableListOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
             question = ResettlementAssessmentResponseQuestion(
               id = "SUPPORT_NEEDS",
-              title = "",
+              title = "Education, skills and work support needs",
+              subTitle = "Select one option.",
               type = TypeOfQuestion.RADIO,
               options = mutableListOf(
                 Option(

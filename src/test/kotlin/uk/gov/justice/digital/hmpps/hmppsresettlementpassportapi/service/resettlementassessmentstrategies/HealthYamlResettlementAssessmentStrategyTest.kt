@@ -6,18 +6,18 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.Mockito
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponsePage
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponseQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponseQuestionAndAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponseQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
@@ -156,14 +156,14 @@ class HealthYamlResettlementAssessmentStrategyTest : BaseYamlResettlementStrateg
       "REGISTERED_WITH_GP",
       ResettlementAssessmentResponsePage(
         id = "REGISTERED_WITH_GP",
-        questionsAndAnswers = mutableListOf(
+        questionsAndAnswers = listOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            question = ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentQuestion(
               id = "REGISTERED_WITH_GP",
               title = "Is the person in prison registered with a GP surgery outside of prison?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
-              options = yesNoOptions.toMutableList(),
+              options = yesNoOptions,
             ),
             originalPageId = "REGISTERED_WITH_GP",
           ),
@@ -174,14 +174,14 @@ class HealthYamlResettlementAssessmentStrategyTest : BaseYamlResettlementStrateg
       "HELP_REGISTERING_GP",
       ResettlementAssessmentResponsePage(
         id = "HELP_REGISTERING_GP",
-        questionsAndAnswers = mutableListOf(
+        questionsAndAnswers = listOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            question = ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentQuestion(
               id = "HELP_REGISTERING_GP",
               title = "Does the person in prison want help registering with a GP surgery?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
-              options = yesNoOptions.toMutableList(),
+              options = yesNoOptions,
             ),
             originalPageId = "HELP_REGISTERING_GP",
           ),
@@ -192,14 +192,14 @@ class HealthYamlResettlementAssessmentStrategyTest : BaseYamlResettlementStrateg
       "MEET_HEALTHCARE_TEAM",
       ResettlementAssessmentResponsePage(
         id = "MEET_HEALTHCARE_TEAM",
-        questionsAndAnswers = mutableListOf(
+        questionsAndAnswers = listOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            question = ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentQuestion(
               id = "MEET_HEALTHCARE_TEAM",
               title = "Does the person in prison want to meet with a prison healthcare team?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
-              options = yesNoOptions.toMutableList(),
+              options = yesNoOptions,
             ),
             originalPageId = "MEET_HEALTHCARE_TEAM",
           ),
@@ -210,17 +210,17 @@ class HealthYamlResettlementAssessmentStrategyTest : BaseYamlResettlementStrateg
       "WHAT_HEALTH_NEED",
       ResettlementAssessmentResponsePage(
         id = "WHAT_HEALTH_NEED",
-        questionsAndAnswers = mutableListOf(
+        questionsAndAnswers = listOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            question = ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentQuestion(
               id = "WHAT_HEALTH_NEED",
               title = "What health need is this related to?",
               subTitle = null,
               type = TypeOfQuestion.CHECKBOX,
-              options = mutableListOf(
-                Option(id = "PHYSICAL_HEALTH", displayText = "Physical health"),
-                Option(id = "MENTAL_HEALTH", displayText = "Mental health"),
-                Option(id = "NO_ANSWER", displayText = "No answer provided", exclusive = true),
+              options = listOf(
+                ResettlementAssessmentOption(id = "PHYSICAL_HEALTH", displayText = "Physical health"),
+                ResettlementAssessmentOption(id = "MENTAL_HEALTH", displayText = "Mental health"),
+                ResettlementAssessmentOption(id = "NO_ANSWER", displayText = "No answer provided", exclusive = true),
               ),
             ),
             originalPageId = "WHAT_HEALTH_NEED",
@@ -233,21 +233,21 @@ class HealthYamlResettlementAssessmentStrategyTest : BaseYamlResettlementStrateg
       ResettlementAssessmentResponsePage(
         id = "ASSESSMENT_SUMMARY",
         title = "Health report summary",
-        questionsAndAnswers = mutableListOf(
+        questionsAndAnswers = listOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            question = ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentQuestion(
               id = "SUPPORT_NEEDS",
               title = "Health support needs",
               subTitle = "Select one option.",
               type = TypeOfQuestion.RADIO,
-              options = mutableListOf(
-                Option(
+              options = listOf(
+                ResettlementAssessmentOption(
                   id = "SUPPORT_REQUIRED",
                   displayText = "Support required",
                   description = "a need for support has been identified and is accepted",
                 ),
-                Option(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
-                Option(
+                ResettlementAssessmentOption(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
+                ResettlementAssessmentOption(
                   id = "SUPPORT_DECLINED",
                   displayText = "Support declined",
                   description = "a need has been identified but support is declined",
@@ -257,7 +257,7 @@ class HealthYamlResettlementAssessmentStrategyTest : BaseYamlResettlementStrateg
             originalPageId = "ASSESSMENT_SUMMARY",
           ),
           ResettlementAssessmentResponseQuestionAndAnswer(
-            question = ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentQuestion(
               id = "CASE_NOTE_SUMMARY",
               title = "Add a case note summary",
               subTitle = "This will be displayed as a case note in both DPS and nDelius",
@@ -272,12 +272,12 @@ class HealthYamlResettlementAssessmentStrategyTest : BaseYamlResettlementStrateg
       "CHECK_ANSWERS",
       ResettlementAssessmentResponsePage(
         id = "CHECK_ANSWERS",
-        questionsAndAnswers = mutableListOf(),
+        questionsAndAnswers = listOf(),
       ),
     ),
   )
 
-  private fun setUpMocks(nomsId: String, returnResettlementAssessmentEntity: Boolean, assessment: ResettlementAssessmentQuestionAndAnswerList = ResettlementAssessmentQuestionAndAnswerList(mutableListOf())) {
+  private fun setUpMocks(nomsId: String, returnResettlementAssessmentEntity: Boolean, assessment: ResettlementAssessmentQuestionAndAnswerList = ResettlementAssessmentQuestionAndAnswerList(listOf())) {
     val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23"))
     val resettlementAssessmentEntity = if (returnResettlementAssessmentEntity) ResettlementAssessmentEntity(1, prisonerEntity, Pathway.HEALTH, Status.NOT_STARTED, ResettlementAssessmentType.BCST2, assessment, testDate, "", ResettlementAssessmentStatus.COMPLETE, "some text", "USER_1", submissionDate = null, version = 1) else null
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)

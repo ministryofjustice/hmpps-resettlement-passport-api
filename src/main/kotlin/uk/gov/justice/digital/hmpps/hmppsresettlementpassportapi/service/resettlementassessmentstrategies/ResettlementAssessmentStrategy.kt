@@ -4,21 +4,17 @@ import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentCompleteRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponsePage
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponseQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponseQuestionAndAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentCompleteRequest
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponseQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentSimpleQuestionAndAnswer
@@ -35,7 +31,6 @@ class YamlResettlementAssessmentStrategy(
   private val resettlementAssessmentRepository: ResettlementAssessmentRepository,
   private val prisonerRepository: PrisonerRepository,
   private val pathwayStatusRepository: PathwayStatusRepository,
-
 ) {
 
   fun getConfig(pathway: Pathway, assessmentType: ResettlementAssessmentType, version: Int): AssessmentQuestionSet {
@@ -189,7 +184,7 @@ class YamlResettlementAssessmentStrategy(
           it.question,
           it.answer,
         )
-      }.toMutableList(),
+      }
     )
 
     // Create new resettlement assessment entity and save to database
@@ -220,7 +215,7 @@ class YamlResettlementAssessmentStrategy(
     version: Int = 1,
   ) {
     // Convert to Map of pages to List of questionsAndAnswers
-    val nodeToQuestionMap = assessment.questionsAndAnswers
+    val nodeToQuestionMap = assessment.questionsAndAnswers // TODO deal with flattened nested questions
       .groupByTo(LinkedHashMap()) { qa ->
         getConfig(pathway, assessmentType, version).pages
           .firstOrNull { configPage ->
@@ -323,12 +318,12 @@ class YamlResettlementAssessmentStrategy(
       id = page.id,
       questionsAndAnswers = page.questions?.map {
         ResettlementAssessmentResponseQuestionAndAnswer(
-          ResettlementAssessmentResponseQuestion(
+          ResettlementAssessmentQuestion(
             it.id,
             it.title,
             it.subTitle,
             it.type,
-            it.options?.toMutableList(),
+            it.options,
             it.validationType,
           ),
           answer = null,
@@ -374,7 +369,7 @@ class YamlResettlementAssessmentStrategy(
     return resettlementAssessmentResponsePage
   }
 
-  fun getQuestionById(id: String, pathway: Pathway, assessmentType: ResettlementAssessmentType): IResettlementAssessmentQuestion {
+  fun getQuestionById(id: String, pathway: Pathway, assessmentType: ResettlementAssessmentType): ResettlementAssessmentQuestion {
     return getQuestionList(pathway, assessmentType).first { it.id == id }
   }
 
@@ -384,10 +379,12 @@ class YamlResettlementAssessmentStrategy(
     pathway: Pathway,
     version: Int = 1,
   ): String {
+    // TODO deal with flattened nested questions
     return getConfig(pathway, assessmentType, version).pages.firstOrNull { p -> (p.questions?.any { q -> q.id == questionId } == true) }?.id ?: throw RuntimeException("Cannot find page for question [$questionId] - check that the question is used in a page!")
   }
 
-  private fun getQuestionList(pathway: Pathway, assessmentType: ResettlementAssessmentType, version: Int = 1): List<IResettlementAssessmentQuestion> = getConfig(pathway, assessmentType, version).pages.filter { it.questions != null }.flatMap { it.questions!! }
+  // TODO deal with flattened nested questions
+  private fun getQuestionList(pathway: Pathway, assessmentType: ResettlementAssessmentType, version: Int = 1): List<ResettlementAssessmentQuestion> = getConfig(pathway, assessmentType, version).pages.filter { it.questions != null }.flatMap { it.questions!! }
 
   private fun saveAssessment(assessment: ResettlementAssessmentEntity): ResettlementAssessmentEntity = resettlementAssessmentRepository.save(assessment)
 
@@ -436,18 +433,8 @@ data class AssessmentQuestionSet(
 data class AssessmentConfigPage(
   val id: String,
   val title: String?,
-  val questions: List<AssessmentConfigQuestion>?,
+  val questions: List<ResettlementAssessmentQuestion>?,
   val nextPageLogic: List<AssessmentConfigNextPageOption>?,
 )
 
 data class AssessmentConfigNextPageOption(val questionId: String?, val nextPageId: String, val answers: List<Answer<*>>?)
-
-data class AssessmentConfigQuestion(
-  override val id: String,
-  override val title: String,
-  override val subTitle: String?,
-  override val type: TypeOfQuestion,
-  override val options: List<Option>?,
-) : IResettlementAssessmentQuestion {
-  override val validationType: ValidationType = ValidationType.MANDATORY
-}

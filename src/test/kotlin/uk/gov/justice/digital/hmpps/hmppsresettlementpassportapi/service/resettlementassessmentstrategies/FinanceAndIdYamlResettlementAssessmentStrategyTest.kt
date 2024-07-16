@@ -6,18 +6,18 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.Mockito
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponsePage
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponseQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponseQuestionAndAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponseQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
@@ -220,14 +220,14 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
       "HAS_BANK_ACCOUNT",
       ResettlementAssessmentResponsePage(
         id = "HAS_BANK_ACCOUNT",
-        questionsAndAnswers = mutableListOf(
+        questionsAndAnswers = listOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            question = ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentQuestion(
               id = "HAS_BANK_ACCOUNT",
               title = "Does the person in prison have a bank account?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
-              options = yesNoOptions.toMutableList(),
+              options = yesNoOptions,
             ),
             originalPageId = "HAS_BANK_ACCOUNT",
           ),
@@ -238,14 +238,14 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
       "HELP_WITH_BANK_ACCOUNT",
       ResettlementAssessmentResponsePage(
         id = "HELP_WITH_BANK_ACCOUNT",
-        questionsAndAnswers = mutableListOf(
+        questionsAndAnswers = listOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            question = ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentQuestion(
               id = "HELP_WITH_BANK_ACCOUNT",
               title = "Does the person in prison want help to apply for a bank account?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
-              options = yesNoOptions.toMutableList(),
+              options = yesNoOptions,
             ),
             originalPageId = "HELP_WITH_BANK_ACCOUNT",
           ),
@@ -256,23 +256,23 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
       "WHAT_ID_DOCUMENTS",
       ResettlementAssessmentResponsePage(
         id = "WHAT_ID_DOCUMENTS",
-        questionsAndAnswers = mutableListOf(
+        questionsAndAnswers = listOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            question = ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentQuestion(
               id = "WHAT_ID_DOCUMENTS",
               title = "What ID documents does the person in prison have?",
               subTitle = null,
               type = TypeOfQuestion.CHECKBOX,
-              options = mutableListOf(
-                Option(id = "BIRTH_CERTIFICATE", displayText = "Birth or adoption certificate"),
-                Option(id = "PASSPORT", displayText = "Passport"),
-                Option(id = "DRIVING_LICENCE", displayText = "Driving licence"),
-                Option(id = "MARRIAGE_CERTIFICATE", displayText = "Marriage or civil partnership certificate"),
-                Option(id = "DIVORCE_CERTIFICATE", displayText = "Divorce decree absolute certificate"),
-                Option(id = "BIOMETRIC_RESIDENCE_PERMIT", displayText = "Biometric residence permit"),
-                Option(id = "DEED_POLL_CERTIFICATE", displayText = "Deed poll certificate"),
-                Option(id = "NO_ID_DOCUMENTS", displayText = "No ID documents", exclusive = true),
-                Option(id = "NO_ANSWER", displayText = "No answer provided", exclusive = true),
+              options = listOf(
+                ResettlementAssessmentOption(id = "BIRTH_CERTIFICATE", displayText = "Birth or adoption certificate"),
+                ResettlementAssessmentOption(id = "PASSPORT", displayText = "Passport"),
+                ResettlementAssessmentOption(id = "DRIVING_LICENCE", displayText = "Driving licence"),
+                ResettlementAssessmentOption(id = "MARRIAGE_CERTIFICATE", displayText = "Marriage or civil partnership certificate"),
+                ResettlementAssessmentOption(id = "DIVORCE_CERTIFICATE", displayText = "Divorce decree absolute certificate"),
+                ResettlementAssessmentOption(id = "BIOMETRIC_RESIDENCE_PERMIT", displayText = "Biometric residence permit"),
+                ResettlementAssessmentOption(id = "DEED_POLL_CERTIFICATE", displayText = "Deed poll certificate"),
+                ResettlementAssessmentOption(id = "NO_ID_DOCUMENTS", displayText = "No ID documents", exclusive = true),
+                ResettlementAssessmentOption(id = "NO_ANSWER", displayText = "No answer provided", exclusive = true),
               ),
             ),
             originalPageId = "WHAT_ID_DOCUMENTS",
@@ -284,14 +284,14 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
       "HELP_APPLY_FOR_ID",
       ResettlementAssessmentResponsePage(
         id = "HELP_APPLY_FOR_ID",
-        questionsAndAnswers = mutableListOf(
+        questionsAndAnswers = listOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            question = ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentQuestion(
               id = "HELP_APPLY_FOR_ID",
               title = "Does the person leaving prison want help to apply for ID?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
-              options = yesNoOptions.toMutableList(),
+              options = yesNoOptions,
             ),
             originalPageId = "HELP_APPLY_FOR_ID",
           ),
@@ -302,14 +302,14 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
       "RECEIVING_BENEFITS",
       ResettlementAssessmentResponsePage(
         id = "RECEIVING_BENEFITS",
-        questionsAndAnswers = mutableListOf(
+        questionsAndAnswers = listOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            question = ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentQuestion(
               id = "RECEIVING_BENEFITS",
               title = "Was the person in prison receiving benefits before custody?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
-              options = yesNoOptions.toMutableList(),
+              options = yesNoOptions,
             ),
             originalPageId = "RECEIVING_BENEFITS",
           ),
@@ -320,23 +320,23 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
       "SELECT_BENEFITS",
       ResettlementAssessmentResponsePage(
         id = "SELECT_BENEFITS",
-        questionsAndAnswers = mutableListOf(
+        questionsAndAnswers = listOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            question = ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentQuestion(
               id = "SELECT_BENEFITS",
               title = "Select benefits the person in prison received before custody",
               subTitle = null,
               type = TypeOfQuestion.CHECKBOX,
-              options = mutableListOf(
-                Option(id = "ESA", displayText = "Employment and support allowance (ESA)"),
-                Option(id = "HOUSING_BENEFIT", displayText = "Housing benefit"),
-                Option(id = "UNIVERSAL_CREDIT_HOUSING_ELEMENT", displayText = "Universal credit housing element"),
-                Option(id = "UNIVERSAL_CREDIT", displayText = "Universal credit"),
-                Option(id = "PIP", displayText = "Personal independence payment (PIP)"),
-                Option(id = "STATE_PENSION", displayText = "State pension"),
-                Option(id = "NO_BENEFITS", displayText = "No benefits"),
-                Option(id = "OTHER", displayText = "Other"),
-                Option(id = "NO_ANSWER", displayText = "No answer provided", exclusive = true),
+              options = listOf(
+                ResettlementAssessmentOption(id = "ESA", displayText = "Employment and support allowance (ESA)"),
+                ResettlementAssessmentOption(id = "HOUSING_BENEFIT", displayText = "Housing benefit"),
+                ResettlementAssessmentOption(id = "UNIVERSAL_CREDIT_HOUSING_ELEMENT", displayText = "Universal credit housing element"),
+                ResettlementAssessmentOption(id = "UNIVERSAL_CREDIT", displayText = "Universal credit"),
+                ResettlementAssessmentOption(id = "PIP", displayText = "Personal independence payment (PIP)"),
+                ResettlementAssessmentOption(id = "STATE_PENSION", displayText = "State pension"),
+                ResettlementAssessmentOption(id = "NO_BENEFITS", displayText = "No benefits"),
+                ResettlementAssessmentOption(id = "OTHER", displayText = "Other"),
+                ResettlementAssessmentOption(id = "NO_ANSWER", displayText = "No answer provided", exclusive = true),
               ),
             ),
             originalPageId = "SELECT_BENEFITS",
@@ -348,14 +348,14 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
       "DEBTS_OR_ARREARS",
       ResettlementAssessmentResponsePage(
         id = "DEBTS_OR_ARREARS",
-        questionsAndAnswers = mutableListOf(
+        questionsAndAnswers = listOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            question = ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentQuestion(
               id = "DEBTS_OR_ARREARS",
               title = "Does the person in prison have any debts or arrears?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
-              options = yesNoOptions.toMutableList(),
+              options = yesNoOptions,
             ),
             originalPageId = "DEBTS_OR_ARREARS",
           ),
@@ -366,14 +366,14 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
       "HELP_MANAGE_DEBTS",
       ResettlementAssessmentResponsePage(
         id = "HELP_MANAGE_DEBTS",
-        questionsAndAnswers = mutableListOf(
+        questionsAndAnswers = listOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            question = ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentQuestion(
               id = "HELP_MANAGE_DEBTS",
               title = "Does the person in prison want support to manage their debts or arrears?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
-              options = yesNoOptions.toMutableList(),
+              options = yesNoOptions,
             ),
             originalPageId = "HELP_MANAGE_DEBTS",
           ),
@@ -385,21 +385,21 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
       ResettlementAssessmentResponsePage(
         id = "ASSESSMENT_SUMMARY",
         title = "Finance and ID report summary",
-        questionsAndAnswers = mutableListOf(
+        questionsAndAnswers = listOf(
           ResettlementAssessmentResponseQuestionAndAnswer(
-            question = ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentQuestion(
               id = "SUPPORT_NEEDS",
               title = "Finance and ID support needs",
               subTitle = "Select one option.",
               type = TypeOfQuestion.RADIO,
-              options = mutableListOf(
-                Option(
+              options = listOf(
+                ResettlementAssessmentOption(
                   id = "SUPPORT_REQUIRED",
                   displayText = "Support required",
                   description = "a need for support has been identified and is accepted",
                 ),
-                Option(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
-                Option(
+                ResettlementAssessmentOption(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
+                ResettlementAssessmentOption(
                   id = "SUPPORT_DECLINED",
                   displayText = "Support declined",
                   description = "a need has been identified but support is declined",
@@ -409,7 +409,7 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
             originalPageId = "ASSESSMENT_SUMMARY",
           ),
           ResettlementAssessmentResponseQuestionAndAnswer(
-            question = ResettlementAssessmentResponseQuestion(
+            question = ResettlementAssessmentQuestion(
               id = "CASE_NOTE_SUMMARY",
               title = "Add a case note summary",
               subTitle = "This will be displayed as a case note in both DPS and nDelius",
@@ -424,12 +424,12 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
       "CHECK_ANSWERS",
       ResettlementAssessmentResponsePage(
         id = "CHECK_ANSWERS",
-        questionsAndAnswers = mutableListOf(),
+        questionsAndAnswers = listOf(),
       ),
     ),
   )
 
-  private fun setUpMocks(nomsId: String, returnResettlementAssessmentEntity: Boolean, assessment: ResettlementAssessmentQuestionAndAnswerList = ResettlementAssessmentQuestionAndAnswerList(mutableListOf())) {
+  private fun setUpMocks(nomsId: String, returnResettlementAssessmentEntity: Boolean, assessment: ResettlementAssessmentQuestionAndAnswerList = ResettlementAssessmentQuestionAndAnswerList(listOf())) {
     val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23"))
     val resettlementAssessmentEntity = if (returnResettlementAssessmentEntity) ResettlementAssessmentEntity(1, prisonerEntity, Pathway.FINANCE_AND_ID, Status.NOT_STARTED, ResettlementAssessmentType.BCST2, assessment, testDate, "", ResettlementAssessmentStatus.COMPLETE, "some text", "USER_1", submissionDate = null, version = 1) else null
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)

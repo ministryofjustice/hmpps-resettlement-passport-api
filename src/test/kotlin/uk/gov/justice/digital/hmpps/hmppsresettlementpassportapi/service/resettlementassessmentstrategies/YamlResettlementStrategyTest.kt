@@ -8,10 +8,11 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.Mockito
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
@@ -89,7 +90,7 @@ class YamlResettlementStrategyTest : BaseYamlResettlementStrategyTest() {
     ),
   )
 
-  private fun setUpMocks(nomsId: String, returnResettlementAssessmentEntity: Boolean, assessment: ResettlementAssessmentQuestionAndAnswerList = ResettlementAssessmentQuestionAndAnswerList(mutableListOf())) {
+  private fun setUpMocks(nomsId: String, returnResettlementAssessmentEntity: Boolean, assessment: ResettlementAssessmentQuestionAndAnswerList = ResettlementAssessmentQuestionAndAnswerList(listOf())) {
     val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23"))
     val resettlementAssessmentEntity = if (returnResettlementAssessmentEntity) ResettlementAssessmentEntity(1, prisonerEntity, Pathway.ACCOMMODATION, Status.NOT_STARTED, ResettlementAssessmentType.BCST2, assessment, testDate, "", ResettlementAssessmentStatus.COMPLETE, "some text", "USER_1", submissionDate = null, version = 1) else null
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
@@ -110,17 +111,17 @@ class YamlResettlementStrategyTest : BaseYamlResettlementStrategyTest() {
         id = "WHERE_DID_THEY_LIVE",
         title = null,
         questions = listOf(
-          AssessmentConfigQuestion(
+          ResettlementAssessmentQuestion(
             id = "WHERE_DID_THEY_LIVE",
             title = "Where did the person in prison live before custody?",
             subTitle = null,
             type = TypeOfQuestion.RADIO,
             options = listOf(
-              Option(id = "PRIVATE_RENTED_HOUSING", displayText = "Private rented housing"),
-              Option(id = "SOCIAL_HOUSING", displayText = "Social housing"),
-              Option(id = "HOMEOWNER", displayText = "Homeowner"),
-              Option(id = "NO_PERMANENT_OR_FIXED", displayText = "No permanent or fixed address"),
-              Option(id = "NO_ANSWER", displayText = "No answer provided"),
+              ResettlementAssessmentOption(id = "PRIVATE_RENTED_HOUSING", displayText = "Private rented housing"),
+              ResettlementAssessmentOption(id = "SOCIAL_HOUSING", displayText = "Social housing"),
+              ResettlementAssessmentOption(id = "HOMEOWNER", displayText = "Homeowner"),
+              ResettlementAssessmentOption(id = "NO_PERMANENT_OR_FIXED", displayText = "No permanent or fixed address"),
+              ResettlementAssessmentOption(id = "NO_ANSWER", displayText = "No answer provided"),
             ),
           ),
         ),
@@ -148,7 +149,7 @@ class YamlResettlementStrategyTest : BaseYamlResettlementStrategyTest() {
         id = "WHERE_DID_THEY_LIVE_ADDRESS",
         title = "Where did the person in prison live before custody?",
         questions = listOf(
-          AssessmentConfigQuestion(
+          ResettlementAssessmentQuestion(
             id = "WHERE_DID_THEY_LIVE_ADDRESS",
             title = "Enter the address",
             subTitle = null,
@@ -168,15 +169,15 @@ class YamlResettlementStrategyTest : BaseYamlResettlementStrategyTest() {
         id = "HELP_TO_KEEP_HOME",
         title = null,
         questions = listOf(
-          AssessmentConfigQuestion(
+          ResettlementAssessmentQuestion(
             id = "HELP_TO_KEEP_HOME",
             title = "Does the person in prison or their family need help to keep their home while they are in prison?",
             subTitle = null,
             type = TypeOfQuestion.RADIO,
             options = listOf(
-              Option(id = "YES", displayText = "Yes"),
-              Option(id = "NO", displayText = "No"),
-              Option(id = "NO_ANSWER", displayText = "No answer provided"),
+              ResettlementAssessmentOption(id = "YES", displayText = "Yes"),
+              ResettlementAssessmentOption(id = "NO", displayText = "No"),
+              ResettlementAssessmentOption(id = "NO_ANSWER", displayText = "No answer provided"),
             ),
           ),
         ),
@@ -192,16 +193,16 @@ class YamlResettlementStrategyTest : BaseYamlResettlementStrategyTest() {
         id = "WHERE_WILL_THEY_LIVE_1",
         title = null,
         questions = listOf(
-          AssessmentConfigQuestion(
+          ResettlementAssessmentQuestion(
             id = "WHERE_WILL_THEY_LIVE_1",
             title = "Where will the person in prison live when they are released?",
             subTitle = null,
             type = TypeOfQuestion.RADIO,
             options = listOf(
-              Option(id = "RETURN_TO_PREVIOUS_ADDRESS", displayText = "Return to their previous address"),
-              Option(id = "MOVE_TO_NEW_ADDRESS", displayText = "Move to a new address"),
-              Option(id = "DOES_NOT_HAVE_ANYWHERE", displayText = "Does not have anywhere to live"),
-              Option(id = "NO_ANSWER", displayText = "No answer provided"),
+              ResettlementAssessmentOption(id = "RETURN_TO_PREVIOUS_ADDRESS", displayText = "Return to their previous address"),
+              ResettlementAssessmentOption(id = "MOVE_TO_NEW_ADDRESS", displayText = "Move to a new address"),
+              ResettlementAssessmentOption(id = "DOES_NOT_HAVE_ANYWHERE", displayText = "Does not have anywhere to live"),
+              ResettlementAssessmentOption(id = "NO_ANSWER", displayText = "No answer provided"),
             ),
           ),
         ),
@@ -228,15 +229,15 @@ class YamlResettlementStrategyTest : BaseYamlResettlementStrategyTest() {
         id = "WHERE_WILL_THEY_LIVE_2",
         title = null,
         questions = listOf(
-          AssessmentConfigQuestion(
+          ResettlementAssessmentQuestion(
             id = "WHERE_WILL_THEY_LIVE_2",
             title = "Where will the person in prison live when they are released?",
             subTitle = null,
             type = TypeOfQuestion.RADIO,
             options = listOf(
-              Option(id = "MOVE_TO_NEW_ADDRESS", displayText = "Move to a new address"),
-              Option(id = "DOES_NOT_HAVE_ANYWHERE", displayText = "Does not have anywhere to live"),
-              Option(id = "NO_ANSWER", displayText = "No answer provided"),
+              ResettlementAssessmentOption(id = "MOVE_TO_NEW_ADDRESS", displayText = "Move to a new address"),
+              ResettlementAssessmentOption(id = "DOES_NOT_HAVE_ANYWHERE", displayText = "Does not have anywhere to live"),
+              ResettlementAssessmentOption(id = "NO_ANSWER", displayText = "No answer provided"),
             ),
           ),
         ),
@@ -262,7 +263,7 @@ class YamlResettlementStrategyTest : BaseYamlResettlementStrategyTest() {
         id = "WHERE_WILL_THEY_LIVE_ADDRESS",
         title = "Where will the person in prison live when they are released?",
         questions = listOf(
-          AssessmentConfigQuestion(
+          ResettlementAssessmentQuestion(
             id = "WHERE_WILL_THEY_LIVE_ADDRESS",
             title = "Enter the address",
             subTitle = null,
@@ -282,18 +283,18 @@ class YamlResettlementStrategyTest : BaseYamlResettlementStrategyTest() {
         id = "ASSESSMENT_SUMMARY",
         title = "Accommodation report summary",
         questions = listOf(
-          AssessmentConfigQuestion(
+          ResettlementAssessmentQuestion(
             id = "SUPPORT_NEEDS",
             title = "Accommodation support needs",
             subTitle = "Select one option.",
             type = TypeOfQuestion.RADIO,
             options = listOf(
-              Option(id = "SUPPORT_REQUIRED", displayText = "Support required", description = "a need for support has been identified and is accepted"),
-              Option(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
-              Option(id = "SUPPORT_DECLINED", displayText = "Support declined", description = "a need has been identified but support is declined"),
+              ResettlementAssessmentOption(id = "SUPPORT_REQUIRED", displayText = "Support required", description = "a need for support has been identified and is accepted"),
+              ResettlementAssessmentOption(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
+              ResettlementAssessmentOption(id = "SUPPORT_DECLINED", displayText = "Support declined", description = "a need has been identified but support is declined"),
             ),
           ),
-          AssessmentConfigQuestion(
+          ResettlementAssessmentQuestion(
             id = "CASE_NOTE_SUMMARY",
             title = "Add a case note summary",
             subTitle = "This will be displayed as a case note in both DPS and nDelius",
@@ -334,43 +335,43 @@ class YamlResettlementStrategyTest : BaseYamlResettlementStrategyTest() {
         id = "PAST_AND_FUTURE_ACCOMMODATION",
         title = null,
         questions = listOf(
-          AssessmentConfigQuestion(
+          ResettlementAssessmentQuestion(
             id = "WHERE_DID_THEY_LIVE",
             title = "Where did the person in prison live before custody?",
             subTitle = null,
             type = TypeOfQuestion.RADIO,
             options = listOf(
-              Option(id = "PRIVATE_RENTED_HOUSING", displayText = "Private rented housing"),
-              Option(id = "PRIVATE_HOUSING_OWNED", displayText = "Private housing owned by them"),
-              Option(id = "FAMILY_OR_FRIENDS", displayText = "With family or friends"),
-              Option(id = "SOCIAL_HOUSING", displayText = "Social housing"),
-              Option(id = "LOCAL_AUTHORITY_OR_SUPPORTED_HOUSING", displayText = "Local authority care or supported housing"),
-              Option(id = "HOSTEL", displayText = "Hostel"),
-              Option(id = "APPROVED_PREMISES", displayText = "Approved premises"),
-              Option(id = "NO_PERMANENT_OR_FIXED", displayText = "No permanent or fixed address"),
-              Option(id = "NO_ANSWER", displayText = "No answer provided"),
+              ResettlementAssessmentOption(id = "PRIVATE_RENTED_HOUSING", displayText = "Private rented housing"),
+              ResettlementAssessmentOption(id = "PRIVATE_HOUSING_OWNED", displayText = "Private housing owned by them"),
+              ResettlementAssessmentOption(id = "FAMILY_OR_FRIENDS", displayText = "With family or friends"),
+              ResettlementAssessmentOption(id = "SOCIAL_HOUSING", displayText = "Social housing"),
+              ResettlementAssessmentOption(id = "LOCAL_AUTHORITY_OR_SUPPORTED_HOUSING", displayText = "Local authority care or supported housing"),
+              ResettlementAssessmentOption(id = "HOSTEL", displayText = "Hostel"),
+              ResettlementAssessmentOption(id = "APPROVED_PREMISES", displayText = "Approved premises"),
+              ResettlementAssessmentOption(id = "NO_PERMANENT_OR_FIXED", displayText = "No permanent or fixed address"),
+              ResettlementAssessmentOption(id = "NO_ANSWER", displayText = "No answer provided"),
             ),
           ),
-          AssessmentConfigQuestion(
+          ResettlementAssessmentQuestion(
             id = "ADDITIONAL_INFORMATION_WHERE_DID_THEY_LIVE",
             title = "Additional information",
             subTitle = "Include details of who else lived at the address and how the accommodation was paid for. If no fixed address, specify the council area where they have a local connection.",
             type = TypeOfQuestion.LONG_TEXT,
             options = null,
           ),
-          AssessmentConfigQuestion(
+          ResettlementAssessmentQuestion(
             id = "WHERE_WILL_THEY_LIVE",
             title = "Where will the person in prison live when they are released?",
             subTitle = null,
             type = TypeOfQuestion.RADIO,
             options = listOf(
-              Option(id = "RETURN_TO_PREVIOUS_ADDRESS", displayText = "Return to their previous address"),
-              Option(id = "MOVE_TO_NEW_ADDRESS", displayText = "Move to a new address"),
-              Option(id = "DOES_NOT_HAVE_ANYWHERE", displayText = "Does not have anywhere to live"),
-              Option(id = "NO_ANSWER", displayText = "No answer provided"),
+              ResettlementAssessmentOption(id = "RETURN_TO_PREVIOUS_ADDRESS", displayText = "Return to their previous address"),
+              ResettlementAssessmentOption(id = "MOVE_TO_NEW_ADDRESS", displayText = "Move to a new address"),
+              ResettlementAssessmentOption(id = "DOES_NOT_HAVE_ANYWHERE", displayText = "Does not have anywhere to live"),
+              ResettlementAssessmentOption(id = "NO_ANSWER", displayText = "No answer provided"),
             ),
           ),
-          AssessmentConfigQuestion(
+          ResettlementAssessmentQuestion(
             id = "ADDITIONAL_INFORMATION_WHERE_WILL_THEY_LIVE",
             title = "Additional information",
             subTitle = "Include details of who else lived at the address and how the accommodation was paid for. If no fixed address, specify the council area where they have a local connection.",
@@ -401,7 +402,7 @@ class YamlResettlementStrategyTest : BaseYamlResettlementStrategyTest() {
         id = "WHERE_WILL_THEY_LIVE_ADDRESS",
         title = "Where will the person in prison live when they are released?",
         questions = listOf(
-          AssessmentConfigQuestion(
+          ResettlementAssessmentQuestion(
             id = "WHERE_WILL_THEY_LIVE_ADDRESS",
             title = "Enter the address",
             subTitle = null,
@@ -421,33 +422,33 @@ class YamlResettlementStrategyTest : BaseYamlResettlementStrategyTest() {
         id = "ASSESSMENT_SUMMARY",
         title = "Accommodation report summary",
         questions = listOf(
-          AssessmentConfigQuestion(
+          ResettlementAssessmentQuestion(
             id = "ACCOMMODATION_SUPPORT_NEEDS_CHECKBOXES",
             title = "Support needs",
             subTitle = "Select all that apply.",
             type = TypeOfQuestion.CHECKBOX,
             options = listOf(
-              Option(id = "HELP_TO_FIND_ACCOMMODATION", displayText = "Help to find accommodation"),
-              Option(id = "HOME_ADAPTATIONS", displayText = "Home adaptations"),
-              Option(id = "HELP_TO_KEEP_HOME", displayText = "Help to keep their home while in prison"),
-              Option(id = "HOMELESS_APPLICATION", displayText = "Homeless application"),
-              Option(id = "CANCEL_A_TENANCY", displayText = "Cancel a tenancy"),
-              Option(id = "SET_UP_RENT_ARREARS", displayText = "Set up rent arrears"),
-              Option(id = "ARRANGE_STORAGE", displayText = "Arrange storage for personal possessions"),
+              ResettlementAssessmentOption(id = "HELP_TO_FIND_ACCOMMODATION", displayText = "Help to find accommodation"),
+              ResettlementAssessmentOption(id = "HOME_ADAPTATIONS", displayText = "Home adaptations"),
+              ResettlementAssessmentOption(id = "HELP_TO_KEEP_HOME", displayText = "Help to keep their home while in prison"),
+              ResettlementAssessmentOption(id = "HOMELESS_APPLICATION", displayText = "Homeless application"),
+              ResettlementAssessmentOption(id = "CANCEL_A_TENANCY", displayText = "Cancel a tenancy"),
+              ResettlementAssessmentOption(id = "SET_UP_RENT_ARREARS", displayText = "Set up rent arrears"),
+              ResettlementAssessmentOption(id = "ARRANGE_STORAGE", displayText = "Arrange storage for personal possessions"),
             ),
           ),
-          AssessmentConfigQuestion(
+          ResettlementAssessmentQuestion(
             id = "SUPPORT_NEEDS",
             title = "Accommodation resettlement status",
             type = TypeOfQuestion.RADIO,
             subTitle = null,
             options = listOf(
-              Option(id = "SUPPORT_REQUIRED", displayText = "Support required", description = "a need for support has been identified and is accepted"),
-              Option(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
-              Option(id = "SUPPORT_DECLINED", displayText = "Support declined", description = "a need has been identified but support is declined"),
+              ResettlementAssessmentOption(id = "SUPPORT_REQUIRED", displayText = "Support required", description = "a need for support has been identified and is accepted"),
+              ResettlementAssessmentOption(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
+              ResettlementAssessmentOption(id = "SUPPORT_DECLINED", displayText = "Support declined", description = "a need has been identified but support is declined"),
             ),
           ),
-          AssessmentConfigQuestion(
+          ResettlementAssessmentQuestion(
             id = "CASE_NOTE_SUMMARY",
             title = "Add a case note summary",
             subTitle = "This will be displayed as a case note in both DPS and nDelius",

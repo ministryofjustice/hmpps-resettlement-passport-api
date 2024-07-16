@@ -15,12 +15,12 @@ import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.MapAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.PrisonerResettlementAssessment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
@@ -314,7 +314,7 @@ class ResettlementAssessmentServiceTest {
 
   @ParameterizedTest
   @MethodSource("test convertAnswerToString data")
-  fun `test convertAnswerToString`(options: List<Option>?, answer: Answer<*>, expectedString: String) {
+  fun `test convertAnswerToString`(options: List<ResettlementAssessmentOption>?, answer: Answer<*>, expectedString: String) {
     Assertions.assertEquals(expectedString, resettlementAssessmentService.convertAnswerToString(options, answer))
   }
 
@@ -322,7 +322,7 @@ class ResettlementAssessmentServiceTest {
     Arguments.of(null, StringAnswer("My answer"), "My answer"),
     Arguments.of(null, StringAnswer("My answer"), "My answer"),
     Arguments.of(
-      listOf(Option("MY_ANSWER", "My answer"), Option("OTHER_OPTION", "Other option")),
+      listOf(ResettlementAssessmentOption("MY_ANSWER", "My answer"), ResettlementAssessmentOption("OTHER_OPTION", "Other option")),
       StringAnswer("MY_ANSWER"),
       "My answer",
     ),
@@ -342,7 +342,7 @@ class ResettlementAssessmentServiceTest {
     Arguments.of(null, MapAnswer(listOf(mapOf(), mapOf(), mapOf(), mapOf())), ""),
     Arguments.of(null, MapAnswer(listOf()), ""),
     Arguments.of(
-      listOf(Option("ANSWER_1", "Answer 1"), Option("ANSWER_2", "Answer 2")),
+      listOf(ResettlementAssessmentOption("ANSWER_1", "Answer 1"), ResettlementAssessmentOption("ANSWER_2", "Answer 2")),
       ListAnswer(listOf("ANSWER_1", "ANSWER_2", "ANSWER_3")),
       "Answer 1\nAnswer 2\nANSWER_3",
     ),
@@ -355,7 +355,7 @@ class ResettlementAssessmentServiceTest {
     pathway = pathway,
     assessmentType = ResettlementAssessmentType.BCST2,
     assessmentStatus = ResettlementAssessmentStatus.NOT_STARTED,
-    assessment = ResettlementAssessmentQuestionAndAnswerList(mutableListOf()),
+    assessment = ResettlementAssessmentQuestionAndAnswerList(listOf()),
     creationDate = fakeNow,
     createdBy = "PO",
     statusChangedTo = Status.NOT_STARTED,
@@ -371,7 +371,7 @@ class ResettlementAssessmentServiceTest {
     pathway = pathway,
     assessmentType = ResettlementAssessmentType.BCST2,
     assessmentStatus = ResettlementAssessmentStatus.COMPLETE,
-    assessment = ResettlementAssessmentQuestionAndAnswerList(mutableListOf()),
+    assessment = ResettlementAssessmentQuestionAndAnswerList(listOf()),
     creationDate = fakeNow,
     createdBy = "PO",
     statusChangedTo = Status.SUPPORT_DECLINED,
@@ -387,7 +387,7 @@ class ResettlementAssessmentServiceTest {
     pathway = pathway,
     assessmentType = ResettlementAssessmentType.BCST2,
     assessmentStatus = ResettlementAssessmentStatus.SUBMITTED,
-    assessment = ResettlementAssessmentQuestionAndAnswerList(mutableListOf()),
+    assessment = ResettlementAssessmentQuestionAndAnswerList(listOf()),
     creationDate = fakeNow,
     createdBy = user,
     statusChangedTo = Status.SUPPORT_DECLINED,

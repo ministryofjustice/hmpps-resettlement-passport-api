@@ -9,18 +9,46 @@ pages:
         options:
           - id: "PRIVATE_RENTED_HOUSING"
             displayText: "Private rented housing"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS"
+                title: "Enter the address"
+                type: "ADDRESS"
           - id: "PRIVATE_HOUSING_OWNED"
             displayText: "Private housing owned by them"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS"
+                title: "Enter the address"
+                type: "ADDRESS"
           - id: "FAMILY_OR_FRIENDS"
             displayText: "With family or friends"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS"
+                title: "Enter the address"
+                type: "ADDRESS"
           - id: "SOCIAL_HOUSING"
             displayText: "Social housing"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS"
+                title: "Enter the address"
+                type: "ADDRESS"
           - id: "LOCAL_AUTHORITY_OR_SUPPORTED_HOUSING"
             displayText: "Local authority care or supported housing"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS"
+                title: "Enter the address"
+                type: "ADDRESS"
           - id: "HOSTEL"
             displayText: "Hostel"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS"
+                title: "Enter the address"
+                type: "ADDRESS"
           - id: "APPROVED_PREMISES"
             displayText: "Approved premises"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS"
+                title: "Enter the address"
+                type: "ADDRESS"
           - id: "NO_PERMANENT_OR_FIXED"
             displayText: "No permanent or fixed address"
           - id: "NO_ANSWER"
@@ -37,6 +65,13 @@ pages:
             displayText: "Return to their previous address"
           - id: "MOVE_TO_NEW_ADDRESS"
             displayText: "Move to a new address"
+            nestedQuestions:
+              - id: "WHERE_WILL_THEY_LIVE_ADDRESS"
+                title: "Enter the address"
+                type: "ADDRESS"
+              - id: "WHERE_WILL_THEY_LIVE_ADDRESS_ADDITIONAL_INFO"
+                title: "Additional information"
+                type: "LONG_TEXT"
           - id: "DOES_NOT_HAVE_ANYWHERE"
             displayText: "Does not have anywhere to live"
           - id: "NO_ANSWER"
@@ -76,6 +111,7 @@ pages:
         title: "Support needs"
         subTitle: "Select all that apply."
         type: "CHECKBOX"
+        validationType: "OPTIONAL"
         options:
           - id: "HELP_TO_FIND_ACCOMMODATION"
             displayText: "Help to find accommodation"
@@ -117,6 +153,7 @@ pages:
         title: "Support needs"
         subTitle: "Select all that apply."
         type: "CHECKBOX"
+        validationType: "OPTIONAL"
         options:
           - id: "HELP_TO_FIND_ACCOMMODATION"
             displayText: "Help to find accommodation"

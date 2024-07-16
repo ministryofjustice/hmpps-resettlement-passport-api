@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.MapAnswer
@@ -38,7 +38,7 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       assessmentType = ResettlementAssessmentType.BCST2,
       creationDate = LocalDateTime.parse("2023-01-01T12:00:00"),
       createdBy = "Human, A",
-      assessment = ResettlementAssessmentQuestionAndAnswerList(mutableListOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_1", answer = StringAnswer("Test Answer 1")))),
+      assessment = ResettlementAssessmentQuestionAndAnswerList(listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_1", answer = StringAnswer("Test Answer 1")))),
       assessmentStatus = ResettlementAssessmentStatus.NOT_STARTED,
       caseNoteText = "Some case note text",
       createdByUserId = "JSMITH_GEN",
@@ -65,7 +65,7 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       creationDate = LocalDateTime.parse("2023-01-01T12:00:00"),
       createdBy = "Human, A",
       assessment = ResettlementAssessmentQuestionAndAnswerList(
-        mutableListOf(
+        listOf(
           ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_2", answer = StringAnswer("My answer")),
           ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_3", answer = ListAnswer(listOf("Answer 1", "Answer 2", "Answer 3"))),
         ),
@@ -85,7 +85,7 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       creationDate = LocalDateTime.parse("2022-01-01T12:00:00"),
       createdBy = "Human, A",
       assessment = ResettlementAssessmentQuestionAndAnswerList(
-        mutableListOf(
+        listOf(
           ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_4", answer = MapAnswer(listOf(mapOf(Pair("key1", "value1"), Pair("key2", "value2"))))),
           ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_5", answer = ListAnswer(listOf("Answer 1", "Answer 2", "Answer 3"))),
         ),
@@ -167,7 +167,7 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       pathway = pathway,
       statusChangedTo = Status.SUPPORT_NOT_REQUIRED,
       assessmentType = ResettlementAssessmentType.BCST2,
-      assessment = ResettlementAssessmentQuestionAndAnswerList(mutableListOf()),
+      assessment = ResettlementAssessmentQuestionAndAnswerList(listOf()),
       creationDate = creationDate,
       createdBy = "test user",
       assessmentStatus = status,

@@ -30,6 +30,6 @@ class LibreOfficeDocumentConversionServiceTest {
     every { s3Client.putObject(any<Consumer<PutObjectRequest.Builder>>(), any<Path>()) }
       .returns(PutObjectResponse.builder().build())
 
-    documentConversionService.convert(MockMultipartFile("file", fileData), "key")
+    documentConversionService.convert(MockMultipartFile("file", fileData))
   }
 }

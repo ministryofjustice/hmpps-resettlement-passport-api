@@ -56,7 +56,7 @@ class DocumentService(
     val key = nomsId + "_" + UUID.randomUUID()
 
     uploadDocumentToS3(document, bucketName, key)
-    val convertedDocumentKey = documentConversionService.convert(document, key)
+    val convertedDocumentKey = documentConversionService.convert(document)
 
     val documents = DocumentsEntity(
       prisonerId = prisoner.id!!,

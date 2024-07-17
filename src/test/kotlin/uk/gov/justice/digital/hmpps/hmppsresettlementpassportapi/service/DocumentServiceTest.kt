@@ -9,7 +9,6 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
-import org.mockito.kotlin.isA
 import org.mockito.kotlin.whenever
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
@@ -67,7 +66,7 @@ class DocumentServiceTest {
     whenever(virusScanner.scan(file.bytes)).thenReturn(VirusScanResult.NoVirusFound)
     whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
     whenever(documentsRepository.save(any())).thenReturn(documentsEntity)
-    whenever(documentConversionService.convert(eq(file), isA<String>())).thenReturn(htmlDocumentKey)
+    whenever(documentConversionService.convert(eq(file))).thenReturn(htmlDocumentKey)
     val response = documentService.processDocument("acb", file)
     Assertions.assertEquals(documentsEntity, response.valueOrNull())
   }

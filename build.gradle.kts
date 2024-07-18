@@ -124,3 +124,12 @@ tasks.named<BootRun>("bootRun") {
 dependencyCheck {
   suppressionFiles.add("owasp-suppressions.xml")
 }
+
+abstract class EchoTask : DefaultTask() {
+  @TaskAction
+  fun action() {
+    println("Dependencies downloaded")
+  }
+}
+
+tasks.register<EchoTask>("downloadDependencies")

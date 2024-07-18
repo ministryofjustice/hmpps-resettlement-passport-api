@@ -3,9 +3,15 @@ FROM --platform=$BUILDPLATFORM eclipse-temurin:21-jre-jammy AS builder
 ARG BUILD_NUMBER
 ENV BUILD_NUMBER ${BUILD_NUMBER:-1_0_0}
 
+# Copy just gradle download step so that it's cached unless gradle version is changed
 WORKDIR /app
-ADD . .
-RUN ./gradlew clean --no-daemon assemble
+COPY gradlew build.gradle.kts gradle.properties ./
+COPY gradle/ ./gradle
+RUN ./gradlew downloadDependencies
+
+# Copy the rest
+COPY . .
+RUN ./gradlew --no-daemon assemble
 
 FROM eclipse-temurin:21-jre-jammy
 LABEL maintainer="HMPPS Digital Studio <info@digital.justice.gov.uk>"
@@ -13,17 +19,15 @@ LABEL maintainer="HMPPS Digital Studio <info@digital.justice.gov.uk>"
 ARG BUILD_NUMBER
 ENV BUILD_NUMBER ${BUILD_NUMBER:-1_0_0}
 
-RUN apt-get update && \
-    apt-get -y upgrade && \
-    apt-get install -y curl && \
-    apt-get install -y libreoffice && \
-    rm -rf /var/lib/apt/lists/*
-
 ENV TZ=Europe/London
 RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
 
 RUN addgroup --gid 2000 --system appgroup && \
     adduser --uid 2000 --system appuser --gid 2000
+
+RUN apt-get update
+RUN apt-get -y upgrade && apt-get install -y libreoffice-writer-nogui libreoffice-draw-nogui
+RUN rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /home/appuser/.postgresql
 ADD --chown=appuser:appgroup https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /home/appuser/.postgresql/root.crt

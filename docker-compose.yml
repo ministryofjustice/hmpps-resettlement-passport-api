@@ -4,14 +4,11 @@ services:
   hmpps-resettlement-passport-api:
     build:
       context: .
-
     networks:
       - hmpps
     container_name: hmpps-resettlement-passport-api
     ports:
       - "8080:8080"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/health/ping" ]
     environment:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=dev

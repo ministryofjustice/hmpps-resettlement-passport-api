@@ -35,6 +35,8 @@ spring:
   servlet:
     multipart:
       enabled: true
+      max-file-size: 100KB
+      max-request-size: 10MB
 
   flyway:
     url: jdbc:postgresql://localhost:5432/resettlement-passport?sslmode=prefer

@@ -56,7 +56,7 @@ class DocumentServiceTest {
   fun `test scanAndStoreDocument - returns document`() {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
     val htmlDocumentKey = UUID.randomUUID()
-    val documentsEntity = DocumentsEntity(1, 1, "", htmlDocumentKey, fakeNow, DocumentCategory.EMPLOYMENT_SKILLS_WORK, "Filename.doc")
+    val documentsEntity = DocumentsEntity(1, 1, "", htmlDocumentKey, fakeNow, DocumentCategory.LICENCE_CONDITIONS, "Filename.doc")
     val file = MockMultipartFile(
       "file",
       "hello.doc",
@@ -68,14 +68,14 @@ class DocumentServiceTest {
     whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
     whenever(documentsRepository.save(any())).thenReturn(documentsEntity)
     whenever(documentConversionService.convert(eq(file))).thenReturn(htmlDocumentKey)
-    val response = documentService.processDocument("acb", file, "EMPLOYMENT_SKILLS_WORK")
+    val response = documentService.processDocument("acb", file, "LICENCE_CONDITIONS")
     Assertions.assertEquals(documentsEntity, response.valueOrNull())
   }
 
   @Test
   fun `test getDocumentByNomisIdAndDocumentId - returns document`() {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
-    val documentsEntity = DocumentsEntity(1, 1, "acb_123455", UUID.randomUUID(), fakeNow, DocumentCategory.EMPLOYMENT_SKILLS_WORK, "Filename.doc")
+    val documentsEntity = DocumentsEntity(1, 1, "acb_123455", UUID.randomUUID(), fakeNow, DocumentCategory.LICENCE_CONDITIONS, "Filename.doc")
     val file = MockMultipartFile(
       "file",
       "hello.doc",

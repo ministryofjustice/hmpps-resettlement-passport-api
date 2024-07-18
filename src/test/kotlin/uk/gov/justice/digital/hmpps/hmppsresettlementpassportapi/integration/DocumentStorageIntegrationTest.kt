@@ -28,7 +28,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
     val nomsId = "ABC1234"
     webTestClient.post()
       .uri("/resettlement-passport/documents/$nomsId/upload")
-      .body(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "EMPLOYMENT_SKILLS_WORK"))
+      .body(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "LICENCE_CONDITIONS"))
       .headers(setAuthorisation())
       .exchange()
       .expectStatus().isForbidden
@@ -39,7 +39,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
     val nomsId = "ABC123"
     webTestClient.post()
       .uri("/resettlement-passport/documents/$nomsId/upload")
-      .body(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "EMPLOYMENT_SKILLS_WORK"))
+      .body(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "LICENCE_CONDITIONS"))
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(404)
@@ -55,7 +55,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
 
     webTestClient.post()
       .uri("/resettlement-passport/documents/$nomsId/upload")
-      .body(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "EMPLOYMENT_SKILLS_WORK"))
+      .body(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "LICENCE_CONDITIONS"))
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -126,7 +126,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
 
     webTestClient.post()
       .uri("/resettlement-passport/documents/$nomsId/upload")
-      .bodyValue(generateMultiPartFormRequestWeb("testdata/pop-user-api/pop-user-details.json", "EMPLOYMENT_SKILLS_WORK"))
+      .bodyValue(generateMultiPartFormRequestWeb("testdata/pop-user-api/pop-user-details.json", "LICENCE_CONDITIONS"))
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isBadRequest
@@ -141,7 +141,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
 
     webTestClient.post()
       .uri("/resettlement-passport/documents/$nomsId/upload")
-      .bodyValue(generateMultiPartFormRequestWeb("testdata/PD1_example_oversized.docx", "EMPLOYMENT_SKILLS_WORK"))
+      .bodyValue(generateMultiPartFormRequestWeb("testdata/PD1_example_oversized.docx", "LICENCE_CONDITIONS"))
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isBadRequest

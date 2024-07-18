@@ -48,7 +48,7 @@ class DocumentService(
         throw ValidationException("Unsupported document format, only .doc or pdf allowed")
       }
 
-      var categoryValue = DocumentCategory.EMPLOYMENT_SKILLS_WORK
+      var categoryValue = DocumentCategory.LICENCE_CONDITIONS
       if (category != null) {
         try {
           categoryValue = DocumentCategory.valueOf(category)

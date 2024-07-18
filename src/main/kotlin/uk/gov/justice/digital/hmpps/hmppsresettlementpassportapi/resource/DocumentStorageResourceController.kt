@@ -51,7 +51,7 @@ class DocumentStorageResourceController(
     nomsId: String,
     @RequestParam("file")
     file: MultipartFile,
-    @RequestParam(defaultValue = "EMPLOYMENT_SKILLS_WORK", required = false)
+    @RequestParam(defaultValue = "LICENCE_CONDITIONS", required = false)
     category: String,
   ) = uploadService.processDocument(nomsId, file, category)
 

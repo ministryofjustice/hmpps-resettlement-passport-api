@@ -87,6 +87,7 @@ spring:
       region:
         static: eu-west-2
 
+
 interventions-api-integration:
   crsAppointmentsEnabled: true
 

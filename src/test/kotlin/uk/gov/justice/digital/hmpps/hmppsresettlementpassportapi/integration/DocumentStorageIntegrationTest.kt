@@ -4,12 +4,10 @@ import com.google.common.io.Resources
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.ByteArrayResource
-import org.springframework.http.HttpEntity
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.test.context.jdbc.Sql
-import org.springframework.util.MultiValueMap
+import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.DocumentsRepository
-import java.util.*
 
 class DocumentStorageIntegrationTest : IntegrationTestBase() {
 
@@ -30,7 +28,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
     val nomsId = "ABC1234"
     webTestClient.post()
       .uri("/resettlement-passport/documents/$nomsId/upload")
-      .bodyValue(generateMultiPartFormRequestWeb())
+      .body(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "EMPLOYMENT_SKILLS_WORK"))
       .headers(setAuthorisation())
       .exchange()
       .expectStatus().isForbidden
@@ -41,7 +39,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
     val nomsId = "ABC123"
     webTestClient.post()
       .uri("/resettlement-passport/documents/$nomsId/upload")
-      .bodyValue(generateMultiPartFormRequestWeb())
+      .body(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "EMPLOYMENT_SKILLS_WORK"))
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(404)
@@ -57,7 +55,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
 
     webTestClient.post()
       .uri("/resettlement-passport/documents/$nomsId/upload")
-      .bodyValue(generateMultiPartFormRequestWeb())
+      .body(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "EMPLOYMENT_SKILLS_WORK"))
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -107,16 +105,60 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(404)
   }
 
-  private fun generateMultiPartFormRequestWeb(): MultiValueMap<String, HttpEntity<*>> {
-    val uploadFile = Resources.getResource("testdata/resettlement-passport-delius-api/appointment.json")
+  private fun generateMultiPartFormRequestWeb(fileName: String, category: String): BodyInserters.MultipartInserter {
+    val uploadFile = Resources.getResource(fileName)
     val multipartBodyBuilder = MultipartBodyBuilder()
     val contentsAsResource: ByteArrayResource = object : ByteArrayResource(uploadFile.readBytes()) {
       override fun getFilename(): String {
-        return "a.json"
+        return "a.doc"
       }
     }
     multipartBodyBuilder.part("file", contentsAsResource)
     multipartBodyBuilder.part("metadata", 1)
-    return multipartBodyBuilder.build()
+    multipartBodyBuilder.part("category", category)
+    return BodyInserters.fromMultipartData(multipartBodyBuilder.build())
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-3.sql")
+  fun `Create uploadDocument with document not supported`() {
+    val nomsId = "ABC1234"
+
+    webTestClient.post()
+      .uri("/resettlement-passport/documents/$nomsId/upload")
+      .bodyValue(generateMultiPartFormRequestWeb("testdata/pop-user-api/pop-user-details.json", "EMPLOYMENT_SKILLS_WORK"))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isBadRequest
+      .expectBody()
+      .jsonPath("status").isEqualTo(400)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-3.sql")
+  fun `Create uploadDocument with document size exceeded`() {
+    val nomsId = "ABC1234"
+
+    webTestClient.post()
+      .uri("/resettlement-passport/documents/$nomsId/upload")
+      .bodyValue(generateMultiPartFormRequestWeb("testdata/PD1_example_oversized.docx", "EMPLOYMENT_SKILLS_WORK"))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isBadRequest
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-3.sql")
+  fun `Create uploadDocument with invalid document category`() {
+    val nomsId = "ABC1234"
+
+    webTestClient.post()
+      .uri("/resettlement-passport/documents/$nomsId/upload")
+      .bodyValue(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "NOT_EXISTS_CATEGORY"))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isBadRequest
+      .expectBody()
+      .jsonPath("status").isEqualTo(400)
   }
 }

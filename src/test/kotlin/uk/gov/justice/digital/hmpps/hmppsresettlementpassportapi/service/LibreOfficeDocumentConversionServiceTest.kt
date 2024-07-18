@@ -26,7 +26,7 @@ class LibreOfficeDocumentConversionServiceTest {
       "bucket",
     )
 
-    val fileData = Resources.getResource("testdata/PD1_example.docx").openStream()
+    val fileData = Resources.getResource("testdata/PD1_example_oversized.docx").openStream()
     every { s3Client.putObject(any<Consumer<PutObjectRequest.Builder>>(), any<Path>()) }
       .returns(PutObjectResponse.builder().build())
 

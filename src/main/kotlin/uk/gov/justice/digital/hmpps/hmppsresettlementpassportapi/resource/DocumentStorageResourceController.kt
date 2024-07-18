@@ -51,9 +51,11 @@ class DocumentStorageResourceController(
     nomsId: String,
     @RequestParam("file")
     file: MultipartFile,
-  ) = uploadService.processDocument(nomsId, file)
+    @RequestParam(defaultValue = "EMPLOYMENT_SKILLS_WORK", required = false)
+    category: String,
+  ) = uploadService.processDocument(nomsId, file, category)
 
-  @GetMapping("{nomsId}/download/{documentId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @GetMapping("{nomsId}/download/{documentId}")
   @Operation(
     summary = "Get document  for a prisoner",
     description = "Get Document for a given document Id and prisoner Id .",

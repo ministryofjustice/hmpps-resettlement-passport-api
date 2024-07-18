@@ -133,6 +133,7 @@ hmpps.s3:
   buckets:
     document-management:
       bucketName: ${S3_DOCUMENT_BUCKET_NAME}
+      maxFileSize:
 
 clamav:
   hostname: localhost

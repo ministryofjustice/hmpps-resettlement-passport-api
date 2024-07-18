@@ -17,6 +17,7 @@ import software.amazon.awssdk.http.AbortableInputStream
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.GetObjectRequest
 import software.amazon.awssdk.services.s3.model.GetObjectResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DocumentCategory
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DocumentsEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.DocumentsRepository
@@ -55,10 +56,10 @@ class DocumentServiceTest {
   fun `test scanAndStoreDocument - returns document`() {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
     val htmlDocumentKey = UUID.randomUUID()
-    val documentsEntity = DocumentsEntity(1, 1, "", htmlDocumentKey, fakeNow)
+    val documentsEntity = DocumentsEntity(1, 1, "", htmlDocumentKey, fakeNow, DocumentCategory.EMPLOYMENT_SKILLS_WORK, "Filename.doc")
     val file = MockMultipartFile(
       "file",
-      "hello.txt",
+      "hello.doc",
       MediaType.TEXT_PLAIN_VALUE,
       "Hello, World!".toByteArray(),
     )
@@ -67,17 +68,17 @@ class DocumentServiceTest {
     whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
     whenever(documentsRepository.save(any())).thenReturn(documentsEntity)
     whenever(documentConversionService.convert(eq(file))).thenReturn(htmlDocumentKey)
-    val response = documentService.processDocument("acb", file)
+    val response = documentService.processDocument("acb", file, "EMPLOYMENT_SKILLS_WORK")
     Assertions.assertEquals(documentsEntity, response.valueOrNull())
   }
 
   @Test
   fun `test getDocumentByNomisIdAndDocumentId - returns document`() {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
-    val documentsEntity = DocumentsEntity(1, 1, "acb_123455", UUID.randomUUID(), fakeNow)
+    val documentsEntity = DocumentsEntity(1, 1, "acb_123455", UUID.randomUUID(), fakeNow, DocumentCategory.EMPLOYMENT_SKILLS_WORK, "Filename.doc")
     val file = MockMultipartFile(
       "file",
-      "hello.txt",
+      "hello.doc",
       MediaType.TEXT_PLAIN_VALUE,
       "Hello, World!".toByteArray(),
     )

@@ -4,27 +4,20 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import org.mockito.Mockito
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponseQuestionAndAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.yesNoOptions
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
-import java.time.LocalDate
 import java.util.stream.Stream
 
-class AttitudesThinkingAndBehaviourYamlResettlementAssessmentStrategyTest : BaseYamlResettlementStrategyTest() {
+class AttitudesThinkingAndBehaviourResettlementAssessmentAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR) {
 
   @ParameterizedTest(name = "{1} -> {2}")
   @MethodSource("test next page function flow - no existing assessment data")
@@ -39,7 +32,7 @@ class AttitudesThinkingAndBehaviourYamlResettlementAssessmentStrategyTest : Base
     val assessment = ResettlementAssessmentRequest(
       questionsAndAnswers = questionsAndAnswers,
     )
-    val nextPage = resettlementAssessmentService.getNextPageId(
+    val nextPage = resettlementAssessmentStrategy.getNextPageId(
       assessment = assessment,
       nomsId = nomsId,
       pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
@@ -90,7 +83,7 @@ class AttitudesThinkingAndBehaviourYamlResettlementAssessmentStrategyTest : Base
     val nomsId = "123"
     setUpMocks("123", false)
 
-    val page = resettlementAssessmentService.getPageFromId(
+    val page = resettlementAssessmentStrategy.getPageFromId(
       nomsId = nomsId,
       pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
       assessmentType = ResettlementAssessmentType.BCST2,
@@ -105,7 +98,7 @@ class AttitudesThinkingAndBehaviourYamlResettlementAssessmentStrategyTest : Base
       ResettlementAssessmentResponsePage(
         id = "HELP_TO_MANAGE_ANGER",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "HELP_TO_MANAGE_ANGER",
               title = "Does the person in prison want support managing their emotions?",
@@ -123,7 +116,7 @@ class AttitudesThinkingAndBehaviourYamlResettlementAssessmentStrategyTest : Base
       ResettlementAssessmentResponsePage(
         id = "ISSUES_WITH_GAMBLING",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "ISSUES_WITH_GAMBLING",
               title = "Does the person in prison want support with gambling issues?",
@@ -142,7 +135,7 @@ class AttitudesThinkingAndBehaviourYamlResettlementAssessmentStrategyTest : Base
         id = "ASSESSMENT_SUMMARY",
         title = "Attitudes, thinking and behaviour report summary",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "SUPPORT_NEEDS",
               title = "Attitudes, thinking and behaviour support needs",
@@ -164,7 +157,7 @@ class AttitudesThinkingAndBehaviourYamlResettlementAssessmentStrategyTest : Base
             ),
             originalPageId = "ASSESSMENT_SUMMARY",
           ),
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "CASE_NOTE_SUMMARY",
               title = "Add a case note summary",
@@ -184,18 +177,4 @@ class AttitudesThinkingAndBehaviourYamlResettlementAssessmentStrategyTest : Base
       ),
     ),
   )
-
-  private fun setUpMocks(nomsId: String, returnResettlementAssessmentEntity: Boolean, assessment: ResettlementAssessmentQuestionAndAnswerList = ResettlementAssessmentQuestionAndAnswerList(listOf())) {
-    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23"))
-    val resettlementAssessmentEntity = if (returnResettlementAssessmentEntity) ResettlementAssessmentEntity(1, prisonerEntity, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, Status.NOT_STARTED, ResettlementAssessmentType.BCST2, assessment, testDate, "", ResettlementAssessmentStatus.COMPLETE, "some text", "USER_1", submissionDate = null, version = 1) else null
-    Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
-    Mockito.`when`(
-      resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-        prisonerEntity,
-        Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
-        ResettlementAssessmentType.BCST2,
-        listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED),
-      ),
-    ).thenReturn(resettlementAssessmentEntity)
-  }
 }

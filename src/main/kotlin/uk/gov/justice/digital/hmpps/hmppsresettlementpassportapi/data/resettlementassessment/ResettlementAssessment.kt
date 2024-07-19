@@ -12,6 +12,11 @@ data class ResettlementAssessmentCompleteRequest(
   val version: Int = 1,
 )
 
+data class ResettlementAssessmentRequestQuestionAndAnswer<T>(
+  val question: String,
+  val answer: Answer<T>,
+)
+
 data class ResettlementAssessmentNextPage(
   val nextPageId: String,
 )
@@ -19,10 +24,10 @@ data class ResettlementAssessmentNextPage(
 data class ResettlementAssessmentResponsePage(
   val id: String,
   val title: String? = null,
-  val questionsAndAnswers: List<ResettlementAssessmentResponseQuestionAndAnswer>,
+  val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer>,
 )
 
-data class ResettlementAssessmentResponseQuestionAndAnswer(
+data class ResettlementAssessmentQuestionAndAnswer(
   val question: ResettlementAssessmentQuestion,
   var answer: Answer<*>? = null,
   val originalPageId: String,
@@ -42,7 +47,7 @@ data class ResettlementAssessmentOption(
   val displayText: String,
   val description: String? = null,
   val exclusive: Boolean = false,
-  val nestedQuestions: List<ResettlementAssessmentQuestion>? = null,
+  val nestedQuestions: List<ResettlementAssessmentQuestionAndAnswer>? = null,
 )
 
 data class LatestResettlementAssessmentResponse(

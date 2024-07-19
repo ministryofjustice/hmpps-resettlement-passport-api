@@ -4,29 +4,22 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import org.mockito.Mockito
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponseQuestionAndAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.MapAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.yesNoOptions
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
-import java.time.LocalDate
 import java.util.stream.Stream
 
-class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlResettlementStrategyTest() {
+class EducationSkillsAndWorkResettlementAssessmentAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.EDUCATION_SKILLS_AND_WORK) {
 
   @ParameterizedTest
   @MethodSource("test next page function flow - no existing assessment data")
@@ -41,7 +34,7 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlRes
     val assessment = ResettlementAssessmentRequest(
       questionsAndAnswers = questionsAndAnswers,
     )
-    val nextPage = resettlementAssessmentService.getNextPageId(
+    val nextPage = resettlementAssessmentStrategy.getNextPageId(
       assessment = assessment,
       nomsId = nomsId,
       pathway = Pathway.EDUCATION_SKILLS_AND_WORK,
@@ -447,7 +440,7 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlRes
     val nomsId = "123"
     setUpMocks("123", false)
 
-    val page = resettlementAssessmentService.getPageFromId(
+    val page = resettlementAssessmentStrategy.getPageFromId(
       nomsId = nomsId,
       pathway = Pathway.EDUCATION_SKILLS_AND_WORK,
       assessmentType = ResettlementAssessmentType.BCST2,
@@ -462,7 +455,7 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlRes
       ResettlementAssessmentResponsePage(
         id = "JOB_BEFORE_CUSTODY",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "JOB_BEFORE_CUSTODY",
               title = "Did the person in prison have a job before custody?",
@@ -479,7 +472,7 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlRes
       ResettlementAssessmentResponsePage(
         id = "TYPE_OF_EMPLOYMENT_CONTRACT",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "TYPE_OF_EMPLOYMENT_CONTRACT",
               title = "Type of employment contract",
@@ -504,7 +497,7 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlRes
       ResettlementAssessmentResponsePage(
         id = "RETURN_TO_JOB_AFTER_RELEASE",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "RETURN_TO_JOB_AFTER_RELEASE",
               title = "Can the person in prison return to this job after release?",
@@ -521,7 +514,7 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlRes
       ResettlementAssessmentResponsePage(
         id = "HAVE_A_JOB_AFTER_RELEASE",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "HAVE_A_JOB_AFTER_RELEASE",
               title = "Does the person in prison have a job when they are released?",
@@ -538,7 +531,7 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlRes
       ResettlementAssessmentResponsePage(
         id = "HELP_CONTACTING_EMPLOYER",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "HELP_CONTACTING_EMPLOYER",
               title = "Does the person in prison need help contacting the employer?",
@@ -556,7 +549,7 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlRes
         id = "EMPLOYMENT_DETAILS_BEFORE_CUSTODY",
         title = "Employment before custody",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "EMPLOYMENT_TITLE_BEFORE_CUSTODY",
               title = "Job title",
@@ -564,7 +557,7 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlRes
             ),
             originalPageId = "EMPLOYMENT_DETAILS_BEFORE_CUSTODY",
           ),
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "NAME_OF_EMPLOYER",
               title = "Employer",
@@ -572,7 +565,7 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlRes
             ),
             originalPageId = "EMPLOYMENT_DETAILS_BEFORE_CUSTODY",
           ),
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "ADDRESS_OF_EMPLOYER",
               title = "Employer address",
@@ -588,7 +581,7 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlRes
       ResettlementAssessmentResponsePage(
         id = "SUPPORT_TO_FIND_JOB",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "SUPPORT_TO_FIND_JOB",
               title = "Does the person in prison want support to find a job when they are released?",
@@ -605,7 +598,7 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlRes
       ResettlementAssessmentResponsePage(
         id = "IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY",
               title = "Was the person in prison in education or training before custody?",
@@ -622,7 +615,7 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlRes
       ResettlementAssessmentResponsePage(
         id = "RETURN_TO_EDUCATION_OR_TRAINING_AFTER_RELEASE",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "RETURN_TO_EDUCATION_OR_TRAINING_AFTER_RELEASE",
               title = "Can the person in prison return to this education or training after release?",
@@ -639,7 +632,7 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlRes
       ResettlementAssessmentResponsePage(
         id = "WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE",
               title = "Does the person in prison want to start education or training after release?",
@@ -656,7 +649,7 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlRes
       ResettlementAssessmentResponsePage(
         id = "HELP_CONTACTING_EDUCATION_PROVIDER",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "HELP_CONTACTING_EDUCATION_PROVIDER",
               title = "Does the person in prison want help contacting an education or training provider?",
@@ -674,7 +667,7 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlRes
         id = "TRAINING_PROVIDER_DETAILS",
         title = "Education or training before custody",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "NAME_OF_TRAINING_PROVIDER",
               title = "Education or training provider",
@@ -682,7 +675,7 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlRes
             ),
             originalPageId = "TRAINING_PROVIDER_DETAILS",
           ),
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "ADDRESS_OF_TRAINING_PROVIDER",
               title = "Education or training provider address",
@@ -698,7 +691,7 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlRes
       ResettlementAssessmentResponsePage(
         id = "BURSARIES_AND_GRANTS",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "BURSARIES_AND_GRANTS",
               title = "Does the person in prison want to find out about bursaries and grants for courses or training?",
@@ -716,7 +709,7 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlRes
         id = "ASSESSMENT_SUMMARY",
         title = "Education, skills and work report summary",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "SUPPORT_NEEDS",
               title = "Education, skills and work support needs",
@@ -738,7 +731,7 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlRes
             ),
             originalPageId = "ASSESSMENT_SUMMARY",
           ),
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "CASE_NOTE_SUMMARY",
               title = "Add a case note summary",
@@ -758,18 +751,4 @@ class EducationSkillsAndWorkYamlResettlementAssessmentStrategyTest : BaseYamlRes
       ),
     ),
   )
-
-  private fun setUpMocks(nomsId: String, returnResettlementAssessmentEntity: Boolean, assessment: ResettlementAssessmentQuestionAndAnswerList = ResettlementAssessmentQuestionAndAnswerList(listOf())) {
-    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23"))
-    val resettlementAssessmentEntity = if (returnResettlementAssessmentEntity) ResettlementAssessmentEntity(1, prisonerEntity, Pathway.HEALTH, Status.NOT_STARTED, ResettlementAssessmentType.BCST2, assessment, testDate, "", ResettlementAssessmentStatus.COMPLETE, "some text", "USER_1", submissionDate = null, version = 1) else null
-    Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
-    Mockito.`when`(
-      resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-        prisonerEntity,
-        Pathway.EDUCATION_SKILLS_AND_WORK,
-        ResettlementAssessmentType.BCST2,
-        listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED),
-      ),
-    ).thenReturn(resettlementAssessmentEntity)
-  }
 }

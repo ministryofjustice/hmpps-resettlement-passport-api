@@ -4,28 +4,21 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import org.mockito.Mockito
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponseQuestionAndAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.yesNoOptions
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
-import java.time.LocalDate
 import java.util.stream.Stream
 
-class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementStrategyTest() {
+class FinanceAndIdResettlementAssessmentAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.FINANCE_AND_ID) {
 
   @ParameterizedTest(name = "current: {1}, expected: {2}")
   @MethodSource("test next page function flow - no existing assessment data")
@@ -40,7 +33,7 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
     val assessment = ResettlementAssessmentRequest(
       questionsAndAnswers = questionsAndAnswers,
     )
-    val nextPage = resettlementAssessmentService.getNextPageId(
+    val nextPage = resettlementAssessmentStrategy.getNextPageId(
       assessment = assessment,
       nomsId = nomsId,
       pathway = Pathway.FINANCE_AND_ID,
@@ -206,7 +199,7 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
     val nomsId = "123"
     setUpMocks("123", false)
 
-    val page = resettlementAssessmentService.getPageFromId(
+    val page = resettlementAssessmentStrategy.getPageFromId(
       nomsId = nomsId,
       pathway = Pathway.FINANCE_AND_ID,
       assessmentType = ResettlementAssessmentType.BCST2,
@@ -221,7 +214,7 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
       ResettlementAssessmentResponsePage(
         id = "HAS_BANK_ACCOUNT",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "HAS_BANK_ACCOUNT",
               title = "Does the person in prison have a bank account?",
@@ -239,7 +232,7 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
       ResettlementAssessmentResponsePage(
         id = "HELP_WITH_BANK_ACCOUNT",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "HELP_WITH_BANK_ACCOUNT",
               title = "Does the person in prison want help to apply for a bank account?",
@@ -257,7 +250,7 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
       ResettlementAssessmentResponsePage(
         id = "WHAT_ID_DOCUMENTS",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "WHAT_ID_DOCUMENTS",
               title = "What ID documents does the person in prison have?",
@@ -285,7 +278,7 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
       ResettlementAssessmentResponsePage(
         id = "HELP_APPLY_FOR_ID",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "HELP_APPLY_FOR_ID",
               title = "Does the person leaving prison want help to apply for ID?",
@@ -303,7 +296,7 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
       ResettlementAssessmentResponsePage(
         id = "RECEIVING_BENEFITS",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "RECEIVING_BENEFITS",
               title = "Was the person in prison receiving benefits before custody?",
@@ -321,7 +314,7 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
       ResettlementAssessmentResponsePage(
         id = "SELECT_BENEFITS",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "SELECT_BENEFITS",
               title = "Select benefits the person in prison received before custody",
@@ -349,7 +342,7 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
       ResettlementAssessmentResponsePage(
         id = "DEBTS_OR_ARREARS",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "DEBTS_OR_ARREARS",
               title = "Does the person in prison have any debts or arrears?",
@@ -367,7 +360,7 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
       ResettlementAssessmentResponsePage(
         id = "HELP_MANAGE_DEBTS",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "HELP_MANAGE_DEBTS",
               title = "Does the person in prison want support to manage their debts or arrears?",
@@ -386,7 +379,7 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
         id = "ASSESSMENT_SUMMARY",
         title = "Finance and ID report summary",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "SUPPORT_NEEDS",
               title = "Finance and ID support needs",
@@ -408,7 +401,7 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
             ),
             originalPageId = "ASSESSMENT_SUMMARY",
           ),
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "CASE_NOTE_SUMMARY",
               title = "Add a case note summary",
@@ -428,18 +421,4 @@ class FinanceAndIdYamlResettlementAssessmentStrategyTest : BaseYamlResettlementS
       ),
     ),
   )
-
-  private fun setUpMocks(nomsId: String, returnResettlementAssessmentEntity: Boolean, assessment: ResettlementAssessmentQuestionAndAnswerList = ResettlementAssessmentQuestionAndAnswerList(listOf())) {
-    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23"))
-    val resettlementAssessmentEntity = if (returnResettlementAssessmentEntity) ResettlementAssessmentEntity(1, prisonerEntity, Pathway.FINANCE_AND_ID, Status.NOT_STARTED, ResettlementAssessmentType.BCST2, assessment, testDate, "", ResettlementAssessmentStatus.COMPLETE, "some text", "USER_1", submissionDate = null, version = 1) else null
-    Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
-    Mockito.`when`(
-      resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-        prisonerEntity,
-        Pathway.FINANCE_AND_ID,
-        ResettlementAssessmentType.BCST2,
-        listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED),
-      ),
-    ).thenReturn(resettlementAssessmentEntity)
-  }
 }

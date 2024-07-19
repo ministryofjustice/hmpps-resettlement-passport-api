@@ -6,28 +6,21 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import org.mockito.Mockito
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponseQuestionAndAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.yesNoOptions
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
-import java.time.LocalDate
 import java.util.stream.Stream
 
-class ChildrenFamiliesAndCommunitiesYamlStrategyTest : BaseYamlResettlementStrategyTest() {
+class ChildrenFamiliesAndCommunitiesAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY) {
 
   @ParameterizedTest
   @MethodSource("test next page function flow - no existing assessment data")
@@ -42,7 +35,7 @@ class ChildrenFamiliesAndCommunitiesYamlStrategyTest : BaseYamlResettlementStrat
     val assessment = ResettlementAssessmentRequest(
       questionsAndAnswers = questionsAndAnswers,
     )
-    val nextPage = resettlementAssessmentService.getNextPageId(
+    val nextPage = resettlementAssessmentStrategy.getNextPageId(
       assessment = assessment,
       nomsId = nomsId,
       pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
@@ -254,7 +247,7 @@ class ChildrenFamiliesAndCommunitiesYamlStrategyTest : BaseYamlResettlementStrat
     val nomsId = "123"
     setUpMocks("123", false)
 
-    val page = resettlementAssessmentService.getPageFromId(
+    val page = resettlementAssessmentStrategy.getPageFromId(
       nomsId = nomsId,
       pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
       assessmentType = ResettlementAssessmentType.BCST2,
@@ -269,7 +262,7 @@ class ChildrenFamiliesAndCommunitiesYamlStrategyTest : BaseYamlResettlementStrat
       ResettlementAssessmentResponsePage(
         id = "PARTNER_OR_SPOUSE",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "PARTNER_OR_SPOUSE",
               title = "Does the person in prison have a partner or spouse?",
@@ -287,7 +280,7 @@ class ChildrenFamiliesAndCommunitiesYamlStrategyTest : BaseYamlResettlementStrat
       ResettlementAssessmentResponsePage(
         id = "PRIMARY_CARER_FOR_CHILDREN",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "PRIMARY_CARER_FOR_CHILDREN",
               title = "Is the person in prison the primary carer for any children?",
@@ -305,7 +298,7 @@ class ChildrenFamiliesAndCommunitiesYamlStrategyTest : BaseYamlResettlementStrat
       ResettlementAssessmentResponsePage(
         id = "CHILDREN_SERVICES_INVOLVED",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "CHILDREN_SERVICES_INVOLVED",
               title = "Are children's services involved with the person in prison and the children they look after?",
@@ -323,7 +316,7 @@ class ChildrenFamiliesAndCommunitiesYamlStrategyTest : BaseYamlResettlementStrat
       ResettlementAssessmentResponsePage(
         id = "SUPPORT_MEETING_CHILDREN_SERVICES",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "SUPPORT_MEETING_CHILDREN_SERVICES",
               title = "Does the person in prison want support when they meet with children's services?",
@@ -341,7 +334,7 @@ class ChildrenFamiliesAndCommunitiesYamlStrategyTest : BaseYamlResettlementStrat
       ResettlementAssessmentResponsePage(
         id = "CARING_FOR_ADULT",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "CARING_FOR_ADULT",
               title = "Does the person in prison have caring responsibilities for any adults?",
@@ -359,7 +352,7 @@ class ChildrenFamiliesAndCommunitiesYamlStrategyTest : BaseYamlResettlementStrat
       ResettlementAssessmentResponsePage(
         id = "SOCIAL_SERVICES_INVOLVED_FOR_ADULT",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "SOCIAL_SERVICES_INVOLVED_FOR_ADULT",
               title = "Are social services involved with the person in prison and the adult they provide care for?",
@@ -377,7 +370,7 @@ class ChildrenFamiliesAndCommunitiesYamlStrategyTest : BaseYamlResettlementStrat
       ResettlementAssessmentResponsePage(
         id = "SUPPORT_FROM_SOCIAL_SERVICES",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "SUPPORT_FROM_SOCIAL_SERVICES",
               title = "Has the person in prison themselves ever received support from social services?",
@@ -395,7 +388,7 @@ class ChildrenFamiliesAndCommunitiesYamlStrategyTest : BaseYamlResettlementStrat
       ResettlementAssessmentResponsePage(
         id = "FRIEND_FAMILY_COMMUNITY_SUPPORT",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "FRIEND_FAMILY_COMMUNITY_SUPPORT",
               title = "Will the person in prison have support from family, friends or their community outside of prison?",
@@ -413,7 +406,7 @@ class ChildrenFamiliesAndCommunitiesYamlStrategyTest : BaseYamlResettlementStrat
       ResettlementAssessmentResponsePage(
         id = "INVOLVEMENT_IN_GANG_ACTIVITY",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "INVOLVEMENT_IN_GANG_ACTIVITY",
               title = "Has the person in prison had any involvement in gang activity?",
@@ -431,7 +424,7 @@ class ChildrenFamiliesAndCommunitiesYamlStrategyTest : BaseYamlResettlementStrat
       ResettlementAssessmentResponsePage(
         id = "UNDER_THREAT_OUTSIDE",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "UNDER_THREAT_OUTSIDE",
               title = "Is the person in prison under threat outside of prison?",
@@ -449,7 +442,7 @@ class ChildrenFamiliesAndCommunitiesYamlStrategyTest : BaseYamlResettlementStrat
       ResettlementAssessmentResponsePage(
         id = "COMMUNITY_ORGANISATION_SUPPORT",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "COMMUNITY_ORGANISATION_SUPPORT",
               title = "Does the person in prison need support from community organisations outside of prison?",
@@ -468,7 +461,7 @@ class ChildrenFamiliesAndCommunitiesYamlStrategyTest : BaseYamlResettlementStrat
         id = "ASSESSMENT_SUMMARY",
         title = "Children, families and communities report summary",
         questionsAndAnswers = listOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "SUPPORT_NEEDS",
               title = "Children, families and communities support needs",
@@ -490,7 +483,7 @@ class ChildrenFamiliesAndCommunitiesYamlStrategyTest : BaseYamlResettlementStrat
             ),
             originalPageId = "ASSESSMENT_SUMMARY",
           ),
-          ResettlementAssessmentResponseQuestionAndAnswer(
+          ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "CASE_NOTE_SUMMARY",
               title = "Add a case note summary",
@@ -520,7 +513,7 @@ class ChildrenFamiliesAndCommunitiesYamlStrategyTest : BaseYamlResettlementStrat
     val assessment = ResettlementAssessmentRequest(
       questionsAndAnswers = null,
     )
-    val nextPage = resettlementAssessmentService.getNextPageId(
+    val nextPage = resettlementAssessmentStrategy.getNextPageId(
       assessment = assessment,
       nomsId = nomsId,
       pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
@@ -541,7 +534,7 @@ class ChildrenFamiliesAndCommunitiesYamlStrategyTest : BaseYamlResettlementStrat
     setUpMocks(nomsId, false)
 
     val exception = assertThrows<ServerWebInputException> {
-      resettlementAssessmentService.getNextPageId(
+      resettlementAssessmentStrategy.getNextPageId(
         assessment = assessment,
         nomsId = nomsId,
         pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
@@ -550,18 +543,5 @@ class ChildrenFamiliesAndCommunitiesYamlStrategyTest : BaseYamlResettlementStrat
       )
     }
     Assertions.assertEquals("400 BAD_REQUEST \"Cannot get the next question from CHECK_ANSWERS as this is the end of the flow for this pathway.\"", exception.message)
-  }
-  private fun setUpMocks(nomsId: String, returnResettlementAssessmentEntity: Boolean, assessment: ResettlementAssessmentQuestionAndAnswerList = ResettlementAssessmentQuestionAndAnswerList(listOf())) {
-    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23"))
-    val resettlementAssessmentEntity = if (returnResettlementAssessmentEntity) ResettlementAssessmentEntity(1, prisonerEntity, Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, Status.NOT_STARTED, ResettlementAssessmentType.BCST2, assessment, testDate, "", ResettlementAssessmentStatus.COMPLETE, "some text", "USER_1", submissionDate = null, version = 1) else null
-    Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
-    Mockito.`when`(
-      resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-        prisonerEntity,
-        Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
-        ResettlementAssessmentType.BCST2,
-        listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED),
-      ),
-    ).thenReturn(resettlementAssessmentEntity)
   }
 }

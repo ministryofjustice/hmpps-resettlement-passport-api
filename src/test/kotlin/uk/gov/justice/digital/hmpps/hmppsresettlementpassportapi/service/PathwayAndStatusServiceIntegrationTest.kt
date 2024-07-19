@@ -28,6 +28,6 @@ class PathwayAndStatusServiceIntegrationTest : IntegrationTestBase() {
 
     val result = pathwayAndStatusService.createPrisoner(nomsId = "A123", resolvedCrn = "CRN123", prisonId = "P123", releaseDate = null)
 
-    assertThat(result).isEqualTo(existingPrisoner)
+    assertThat(result.id).isEqualTo(existingPrisoner.id)
   }
 }

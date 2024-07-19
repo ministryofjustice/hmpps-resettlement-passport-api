@@ -16,7 +16,7 @@ import kotlin.time.measureTimedValue
 private val logger = KotlinLogging.logger {}
 
 interface DocumentConversionService {
-  fun convert(multipartFile: MultipartFile, originalBucketKey: String): UUID?
+  fun convert(multipartFile: MultipartFile): UUID?
 }
 
 class LibreOfficeDocumentConversionService(
@@ -25,8 +25,9 @@ class LibreOfficeDocumentConversionService(
   private val bucketName: String,
 ) : DocumentConversionService {
 
-  override fun convert(multipartFile: MultipartFile, originalBucketKey: String): UUID? {
-    val tempFile = tempDocumentDir.resolve(originalBucketKey)
+  override fun convert(multipartFile: MultipartFile): UUID? {
+    val tempFileId = UUID.randomUUID().toString()
+    val tempFile = tempDocumentDir.resolve(tempFileId)
     multipartFile.transferTo(tempFile)
     val (exitCode, elapsed) = measureTimedValue {
       val process = Runtime.getRuntime().exec(
@@ -77,7 +78,7 @@ private fun Path.cleanupQuietly() {
 }
 
 class StubDocumentConversionService(private val s3Client: S3Client, private val bucketName: String) : DocumentConversionService {
-  override fun convert(multipartFile: MultipartFile, originalBucketKey: String): UUID? {
+  override fun convert(multipartFile: MultipartFile): UUID? {
     val bucketKey = UUID.randomUUID()
 
     s3Client.putObject(

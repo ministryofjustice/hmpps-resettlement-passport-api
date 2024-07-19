@@ -120,3 +120,16 @@ tasks.jacocoTestReport {
 tasks.named<BootRun>("bootRun") {
   systemProperty("spring.profiles.active", project.findProperty("profiles")?.toString() ?: "dev")
 }
+
+dependencyCheck {
+  suppressionFiles.add("owasp-suppressions.xml")
+}
+
+abstract class EchoTask : DefaultTask() {
+  @TaskAction
+  fun action() {
+    println("Dependencies downloaded")
+  }
+}
+
+tasks.register<EchoTask>("downloadDependencies")

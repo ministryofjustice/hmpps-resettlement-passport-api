@@ -12,7 +12,14 @@ generic-service:
     tag: app_version # override at deployment time
     port: 8080
 
+  volumes:
+    - name: conversion
+      emptyDir:
+        sizeLimit: 2Gi
 
+  volumeMounts:
+    - mountPath: /conversion-tmp
+      name: conversion
 
   ingress:
     enabled: true
@@ -26,14 +33,7 @@ generic-service:
           return 401;
         }
 
-  volumes:
-    - name: conversion-tmp
-      emptyDir:
-        sizeLimit: 2Gi
 
-  volumeMounts:
-    - mountPath: /conversion-tmp
-      name: conversion-tmp
 
   startupProbe:
     httpGet:
@@ -49,7 +49,7 @@ generic-service:
     JAVA_OPTS: "-Xmx512m"
     SERVER_PORT: "8080"
     SPRING_PROFILES_ACTIVE: "logstash,offender-events"
-    APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=$(APPINSIGHTS_INSTRUMENTATIONKEY)"
+    APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=$(APPINSIGHTS_INSTRUMENTATIONKEY);IngestionEndpoint=https://northeurope-0.in.applicationinsights.azure.com/;LiveEndpoint=https://northeurope.livediagnostics.monitor.azure.com/"
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.json
     SCHEDULE_EXPRESSION_CUSTOM-METRICS: 0 0/15 * * * ?
     SCHEDULE_EXPRESSION_RELEASE-DAY-METRICS: 0 0 4 * * *

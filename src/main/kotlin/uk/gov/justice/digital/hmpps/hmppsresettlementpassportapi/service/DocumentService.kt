@@ -4,6 +4,7 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
 import jakarta.transaction.Transactional
+import jakarta.validation.ValidationException
 import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -13,6 +14,7 @@ import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.GetObjectRequest
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DocumentCategory
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DocumentsEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.DocumentsRepository
@@ -30,17 +32,33 @@ class DocumentService(
   private val virusScanner: VirusScanner,
   private val documentConversionService: DocumentConversionService,
   @Value("\${hmpps.s3.buckets.document-management.bucketName}") private val bucketName: String,
-
 ) {
 
   @Transactional
   fun processDocument(
     nomsId: String,
     document: MultipartFile,
+    category: String,
   ): Result<DocumentsEntity, VirusFound> =
     forExistingPrisoner(nomsId) {
+      if (!document.originalFilename?.endsWith("docx")!! && !document.originalFilename?.endsWith("doc")!! && !document.originalFilename?.endsWith(
+          "pdf",
+        )!!
+      ) {
+        throw ValidationException("Unsupported document format, only .doc or pdf allowed")
+      }
+
+      var categoryValue = DocumentCategory.LICENCE_CONDITIONS
+      if (category != null) {
+        try {
+          categoryValue = DocumentCategory.valueOf(category)
+        } catch (ex: IllegalArgumentException) {
+          throw ValidationException("Invalid Document Category")
+        }
+      }
+
       when (val virusScanResult = virusScanner.scan(document.bytes)) {
-        NoVirusFound -> Success(convertAndStoreDocument(nomsId, document))
+        NoVirusFound -> Success(convertAndStoreDocument(nomsId, document, categoryValue))
         is VirusFound -> {
           log.info(VirusFoundEvent(nomsId, virusScanResult.foundViruses).toString())
           Failure(virusScanResult)
@@ -49,20 +67,23 @@ class DocumentService(
     }
 
   @Transactional
-  fun convertAndStoreDocument(nomsId: String, document: MultipartFile): DocumentsEntity {
+  fun convertAndStoreDocument(nomsId: String, document: MultipartFile, category: DocumentCategory): DocumentsEntity {
     // using nomsId to find the prisoner entity
     val prisoner = findPrisonerByNomsId(nomsId)
 
     val key = nomsId + "_" + UUID.randomUUID()
 
     uploadDocumentToS3(document, bucketName, key)
-    val convertedDocumentKey = documentConversionService.convert(document, key)
+    val convertedDocumentKey = documentConversionService.convert(document)
 
     val documents = DocumentsEntity(
       prisonerId = prisoner.id!!,
       originalDocumentKey = key,
       htmlDocumentKey = convertedDocumentKey,
       creationDate = LocalDateTime.now(),
+      category = category,
+      originalDocumentFileName = document.originalFilename,
+
     )
 
     val docEntity = documentsRepository.save(documents)

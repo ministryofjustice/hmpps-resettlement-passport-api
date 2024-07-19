@@ -4,18 +4,15 @@ import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentCompleteRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponsePage
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponseQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponseQuestionAndAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.IResettlementAssessmentQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentCompleteRequest
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
@@ -30,12 +27,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClai
 import java.time.LocalDateTime
 
 @Service
-class YamlResettlementAssessmentStrategy(
+class ResettlementAssessmentStrategy(
   private val config: AssessmentQuestionSets,
   private val resettlementAssessmentRepository: ResettlementAssessmentRepository,
   private val prisonerRepository: PrisonerRepository,
   private val pathwayStatusRepository: PathwayStatusRepository,
-
 ) {
 
   fun getConfig(pathway: Pathway, assessmentType: ResettlementAssessmentType, version: Int): AssessmentQuestionSet {
@@ -189,7 +185,7 @@ class YamlResettlementAssessmentStrategy(
           it.question,
           it.answer,
         )
-      }.toMutableList(),
+      },
     )
 
     // Create new resettlement assessment entity and save to database
@@ -217,15 +213,14 @@ class YamlResettlementAssessmentStrategy(
     assessment: ResettlementAssessmentCompleteRequest,
     edit: Boolean,
     assessmentType: ResettlementAssessmentType = ResettlementAssessmentType.BCST2,
-    version: Int = 1,
   ) {
     // Convert to Map of pages to List of questionsAndAnswers
     val nodeToQuestionMap = assessment.questionsAndAnswers
       .groupByTo(LinkedHashMap()) { qa ->
-        getConfig(pathway, assessmentType, version).pages
+        getConfig(pathway, assessmentType, assessment.version).pages
           .firstOrNull { configPage ->
             if (configPage.questions != null) {
-              qa.question in configPage.questions.map { q -> q.id }
+              qa.question in configPage.questions.getFlattenedListOfQuestions().map { it.id }
             } else {
               false
             }
@@ -233,18 +228,21 @@ class YamlResettlementAssessmentStrategy(
       }
       .mapValues { entry ->
         entry.value.map {
-          ResettlementAssessmentQuestionAndAnswer(getQuestionList(pathway, assessmentType).firstOrNull { q -> q.id == it.question } ?: throw ServerWebInputException("Error validating questions and answers - cannot find a question with id [${it.question}]"), it.answer)
+          ResettlementAssessmentQuestionAndAnswer(getFlattenedQuestionList(pathway, assessmentType, assessment.version).firstOrNull { q -> q.id == it.question } ?: throw ServerWebInputException("Error validating questions and answers - cannot find a question with id [${it.question}]"), it.answer, findPageIdFromQuestionId(it.question, assessmentType, pathway, assessment.version))
         }
       }
 
-    // Ensure the correct number of questions are answered in each page
+    // Ensure that only the correct base questions are answered in each page (validate nested questions later)
     nodeToQuestionMap.forEach { (key, value) ->
-      val expectedQuestions = key.questions
-      val actualQuestions = value.map { it.question }
-      if (expectedQuestions != actualQuestions) {
-        throw ServerWebInputException("Error validating questions and answers - wrong questions answered on page [${key.id}]. Expected [${expectedQuestions?.map { it.id }}] but found [${actualQuestions.map { it.id }}]")
+      val expectedBaseQuestions = key.questions?.map { it.mapToResettlementAssessmentQuestion(key.id) } ?: listOf()
+      val nestedQuestions = key.questions.getNestedQuestions().map { it.mapToResettlementAssessmentQuestion(key.id) }
+      val actualBaseQuestions = value.map { it.question } - nestedQuestions.toSet()
+      if (expectedBaseQuestions != actualBaseQuestions) {
+        throw ServerWebInputException("Error validating questions and answers - wrong questions answered on page [${key.id}]. Expected [${expectedBaseQuestions.map { it.id }}] but found [${actualBaseQuestions.map { it.id }}]")
       }
     }
+
+    // TODO PSFR-1545 validate nested questions are valid
 
     // Go through the expected page flow and check that actual pages match up
     var currentNode: AssessmentConfigPage? = null
@@ -253,7 +251,7 @@ class YamlResettlementAssessmentStrategy(
     while (true) {
       try {
         val actualPage: AssessmentConfigPage? = nodeToQuestionMap.keys.elementAtOrNull(pageNumber)
-        val expectedPage: String = if (currentNode != null) chooseNextPage(currentNode, assessment.questionsAndAnswers, edit, assessmentType) else getConfig(pathway, assessmentType, version).pages[0].id
+        val expectedPage: String = if (currentNode != null) chooseNextPage(currentNode, assessment.questionsAndAnswers, edit, assessmentType) else getConfig(pathway, assessmentType, assessment.version).pages[0].id
         if (expectedPage == "CHECK_ANSWERS") {
           break
         }
@@ -316,19 +314,19 @@ class YamlResettlementAssessmentStrategy(
 
     // Get the current page
     val config = getConfig(pathway, assessmentType, version)
-    val page = config.pages.first { it.id == pageId }
+    val page = config.pages.find { it.id == pageId } ?: throw ServerWebInputException("Page requested [$pageId] does not exist in config.")
 
     // Convert to ResettlementAssessmentPage DTO
     var resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(
       id = page.id,
       questionsAndAnswers = page.questions?.map {
-        ResettlementAssessmentResponseQuestionAndAnswer(
-          ResettlementAssessmentResponseQuestion(
+        ResettlementAssessmentQuestionAndAnswer(
+          ResettlementAssessmentQuestion(
             it.id,
             it.title,
             it.subTitle,
             it.type,
-            it.options?.toMutableList(),
+            it.options?.mapToResettlementAssessmentOptions(page.id),
             it.validationType,
           ),
           answer = null,
@@ -344,29 +342,38 @@ class YamlResettlementAssessmentStrategy(
       if (resettlementAssessmentResponsePage.id == "CHECK_ANSWERS") {
         // If the existing assessment is submitted we are in an edit and don't want to send back the ASSESSMENT_SUMMARY or PRERELEASE_ASSESSMENT_SUMMARY questions
         val questionsToExclude = if (edit) {
-          config.pages.filter { it.questions != null && it.id == "ASSESSMENT_SUMMARY" || it.id == "PRERELEASE_ASSESSMENT_SUMMARY" }.flatMap { it.questions!! }
+          config.pages.filter { it.questions != null && it.id == "ASSESSMENT_SUMMARY" || it.id == "PRERELEASE_ASSESSMENT_SUMMARY" }
+            .flatMap { it.questions!! }.map { it.mapToResettlementAssessmentQuestion(page.id) }
         } else {
           listOf()
         }
-        val questionsAndAnswers: List<ResettlementAssessmentResponseQuestionAndAnswer> =
+        val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer> =
           existingAssessment.assessment.assessment.map {
-            ResettlementAssessmentResponseQuestionAndAnswer(
-              question = getQuestionList(pathway, assessmentType).first { q -> q.id == it.questionId },
+            ResettlementAssessmentQuestionAndAnswer(
+              question = getFlattenedQuestionList(pathway, assessmentType, version).first { q -> q.id == it.questionId }.removeNestedQuestions(),
               answer = it.answer,
-              originalPageId = findPageIdFromQuestionId(it.questionId, assessmentType, pathway),
+              originalPageId = findPageIdFromQuestionId(it.questionId, assessmentType, pathway, version),
             )
           }.filter { it.question !in questionsToExclude }
-        resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(resettlementAssessmentResponsePage.id, questionsAndAnswers = questionsAndAnswers)
-      }
-
-      resettlementAssessmentResponsePage.questionsAndAnswers.forEach { q ->
-        val existingAnswer = existingAssessment.assessment.assessment.find { it.questionId == q.question.id }
-        // Copy in existing answers _but_ we don't want to copy case notes from BCST2 to RESETTLEMENT_PLAN
-        if (existingAnswer != null && !(resettlementPlanCopy && q.question.id == "CASE_NOTE_SUMMARY")) {
-          q.answer = existingAnswer.answer
-        }
-        if (q.question.id == "SUPPORT_NEEDS_PRERELEASE") {
-          q.answer = loadPathwayStatusAnswer(pathway, nomsId) ?: existingAnswer?.answer
+        resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(
+          resettlementAssessmentResponsePage.id,
+          questionsAndAnswers = questionsAndAnswers,
+        )
+      } else {
+        // Need to add in the answer foe all questions include those nested within options. Only support one level of nesting.
+        (
+          resettlementAssessmentResponsePage.questionsAndAnswers + resettlementAssessmentResponsePage.questionsAndAnswers.filter { it.question.options != null }
+            .flatMap { it.question.options!! }.filter { it.nestedQuestions != null }
+            .flatMap { it.nestedQuestions!! }
+          ).forEach { q ->
+          val existingAnswer = existingAssessment.assessment.assessment.find { it.questionId == q.question.id }
+          // Copy in existing answers _but_ we don't want to copy case notes from BCST2 to RESETTLEMENT_PLAN
+          if (existingAnswer != null && !(resettlementPlanCopy && q.question.id == "CASE_NOTE_SUMMARY")) {
+            q.answer = existingAnswer.answer
+          }
+          if (q.question.id == "SUPPORT_NEEDS_PRERELEASE") {
+            q.answer = loadPathwayStatusAnswer(pathway, nomsId) ?: existingAnswer?.answer
+          }
         }
       }
     }
@@ -374,20 +381,20 @@ class YamlResettlementAssessmentStrategy(
     return resettlementAssessmentResponsePage
   }
 
-  fun getQuestionById(id: String, pathway: Pathway, assessmentType: ResettlementAssessmentType): IResettlementAssessmentQuestion {
-    return getQuestionList(pathway, assessmentType).first { it.id == id }
+  fun getQuestionById(id: String, pathway: Pathway, assessmentType: ResettlementAssessmentType, version: Int): ResettlementAssessmentQuestion {
+    return getFlattenedQuestionList(pathway, assessmentType, version).first { it.id == id }
   }
 
   fun findPageIdFromQuestionId(
     questionId: String,
     assessmentType: ResettlementAssessmentType,
     pathway: Pathway,
-    version: Int = 1,
+    version: Int,
   ): String {
-    return getConfig(pathway, assessmentType, version).pages.firstOrNull { p -> (p.questions?.any { q -> q.id == questionId } == true) }?.id ?: throw RuntimeException("Cannot find page for question [$questionId] - check that the question is used in a page!")
+    return getConfig(pathway, assessmentType, version).pages.firstOrNull { p -> (p.questions?.getFlattenedListOfQuestions()?.any { q -> q.id == questionId } == true) }?.id ?: throw RuntimeException("Cannot find page for question [$questionId] - check that the question is used in a page!")
   }
 
-  private fun getQuestionList(pathway: Pathway, assessmentType: ResettlementAssessmentType, version: Int = 1): List<IResettlementAssessmentQuestion> = getConfig(pathway, assessmentType, version).pages.filter { it.questions != null }.flatMap { it.questions!! }
+  private fun getFlattenedQuestionList(pathway: Pathway, assessmentType: ResettlementAssessmentType, version: Int): List<ResettlementAssessmentQuestion> = getConfig(pathway, assessmentType, version).pages.filter { it.questions != null }.flatMap { it.questions!! }.getFlattenedListOfQuestions().map { it.mapToResettlementAssessmentQuestion(findPageIdFromQuestionId(it.id, assessmentType, pathway, version)) }
 
   private fun saveAssessment(assessment: ResettlementAssessmentEntity): ResettlementAssessmentEntity = resettlementAssessmentRepository.save(assessment)
 
@@ -435,19 +442,26 @@ data class AssessmentQuestionSet(
 
 data class AssessmentConfigPage(
   val id: String,
-  val title: String?,
+  val title: String? = null,
   val questions: List<AssessmentConfigQuestion>?,
   val nextPageLogic: List<AssessmentConfigNextPageOption>?,
 )
 
-data class AssessmentConfigNextPageOption(val questionId: String?, val nextPageId: String, val answers: List<Answer<*>>?)
-
 data class AssessmentConfigQuestion(
-  override val id: String,
-  override val title: String,
-  override val subTitle: String?,
-  override val type: TypeOfQuestion,
-  override val options: List<Option>?,
-) : IResettlementAssessmentQuestion {
-  override val validationType: ValidationType = ValidationType.MANDATORY
-}
+  val id: String,
+  val title: String,
+  val subTitle: String? = null,
+  val type: TypeOfQuestion,
+  val options: List<AssessmentConfigOption>? = null,
+  val validationType: ValidationType = ValidationType.MANDATORY,
+)
+
+data class AssessmentConfigOption(
+  val id: String,
+  val displayText: String,
+  val description: String? = null,
+  val exclusive: Boolean = false,
+  val nestedQuestions: List<AssessmentConfigQuestion>? = null,
+)
+
+data class AssessmentConfigNextPageOption(val questionId: String? = null, val nextPageId: String, val answers: List<Answer<*>>? = null)

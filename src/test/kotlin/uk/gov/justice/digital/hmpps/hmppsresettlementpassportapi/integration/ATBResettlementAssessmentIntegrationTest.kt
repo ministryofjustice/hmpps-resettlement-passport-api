@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.context.jdbc.Sql
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
@@ -33,7 +33,7 @@ class ATBResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val pathway = "ATTITUDES_THINKING_AND_BEHAVIOUR"
     val assessmentType = "BCST2"
     val currentPage = "HELP_TO_MANAGE_ANGER"
-    val questions = mutableListOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
+    val questions = listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
       ResettlementAssessmentRequestQuestionAndAnswer("HELP_TO_MANAGE_ANGER", answer = StringAnswer("NO")),
     )
     val body = ResettlementAssessmentRequest(
@@ -143,7 +143,7 @@ class ATBResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
 
-    val sampleAssessment = ResettlementAssessmentQuestionAndAnswerList(assessment = mutableListOf())
+    val sampleAssessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf())
 
     val expectedResettlementAssessments = listOf(
       ResettlementAssessmentEntity(
@@ -182,7 +182,7 @@ class ATBResettlementAssessmentIntegrationTest : IntegrationTestBase() {
         statusChangedTo = Status.SUPPORT_REQUIRED,
         assessmentType = ResettlementAssessmentType.BCST2,
         assessment = ResettlementAssessmentQuestionAndAnswerList(
-          mutableListOf(
+          listOf(
             ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "HELP_TO_MANAGE_ANGER",
               answer = StringAnswer(answer = "NO"),

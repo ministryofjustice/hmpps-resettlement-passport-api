@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
+package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment
 
 enum class ResettlementAssessmentStatus {
   /**

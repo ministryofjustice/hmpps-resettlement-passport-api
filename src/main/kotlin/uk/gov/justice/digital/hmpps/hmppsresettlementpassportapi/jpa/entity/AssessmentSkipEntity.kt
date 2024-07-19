@@ -11,7 +11,7 @@ import jakarta.persistence.Table
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AssessmentSkipReason
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.AssessmentSkipReason
 import java.time.LocalDateTime
 
 @Entity

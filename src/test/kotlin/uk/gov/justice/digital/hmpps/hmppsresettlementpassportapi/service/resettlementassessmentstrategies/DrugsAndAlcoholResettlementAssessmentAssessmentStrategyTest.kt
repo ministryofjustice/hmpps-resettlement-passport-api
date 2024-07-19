@@ -4,27 +4,20 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import org.mockito.Mockito
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponsePage
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponseQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentResponseQuestionAndAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementAssessmentStatus
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Option
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.yesNoOptions
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
-import java.time.LocalDate
 import java.util.stream.Stream
 
-class DrugsAndAlcoholYamlResettlementAssessmentStrategyTest : BaseYamlResettlementStrategyTest() {
+class DrugsAndAlcoholResettlementAssessmentAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.DRUGS_AND_ALCOHOL) {
 
   @ParameterizedTest
   @MethodSource("test next page function flow - no existing assessment data")
@@ -39,7 +32,7 @@ class DrugsAndAlcoholYamlResettlementAssessmentStrategyTest : BaseYamlResettleme
     val assessment = ResettlementAssessmentRequest(
       questionsAndAnswers = questionsAndAnswers,
     )
-    val nextPage = resettlementAssessmentService.getNextPageId(
+    val nextPage = resettlementAssessmentStrategy.getNextPageId(
       assessment = assessment,
       nomsId = nomsId,
       pathway = Pathway.DRUGS_AND_ALCOHOL,
@@ -132,7 +125,7 @@ class DrugsAndAlcoholYamlResettlementAssessmentStrategyTest : BaseYamlResettleme
     val nomsId = "123"
     setUpMocks("123", false)
 
-    val page = resettlementAssessmentService.getPageFromId(
+    val page = resettlementAssessmentStrategy.getPageFromId(
       nomsId = nomsId,
       pathway = Pathway.DRUGS_AND_ALCOHOL,
       assessmentType = ResettlementAssessmentType.BCST2,
@@ -146,14 +139,14 @@ class DrugsAndAlcoholYamlResettlementAssessmentStrategyTest : BaseYamlResettleme
       "DRUG_ISSUES",
       ResettlementAssessmentResponsePage(
         id = "DRUG_ISSUES",
-        questionsAndAnswers = mutableListOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
-            question = ResettlementAssessmentResponseQuestion(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
               id = "DRUG_ISSUES",
               title = "Does the person in prison have any previous or current drug misuse issues?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
-              options = yesNoOptions.toMutableList(),
+              options = yesNoOptions,
             ),
             originalPageId = "DRUG_ISSUES",
           ),
@@ -164,14 +157,14 @@ class DrugsAndAlcoholYamlResettlementAssessmentStrategyTest : BaseYamlResettleme
       "SUPPORT_WITH_DRUG_ISSUES",
       ResettlementAssessmentResponsePage(
         id = "SUPPORT_WITH_DRUG_ISSUES",
-        questionsAndAnswers = mutableListOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
-            question = ResettlementAssessmentResponseQuestion(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
               id = "SUPPORT_WITH_DRUG_ISSUES",
               title = "Does the person in prison want support with drug issues from the drug and alcohol team to help them prepare for release?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
-              options = yesNoOptions.toMutableList(),
+              options = yesNoOptions,
             ),
             originalPageId = "SUPPORT_WITH_DRUG_ISSUES",
           ),
@@ -182,14 +175,14 @@ class DrugsAndAlcoholYamlResettlementAssessmentStrategyTest : BaseYamlResettleme
       "ALCOHOL_ISSUES",
       ResettlementAssessmentResponsePage(
         id = "ALCOHOL_ISSUES",
-        questionsAndAnswers = mutableListOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
-            question = ResettlementAssessmentResponseQuestion(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
               id = "ALCOHOL_ISSUES",
               title = "Does the person in prison have any previous or current alcohol misuse issues?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
-              options = yesNoOptions.toMutableList(),
+              options = yesNoOptions,
             ),
             originalPageId = "ALCOHOL_ISSUES",
           ),
@@ -200,14 +193,14 @@ class DrugsAndAlcoholYamlResettlementAssessmentStrategyTest : BaseYamlResettleme
       "SUPPORT_WITH_ALCOHOL_ISSUES",
       ResettlementAssessmentResponsePage(
         id = "SUPPORT_WITH_ALCOHOL_ISSUES",
-        questionsAndAnswers = mutableListOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
-            question = ResettlementAssessmentResponseQuestion(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
               id = "SUPPORT_WITH_ALCOHOL_ISSUES",
               title = "Does the person in prison want support with alcohol issues from the drug and alcohol team to help them prepare for release?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
-              options = yesNoOptions.toMutableList(),
+              options = yesNoOptions,
             ),
             originalPageId = "SUPPORT_WITH_ALCOHOL_ISSUES",
           ),
@@ -219,21 +212,21 @@ class DrugsAndAlcoholYamlResettlementAssessmentStrategyTest : BaseYamlResettleme
       ResettlementAssessmentResponsePage(
         id = "ASSESSMENT_SUMMARY",
         title = "Drugs and alcohol report summary",
-        questionsAndAnswers = mutableListOf(
-          ResettlementAssessmentResponseQuestionAndAnswer(
-            question = ResettlementAssessmentResponseQuestion(
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
               id = "SUPPORT_NEEDS",
               title = "Drugs and alcohol support needs",
               subTitle = "Select one option.",
               type = TypeOfQuestion.RADIO,
-              options = mutableListOf(
-                Option(
+              options = listOf(
+                ResettlementAssessmentOption(
                   id = "SUPPORT_REQUIRED",
                   displayText = "Support required",
                   description = "a need for support has been identified and is accepted",
                 ),
-                Option(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
-                Option(
+                ResettlementAssessmentOption(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
+                ResettlementAssessmentOption(
                   id = "SUPPORT_DECLINED",
                   displayText = "Support declined",
                   description = "a need has been identified but support is declined",
@@ -242,8 +235,8 @@ class DrugsAndAlcoholYamlResettlementAssessmentStrategyTest : BaseYamlResettleme
             ),
             originalPageId = "ASSESSMENT_SUMMARY",
           ),
-          ResettlementAssessmentResponseQuestionAndAnswer(
-            question = ResettlementAssessmentResponseQuestion(
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
               id = "CASE_NOTE_SUMMARY",
               title = "Add a case note summary",
               subTitle = "This will be displayed as a case note in both DPS and nDelius",
@@ -258,22 +251,8 @@ class DrugsAndAlcoholYamlResettlementAssessmentStrategyTest : BaseYamlResettleme
       "CHECK_ANSWERS",
       ResettlementAssessmentResponsePage(
         id = "CHECK_ANSWERS",
-        questionsAndAnswers = mutableListOf(),
+        questionsAndAnswers = listOf(),
       ),
     ),
   )
-
-  private fun setUpMocks(nomsId: String, returnResettlementAssessmentEntity: Boolean, assessment: ResettlementAssessmentQuestionAndAnswerList = ResettlementAssessmentQuestionAndAnswerList(mutableListOf())) {
-    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23"))
-    val resettlementAssessmentEntity = if (returnResettlementAssessmentEntity) ResettlementAssessmentEntity(1, prisonerEntity, Pathway.DRUGS_AND_ALCOHOL, Status.NOT_STARTED, ResettlementAssessmentType.BCST2, assessment, testDate, "", ResettlementAssessmentStatus.COMPLETE, "some text", "USER_1", submissionDate = null, version = 1) else null
-    Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
-    Mockito.`when`(
-      resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-        prisonerEntity,
-        Pathway.DRUGS_AND_ALCOHOL,
-        ResettlementAssessmentType.BCST2,
-        listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED),
-      ),
-    ).thenReturn(resettlementAssessmentEntity)
-  }
 }

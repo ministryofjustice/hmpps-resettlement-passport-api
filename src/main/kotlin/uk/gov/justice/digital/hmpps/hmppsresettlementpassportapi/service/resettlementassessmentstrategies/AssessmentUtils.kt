@@ -3,6 +3,9 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resett
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 
 internal fun convertFromSupportNeedAnswerToStatus(supportNeed: Answer<*>?): Status {
@@ -28,3 +31,52 @@ internal fun convertFromStringAnswer(answer: Answer<*>?): String {
     throw ServerWebInputException("Answer [$answer] must be a StringAnswer")
   }
 }
+
+internal fun List<AssessmentConfigOption>?.mapToResettlementAssessmentOptions(originalPageId: String) = this?.map {
+  ResettlementAssessmentOption(
+    id = it.id,
+    displayText = it.displayText,
+    description = it.description,
+    exclusive = it.exclusive,
+    nestedQuestions = it.nestedQuestions?.map { nq -> nq.mapToResettlementAssessmentQuestionAndAnswer(originalPageId) },
+  )
+}
+
+internal fun AssessmentConfigQuestion.mapToResettlementAssessmentQuestionAndAnswer(originalPageId: String): ResettlementAssessmentQuestionAndAnswer =
+  ResettlementAssessmentQuestionAndAnswer(
+    question = this.mapToResettlementAssessmentQuestion(originalPageId),
+    originalPageId = originalPageId,
+  )
+
+internal fun AssessmentConfigQuestion.mapToResettlementAssessmentQuestion(originalPageId: String): ResettlementAssessmentQuestion =
+  ResettlementAssessmentQuestion(
+    id = this.id,
+    title = this.title,
+    subTitle = this.subTitle,
+    type = this.type,
+    options = this.options.mapToResettlementAssessmentOptions(originalPageId),
+    validationType = this.validationType,
+  )
+
+internal fun List<AssessmentConfigQuestion>?.getFlattenedListOfQuestions() =
+  this?.plus(this.filter { it.options != null }.flatMap { it.options!! }.filter { it.nestedQuestions != null }.flatMap { it.nestedQuestions!! }) ?: emptyList()
+
+internal fun List<AssessmentConfigQuestion>?.getNestedQuestions() =
+  this?.filter { it.options != null }?.flatMap { it.options!! }?.filter { it.nestedQuestions != null }?.flatMap { it.nestedQuestions!! } ?: emptyList()
+
+internal fun ResettlementAssessmentQuestion.removeNestedQuestions() = ResettlementAssessmentQuestion(
+  id = this.id,
+  title = this.title,
+  subTitle = this.subTitle,
+  type = this.type,
+  options = this.options?.map {
+    ResettlementAssessmentOption(
+      id = it.id,
+      displayText = it.displayText,
+      description = it.description,
+      exclusive = it.exclusive,
+      nestedQuestions = null,
+    )
+  },
+  validationType = this.validationType,
+)

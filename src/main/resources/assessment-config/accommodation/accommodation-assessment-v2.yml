@@ -9,18 +9,46 @@ pages:
         options:
           - id: "PRIVATE_RENTED_HOUSING"
             displayText: "Private rented housing"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING"
+                title: "Enter the address"
+                type: "ADDRESS"
           - id: "PRIVATE_HOUSING_OWNED"
             displayText: "Private housing owned by them"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_HOUSING_OWNED"
+                title: "Enter the address"
+                type: "ADDRESS"
           - id: "FAMILY_OR_FRIENDS"
             displayText: "With family or friends"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS_FAMILY_OR_FRIENDS"
+                title: "Enter the address"
+                type: "ADDRESS"
           - id: "SOCIAL_HOUSING"
             displayText: "Social housing"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS_SOCIAL_HOUSING"
+                title: "Enter the address"
+                type: "ADDRESS"
           - id: "LOCAL_AUTHORITY_OR_SUPPORTED_HOUSING"
             displayText: "Local authority care or supported housing"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS_LOCAL_AUTHORITY_OR_SUPPORTED_HOUSING"
+                title: "Enter the address"
+                type: "ADDRESS"
           - id: "HOSTEL"
             displayText: "Hostel"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS_HOSTEL"
+                title: "Enter the address"
+                type: "ADDRESS"
           - id: "APPROVED_PREMISES"
             displayText: "Approved premises"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS_APPROVED_PREMISES"
+                title: "Enter the address"
+                type: "ADDRESS"
           - id: "NO_PERMANENT_OR_FIXED"
             displayText: "No permanent or fixed address"
           - id: "NO_ANSWER"
@@ -37,6 +65,13 @@ pages:
             displayText: "Return to their previous address"
           - id: "MOVE_TO_NEW_ADDRESS"
             displayText: "Move to a new address"
+            nestedQuestions:
+              - id: "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS"
+                title: "Enter the address"
+                type: "ADDRESS"
+              - id: "WHERE_WILL_THEY_LIVE_ADDRESS_ADDITIONAL_INFO_MOVE_TO_NEW_ADDRESS"
+                title: "Additional information"
+                type: "LONG_TEXT"
           - id: "DOES_NOT_HAVE_ANYWHERE"
             displayText: "Does not have anywhere to live"
           - id: "NO_ANSWER"
@@ -46,28 +81,7 @@ pages:
         subTitle: "Include details of who else lived at the address and how the accommodation was paid for. If no fixed address, specify the council area where they have a local connection."
         type: "LONG_TEXT"
     nextPageLogic:
-      - questionId: "WHERE_WILL_THEY_LIVE"
-        answers:
-          - "@class": "StringAnswer"
-            answer: "MOVE_TO_NEW_ADDRESS"
-        nextPageId: "WHERE_WILL_THEY_LIVE_ADDRESS"
-      - questionId: "WHERE_WILL_THEY_LIVE"
-        answers:
-          - "@class": "StringAnswer"
-            answer: "RETURN_TO_PREVIOUS_ADDRESS"
-          - "@class": "StringAnswer"
-            answer: "DOES_NOT_HAVE_ANYWHERE"
-          - "@class": "StringAnswer"
-            answer: "NO_ANSWER"
-        nextPageId: "FINAL_QUESTION_NEXT_PAGE"
-  - id: "WHERE_WILL_THEY_LIVE_ADDRESS"
-    title: "Where will the person in prison live when they are released?"
-    questions:
-      - id: "WHERE_WILL_THEY_LIVE_ADDRESS"
-        title: "Enter the address"
-        type: "ADDRESS"
-    nextPageLogic:
-      - nextPageId: "FINAL_QUESTION_NEXT_PAGE"
+     - nextPageId: "FINAL_QUESTION_NEXT_PAGE"
   # In subsequent versions do not change page and question ids below this point due to custom logic elsewhere in the code
   - id: "ASSESSMENT_SUMMARY"
     title: "Accommodation report summary"
@@ -76,6 +90,7 @@ pages:
         title: "Support needs"
         subTitle: "Select all that apply."
         type: "CHECKBOX"
+        validationType: "OPTIONAL"
         options:
           - id: "HELP_TO_FIND_ACCOMMODATION"
             displayText: "Help to find accommodation"
@@ -117,6 +132,7 @@ pages:
         title: "Support needs"
         subTitle: "Select all that apply."
         type: "CHECKBOX"
+        validationType: "OPTIONAL"
         options:
           - id: "HELP_TO_FIND_ACCOMMODATION"
             displayText: "Help to find accommodation"

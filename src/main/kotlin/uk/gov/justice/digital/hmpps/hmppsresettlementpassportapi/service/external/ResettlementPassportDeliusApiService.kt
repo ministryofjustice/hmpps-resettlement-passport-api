@@ -193,7 +193,6 @@ class ResettlementPassportDeliusApiService(
           .awaitBodilessEntity()
         success = true
       } catch (e: WebClientResponseException) {
-        // TODO PSFR-1386 Add retry mechanism if we fail to send the case note
         log.warn("Error calling post case note delius api {}, {}", e.statusCode, e.responseBodyAsString)
         success = false
       }

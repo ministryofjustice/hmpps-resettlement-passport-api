@@ -39,7 +39,7 @@ class MetricsIntegrationTest : IntegrationTestBase() {
   @Test
   fun `test collect metrics - blank database and no results from prisoner search api`() {
     prisonRegisterApiMockServer.stubPrisonList(200)
-    prisonerSearchApiMockServer.stubGetPrisonersList("MDI", "", 500, 0, 404)
+    prisonerSearchApiMockServer.stubGetPrisonersList("MDI", 500, 0, 404)
 
     metricsService.recordCustomMetrics()
     assertThrows<MeterNotFoundException> { registry.get("total_prisoners_count").gauges() }
@@ -56,7 +56,7 @@ class MetricsIntegrationTest : IntegrationTestBase() {
     seedPathwayStatuses()
 
     prisonRegisterApiMockServer.stubPrisonList(200)
-    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-3.json", prisonId, "", 500, 0, 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-3.json", prisonId, 500, 0, 200)
 
     getAndAssert(prisonId, expectedOutput)
 

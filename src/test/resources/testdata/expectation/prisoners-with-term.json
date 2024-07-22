@@ -1,0 +1,62 @@
+{
+  "content": [
+    {
+      "prisonerNumber": "G1458GV",
+      "firstName": "FINN",
+      "middleNames": "CHANDLEVIEVE",
+      "lastName": "CRAWFIS",
+      "releaseDate": "2099-09-12",
+      "releaseType": "CRD",
+      "lastUpdatedDate": "2023-05-17",
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "NOT_STARTED",
+          "lastDateChange": "2023-05-17"
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-05-18"
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "SUPPORT_NOT_REQUIRED",
+          "lastDateChange": "2023-05-19"
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-05-20"
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "DONE",
+          "lastDateChange": "2023-05-21"
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "NOT_STARTED",
+          "lastDateChange": "2023-05-22"
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-05-23"
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": "2018-10-16",
+      "paroleEligibilityDate": null,
+      "releaseEligibilityDate": "2018-10-16",
+      "releaseEligibilityType": "HDCED",
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": true
+    }
+  ],
+  "pageSize": 1,
+  "page": 0,
+  "sortName": "releaseDate,DESC",
+  "totalElements": 1,
+  "last": true
+}

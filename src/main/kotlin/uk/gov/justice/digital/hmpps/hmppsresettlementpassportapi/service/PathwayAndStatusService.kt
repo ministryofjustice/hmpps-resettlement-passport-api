@@ -1,8 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import jakarta.transaction.Transactional
+import io.github.oshai.kotlinlogging.KotlinLogging
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import org.springframework.transaction.support.TransactionOperations
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayAndStatus
@@ -15,11 +17,14 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 import java.time.LocalDate
 import java.time.LocalDateTime
 
+private val logger = KotlinLogging.logger {}
+
 @Service
 class PathwayAndStatusService(
   private val pathwayStatusRepository: PathwayStatusRepository,
   private val prisonerRepository: PrisonerRepository,
   private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
+  private val transactionOperations: TransactionOperations,
 ) {
 
   fun updatePathwayStatus(nomsId: String, pathwayAndStatus: PathwayAndStatus): ResponseEntity<Void> {
@@ -43,12 +48,30 @@ class PathwayAndStatusService(
     pathwayStatusRepository.save(pathwayStatus)
   }
 
-  @Transactional
   fun getOrCreatePrisoner(nomsId: String, prisonId: String?, releaseDate: LocalDate? = null, crn: String? = null): PrisonerEntity {
     // Seed the Prisoner data into the DB
     val existingPrisonerEntity = prisonerRepository.findByNomsId(nomsId)
     if (existingPrisonerEntity == null) {
       val resolvedCrn = crn ?: resettlementPassportDeliusApiService.getCrn(nomsId)
+      return createPrisoner(nomsId, resolvedCrn, prisonId, releaseDate)
+    } else if (existingPrisonerEntity.crn == null) {
+      // If the CRN failed to be added last time, try again
+      val resolvedCrn = crn ?: resettlementPassportDeliusApiService.getCrn(nomsId)
+      if (resolvedCrn != null) {
+        existingPrisonerEntity.crn = resolvedCrn
+        return prisonerRepository.save(existingPrisonerEntity)
+      }
+    }
+    return existingPrisonerEntity
+  }
+
+  internal fun createPrisoner(
+    nomsId: String,
+    resolvedCrn: String?,
+    prisonId: String?,
+    releaseDate: LocalDate?,
+  ): PrisonerEntity = try {
+    transactionOperations.execute {
       val newPrisonerEntity = prisonerRepository.save(
         PrisonerEntity(
           nomsId = nomsId,
@@ -62,15 +85,10 @@ class PathwayAndStatusService(
           PathwayStatusEntity(null, newPrisonerEntity, it, Status.NOT_STARTED, null)
         pathwayStatusRepository.save(pathwayStatusEntity)
       }
-      return newPrisonerEntity
-    } else if (existingPrisonerEntity.crn == null) {
-      // If the CRN failed to be added last time, try again
-      val resolvedCrn = crn ?: resettlementPassportDeliusApiService.getCrn(nomsId)
-      if (resolvedCrn != null) {
-        existingPrisonerEntity.crn = resolvedCrn
-        return prisonerRepository.save(existingPrisonerEntity)
-      }
-    }
-    return existingPrisonerEntity
+      newPrisonerEntity
+    }!!
+  } catch (e: DataIntegrityViolationException) {
+    logger.warn(e) { "Failed to create prisoner as it already exists, loading" }
+    getPrisonerEntityFromNomsId(nomsId)
   }
 }

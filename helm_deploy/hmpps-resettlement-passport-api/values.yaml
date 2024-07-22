@@ -82,7 +82,7 @@ generic-service:
     sqs-prisoner-event-queue-secret:
       OFFENDER_EVENT_QUEUE_NAME: "sqs_queue_name"
       OFFENDER_EVENT_DLQ_NAME: "sqs_dlq_queue_name"
-    s3-bucket-output:
+    s3-bucket-document-storage:
       S3_DOCUMENT_BUCKET_NAME: bucket_name
 
   allowlist:

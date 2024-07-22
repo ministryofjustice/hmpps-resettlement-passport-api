@@ -49,7 +49,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  @Sql("classpath:testdata/sql/seed-resettlement-assessment-3.sql")
+  @Sql("classpath:testdata/sql/seed-document-upload.sql")
   fun `Create uploadDocument and getDocument - happy path`() {
     val nomsId = "ABC1234"
 
@@ -68,6 +68,18 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/documents/$nomsId/html/1")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+
+    webTestClient.get()
+      .uri("/resettlement-passport/documents/$nomsId/download")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+
+    webTestClient.get()
+      .uri("/resettlement-passport/documents/$nomsId/html")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -120,7 +132,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  @Sql("classpath:testdata/sql/seed-resettlement-assessment-3.sql")
+  @Sql("classpath:testdata/sql/seed-document-upload.sql")
   fun `Create uploadDocument with document not supported`() {
     val nomsId = "ABC1234"
 
@@ -135,7 +147,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  @Sql("classpath:testdata/sql/seed-resettlement-assessment-3.sql")
+  @Sql("classpath:testdata/sql/seed-document-upload.sql")
   fun `Create uploadDocument with document size exceeded`() {
     val nomsId = "ABC1234"
 
@@ -148,7 +160,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  @Sql("classpath:testdata/sql/seed-resettlement-assessment-3.sql")
+  @Sql("classpath:testdata/sql/seed-document-upload.sql")
   fun `Create uploadDocument with invalid document category`() {
     val nomsId = "ABC1234"
 
@@ -160,5 +172,92 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
       .expectStatus().isBadRequest
       .expectBody()
       .jsonPath("status").isEqualTo(400)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-document-upload.sql")
+  fun `Get Document & HTML when category and documentId given`() {
+    val nomsId = "ABC1234"
+
+    webTestClient.post()
+      .uri("/resettlement-passport/documents/$nomsId/upload")
+      .body(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "LICENCE_CONDITIONS"))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+
+    webTestClient.get()
+      .uri("/resettlement-passport/documents/$nomsId/download/1?category=LICENCE_CONDITIONS")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isEqualTo(200)
+      .expectHeader().contentType("application/json")
+      .expectBody()
+
+    webTestClient.get()
+      .uri("/resettlement-passport/documents/$nomsId/html/1?category=LICENCE_CONDITIONS")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isEqualTo(200)
+      .expectHeader().contentType("text/html;charset=UTF-8")
+      .expectBody()
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-document-upload.sql")
+  fun `Get Document & HTML when Invalid category given`() {
+    val nomsId = "ABC1234"
+
+    webTestClient.post()
+      .uri("/resettlement-passport/documents/$nomsId/upload")
+      .body(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "LICENCE_CONDITIONS"))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+
+    webTestClient.get()
+      .uri("/resettlement-passport/documents/$nomsId/download?category=LICENCE_CONDITIONS_INVALID")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isBadRequest
+      .expectBody()
+      .jsonPath("status").isEqualTo(400)
+
+    webTestClient.get()
+      .uri("/resettlement-passport/documents/$nomsId/html?category=LICENCE_CONDITIONS_INVALID")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isBadRequest
+      .expectBody()
+      .jsonPath("status").isEqualTo(400)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-document-upload.sql")
+  fun `Get Latest Document & HTML when only category  given`() {
+    val nomsId = "ABC1234"
+
+    webTestClient.post()
+      .uri("/resettlement-passport/documents/$nomsId/upload")
+      .body(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "LICENCE_CONDITIONS"))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+
+    webTestClient.get()
+      .uri("/resettlement-passport/documents/$nomsId/download?category=LICENCE_CONDITIONS")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isEqualTo(200)
+      .expectHeader().contentType("application/json")
+      .expectBody()
+
+    webTestClient.get()
+      .uri("/resettlement-passport/documents/$nomsId/html?category=LICENCE_CONDITIONS")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isEqualTo(200)
+      .expectHeader().contentType("text/html;charset=UTF-8")
+      .expectBody()
   }
 }

@@ -95,7 +95,7 @@ class DocumentStorageResourceController(
     @PathVariable("documentId")
     @Parameter(required = true)
     documentId: Long,
-  ): ByteArray = uploadService.getDocumentByNomisIdAndDocumentId(nomsId, documentId)
+  ): ByteArray = uploadService.getDocumentByNomisIdAndDocumentId(nomsId, documentId, null)
 
   @GetMapping("{nomsId}/html/{documentId}", produces = [MediaType.TEXT_HTML_VALUE])
   @Operation(
@@ -137,5 +137,87 @@ class DocumentStorageResourceController(
     @PathVariable("documentId")
     @Parameter(required = true)
     documentId: Long,
-  ): String = uploadService.getHtmlByNomisIdAndDocumentId(nomsId, documentId)
+  ): String = uploadService.getHtmlByNomisIdAndDocumentId(nomsId, documentId, null)
+
+  @GetMapping("{nomsId}/download")
+  @Operation(
+    summary = "Get document  for a prisoner",
+    description = "Get Latest Original Document for prisoner Id .",
+  )
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [
+          Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "404",
+        description = "No data found for prisoner id",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  fun getLatestDocumentByNomsId(
+    @PathVariable("nomsId")
+    @Parameter(required = true)
+    nomsId: String,
+    @RequestParam(defaultValue = "LICENCE_CONDITIONS", required = false)
+    category: String,
+  ): ByteArray = uploadService.getLatestDocumentByNomisId(nomsId, category)
+
+  @GetMapping("{nomsId}/html", produces = [MediaType.TEXT_HTML_VALUE])
+  @Operation(
+    summary = "Get latest document  for a prisoner",
+    description = "Get Latest HTML Document for a given prisoner Id .",
+  )
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [
+          Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "404",
+        description = "No data found for given document id and prisoner id",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  fun getLatestDocumentHtmlByNomsId(
+    @PathVariable("nomsId")
+    @Parameter(required = true)
+    nomsId: String,
+    @RequestParam(defaultValue = "LICENCE_CONDITIONS", required = false)
+    category: String,
+  ): String = uploadService.getLatestHTMLByNomisId(nomsId, category)
 }

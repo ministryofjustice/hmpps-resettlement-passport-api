@@ -9,7 +9,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
   fun `Get All Prisoners happy path - with caching`() {
     val expectedOutput = readFile("testdata/expectation/prisoners.json")
     val prisonId = "MDI"
-    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, 500, 0, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?term=&page=0&size=10&sort=releaseDate,DESC")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -32,10 +32,40 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-9.sql")
+  fun `Get All Prisoners - PSFR-1495 check caching with and without a search search gets same results`() {
+    val prisonId = "MDI"
+
+    // Stub get prisoners to include Finn Chandlevieve
+    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, 500, 0, 200)
+
+    // Call GET prisoners with no search term and assert json
+    webTestClient.get()
+      .uri("/resettlement-passport/prison/$prisonId/prisoners?term=&page=0&size=10&sort=releaseDate,DESC")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(readFile("testdata/expectation/prisoners.json"), true)
+
+    // Update test stub to remove Finn Chandlevieve
+    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-4.json", prisonId, 500, 0, 200)
+
+    // Call GET prisoners with search term and assert json (should use cache and still be there)
+    webTestClient.get()
+      .uri("/resettlement-passport/prison/$prisonId/prisoners?term=Finn&page=0&size=10&sort=releaseDate,DESC")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(readFile("testdata/expectation/prisoners-with-term.json"), true)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-9.sql")
   fun `Get All Prisoners sort by releaseDate ascending happy path`() {
     val expectedOutput = readFile("testdata/expectation/prisoners-ascending.json")
     val prisonId = "MDI"
-    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, 500, 0, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?term=&page=0&size=10&sort=releaseDate,ASC")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -68,7 +98,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get All Prisoners  Internal Error`() {
     val prisonId = "MDI"
-    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 500)
+    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, 500, 0, 500)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -82,7 +112,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get All Prisoners  negative Page number`() {
     val prisonId = "MDI"
-    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 404)
+    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, 500, 0, 404)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?page=-1&size=10&sort=releaseDate,ASC")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -97,7 +127,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get All Prisoners  negative Page size`() {
     val prisonId = "MDI"
-    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 404)
+    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, 500, 0, 404)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?page=1&size=-1&sort=releaseDate,ASC")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -112,7 +142,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get All Prisoners with no page and no size as Internal Error`() {
     val prisonId = "MDI"
-    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 500)
+    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, 500, 0, 500)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?sort=releaseDate,ASC")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -126,7 +156,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get All Prisoners with no sort as Internal Error`() {
     val prisonId = "MDI"
-    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 500)
+    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, 500, 0, 500)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?page=1&sie=10")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -140,7 +170,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get All Prisoners with sort invalid`() {
     val prisonId = "MDI"
-    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, 500, 0, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?page=0&size=10&sort=xxxxx")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -155,7 +185,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get All Prisoners with sort by pathway status- no pathway view selected`() {
     val prisonId = "MDI"
-    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, 500, 0, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?page=0&size=10&sort=pathwayStatus,ASC")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -171,7 +201,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
   fun `Get Prisoners when nomsId not found`() {
     val prisonId = "abc"
 
-    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 404)
+    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, 500, 0, 404)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?page=0&size=10&sort=xxxxx")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -225,12 +255,12 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
   @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
   fun `Get All Prisoners happy path - volume test`() {
     val prisonId = "MDI"
-    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-volume-test-1.json", prisonId, "", 500, 0, 200)
-    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-volume-test-2.json", prisonId, "", 500, 1, 200)
-    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-volume-test-3.json", prisonId, "", 500, 2, 200)
-    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-volume-test-4.json", prisonId, "", 500, 3, 200)
-    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-volume-test-5.json", prisonId, "", 500, 4, 200)
-    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-volume-test-6.json", prisonId, "", 500, 5, 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-volume-test-1.json", prisonId, 500, 0, 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-volume-test-2.json", prisonId, 500, 1, 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-volume-test-3.json", prisonId, 500, 2, 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-volume-test-4.json", prisonId, 500, 3, 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-volume-test-5.json", prisonId, 500, 4, 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-volume-test-6.json", prisonId, 500, 5, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?term=&page=0&size=10&sort=releaseDate,DESC")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -270,7 +300,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
   fun `Get All Prisoners happy path - assessmentRequired true`() {
     val expectedOutput = readFile("testdata/expectation/prisoners-assessment-required.json")
     val prisonId = "MDI"
-    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, 500, 0, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?term=&assessmentRequired=true&page=0&size=10&sort=releaseDate,DESC")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -285,7 +315,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
   fun `Get All Prisoners happy path - assessmentRequired false`() {
     val expectedOutput = readFile("testdata/expectation/prisoners-assessment-not-required.json")
     val prisonId = "MDI"
-    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, "", 500, 0, 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, 500, 0, 200)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?term=&assessmentRequired=false&page=0&size=10&sort=releaseDate,DESC")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))

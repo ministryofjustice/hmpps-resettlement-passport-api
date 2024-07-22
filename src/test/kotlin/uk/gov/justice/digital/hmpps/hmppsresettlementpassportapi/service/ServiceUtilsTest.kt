@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteTy
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusAuthor
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import java.util.stream.Stream
 
@@ -392,6 +393,44 @@ class ServiceUtilsTest {
     Arguments.of("Mary Williams-Smith", DeliusAuthor("MDI", "Mary", "Williams-Smith")),
     Arguments.of("Mary Jane Miller", DeliusAuthor("MDI", "Mary Jane", "Miller")),
     Arguments.of("Chris", DeliusAuthor("MDI", "Chris", "")),
+  )
+
+  @ParameterizedTest
+  @MethodSource("test searchTermMatchesPrisoner data")
+  fun `test searchTermMatchesPrisoner`(searchTerm: String, prisoner: PrisonersSearch, matches: Boolean) {
+    Assertions.assertEquals(matches, searchTermMatchesPrisoner(searchTerm, prisoner))
+  }
+
+  private fun `test searchTermMatchesPrisoner data`() = Stream.of(
+    Arguments.of("", getPrisonersSearch("ABC1234", "Joe", "Bloggs"), true),
+    Arguments.of(" ", getPrisonersSearch("ABC1234", "Joe", "Bloggs"), true),
+    Arguments.of("ABC1234", getPrisonersSearch("ABC1234", "Joe", "Bloggs"), true),
+    Arguments.of("abc1234", getPrisonersSearch("ABC1234", "Joe", "Bloggs"), true),
+    Arguments.of("Joe", getPrisonersSearch("ABC1234", "Joe", "Bloggs"), true),
+    Arguments.of("joe", getPrisonersSearch("ABC1234", "Joe", "Bloggs"), true),
+    Arguments.of("joE", getPrisonersSearch("ABC1234", "Joe", "Bloggs"), true),
+    Arguments.of("Bloggs", getPrisonersSearch("ABC1234", "Joe", "Bloggs"), true),
+    Arguments.of("bloggs", getPrisonersSearch("ABC1234", "Joe", "Bloggs"), true),
+    Arguments.of("blogGs", getPrisonersSearch("ABC1234", "Joe", "Bloggs"), true),
+    Arguments.of("Jo", getPrisonersSearch("ABC1234", "Joe", "Bloggs"), true),
+    Arguments.of("jo", getPrisonersSearch("ABC1234", "Joe", "Bloggs"), true),
+    Arguments.of("blog", getPrisonersSearch("ABC1234", "Joe", "Bloggs"), true),
+    Arguments.of("ggs", getPrisonersSearch("ABC1234", "Joe", "Bloggs"), false),
+    Arguments.of("oe", getPrisonersSearch("ABC1234", "Joe", "Bloggs"), false),
+    Arguments.of("random string", getPrisonersSearch("ABC1234", "Joe", "Bloggs"), false),
+    Arguments.of("!\"£$%^&*()_-+=[]{};:@'#~<>,.?/`¬|\\ç", getPrisonersSearch("ABC1234", "Joe", "Bloggs"), false),
+    Arguments.of("John", getPrisonersSearch("ABC1234", "John James", "Smith"), true),
+    Arguments.of("  john ", getPrisonersSearch("ABC1234", "John James", "Smith"), true),
+  )
+
+  private fun getPrisonersSearch(prisonerNumber: String, firstName: String, lastName: String) = PrisonersSearch(
+    prisonerNumber = prisonerNumber,
+    firstName = firstName,
+    lastName = lastName,
+    cellLocation = null,
+    prisonId = "ABC",
+    prisonName = "HMP ABC",
+    youthOffender = null,
   )
 }
 

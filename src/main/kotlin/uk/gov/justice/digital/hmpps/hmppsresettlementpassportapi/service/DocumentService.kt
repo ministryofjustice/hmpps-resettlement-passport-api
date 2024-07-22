@@ -48,14 +48,10 @@ class DocumentService(
         throw ValidationException("Unsupported document format, only .doc or pdf allowed")
       }
 
-      var categoryValue = DocumentCategory.LICENCE_CONDITIONS
-      if (category != null) {
-        try {
-          categoryValue = DocumentCategory.valueOf(category)
-        } catch (ex: IllegalArgumentException) {
-          throw ValidationException("Invalid Document Category")
-        }
+      if (category != null && !isValidDocumentCategory(category)) {
+        throw ValidationException("Invalid Document Category")
       }
+      val categoryValue = DocumentCategory.valueOf(category)
 
       when (val virusScanResult = virusScanner.scan(document.bytes)) {
         NoVirusFound -> Success(convertAndStoreDocument(nomsId, document, categoryValue))
@@ -122,36 +118,86 @@ class DocumentService(
     return s3Client.getObject(request).readAllBytes()
   }
 
-  fun getDocumentByNomisIdAndDocumentId(nomsId: String, documentId: Long): ByteArray {
+  fun getDocumentByNomisIdAndDocumentId(nomsId: String, documentId: Long, category: String?): ByteArray {
     val prisoner = findPrisonerByNomsId(nomsId)
     val document: DocumentsEntity
-    try {
-      document = documentsRepository.getReferenceById(documentId)
-    } catch (ex: Exception) {
-      throw ResourceNotFoundException("Document with id $documentId not found")
+    var documentKey: String? = null
+    if (documentId.toInt() != 0) {
+      try {
+        document = documentsRepository.getReferenceById(documentId)
+        documentKey = document.originalDocumentKey
+      } catch (ex: Exception) {
+        throw ResourceNotFoundException("Document with id $documentId not found")
+      }
+      if (prisoner.id != document.prisonerId) {
+        throw ResourceNotFoundException("Document with id $documentId not found")
+      }
+    } else if (documentId.toInt() == 0 && category != null) {
+      if (category != null && !isValidDocumentCategory(category)) {
+        throw ValidationException("Invalid Document Category")
+      }
+      val documentsList =
+        prisoner.id?.let {
+          documentsRepository.findAllByPrisonerIdAndCategoryOrderByCreationDateDesc(
+            it,
+            DocumentCategory.valueOf(category),
+          )
+        }
+      if (documentsList != null && documentsList.isEmpty()) {
+        throw ResourceNotFoundException("No Document Exists for category $category")
+      }
+      if (documentsList != null) {
+        document = documentsList.get(0)
+        documentKey = document.originalDocumentKey
+      }
     }
-    if (prisoner.id != document.prisonerId) {
-      throw ResourceNotFoundException("Document with id $documentId not found")
+    if (documentKey != null) {
+      return getDocument(documentKey)
     }
-    return getDocument(document.originalDocumentKey)
+    throw ResourceNotFoundException("No Document Found")
   }
 
-  fun getHtmlByNomisIdAndDocumentId(nomsId: String, documentId: Long): String {
+  fun getHtmlByNomisIdAndDocumentId(nomsId: String, documentId: Long, category: String?): String {
     val prisoner = findPrisonerByNomsId(nomsId)
     val document: DocumentsEntity
-    try {
-      document = documentsRepository.getReferenceById(documentId)
-    } catch (ex: Exception) {
-      throw ResourceNotFoundException("Document with id $documentId not found")
+    var key: String? = null
+    if (documentId.toInt() > 0) {
+      if (category != null && !isValidDocumentCategory(category)) {
+        throw ValidationException("Invalid Document Category $category")
+      }
+      try {
+        document = documentsRepository.getReferenceById(documentId)
+        key = document.htmlDocumentKey.toString() ?: throw ResourceNotFoundException("$documentId does not have html available")
+      } catch (ex: Exception) {
+        throw ResourceNotFoundException("Document with id $documentId not found")
+      }
+      if (prisoner.id != document.prisonerId) {
+        throw ResourceNotFoundException("Document with id $documentId not found")
+      }
+    } else if (documentId.toInt() == 0 && category != null) {
+      if (category != null && !isValidDocumentCategory(category)) {
+        throw ValidationException("Invalid Document Category $category")
+      }
+      val documentsList =
+        prisoner.id?.let {
+          documentsRepository.findAllByPrisonerIdAndCategoryOrderByCreationDateDesc(
+            it,
+            DocumentCategory.valueOf(category),
+          )
+        }
+      if (documentsList != null && documentsList.isEmpty()) {
+        throw ResourceNotFoundException("No Document Exists for category $category and prisoner ${prisoner.nomsId}")
+      }
+      if (documentsList != null) {
+        document = documentsList.get(0)
+        key = document.htmlDocumentKey.toString() ?: throw ResourceNotFoundException("$documentId does not have html available")
+      }
     }
-    if (prisoner.id != document.prisonerId) {
-      throw ResourceNotFoundException("Document with id $documentId not found")
+    if (key != null) {
+      val bytes = getDocument(key)
+      return String(bytes, Charsets.UTF_8)
     }
-
-    val key = document.htmlDocumentKey?.toString()
-      ?: throw ResourceNotFoundException("$documentId does not have html available")
-    val bytes = getDocument(key)
-    return String(bytes, Charsets.UTF_8)
+    throw ResourceNotFoundException("No Document Found for document id $documentId")
   }
 
   private inline fun <reified T : Any?> forExistingPrisoner(nomsId: String, fn: () -> T): T {
@@ -160,4 +206,24 @@ class DocumentService(
   }
 
   data class VirusFoundEvent(val nomsId: String, val foundViruses: Map<String, Collection<String>>)
+
+  fun isValidDocumentCategory(category: String): Boolean {
+    if (category != null) {
+      try {
+        DocumentCategory.valueOf(category)
+      } catch (ex: IllegalArgumentException) {
+        return false
+      }
+      return true
+    }
+    return false
+  }
+
+  fun getLatestDocumentByNomisId(nomsId: String, category: String?): ByteArray {
+    return getDocumentByNomisIdAndDocumentId(nomsId, 0, category)
+  }
+
+  fun getLatestHTMLByNomisId(nomsId: String, category: String): String {
+    return getHtmlByNomisIdAndDocumentId(nomsId, 0, category)
+  }
 }

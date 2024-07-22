@@ -12,6 +12,7 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.http.HttpStatusCode
+import org.springframework.transaction.support.TransactionOperations
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayAndStatus
@@ -43,7 +44,12 @@ class PathwayAndStatusServiceTest {
 
   @BeforeEach
   fun beforeEach() {
-    pathwayAndStatusService = PathwayAndStatusService(pathwayStatusRepository, prisonerRepository, resettlementPassportDeliusApiService)
+    pathwayAndStatusService = PathwayAndStatusService(
+      pathwayStatusRepository = pathwayStatusRepository,
+      prisonerRepository = prisonerRepository,
+      resettlementPassportDeliusApiService = resettlementPassportDeliusApiService,
+      transactionOperations = TransactionOperations.withoutTransaction(),
+    )
   }
 
   @Test

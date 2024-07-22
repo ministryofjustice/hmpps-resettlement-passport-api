@@ -14,8 +14,8 @@ class PrisonerSearchApiService(
   private val prisonerSearchWebClientClientCredentials: WebClient,
 ) {
 
-  @Cacheable("prisoner-search-api-find-prisoners-by-search-term")
-  fun findPrisonersBySearchTerm(prisonId: String): List<PrisonersSearch> {
+  @Cacheable("prisoner-search-api-find-prisoners-by-prison-id")
+  fun findPrisonersByPrisonId(prisonId: String): List<PrisonersSearch> {
     val listToReturn = mutableListOf<PrisonersSearch>()
 
     var page = 0

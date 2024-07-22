@@ -98,7 +98,7 @@ class PrisonerService(
         "Page $pageNumber and Size $pageSize",
       )
     }
-    prisonerSearchApiService.findPrisonersBySearchTerm(prisonId).forEach {
+    prisonerSearchApiService.findPrisonersByPrisonId(prisonId).forEach {
       setDisplayedReleaseDate(it)
       prisoners.add(it)
     }

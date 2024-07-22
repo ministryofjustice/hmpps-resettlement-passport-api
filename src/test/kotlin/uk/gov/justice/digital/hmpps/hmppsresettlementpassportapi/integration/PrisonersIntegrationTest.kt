@@ -127,7 +127,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
   @Test
   fun `Get All Prisoners  negative Page size`() {
     val prisonId = "MDI"
-    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId,500, 0, 404)
+    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, 500, 0, 404)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?page=1&size=-1&sort=releaseDate,ASC")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))

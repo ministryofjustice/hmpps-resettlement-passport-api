@@ -147,5 +147,6 @@ tailrec fun getFibonacciNumber(n: Int, a: Int = 0, b: Int = 1): Long {
 }
 
 fun searchTermMatchesPrisoner(searchTerm: String, prisoner: PrisonersSearch): Boolean {
-  TODO()
+  val trimmedSearchTerm = searchTerm.trim()
+  return prisoner.prisonerNumber.lowercase() == trimmedSearchTerm.lowercase() || prisoner.firstName.lowercase().startsWith(trimmedSearchTerm.lowercase()) || prisoner.lastName.lowercase().startsWith(trimmedSearchTerm.lowercase())
 }

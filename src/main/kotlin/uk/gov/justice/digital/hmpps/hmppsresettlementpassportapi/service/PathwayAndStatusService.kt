@@ -39,8 +39,10 @@ class PathwayAndStatusService(
   fun getPrisonerEntityFromNomsId(nomsId: String) = prisonerRepository.findByNomsId(nomsId)
     ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
 
-  fun findPathwayStatusFromPathwayAndPrisoner(pathway: Pathway, prisoner: PrisonerEntity) = pathwayStatusRepository.findByPathwayAndPrisoner(pathway, prisoner)
+  fun findPathwayStatusFromPathwayAndPrisoner(pathway: Pathway, prisoner: PrisonerEntity) = pathwayStatusRepository.findByPathwayAndPrisonerId(pathway, prisoner.id())
     ?: throw ResourceNotFoundException("Prisoner with id ${prisoner.nomsId} has no pathway_status entry for ${pathway.name} in database")
+
+  fun findAllPathwayStatusForPrisoner(prisoner: PrisonerEntity) = pathwayStatusRepository.findByPrisonerId(prisoner.id())
 
   fun updatePathwayStatusWithNewStatus(pathwayStatus: PathwayStatusEntity, newStatus: Status) {
     pathwayStatus.status = newStatus
@@ -82,7 +84,7 @@ class PathwayAndStatusService(
       )
       Pathway.entries.forEach {
         val pathwayStatusEntity =
-          PathwayStatusEntity(null, newPrisonerEntity, it, Status.NOT_STARTED, null)
+          PathwayStatusEntity(null, newPrisonerEntity.id(), it, Status.NOT_STARTED, null)
         pathwayStatusRepository.save(pathwayStatusEntity)
       }
       newPrisonerEntity

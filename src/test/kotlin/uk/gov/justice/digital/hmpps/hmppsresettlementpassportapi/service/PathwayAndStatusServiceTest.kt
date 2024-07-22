@@ -65,12 +65,12 @@ class PathwayAndStatusServiceTest {
     val newStatus = Status.IN_PROGRESS
     val prisonerEntity = PrisonerEntity(1, nomsId, testDate, crn, prisonId, LocalDate.parse("2025-01-23"))
     val oldStatus = Status.NOT_STARTED
-    val pathwayStatusEntity = PathwayStatusEntity(1, prisonerEntity, pathway, oldStatus, testDate)
+    val pathwayStatusEntity = PathwayStatusEntity(1, prisonerEntity.id(), pathway, oldStatus, testDate)
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
-    Mockito.`when`(pathwayStatusRepository.findByPathwayAndPrisoner(pathway, prisonerEntity)).thenReturn(pathwayStatusEntity)
+    Mockito.`when`(pathwayStatusRepository.findByPathwayAndPrisonerId(pathway, prisonerEntity.id())).thenReturn(pathwayStatusEntity)
 
-    val expectedPathwayStatusEntity = PathwayStatusEntity(1, prisonerEntity, pathway, newStatus, fakeNow)
+    val expectedPathwayStatusEntity = PathwayStatusEntity(1, prisonerEntity.id(), pathway, newStatus, fakeNow)
 
     val response = pathwayAndStatusService.updatePathwayStatus(nomsId, PathwayAndStatus(Pathway.ACCOMMODATION, Status.IN_PROGRESS))
     Assertions.assertEquals(HttpStatusCode.valueOf(200), response.statusCode)
@@ -98,7 +98,7 @@ class PathwayAndStatusServiceTest {
     val prisonerEntity = PrisonerEntity(1, nomsId, testDate, crn, prisonId, LocalDate.parse("2025-01-23"))
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
-    Mockito.`when`(pathwayStatusRepository.findByPathwayAndPrisoner(pathway, prisonerEntity)).thenReturn(null)
+    Mockito.`when`(pathwayStatusRepository.findByPathwayAndPrisonerId(pathway, prisonerEntity.id())).thenReturn(null)
 
     assertThrows<ResourceNotFoundException> { pathwayAndStatusService.updatePathwayStatus(nomsId, PathwayAndStatus(pathway, newStatus)) }
     Mockito.verify(pathwayStatusRepository, Mockito.never()).save(Mockito.any())

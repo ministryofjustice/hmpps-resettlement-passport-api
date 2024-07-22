@@ -24,7 +24,7 @@ class IdApplicationService(
   fun getIdApplicationByNomsId(nomsId: String): IdApplicationEntity? {
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val idApplicationEntityList = idApplicationRepository.findByPrisonerAndIsDeleted(prisoner)
+    val idApplicationEntityList = idApplicationRepository.findByPrisonerIdAndIsDeleted(prisoner.id())
     if (idApplicationEntityList.isEmpty()) {
       throw ResourceNotFoundException("No active ID application found for prisoner with id $nomsId")
     } else {
@@ -41,7 +41,7 @@ class IdApplicationService(
     val idTypeEntity = idTypeRepository.findByName(idApplicationPost.idType!!)
       ?: throw ResourceNotFoundException("Id type ${idApplicationPost.idType} not found in database")
 
-    val idApplicationExists = idApplicationRepository.findByPrisonerAndIdTypeAndIsDeleted(prisoner, idTypeEntity, false)
+    val idApplicationExists = idApplicationRepository.findByPrisonerIdAndIdTypeAndIsDeleted(prisoner.id(), idTypeEntity, false)
     if (idApplicationExists != null) {
       throw DuplicateDataFoundException("Id application for prisoner with id $nomsId and id application type ${idApplicationPost.idType} already exists in database")
     }
@@ -52,7 +52,7 @@ class IdApplicationService(
     ) {
       val idApplicationEntity = IdApplicationEntity(
         id = null,
-        prisoner = prisoner,
+        prisonerId = prisoner.id(),
         idType = idTypeEntity,
         creationDate = now,
         applicationSubmittedDate = idApplicationPost.applicationSubmittedDate,
@@ -108,6 +108,6 @@ class IdApplicationService(
   fun getAllIdApplicationsByNomsId(nomsId: String): List<IdApplicationEntity?> {
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    return idApplicationRepository.findByPrisonerAndIsDeleted(prisoner, false)
+    return idApplicationRepository.findByPrisonerIdAndIsDeleted(prisoner.id(), false)
   }
 }

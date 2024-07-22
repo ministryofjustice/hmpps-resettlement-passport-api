@@ -30,4 +30,6 @@ data class PrisonerEntity(
 
   @Column(name = "release_date")
   var releaseDate: LocalDate?,
-)
+) {
+  fun id() = id ?: throw IllegalStateException("Tried to get id before saving")
+}

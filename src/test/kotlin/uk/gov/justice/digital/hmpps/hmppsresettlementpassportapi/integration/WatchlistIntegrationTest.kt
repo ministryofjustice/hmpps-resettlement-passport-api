@@ -4,10 +4,8 @@ import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.WatchlistEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.WatchlistRepository
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 class WatchlistIntegrationTest : IntegrationTestBase() {
@@ -28,7 +26,7 @@ class WatchlistIntegrationTest : IntegrationTestBase() {
     val expectedWatchlistEntry = listOf(
       WatchlistEntity(
         id = 1,
-        prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-17T12:21:38.709"), crn = "123", prisonId = "MDI", releaseDate = LocalDate.parse("2030-09-12")),
+        prisonerId = 1,
         staffUsername = "RESETTLEMENTPASSPORT_ADM",
         creationDate = LocalDateTime.now(),
       ),

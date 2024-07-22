@@ -17,18 +17,17 @@ import java.time.LocalDateTime
 data class IdApplicationEntity(
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  val id: Long?,
+  val id: Long? = null,
 
-  @ManyToOne(cascade = [CascadeType.MERGE])
-  @JoinColumn(name = "prisoner_id", referencedColumnName = "id")
-  val prisoner: PrisonerEntity,
+  @Column(name = "prisoner_id")
+  val prisonerId: Long,
 
   @ManyToOne(cascade = [CascadeType.MERGE])
   @JoinColumn(name = "id_type_id", referencedColumnName = "id")
   val idType: IdTypeEntity,
 
   @Column(name = "when_created")
-  val creationDate: LocalDateTime,
+  val creationDate: LocalDateTime = LocalDateTime.now(),
 
   @Column(name = "application_submitted_date")
   val applicationSubmittedDate: LocalDateTime,

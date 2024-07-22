@@ -41,14 +41,16 @@ class DocumentService(
     category: String,
   ): Result<DocumentsEntity, VirusFound> =
     forExistingPrisoner(nomsId) {
-      if (!document.originalFilename?.endsWith("docx")!! && !document.originalFilename?.endsWith("doc")!! && !document.originalFilename?.endsWith(
+      if (!document.originalFilename?.endsWith("docx")!! &&
+        !document.originalFilename?.endsWith("doc")!! &&
+        !document.originalFilename?.endsWith(
           "pdf",
         )!!
       ) {
         throw ValidationException("Unsupported document format, only .doc or pdf allowed")
       }
 
-      if (category != null && !isValidDocumentCategory(category)) {
+      if (!isValidDocumentCategory(category)) {
         throw ValidationException("Invalid Document Category")
       }
       val categoryValue = DocumentCategory.valueOf(category)
@@ -78,16 +80,12 @@ class DocumentService(
       htmlDocumentKey = convertedDocumentKey,
       creationDate = LocalDateTime.now(),
       category = category,
-      originalDocumentFileName = document.originalFilename,
+      originalDocumentFileName = document.originalFilename!!,
 
     )
 
     val docEntity = documentsRepository.save(documents)
-    if (docEntity == null) {
-      log.info("Failed to create document")
-    } else {
-      log.info("Document key ${docEntity.originalDocumentKey} and id is ${docEntity.id}")
-    }
+    log.info("Document key ${docEntity.originalDocumentKey} and id is ${docEntity.id}")
     // saving the documents entity
     // return documentsRepository.save(documents)
     return docEntity
@@ -133,7 +131,7 @@ class DocumentService(
         throw ResourceNotFoundException("Document with id $documentId not found")
       }
     } else if (documentId.toInt() == 0 && category != null) {
-      if (category != null && !isValidDocumentCategory(category)) {
+      if (!isValidDocumentCategory(category)) {
         throw ValidationException("Invalid Document Category")
       }
       val documentsList =
@@ -147,7 +145,7 @@ class DocumentService(
         throw ResourceNotFoundException("No Document Exists for category $category")
       }
       if (documentsList != null) {
-        document = documentsList.get(0)
+        document = documentsList.first()
         documentKey = document.originalDocumentKey
       }
     }
@@ -167,7 +165,7 @@ class DocumentService(
       }
       try {
         document = documentsRepository.getReferenceById(documentId)
-        key = document.htmlDocumentKey.toString() ?: throw ResourceNotFoundException("$documentId does not have html available")
+        key = document.htmlDocumentKey?.toString() ?: throw ResourceNotFoundException("$documentId does not have html available")
       } catch (ex: Exception) {
         throw ResourceNotFoundException("Document with id $documentId not found")
       }
@@ -175,7 +173,7 @@ class DocumentService(
         throw ResourceNotFoundException("Document with id $documentId not found")
       }
     } else if (documentId.toInt() == 0 && category != null) {
-      if (category != null && !isValidDocumentCategory(category)) {
+      if (!isValidDocumentCategory(category)) {
         throw ValidationException("Invalid Document Category $category")
       }
       val documentsList =
@@ -189,8 +187,8 @@ class DocumentService(
         throw ResourceNotFoundException("No Document Exists for category $category and prisoner ${prisoner.nomsId}")
       }
       if (documentsList != null) {
-        document = documentsList.get(0)
-        key = document.htmlDocumentKey.toString() ?: throw ResourceNotFoundException("$documentId does not have html available")
+        document = documentsList.first()
+        key = document.htmlDocumentKey?.toString() ?: throw ResourceNotFoundException("$documentId does not have html available")
       }
     }
     if (key != null) {
@@ -208,22 +206,15 @@ class DocumentService(
   data class VirusFoundEvent(val nomsId: String, val foundViruses: Map<String, Collection<String>>)
 
   fun isValidDocumentCategory(category: String): Boolean {
-    if (category != null) {
-      try {
-        DocumentCategory.valueOf(category)
-      } catch (ex: IllegalArgumentException) {
-        return false
-      }
-      return true
+    try {
+      DocumentCategory.valueOf(category)
+    } catch (ex: IllegalArgumentException) {
+      return false
     }
-    return false
+    return true
   }
 
-  fun getLatestDocumentByNomisId(nomsId: String, category: String?): ByteArray {
-    return getDocumentByNomisIdAndDocumentId(nomsId, 0, category)
-  }
+  fun getLatestDocumentByNomisId(nomsId: String, category: String?): ByteArray = getDocumentByNomisIdAndDocumentId(nomsId, 0, category)
 
-  fun getLatestHTMLByNomisId(nomsId: String, category: String): String {
-    return getHtmlByNomisIdAndDocumentId(nomsId, 0, category)
-  }
+  fun getLatestHTMLByNomisId(nomsId: String, category: String): String = getHtmlByNomisIdAndDocumentId(nomsId, 0, category)
 }

@@ -28,17 +28,23 @@ class IdApplicationRepositoryTest : RepositoryTestBase() {
 
   @Test
   fun `test persist new assessment`() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23"))
-    prisonerRepository.save(prisoner)
+    val prisoner = prisonerRepository.save(
+      PrisonerEntity(
+        nomsId = "NOM1234",
+        creationDate = LocalDateTime.now(),
+        crn = "crn1",
+        prisonId = "xyz1",
+        releaseDate = LocalDate.parse("2025-01-23"),
+      ),
+    )
 
     val idType = IdTypeEntity(1, "Birth certificate")
 
     val application = IdApplicationEntity(
-      null,
-      prisoner,
-      idType,
-      LocalDateTime.now(),
-      LocalDateTime.now(),
+      prisonerId = prisoner.id(),
+      idType = idType,
+      creationDate = LocalDateTime.now(),
+      applicationSubmittedDate = LocalDateTime.now(),
       isPriorityApplication = false,
       haveGro = true,
       isUkNationalBornOverseas = false,
@@ -54,17 +60,24 @@ class IdApplicationRepositoryTest : RepositoryTestBase() {
 
   @Test
   fun `test findByPrisonerAndIsDeleted`() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23"))
-    prisonerRepository.save(prisoner)
+    val prisoner = prisonerRepository.save(
+      PrisonerEntity(
+        null,
+        "NOM1234",
+        LocalDateTime.now(),
+        "crn1",
+        "xyz1",
+        LocalDate.parse("2025-01-23"),
+      ),
+    )
 
     val idType = IdTypeEntity(1, "Birth certificate")
 
     val application1 = IdApplicationEntity(
-      null,
-      prisoner,
-      idType,
-      LocalDateTime.now(),
-      LocalDateTime.now(),
+      prisonerId = prisoner.id(),
+      idType = idType,
+      creationDate = LocalDateTime.now(),
+      applicationSubmittedDate = LocalDateTime.now(),
       isPriorityApplication = false,
       haveGro = true,
       isUkNationalBornOverseas = false,
@@ -72,11 +85,10 @@ class IdApplicationRepositoryTest : RepositoryTestBase() {
     )
 
     val application2 = IdApplicationEntity(
-      null,
-      prisoner,
-      idType,
-      LocalDateTime.now(),
-      LocalDateTime.now(),
+      prisonerId = prisoner.id(),
+      idType = idType,
+      creationDate = LocalDateTime.now(),
+      applicationSubmittedDate = LocalDateTime.now(),
       isPriorityApplication = false,
       haveGro = true,
       isUkNationalBornOverseas = false,
@@ -88,7 +100,7 @@ class IdApplicationRepositoryTest : RepositoryTestBase() {
     idApplicationRepository.save(application1)
     idApplicationRepository.save(application2)
 
-    val assessmentFromDatabase = idApplicationRepository.findByPrisonerAndIdTypeAndIsDeleted(prisoner, idType)
+    val assessmentFromDatabase = idApplicationRepository.findByPrisonerIdAndIdTypeAndIsDeleted(prisoner.id(), idType)
 
     Assertions.assertThat(assessmentFromDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(application1)
   }

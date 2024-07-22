@@ -10,7 +10,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AppointmentsService.Companion.SECTION_DELIMITER
-import java.lang.IllegalArgumentException
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.reflect.KClass
 import kotlin.streams.asSequence
@@ -40,9 +39,7 @@ fun <I, T, Q> convertEnumStringToEnum(enumClass: KClass<T>, secondaryEnumClass: 
   return enum ?: throw IllegalArgumentException("$stringValue does not exist in enum ${enumClass.simpleName} (or ${secondaryEnumClass?.simpleName})")
 }
 
-fun String.fuzzyMatch(string2: String?): Boolean {
-  return this == string2?.trim()?.replace(Regex("[^A-Za-z0-9_ ]"), "")?.replace(Regex("\\s+"), "_")?.uppercase()
-}
+fun String.fuzzyMatch(string2: String?): Boolean = this == string2?.trim()?.replace(Regex("[^A-Za-z0-9_ ]"), "")?.replace(Regex("\\s+"), "_")?.uppercase()
 
 fun String.convertNameToTitleCase(): String = WordUtils.capitalizeFully(this).trim()
 
@@ -60,16 +57,14 @@ interface EnumWithLabel {
   fun customLabel(): String? = null
 }
 
-fun <T> getLabelFromEnum(enum: T?): String? where T : Enum<T>, T : EnumWithLabel {
-  return if (enum != null) {
-    if (enum.customLabel() != null) {
-      enum.customLabel()
-    } else {
-      enum.name.convertEnumToContent()
-    }
+fun <T> getLabelFromEnum(enum: T?): String? where T : Enum<T>, T : EnumWithLabel = if (enum != null) {
+  if (enum.customLabel() != null) {
+    enum.customLabel()
   } else {
-    null
+    enum.name.convertEnumToContent()
   }
+} else {
+  null
 }
 
 private fun String.convertEnumToContent(): String = this.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() }
@@ -92,9 +87,7 @@ fun <T> convertEnumSetToStringSet(enumSet: Set<T>?, other: String?): Set<String>
   return stringSet
 }
 
-inline fun <reified E : Enum<E>> enumIncludes(name: String): Boolean {
-  return enumValues<E>().any { it.name == name }
-}
+inline fun <reified E : Enum<E>> enumIncludes(name: String): Boolean = enumValues<E>().any { it.name == name }
 
 fun getClaimFromJWTToken(token: String, claimName: String): String? {
   val jwtClaimsSet = JWTParser.parse(token.replaceFirst("Bearer ", "")).jwtClaimsSet
@@ -116,13 +109,11 @@ fun extractSectionFromNotes(customFields: List<String>, section: String, id: Lon
 
 fun extractSectionFromNotesTrimToNull(customFields: List<String>, section: String, id: Long?) = extractSectionFromNotes(customFields, section, id).ifBlank { null }
 
-fun randomAlphaNumericString(): String {
-  return ThreadLocalRandom.current()
-    .ints(STRING_LENGTH.toLong(), 0, charPool.size)
-    .asSequence()
-    .map(charPool::get)
-    .joinToString("")
-}
+fun randomAlphaNumericString(): String = ThreadLocalRandom.current()
+  .ints(STRING_LENGTH.toLong(), 0, charPool.size)
+  .asSequence()
+  .map(charPool::get)
+  .joinToString("")
 
 fun extractCaseNoteTypeFromBcstCaseNote(text: String) = CaseNoteType.getByDisplayName(BCST_CASE_NOTE_REGEX.find(text)?.groups?.get(1)?.value)
 
@@ -142,9 +133,7 @@ fun convertToDeliusCaseNoteType(assessmentType: ResettlementAssessmentType) = wh
   ResettlementAssessmentType.RESETTLEMENT_PLAN -> DeliusCaseNoteType.PRE_RELEASE_REPORT
 }
 
-tailrec fun getFibonacciNumber(n: Int, a: Int = 0, b: Int = 1): Long {
-  return if (n == 0) a.toLong() else getFibonacciNumber(n - 1, b, a + b)
-}
+tailrec fun getFibonacciNumber(n: Int, a: Int = 0, b: Int = 1): Long = if (n == 0) a.toLong() else getFibonacciNumber(n - 1, b, a + b)
 
 fun searchTermMatchesPrisoner(searchTerm: String, prisoner: PrisonersSearch): Boolean {
   val trimmedSearchTerm = searchTerm.trim()

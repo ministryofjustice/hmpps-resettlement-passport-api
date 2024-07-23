@@ -734,7 +734,7 @@ class EducationSkillsAndWorkResettlementAssessmentAssessmentStrategyTest : BaseR
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "CASE_NOTE_SUMMARY",
-              title = "Add a case note summary",
+              title = "Case note summary",
               subTitle = "This will be displayed as a case note in both DPS and nDelius",
               type = TypeOfQuestion.LONG_TEXT,
             ),

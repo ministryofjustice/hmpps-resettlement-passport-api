@@ -194,6 +194,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
       "PAST_AND_FUTURE_ACCOMMODATION",
       ResettlementAssessmentResponsePage(
         id = "PAST_AND_FUTURE_ACCOMMODATION",
+        title = "Accommodation report",
         questionsAndAnswers = listOf(
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
@@ -450,7 +451,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "CASE_NOTE_SUMMARY",
-              title = "Add a case note summary",
+              title = "Case note summary",
               subTitle = "This will be displayed as a case note in both DPS and nDelius",
               type = TypeOfQuestion.LONG_TEXT,
             ),
@@ -488,6 +489,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
 
     val expectedPage = ResettlementAssessmentResponsePage(
       id = "PAST_AND_FUTURE_ACCOMMODATION",
+      title = "Accommodation report",
       questionsAndAnswers = listOf(
         ResettlementAssessmentQuestionAndAnswer(
           question = ResettlementAssessmentQuestion(
@@ -902,7 +904,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
         ResettlementAssessmentQuestionAndAnswer(
           question = ResettlementAssessmentQuestion(
             id = "CASE_NOTE_SUMMARY",
-            title = "Add a case note summary",
+            title = "Case note summary",
             subTitle = "This will be displayed as a case note in both DPS and nDelius",
             type = TypeOfQuestion.LONG_TEXT,
           ),
@@ -1507,6 +1509,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
     val expectedPages = listOf(
       AssessmentConfigPage(
         id = "PAST_AND_FUTURE_ACCOMMODATION",
+        title = "Accommodation report",
         questions = listOf(
           AssessmentConfigQuestion(
             id = "WHERE_DID_THEY_LIVE",
@@ -1719,7 +1722,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
           ),
           AssessmentConfigQuestion(
             id = "CASE_NOTE_SUMMARY",
-            title = "Add a case note summary",
+            title = "Case note summary",
             subTitle = "This will be displayed as a case note in both DPS and nDelius",
             type = TypeOfQuestion.LONG_TEXT,
           ),

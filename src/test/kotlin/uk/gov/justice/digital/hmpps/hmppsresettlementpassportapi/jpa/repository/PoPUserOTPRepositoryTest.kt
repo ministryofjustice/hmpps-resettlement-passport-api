@@ -31,7 +31,7 @@ class PoPUserOTPRepositoryTest : RepositoryTestBase() {
 
     val popUserOTPEntity = PoPUserOTPEntity(
       null,
-      prisoner,
+      prisoner.id(),
       LocalDateTime.now(),
       LocalDateTime.now().plusDays(7).withHour(11).withMinute(59).withSecond(59),
       "1X3456",
@@ -51,7 +51,7 @@ class PoPUserOTPRepositoryTest : RepositoryTestBase() {
 
     val popUserOTPEntity = PoPUserOTPEntity(
       null,
-      prisoner,
+      prisoner.id(),
       LocalDateTime.now(),
       LocalDateTime.now().plusDays(7).withHour(11).withMinute(59).withSecond(59),
       "1X3456",
@@ -59,7 +59,7 @@ class PoPUserOTPRepositoryTest : RepositoryTestBase() {
     )
 
     val popUserOTPResult = popUserOTPRepository.save(popUserOTPEntity)
-    val popUserOTP = popUserOTPRepository.findByPrisoner(prisoner)
+    val popUserOTP = popUserOTPRepository.findByPrisonerId(prisoner.id())
 
     assertThat(popUserOTPResult).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(popUserOTP)
   }

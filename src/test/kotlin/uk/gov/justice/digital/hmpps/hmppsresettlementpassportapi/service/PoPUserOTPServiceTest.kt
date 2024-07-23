@@ -55,14 +55,14 @@ class PoPUserOTPServiceTest {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
     val popUserOTPEntity = PoPUserOTPEntity(
       null,
-      prisonerEntity,
+      prisonerEntity.id(),
       fakeNow,
       fakeNow.plusDays(7).withHour(11).withMinute(59).withSecond(59),
       "1X3456",
       LocalDate.parse("1982-10-24"),
     )
 
-    Mockito.`when`(popUserOTPRepository.findByPrisoner(any())).thenReturn(popUserOTPEntity)
+    Mockito.`when`(popUserOTPRepository.findByPrisonerId(any())).thenReturn(popUserOTPEntity)
     val result = popUserOTPService.getOTPByPrisoner(prisonerEntity)
     Assertions.assertEquals(popUserOTPEntity.id, result!!.id)
   }
@@ -71,7 +71,7 @@ class PoPUserOTPServiceTest {
   fun `test get PoP User OTP - returns PoP User not found `() {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
 
-    Mockito.`when`(popUserOTPRepository.findByPrisoner(any())).thenReturn(null)
+    Mockito.`when`(popUserOTPRepository.findByPrisonerId(any())).thenReturn(null)
     val thrown = assertThrows<ResourceNotFoundException> { popUserOTPService.getOTPByPrisoner(prisonerEntity) }
     Assertions.assertEquals("OTP for Prisoner with id 1 not found in database", thrown.message)
   }
@@ -83,7 +83,7 @@ class PoPUserOTPServiceTest {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
     val popUserOTPEntity = PoPUserOTPEntity(
       null,
-      prisonerEntity,
+      prisonerEntity.id(),
       fakeNow,
       fakeNow.plusDays(7).withHour(11).withMinute(59).withSecond(59),
       "1X3456",
@@ -101,7 +101,7 @@ class PoPUserOTPServiceTest {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
     val popUserOTPEntity = PoPUserOTPEntity(
       null,
-      prisonerEntity,
+      prisonerEntity.id(),
       fakeNow,
       fakeNow.plusDays(7).withHour(11).withMinute(59).withSecond(59),
       "1X3456",
@@ -127,7 +127,7 @@ class PoPUserOTPServiceTest {
     val prisonerEntity = PrisonerEntity(1, "acb", fakeNow, "crn", "xyz", null)
     val popUserOTPEntity = PoPUserOTPEntity(
       null,
-      prisonerEntity,
+      prisonerEntity.id(),
       fakeNow,
       fakeNow.plusDays(7).withHour(23).withMinute(59).withSecond(59),
       "1X3456",
@@ -146,7 +146,7 @@ class PoPUserOTPServiceTest {
       releaseDate = testDate.toLocalDate().plusMonths(6),
     )
 
-    Mockito.`when`(popUserOTPRepository.findByPrisoner(prisonerEntity)).thenReturn(null)
+    Mockito.`when`(popUserOTPRepository.findByPrisonerId(prisonerEntity.id())).thenReturn(null)
     Mockito.`when`(popUserOTPRepository.save(any())).thenReturn(popUserOTPEntity)
     Mockito.`when`(prisonerSearchApiService.findPrisonerPersonalDetails(prisonerEntity.nomsId)).thenReturn(prisonerResponse)
     val result = popUserOTPService.createPoPUserOTP(prisonerEntity)
@@ -185,7 +185,7 @@ class PoPUserOTPServiceTest {
     )
     val popUserOTPEntity = PoPUserOTPEntity(
       1,
-      prisoner,
+      prisoner.id(),
       fakeNow,
       fakeNow.plusDays(7).withHour(23).withMinute(59).withSecond(59),
       "123457",
@@ -253,7 +253,7 @@ class PoPUserOTPServiceTest {
     )
     val popUserOTPEntity = PoPUserOTPEntity(
       1,
-      prisoner,
+      prisoner.id(),
       fakeNow,
       fakeNow.plusDays(7).withHour(23).withMinute(59).withSecond(59),
       "123457",
@@ -273,7 +273,7 @@ class PoPUserOTPServiceTest {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
     val popUserOTPEntity = PoPUserOTPEntity(
       null,
-      prisonerEntity,
+      prisonerEntity.id(),
       fakeNow,
       fakeNow.plusDays(7).withHour(11).withMinute(59).withSecond(59),
       "1X3456",

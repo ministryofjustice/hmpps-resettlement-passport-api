@@ -23,7 +23,7 @@ class DeliusContactService(private val deliusContactRepository: DeliusContactRep
     deliusContactRepository.save(
       DeliusContactEntity(
         id = null,
-        prisoner = prisonerEntity,
+        prisonerId = prisonerEntity.id(),
         category = Category.convertPathwayToCategory(pathwayStatusAndCaseNote.pathway),
         contactType = ContactType.CASE_NOTE,
         createdDate = LocalDateTime.now(),
@@ -36,30 +36,28 @@ class DeliusContactService(private val deliusContactRepository: DeliusContactRep
   fun getCaseNotesByNomsId(nomsId: String, caseNoteType: CaseNoteType): List<PathwayCaseNote> {
     val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val contactType = ContactType.CASE_NOTE
-    val deliusContacts: List<DeliusContactEntity> = when (caseNoteType) {
-      CaseNoteType.All -> deliusContactRepository.findByPrisonerAndContactType(prisoner, contactType)
-      CaseNoteType.ACCOMMODATION -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.ACCOMMODATION)
-      CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.ATTITUDES_THINKING_AND_BEHAVIOUR)
-      CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.CHILDREN_FAMILIES_AND_COMMUNITY)
-      CaseNoteType.DRUGS_AND_ALCOHOL -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.DRUGS_AND_ALCOHOL)
-      CaseNoteType.EDUCATION_SKILLS_AND_WORK -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.EDUCATION_SKILLS_AND_WORK)
-      CaseNoteType.FINANCE_AND_ID -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.FINANCE_AND_ID)
-      CaseNoteType.HEALTH -> deliusContactRepository.findByPrisonerAndContactTypeAndCategory(prisoner, contactType, Category.HEALTH)
+    val deliusContacts = when (caseNoteType) {
+      CaseNoteType.All -> deliusContactRepository.findByPrisonerIdAndContactType(prisoner.id(), contactType)
+      CaseNoteType.ACCOMMODATION -> deliusContactRepository.findByPrisonerIdAndContactTypeAndCategory(prisoner.id(), contactType, Category.ACCOMMODATION)
+      CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR -> deliusContactRepository.findByPrisonerIdAndContactTypeAndCategory(prisoner.id(), contactType, Category.ATTITUDES_THINKING_AND_BEHAVIOUR)
+      CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY -> deliusContactRepository.findByPrisonerIdAndContactTypeAndCategory(prisoner.id(), contactType, Category.CHILDREN_FAMILIES_AND_COMMUNITY)
+      CaseNoteType.DRUGS_AND_ALCOHOL -> deliusContactRepository.findByPrisonerIdAndContactTypeAndCategory(prisoner.id(), contactType, Category.DRUGS_AND_ALCOHOL)
+      CaseNoteType.EDUCATION_SKILLS_AND_WORK -> deliusContactRepository.findByPrisonerIdAndContactTypeAndCategory(prisoner.id(), contactType, Category.EDUCATION_SKILLS_AND_WORK)
+      CaseNoteType.FINANCE_AND_ID -> deliusContactRepository.findByPrisonerIdAndContactTypeAndCategory(prisoner.id(), contactType, Category.FINANCE_AND_ID)
+      CaseNoteType.HEALTH -> deliusContactRepository.findByPrisonerIdAndContactTypeAndCategory(prisoner.id(), contactType, Category.HEALTH)
     }
     return mapDeliusContactsToPathwayCaseNotes(deliusContacts)
   }
 
-  fun mapDeliusContactsToPathwayCaseNotes(deliusContacts: List<DeliusContactEntity>): List<PathwayCaseNote> {
-    return deliusContacts.map {
-      PathwayCaseNote(
-        caseNoteId = "db-${it.id}",
-        pathway = convertCategoryToPathway(it.category),
-        creationDateTime = it.createdDate,
-        occurenceDateTime = it.createdDate,
-        createdBy = it.createdBy,
-        text = it.notes,
-      )
-    }
+  fun mapDeliusContactsToPathwayCaseNotes(deliusContacts: List<DeliusContactEntity>): List<PathwayCaseNote> = deliusContacts.map {
+    PathwayCaseNote(
+      caseNoteId = "db-${it.id}",
+      pathway = convertCategoryToPathway(it.category),
+      creationDateTime = it.createdDate,
+      occurenceDateTime = it.createdDate,
+      createdBy = it.createdBy,
+      text = it.notes,
+    )
   }
 
   fun convertCategoryToPathway(category: Category) = when (category) {

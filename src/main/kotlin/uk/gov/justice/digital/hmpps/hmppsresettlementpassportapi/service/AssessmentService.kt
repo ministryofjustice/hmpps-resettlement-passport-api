@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.DuplicateDataFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Assessment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.AssessmentEntity
@@ -28,7 +29,7 @@ class AssessmentService(
   fun getAssessmentByNomsId(nomsId: String): AssessmentEntity? {
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val assessment = assessmentRepository.findByPrisonerAndIsDeleted(prisoner) ?: throw ResourceNotFoundException("assessment not found")
+    val assessment = assessmentRepository.findByPrisonerIdAndIsDeleted(prisoner.id()) ?: throw ResourceNotFoundException("assessment not found")
     return if (assessment.isDeleted) null else assessment
   }
 
@@ -44,7 +45,7 @@ class AssessmentService(
     val prisoner = prisonerRepository.findByNomsId(assessment.nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id ${assessment.nomsId} not found in database")
 
-    val assessmentExists = assessmentRepository.findByPrisonerAndIsDeleted(prisoner)
+    val assessmentExists = assessmentRepository.findByPrisonerIdAndIsDeleted(prisoner.id())
     if (assessmentExists != null) {
       throw DuplicateDataFoundException("Assessment for prisoner with id ${assessment.nomsId} already exists in database")
     }
@@ -53,7 +54,7 @@ class AssessmentService(
 
     val assessmentEntity = AssessmentEntity(
       null,
-      prisoner,
+      prisoner.id(),
       LocalDateTime.now(),
       assessment.assessmentDate,
       assessment.isBankAccountRequired,
@@ -63,5 +64,21 @@ class AssessmentService(
       null,
     )
     return assessmentRepository.save(assessmentEntity)
+  }
+
+  @Transactional
+  fun deleteAssessmentByNomsId(nomsId: String, assessmentId: String) {
+    val prisoner = prisonerRepository.findByNomsId(nomsId)
+    val assessment = getAssessmentById(assessmentId.toLong()) ?: throw NoDataWithCodeFoundException(
+      "Assessment",
+      assessmentId,
+    )
+    if (assessment.prisonerId != prisoner?.id) {
+      throw NoDataWithCodeFoundException(
+        "Assessment",
+        assessmentId,
+      )
+    }
+    deleteAssessment(assessment)
   }
 }

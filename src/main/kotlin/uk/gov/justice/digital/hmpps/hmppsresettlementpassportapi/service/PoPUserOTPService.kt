@@ -32,7 +32,7 @@ class PoPUserOTPService(
   @Transactional
   fun getOTPByPrisoner(prisoner: PrisonerEntity): PoPUserOTP? {
     val popUserOTP: PoPUserOTP
-    val popUserOTPEntity = popUserOTPRepository.findByPrisoner(prisoner)
+    val popUserOTPEntity = popUserOTPRepository.findByPrisonerId(prisoner.id())
       ?: throw ResourceNotFoundException("OTP for Prisoner with id ${prisoner.id} not found in database")
     popUserOTP =
       PoPUserOTP(
@@ -60,7 +60,7 @@ class PoPUserOTPService(
   @Transactional
   fun createPoPUserOTP(prisoner: PrisonerEntity): PoPUserOTP {
     val now = LocalDateTime.now()
-    val popUserOTPExists = popUserOTPRepository.findByPrisoner(prisoner)
+    val popUserOTPExists = popUserOTPRepository.findByPrisonerId(prisoner.id())
     val prisonerDOB = prisonerSearchApiService.findPrisonerPersonalDetails(prisoner.nomsId).dateOfBirth
       ?: throw ValidationException("Person On Probation User DOB not found in Prisoner Search Service.")
 
@@ -71,7 +71,7 @@ class PoPUserOTPService(
     }
     val popUserOTPEntity = PoPUserOTPEntity(
       id = null,
-      prisoner = prisoner,
+      prisonerId = prisoner.id(),
       creationDate = now,
       expiryDate = now.plusDays(7).withHour(23).withMinute(59).withSecond(59),
       otp = otpValue,
@@ -94,11 +94,12 @@ class PoPUserOTPService(
     if (oneLoginData.otp != null && oneLoginData.dob != null && oneLoginData.urn != null) {
       val popUserOTPEntityExists = popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(
         oneLoginData.otp,
-        oneLoginData.dob, LocalDateTime.now(),
+        oneLoginData.dob,
+        LocalDateTime.now(),
       )
         ?: throw ResourceNotFoundException("Person On Probation User otp  ${oneLoginData.otp}  not found in database or expired.")
 
-      val prisonerEntity: Optional<PrisonerEntity>? = popUserOTPEntityExists.prisoner.id?.let { prisonerRepository.findById(it) }
+      val prisonerEntity: Optional<PrisonerEntity>? = prisonerRepository.findById(popUserOTPEntityExists.prisonerId)
       val prisoner = prisonerSearchApiService.findPrisonerPersonalDetails(prisonerEntity!!.get().nomsId)
 
       if (!prisonerEntity.isEmpty) {
@@ -110,11 +111,11 @@ class PoPUserOTPService(
         if (response != null) {
           popUserOTPRepository.delete(popUserOTPEntityExists)
         } else {
-          throw RuntimeException("Person On Probation User Verification failed for nomsId ${popUserOTPEntityExists.prisoner.nomsId} ")
+          throw RuntimeException("Person On Probation User Verification failed for prisonerId ${popUserOTPEntityExists.prisonerId} ")
         }
         return response
       } else {
-        throw ResourceNotFoundException("Prisoner with id ${popUserOTPEntityExists.prisoner.id}  not found in database")
+        throw ResourceNotFoundException("Prisoner with id ${popUserOTPEntityExists.prisonerId}  not found in database")
       }
     } else {
       throw ValidationException("required data otp, urn or dob  is missing")
@@ -130,7 +131,7 @@ class PoPUserOTPService(
 
   @Transactional
   fun getPoPUserOTPByPrisoner(prisoner: PrisonerEntity): PoPUserOTPEntity {
-    val popUserOTP = popUserOTPRepository.findByPrisoner(prisoner) ?: throw ResourceNotFoundException("OTP for Prisoner with id ${prisoner.id} not found in database")
+    val popUserOTP = popUserOTPRepository.findByPrisonerId(prisoner.id()) ?: throw ResourceNotFoundException("OTP for Prisoner with id ${prisoner.id} not found in database")
     return popUserOTP
   }
 }

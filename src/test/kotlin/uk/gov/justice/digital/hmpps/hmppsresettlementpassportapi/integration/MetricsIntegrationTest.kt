@@ -280,7 +280,7 @@ class MetricsIntegrationTest : IntegrationTestBase() {
           pathwayStatusRepository.save(
             PathwayStatusEntity(
               null,
-              prisoner,
+              prisoner.id(),
               Pathway.entries[pathwayId],
               Status.entries[statusId - 1],
               LocalDateTime.now(),

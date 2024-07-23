@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplication
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplicationResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.BankApplicationService
@@ -144,15 +143,9 @@ class BankApplicationResourceController(private val bankApplicationService: Bank
     nomsId: String,
     @PathVariable("bankApplicationId")
     @Parameter(required = true)
-    bankApplicationId: String,
+    bankApplicationId: Long,
   ) {
-    val bankApplication = bankApplicationService.getBankApplicationById(bankApplicationId.toLong()).get()
-    if (bankApplication.prisoner.nomsId != nomsId) {
-      throw NoDataWithCodeFoundException(
-        "BankApplication",
-        bankApplicationId,
-      )
-    }
+    val bankApplication = bankApplicationService.getBankApplicationByIdAndNomsId(bankApplicationId, nomsId)
     bankApplicationService.deleteBankApplication(bankApplication)
   }
 

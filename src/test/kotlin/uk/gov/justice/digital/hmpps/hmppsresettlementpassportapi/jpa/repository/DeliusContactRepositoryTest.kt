@@ -33,7 +33,7 @@ class DeliusContactRepositoryTest : RepositoryTestBase() {
 
     val deliusContact = DeliusContactEntity(
       id = null,
-      prisoner = prisoner,
+      prisonerId = prisoner.id(),
       category = Category.ACCOMMODATION,
       contactType = ContactType.CASE_NOTE,
       createdDate = LocalDateTime.parse("2023-01-01T12:00:00"),
@@ -54,7 +54,7 @@ class DeliusContactRepositoryTest : RepositoryTestBase() {
 
     val deliusContact = DeliusContactEntity(
       id = null,
-      prisoner = prisoner,
+      prisonerId = prisoner.id(),
       category = Category.ATTITUDES_THINKING_AND_BEHAVIOUR,
       contactType = ContactType.APPOINTMENT,
       createdDate = LocalDateTime.parse("2023-01-01T12:00:00"),

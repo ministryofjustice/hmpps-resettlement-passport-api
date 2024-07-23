@@ -197,7 +197,7 @@ class SchedulerIntegrationTest : IntegrationTestBase() {
 
       PoPUserOTPEntity(
         id = 2,
-        prisoner2,
+        prisoner2.id(),
         creationDate = LocalDateTime.parse("2024-02-19T10:18:22"),
         expiryDate = LocalDateTime.parse("2024-02-26T23:59:59"),
         otp = "1Y3456",
@@ -205,7 +205,7 @@ class SchedulerIntegrationTest : IntegrationTestBase() {
       ),
       PoPUserOTPEntity(
         id = 3,
-        prisoner3,
+        prisoner3.id(),
         creationDate = LocalDateTime.parse("2024-02-19T10:18:22"),
         expiryDate = LocalDateTime.parse("2024-02-26T23:59:59"),
         otp = "1Z3456",

@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity
 
-import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -8,8 +7,6 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import java.time.LocalDateTime
@@ -21,9 +18,8 @@ data class DeliusContactEntity(
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   val id: Long?,
 
-  @ManyToOne(cascade = [CascadeType.MERGE])
-  @JoinColumn(name = "prisoner_id", referencedColumnName = "id")
-  val prisoner: PrisonerEntity,
+  @Column(name = "prisoner_id")
+  val prisonerId: Long,
 
   @Enumerated(EnumType.STRING)
   val category: Category,
@@ -62,16 +58,14 @@ enum class Category {
   ;
 
   companion object {
-    fun convertPathwayToCategory(pathway: Pathway): Category {
-      return when (pathway) {
-        Pathway.ACCOMMODATION -> ACCOMMODATION
-        Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR -> ATTITUDES_THINKING_AND_BEHAVIOUR
-        Pathway.CHILDREN_FAMILIES_AND_COMMUNITY -> CHILDREN_FAMILIES_AND_COMMUNITY
-        Pathway.DRUGS_AND_ALCOHOL -> DRUGS_AND_ALCOHOL
-        Pathway.EDUCATION_SKILLS_AND_WORK -> EDUCATION_SKILLS_AND_WORK
-        Pathway.FINANCE_AND_ID -> FINANCE_AND_ID
-        Pathway.HEALTH -> HEALTH
-      }
+    fun convertPathwayToCategory(pathway: Pathway): Category = when (pathway) {
+      Pathway.ACCOMMODATION -> ACCOMMODATION
+      Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR -> ATTITUDES_THINKING_AND_BEHAVIOUR
+      Pathway.CHILDREN_FAMILIES_AND_COMMUNITY -> CHILDREN_FAMILIES_AND_COMMUNITY
+      Pathway.DRUGS_AND_ALCOHOL -> DRUGS_AND_ALCOHOL
+      Pathway.EDUCATION_SKILLS_AND_WORK -> EDUCATION_SKILLS_AND_WORK
+      Pathway.FINANCE_AND_ID -> FINANCE_AND_ID
+      Pathway.HEALTH -> HEALTH
     }
   }
 }

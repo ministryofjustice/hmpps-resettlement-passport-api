@@ -27,12 +27,11 @@ class BankApplicationRepositoryTest : RepositoryTestBase() {
 
   @Test
   fun `test persist new assessment`() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23"))
-    prisonerRepository.save(prisoner)
+    val prisoner = prisonerRepository.save(PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23")))
 
     val logs = setOf(BankApplicationStatusLogEntity(null, null, statusChangedTo = "Application Started", changedAtDate = LocalDateTime.now()))
 
-    val application = BankApplicationEntity(null, prisoner, logs, LocalDateTime.now(), LocalDateTime.now(), status = "Application Started", bankName = "Lloyds")
+    val application = BankApplicationEntity(null, prisoner.id(), logs, LocalDateTime.now(), LocalDateTime.now(), status = "Application Started", bankName = "Lloyds")
 
     bankApplicationRepository.save(application)
 
@@ -43,19 +42,18 @@ class BankApplicationRepositoryTest : RepositoryTestBase() {
 
   @Test
   fun `test findByPrisonerAndIsDeleted`() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23"))
-    prisonerRepository.save(prisoner)
+    val prisoner = prisonerRepository.save(PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23")))
 
     val logs1 = setOf(BankApplicationStatusLogEntity(null, null, statusChangedTo = "Application Started", changedAtDate = LocalDateTime.now()))
 
-    val application1 = BankApplicationEntity(null, prisoner, logs1, LocalDateTime.now(), LocalDateTime.now(), status = "Application Started", bankName = "Lloyds")
+    val application1 = BankApplicationEntity(null, prisoner.id(), logs1, LocalDateTime.now(), LocalDateTime.now(), status = "Application Started", bankName = "Lloyds")
 
-    val application2 = BankApplicationEntity(null, prisoner, emptySet(), LocalDateTime.now(), LocalDateTime.now(), status = "Application Started", isDeleted = true, deletionDate = LocalDateTime.now(), bankName = "Lloyds")
+    val application2 = BankApplicationEntity(null, prisoner.id(), emptySet(), LocalDateTime.now(), LocalDateTime.now(), status = "Application Started", isDeleted = true, deletionDate = LocalDateTime.now(), bankName = "Lloyds")
 
     bankApplicationRepository.save(application1)
     bankApplicationRepository.save(application2)
 
-    val assessmentFromDatabase = bankApplicationRepository.findByPrisonerAndIsDeleted(prisoner)
+    val assessmentFromDatabase = bankApplicationRepository.findByPrisonerIdAndIsDeleted(prisoner.id())
 
     Assertions.assertThat(assessmentFromDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(application1)
   }

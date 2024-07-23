@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository
 
 import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
+import org.assertj.core.groups.Tuple
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
@@ -24,7 +25,7 @@ class PathwayStatusRepositoryTest : RepositoryTestBase() {
 
     val pathwayStatus = PathwayStatusEntity(
       null,
-      prisoner,
+      prisoner.id(),
       Pathway.ACCOMMODATION,
       Status.IN_PROGRESS,
       LocalDateTime.now(),
@@ -39,45 +40,50 @@ class PathwayStatusRepositoryTest : RepositoryTestBase() {
   @Test
   fun `test findByPrison query`() {
     // Seed database with prisoners and pathway statuses
-    val prisoner1 = PrisonerEntity(null, "NOMS1", LocalDateTime.parse("2023-12-13T12:00:00"), "CRN1", "MDI", LocalDate.parse("2033-01-02"))
-    val prisoner2 = PrisonerEntity(null, "NOMS2", LocalDateTime.parse("2023-12-13T12:00:00"), "CRN2", "MDI", LocalDate.parse("2043-09-16"))
-    val prisoner3 = PrisonerEntity(null, "NOMS3", LocalDateTime.parse("2023-12-13T12:00:00"), "CRN3", "MDI", LocalDate.parse("2024-04-12"))
-    val prisoner4 = PrisonerEntity(null, "NOMS4", LocalDateTime.parse("2023-12-13T12:00:00"), "CRN4", "BWI", LocalDate.parse("2030-07-11"))
+    prisonerRepository.save(PrisonerEntity(null, "NOMS1", LocalDateTime.parse("2023-12-13T12:00:00"), "CRN1", "MDI", LocalDate.parse("2033-01-02")))
+    val prisoner2 = prisonerRepository.save(PrisonerEntity(null, "NOMS2", LocalDateTime.parse("2023-12-13T12:00:00"), "CRN2", "MDI", LocalDate.parse("2043-09-16")))
+    val prisoner3 = prisonerRepository.save(PrisonerEntity(null, "NOMS3", LocalDateTime.parse("2023-12-13T12:00:00"), "CRN3", "MDI", LocalDate.parse("2024-04-12")))
+    val prisoner4 = prisonerRepository.save(PrisonerEntity(null, "NOMS4", LocalDateTime.parse("2023-12-13T12:00:00"), "CRN4", "BWI", LocalDate.parse("2030-07-11")))
 
     // Prisoner 1 has no pathway statuses
     // Prisoners 2 and 3 has all pathways set
     // Prisoner 4 has pathways but is in a different prison
     val pathwayStatusesPrisoner2 = listOf(
-      PathwayStatusEntity(null, prisoner2, Pathway.ACCOMMODATION, Status.NOT_STARTED, LocalDateTime.parse("2023-09-12T12:34:56")),
-      PathwayStatusEntity(null, prisoner2, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, Status.SUPPORT_NOT_REQUIRED, LocalDateTime.parse("2023-09-12T12:34:56")),
-      PathwayStatusEntity(null, prisoner2, Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, Status.SUPPORT_DECLINED, LocalDateTime.parse("2023-09-12T12:34:56")),
-      PathwayStatusEntity(null, prisoner2, Pathway.DRUGS_AND_ALCOHOL, Status.IN_PROGRESS, LocalDateTime.parse("2023-09-12T12:34:56")),
-      PathwayStatusEntity(null, prisoner2, Pathway.EDUCATION_SKILLS_AND_WORK, Status.DONE, LocalDateTime.parse("2023-09-12T12:34:56")),
-      PathwayStatusEntity(null, prisoner2, Pathway.FINANCE_AND_ID, Status.NOT_STARTED, LocalDateTime.parse("2023-09-12T12:34:56")),
-      PathwayStatusEntity(null, prisoner2, Pathway.HEALTH, Status.DONE, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner2.id(), Pathway.ACCOMMODATION, Status.NOT_STARTED, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner2.id(), Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, Status.SUPPORT_NOT_REQUIRED, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner2.id(), Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, Status.SUPPORT_DECLINED, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner2.id(), Pathway.DRUGS_AND_ALCOHOL, Status.IN_PROGRESS, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner2.id(), Pathway.EDUCATION_SKILLS_AND_WORK, Status.DONE, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner2.id(), Pathway.FINANCE_AND_ID, Status.NOT_STARTED, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner2.id(), Pathway.HEALTH, Status.DONE, LocalDateTime.parse("2023-09-12T12:34:56")),
     )
     val pathwayStatusesPrisoner3 = listOf(
-      PathwayStatusEntity(null, prisoner3, Pathway.ACCOMMODATION, Status.DONE, LocalDateTime.parse("2023-09-12T12:34:56")),
-      PathwayStatusEntity(null, prisoner3, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, Status.SUPPORT_DECLINED, LocalDateTime.parse("2023-09-12T12:34:56")),
-      PathwayStatusEntity(null, prisoner3, Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, Status.NOT_STARTED, LocalDateTime.parse("2023-09-12T12:34:56")),
-      PathwayStatusEntity(null, prisoner3, Pathway.DRUGS_AND_ALCOHOL, Status.IN_PROGRESS, LocalDateTime.parse("2023-09-12T12:34:56")),
-      PathwayStatusEntity(null, prisoner3, Pathway.EDUCATION_SKILLS_AND_WORK, Status.SUPPORT_DECLINED, LocalDateTime.parse("2023-09-12T12:34:56")),
-      PathwayStatusEntity(null, prisoner3, Pathway.FINANCE_AND_ID, Status.SUPPORT_NOT_REQUIRED, LocalDateTime.parse("2023-09-12T12:34:56")),
-      PathwayStatusEntity(null, prisoner3, Pathway.HEALTH, Status.NOT_STARTED, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner3.id(), Pathway.ACCOMMODATION, Status.DONE, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner3.id(), Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, Status.SUPPORT_DECLINED, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner3.id(), Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, Status.NOT_STARTED, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner3.id(), Pathway.DRUGS_AND_ALCOHOL, Status.IN_PROGRESS, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner3.id(), Pathway.EDUCATION_SKILLS_AND_WORK, Status.SUPPORT_DECLINED, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner3.id(), Pathway.FINANCE_AND_ID, Status.SUPPORT_NOT_REQUIRED, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner3.id(), Pathway.HEALTH, Status.NOT_STARTED, LocalDateTime.parse("2023-09-12T12:34:56")),
     )
     val pathwayStatusesPrisoner4 = listOf(
-      PathwayStatusEntity(null, prisoner4, Pathway.ACCOMMODATION, Status.SUPPORT_NOT_REQUIRED, LocalDateTime.parse("2023-09-12T12:34:56")),
-      PathwayStatusEntity(null, prisoner4, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, Status.IN_PROGRESS, LocalDateTime.parse("2023-09-12T12:34:56")),
-      PathwayStatusEntity(null, prisoner4, Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, Status.DONE, LocalDateTime.parse("2023-09-12T12:34:56")),
-      PathwayStatusEntity(null, prisoner4, Pathway.DRUGS_AND_ALCOHOL, Status.IN_PROGRESS, LocalDateTime.parse("2023-09-12T12:34:56")),
-      PathwayStatusEntity(null, prisoner4, Pathway.EDUCATION_SKILLS_AND_WORK, Status.IN_PROGRESS, LocalDateTime.parse("2023-09-12T12:34:56")),
-      PathwayStatusEntity(null, prisoner4, Pathway.FINANCE_AND_ID, Status.SUPPORT_DECLINED, LocalDateTime.parse("2023-09-12T12:34:56")),
-      PathwayStatusEntity(null, prisoner4, Pathway.HEALTH, Status.NOT_STARTED, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner4.id(), Pathway.ACCOMMODATION, Status.SUPPORT_NOT_REQUIRED, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner4.id(), Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, Status.IN_PROGRESS, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner4.id(), Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, Status.DONE, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner4.id(), Pathway.DRUGS_AND_ALCOHOL, Status.IN_PROGRESS, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner4.id(), Pathway.EDUCATION_SKILLS_AND_WORK, Status.IN_PROGRESS, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner4.id(), Pathway.FINANCE_AND_ID, Status.SUPPORT_DECLINED, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner4.id(), Pathway.HEALTH, Status.NOT_STARTED, LocalDateTime.parse("2023-09-12T12:34:56")),
     )
 
-    prisonerRepository.saveAll(listOf(prisoner1, prisoner2, prisoner3, prisoner4))
     pathwayStatusRepository.saveAll(pathwayStatusesPrisoner2 + pathwayStatusesPrisoner3 + pathwayStatusesPrisoner4)
 
-    assertThat(pathwayStatusRepository.findByPrison("MDI")).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(pathwayStatusesPrisoner2 + pathwayStatusesPrisoner3)
+    val result = pathwayStatusRepository.findByPrison("MDI")
+    assertThat(result)
+      .extracting(PrisonerWithStatusProjection::prisonerId, PrisonerWithStatusProjection::pathway, PrisonerWithStatusProjection::pathwayStatus)
+      .containsExactlyInAnyOrderElementsOf(
+        pathwayStatusesPrisoner2.map { Tuple(it.prisonerId, it.pathway, it.status) } +
+          pathwayStatusesPrisoner3.map { Tuple(it.prisonerId, it.pathway, it.status) },
+      )
   }
 }

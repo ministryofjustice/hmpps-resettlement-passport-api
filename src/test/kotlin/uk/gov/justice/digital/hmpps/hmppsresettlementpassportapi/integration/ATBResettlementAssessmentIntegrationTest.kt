@@ -12,13 +12,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentSimpleQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 class ATBResettlementAssessmentIntegrationTest : IntegrationTestBase() {
@@ -148,14 +146,7 @@ class ATBResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val expectedResettlementAssessments = listOf(
       ResettlementAssessmentEntity(
         id = 2,
-        prisoner = PrisonerEntity(
-          id = 1,
-          nomsId = "ABC1234",
-          creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"),
-          crn = "123",
-          prisonId = "MDI",
-          releaseDate = LocalDate.parse("2030-09-12"),
-        ),
+        prisonerId = 1L,
         pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
         statusChangedTo = Status.SUPPORT_DECLINED,
         assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN,
@@ -170,14 +161,7 @@ class ATBResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       ),
       ResettlementAssessmentEntity(
         id = 1,
-        prisoner = PrisonerEntity(
-          id = 1,
-          nomsId = "ABC1234",
-          creationDate = LocalDateTime.parse("2023-08-17T12:21:38.709"),
-          crn = "123",
-          prisonId = "MDI",
-          releaseDate = LocalDate.parse("2030-09-12"),
-        ),
+        prisonerId = 1L,
         pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
         statusChangedTo = Status.SUPPORT_REQUIRED,
         assessmentType = ResettlementAssessmentType.BCST2,

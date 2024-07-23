@@ -23,7 +23,7 @@ class AssessmentRepositoryTest : RepositoryTestBase() {
 
     val idDocument = setOf(IdTypeEntity(1, "Birth certificate"))
 
-    val assessment = AssessmentEntity(null, prisoner, LocalDateTime.now(), LocalDateTime.now(), isBankAccountRequired = true, isIdRequired = true, idDocument, false, null)
+    val assessment = AssessmentEntity(null, prisoner.id(), LocalDateTime.now(), LocalDateTime.now(), isBankAccountRequired = true, isIdRequired = true, idDocument, false, null)
 
     assessmentRepository.save(assessment)
 
@@ -34,18 +34,17 @@ class AssessmentRepositoryTest : RepositoryTestBase() {
 
   @Test
   fun `test findByPrisonerAndIsDeleted`() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23"))
-    prisonerRepository.save(prisoner)
+    val prisoner = prisonerRepository.save(PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23")))
 
     val idDocument = setOf(IdTypeEntity(1, "Birth certificate"))
 
-    val assessment1 = AssessmentEntity(null, prisoner, LocalDateTime.now(), LocalDateTime.now(), isBankAccountRequired = true, isIdRequired = true, idDocument, false, null)
-    val assessment2 = AssessmentEntity(null, prisoner, LocalDateTime.now(), LocalDateTime.now(), isBankAccountRequired = true, isIdRequired = true, idDocument, true, LocalDateTime.now())
+    val assessment1 = AssessmentEntity(null, prisoner.id(), LocalDateTime.now(), LocalDateTime.now(), isBankAccountRequired = true, isIdRequired = true, idDocument, false, null)
+    val assessment2 = AssessmentEntity(null, prisoner.id(), LocalDateTime.now(), LocalDateTime.now(), isBankAccountRequired = true, isIdRequired = true, idDocument, true, LocalDateTime.now())
 
     assessmentRepository.save(assessment1)
     assessmentRepository.save(assessment2)
 
-    val assessmentFromDatabase = assessmentRepository.findByPrisonerAndIsDeleted(prisoner)
+    val assessmentFromDatabase = assessmentRepository.findByPrisonerIdAndIsDeleted(prisoner.id())
 
     assertThat(assessmentFromDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(assessment1)
   }

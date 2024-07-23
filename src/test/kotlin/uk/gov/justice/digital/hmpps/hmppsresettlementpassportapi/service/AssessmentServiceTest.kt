@@ -45,8 +45,7 @@ class AssessmentServiceTest {
   @Test
   fun `test getAssessmentById - returns assessment`() {
     val assessmentId: Long = 1
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz1", LocalDate.parse("2025-01-23"))
-    val assessmentEntity = AssessmentEntity(1, prisonerEntity, fakeNow, fakeNow, isBankAccountRequired = true, isIdRequired = true, idDocuments = emptySet(), isDeleted = false, deletionDate = null)
+    val assessmentEntity = AssessmentEntity(1, 1, fakeNow, fakeNow, isBankAccountRequired = true, isIdRequired = true, idDocuments = emptySet(), isDeleted = false, deletionDate = null)
     Mockito.`when`(assessmentRepository.findById(assessmentId)).thenReturn(Optional.of(assessmentEntity))
 
     val response = assessmentService.getAssessmentById(assessmentId)
@@ -56,8 +55,8 @@ class AssessmentServiceTest {
   @Test
   fun `test getAssessmentById - returns null if assessment is deleted`() {
     val assessmentId: Long = 1
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
-    val assessmentEntity = AssessmentEntity(1, prisonerEntity, fakeNow, fakeNow, isBankAccountRequired = true, isIdRequired = true, idDocuments = emptySet(), isDeleted = true, deletionDate = fakeNow)
+
+    val assessmentEntity = AssessmentEntity(1, 1, fakeNow, fakeNow, isBankAccountRequired = true, isIdRequired = true, idDocuments = emptySet(), isDeleted = true, deletionDate = fakeNow)
     Mockito.`when`(assessmentRepository.findById(assessmentId)).thenReturn(Optional.of(assessmentEntity))
 
     val response = assessmentService.getAssessmentById(assessmentId)
@@ -78,8 +77,8 @@ class AssessmentServiceTest {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
-    val assessmentEntity = AssessmentEntity(1, prisonerEntity, fakeNow, fakeNow, isBankAccountRequired = true, isIdRequired = true, idDocuments = emptySet(), isDeleted = false, deletionDate = null)
-    val expectedAssessmentEntity = AssessmentEntity(1, prisonerEntity, fakeNow, fakeNow, isBankAccountRequired = true, isIdRequired = true, idDocuments = emptySet(), isDeleted = true, deletionDate = fakeNow)
+    val assessmentEntity = AssessmentEntity(1, prisonerEntity.id(), fakeNow, fakeNow, isBankAccountRequired = true, isIdRequired = true, idDocuments = emptySet(), isDeleted = false, deletionDate = null)
+    val expectedAssessmentEntity = AssessmentEntity(1, prisonerEntity.id(), fakeNow, fakeNow, isBankAccountRequired = true, isIdRequired = true, idDocuments = emptySet(), isDeleted = true, deletionDate = fakeNow)
 
     assessmentService.deleteAssessment(assessmentEntity)
     Mockito.verify(assessmentRepository).save(expectedAssessmentEntity)
@@ -95,7 +94,7 @@ class AssessmentServiceTest {
     val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
     val idTypes = listOf(IdTypeEntity(1, "Driving licence"), IdTypeEntity(2, "Birth certificate"), IdTypeEntity(1, "Something else"))
     val expectedIdTypes = listOf(IdTypeEntity(1, "Driving licence"), IdTypeEntity(2, "Birth certificate"))
-    val expectedAssessmentEntity = AssessmentEntity(null, prisonerEntity, fakeNow, fakeNow, isBankAccountRequired = true, isIdRequired = true, idDocuments = expectedIdTypes.toSet(), isDeleted = false, deletionDate = null)
+    val expectedAssessmentEntity = AssessmentEntity(null, prisonerEntity.id(), fakeNow, fakeNow, isBankAccountRequired = true, isIdRequired = true, idDocuments = expectedIdTypes.toSet(), isDeleted = false, deletionDate = null)
     val assessment = Assessment(fakeNow, isBankAccountRequired = true, isIdRequired = true, idDocuments = setOf("Driving licence", "Birth certificate"), nomsId = nomsId)
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
     Mockito.`when`(idTypeRepository.findAll()).thenReturn(idTypes)

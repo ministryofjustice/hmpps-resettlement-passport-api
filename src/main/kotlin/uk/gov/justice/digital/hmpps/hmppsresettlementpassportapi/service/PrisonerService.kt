@@ -211,21 +211,21 @@ class PrisonerService(
     val watchedOffenders = watchlistService.findAllWatchedPrisonerForStaff(staffUsername)
     searchList.forEach { prisonersSearch ->
 
-      val pathwayStatusesEntities = prisonerPathwayStatusesFromDatabase.filter { it.prisoner.nomsId == prisonersSearch.prisonerNumber }
-      val prisonerEntity = pathwayStatusesEntities.map { it.prisoner }.firstOrNull()
+      val pathwayStatusesEntities = prisonerPathwayStatusesFromDatabase.filter { it.nomsId == prisonersSearch.prisonerNumber }
+      val prisonerId = pathwayStatusesEntities.firstOrNull()?.prisonerId
 
       val pathwayStatuses: List<PathwayStatus>?
       val sortedPathwayStatuses: List<PathwayStatus>?
       val pathwayStatus: Status?
       val lastUpdatedDate: LocalDate?
-      val isInWatchList = watchedOffenders.contains(prisonerEntity)
+      val isInWatchList = watchedOffenders.contains(prisonerId)
 
       if (watchListFilter == true && !isInWatchList) {
         return@forEach
       }
 
-      if (prisonerEntity != null) {
-        pathwayStatuses = if (pathwayView == null) pathwayStatusesEntities.map { PathwayStatus(pathway = it.pathway, status = it.status, lastDateChange = it.updatedDate?.toLocalDate()) }.sortedBy { it.pathway } else null
+      if (prisonerId != null) {
+        pathwayStatuses = if (pathwayView == null) pathwayStatusesEntities.map { PathwayStatus(pathway = it.pathway, status = it.pathwayStatus, lastDateChange = it.updatedDate?.toLocalDate()) }.sortedBy { it.pathway } else null
         sortedPathwayStatuses = pathwayStatuses?.sortedWith(compareBy(nullsLast()) { it.lastDateChange })
         lastUpdatedDate =
           if (pathwayView == null) {
@@ -233,7 +233,7 @@ class PrisonerService(
           } else {
             pathwayStatusesEntities.find { it.pathway == pathwayView }?.updatedDate?.toLocalDate()
           }
-        pathwayStatus = if (pathwayView != null) pathwayStatusesEntities.first { it.pathway == pathwayView }.status else null
+        pathwayStatus = if (pathwayView != null) pathwayStatusesEntities.first { it.pathway == pathwayView }.pathwayStatus else null
       } else {
         // We don't know about this prisoner yet so just set all the statuses to NOT_STARTED.
         pathwayStatuses = if (pathwayView == null) defaultPathwayStatuses else null
@@ -241,11 +241,10 @@ class PrisonerService(
         lastUpdatedDate = null
       }
 
-      // Find out if resettlement assessment is required
-      val assessmentRequired = !prisonersWithSubmittedAssessment.contains(prisonerEntity)
-
+      val assessmentRequired = !prisonersWithSubmittedAssessment.contains(prisonerId)
       // If assessmentRequired filter is defined, skip over any that don't match
       if (assessmentRequiredFilter != null) {
+        // Find out if resettlement assessment is required
         if (assessmentRequired != assessmentRequiredFilter) {
           return@forEach
         }
@@ -303,7 +302,6 @@ class PrisonerService(
     } else {
       personalDetails.contactDetails = PersonalDetail.ContactDetails(null, null, null)
     }
-
     val prisonerPersonal = PrisonerPersonal(
       prisonerSearch.prisonerNumber,
       prisonerSearch.prisonId,
@@ -325,7 +323,6 @@ class PrisonerService(
     )
 
     val pathwayStatuses = getPathwayStatuses(prisonerEntity)
-
     val assessmentStatus = isAssessmentRequired(prisonerEntity)
     val staffUsername = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get name from auth token")
     val isInWatchlist = watchlistService.isPrisonerInWatchList(staffUsername, prisonerEntity)
@@ -344,21 +341,19 @@ class PrisonerService(
     prisonerSearch.homeDetentionCurfewEligibilityDate != null
 
   protected fun getPathwayStatuses(
-    prisonerEntity: PrisonerEntity,
-  ): ArrayList<PathwayStatus> {
-    val pathwayStatuses = ArrayList<PathwayStatus>()
-    Pathway.entries.forEach { pathway ->
-      // Find the status in the database of each pathway for this prisoner - if any data is missing then throw an exception (should never happen)
-      val pathwayStatusEntity =
-        pathwayAndStatusService.findPathwayStatusFromPathwayAndPrisoner(pathway, prisonerEntity)
-      val pathwayStatus = PathwayStatus(
+    prisoner: PrisonerEntity,
+  ): List<PathwayStatus> {
+    val statusForPrisoner = pathwayAndStatusService.findAllPathwayStatusForPrisoner(prisoner)
+    return Pathway.entries.map { pathway ->
+      val pathwayStatusEntity = statusForPrisoner.find { it.pathway == pathway }
+        ?: throw ResourceNotFoundException("Prisoner with id ${prisoner.nomsId} has no pathway_status entry for ${pathway.name} in database")
+
+      PathwayStatus(
         pathway,
         pathwayStatusEntity.status,
         pathwayStatusEntity.updatedDate?.toLocalDate(),
       )
-      pathwayStatuses.add(pathwayStatus)
     }
-    return pathwayStatuses
   }
 
   fun getDefaultPathwayStatuses(): List<PathwayStatus> {
@@ -426,9 +421,8 @@ class PrisonerService(
 
   private fun isAssessmentRequired(prisonerEntity: PrisonerEntity): AssessmentRequiredResult {
     // Assessment required we don't have all pathways in submitted
-    val statusByType = resettlementAssessmentRepository.findLatestForEachPathwayAndType(prisonerEntity)
+    val statusByType = resettlementAssessmentRepository.findLatestForEachPathwayAndType(prisonerEntity.id())
       .groupBy { it.assessmentType }
-
     val iNeedsSubmitted =
       statusByType[ResettlementAssessmentType.BCST2]?.all { it.assessmentStatus == ResettlementAssessmentStatus.SUBMITTED }
         ?: false

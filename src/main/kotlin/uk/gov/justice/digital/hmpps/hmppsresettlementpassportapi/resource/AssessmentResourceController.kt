@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Assessment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AssessmentService
 
@@ -145,16 +144,6 @@ class AssessmentResourceController(private val assessmentService: AssessmentServ
     @Parameter(required = true)
     assessmentId: String,
   ) {
-    val assessment = assessmentService.getAssessmentById(assessmentId.toLong()) ?: throw NoDataWithCodeFoundException(
-      "Assessment",
-      assessmentId,
-    )
-    if (assessment.prisoner.nomsId != nomsId) {
-      throw NoDataWithCodeFoundException(
-        "Assessment",
-        assessmentId,
-      )
-    }
-    assessmentService.deleteAssessment(assessment)
+    assessmentService.deleteAssessmentByNomsId(nomsId, assessmentId)
   }
 }

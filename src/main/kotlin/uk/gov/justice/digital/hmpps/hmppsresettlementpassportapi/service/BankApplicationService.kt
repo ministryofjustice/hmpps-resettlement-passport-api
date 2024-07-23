@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional
 import jakarta.validation.ValidationException
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.DuplicateDataFoundException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplication
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplicationLog
@@ -28,10 +27,14 @@ class BankApplicationService(
     ?: throw ResourceNotFoundException("Bank application with id $id not found in database")
 
   @Transactional
+  fun getBankApplicationByIdAndNomsId(id: Long, nomsId: String) = bankApplicationRepository.findByIdAndNomsId(id, nomsId)
+    ?: throw ResourceNotFoundException("Bank application with id $id not found in database")
+
+  @Transactional
   fun getBankApplicationByNomsId(nomsId: String): BankApplicationResponse? {
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val bankApplication = bankApplicationRepository.findByPrisonerAndIsDeleted(prisoner)
+    val bankApplication = bankApplicationRepository.findByPrisonerIdAndIsDeleted(prisoner.id())
       ?: throw ResourceNotFoundException(" no none deleted bank applications for prisoner: ${prisoner.nomsId} found in database")
     bankApplication.logs = emptySet()
     val logs = bankApplicationStatusLogRepository.findByBankApplication(bankApplication)
@@ -62,14 +65,14 @@ class BankApplicationService(
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val statusText = "Pending"
 
-    val bankApplicationExists = bankApplicationRepository.findByPrisonerAndIsDeleted(prisoner)
+    val bankApplicationExists = bankApplicationRepository.findByPrisonerIdAndIsDeleted(prisoner.id())
     if (notUnitTest && bankApplicationExists != null) {
       throw DuplicateDataFoundException("Bank application for prisoner with id $nomsId already exists in database")
     }
 
     val bankApplicationEntity = BankApplicationEntity(
       null,
-      prisoner,
+      prisoner.id(),
       emptySet(),
       bankName = bankApplication.bankName ?: throw ValidationException("Bank name cannot be null"),
       creationDate = now,
@@ -89,13 +92,8 @@ class BankApplicationService(
 
   @Transactional
   fun patchBankApplication(nomsId: String, bankApplicationId: String, bankApplication: BankApplication): BankApplicationResponse {
-    val existingBankApplication = getBankApplicationById(bankApplicationId.toLong()).get()
-    if (existingBankApplication.prisoner.nomsId != nomsId) {
-      throw NoDataWithCodeFoundException(
-        "BankApplication",
-        bankApplicationId,
-      )
-    }
+    val existingBankApplication = getBankApplicationByIdAndNomsId(bankApplicationId.toLong(), nomsId)
+
     updateBankApplication(existingBankApplication = existingBankApplication, bankApplication)
     return getBankApplicationByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Bank application for prisoner: $nomsId not found after update")
@@ -104,7 +102,7 @@ class BankApplicationService(
   @Transactional
   fun updateBankApplication(existingBankApplication: BankApplicationEntity, bankApplication: BankApplication) {
     val logs = bankApplicationStatusLogRepository.findByBankApplication(existingBankApplication)
-      ?: throw ResourceNotFoundException("Bank application for prisoner with id ${existingBankApplication.prisoner.nomsId} not found in database ")
+      ?: throw ResourceNotFoundException("Bank application for prisoner with id ${existingBankApplication.prisonerId} not found in database")
 
     logs[0].bankApplication?.bankResponseDate = bankApplication.bankResponseDate ?: logs[0].bankApplication?.bankResponseDate
     logs[0].bankApplication?.status = bankApplication.status ?: logs[0].bankApplication?.status!!

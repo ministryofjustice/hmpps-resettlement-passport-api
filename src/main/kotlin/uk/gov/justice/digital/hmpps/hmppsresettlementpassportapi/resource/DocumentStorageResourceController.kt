@@ -6,7 +6,9 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import org.springframework.core.io.InputStreamResource
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,17 +19,18 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DocumentCategory
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.DocumentService
 
 @RestController
 @Validated
-@RequestMapping("/resettlement-passport/documents", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/resettlement-passport/prisoner/{nomsId}", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class DocumentStorageResourceController(
   private val uploadService: DocumentService,
 ) {
   @PostMapping(
-    "/{nomsId}/upload",
+    "/documents/upload",
     produces = [MediaType.APPLICATION_JSON_VALUE],
     consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
   )
@@ -52,10 +55,10 @@ class DocumentStorageResourceController(
     @RequestParam("file")
     file: MultipartFile,
     @RequestParam(defaultValue = "LICENCE_CONDITIONS", required = false)
-    category: String,
+    category: DocumentCategory,
   ) = uploadService.processDocument(nomsId, file, category)
 
-  @GetMapping("{nomsId}/download/{documentId}")
+  @GetMapping("/documents/{documentId}/download", produces = [MediaType.APPLICATION_PDF_VALUE])
   @Operation(
     summary = "Get document  for a prisoner",
     description = "Get Document for a given document Id and prisoner Id .",
@@ -95,51 +98,14 @@ class DocumentStorageResourceController(
     @PathVariable("documentId")
     @Parameter(required = true)
     documentId: Long,
-  ): ByteArray = uploadService.getDocumentByNomisIdAndDocumentId(nomsId, documentId, null)
+  ): ResponseEntity<InputStreamResource> {
+    val stream = uploadService.getDocumentByNomisIdAndDocumentId(nomsId, documentId)
+    return ResponseEntity.ok()
+      .contentType(MediaType.APPLICATION_PDF)
+      .body(InputStreamResource(stream))
+  }
 
-  @GetMapping("{nomsId}/html/{documentId}", produces = [MediaType.TEXT_HTML_VALUE])
-  @Operation(
-    summary = "Get document  for a prisoner",
-    description = "Get Document for a given document Id and prisoner Id .",
-  )
-  @ApiResponses(
-    value = [
-      ApiResponse(
-        responseCode = "200",
-        description = "Successful Operation",
-      ),
-      ApiResponse(
-        responseCode = "401",
-        description = "Unauthorized to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-      ApiResponse(
-        responseCode = "403",
-        description = "Forbidden, requires an appropriate role",
-        content = [
-          Content(
-            mediaType = MediaType.APPLICATION_JSON_VALUE,
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
-      ),
-      ApiResponse(
-        responseCode = "404",
-        description = "No data found for given document id and prisoner id",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-    ],
-  )
-  fun getDocumentHtmlByNomsId(
-    @PathVariable("nomsId")
-    @Parameter(required = true)
-    nomsId: String,
-    @PathVariable("documentId")
-    @Parameter(required = true)
-    documentId: Long,
-  ): String = uploadService.getHtmlByNomisIdAndDocumentId(nomsId, documentId, null)
-
-  @GetMapping("{nomsId}/download")
+  @GetMapping("/documents/latest/download")
   @Operation(
     summary = "Get document  for a prisoner",
     description = "Get Latest Original Document for prisoner Id .",
@@ -177,13 +143,18 @@ class DocumentStorageResourceController(
     @Parameter(required = true)
     nomsId: String,
     @RequestParam(defaultValue = "LICENCE_CONDITIONS", required = false)
-    category: String,
-  ): ByteArray = uploadService.getLatestDocumentByNomisId(nomsId, category)
+    category: DocumentCategory,
+  ): ResponseEntity<InputStreamResource> {
+    val stream = uploadService.getLatestDocumentByCategory(nomsId, category)
+    return ResponseEntity.ok()
+      .contentType(MediaType.APPLICATION_PDF)
+      .body(InputStreamResource(stream))
+  }
 
-  @GetMapping("{nomsId}/html", produces = [MediaType.TEXT_HTML_VALUE])
+  @GetMapping("/documents")
   @Operation(
-    summary = "Get latest document  for a prisoner",
-    description = "Get Latest HTML Document for a given prisoner Id .",
+    summary = "Get document metadata for a prisoner",
+    description = "List of available documents for a prisoner",
   )
   @ApiResponses(
     value = [
@@ -206,18 +177,19 @@ class DocumentStorageResourceController(
           ),
         ],
       ),
-      ApiResponse(
-        responseCode = "404",
-        description = "No data found for given document id and prisoner id",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
     ],
   )
-  fun getLatestDocumentHtmlByNomsId(
+  fun listDocuments(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-    @RequestParam(defaultValue = "LICENCE_CONDITIONS", required = false)
-    category: String,
-  ): String = uploadService.getLatestHTMLByNomisId(nomsId, category)
+    @RequestParam(required = true)
+    category: DocumentCategory,
+  ): Collection<DocumentResponse> = uploadService.listDocuments(nomsId, category)
+    .map { DocumentResponse(it.id!!, it.originalDocumentFileName) }
+
+  data class DocumentResponse(
+    val id: Long,
+    val fileName: String,
+  )
 }

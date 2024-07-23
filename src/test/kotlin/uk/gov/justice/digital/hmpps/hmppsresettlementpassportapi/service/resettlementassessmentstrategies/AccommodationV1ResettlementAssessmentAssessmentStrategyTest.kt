@@ -461,7 +461,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "CASE_NOTE_SUMMARY",
-              title = "Add a case note summary",
+              title = "Case note summary",
               subTitle = "This will be displayed as a case note in both DPS and nDelius",
               type = TypeOfQuestion.LONG_TEXT,
             ),
@@ -720,7 +720,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
         ResettlementAssessmentQuestionAndAnswer(
           ResettlementAssessmentQuestion(
             id = "CASE_NOTE_SUMMARY",
-            title = "Add a case note summary",
+            title = "Case note summary",
             subTitle = "This will be displayed as a case note in both DPS and nDelius",
             type = TypeOfQuestion.LONG_TEXT,
             options = null,
@@ -1608,7 +1608,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
           ),
           AssessmentConfigQuestion(
             id = "CASE_NOTE_SUMMARY",
-            title = "Add a case note summary",
+            title = "Case note summary",
             subTitle = "This will be displayed as a case note in both DPS and nDelius",
             type = TypeOfQuestion.LONG_TEXT,
             options = null,

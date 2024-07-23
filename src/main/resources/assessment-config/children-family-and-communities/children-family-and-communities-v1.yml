@@ -207,7 +207,7 @@ pages:
             displayText: "Support declined"
             description: "a need has been identified but support is declined"
       - id: "CASE_NOTE_SUMMARY"
-        title: "Add a case note summary"
+        title: "Case note summary"
         subTitle: "This will be displayed as a case note in both DPS and nDelius"
         type: "LONG_TEXT"
     nextPageLogic:
@@ -236,7 +236,7 @@ pages:
             displayText: "Done"
             description: "all required work has been completed successfully"
       - id: "CASE_NOTE_SUMMARY"
-        title: "Add a case note summary"
+        title: "Case note summary"
         subTitle: "This will be displayed as a case note in both DPS and nDelius"
         type: "LONG_TEXT"
     nextPageLogic:

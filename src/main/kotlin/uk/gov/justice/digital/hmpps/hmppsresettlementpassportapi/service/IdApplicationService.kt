@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.IdAp
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.IdApplicationRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.IdTypeRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Service
@@ -21,10 +22,10 @@ class IdApplicationService(
 ) {
 
   @Transactional
-  fun getIdApplicationByNomsId(nomsId: String): IdApplicationEntity? {
+  fun getIdApplicationByNomsId(nomsId: String, fromDate: LocalDate = LocalDate.now().minusYears(50), toDate: LocalDate = LocalDate.now()): IdApplicationEntity? {
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val idApplicationEntityList = idApplicationRepository.findByPrisonerAndIsDeleted(prisoner)
+    val idApplicationEntityList = idApplicationRepository.findByPrisonerAndIsDeletedAndCreationDateBetween(prisoner, fromDate = fromDate.atStartOfDay(), toDate = toDate.atStartOfDay())
     if (idApplicationEntityList.isEmpty()) {
       throw ResourceNotFoundException("No active ID application found for prisoner with id $nomsId")
     } else {
@@ -108,6 +109,6 @@ class IdApplicationService(
   fun getAllIdApplicationsByNomsId(nomsId: String): List<IdApplicationEntity?> {
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    return idApplicationRepository.findByPrisonerAndIsDeleted(prisoner, false)
+    return idApplicationRepository.findByPrisonerAndIsDeletedAndCreationDateBetween(prisoner, false)
   }
 }

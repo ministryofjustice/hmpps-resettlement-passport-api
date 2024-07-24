@@ -4,8 +4,13 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.AssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
+import java.time.LocalDateTime
 
 @Repository
 interface AssessmentRepository : JpaRepository<AssessmentEntity, Long> {
-  fun findByPrisonerAndIsDeleted(prisoner: PrisonerEntity, isDeleted: Boolean = false): AssessmentEntity?
+  fun findByPrisonerAndIsDeletedAndCreationDateBetween(
+    prisoner: PrisonerEntity, isDeleted: Boolean = false,
+    fromDate: LocalDateTime = LocalDateTime.now().minusYears(50),
+    toDate: LocalDateTime = LocalDateTime.now(),
+  ): AssessmentEntity?
 }

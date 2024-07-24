@@ -45,7 +45,7 @@ class AssessmentRepositoryTest : RepositoryTestBase() {
     assessmentRepository.save(assessment1)
     assessmentRepository.save(assessment2)
 
-    val assessmentFromDatabase = assessmentRepository.findByPrisonerAndIsDeleted(prisoner)
+    val assessmentFromDatabase = assessmentRepository.findByPrisonerAndIsDeletedAndCreationDateBetween(prisoner)
 
     assertThat(assessmentFromDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(assessment1)
   }

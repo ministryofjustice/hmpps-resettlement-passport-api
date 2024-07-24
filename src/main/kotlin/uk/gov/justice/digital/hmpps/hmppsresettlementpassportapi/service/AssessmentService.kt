@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Asse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.IdTypeRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Service
@@ -25,10 +26,12 @@ class AssessmentService(
   }
 
   @Transactional
-  fun getAssessmentByNomsId(nomsId: String): AssessmentEntity? {
+  fun getAssessmentByNomsId(nomsId: String, fromDate: LocalDate = LocalDate.now().minusYears(50), toDate: LocalDate = LocalDate.now()): AssessmentEntity? {
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val assessment = assessmentRepository.findByPrisonerAndIsDeleted(prisoner) ?: throw ResourceNotFoundException("assessment not found")
+    val assessment = assessmentRepository.findByPrisonerAndIsDeletedAndCreationDateBetween(
+      prisoner, fromDate = fromDate.atStartOfDay(), toDate = toDate.atStartOfDay(),
+    ) ?: throw ResourceNotFoundException("assessment not found")
     return if (assessment.isDeleted) null else assessment
   }
 
@@ -44,7 +47,7 @@ class AssessmentService(
     val prisoner = prisonerRepository.findByNomsId(assessment.nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id ${assessment.nomsId} not found in database")
 
-    val assessmentExists = assessmentRepository.findByPrisonerAndIsDeleted(prisoner)
+    val assessmentExists = assessmentRepository.findByPrisonerAndIsDeletedAndCreationDateBetween(prisoner)
     if (assessmentExists != null) {
       throw DuplicateDataFoundException("Assessment for prisoner with id ${assessment.nomsId} already exists in database")
     }

@@ -58,7 +58,7 @@ class IdApplicationServiceTest {
     )
     val idApplicationEntityList = emptyList<IdApplicationEntity>().toMutableList()
     idApplicationEntityList.add(idApplicationEntity)
-    Mockito.`when`(idApplicationRepository.findByPrisonerAndIsDeleted(prisonerEntity)).thenReturn(idApplicationEntityList)
+    Mockito.`when`(idApplicationRepository.findByPrisonerAndIsDeletedAndCreationDateBetween(prisonerEntity)).thenReturn(idApplicationEntityList)
     val result = idApplicationService.getIdApplicationByNomsId(prisonerEntity.nomsId)
     Assertions.assertEquals(idApplicationEntity, result)
   }
@@ -240,7 +240,7 @@ class IdApplicationServiceTest {
     idApplicationEntityList.add(idApplicationEntity1)
     idApplicationEntityList.add(idApplicationEntity2)
 
-    Mockito.`when`(idApplicationRepository.findByPrisonerAndIsDeleted(prisonerEntity)).thenReturn(idApplicationEntityList)
+    Mockito.`when`(idApplicationRepository.findByPrisonerAndIsDeletedAndCreationDateBetween(prisonerEntity)).thenReturn(idApplicationEntityList)
     val result = idApplicationService.getAllIdApplicationsByNomsId(prisonerEntity.nomsId)
     Assertions.assertEquals(idApplicationEntityList, result)
   }

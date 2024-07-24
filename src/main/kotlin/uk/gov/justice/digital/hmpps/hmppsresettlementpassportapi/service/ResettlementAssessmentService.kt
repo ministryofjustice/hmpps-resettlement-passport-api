@@ -33,6 +33,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.YamlResettlementAssessmentStrategy
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Service
@@ -52,17 +53,22 @@ class ResettlementAssessmentService(
   }
 
   @Transactional
-  fun getResettlementAssessmentSummaryByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType): List<PrisonerResettlementAssessment> {
+  fun getResettlementAssessmentSummaryByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType,
+                                               fromDate: LocalDate = LocalDate.now().minusYears(50),
+                                               toDate: LocalDate = LocalDate.now()): List<PrisonerResettlementAssessment> {
     val prisonerEntity = getPrisonerEntityOrThrow(nomsId)
-    return getAssessmentSummary(prisonerEntity, assessmentType)
+    return getAssessmentSummary(prisonerEntity, assessmentType, fromDate, toDate)
   }
 
   private fun getAssessmentSummary(
     prisonerEntity: PrisonerEntity,
     assessmentType: ResettlementAssessmentType,
+    fromDate: LocalDate = LocalDate.now().minusYears(50),
+    toDate: LocalDate = LocalDate.now()
   ): List<PrisonerResettlementAssessment> {
     val latestForEachPathway =
-      resettlementAssessmentRepository.findLatestForEachPathway(prisonerEntity, assessmentType)
+      resettlementAssessmentRepository.findLatestForEachPathway(prisonerEntity, assessmentType,
+        fromDate.atStartOfDay(), toDate.atStartOfDay())
         .associateBy { it.pathway }
     return Pathway.entries.map {
       val resettlementAssessmentForPathway = latestForEachPathway[it]
@@ -282,18 +288,22 @@ class ResettlementAssessmentService(
     val name: String,
   )
 
-  fun getLatestResettlementAssessmentByNomsIdAndPathway(nomsId: String, pathway: Pathway, resettlementAssessmentStrategies: YamlResettlementAssessmentStrategy): LatestResettlementAssessmentResponse {
+  fun getLatestResettlementAssessmentByNomsIdAndPathway(nomsId: String, pathway: Pathway, resettlementAssessmentStrategies: YamlResettlementAssessmentStrategy,
+                                                        fromDate: LocalDate = LocalDate.now().minusYears(50),
+                                                        toDate: LocalDate = LocalDate.now()): LatestResettlementAssessmentResponse {
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
 
     val latestResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
-      resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentStatusOrderByCreationDateDesc(prisonerEntity, pathway, ResettlementAssessmentStatus.SUBMITTED)
+      resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentStatusAndCreationDateBetweenOrderByCreationDateDesc(
+        prisonerEntity, pathway, ResettlementAssessmentStatus.SUBMITTED, fromDate.atStartOfDay(), toDate.atStartOfDay())
         ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"),
       resettlementAssessmentStrategies,
     )
 
     val originalResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
-      resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentStatusOrderByCreationDateAsc(prisonerEntity, pathway, ResettlementAssessmentStatus.SUBMITTED)
+      resettlementAssessmentRepository.findFirstByPrisonerAndPathwayAndAssessmentStatusAndCreationDateBetweenOrderByCreationDateAsc(
+        prisonerEntity, pathway, ResettlementAssessmentStatus.SUBMITTED, fromDate.atStartOfDay(), toDate.atStartOfDay())
         ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"),
       resettlementAssessmentStrategies,
     )

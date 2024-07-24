@@ -73,7 +73,7 @@ class BankApplicationServiceTest {
       bankName = "Lloyds",
     )
     Mockito.`when`(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
-    Mockito.`when`(bankApplicationRepository.findByPrisonerAndIsDeleted(any(), any())).thenReturn(bankApplicationEntity)
+    Mockito.`when`(bankApplicationRepository.findByPrisonerAndIsDeletedAndCreationDateBetween(any(), any())).thenReturn(bankApplicationEntity)
 
     val response = bankApplicationService.getBankApplicationByNomsId(prisonerEntity.nomsId)
 
@@ -84,7 +84,7 @@ class BankApplicationServiceTest {
   fun `test getBankApplicationByPrisoner - throws if not found`() {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
     Mockito.`when`(prisonerRepository.findByNomsId(prisonerEntity.nomsId)).thenReturn(prisonerEntity)
-    Mockito.`when`(bankApplicationRepository.findByPrisonerAndIsDeleted(any(), any())).thenReturn(null)
+    Mockito.`when`(bankApplicationRepository.findByPrisonerAndIsDeletedAndCreationDateBetween(any(), any())).thenReturn(null)
 
     assertThrows<ResourceNotFoundException> { bankApplicationService.getBankApplicationByNomsId(prisonerEntity.nomsId) }
   }
@@ -124,7 +124,7 @@ class BankApplicationServiceTest {
     val expectedBankApplicationEntity = BankApplicationEntity(null, prisonerEntity, emptySet(), fakeNow, fakeNow, status = "Pending", bankName = "Lloyds")
     val expectedLogEntity = BankApplicationStatusLogEntity(null, expectedBankApplicationEntity, "Pending", fakeNow)
     Mockito.`when`(prisonerRepository.findByNomsId(any())).thenReturn(prisonerEntity)
-    Mockito.`when`(bankApplicationRepository.findByPrisonerAndIsDeleted(any(), any())).thenReturn(bankApplicationEntity)
+    Mockito.`when`(bankApplicationRepository.findByPrisonerAndIsDeletedAndCreationDateBetween(any(), any())).thenReturn(bankApplicationEntity)
     Mockito.`when`(bankApplicationStatusLogRepository.findByBankApplication(any())).thenReturn(logEntities)
 
     bankApplicationService.createBankApplication(bankApplication, prisonerEntity.nomsId, false)
@@ -144,7 +144,7 @@ class BankApplicationServiceTest {
     val expectedBankApplicationEntity = BankApplicationEntity(null, prisonerEntity, emptySet(), fakeNow, fakeNow, status = "Pending", bankName = "Lloyds")
     val expectedLogEntity = BankApplicationStatusLogEntity(null, expectedBankApplicationEntity, "Pending", fakeNow)
     Mockito.`when`(prisonerRepository.findByNomsId(any())).thenReturn(prisonerEntity)
-    Mockito.`when`(bankApplicationRepository.findByPrisonerAndIsDeleted(any(), any())).thenReturn(bankApplicationEntity)
+    Mockito.`when`(bankApplicationRepository.findByPrisonerAndIsDeletedAndCreationDateBetween(any(), any())).thenReturn(bankApplicationEntity)
     Mockito.`when`(bankApplicationStatusLogRepository.findByBankApplication(any())).thenReturn(logEntities)
     bankApplicationService.createBankApplication(bankApplication, prisonerEntity.nomsId, false)
     Mockito.verify(bankApplicationStatusLogRepository).save(expectedLogEntity)

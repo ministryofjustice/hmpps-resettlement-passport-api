@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Bank
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.BankApplicationRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.BankApplicationStatusLogRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Service
@@ -28,10 +29,10 @@ class BankApplicationService(
     ?: throw ResourceNotFoundException("Bank application with id $id not found in database")
 
   @Transactional
-  fun getBankApplicationByNomsId(nomsId: String): BankApplicationResponse? {
+  fun getBankApplicationByNomsId(nomsId: String, fromDate: LocalDate = LocalDate.now().minusYears(50), toDate: LocalDate = LocalDate.now()): BankApplicationResponse? {
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val bankApplication = bankApplicationRepository.findByPrisonerAndIsDeleted(prisoner)
+    val bankApplication = bankApplicationRepository.findByPrisonerAndIsDeletedAndCreationDateBetween(prisoner, fromDate = fromDate.atStartOfDay(), toDate = toDate.atStartOfDay())
       ?: throw ResourceNotFoundException(" no none deleted bank applications for prisoner: ${prisoner.nomsId} found in database")
     bankApplication.logs = emptySet()
     val logs = bankApplicationStatusLogRepository.findByBankApplication(bankApplication)
@@ -62,7 +63,7 @@ class BankApplicationService(
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val statusText = "Pending"
 
-    val bankApplicationExists = bankApplicationRepository.findByPrisonerAndIsDeleted(prisoner)
+    val bankApplicationExists = bankApplicationRepository.findByPrisonerAndIsDeletedAndCreationDateBetween(prisoner)
     if (notUnitTest && bankApplicationExists != null) {
       throw DuplicateDataFoundException("Bank application for prisoner with id $nomsId already exists in database")
     }

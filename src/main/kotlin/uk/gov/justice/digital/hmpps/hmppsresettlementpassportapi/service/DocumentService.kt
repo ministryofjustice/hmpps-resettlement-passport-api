@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.VirusScanResult.NoVirusFound
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.VirusScanResult.VirusFound
+import java.io.InputStream
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -38,7 +39,7 @@ class DocumentService(
   fun processDocument(
     nomsId: String,
     document: MultipartFile,
-    category: String,
+    category: DocumentCategory,
   ): Result<DocumentsEntity, VirusFound> =
     forExistingPrisoner(nomsId) {
       if (!document.originalFilename?.endsWith("docx")!! &&
@@ -50,13 +51,8 @@ class DocumentService(
         throw ValidationException("Unsupported document format, only .doc or pdf allowed")
       }
 
-      if (!isValidDocumentCategory(category)) {
-        throw ValidationException("Invalid Document Category")
-      }
-      val categoryValue = DocumentCategory.valueOf(category)
-
       when (val virusScanResult = virusScanner.scan(document.bytes)) {
-        NoVirusFound -> Success(convertAndStoreDocument(nomsId, document, categoryValue))
+        NoVirusFound -> Success(convertAndStoreDocument(nomsId, document, category))
         is VirusFound -> {
           log.info(VirusFoundEvent(nomsId, virusScanResult.foundViruses).toString())
           Failure(virusScanResult)
@@ -107,95 +103,33 @@ class DocumentService(
     s3Client.putObject(request, RequestBody.fromInputStream(file.inputStream, file.size))
   }
 
-  fun getDocument(documentKey: String): ByteArray {
+  fun getDocument(documentKey: String): InputStream {
     val request = GetObjectRequest.builder()
       .bucket(bucketName)
       .key(documentKey)
       .build()
 
-    return s3Client.getObject(request).readAllBytes()
+    return s3Client.getObject(request)
   }
 
-  fun getDocumentByNomisIdAndDocumentId(nomsId: String, documentId: Long, category: String?): ByteArray {
+  fun getDocumentByNomisIdAndDocumentId(nomsId: String, documentId: Long): InputStream {
     val prisoner = findPrisonerByNomsId(nomsId)
-    val document: DocumentsEntity
-    var documentKey: String? = null
-    if (documentId.toInt() != 0) {
-      try {
-        document = documentsRepository.getReferenceById(documentId)
-        documentKey = document.originalDocumentKey
-      } catch (ex: Exception) {
-        throw ResourceNotFoundException("Document with id $documentId not found")
-      }
+
+    try {
+      val document = documentsRepository.getReferenceById(documentId)
+      val documentKey = document.originalDocumentKey
       if (prisoner.id != document.prisonerId) {
         throw ResourceNotFoundException("Document with id $documentId not found")
       }
-    } else if (documentId.toInt() == 0 && category != null) {
-      if (!isValidDocumentCategory(category)) {
-        throw ValidationException("Invalid Document Category")
-      }
-      val documentsList =
-        prisoner.id?.let {
-          documentsRepository.findAllByPrisonerIdAndCategoryOrderByCreationDateDesc(
-            it,
-            DocumentCategory.valueOf(category),
-          )
-        }
-      if (documentsList != null && documentsList.isEmpty()) {
-        throw ResourceNotFoundException("No Document Exists for category $category")
-      }
-      if (documentsList != null) {
-        document = documentsList.first()
-        documentKey = document.originalDocumentKey
-      }
-    }
-    if (documentKey != null) {
       return getDocument(documentKey)
+    } catch (ex: Exception) {
+      throw ResourceNotFoundException("Document with id $documentId not found")
     }
-    throw ResourceNotFoundException("No Document Found")
   }
 
-  fun getHtmlByNomisIdAndDocumentId(nomsId: String, documentId: Long, category: String?): String {
-    val prisoner = findPrisonerByNomsId(nomsId)
-    val document: DocumentsEntity
-    var key: String? = null
-    if (documentId.toInt() > 0) {
-      if (category != null && !isValidDocumentCategory(category)) {
-        throw ValidationException("Invalid Document Category $category")
-      }
-      try {
-        document = documentsRepository.getReferenceById(documentId)
-        key = document.htmlDocumentKey?.toString() ?: throw ResourceNotFoundException("$documentId does not have html available")
-      } catch (ex: Exception) {
-        throw ResourceNotFoundException("Document with id $documentId not found")
-      }
-      if (prisoner.id != document.prisonerId) {
-        throw ResourceNotFoundException("Document with id $documentId not found")
-      }
-    } else if (documentId.toInt() == 0 && category != null) {
-      if (!isValidDocumentCategory(category)) {
-        throw ValidationException("Invalid Document Category $category")
-      }
-      val documentsList =
-        prisoner.id?.let {
-          documentsRepository.findAllByPrisonerIdAndCategoryOrderByCreationDateDesc(
-            it,
-            DocumentCategory.valueOf(category),
-          )
-        }
-      if (documentsList != null && documentsList.isEmpty()) {
-        throw ResourceNotFoundException("No Document Exists for category $category and prisoner ${prisoner.nomsId}")
-      }
-      if (documentsList != null) {
-        document = documentsList.first()
-        key = document.htmlDocumentKey?.toString() ?: throw ResourceNotFoundException("$documentId does not have html available")
-      }
-    }
-    if (key != null) {
-      val bytes = getDocument(key)
-      return String(bytes, Charsets.UTF_8)
-    }
-    throw ResourceNotFoundException("No Document Found for document id $documentId")
+  fun getLatestDocumentByCategory(nomsId: String, category: DocumentCategory): InputStream {
+    val latest = documentsRepository.findFirstByNomsIdAndCategory(nomsId, category) ?: throw ResourceNotFoundException("No $category documents found for $nomsId")
+    return getDocument(latest.originalDocumentKey)
   }
 
   private inline fun <reified T : Any?> forExistingPrisoner(nomsId: String, fn: () -> T): T {
@@ -205,16 +139,6 @@ class DocumentService(
 
   data class VirusFoundEvent(val nomsId: String, val foundViruses: Map<String, Collection<String>>)
 
-  fun isValidDocumentCategory(category: String): Boolean {
-    try {
-      DocumentCategory.valueOf(category)
-    } catch (ex: IllegalArgumentException) {
-      return false
-    }
-    return true
-  }
-
-  fun getLatestDocumentByNomisId(nomsId: String, category: String?): ByteArray = getDocumentByNomisIdAndDocumentId(nomsId, 0, category)
-
-  fun getLatestHTMLByNomisId(nomsId: String, category: String): String = getHtmlByNomisIdAndDocumentId(nomsId, 0, category)
+  fun listDocuments(nomsId: String, category: DocumentCategory): Collection<DocumentsEntity> =
+    documentsRepository.findAllByNomsIdAndCategory(nomsId, category)
 }

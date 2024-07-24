@@ -2,23 +2,18 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
 import com.google.common.io.Resources
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.web.reactive.function.BodyInserters
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.DocumentsRepository
 
 class DocumentStorageIntegrationTest : IntegrationTestBase() {
-
-  @Autowired
-  private lateinit var documentsRepository: DocumentsRepository
 
   @Test
   fun `401 unauthorised`() {
     val nomsId = "ABC1234"
     webTestClient.post()
-      .uri("/resettlement-passport/documents/$nomsId/upload")
+      .uri("/resettlement-passport/prisoner/$nomsId/documents/upload")
       .exchange()
       .expectStatus().isUnauthorized
   }
@@ -27,7 +22,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
   fun `403 forbidden - no roles`() {
     val nomsId = "ABC1234"
     webTestClient.post()
-      .uri("/resettlement-passport/documents/$nomsId/upload")
+      .uri("/resettlement-passport/prisoner/$nomsId/documents/upload")
       .body(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "LICENCE_CONDITIONS"))
       .headers(setAuthorisation())
       .exchange()
@@ -38,7 +33,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
   fun `when nomsId not found`() {
     val nomsId = "ABC123"
     webTestClient.post()
-      .uri("/resettlement-passport/documents/$nomsId/upload")
+      .uri("/resettlement-passport/prisoner/$nomsId/documents/upload")
       .body(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "LICENCE_CONDITIONS"))
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
@@ -53,43 +48,21 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
   fun `Create uploadDocument and getDocument - happy path`() {
     val nomsId = "ABC1234"
 
-    webTestClient.post()
-      .uri("/resettlement-passport/documents/$nomsId/upload")
-      .body(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "LICENCE_CONDITIONS"))
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
-      .expectStatus().isOk
+    uploadDocument(nomsId)
 
     webTestClient.get()
-      .uri("/resettlement-passport/documents/$nomsId/download/1")
+      .uri("/resettlement-passport/prisoner/$nomsId/documents/1/download")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
-
-    webTestClient.get()
-      .uri("/resettlement-passport/documents/$nomsId/html/1")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
-      .expectStatus().isOk
-
-    webTestClient.get()
-      .uri("/resettlement-passport/documents/$nomsId/download")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
-      .expectStatus().isOk
-
-    webTestClient.get()
-      .uri("/resettlement-passport/documents/$nomsId/html")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
-      .expectStatus().isOk
+      .expectHeader().contentType("application/pdf")
   }
 
   @Test
   fun `Get Document 401 unauthorised`() {
     val nomsId = "ABC1234"
     webTestClient.get()
-      .uri("/resettlement-passport/documents/$nomsId/download/1")
+      .uri("/resettlement-passport/prisoner/$nomsId/documents/1/download")
       .exchange()
       .expectStatus().isUnauthorized
   }
@@ -98,7 +71,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
   fun `Get Document 403 forbidden - no roles`() {
     val nomsId = "ABC1234"
     webTestClient.get()
-      .uri("/resettlement-passport/documents/$nomsId/download/1")
+      .uri("/resettlement-passport/prisoner/$nomsId/documents/1/download")
       .headers(setAuthorisation())
       .exchange()
       .expectStatus().isForbidden
@@ -108,7 +81,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
   fun `Get when nomsId not found`() {
     val nomsId = "ABC123"
     webTestClient.get()
-      .uri("/resettlement-passport/documents/$nomsId/download/1")
+      .uri("/resettlement-passport/prisoner/$nomsId/documents/1/download")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(404)
@@ -121,9 +94,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
     val uploadFile = Resources.getResource(fileName)
     val multipartBodyBuilder = MultipartBodyBuilder()
     val contentsAsResource: ByteArrayResource = object : ByteArrayResource(uploadFile.readBytes()) {
-      override fun getFilename(): String {
-        return "a.doc"
-      }
+      override fun getFilename(): String = fileName.split("/").last()
     }
     multipartBodyBuilder.part("file", contentsAsResource)
     multipartBodyBuilder.part("metadata", 1)
@@ -137,7 +108,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
     val nomsId = "ABC1234"
 
     webTestClient.post()
-      .uri("/resettlement-passport/documents/$nomsId/upload")
+      .uri("/resettlement-passport/prisoner/$nomsId/documents/upload")
       .bodyValue(generateMultiPartFormRequestWeb("testdata/pop-user-api/pop-user-details.json", "LICENCE_CONDITIONS"))
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
@@ -152,7 +123,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
     val nomsId = "ABC1234"
 
     webTestClient.post()
-      .uri("/resettlement-passport/documents/$nomsId/upload")
+      .uri("/resettlement-passport/prisoner/$nomsId/documents/upload")
       .bodyValue(generateMultiPartFormRequestWeb("testdata/PD1_example_oversized.docx", "LICENCE_CONDITIONS"))
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
@@ -165,7 +136,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
     val nomsId = "ABC1234"
 
     webTestClient.post()
-      .uri("/resettlement-passport/documents/$nomsId/upload")
+      .uri("/resettlement-passport/prisoner/$nomsId/documents/upload")
       .bodyValue(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "NOT_EXISTS_CATEGORY"))
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
@@ -176,55 +147,27 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-document-upload.sql")
-  fun `Get Document & HTML when category and documentId given`() {
+  fun `Get Document when category and documentId given`() {
     val nomsId = "ABC1234"
 
-    webTestClient.post()
-      .uri("/resettlement-passport/documents/$nomsId/upload")
-      .body(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "LICENCE_CONDITIONS"))
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
-      .expectStatus().isOk
+    uploadDocument(nomsId)
 
     webTestClient.get()
-      .uri("/resettlement-passport/documents/$nomsId/download/1?category=LICENCE_CONDITIONS")
+      .uri("/resettlement-passport/prisoner/$nomsId/documents/1/download?category=LICENCE_CONDITIONS")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(200)
-      .expectHeader().contentType("application/json")
-      .expectBody()
-
-    webTestClient.get()
-      .uri("/resettlement-passport/documents/$nomsId/html/1?category=LICENCE_CONDITIONS")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
-      .expectStatus().isEqualTo(200)
-      .expectHeader().contentType("text/html;charset=UTF-8")
+      .expectHeader().contentType("application/pdf")
       .expectBody()
   }
 
   @Test
   @Sql("classpath:testdata/sql/seed-document-upload.sql")
-  fun `Get Document & HTML when Invalid category given`() {
+  fun `Get Document when Invalid category given`() {
     val nomsId = "ABC1234"
 
-    webTestClient.post()
-      .uri("/resettlement-passport/documents/$nomsId/upload")
-      .body(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "LICENCE_CONDITIONS"))
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
-      .expectStatus().isOk
-
     webTestClient.get()
-      .uri("/resettlement-passport/documents/$nomsId/download?category=LICENCE_CONDITIONS_INVALID")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
-      .expectStatus().isBadRequest
-      .expectBody()
-      .jsonPath("status").isEqualTo(400)
-
-    webTestClient.get()
-      .uri("/resettlement-passport/documents/$nomsId/html?category=LICENCE_CONDITIONS_INVALID")
+      .uri("/resettlement-passport/prisoner/$nomsId/documents/latest/download?category=LICENCE_CONDITIONS_INVALID")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isBadRequest
@@ -234,30 +177,77 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-document-upload.sql")
-  fun `Get Latest Document & HTML when only category  given`() {
+  fun `Get Latest Document when only category  given`() {
     val nomsId = "ABC1234"
 
+    uploadDocument(nomsId)
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/documents/latest/download?category=LICENCE_CONDITIONS")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isEqualTo(200)
+      .expectHeader().contentType("application/pdf")
+      .expectBody()
+  }
+
+  private fun uploadDocument(nomsId: String, filename: String = "testdata/PD1_example.docx") {
     webTestClient.post()
-      .uri("/resettlement-passport/documents/$nomsId/upload")
-      .body(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "LICENCE_CONDITIONS"))
+      .uri("/resettlement-passport/prisoner/$nomsId/documents/upload")
+      .body(generateMultiPartFormRequestWeb(filename, "LICENCE_CONDITIONS"))
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-document-upload.sql")
+  fun `Get document list`() {
+    val nomsId = "ABC1234"
+    uploadDocument(nomsId, filename = "testdata/PD1_example.docx")
+    uploadDocument(nomsId, filename = "testdata/example-doc.pdf")
 
     webTestClient.get()
-      .uri("/resettlement-passport/documents/$nomsId/download?category=LICENCE_CONDITIONS")
+      .uri("/resettlement-passport/prisoner/$nomsId/documents?category=LICENCE_CONDITIONS")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
-      .expectStatus().isEqualTo(200)
       .expectHeader().contentType("application/json")
       .expectBody()
+      .json(
+        """
+        [
+          {"id": 2, "fileName": "example-doc.pdf"},
+          {"id": 1, "fileName": "PD1_example.docx"},
+        ]     
+        """.trimIndent(),
+      )
+  }
 
+  @Test
+  fun `get document list gives empty list when no documents`() {
     webTestClient.get()
-      .uri("/resettlement-passport/documents/$nomsId/html?category=LICENCE_CONDITIONS")
+      .uri("/resettlement-passport/prisoner/0/documents?category=LICENCE_CONDITIONS")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
-      .expectStatus().isEqualTo(200)
-      .expectHeader().contentType("text/html;charset=UTF-8")
+      .expectHeader().contentType("application/json")
       .expectBody()
+      .json("[]")
+  }
+
+  @Test
+  fun `get document list gives 403 when unauthorized`() {
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/0/documents?category=LICENCE_CONDITIONS")
+      .headers(setAuthorisation(roles = listOf("SOME_ROLE")))
+      .exchange()
+      .expectStatus().isForbidden
+  }
+
+  @Test
+  fun `get document list gives 401 when unauthenticated`() {
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/0/documents?category=LICENCE_CONDITIONS")
+      .exchange()
+      .expectStatus().isUnauthorized
   }
 }

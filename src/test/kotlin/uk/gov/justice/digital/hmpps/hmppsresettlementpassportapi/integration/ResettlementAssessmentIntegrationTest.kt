@@ -290,7 +290,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val sampleAssessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf())
 
     val expectedResettlementAssessments = listOf(
-      ResettlementAssessmentEntity(id = 2, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_DECLINED, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = sampleAssessment, creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = "Some case notes", createdByUserId = "JSMITH_GEN", submissionDate = null, version = 1),
       ResettlementAssessmentEntity(
         id = 1, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_REQUIRED, assessmentType = ResettlementAssessmentType.BCST2,
         assessment = ResettlementAssessmentQuestionAndAnswerList(
@@ -298,8 +297,9 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
         ),
         creationDate = LocalDateTime.parse("2024-01-16T14:42:27.905483"), createdBy = "RESETTLEMENTPASSPORT_ADM", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = "My case note summary...", createdByUserId = "RESETTLEMENTPASSPORT_ADM", submissionDate = null, version = 1,
       ),
+      ResettlementAssessmentEntity(id = 2, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_DECLINED, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = sampleAssessment, creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = "Some case notes", createdByUserId = "JSMITH_GEN", submissionDate = null, version = 1),
     )
-    val actualResettlementAssessments = resettlementAssessmentRepository.findAll()
+    val actualResettlementAssessments = resettlementAssessmentRepository.allOrderedById()
     assertThat(actualResettlementAssessments).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedResettlementAssessments)
   }
 
@@ -465,7 +465,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
 
     // Check correct updates have been made to the database
-    val assessmentsInDatabase = resettlementAssessmentRepository.findAll()
+    val assessmentsInDatabase = resettlementAssessmentRepository.allOrderedById()
     val expectedAssessments = listOf(
       ResettlementAssessmentEntity(id = 1, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_NOT_REQUIRED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf()), creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatus.SUBMITTED, caseNoteText = "Case note related to accommodation", createdByUserId = "USER_1", submissionDate = fakeNow, version = 1),
       ResettlementAssessmentEntity(id = 2, prisonerId = 1, pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, statusChangedTo = Status.SUPPORT_DECLINED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf()), creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatus.SUBMITTED, caseNoteText = "Case note related to Attitudes, thinking and behaviour", createdByUserId = "USER_1", submissionDate = fakeNow, version = 1),
@@ -479,7 +479,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     assertThat(assessmentsInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedAssessments)
 
     // Check pathway statuses have been updated
-    val pathwayStatusesInDatabase = pathwayStatusRepository.findAll()
+    val pathwayStatusesInDatabase = pathwayStatusRepository.allOrderedById()
     val expectedPathwayStatuses = listOf(
       PathwayStatusEntity(id = 1, prisonerId = 1, pathway = Pathway.ACCOMMODATION, status = Status.SUPPORT_NOT_REQUIRED, updatedDate = LocalDateTime.parse("2024-01-31T14:48:42.924738")),
       PathwayStatusEntity(id = 2, prisonerId = 1, pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, status = Status.SUPPORT_DECLINED, updatedDate = LocalDateTime.parse("2024-01-31T14:48:42.966093")),
@@ -527,7 +527,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
 
     // Check correct updates have been made to the database
-    val assessmentsInDatabase = resettlementAssessmentRepository.findAll()
+    val assessmentsInDatabase = resettlementAssessmentRepository.allOrderedById()
     val expectedAssessments = listOf(
       ResettlementAssessmentEntity(id = 1, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_NOT_REQUIRED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf()), creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "John Smith", assessmentStatus = ResettlementAssessmentStatus.SUBMITTED, caseNoteText = "Case note related to accommodation", createdByUserId = "USER_1", submissionDate = fakeNow, version = 1),
       ResettlementAssessmentEntity(id = 2, prisonerId = 1, pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, statusChangedTo = Status.SUPPORT_DECLINED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf()), creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "John Smith", assessmentStatus = ResettlementAssessmentStatus.SUBMITTED, caseNoteText = "Case note related to Attitudes, thinking and behaviour", createdByUserId = "USER_1", submissionDate = fakeNow, version = 1),
@@ -541,7 +541,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     assertThat(assessmentsInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedAssessments)
 
     // Check pathway statuses have been updated
-    val pathwayStatusesInDatabase = pathwayStatusRepository.findAll()
+    val pathwayStatusesInDatabase = pathwayStatusRepository.allOrderedById()
     val expectedPathwayStatuses = listOf(
       PathwayStatusEntity(id = 1, prisonerId = 1, pathway = Pathway.ACCOMMODATION, status = Status.SUPPORT_NOT_REQUIRED, updatedDate = LocalDateTime.parse("2024-01-31T14:48:42.924738")),
       PathwayStatusEntity(id = 2, prisonerId = 1, pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, status = Status.SUPPORT_DECLINED, updatedDate = LocalDateTime.parse("2024-01-31T14:48:42.966093")),
@@ -581,7 +581,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
 
     // Check correct updates have been made to the database
-    val assessmentsInDatabase = resettlementAssessmentRepository.findAll()
+    val assessmentsInDatabase = resettlementAssessmentRepository.allOrderedById()
     val expectedAssessments = listOf(
       ResettlementAssessmentEntity(id = 1, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_NOT_REQUIRED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf()), creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatus.SUBMITTED, caseNoteText = "Case note related to accommodation", createdByUserId = "USER_1", submissionDate = fakeNow, version = 1),
       ResettlementAssessmentEntity(id = 2, prisonerId = 1, pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, statusChangedTo = Status.SUPPORT_DECLINED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf()), creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatus.SUBMITTED, caseNoteText = "Case note related to Attitudes, thinking and behaviour", createdByUserId = "USER_1", submissionDate = fakeNow, version = 1),
@@ -595,7 +595,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     assertThat(assessmentsInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedAssessments)
 
     // Check pathway statuses have been updated
-    val pathwayStatusesInDatabase = pathwayStatusRepository.findAll()
+    val pathwayStatusesInDatabase = pathwayStatusRepository.allOrderedById()
     val expectedPathwayStatuses = listOf(
       PathwayStatusEntity(id = 1, prisonerId = 1, pathway = Pathway.ACCOMMODATION, status = Status.SUPPORT_NOT_REQUIRED, updatedDate = LocalDateTime.parse("2024-01-31T14:48:42.924738")),
       PathwayStatusEntity(id = 2, prisonerId = 1, pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, status = Status.SUPPORT_DECLINED, updatedDate = LocalDateTime.parse("2024-01-31T14:48:42.966093")),
@@ -652,7 +652,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
 
     // Check correct updates have been made to the database
-    val assessmentsInDatabase = resettlementAssessmentRepository.findAll()
+    val assessmentsInDatabase = resettlementAssessmentRepository.allOrderedById()
     val expectedAssessments = listOf(
       ResettlementAssessmentEntity(id = 1, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_NOT_REQUIRED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf()), creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatus.SUBMITTED, caseNoteText = "Case note related to accommodation", createdByUserId = "USER_1", submissionDate = fakeNow, version = 1),
       ResettlementAssessmentEntity(id = 2, prisonerId = 1, pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, statusChangedTo = Status.SUPPORT_DECLINED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf()), creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatus.SUBMITTED, caseNoteText = "Case note related to Attitudes, thinking and behaviour", createdByUserId = "USER_1", submissionDate = fakeNow, version = 1),
@@ -666,7 +666,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     assertThat(assessmentsInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedAssessments)
 
     // Check pathway statuses have been updated
-    val pathwayStatusesInDatabase = pathwayStatusRepository.findAll()
+    val pathwayStatusesInDatabase = pathwayStatusRepository.allOrderedById()
     val expectedPathwayStatuses = listOf(
       PathwayStatusEntity(id = 1, prisonerId = 1, pathway = Pathway.ACCOMMODATION, status = Status.SUPPORT_NOT_REQUIRED, updatedDate = LocalDateTime.parse("2024-01-31T14:48:42.924738")),
       PathwayStatusEntity(id = 2, prisonerId = 1, pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, status = Status.SUPPORT_DECLINED, updatedDate = LocalDateTime.parse("2024-01-31T14:48:42.966093")),
@@ -1034,4 +1034,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .jsonPath("questionsAndAnswers[?(@.question.id == 'CASE_NOTE_SUMMARY')].answer.answer")
       .isEqualTo("Expertly written case note answer")
   }
+
+  private fun ResettlementAssessmentRepository.allOrderedById() = this.findAll().sortedBy { it.id }
+  private fun PathwayStatusRepository.allOrderedById() = this.findAll().sortedBy { it.id }
 }

@@ -250,4 +250,28 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isUnauthorized
   }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-document-upload.sql")
+  fun `404 on download document when document does not exist`() {
+    val nomsId = "ABC1234"
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/documents/1/download")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-document-upload.sql")
+  fun `404 on download document when document does not exist not belong to prisoner`() {
+    val nomsId = "ABC1234"
+    uploadDocument("DEF4567")
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/documents/1/download")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
 }

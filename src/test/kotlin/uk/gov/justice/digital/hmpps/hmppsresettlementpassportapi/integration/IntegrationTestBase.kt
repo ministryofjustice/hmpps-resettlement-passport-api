@@ -38,7 +38,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wir
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
-@Sql(scripts = ["classpath:testdata/sql/clear-all-data.sql"], executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+@Sql(scripts = ["classpath:testdata/sql/clear-all-data.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
 abstract class IntegrationTestBase : TestBase() {
 

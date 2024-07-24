@@ -35,7 +35,7 @@ spring:
   servlet:
     multipart:
       enabled: true
-      max-file-size: 100KB
+      max-file-size: 2MB
       max-request-size: 10MB
 
   flyway:

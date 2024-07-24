@@ -68,7 +68,7 @@ class DocumentServiceTest {
     whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
     whenever(documentsRepository.save(any())).thenReturn(documentsEntity)
     whenever(documentConversionService.convert(eq(file))).thenReturn(htmlDocumentKey)
-    val response = documentService.processDocument("acb", file, "LICENCE_CONDITIONS")
+    val response = documentService.processDocument("acb", file, DocumentCategory.LICENCE_CONDITIONS)
     Assertions.assertEquals(documentsEntity, response.valueOrNull())
   }
 
@@ -95,16 +95,14 @@ class DocumentServiceTest {
     whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
     whenever(documentsRepository.getReferenceById(1)).thenReturn(documentsEntity)
     whenever(s3Client.getObject(request)).thenReturn(res)
-    val response = documentService.getDocumentByNomisIdAndDocumentId("acb", 1, "LICENCE_CONDITIONS")
-    Assertions.assertEquals(file.size.toInt(), response.size)
+    val response = documentService.getDocumentByNomisIdAndDocumentId("acb", 1)
+    Assertions.assertEquals(file.size.toInt(), response.readAllBytes().size)
   }
 
   @Test
   fun `test getLatestDocumentByNomisId - returns document`() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
     val documentsEntity = DocumentsEntity(1, 1, "acb_123455", UUID.randomUUID(), fakeNow, DocumentCategory.LICENCE_CONDITIONS, "Filename.doc")
-    val documentsList = emptyList<DocumentsEntity>().toMutableList()
-    documentsList.add(documentsEntity)
+
     val file = MockMultipartFile(
       "file",
       "hello.doc",
@@ -121,11 +119,10 @@ class DocumentServiceTest {
       .key("acb_123455")
       .build()
 
-    whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
-    whenever(documentsRepository.findAllByPrisonerIdAndCategoryOrderByCreationDateDesc(1, DocumentCategory.LICENCE_CONDITIONS)).thenReturn(documentsList)
+    whenever(documentsRepository.findFirstByNomsIdAndCategory("acb", DocumentCategory.LICENCE_CONDITIONS)).thenReturn(documentsEntity)
     whenever(s3Client.getObject(request)).thenReturn(res)
-    val response = documentService.getLatestDocumentByNomisId("acb", "LICENCE_CONDITIONS")
-    Assertions.assertEquals(file.size.toInt(), response.size)
+    val response = documentService.getLatestDocumentByCategory("acb", DocumentCategory.LICENCE_CONDITIONS)
+    Assertions.assertEquals(file.size.toInt(), response.readAllBytes().size)
   }
 
   @Test
@@ -151,39 +148,8 @@ class DocumentServiceTest {
 
     whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
     whenever(documentsRepository.getReferenceById(1)).thenReturn(documentsEntity)
-    // whenever(documentsRepository.findAllByPrisonerIdAndCategoryOrderByCreationDateDesc(1, DocumentCategory.LICENCE_CONDITIONS)).thenReturn(documentsList)
     whenever(s3Client.getObject(request)).thenReturn(res)
-    val response = documentService.getDocumentByNomisIdAndDocumentId("acb", 1, "LICENCE_CONDITIONS")
-    Assertions.assertEquals(file.size.toInt(), response.size)
-  }
-
-  @Test
-  fun `test getLatestHTMLByNomisId - returns document`() {
-    val uid = UUID.randomUUID()
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
-    val documentsEntity = DocumentsEntity(1, 1, "acb_123455", uid, fakeNow, DocumentCategory.LICENCE_CONDITIONS, "Filename.doc")
-    val documentsList = emptyList<DocumentsEntity>().toMutableList()
-    documentsList.add(documentsEntity)
-    val file = MockMultipartFile(
-      "file",
-      "hello.doc",
-      MediaType.TEXT_PLAIN_VALUE,
-      "Hello, World!".toByteArray(),
-    )
-    val res = ResponseInputStream(
-      GetObjectResponse.builder().build(),
-      AbortableInputStream.create(file.inputStream),
-    )
-
-    val request = GetObjectRequest.builder()
-      .bucket("document-storage")
-      .key(uid.toString())
-      .build()
-
-    whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
-    whenever(documentsRepository.findAllByPrisonerIdAndCategoryOrderByCreationDateDesc(1, DocumentCategory.LICENCE_CONDITIONS)).thenReturn(documentsList)
-    whenever(s3Client.getObject(request)).thenReturn(res)
-    val response = documentService.getLatestHTMLByNomisId("acb", "LICENCE_CONDITIONS")
-    Assertions.assertEquals(file.size.toInt(), response.length)
+    val response = documentService.getDocumentByNomisIdAndDocumentId("acb", 1)
+    Assertions.assertEquals(file.size.toInt(), response.readAllBytes().size)
   }
 }

@@ -9,15 +9,18 @@ import org.springframework.web.reactive.function.client.WebClient
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ClientTimeoutException
+import java.nio.file.Files
 import java.nio.file.Path
 import java.util.UUID
 import kotlin.io.path.deleteExisting
+import kotlin.io.path.name
 import kotlin.io.path.pathString
 
 private val logger = KotlinLogging.logger {}
 
 interface DocumentConversionService {
-  fun convert(multipartFile: MultipartFile): UUID?
+   fun convert(multipartFile: MultipartFile): UUID?
 }
 
 class LibreOfficeDocumentConversionService(
@@ -29,6 +32,7 @@ class LibreOfficeDocumentConversionService(
 ) : DocumentConversionService {
 
   override fun convert(multipartFile: MultipartFile): UUID? {
+    //val gotenbergWebClient = WebClient.builder().baseUrl("http://localhost:9091").build()
     val tempFileId = UUID.randomUUID().toString()
     // val tempFile = tempDocumentDir.resolve(tempFileId)
     // multipartFile.transferTo(tempFile)

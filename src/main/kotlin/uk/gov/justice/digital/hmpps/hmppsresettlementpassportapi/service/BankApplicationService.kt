@@ -67,12 +67,16 @@ class BankApplicationService(
     return BankApplicationResponse(
       id = bankApplication.id!!,
       prisoner = prisoner,
-      logs = if (logs.isNullOrEmpty()) emptyList() else logs.map {
-        BankApplicationLog(
-          it.id!!,
-          it.statusChangedTo,
-          it.changedAtDate,
-        )
+      logs = if (logs.isNullOrEmpty()) {
+        emptyList()
+      } else {
+        logs.map {
+          BankApplicationLog(
+            it.id!!,
+            it.statusChangedTo,
+            it.changedAtDate,
+          )
+        }
       },
       currentStatus = bankApplication.status,
       bankName = bankApplication.bankName,

@@ -60,13 +60,17 @@ class ResettlementAssessmentService(
 
   @Transactional
   fun getResettlementAssessmentSummaryByNomsIdAndCreationDate(
-    nomsId: String, assessmentType: ResettlementAssessmentType,
-    fromDate: LocalDate, toDate: LocalDate,
+    nomsId: String,
+    assessmentType: ResettlementAssessmentType,
+    fromDate: LocalDate,
+    toDate: LocalDate,
   ): List<PrisonerResettlementAssessment> {
     val prisonerEntity = getPrisonerEntityOrThrow(nomsId)
     val resettlementEntityList = resettlementAssessmentRepository.findLatestForEachPathwayAndCreationDateBetween(
       prisonerEntity.id(),
-      assessmentType, fromDate.atStartOfDay(), toDate.atStartOfDay(),
+      assessmentType,
+      fromDate.atStartOfDay(),
+      toDate.atStartOfDay(),
     )
     return getAssessmentSummary(resettlementEntityList)
   }
@@ -323,9 +327,11 @@ class ResettlementAssessmentService(
   }
 
   fun getLatestResettlementAssessmentByNomsIdAndPathwayAndCreationDate(
-    nomsId: String, pathway: Pathway,
+    nomsId: String,
+    pathway: Pathway,
     resettlementAssessmentStrategies: ResettlementAssessmentStrategy,
-    fromDate: LocalDate, toDate: LocalDate,
+    fromDate: LocalDate,
+    toDate: LocalDate,
   ): LatestResettlementAssessmentResponse {
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")

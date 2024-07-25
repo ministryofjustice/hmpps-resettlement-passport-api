@@ -48,8 +48,13 @@ class SubjectAccessRequestService(
     val resettlementAssessments = getResettlementAssessments(prn, startDate, endDate)
 
     val resettlementData = ResettlementSarContent(
-      prisonerEntity, assessmentData, bankApplicationData, deliusContactData,
-      idApplicationData, resettlementAssessmentsPathwayStatus, resettlementAssessments,
+      prisonerEntity,
+      assessmentData,
+      bankApplicationData,
+      deliusContactData,
+      idApplicationData,
+      resettlementAssessmentsPathwayStatus,
+      resettlementAssessments,
     )
     return HmppsSubjectAccessRequestContent(
       content = resettlementData,
@@ -108,7 +113,11 @@ class SubjectAccessRequestService(
     return Pathway.entries.mapNotNull { pathway ->
       runCatching {
         resettlementAssessmentService.getLatestResettlementAssessmentByNomsIdAndPathwayAndCreationDate(
-          prn, pathway, resettlementAssessmentStrategies, fromDate, toDate,
+          prn,
+          pathway,
+          resettlementAssessmentStrategies,
+          fromDate,
+          toDate,
         )
       }.getOrNull()
     }

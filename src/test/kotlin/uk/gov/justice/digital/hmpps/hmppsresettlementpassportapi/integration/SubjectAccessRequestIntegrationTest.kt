@@ -119,29 +119,29 @@ class SubjectAccessRequestIntegrationTest : IntegrationTestBase() {
     "questionsAndAnswers=[{questionTitle=Is the person in prison registered with a GP surgery outside of prison?, answer=Yes, originalPageId=REGISTERED_WITH_GP}, " +
     "{questionTitle=Does the person in prison want to meet with a prison healthcare team?, answer=No, originalPageId=MEET_HEALTHCARE_TEAM}]}}]"
 
-    @Test
-    @Sql("classpath:testdata/sql/seed-sar-data-1.sql")
-    fun `SAR without Dates`() {
-      val nomsId = "G1458GV"
+  @Test
+  @Sql("classpath:testdata/sql/seed-sar-data-1.sql")
+  fun `SAR without Dates`() {
+    val nomsId = "G1458GV"
 
-      val response = webTestClient.get()
-        .uri("/subject-access-request?prn=$nomsId")
-        .headers(setAuthorisation(roles = listOf("ROLE_SAR_DATA_ACCESS")))
-        .exchange()
-        .expectStatus().isOk
-        .expectHeader().contentType("application/json")
-        .expectBody(HmppsSubjectAccessRequestContent::class.java)
-        .returnResult().responseBody
+    val response = webTestClient.get()
+      .uri("/subject-access-request?prn=$nomsId")
+      .headers(setAuthorisation(roles = listOf("ROLE_SAR_DATA_ACCESS")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody(HmppsSubjectAccessRequestContent::class.java)
+      .returnResult().responseBody
 
-      val responseContent = response?.content.toString().replace("\n", "")
-      assertThat(responseContent).contains(expectedPrisoner)
-      assertThat(responseContent).contains(expectedAssessment)
-      assertThat(responseContent).contains(expectedBankApplication)
-      assertThat(responseContent).contains(expectedDeliusContact)
-      assertThat(responseContent).contains(expectedIdApplication)
-      assertThat(responseContent).contains(expectedStatusSummary)
-      assertThat(responseContent).contains(expectedResettlementAssessment)
-    }
+    val responseContent = response?.content.toString().replace("\n", "")
+    assertThat(responseContent).contains(expectedPrisoner)
+    assertThat(responseContent).contains(expectedAssessment)
+    assertThat(responseContent).contains(expectedBankApplication)
+    assertThat(responseContent).contains(expectedDeliusContact)
+    assertThat(responseContent).contains(expectedIdApplication)
+    assertThat(responseContent).contains(expectedStatusSummary)
+    assertThat(responseContent).contains(expectedResettlementAssessment)
+  }
 
   @Test
   @Sql("classpath:testdata/sql/seed-sar-data-1.sql")
@@ -152,20 +152,20 @@ class SubjectAccessRequestIntegrationTest : IntegrationTestBase() {
     val yesterdayExpectedIdApplication = "idApplication=null"
     val yesterdayExpectedStatsuSummary = "statusSummary=[{type=BCST2, " +
       "pathwayStatus=[{pathway=ACCOMMODATION, assessmentStatus=NOT_STARTED}, " +
-        "{pathway=ATTITUDES_THINKING_AND_BEHAVIOUR, assessmentStatus=NOT_STARTED}, " +
-        "{pathway=CHILDREN_FAMILIES_AND_COMMUNITY, assessmentStatus=NOT_STARTED}, " +
-        "{pathway=DRUGS_AND_ALCOHOL, assessmentStatus=NOT_STARTED}, " +
-        "{pathway=EDUCATION_SKILLS_AND_WORK, assessmentStatus=NOT_STARTED}, " +
-        "{pathway=FINANCE_AND_ID, assessmentStatus=NOT_STARTED}, " +
-        "{pathway=HEALTH, assessmentStatus=NOT_STARTED}]}, " +
-        "{type=RESETTLEMENT_PLAN, " +
-        "pathwayStatus=[{pathway=ACCOMMODATION, assessmentStatus=NOT_STARTED}, " +
-        "{pathway=ATTITUDES_THINKING_AND_BEHAVIOUR, assessmentStatus=NOT_STARTED}, " +
-        "{pathway=CHILDREN_FAMILIES_AND_COMMUNITY, assessmentStatus=NOT_STARTED}, " +
-        "{pathway=DRUGS_AND_ALCOHOL, assessmentStatus=NOT_STARTED}, " +
-        "{pathway=EDUCATION_SKILLS_AND_WORK, assessmentStatus=NOT_STARTED}, " +
-        "{pathway=FINANCE_AND_ID, assessmentStatus=NOT_STARTED}, " +
-        "{pathway=HEALTH, assessmentStatus=NOT_STARTED}]}]"
+      "{pathway=ATTITUDES_THINKING_AND_BEHAVIOUR, assessmentStatus=NOT_STARTED}, " +
+      "{pathway=CHILDREN_FAMILIES_AND_COMMUNITY, assessmentStatus=NOT_STARTED}, " +
+      "{pathway=DRUGS_AND_ALCOHOL, assessmentStatus=NOT_STARTED}, " +
+      "{pathway=EDUCATION_SKILLS_AND_WORK, assessmentStatus=NOT_STARTED}, " +
+      "{pathway=FINANCE_AND_ID, assessmentStatus=NOT_STARTED}, " +
+      "{pathway=HEALTH, assessmentStatus=NOT_STARTED}]}, " +
+      "{type=RESETTLEMENT_PLAN, " +
+      "pathwayStatus=[{pathway=ACCOMMODATION, assessmentStatus=NOT_STARTED}, " +
+      "{pathway=ATTITUDES_THINKING_AND_BEHAVIOUR, assessmentStatus=NOT_STARTED}, " +
+      "{pathway=CHILDREN_FAMILIES_AND_COMMUNITY, assessmentStatus=NOT_STARTED}, " +
+      "{pathway=DRUGS_AND_ALCOHOL, assessmentStatus=NOT_STARTED}, " +
+      "{pathway=EDUCATION_SKILLS_AND_WORK, assessmentStatus=NOT_STARTED}, " +
+      "{pathway=FINANCE_AND_ID, assessmentStatus=NOT_STARTED}, " +
+      "{pathway=HEALTH, assessmentStatus=NOT_STARTED}]}]"
     val yesterdayExpectedResettlementAssessment = "resettlementAssessment=[]"
 
     val nomsId = "G1458GV"

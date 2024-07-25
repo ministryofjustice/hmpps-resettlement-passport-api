@@ -40,3 +40,5 @@ deploy_stubs: true
 clamav:
   replicaCount: 1
 
+gotenberg:
+  replicaCount: 1

@@ -35,3 +35,6 @@ generic-prometheus-alerts:
 
 clamav:
   replicaCount: 1
+
+gotenberg:
+  alertSeverity: hmpps-resettlement-passport-non-prod

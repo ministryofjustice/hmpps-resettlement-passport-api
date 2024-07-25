@@ -6,6 +6,7 @@ import io.mockk.mockk
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.mock.web.MockMultipartFile
+import org.springframework.web.reactive.function.client.WebClient
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import software.amazon.awssdk.services.s3.model.PutObjectResponse
@@ -20,10 +21,12 @@ class LibreOfficeDocumentConversionServiceTest {
     val tempDir = Files.createTempDirectory("temp").toFile()
     tempDir.deleteOnExit()
     val s3Client = mockk<S3Client>()
+    val webClient = mockk<WebClient>()
     val documentConversionService = LibreOfficeDocumentConversionService(
       tempDir.toPath(),
       s3Client,
       "bucket",
+      webClient
     )
 
     val fileData = Resources.getResource("testdata/PD1_example_oversized.docx").openStream()

@@ -107,6 +107,45 @@ clamav:
       memory: 2G
   replicaCount: 2
 
+gotenberg:
+  nameOverride: gotenberg
+  replicaCount: 2
+
+  image:
+    repository: gotenberg/gotenberg
+    tag: 7.7.0
+    port: 3000
+
+  containerCommand: [ "gotenberg" ]
+  containerArgs: [ "--chromium-ignore-certificate-errors","--api-timeout=30s","--pdfengines-engines=pdftk","--uno-listener-restart-threshold=0" ]
+
+  ingress:
+    enabled: false
+
+  livenessProbe:
+    httpGet:
+      path: /health
+    periodSeconds: 30
+    initialDelaySeconds: 60
+    timeoutSeconds: 20
+    failureThreshold: 10
+
+  readinessProbe:
+    httpGet:
+      path: /health
+    periodSeconds: 20
+    initialDelaySeconds: 60
+    timeoutSeconds: 30
+    failureThreshold: 15
+
+  podSecurityContext:
+    fsGroup: 1001
+
+  securityContext:
+    runAsUser: 1001
+    privileged: false
+    runAsNonRoot: true
+
 # Whether to deploy the stubs
 # Override in values-dev.yaml
 # Also update the environment variables to point the application to the mocked services (on port 80) e.g. http://cvl-stub-api

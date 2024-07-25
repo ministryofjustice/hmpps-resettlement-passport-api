@@ -33,7 +33,7 @@ class SubjectAccessRequestService(
     fromDate: LocalDate?,
     toDate: LocalDate?,
   ): HmppsSubjectAccessRequestContent {
-    //Didn't seem to like the Max and Min values so picked 50 years ago and now
+    // Didn't seem to like the Max and Min values so picked 50 years ago and now
     val startDate = fromDate ?: LocalDate.now().minusYears(50)
     val endDate = toDate ?: LocalDate.now()
 

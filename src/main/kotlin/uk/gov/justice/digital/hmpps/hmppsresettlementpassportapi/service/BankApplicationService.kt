@@ -156,7 +156,8 @@ class BankApplicationService(
         null,
         logs[0].bankApplication,
         statusChangedTo = bankApplication.status,
-        changedAtDate = bankApplication.bankResponseDate ?: throw ValidationException("changedAtDate cant be null when changing status"),
+        changedAtDate = bankApplication.bankResponseDate
+          ?: throw ValidationException("changedAtDate cant be null when changing status"),
       )
       logs.plus(newStatus)
       bankApplicationStatusLogRepository.save(newStatus)

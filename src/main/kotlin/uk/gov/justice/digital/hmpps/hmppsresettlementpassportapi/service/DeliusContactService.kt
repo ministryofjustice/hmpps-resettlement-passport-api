@@ -50,10 +50,20 @@ class DeliusContactService(private val deliusContactRepository: DeliusContactRep
     return mapDeliusContactsToPathwayCaseNotes(deliusContacts)
   }
 
-  fun getAllCaseNotesByNomsIdAndCreationDate(nomsId: String, fromDate: LocalDate, toDate: LocalDate): List<PathwayCaseNote> {
-    val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+  fun getAllCaseNotesByNomsIdAndCreationDate(
+    nomsId: String,
+    fromDate: LocalDate,
+    toDate: LocalDate,
+  ): List<PathwayCaseNote> {
+    val prisoner = prisonerRepository.findByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val contactType = ContactType.CASE_NOTE
-    val deliusContacts =  deliusContactRepository.findByPrisonerIdAndContactTypeAndCreatedDateBetween(prisoner.id(), contactType, fromDate.atStartOfDay(), toDate.atStartOfDay())
+    val deliusContacts = deliusContactRepository.findByPrisonerIdAndContactTypeAndCreatedDateBetween(
+      prisoner.id(),
+      contactType,
+      fromDate.atStartOfDay(),
+      toDate.atStartOfDay(),
+    )
     return mapDeliusContactsToPathwayCaseNotes(deliusContacts)
   }
 

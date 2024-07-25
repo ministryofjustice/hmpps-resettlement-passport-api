@@ -35,8 +35,10 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
     nativeQuery = true,
   )
   fun findLatestForEachPathwayAndCreationDateBetween(
-    prisonerId: Long, assessmentType: ResettlementAssessmentType,
-    fromDate: LocalDateTime, toDate: LocalDateTime,
+    prisonerId: Long,
+    assessmentType: ResettlementAssessmentType,
+    fromDate: LocalDateTime,
+    toDate: LocalDateTime,
   ): List<ResettlementAssessmentEntity>
 
   @Query(

@@ -18,7 +18,7 @@ import uk.gov.justice.hmpps.kotlin.sar.HmppsSubjectAccessRequestContent
 import java.time.LocalDate
 
 @Service
-class SubjectAccessRequestService (
+class SubjectAccessRequestService(
   private val prisonerRepository: PrisonerRepository,
   private val assessmentService: AssessmentService,
   private val bankApplicationService: BankApplicationService,
@@ -26,12 +26,12 @@ class SubjectAccessRequestService (
   private val idApplicationService: IdApplicationService,
   private val resettlementAssessmentService: ResettlementAssessmentService,
   private val resettlementAssessmentStrategies: ResettlementAssessmentStrategy,
-): HmppsPrisonSubjectAccessRequestService {
+) : HmppsPrisonSubjectAccessRequestService {
 
   override fun getPrisonContentFor(
     prn: String,
     fromDate: LocalDate?,
-    toDate: LocalDate?
+    toDate: LocalDate?,
   ): HmppsSubjectAccessRequestContent {
     //Didn't seem to like the Max and Min values so picked 50 years ago and now
     val startDate = fromDate ?: LocalDate.now().minusYears(50)
@@ -47,8 +47,10 @@ class SubjectAccessRequestService (
     val resettlementAssessmentsPathwayStatus = getPathwayStatus(prn, startDate, endDate)
     val resettlementAssessments = getResettlementAssessments(prn, startDate, endDate)
 
-    val resettlementData = ResettlementSarContent(prisonerEntity, assessmentData, bankApplicationData, deliusContactData,
-      idApplicationData, resettlementAssessmentsPathwayStatus, resettlementAssessments)
+    val resettlementData = ResettlementSarContent(
+      prisonerEntity, assessmentData, bankApplicationData, deliusContactData,
+      idApplicationData, resettlementAssessmentsPathwayStatus, resettlementAssessments,
+    )
     return HmppsSubjectAccessRequestContent(
       content = resettlementData,
     )
@@ -56,7 +58,7 @@ class SubjectAccessRequestService (
 
   private fun getAssessment(prn: String, fromDate: LocalDate, toDate: LocalDate): AssessmentEntity? {
     return runCatching {
-        assessmentService.getAssessmentByNomsIdAndCreationDate(prn, fromDate, toDate)
+      assessmentService.getAssessmentByNomsIdAndCreationDate(prn, fromDate, toDate)
     }.getOrNull()
   }
 
@@ -78,21 +80,38 @@ class SubjectAccessRequestService (
     }.getOrNull()
   }
 
-  private fun getPathwayStatus(prn: String, fromDate: LocalDate, toDate: LocalDate): List<ResettlementAssessmentPathwayStatus> {
+  private fun getPathwayStatus(
+    prn: String,
+    fromDate: LocalDate,
+    toDate: LocalDate,
+  ): List<ResettlementAssessmentPathwayStatus> {
     return ResettlementAssessmentType.entries.mapNotNull { type ->
       runCatching {
-        ResettlementAssessmentPathwayStatus(type, resettlementAssessmentService.getResettlementAssessmentSummaryByNomsIdAndCreationDate(prn, type, fromDate, toDate))
+        ResettlementAssessmentPathwayStatus(
+          type,
+          resettlementAssessmentService.getResettlementAssessmentSummaryByNomsIdAndCreationDate(
+            prn,
+            type,
+            fromDate,
+            toDate,
+          ),
+        )
       }.getOrNull()
     }
   }
 
-  private fun getResettlementAssessments(prn: String, fromDate: LocalDate, toDate: LocalDate): List<LatestResettlementAssessmentResponse> {
-   return Pathway.entries.mapNotNull { pathway ->
-     runCatching {
-       resettlementAssessmentService.getLatestResettlementAssessmentByNomsIdAndPathwayAndCreationDate(
-         prn, pathway, resettlementAssessmentStrategies, fromDate, toDate)
-     }.getOrNull()
-   }
+  private fun getResettlementAssessments(
+    prn: String,
+    fromDate: LocalDate,
+    toDate: LocalDate,
+  ): List<LatestResettlementAssessmentResponse> {
+    return Pathway.entries.mapNotNull { pathway ->
+      runCatching {
+        resettlementAssessmentService.getLatestResettlementAssessmentByNomsIdAndPathwayAndCreationDate(
+          prn, pathway, resettlementAssessmentStrategies, fromDate, toDate,
+        )
+      }.getOrNull()
+    }
   }
 }
 
@@ -102,9 +121,9 @@ data class ResettlementSarContent(
   val bankApplication: BankApplicationResponse?,
   val deliusContact: List<PathwayCaseNote>?,
   val idApplication: IdApplicationEntity?,
-  val statusSummary:  List<ResettlementAssessmentPathwayStatus>?,
+  val statusSummary: List<ResettlementAssessmentPathwayStatus>?,
   val resettlementAssessment: List<LatestResettlementAssessmentResponse>?,
-  )
+)
 
 data class ResettlementAssessmentPathwayStatus(
   val type: ResettlementAssessmentType,

@@ -42,21 +42,38 @@ class BankApplicationService(
   }
 
   @Transactional
-  fun getBankApplicationByNomsIdAndCreationDate(nomsId: String, fromDate: LocalDate, toDate: LocalDate): BankApplicationResponse? {
+  fun getBankApplicationByNomsIdAndCreationDate(
+    nomsId: String,
+    fromDate: LocalDate,
+    toDate: LocalDate,
+  ): BankApplicationResponse? {
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val bankApplication = bankApplicationRepository.findByPrisonerIdAndIsDeletedAndCreationDateBetween(prisoner.id(), fromDate = fromDate.atStartOfDay(), toDate = toDate.atStartOfDay())
+    val bankApplication = bankApplicationRepository.findByPrisonerIdAndIsDeletedAndCreationDateBetween(
+      prisoner.id(),
+      fromDate = fromDate.atStartOfDay(),
+      toDate = toDate.atStartOfDay(),
+    )
       ?: throw ResourceNotFoundException(" no none deleted bank applications for prisoner: ${prisoner.nomsId} found in database")
     return getBankApplicationResponse(bankApplication, prisoner)
   }
 
-  private fun getBankApplicationResponse(bankApplication: BankApplicationEntity, prisoner: PrisonerEntity): BankApplicationResponse {
+  private fun getBankApplicationResponse(
+    bankApplication: BankApplicationEntity,
+    prisoner: PrisonerEntity,
+  ): BankApplicationResponse {
     bankApplication.logs = emptySet()
     val logs = bankApplicationStatusLogRepository.findByBankApplication(bankApplication)
     return BankApplicationResponse(
       id = bankApplication.id!!,
       prisoner = prisoner,
-      logs = if (logs.isNullOrEmpty()) emptyList() else logs.map { BankApplicationLog(it.id!!, it.statusChangedTo, it.changedAtDate) },
+      logs = if (logs.isNullOrEmpty()) emptyList() else logs.map {
+        BankApplicationLog(
+          it.id!!,
+          it.statusChangedTo,
+          it.changedAtDate,
+        )
+      },
       currentStatus = bankApplication.status,
       bankName = bankApplication.bankName,
       applicationSubmittedDate = bankApplication.applicationSubmittedDate,

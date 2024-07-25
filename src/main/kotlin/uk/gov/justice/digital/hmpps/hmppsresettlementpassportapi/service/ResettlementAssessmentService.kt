@@ -48,11 +48,15 @@ class ResettlementAssessmentService(
   }
 
   @Transactional
-  fun getResettlementAssessmentSummaryByNomsIdAndCreationDate(nomsId: String, assessmentType: ResettlementAssessmentType,
-                                               fromDate: LocalDate, toDate: LocalDate): List<PrisonerResettlementAssessment> {
+  fun getResettlementAssessmentSummaryByNomsIdAndCreationDate(
+    nomsId: String, assessmentType: ResettlementAssessmentType,
+    fromDate: LocalDate, toDate: LocalDate,
+  ): List<PrisonerResettlementAssessment> {
     val prisonerEntity = getPrisonerEntityOrThrow(nomsId)
-    val resettlementEntityList = resettlementAssessmentRepository.findLatestForEachPathwayAndCreationDateBetween(prisonerEntity.id(),
-      assessmentType, fromDate.atStartOfDay(), toDate.atStartOfDay())
+    val resettlementEntityList = resettlementAssessmentRepository.findLatestForEachPathwayAndCreationDateBetween(
+      prisonerEntity.id(),
+      assessmentType, fromDate.atStartOfDay(), toDate.atStartOfDay(),
+    )
     return getAssessmentSummary(resettlementEntityList)
   }
 
@@ -307,22 +311,34 @@ class ResettlementAssessmentService(
     }
   }
 
-  fun getLatestResettlementAssessmentByNomsIdAndPathwayAndCreationDate(nomsId: String, pathway: Pathway,
-                                                                       resettlementAssessmentStrategies: ResettlementAssessmentStrategy,
-                                                                       fromDate: LocalDate, toDate: LocalDate): LatestResettlementAssessmentResponse {
+  fun getLatestResettlementAssessmentByNomsIdAndPathwayAndCreationDate(
+    nomsId: String, pathway: Pathway,
+    resettlementAssessmentStrategies: ResettlementAssessmentStrategy,
+    fromDate: LocalDate, toDate: LocalDate,
+  ): LatestResettlementAssessmentResponse {
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
 
     val latestResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
       resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndCreationDateBetweenOrderByCreationDateDesc(
-        prisonerEntity.id(), pathway, ResettlementAssessmentStatus.SUBMITTED, fromDate.atStartOfDay(), toDate.atStartOfDay())
+        prisonerEntity.id(),
+        pathway,
+        ResettlementAssessmentStatus.SUBMITTED,
+        fromDate.atStartOfDay(),
+        toDate.atStartOfDay(),
+      )
         ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"),
       resettlementAssessmentStrategies,
     )
 
     val originalResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
       resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndCreationDateBetweenOrderByCreationDateAsc(
-        prisonerEntity.id(), pathway, ResettlementAssessmentStatus.SUBMITTED, fromDate.atStartOfDay(), toDate.atStartOfDay())
+        prisonerEntity.id(),
+        pathway,
+        ResettlementAssessmentStatus.SUBMITTED,
+        fromDate.atStartOfDay(),
+        toDate.atStartOfDay(),
+      )
         ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"),
       resettlementAssessmentStrategies,
     )

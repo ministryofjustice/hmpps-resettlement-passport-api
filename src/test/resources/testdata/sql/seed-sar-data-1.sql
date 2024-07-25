@@ -104,8 +104,8 @@ VALUES (25, 1, 'BCST2', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', '2024-05-22 12:40:13.933994 +00:00', 'Matthew Kerry', 'sadas', 'MKERRY_GEN', 'ACCOMMODATION', 'SUBMITTED',
-        'SUPPORT_DECLINED', '2024-05-22 15:47:30.577230 +00:00');
+}', '2024-05-22 12:40:13.933994', 'Matthew Kerry', 'sadas', 'MKERRY_GEN', 'ACCOMMODATION', 'SUBMITTED',
+        'SUPPORT_DECLINED', '2024-05-22 15:47:30.577230');
 INSERT INTO resettlement_assessment (id, prisoner_id, assessment_type, assessment, created_date, created_by,
                                      case_note_text, created_by_user_id, pathway, assessment_status,
                                      status_changed_to, submission_date)
@@ -140,8 +140,8 @@ VALUES (26, 1, 'BCST2', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', '2024-05-22 15:45:51.383575 +00:00', 'Matthew Kerry', 'asdsada', 'MKERRY_GEN', 'ATTITUDES_THINKING_AND_BEHAVIOUR',
-        'SUBMITTED', 'SUPPORT_NOT_REQUIRED', '2024-05-22 15:47:30.733600 +00:00');
+}', '2024-05-22 15:45:51.383575', 'Matthew Kerry', 'asdsada', 'MKERRY_GEN', 'ATTITUDES_THINKING_AND_BEHAVIOUR',
+        'SUBMITTED', 'SUPPORT_NOT_REQUIRED', '2024-05-22 15:47:30.733600');
 INSERT INTO resettlement_assessment (id, prisoner_id, assessment_type, assessment, created_date, created_by,
                                      case_note_text, created_by_user_id, pathway, assessment_status,
                                      status_changed_to, submission_date)
@@ -218,8 +218,8 @@ VALUES (27, 1, 'BCST2', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', '2024-05-22 15:46:17.002205 +00:00', 'Matthew Kerry', ' feffd', 'MKERRY_GEN', 'CHILDREN_FAMILIES_AND_COMMUNITY',
-        'SUBMITTED', 'SUPPORT_DECLINED', '2024-05-22 15:47:30.874739 +00:00');
+}', '2024-05-22 15:46:17.002205', 'Matthew Kerry', ' feffd', 'MKERRY_GEN', 'CHILDREN_FAMILIES_AND_COMMUNITY',
+        'SUBMITTED', 'SUPPORT_DECLINED', '2024-05-22 15:47:30.874739');
 INSERT INTO resettlement_assessment (id, prisoner_id, assessment_type, assessment, created_date, created_by,
                                      case_note_text, created_by_user_id, pathway, assessment_status,
                                      status_changed_to, submission_date)
@@ -254,8 +254,8 @@ VALUES (28, 1, 'BCST2', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', '2024-05-22 15:46:31.837468 +00:00', 'Matthew Kerry', 'sdsd', 'MKERRY_GEN', 'DRUGS_AND_ALCOHOL', 'SUBMITTED',
-        'SUPPORT_DECLINED', '2024-05-22 15:47:31.027064 +00:00');
+}', '2024-05-22 15:46:31.837468', 'Matthew Kerry', 'sdsd', 'MKERRY_GEN', 'DRUGS_AND_ALCOHOL', 'SUBMITTED',
+        'SUPPORT_DECLINED', '2024-05-22 15:47:31.027064');
 INSERT INTO resettlement_assessment (id, prisoner_id, assessment_type, assessment, created_date, created_by,
                                      case_note_text, created_by_user_id, pathway, assessment_status,
                                      status_changed_to, submission_date)
@@ -311,8 +311,8 @@ VALUES (29, 1, 'BCST2', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', '2024-05-22 15:46:50.480459 +00:00', 'Matthew Kerry', 'sdsds', 'MKERRY_GEN', 'EDUCATION_SKILLS_AND_WORK',
-        'SUBMITTED', 'SUPPORT_DECLINED', '2024-05-22 15:47:31.186027 +00:00');
+}', '2024-05-22 15:46:50.480459', 'Matthew Kerry', 'sdsds', 'MKERRY_GEN', 'EDUCATION_SKILLS_AND_WORK',
+        'SUBMITTED', 'SUPPORT_DECLINED', '2024-05-22 15:47:31.186027');
 INSERT INTO resettlement_assessment (id, prisoner_id, assessment_type, assessment, created_date, created_by,
                                      case_note_text, created_by_user_id, pathway, assessment_status,
                                      status_changed_to, submission_date)
@@ -378,8 +378,8 @@ VALUES (30, 1, 'BCST2', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', '2024-05-22 15:47:14.182755 +00:00', 'Matthew Kerry', 'sdsd', 'MKERRY_GEN', 'FINANCE_AND_ID', 'SUBMITTED',
-        'SUPPORT_DECLINED', '2024-05-22 15:47:31.330052 +00:00');
+}', '2024-05-22 15:47:14.182755', 'Matthew Kerry', 'sdsd', 'MKERRY_GEN', 'FINANCE_AND_ID', 'SUBMITTED',
+        'SUPPORT_DECLINED', '2024-05-22 15:47:31.330052');
 INSERT INTO resettlement_assessment (id, prisoner_id, assessment_type, assessment, created_date, created_by,
                                      case_note_text, created_by_user_id, pathway, assessment_status,
                                      status_changed_to, submission_date)
@@ -414,8 +414,8 @@ VALUES (31, 1, 'BCST2', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', '2024-05-22 15:47:28.145149 +00:00', 'Matthew Kerry', 'dfdfd', 'MKERRY_GEN', 'HEALTH', 'SUBMITTED',
-        'SUPPORT_DECLINED', '2024-05-22 15:47:31.469644 +00:00');
+}', '2024-05-22 15:47:28.145149', 'Matthew Kerry', 'dfdfd', 'MKERRY_GEN', 'HEALTH', 'SUBMITTED',
+        'SUPPORT_DECLINED', '2024-05-22 15:47:31.469644');
 INSERT INTO resettlement_assessment (id, prisoner_id, assessment_type, assessment, created_date, created_by,
                                      case_note_text, created_by_user_id, pathway, assessment_status,
                                      status_changed_to, submission_date)
@@ -443,8 +443,8 @@ VALUES (39, 1, 'BCST2', '{
       "questionId": "ALCOHOL_ISSUES"
     }
   ]
-}', '2024-05-22 15:54:35.535989 +00:00', 'Matthew Kerry', null, 'MKERRY_GEN', 'DRUGS_AND_ALCOHOL', 'SUBMITTED', null,
-        '2024-05-22 15:54:35.535994 +00:00');
+}', '2024-05-22 15:54:35.535989', 'Matthew Kerry', null, 'MKERRY_GEN', 'DRUGS_AND_ALCOHOL', 'SUBMITTED', null,
+        '2024-05-22 15:54:35.535994');
 INSERT INTO resettlement_assessment (id, prisoner_id, assessment_type, assessment, created_date, created_by,
                                      case_note_text, created_by_user_id, pathway, assessment_status,
                                      status_changed_to, submission_date)
@@ -509,8 +509,8 @@ VALUES (40, 1, 'RESETTLEMENT_PLAN', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', '2024-05-22 16:02:41.310279 +00:00', 'Matthew Kerry', 'hello', 'MKERRY_GEN', 'ACCOMMODATION', 'SUBMITTED',
-        'SUPPORT_DECLINED', '2024-05-22 16:06:53.443806 +00:00');
+}', '2024-05-22 16:02:41.310279', 'Matthew Kerry', 'hello', 'MKERRY_GEN', 'ACCOMMODATION', 'SUBMITTED',
+        'SUPPORT_DECLINED', '2024-05-22 16:06:53.443806');
 INSERT INTO resettlement_assessment (id, prisoner_id, assessment_type, assessment, created_date, created_by,
                                      case_note_text, created_by_user_id, pathway, assessment_status,
                                      status_changed_to, submission_date)
@@ -545,8 +545,8 @@ VALUES (41, 1, 'RESETTLEMENT_PLAN', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', '2024-05-22 16:05:17.294788 +00:00', 'Matthew Kerry', 'hello', 'MKERRY_GEN', 'ATTITUDES_THINKING_AND_BEHAVIOUR',
-        'SUBMITTED', 'SUPPORT_NOT_REQUIRED', '2024-05-22 16:06:53.590886 +00:00');
+}', '2024-05-22 16:05:17.294788', 'Matthew Kerry', 'hello', 'MKERRY_GEN', 'ATTITUDES_THINKING_AND_BEHAVIOUR',
+        'SUBMITTED', 'SUPPORT_NOT_REQUIRED', '2024-05-22 16:06:53.590886');
 INSERT INTO resettlement_assessment (id, prisoner_id, assessment_type, assessment, created_date, created_by,
                                      case_note_text, created_by_user_id, pathway, assessment_status,
                                      status_changed_to, submission_date)
@@ -623,8 +623,8 @@ VALUES (42, 1, 'RESETTLEMENT_PLAN', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', '2024-05-22 16:05:40.499062 +00:00', 'Matthew Kerry', 'hello', 'MKERRY_GEN', 'CHILDREN_FAMILIES_AND_COMMUNITY',
-        'SUBMITTED', 'SUPPORT_DECLINED', '2024-05-22 16:06:53.730328 +00:00');
+}', '2024-05-22 16:05:40.499062', 'Matthew Kerry', 'hello', 'MKERRY_GEN', 'CHILDREN_FAMILIES_AND_COMMUNITY',
+        'SUBMITTED', 'SUPPORT_DECLINED', '2024-05-22 16:06:53.730328');
 INSERT INTO resettlement_assessment (id, prisoner_id, assessment_type, assessment, created_date, created_by,
                                      case_note_text, created_by_user_id, pathway, assessment_status,
                                      status_changed_to, submission_date)
@@ -666,8 +666,8 @@ VALUES (43, 1, 'RESETTLEMENT_PLAN', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', '2024-05-22 16:05:57.329810 +00:00', 'Matthew Kerry', 'hello', 'MKERRY_GEN', 'DRUGS_AND_ALCOHOL', 'SUBMITTED',
-        'SUPPORT_DECLINED', '2024-05-22 16:06:53.873318 +00:00');
+}', '2024-05-22 16:05:57.329810', 'Matthew Kerry', 'hello', 'MKERRY_GEN', 'DRUGS_AND_ALCOHOL', 'SUBMITTED',
+        'SUPPORT_DECLINED', '2024-05-22 16:06:53.873318');
 INSERT INTO resettlement_assessment (id, prisoner_id, assessment_type, assessment, created_date, created_by,
                                      case_note_text, created_by_user_id, pathway, assessment_status,
                                      status_changed_to, submission_date)
@@ -723,8 +723,8 @@ VALUES (44, 1, 'RESETTLEMENT_PLAN', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', '2024-05-22 16:06:14.287830 +00:00', 'Matthew Kerry', 'hello', 'MKERRY_GEN', 'EDUCATION_SKILLS_AND_WORK',
-        'SUBMITTED', 'SUPPORT_DECLINED', '2024-05-22 16:06:54.025609 +00:00');
+}', '2024-05-22 16:06:14.287830', 'Matthew Kerry', 'hello', 'MKERRY_GEN', 'EDUCATION_SKILLS_AND_WORK',
+        'SUBMITTED', 'SUPPORT_DECLINED', '2024-05-22 16:06:54.025609');
 INSERT INTO resettlement_assessment (id, prisoner_id, assessment_type, assessment, created_date, created_by,
                                      case_note_text, created_by_user_id, pathway, assessment_status,
                                      status_changed_to, submission_date)
@@ -790,8 +790,8 @@ VALUES (45, 1, 'RESETTLEMENT_PLAN', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', '2024-05-22 16:06:32.454374 +00:00', 'Matthew Kerry', 'hello', 'MKERRY_GEN', 'FINANCE_AND_ID', 'SUBMITTED',
-        'SUPPORT_DECLINED', '2024-05-22 16:06:54.175592 +00:00');
+}', '2024-05-22 16:06:32.454374', 'Matthew Kerry', 'hello', 'MKERRY_GEN', 'FINANCE_AND_ID', 'SUBMITTED',
+        'SUPPORT_DECLINED', '2024-05-22 16:06:54.175592');
 INSERT INTO resettlement_assessment (id, prisoner_id, assessment_type, assessment, created_date, created_by,
                                      case_note_text, created_by_user_id, pathway, assessment_status,
                                      status_changed_to, submission_date)
@@ -826,5 +826,5 @@ VALUES (46, 1, 'RESETTLEMENT_PLAN', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', '2024-05-22 16:06:48.238178 +00:00', 'Matthew Kerry', 'hello', 'MKERRY_GEN', 'HEALTH', 'SUBMITTED',
-        'SUPPORT_DECLINED', '2024-05-22 16:06:54.339643 +00:00');
+}', '2024-05-22 16:06:48.238178', 'Matthew Kerry', 'hello', 'MKERRY_GEN', 'HEALTH', 'SUBMITTED',
+        'SUPPORT_DECLINED', '2024-05-22 16:06:54.339643');

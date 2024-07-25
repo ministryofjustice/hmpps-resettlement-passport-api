@@ -111,11 +111,6 @@ class WebClientConfiguration(
     return getWebClientCredentials(authorizedClientManager, interventionsRootUri)
   }
 
-  @Bean
-  fun gotenbergWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClient(gotenbergRootUri)
-  }
-
   private fun getWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager, baseUrl: String): WebClient {
     val oauth2Client = ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
     oauth2Client.setDefaultClientRegistrationId(SYSTEM_USERNAME)
@@ -151,8 +146,11 @@ class WebClientConfiguration(
     return getWebClientCredentials(authorizedClientManager, popUserRootUri)
   }
 
+  @Bean
+  fun gotenbergWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
+    return getWebClient(gotenbergRootUri)
+  }
   private fun getWebClient(baseUrl: String): WebClient {
-
     val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
     return WebClient.builder()
       .baseUrl(baseUrl)

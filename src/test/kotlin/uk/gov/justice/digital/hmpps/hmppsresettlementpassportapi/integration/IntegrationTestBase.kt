@@ -22,8 +22,19 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.HmppsS3Properties
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBase
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.*
-
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.AllocationManagerApiMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ArnApiMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CaseNotesApiMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CvlApiMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.EducationEmploymentApiMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.HmppsAuthMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.InterventionsServiceApiMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.KeyWorkerApiMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PoPUserApiMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonApiMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonRegisterApiMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonerSearchApiMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ResettlementPassportDeliusApiMockServer
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 @Sql(scripts = ["classpath:testdata/sql/clear-all-data.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -91,9 +102,6 @@ abstract class IntegrationTestBase : TestBase() {
     @JvmField
     val popUserApiMockServer = PoPUserApiMockServer()
 
-    @JvmField
-    var gotenbergMock = GotenbergApiMockServer()
-
     @BeforeAll
     @JvmStatic
     fun startMocks() {
@@ -111,7 +119,6 @@ abstract class IntegrationTestBase : TestBase() {
       educationEmploymentApiMockServer.start()
       interventionsServiceApiMockServer.start()
       popUserApiMockServer.start()
-      gotenbergMock.start()
     }
 
     @AfterAll
@@ -129,7 +136,6 @@ abstract class IntegrationTestBase : TestBase() {
       deliusApiMockServer.stop()
       educationEmploymentApiMockServer.stop()
       interventionsServiceApiMockServer.stop()
-      gotenbergMock.stop()
     }
   }
 

@@ -8,7 +8,6 @@ import org.springframework.web.reactive.function.client.WebClient
 import software.amazon.awssdk.services.s3.S3Client
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.DocumentConversionService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.LibreOfficeDocumentConversionService
-//import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.StubDocumentConversionService
 import java.nio.file.Paths
 import kotlin.io.path.createTempDirectory
 private val logger = KotlinLogging.logger {}
@@ -23,16 +22,16 @@ class DocumentConversionConfig {
     s3Client: S3Client,
     gotenbergWebClient: WebClient,
   ): DocumentConversionService {
-   /* if (useStub) {
+    if (useStub) {
       logger.warn { "Using stub document conversion service" }
-      return StubDocumentConversionService(s3Client, bucketName)
-    }*/
+      return LibreOfficeDocumentConversionService.StubDocumentConversionService(s3Client, bucketName)
+    }
 
     val tempDirFile = if (tempDirPath == "-") {
       createTempDirectory("doc-converter")
     } else {
       Paths.get(tempDirPath)
     }
-    return LibreOfficeDocumentConversionService(tempDocumentDir = tempDirFile, s3Client = s3Client, bucketName = bucketName, gotenbergWebClient=gotenbergWebClient)
+    return LibreOfficeDocumentConversionService(tempDocumentDir = tempDirFile, s3Client = s3Client, bucketName = bucketName, gotenbergWebClient = gotenbergWebClient)
   }
 }

@@ -163,5 +163,3 @@ class NoDataWithCodeFoundException(dataType: String, code: String) : ResourceNot
 open class DuplicateDataFoundException(message: String) : RuntimeException(message)
 
 class DuplicateWithCodeFoundException(dataType: String, code: String) : DuplicateDataFoundException("Duplicate $dataType found for code `$code`")
-
-class ClientTimeoutException(clientName: String, errorType: String) : ResettlementPassportException("$clientName: [$errorType]")

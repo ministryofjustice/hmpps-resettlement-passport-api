@@ -26,6 +26,7 @@ generic-service:
     SCHEDULE_EXPRESSION_RECONCILE-RELEASE-DATES: 0 0 2 * * *
     SCHEDULE_EXPRESSION_DELETE-EXPIRED-OTP: 0 0 3 * * *
     interventions-api-integration_crsAppointmentsEnabled: true
+    API_BASE_URL_gotenberg-api: http://hmpps-resettlement-passport-api-gotenberg
 
 
 
@@ -35,5 +36,3 @@ generic-service:
 generic-prometheus-alerts:
   alertSeverity: hmpps-resettlement-passport-prod
 
-gotenberg:
-  alertSeverity: hmpps-resettlement-passport-prod

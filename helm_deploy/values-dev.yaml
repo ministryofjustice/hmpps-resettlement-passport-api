@@ -40,5 +40,3 @@ deploy_stubs: true
 clamav:
   replicaCount: 1
 
-gotenberg:
-  alertSeverity: hmpps-resettlement-passport-non-prod

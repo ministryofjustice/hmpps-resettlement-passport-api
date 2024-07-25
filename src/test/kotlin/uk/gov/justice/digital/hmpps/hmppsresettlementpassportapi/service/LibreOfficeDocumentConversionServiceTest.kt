@@ -26,7 +26,7 @@ class LibreOfficeDocumentConversionServiceTest {
       tempDir.toPath(),
       s3Client,
       "bucket",
-      webClient
+      webClient,
     )
 
     val fileData = Resources.getResource("testdata/PD1_example_oversized.docx").openStream()

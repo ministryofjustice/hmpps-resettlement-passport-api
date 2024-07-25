@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Asse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.IdTypeRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Service
@@ -30,6 +31,16 @@ class AssessmentService(
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val assessment = assessmentRepository.findByPrisonerIdAndIsDeleted(prisoner.id()) ?: throw ResourceNotFoundException("assessment not found")
+    return if (assessment.isDeleted) null else assessment
+  }
+
+  @Transactional
+  fun getAssessmentByNomsIdAndCreationDate(nomsId: String, fromDate: LocalDate, toDate: LocalDate): AssessmentEntity? {
+    val prisoner = prisonerRepository.findByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+    val assessment = assessmentRepository.findByPrisonerIdAndIsDeletedAndCreationDateBetween(
+      prisoner.id(), fromDate = fromDate.atStartOfDay(), toDate = toDate.atStartOfDay(),
+    ) ?: throw ResourceNotFoundException("assessment not found")
     return if (assessment.isDeleted) null else assessment
   }
 

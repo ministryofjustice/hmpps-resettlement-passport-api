@@ -6,6 +6,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
+import java.time.LocalDateTime
 
 interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmentEntity, Long> {
 
@@ -24,6 +25,21 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
   @Query(
     """
       select * from (
+        select *, rank() over (partition by pathway order by id desc, created_date desc) as rank from resettlement_assessment
+        where assessment_type = :#{#assessmentType.toString()}
+        and prisoner_id = :#{#prisonerId}
+        and created_date >= :#{#fromDate}
+        and created_date <= :#{#toDate}
+      ) by_pathway where rank = 1;
+    """,
+    nativeQuery = true,
+  )
+  fun findLatestForEachPathwayAndCreationDateBetween(prisonerId: Long, assessmentType: ResettlementAssessmentType,
+                               fromDate: LocalDateTime, toDate: LocalDateTime): List<ResettlementAssessmentEntity>
+
+  @Query(
+    """
+      select * from (
         select *, rank() over (partition by assessment_type,pathway order by id desc, created_date desc) as rank from resettlement_assessment
         where prisoner_id = :prisonerId
       ) by_pathway where rank = 1;
@@ -36,6 +52,11 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
 
   fun findFirstByPrisonerIdAndPathwayAndAssessmentStatusOrderByCreationDateDesc(prisonerId: Long, pathway: Pathway, assessmentStatus: ResettlementAssessmentStatus): ResettlementAssessmentEntity?
   fun findFirstByPrisonerIdAndPathwayAndAssessmentStatusOrderByCreationDateAsc(prisonerId: Long, pathway: Pathway, assessmentStatus: ResettlementAssessmentStatus): ResettlementAssessmentEntity?
+
+  fun findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndCreationDateBetweenOrderByCreationDateDesc(
+    prisonerId: Long, pathway: Pathway, assessmentStatus: ResettlementAssessmentStatus, fromDate: LocalDateTime, toDate: LocalDateTime): ResettlementAssessmentEntity?
+  fun findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndCreationDateBetweenOrderByCreationDateAsc(
+    prisonerId: Long, pathway: Pathway, assessmentStatus: ResettlementAssessmentStatus, fromDate: LocalDateTime, toDate: LocalDateTime): ResettlementAssessmentEntity?
 
   fun findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
     prisonerId: Long,

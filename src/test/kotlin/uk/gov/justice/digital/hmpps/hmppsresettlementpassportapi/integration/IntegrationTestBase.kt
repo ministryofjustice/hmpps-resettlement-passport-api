@@ -102,9 +102,6 @@ abstract class IntegrationTestBase : TestBase() {
     @JvmField
     val popUserApiMockServer = PoPUserApiMockServer()
 
-    @JvmField
-    var gotenbergMock = GotenbergApiMockServer()
-
     @BeforeAll
     @JvmStatic
     fun startMocks() {
@@ -122,7 +119,6 @@ abstract class IntegrationTestBase : TestBase() {
       educationEmploymentApiMockServer.start()
       interventionsServiceApiMockServer.start()
       popUserApiMockServer.start()
-      gotenbergMock.start()
     }
 
     @AfterAll
@@ -140,7 +136,6 @@ abstract class IntegrationTestBase : TestBase() {
       deliusApiMockServer.stop()
       educationEmploymentApiMockServer.stop()
       interventionsServiceApiMockServer.stop()
-      gotenbergMock.stop()
     }
   }
 

@@ -10,7 +10,9 @@ interface AssessmentRepository : JpaRepository<AssessmentEntity, Long> {
   fun findByPrisonerIdAndIsDeleted(prisonerId: Long, isDeleted: Boolean = false): AssessmentEntity?
 
   fun findByPrisonerIdAndIsDeletedAndCreationDateBetween(
-    prisonerId: Long, isDeleted: Boolean = false,
-    fromDate: LocalDateTime, toDate: LocalDateTime,
+    prisonerId: Long,
+    isDeleted: Boolean = false,
+    fromDate: LocalDateTime,
+    toDate: LocalDateTime,
   ): AssessmentEntity?
 }

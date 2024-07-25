@@ -7,8 +7,17 @@ import java.time.LocalDateTime
 
 interface IdApplicationRepository : JpaRepository<IdApplicationEntity, Long> {
   fun findByPrisonerIdAndIsDeleted(prisonerId: Long, isDeleted: Boolean = false): List<IdApplicationEntity?>
-  fun findByPrisonerIdAndIsDeletedAndCreationDateBetween(prisonerId: Long, isDeleted: Boolean = false,
-                                                         fromDate: LocalDateTime, toDate: LocalDateTime): List<IdApplicationEntity?>
+  fun findByPrisonerIdAndIsDeletedAndCreationDateBetween(
+    prisonerId: Long,
+    isDeleted: Boolean = false,
+    fromDate: LocalDateTime,
+    toDate: LocalDateTime,
+  ): List<IdApplicationEntity?>
+
   fun findByIdAndIsDeleted(id: Long, isDeleted: Boolean = false): IdApplicationEntity?
-  fun findByPrisonerIdAndIdTypeAndIsDeleted(prisonerId: Long, idTypeEntity: IdTypeEntity, isDeleted: Boolean = false): IdApplicationEntity?
+  fun findByPrisonerIdAndIdTypeAndIsDeleted(
+    prisonerId: Long,
+    idTypeEntity: IdTypeEntity,
+    isDeleted: Boolean = false,
+  ): IdApplicationEntity?
 }

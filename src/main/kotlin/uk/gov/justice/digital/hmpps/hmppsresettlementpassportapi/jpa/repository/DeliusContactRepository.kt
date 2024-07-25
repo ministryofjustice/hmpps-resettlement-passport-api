@@ -9,8 +9,16 @@ import java.time.LocalDateTime
 interface DeliusContactRepository : JpaRepository<DeliusContactEntity, Long> {
   fun findByPrisonerIdAndContactType(prisonerId: Long, contactType: ContactType): List<DeliusContactEntity>
 
-  fun findByPrisonerIdAndContactTypeAndCreatedDateBetween(prisonerId: Long, contactType: ContactType,
-                                                        fromDate: LocalDateTime, toDate: LocalDateTime ): List<DeliusContactEntity>
+  fun findByPrisonerIdAndContactTypeAndCreatedDateBetween(
+    prisonerId: Long,
+    contactType: ContactType,
+    fromDate: LocalDateTime,
+    toDate: LocalDateTime,
+  ): List<DeliusContactEntity>
 
-  fun findByPrisonerIdAndContactTypeAndCategory(prisonerId: Long, contactType: ContactType, category: Category): List<DeliusContactEntity>
+  fun findByPrisonerIdAndContactTypeAndCategory(
+    prisonerId: Long,
+    contactType: ContactType,
+    category: Category,
+  ): List<DeliusContactEntity>
 }

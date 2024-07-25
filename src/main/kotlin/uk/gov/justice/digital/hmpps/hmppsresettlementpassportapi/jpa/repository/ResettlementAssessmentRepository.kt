@@ -34,8 +34,10 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
     """,
     nativeQuery = true,
   )
-  fun findLatestForEachPathwayAndCreationDateBetween(prisonerId: Long, assessmentType: ResettlementAssessmentType,
-                               fromDate: LocalDateTime, toDate: LocalDateTime): List<ResettlementAssessmentEntity>
+  fun findLatestForEachPathwayAndCreationDateBetween(
+    prisonerId: Long, assessmentType: ResettlementAssessmentType,
+    fromDate: LocalDateTime, toDate: LocalDateTime,
+  ): List<ResettlementAssessmentEntity>
 
   @Query(
     """
@@ -54,9 +56,20 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
   fun findFirstByPrisonerIdAndPathwayAndAssessmentStatusOrderByCreationDateAsc(prisonerId: Long, pathway: Pathway, assessmentStatus: ResettlementAssessmentStatus): ResettlementAssessmentEntity?
 
   fun findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndCreationDateBetweenOrderByCreationDateDesc(
-    prisonerId: Long, pathway: Pathway, assessmentStatus: ResettlementAssessmentStatus, fromDate: LocalDateTime, toDate: LocalDateTime): ResettlementAssessmentEntity?
+    prisonerId: Long,
+    pathway: Pathway,
+    assessmentStatus: ResettlementAssessmentStatus,
+    fromDate: LocalDateTime,
+    toDate: LocalDateTime,
+  ): ResettlementAssessmentEntity?
+
   fun findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndCreationDateBetweenOrderByCreationDateAsc(
-    prisonerId: Long, pathway: Pathway, assessmentStatus: ResettlementAssessmentStatus, fromDate: LocalDateTime, toDate: LocalDateTime): ResettlementAssessmentEntity?
+    prisonerId: Long,
+    pathway: Pathway,
+    assessmentStatus: ResettlementAssessmentStatus,
+    fromDate: LocalDateTime,
+    toDate: LocalDateTime,
+  ): ResettlementAssessmentEntity?
 
   fun findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
     prisonerId: Long,

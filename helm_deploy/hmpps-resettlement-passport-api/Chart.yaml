@@ -5,6 +5,10 @@ name: hmpps-resettlement-passport-api
 version: 0.2.0
 dependencies:
   - name: generic-service
+    alias: gotenberg
+    version: 3.3.1
+    repository: https://ministryofjustice.github.io/hmpps-helm-charts
+  - name: generic-service
     version: 3.3.1
     repository: https://ministryofjustice.github.io/hmpps-helm-charts
   - name: generic-prometheus-alerts

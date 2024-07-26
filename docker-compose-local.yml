@@ -49,5 +49,17 @@ services:
     ports:
       - "3310:3310"
 
+  resettlement-passport-api-gotenberg:
+    image: gotenberg/gotenberg:8.3.0
+    networks:
+      - hmpps
+    container_name: hmpps-resettlement-passport-api-gotenberg
+    ports:
+      - "8091:3000"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3000/health" ]
+    environment:
+      - LOG_LEVEL=DEBUG
+
 networks:
   hmpps:

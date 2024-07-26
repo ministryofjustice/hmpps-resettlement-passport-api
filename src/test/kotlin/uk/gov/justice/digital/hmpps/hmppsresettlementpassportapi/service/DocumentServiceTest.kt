@@ -73,35 +73,9 @@ class DocumentServiceTest {
   }
 
   @Test
-  fun `test getDocumentByNomisIdAndDocumentId - returns document`() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
-    val documentsEntity = DocumentsEntity(1, 1, "acb_123455", UUID.randomUUID(), fakeNow, DocumentCategory.LICENCE_CONDITIONS, "Filename.doc")
-    val file = MockMultipartFile(
-      "file",
-      "hello.doc",
-      MediaType.TEXT_PLAIN_VALUE,
-      "Hello, World!".toByteArray(),
-    )
-    val res = ResponseInputStream(
-      GetObjectResponse.builder().build(),
-      AbortableInputStream.create(file.inputStream),
-    )
-
-    val request = GetObjectRequest.builder()
-      .bucket("document-storage")
-      .key("acb_123455")
-      .build()
-
-    whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
-    whenever(documentsRepository.getReferenceById(1)).thenReturn(documentsEntity)
-    whenever(s3Client.getObject(request)).thenReturn(res)
-    val response = documentService.getDocumentByNomisIdAndDocumentId("acb", 1)
-    Assertions.assertEquals(file.size.toInt(), response.readAllBytes().size)
-  }
-
-  @Test
   fun `test getLatestDocumentByNomisId - returns document`() {
-    val documentsEntity = DocumentsEntity(1, 1, "acb_123455", UUID.randomUUID(), fakeNow, DocumentCategory.LICENCE_CONDITIONS, "Filename.doc")
+    val uid = UUID.randomUUID()
+    val documentsEntity = DocumentsEntity(1, 1, "acb_123455", uid, fakeNow, DocumentCategory.LICENCE_CONDITIONS, "Filename.doc")
 
     val file = MockMultipartFile(
       "file",
@@ -116,7 +90,7 @@ class DocumentServiceTest {
 
     val request = GetObjectRequest.builder()
       .bucket("document-storage")
-      .key("acb_123455")
+      .key(uid.toString())
       .build()
 
     whenever(documentsRepository.findFirstByNomsIdAndCategory("acb", DocumentCategory.LICENCE_CONDITIONS)).thenReturn(documentsEntity)
@@ -126,7 +100,7 @@ class DocumentServiceTest {
   }
 
   @Test
-  fun `test getHTMLDocumentByNomisIdAndDocumentId - returns document`() {
+  fun `test getDocumentByNomisIdAndDocumentId - returns document`() {
     val uid = UUID.randomUUID()
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
     val documentsEntity = DocumentsEntity(1, 1, "acb_123455", uid, fakeNow, DocumentCategory.LICENCE_CONDITIONS, "Filename.doc")
@@ -143,7 +117,7 @@ class DocumentServiceTest {
 
     val request = GetObjectRequest.builder()
       .bucket("document-storage")
-      .key("acb_123455")
+      .key(uid.toString())
       .build()
 
     whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)

@@ -26,7 +26,7 @@ RUN addgroup --gid 2000 --system appgroup && \
     adduser --uid 2000 --system appuser --gid 2000
 
 RUN apt-get update
-RUN apt-get -y upgrade && apt-get install -y libreoffice-writer-nogui libreoffice-draw-nogui
+RUN apt-get -y upgrade
 RUN rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /home/appuser/.postgresql

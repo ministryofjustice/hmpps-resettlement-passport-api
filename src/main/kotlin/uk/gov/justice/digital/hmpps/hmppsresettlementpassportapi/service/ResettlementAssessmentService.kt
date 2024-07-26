@@ -23,7 +23,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.AssessmentSkipEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseNoteRetryEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentSkipRepository
@@ -33,6 +32,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.ResettlementAssessmentStrategy
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Service
@@ -54,16 +54,31 @@ class ResettlementAssessmentService(
   @Transactional
   fun getResettlementAssessmentSummaryByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType): List<PrisonerResettlementAssessment> {
     val prisonerEntity = getPrisonerEntityOrThrow(nomsId)
-    return getAssessmentSummary(prisonerEntity, assessmentType)
+    val resettlementEntityList = resettlementAssessmentRepository.findLatestForEachPathway(prisonerEntity.id(), assessmentType)
+    return getAssessmentSummary(resettlementEntityList)
+  }
+
+  @Transactional
+  fun getResettlementAssessmentSummaryByNomsIdAndCreationDate(
+    nomsId: String,
+    assessmentType: ResettlementAssessmentType,
+    fromDate: LocalDate,
+    toDate: LocalDate,
+  ): List<PrisonerResettlementAssessment> {
+    val prisonerEntity = getPrisonerEntityOrThrow(nomsId)
+    val resettlementEntityList = resettlementAssessmentRepository.findLatestForEachPathwayAndCreationDateBetween(
+      prisonerEntity.id(),
+      assessmentType,
+      fromDate.atStartOfDay(),
+      toDate.atStartOfDay(),
+    )
+    return getAssessmentSummary(resettlementEntityList)
   }
 
   private fun getAssessmentSummary(
-    prisonerEntity: PrisonerEntity,
-    assessmentType: ResettlementAssessmentType,
+    resettlementEntityList: List<ResettlementAssessmentEntity>,
   ): List<PrisonerResettlementAssessment> {
-    val latestForEachPathway =
-      resettlementAssessmentRepository.findLatestForEachPathway(prisonerEntity.id(), assessmentType)
-        .associateBy { it.pathway }
+    val latestForEachPathway = resettlementEntityList.associateBy { it.pathway }
     return Pathway.entries.map {
       val resettlementAssessmentForPathway = latestForEachPathway[it]
       if (resettlementAssessmentForPathway == null) {
@@ -311,6 +326,53 @@ class ResettlementAssessmentService(
     }
   }
 
+  fun getLatestResettlementAssessmentByNomsIdAndPathwayAndCreationDate(
+    nomsId: String,
+    pathway: Pathway,
+    resettlementAssessmentStrategies: ResettlementAssessmentStrategy,
+    fromDate: LocalDate,
+    toDate: LocalDate,
+  ): LatestResettlementAssessmentResponse {
+    val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+
+    val latestResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
+      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndCreationDateBetweenOrderByCreationDateDesc(
+        prisonerEntity.id(),
+        pathway,
+        ResettlementAssessmentStatus.SUBMITTED,
+        fromDate.atStartOfDay(),
+        toDate.atStartOfDay(),
+      )
+        ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"),
+      resettlementAssessmentStrategies,
+    )
+
+    val originalResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
+      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndCreationDateBetweenOrderByCreationDateAsc(
+        prisonerEntity.id(),
+        pathway,
+        ResettlementAssessmentStatus.SUBMITTED,
+        fromDate.atStartOfDay(),
+        toDate.atStartOfDay(),
+      )
+        ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"),
+      resettlementAssessmentStrategies,
+    )
+
+    // If the latest and original assessments from the same, then only return the latest otherwise return both
+    return if (latestResettlementAssessment == originalResettlementAssessment) {
+      LatestResettlementAssessmentResponse(
+        latestAssessment = latestResettlementAssessment,
+      )
+    } else {
+      LatestResettlementAssessmentResponse(
+        originalAssessment = originalResettlementAssessment,
+        latestAssessment = latestResettlementAssessment,
+      )
+    }
+  }
+
   fun convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(resettlementAssessmentEntity: ResettlementAssessmentEntity, resettlementAssessmentStrategies: ResettlementAssessmentStrategy): ResettlementAssessmentResponse {
     val questionsAndAnswers = resettlementAssessmentEntity.assessment.assessment.mapNotNull {
       val question = resettlementAssessmentStrategies.getQuestionById(it.questionId, resettlementAssessmentEntity.pathway, resettlementAssessmentEntity.assessmentType, resettlementAssessmentEntity.version)
@@ -368,7 +430,8 @@ class ResettlementAssessmentService(
     }
 
     val prisonerEntity = getPrisonerEntityOrThrow(nomsId)
-    val assessmentSummary = getAssessmentSummary(prisonerEntity, assessmentType)
+    val resettlementEntityList = resettlementAssessmentRepository.findLatestForEachPathway(prisonerEntity.id(), assessmentType)
+    val assessmentSummary = getAssessmentSummary(resettlementEntityList)
     if (assessmentSummary.any { it.assessmentStatus != ResettlementAssessmentStatus.NOT_STARTED }) {
       throw ServerWebInputException("Cannot skip assessment that has already been started")
     }

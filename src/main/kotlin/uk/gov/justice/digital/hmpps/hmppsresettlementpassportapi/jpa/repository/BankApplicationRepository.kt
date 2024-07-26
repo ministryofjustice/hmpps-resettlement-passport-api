@@ -4,10 +4,18 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.BankApplicationEntity
+import java.time.LocalDateTime
 
 @Repository
 interface BankApplicationRepository : JpaRepository<BankApplicationEntity, Long> {
   fun findByPrisonerIdAndIsDeleted(prisonerId: Long, isDeleted: Boolean = false): BankApplicationEntity?
+
+  fun findByPrisonerIdAndIsDeletedAndCreationDateBetween(
+    prisonerId: Long,
+    isDeleted: Boolean = false,
+    fromDate: LocalDateTime,
+    toDate: LocalDateTime,
+  ): BankApplicationEntity?
 
   @Query(
     value = """

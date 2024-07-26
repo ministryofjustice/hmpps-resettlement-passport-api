@@ -10,9 +10,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplic
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplicationResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.BankApplicationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.BankApplicationStatusLogEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.BankApplicationRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.BankApplicationStatusLogRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Service
@@ -36,12 +38,46 @@ class BankApplicationService(
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val bankApplication = bankApplicationRepository.findByPrisonerIdAndIsDeleted(prisoner.id())
       ?: throw ResourceNotFoundException(" no none deleted bank applications for prisoner: ${prisoner.nomsId} found in database")
+    return getBankApplicationResponse(bankApplication, prisoner)
+  }
+
+  @Transactional
+  fun getBankApplicationByNomsIdAndCreationDate(
+    nomsId: String,
+    fromDate: LocalDate,
+    toDate: LocalDate,
+  ): BankApplicationResponse? {
+    val prisoner = prisonerRepository.findByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+    val bankApplication = bankApplicationRepository.findByPrisonerIdAndIsDeletedAndCreationDateBetween(
+      prisoner.id(),
+      fromDate = fromDate.atStartOfDay(),
+      toDate = toDate.atStartOfDay(),
+    )
+      ?: throw ResourceNotFoundException(" no none deleted bank applications for prisoner: ${prisoner.nomsId} found in database")
+    return getBankApplicationResponse(bankApplication, prisoner)
+  }
+
+  private fun getBankApplicationResponse(
+    bankApplication: BankApplicationEntity,
+    prisoner: PrisonerEntity,
+  ): BankApplicationResponse {
     bankApplication.logs = emptySet()
     val logs = bankApplicationStatusLogRepository.findByBankApplication(bankApplication)
     return BankApplicationResponse(
       id = bankApplication.id!!,
       prisoner = prisoner,
-      logs = if (logs.isNullOrEmpty()) emptyList() else logs.map { BankApplicationLog(it.id!!, it.statusChangedTo, it.changedAtDate) },
+      logs = if (logs.isNullOrEmpty()) {
+        emptyList()
+      } else {
+        logs.map {
+          BankApplicationLog(
+            it.id!!,
+            it.statusChangedTo,
+            it.changedAtDate,
+          )
+        }
+      },
       currentStatus = bankApplication.status,
       bankName = bankApplication.bankName,
       applicationSubmittedDate = bankApplication.applicationSubmittedDate,
@@ -124,7 +160,8 @@ class BankApplicationService(
         null,
         logs[0].bankApplication,
         statusChangedTo = bankApplication.status,
-        changedAtDate = bankApplication.bankResponseDate ?: throw ValidationException("changedAtDate cant be null when changing status"),
+        changedAtDate = bankApplication.bankResponseDate
+          ?: throw ValidationException("changedAtDate cant be null when changing status"),
       )
       logs.plus(newStatus)
       bankApplicationStatusLogRepository.save(newStatus)

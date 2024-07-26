@@ -34,6 +34,7 @@ class WebClientConfiguration(
   @Value("\${api.base.url.education-employment}") private val educationEmploymentRootUri: String,
   @Value("\${api.base.url.interventions-service}") private val interventionsRootUri: String,
   @Value("\${api.base.url.pop-user-service}") private val popUserRootUri: String,
+  @Value("\${api.base.url.gotenberg-api}") private val gotenbergRootUri: String,
   private val objectMapper: ObjectMapper,
   val clientRegistrationRepo: ClientRegistrationRepository,
 ) {
@@ -143,5 +144,25 @@ class WebClientConfiguration(
   @Bean
   fun popUserWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
     return getWebClientCredentials(authorizedClientManager, popUserRootUri)
+  }
+
+  @Bean
+  fun gotenbergWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
+    return getWebClient(gotenbergRootUri)
+  }
+  private fun getWebClient(baseUrl: String): WebClient {
+    val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
+    return WebClient.builder()
+      .baseUrl(baseUrl)
+      .clientConnector(ReactorClientHttpConnector(httpClient))
+      .codecs { codecs ->
+        codecs.defaultCodecs().maxInMemorySize(5 * 1024 * 1024)
+        codecs.defaultCodecs().jackson2JsonEncoder(
+          Jackson2JsonEncoder(
+            objectMapper,
+          ),
+        )
+      }
+      .build()
   }
 }

@@ -35,6 +35,7 @@ services:
       - SCHEDULE_EXPRESSION_DELETE-EXPIRED-OTP=0 0 3 * * *
       - HMPPS_SQS_LOCALSTACK-URL=http://localstack:4566
       - HMPPS_S3_LOCALSTACK-URL=http://localstack:4566
+      - API_BASE_URL_GOTENBERG-API=http://hmpps-resettlement-passport-api-gotenberg:3000
 
 networks:
   hmpps:

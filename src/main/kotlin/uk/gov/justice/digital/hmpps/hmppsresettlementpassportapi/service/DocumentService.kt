@@ -117,11 +117,11 @@ class DocumentService(
 
     try {
       val document = documentsRepository.getReferenceById(documentId)
-      val documentKey = document.originalDocumentKey
+      val documentKey = document.htmlDocumentKey
       if (prisoner.id != document.prisonerId) {
         throw ResourceNotFoundException("Document with id $documentId not found")
       }
-      return getDocument(documentKey)
+      return getDocument(documentKey.toString())
     } catch (ex: Exception) {
       throw ResourceNotFoundException("Document with id $documentId not found")
     }
@@ -129,7 +129,7 @@ class DocumentService(
 
   fun getLatestDocumentByCategory(nomsId: String, category: DocumentCategory): InputStream {
     val latest = documentsRepository.findFirstByNomsIdAndCategory(nomsId, category) ?: throw ResourceNotFoundException("No $category documents found for $nomsId")
-    return getDocument(latest.originalDocumentKey)
+    return getDocument(latest.htmlDocumentKey.toString())
   }
 
   private inline fun <reified T : Any?> forExistingPrisoner(nomsId: String, fn: () -> T): T {

@@ -27,12 +27,6 @@ class LibreOfficeDocumentConversionService(
 ) : DocumentConversionService {
 
   override fun convert(multipartFile: MultipartFile): UUID? {
-    // val gotenbergWebClient = WebClient.builder().baseUrl("http://localhost:9091").build()
-    val tempFileId = UUID.randomUUID().toString()
-    // val tempFile = tempDocumentDir.resolve(tempFileId)
-    // multipartFile.transferTo(tempFile)
-
-    val uploadFile = multipartFile.resource.contentAsByteArray
     val response = gotenbergWebClient.post()
       .uri("/forms/libreoffice/convert")
       .contentType(MediaType.MULTIPART_FORM_DATA)

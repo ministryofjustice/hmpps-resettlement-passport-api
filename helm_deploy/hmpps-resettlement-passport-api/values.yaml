@@ -117,7 +117,7 @@ gotenberg:
     port: 3000
 
   containerCommand: [ "gotenberg" ]
-  containerArgs: [ "--chromium-ignore-certificate-errors","--api-timeout=30s","--pdfengines-engines=pdftk","--uno-listener-restart-threshold=0" ]
+  containerArgs: [ "--chromium-ignore-certificate-errors","--api-timeout=30s","--pdfengines-engines=pdftk" ]
 
   ingress:
     enabled: false

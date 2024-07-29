@@ -48,7 +48,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
   @Autowired
   private lateinit var caseNoteRetryRepository: CaseNoteRetryRepository
 
-  // Tests using ACCOMMODATION Pathway - i.e. using new YamlResettlementAssessmentStrategy
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
   fun `Post get next assessment page happy path`() {
@@ -1037,4 +1036,73 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
   private fun ResettlementAssessmentRepository.allOrderedById() = this.findAll().sortedBy { it.id }
   private fun PathwayStatusRepository.allOrderedById() = this.findAll().sortedBy { it.id }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-15.sql")
+  fun `test get latest resettlement assessment version - happy path`() {
+    val nomsId = "G4161UF"
+    val pathway = "ACCOMMODATION"
+    val assessmentType = "BCST2"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/version?assessmentType=$assessmentType")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("version")
+      .isEqualTo(3)
+  }
+
+  @Test
+  fun `test get latest resettlement assessment version - unauthorized`() {
+    val nomsId = "G4161UF"
+    val pathway = "ACCOMMODATION"
+    val assessmentType = "BCST2"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/version?assessmentType=$assessmentType")
+      .exchange()
+      .expectStatus().isUnauthorized
+  }
+
+  @Test
+  fun `test get latest resettlement assessment version - forbidden`() {
+    val nomsId = "G4161UF"
+    val pathway = "ACCOMMODATION"
+    val assessmentType = "BCST2"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/version?assessmentType=$assessmentType")
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
+  }
+
+  @Test
+  fun `test get latest resettlement assessment version - prisoner not found`() {
+    val nomsId = "G4161UF"
+    val pathway = "ACCOMMODATION"
+    val assessmentType = "BCST2"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/version?assessmentType=$assessmentType")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-15.sql")
+  fun `test get latest resettlement assessment version - missing assessment type`() {
+    val nomsId = "G4161UF"
+    val pathway = "ACCOMMODATION"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/version")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isBadRequest
+  }
 }

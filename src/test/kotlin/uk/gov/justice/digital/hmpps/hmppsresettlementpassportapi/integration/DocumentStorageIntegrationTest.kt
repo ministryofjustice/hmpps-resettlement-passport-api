@@ -1,13 +1,22 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
 import com.google.common.io.Resources
+import dev.forkhandles.result4k.get
+import io.mockk.every
+import io.mockk.mockkStatic
+import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.test.context.jdbc.Sql
+import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.web.reactive.function.BodyInserters
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DocumentResponse
+import java.time.LocalDateTime
 
 class DocumentStorageIntegrationTest : IntegrationTestBase() {
+
+  private val fakeNow = LocalDateTime.parse("2024-07-26T12:00:01")
 
   @Test
   fun `401 unauthorised`() {
@@ -192,7 +201,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
   }
 
   private fun uploadDocument(nomsId: String, filename: String = "testdata/PD1_example.docx") {
-    webTestClient.post()
+    val response = webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/documents/upload")
       .body(generateMultiPartFormRequestWeb(filename, "LICENCE_CONDITIONS"))
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -273,5 +282,30 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-document-upload.sql")
+  fun `Create uploadDocument pdf and getDocument pdf without conversion - happy path`() {
+    val nomsId = "ABC1234"
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+    val response = webTestClient.post()
+      .uri("/resettlement-passport/prisoner/$nomsId/documents/upload")
+      .body(generateMultiPartFormRequestWeb("testdata/example-doc.pdf", "LICENCE_CONDITIONS"))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody(DocumentResponse::class.java)
+      .value { document -> assertThat(document.value.originalDocumentKey).isEqualTo(document.value.pdfDocumentKey) }
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/documents/1/download")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/pdf")
+      .expectBody()
   }
 }

@@ -65,15 +65,17 @@ class DocumentService(
     // using nomsId to find the prisoner entity
     val prisoner = findPrisonerByNomsId(nomsId)
 
-    val key = nomsId + "_" + UUID.randomUUID()
-
+    val key = UUID.randomUUID()
+    var convertedDocumentKey = key
     uploadDocumentToS3(document, bucketName, key)
-    val convertedDocumentKey = documentConversionService.convert(document)
+    if (!document.originalFilename?.endsWith("pdf", true)!!) {
+      convertedDocumentKey = documentConversionService.convert(document)
+    }
 
     val documents = DocumentsEntity(
       prisonerId = prisoner.id!!,
       originalDocumentKey = key,
-      htmlDocumentKey = convertedDocumentKey,
+      pdfDocumentKey = convertedDocumentKey,
       creationDate = LocalDateTime.now(),
       category = category,
       originalDocumentFileName = document.originalFilename!!,
@@ -94,10 +96,10 @@ class DocumentService(
     return prisoner
   }
 
-  fun uploadDocumentToS3(file: MultipartFile, bucketName: String?, key: String?) {
+  fun uploadDocumentToS3(file: MultipartFile, bucketName: String?, key: UUID?) {
     val request = PutObjectRequest.builder()
       .bucket(bucketName)
-      .key(key)
+      .key(key.toString())
       .build()
 
     s3Client.putObject(request, RequestBody.fromInputStream(file.inputStream, file.size))
@@ -117,7 +119,7 @@ class DocumentService(
 
     try {
       val document = documentsRepository.getReferenceById(documentId)
-      val documentKey = document.htmlDocumentKey
+      val documentKey = document.pdfDocumentKey
       if (prisoner.id != document.prisonerId) {
         throw ResourceNotFoundException("Document with id $documentId not found")
       }
@@ -129,7 +131,7 @@ class DocumentService(
 
   fun getLatestDocumentByCategory(nomsId: String, category: DocumentCategory): InputStream {
     val latest = documentsRepository.findFirstByNomsIdAndCategory(nomsId, category) ?: throw ResourceNotFoundException("No $category documents found for $nomsId")
-    return getDocument(latest.htmlDocumentKey.toString())
+    return getDocument(latest.pdfDocumentKey.toString())
   }
 
   private inline fun <reified T : Any?> forExistingPrisoner(nomsId: String, fn: () -> T): T {

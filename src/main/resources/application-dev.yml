@@ -104,6 +104,9 @@ hmpps.s3:
     document-management:
       bucketName: document-management
 
+hmpps.sar:
+  additionalAccessRole: RESETTLEMENT_PASSPORT_EDIT
+
 clamav:
   virus:
     scan:

@@ -34,7 +34,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettl
 @RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class ResettlementAssessmentController(
-  private val resettlementAssessmentStrategies: ResettlementAssessmentStrategy,
+  private val resettlementAssessmentStrategy: ResettlementAssessmentStrategy,
   private val resettlementAssessmentService: ResettlementAssessmentService,
 ) {
   @PostMapping("/{nomsId}/resettlement-assessment/{pathway}/next-page", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -82,7 +82,7 @@ class ResettlementAssessmentController(
     @RequestBody
     resettlementAssessment: ResettlementAssessmentRequest,
   ): ResettlementAssessmentNextPage {
-    return ResettlementAssessmentNextPage(nextPageId = resettlementAssessmentStrategies.getNextPageId(resettlementAssessment, nomsId, pathway, assessmentType, currentPage, version))
+    return ResettlementAssessmentNextPage(nextPageId = resettlementAssessmentStrategy.getNextPageId(resettlementAssessment, nomsId, pathway, assessmentType, currentPage, version))
   }
 
   @GetMapping("/{nomsId}/resettlement-assessment/{pathway}/page/{pageId}", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -128,7 +128,7 @@ class ResettlementAssessmentController(
     @RequestParam("version")
     version: Int = 1,
   ): ResettlementAssessmentResponsePage {
-    return resettlementAssessmentStrategies.getPageFromId(nomsId, pathway, pageId, assessmentType, version)
+    return resettlementAssessmentStrategy.getPageFromId(nomsId, pathway, pageId, assessmentType, version)
   }
 
   @GetMapping("/{nomsId}/resettlement-assessment/summary", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -222,7 +222,7 @@ class ResettlementAssessmentController(
     @RequestHeader("Authorization")
     auth: String,
   ): ResponseEntity<Void> {
-    resettlementAssessmentStrategies.completeAssessment(nomsId, pathway, assessmentType, resettlementAssessmentCompleteRequest, auth)
+    resettlementAssessmentStrategy.completeAssessment(nomsId, pathway, assessmentType, resettlementAssessmentCompleteRequest, auth)
     return ResponseEntity.ok().build()
   }
 
@@ -312,7 +312,7 @@ class ResettlementAssessmentController(
     @PathVariable("pathway")
     @Parameter(required = true)
     pathway: Pathway,
-  ) = resettlementAssessmentService.getLatestResettlementAssessmentByNomsIdAndPathway(nomsId, pathway, resettlementAssessmentStrategies)
+  ) = resettlementAssessmentService.getLatestResettlementAssessmentByNomsIdAndPathway(nomsId, pathway, resettlementAssessmentStrategy)
 
   @PostMapping("/{nomsId}/resettlement-assessment/skip", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Skip an assessment")
@@ -356,4 +356,55 @@ class ResettlementAssessmentController(
     resettlementAssessmentService.skipAssessment(nomsId, assessmentType, request)
     return ResponseEntity.noContent().build()
   }
+
+  @GetMapping("/{nomsId}/resettlement-assessment/{pathway}/version", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(
+    summary = "Returns the question set version of the latest resettlement assessment or null if no assessment exists.",
+    description = "Returns the question set version of the latest resettlement assessment or null if no assessment exists.",
+  )
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [
+          Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "400",
+        description = "Incorrect information provided",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+
+      ApiResponse(
+        responseCode = "404",
+        description = "Cannot find prisoner",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  fun getLatestResettlementAssessmentVersionByNomsId(
+    @Schema(example = "AXXXS", required = true)
+    @PathVariable("nomsId")
+    @Parameter(required = true)
+    nomsId: String,
+    @PathVariable("pathway")
+    @Parameter(required = true)
+    pathway: Pathway,
+    @RequestParam("assessmentType")
+    assessmentType: ResettlementAssessmentType,
+  ) = resettlementAssessmentStrategy.getLatestResettlementAssessmentVersion(nomsId, assessmentType, pathway)
 }

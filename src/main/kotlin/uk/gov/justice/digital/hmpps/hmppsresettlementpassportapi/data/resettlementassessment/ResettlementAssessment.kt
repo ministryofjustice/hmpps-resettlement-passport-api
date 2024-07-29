@@ -84,3 +84,7 @@ enum class AssessmentSkipReason {
 data class ResettlementAssessmentSubmitResponse(
   val deliusCaseNoteFailed: Boolean,
 )
+
+data class ResettlementAssessmentVersion(
+  val version: Int?,
+)

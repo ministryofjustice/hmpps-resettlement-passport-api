@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentVersion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
@@ -411,14 +412,14 @@ class ResettlementAssessmentStrategy(
     // Obtain prisoner from database, if exists
     val prisonerEntity = loadPrisoner(nomsId)
 
-    // Obtain COMPLETE and SUBMITTED resettlement status entity from database
-    val resettlementAssessmentStatusEntities = listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED)
+    // Define COMPLETE and SUBMITTED resettlement statuses
+    val resettlementAssessmentStatuses = listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED)
 
     return resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
       prisonerEntity.id(),
       pathway,
       assessmentType,
-      resettlementAssessmentStatusEntities,
+      resettlementAssessmentStatuses,
     )
   }
 
@@ -427,6 +428,10 @@ class ResettlementAssessmentStrategy(
     val pathwayStatus = pathwayStatusRepository.findByPathwayAndPrisonerId(pathway, prisonerEntity.id()) ?: return null
 
     return StringAnswer(pathwayStatus.status.name)
+  }
+
+  fun getLatestResettlementAssessmentVersion(nomsId: String, assessmentType: ResettlementAssessmentType, pathway: Pathway): ResettlementAssessmentVersion {
+    return ResettlementAssessmentVersion(getExistingAssessment(nomsId, pathway, assessmentType)?.version)
   }
 }
 

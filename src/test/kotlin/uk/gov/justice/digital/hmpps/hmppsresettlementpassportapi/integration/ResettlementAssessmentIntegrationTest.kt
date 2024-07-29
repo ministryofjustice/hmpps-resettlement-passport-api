@@ -1038,8 +1038,29 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
   private fun PathwayStatusRepository.allOrderedById() = this.findAll().sortedBy { it.id }
 
   @Test
+  @Sql("classpath:testdata/sql/seed-prisoners-1.sql")
+  fun `test get latest resettlement assessment version - happy path - no assessment in database`() {
+    val nomsId = "G1458GV"
+    val pathway = "ACCOMMODATION"
+    val assessmentType = "BCST2"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/version?assessmentType=$assessmentType")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json("""
+        {
+          "version": null
+        }
+      """.trimIndent(), true)
+  }
+
+  @Test
   @Sql("classpath:testdata/sql/seed-resettlement-assessment-15.sql")
-  fun `test get latest resettlement assessment version - happy path`() {
+  fun `test get latest resettlement assessment version - happy path - assessment in database`() {
     val nomsId = "G4161UF"
     val pathway = "ACCOMMODATION"
     val assessmentType = "BCST2"
@@ -1051,8 +1072,11 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
       .expectBody()
-      .jsonPath("version")
-      .isEqualTo(3)
+      .json("""
+        {
+          "version": 3
+        }
+      """.trimIndent(), true)
   }
 
   @Test

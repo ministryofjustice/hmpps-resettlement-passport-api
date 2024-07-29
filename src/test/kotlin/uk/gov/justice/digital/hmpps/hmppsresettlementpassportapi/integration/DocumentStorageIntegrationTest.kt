@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
 import com.google.common.io.Resources
-import dev.forkhandles.result4k.get
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
@@ -9,7 +8,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.test.context.jdbc.Sql
-import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DocumentResponse
 import java.time.LocalDateTime

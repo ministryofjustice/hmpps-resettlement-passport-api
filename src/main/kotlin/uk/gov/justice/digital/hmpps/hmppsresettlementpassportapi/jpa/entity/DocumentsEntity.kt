@@ -22,10 +22,10 @@ class DocumentsEntity(
   val prisonerId: Long,
 
   @Column(name = "original_document_key")
-  val originalDocumentKey: String,
+  val originalDocumentKey: UUID?,
 
-  @Column(name = "html_document_key")
-  val htmlDocumentKey: UUID?,
+  @Column(name = "pdf_document_key")
+  val pdfDocumentKey: UUID?,
 
   @Column(name = "creation_date")
   val creationDate: LocalDateTime,

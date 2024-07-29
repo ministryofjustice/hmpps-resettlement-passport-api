@@ -1051,11 +1051,14 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
       .expectBody()
-      .json("""
+      .json(
+        """
         {
           "version": null
         }
-      """.trimIndent(), true)
+        """.trimIndent(),
+        true,
+      )
   }
 
   @Test
@@ -1072,11 +1075,14 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
       .expectBody()
-      .json("""
+      .json(
+        """
         {
           "version": 3
         }
-      """.trimIndent(), true)
+        """.trimIndent(),
+        true,
+      )
   }
 
   @Test

@@ -40,7 +40,7 @@ dependencies {
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
 
   implementation("org.flywaydb:flyway-core")
 
@@ -52,7 +52,7 @@ dependencies {
 
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-  implementation("io.micrometer:micrometer-registry-prometheus:1.11.4")
+  implementation("io.micrometer:micrometer-registry-prometheus")
   implementation("xyz.capybara:clamav-client:2.1.2")
   implementation("dev.forkhandles:result4k:2.0.0.0")
 
@@ -64,6 +64,7 @@ dependencies {
   implementation("io.github.oshai:kotlin-logging-jvm:6.0.9")
   implementation("com.pauldijou:jwt-core_2.11:5.0.0")
 
+  implementation("io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations:2.6.0")
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.0.1")
 
   developmentOnly("org.springframework.boot:spring-boot-devtools")

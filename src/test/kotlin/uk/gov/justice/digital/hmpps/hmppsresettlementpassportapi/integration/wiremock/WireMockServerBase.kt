@@ -2,9 +2,10 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wi
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
+import org.springframework.test.util.TestSocketUtils.findAvailableTcpPort
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 
-open class WireMockServerBase(port: Int) : WireMockServer(port) {
+open class WireMockServerBase : WireMockServer(findAvailableTcpPort()) {
   fun stubGet(path: String, status: Int, jsonResponseFile: String?) {
     stubFor(
       WireMock.get(path).willReturn(

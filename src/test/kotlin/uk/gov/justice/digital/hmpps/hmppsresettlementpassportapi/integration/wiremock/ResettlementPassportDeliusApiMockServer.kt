@@ -7,7 +7,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.post
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import java.time.LocalDate
 
-class ResettlementPassportDeliusApiMockServer : WireMockServerBase(9102) {
+class ResettlementPassportDeliusApiMockServer : WireMockServerBase() {
 
   fun stubGetAppointmentsFromCRN(crn: String, status: Int) {
     val appointmentsListJSON = readFile("testdata/resettlement-passport-delius-api/appointments-list.json")

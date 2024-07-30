@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock
 import com.github.tomakehurst.wiremock.client.WireMock
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
-class InterventionsServiceApiMockServer : WireMockServerBase(9105) {
+class InterventionsServiceApiMockServer : WireMockServerBase() {
   fun stubGetCRSAppointmentsFromCRN(crn: String, status: Int) {
     val appointmentsListJSON = readFile("testdata/interventions-service-api/crs-appointments.json")
     stubFor(

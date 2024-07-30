@@ -67,8 +67,8 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .jsonPath("status").isEqualTo(500)
       .jsonPath("errorCode").isEmpty
-      .jsonPath("userMessage").isEqualTo("Unexpected error: 500 Internal Server Error from GET http://localhost:9095/exclusion-zone/id/123/condition/id/456/full-size-image")
-      .jsonPath("developerMessage").isEqualTo("500 Internal Server Error from GET http://localhost:9095/exclusion-zone/id/123/condition/id/456/full-size-image")
+      .jsonPath("userMessage").isEqualTo("Unexpected error: 500 Internal Server Error from GET http://localhost:${cvlApiMockServer.port()}/exclusion-zone/id/123/condition/id/456/full-size-image")
+      .jsonPath("developerMessage").isEqualTo("500 Internal Server Error from GET http://localhost:${cvlApiMockServer.port()}/exclusion-zone/id/123/condition/id/456/full-size-image")
       .jsonPath("moreInfo").isEmpty
   }
 

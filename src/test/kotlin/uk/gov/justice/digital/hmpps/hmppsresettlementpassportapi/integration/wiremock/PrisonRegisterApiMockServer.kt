@@ -4,7 +4,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 
-class PrisonRegisterApiMockServer : WireMockServerBase(9093) {
+class PrisonRegisterApiMockServer : WireMockServerBase() {
 
   fun stubPrisonList(status: Int) {
     val prisonListJSON = readFile("testdata/prison-register-api/prison.json")

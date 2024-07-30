@@ -8,18 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.cache.CacheManager
-import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.SqlMergeMode
 import org.springframework.test.web.reactive.server.WebTestClient
-import software.amazon.awssdk.core.sync.RequestBody
-import software.amazon.awssdk.services.s3.S3Client
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Request
-import software.amazon.awssdk.services.s3.model.PutObjectRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.HmppsS3Properties
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBase
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.AllocationManagerApiMockServer
@@ -35,11 +30,17 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wir
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonRegisterApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonerSearchApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ResettlementPassportDeliusApiMockServer
+
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 @Sql(scripts = ["classpath:testdata/sql/clear-all-data.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
 abstract class IntegrationTestBase : TestBase() {
+
+  @BeforeEach
+  fun printZePort() {
+    println("PORTLE ${hmppsAuthMockServer.port()}")
+  }
 
   @Autowired
   lateinit var webTestClient: WebTestClient
@@ -49,12 +50,6 @@ abstract class IntegrationTestBase : TestBase() {
 
   @Autowired
   lateinit var cacheManager: CacheManager
-
-  @Autowired
-  private lateinit var hmppsS3Properties: HmppsS3Properties
-
-  @Autowired
-  protected lateinit var s3Client: S3Client
 
   @BeforeEach
   fun beforeEach() {
@@ -137,6 +132,24 @@ abstract class IntegrationTestBase : TestBase() {
       educationEmploymentApiMockServer.stop()
       interventionsServiceApiMockServer.stop()
     }
+
+    @JvmStatic
+    @DynamicPropertySource
+    fun properties(registry: DynamicPropertyRegistry) {
+      registry.add("api.base.url.oauth") { "http://localhost:${hmppsAuthMockServer.port()}" }
+      registry.add("api.base.url.prison-register") { "http://localhost:${prisonRegisterApiMockServer.port()}" }
+      registry.add("api.base.url.prisoner-search") { "http://localhost:${prisonerSearchApiMockServer.port()}" }
+      registry.add("api.base.url.cvl") { "http://localhost:${cvlApiMockServer.port()}" }
+      registry.add("api.base.url.arn") { "http://localhost:${arnApiMockServer.port()}" }
+      registry.add("api.base.url.prison") { "http://localhost:${prisonApiMockServer.port()}" }
+      registry.add("api.base.url.case-notes") { "http://localhost:${caseNotesApiMockServer.port()}" }
+      registry.add("api.base.url.key-worker") { "http://localhost:${keyWorkerApiMockServer.port()}" }
+      registry.add("api.base.url.allocation-manager") { "http://localhost:${allocationManagerApiMockServer.port()}" }
+      registry.add("api.base.url.resettlement-passport-delius") { "http://localhost:${deliusApiMockServer.port()}" }
+      registry.add("api.base.url.education-employment") { "http://localhost:${educationEmploymentApiMockServer.port()}" }
+      registry.add("api.base.url.interventions-service") { "http://localhost:${interventionsServiceApiMockServer.port()}" }
+      registry.add("api.base.url.pop-user-service") { "http://localhost:${popUserApiMockServer.port()}" }
+    }
   }
 
   init {
@@ -149,30 +162,6 @@ abstract class IntegrationTestBase : TestBase() {
     scopes: List<String> = listOf(),
     authSource: String = "none",
   ): (HttpHeaders) -> Unit = jwtAuthHelper.setAuthorisation(user, roles, scopes, authSource)
-
-  internal fun bucketName() = hmppsS3Properties.buckets["document-management"]!!.bucketName
-
-  internal fun putDocumentInS3(documentKey: String, fileResourcePath: String): ByteArray {
-    val request = PutObjectRequest.builder()
-      .bucket(bucketName())
-      .key(documentKey)
-      .build()
-    val fileBytes = ClassPathResource(fileResourcePath).contentAsByteArray
-    s3Client.putObject(request, RequestBody.fromBytes(fileBytes))
-    return fileBytes
-  }
-
-  internal fun deleteAllDocumentsInS3() {
-    val listObjectsResponse = s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(bucketName()).build())
-
-    for (s3Object in listObjectsResponse.contents()) {
-      val request = DeleteObjectRequest.builder()
-        .bucket(bucketName())
-        .key(s3Object.key())
-        .build()
-      s3Client.deleteObject(request)
-    }
-  }
 }
 
 fun readFile(file: String): String = Resources.getResource(file).readText()

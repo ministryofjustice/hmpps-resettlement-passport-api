@@ -6,7 +6,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 
-class CaseNotesApiMockServer : WireMockServerBase(9099) {
+class CaseNotesApiMockServer : WireMockServerBase() {
 
   fun stubGetCaseNotesOldList(nomsId: String, size: Int, page: Int, type: String, subType: String?, status: Int) {
     val caseNotesJSON = readFile("testdata/case-notes-api/case-notes-gen.json")

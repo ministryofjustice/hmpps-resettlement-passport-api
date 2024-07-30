@@ -5,7 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 
-class PoPUserApiMockServer : WireMockServerBase(9106) {
+class PoPUserApiMockServer : WireMockServerBase() {
 
   fun stubPostPoPUserVerification(status: Int) {
     val popUserDataResponseJSON = readFile("testdata/pop-user-api/pop-user-verify-response.json")

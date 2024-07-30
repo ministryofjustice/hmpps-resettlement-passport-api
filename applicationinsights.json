@@ -12,7 +12,7 @@
   },
   "selfDiagnostics": {
     "destination": "console",
-    "level": "DEBUG"
+    "level": "INFO"
   },
   "sampling": {
     "requestsPerSecond": 5.0,

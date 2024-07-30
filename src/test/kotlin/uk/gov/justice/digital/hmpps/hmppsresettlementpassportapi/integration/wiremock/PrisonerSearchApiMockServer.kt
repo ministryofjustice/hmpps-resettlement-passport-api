@@ -4,7 +4,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 
-class PrisonerSearchApiMockServer : WireMockServerBase(9094) {
+class PrisonerSearchApiMockServer : WireMockServerBase() {
 
   fun stubGetPrisonersList(prisonId: String, size: Int, page: Int, status: Int) {
     stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-1.json", prisonId, size, page, status)

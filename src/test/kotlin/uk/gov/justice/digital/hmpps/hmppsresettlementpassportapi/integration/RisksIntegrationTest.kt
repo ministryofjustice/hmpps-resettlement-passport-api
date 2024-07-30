@@ -115,9 +115,9 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(500)
       .jsonPath("errorCode").isEmpty
       .jsonPath("userMessage")
-      .isEqualTo("Unexpected error: 500 Internal Server Error from GET http://localhost:9097/risks/crn/abc/predictors/all")
+      .isEqualTo("Unexpected error: 500 Internal Server Error from GET http://localhost:${arnApiMockServer.port()}/risks/crn/abc/predictors/all")
       .jsonPath("developerMessage")
-      .isEqualTo("500 Internal Server Error from GET http://localhost:9097/risks/crn/abc/predictors/all")
+      .isEqualTo("500 Internal Server Error from GET http://localhost:${arnApiMockServer.port()}/risks/crn/abc/predictors/all")
       .jsonPath("moreInfo").isEmpty
   }
 
@@ -233,8 +233,8 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(500)
       .jsonPath("errorCode").isEmpty
       .jsonPath("userMessage")
-      .isEqualTo("Unexpected error: 500 Internal Server Error from GET http://localhost:9097/risks/crn/abc")
-      .jsonPath("developerMessage").isEqualTo("500 Internal Server Error from GET http://localhost:9097/risks/crn/abc")
+      .isEqualTo("Unexpected error: 500 Internal Server Error from GET http://localhost:${arnApiMockServer.port()}/risks/crn/abc")
+      .jsonPath("developerMessage").isEqualTo("500 Internal Server Error from GET http://localhost:${arnApiMockServer.port()}/risks/crn/abc")
       .jsonPath("moreInfo").isEmpty
   }
 

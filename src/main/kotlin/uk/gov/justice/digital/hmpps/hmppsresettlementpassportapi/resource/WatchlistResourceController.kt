@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource
 
+import io.opentelemetry.api.trace.SpanKind
+import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
@@ -41,6 +43,7 @@ class WatchlistResourceController(
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun postWatchlistByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -64,6 +67,7 @@ class WatchlistResourceController(
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun deleteWatchlistByNomsId(
     @PathVariable("nomsId")
     @Parameter(required = true)

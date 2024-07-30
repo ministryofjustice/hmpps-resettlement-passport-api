@@ -37,11 +37,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wir
 @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
 abstract class IntegrationTestBase : TestBase() {
 
-  @BeforeEach
-  fun printZePort() {
-    println("PORTLE ${hmppsAuthMockServer.port()}")
-  }
-
   @Autowired
   lateinit var webTestClient: WebTestClient
 

@@ -6,7 +6,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 import com.github.tomakehurst.wiremock.http.HttpHeader
 import com.github.tomakehurst.wiremock.http.HttpHeaders
 
-class HmppsAuthMockServer : WireMockServerBase(9091) {
+class HmppsAuthMockServer : WireMockServerBase() {
 
   fun stubGrantToken() {
     stubFor(

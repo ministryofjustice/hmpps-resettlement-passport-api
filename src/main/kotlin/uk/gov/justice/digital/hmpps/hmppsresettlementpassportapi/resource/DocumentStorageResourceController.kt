@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource
 
+import io.opentelemetry.api.trace.SpanKind
+import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
@@ -48,6 +50,7 @@ class DocumentStorageResourceController(
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun handleDocumentUploadByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -91,6 +94,7 @@ class DocumentStorageResourceController(
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun getDocumentByNomsId(
     @PathVariable("nomsId")
     @Parameter(required = true)
@@ -138,6 +142,7 @@ class DocumentStorageResourceController(
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun getLatestDocumentByNomsId(
     @PathVariable("nomsId")
     @Parameter(required = true)
@@ -179,6 +184,7 @@ class DocumentStorageResourceController(
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun listDocuments(
     @PathVariable("nomsId")
     @Parameter(required = true)

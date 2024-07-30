@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource
 
+import io.opentelemetry.api.trace.SpanKind
+import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
@@ -56,6 +58,7 @@ class AppointmentsResourceController(
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun getAppointments(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -67,12 +70,10 @@ class AppointmentsResourceController(
     futureOnly: Boolean,
     @RequestParam(defaultValue = "true", required = false)
     includePreRelease: Boolean,
-  ): AppointmentsList {
-    return if (futureOnly) {
-      appointmentsService.getAppointmentsByNomsId(nomsId, LocalDate.now(), LocalDate.now().plusDays(365), includePreRelease)
-    } else {
-      appointmentsService.getAppointmentsByNomsId(nomsId, LocalDate.now().minusDays(365), LocalDate.now().plusDays(365), includePreRelease)
-    }
+  ): AppointmentsList = if (futureOnly) {
+    appointmentsService.getAppointmentsByNomsId(nomsId, LocalDate.now(), LocalDate.now().plusDays(365), includePreRelease)
+  } else {
+    appointmentsService.getAppointmentsByNomsId(nomsId, LocalDate.now().minusDays(365), LocalDate.now().plusDays(365), includePreRelease)
   }
 
   @PostMapping("/{nomsId}/appointments", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -105,6 +106,7 @@ class AppointmentsResourceController(
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun postAppointmentsByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")

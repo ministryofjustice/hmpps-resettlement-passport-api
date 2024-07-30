@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource
 
+import io.opentelemetry.api.trace.SpanKind
+import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
@@ -67,6 +69,7 @@ class ResettlementAssessmentController(
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun postGetNextAssessmentPage(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -81,9 +84,7 @@ class ResettlementAssessmentController(
     version: Int = 1,
     @RequestBody
     resettlementAssessment: ResettlementAssessmentRequest,
-  ): ResettlementAssessmentNextPage {
-    return ResettlementAssessmentNextPage(nextPageId = resettlementAssessmentStrategy.getNextPageId(resettlementAssessment, nomsId, pathway, assessmentType, currentPage, version))
-  }
+  ): ResettlementAssessmentNextPage = ResettlementAssessmentNextPage(nextPageId = resettlementAssessmentStrategy.getNextPageId(resettlementAssessment, nomsId, pathway, assessmentType, currentPage, version))
 
   @GetMapping("/{nomsId}/resettlement-assessment/{pathway}/page/{pageId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Returns a page of resettlement assessment with any existing answers filled in", description = "Returns a page of resettlement assessment with any existing answers filled in")
@@ -115,6 +116,7 @@ class ResettlementAssessmentController(
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun getAssessmentPage(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -127,9 +129,7 @@ class ResettlementAssessmentController(
     assessmentType: ResettlementAssessmentType,
     @RequestParam("version")
     version: Int = 1,
-  ): ResettlementAssessmentResponsePage {
-    return resettlementAssessmentStrategy.getPageFromId(nomsId, pathway, pageId, assessmentType, version)
-  }
+  ): ResettlementAssessmentResponsePage = resettlementAssessmentStrategy.getPageFromId(nomsId, pathway, pageId, assessmentType, version)
 
   @GetMapping("/{nomsId}/resettlement-assessment/summary", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
@@ -170,6 +170,7 @@ class ResettlementAssessmentController(
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun getResettlementAssessmentSummaryByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -209,6 +210,7 @@ class ResettlementAssessmentController(
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun postCompleteAssessmentByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -256,6 +258,7 @@ class ResettlementAssessmentController(
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun postSubmitAssessmentByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -304,6 +307,7 @@ class ResettlementAssessmentController(
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun getResettlementAssessmentByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -344,6 +348,7 @@ class ResettlementAssessmentController(
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun postSkipAssessmentByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -396,6 +401,7 @@ class ResettlementAssessmentController(
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun getLatestResettlementAssessmentVersionByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")

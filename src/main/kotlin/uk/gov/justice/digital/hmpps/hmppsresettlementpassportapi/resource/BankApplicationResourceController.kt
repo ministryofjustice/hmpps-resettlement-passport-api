@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource
 
+import io.opentelemetry.api.trace.SpanKind
+import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
@@ -62,6 +64,7 @@ class BankApplicationResourceController(private val bankApplicationService: Bank
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun getBankApplicationByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -99,6 +102,7 @@ class BankApplicationResourceController(private val bankApplicationService: Bank
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun postBankApplicationByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -137,6 +141,7 @@ class BankApplicationResourceController(private val bankApplicationService: Bank
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun deleteAssessmentByNomsId(
     @PathVariable("nomsId")
     @Parameter(required = true)
@@ -179,6 +184,7 @@ class BankApplicationResourceController(private val bankApplicationService: Bank
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun patchBankApplicationByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")

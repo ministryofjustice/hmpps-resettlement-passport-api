@@ -138,6 +138,7 @@ class PrisonerResourceController(
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun getPrisonerDetails(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -186,6 +187,7 @@ class PrisonerResourceController(
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun getPrisonerImage(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")

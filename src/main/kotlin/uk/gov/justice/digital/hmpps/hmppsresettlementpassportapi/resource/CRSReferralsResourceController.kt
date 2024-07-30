@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource
 
+import io.opentelemetry.api.trace.SpanKind
+import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
@@ -51,6 +53,7 @@ class CRSReferralsResourceController(
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun getCRSReferralsByPathway(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -87,6 +90,7 @@ class CRSReferralsResourceController(
       ),
     ],
   )
+  @WithSpan(kind = SpanKind.SERVER)
   fun getCRSReferralsForAllPathways(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")

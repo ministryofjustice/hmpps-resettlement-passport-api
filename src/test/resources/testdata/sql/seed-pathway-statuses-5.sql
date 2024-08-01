@@ -48,3 +48,7 @@ VALUES(7, 1, 'HEALTH', 'CASE_NOTE', '2020-01-09 02:09:23.476', NULL, NULL, 'stri
 INSERT INTO delius_contact
 (id, prisoner_id, category, contact_type, created_date, appointment_date, appointment_duration, notes, created_by)
 VALUES(8, 1, 'HEALTH', 'CASE_NOTE', '2020-01-09 02:09:23.476', NULL, NULL, 'string test string - another health case note', 'Liz Murphy');
+
+INSERT INTO resettlement_assessment (id, prisoner_id, pathway, assessment_status, assessment_type, assessment, status_changed_to, created_date, created_by, case_note_text, created_by_user_id) VALUES
+(1, 1, 'ACCOMMODATION', 'COMPLETE', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some accom case notes', 'STURNER_GEN'),
+(2, 1, 'HEALTH', 'COMPLETE', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some health case notes', 'STURNER_GEN')

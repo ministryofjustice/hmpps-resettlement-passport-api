@@ -85,4 +85,21 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
 
   @Query("select ra.prisonerId from ResettlementAssessmentEntity ra inner join PrisonerEntity p on ra.prisonerId = p.id where p.prisonId = :prisonId and ra.assessmentType = :assessmentType and ra.assessmentStatus = :assessmentStatus group by ra.prisonerId having count(distinct (ra.pathway)) = :numOfPathways")
   fun findPrisonersWithAllAssessmentsInStatus(prisonId: String, assessmentType: ResettlementAssessmentType, assessmentStatus: ResettlementAssessmentStatus, numOfPathways: Int): Set<Long>
+
+  @Query(
+    """
+      select 
+      'ResettlementAssessmentCaseNote' || id, 
+      pathway, 
+      creationDate, 
+      submissionDate, 
+      createdBy, 
+      caseNoteText  
+      from ResettlementAssessmentEntity
+      where prisonerId = :prisonerId
+      and pathway = :pathway
+      and caseNoteText is not null
+    """,
+  )
+  fun findCaseNotesFor(prisonerId: Long, pathway: Pathway): List<List<Any>>
 }

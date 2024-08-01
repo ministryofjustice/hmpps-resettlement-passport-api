@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource
 
-import io.opentelemetry.api.trace.SpanKind
-import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
@@ -52,7 +50,6 @@ class AccommodationResourceController(
       ),
     ],
   )
-  @WithSpan(kind = SpanKind.SERVER)
   fun getAccommodationMainAddress(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")

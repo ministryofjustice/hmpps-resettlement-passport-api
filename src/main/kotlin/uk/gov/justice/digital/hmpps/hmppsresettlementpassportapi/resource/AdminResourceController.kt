@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource
 
-import io.opentelemetry.api.trace.SpanKind
-import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
@@ -25,7 +23,6 @@ class AdminResourceController(private val adminService: AdminService) {
       ),
     ],
   )
-  @WithSpan(kind = SpanKind.SERVER)
   fun retryFailedDeliusCaseNotes(): ResponseEntity<Void> {
     adminService.retryFailedDeliusCaseNotes()
     return ResponseEntity.ok().build()

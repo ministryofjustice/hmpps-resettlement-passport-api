@@ -139,3 +139,15 @@ fun searchTermMatchesPrisoner(searchTerm: String, prisoner: PrisonersSearch): Bo
   val trimmedSearchTerm = searchTerm.trim()
   return prisoner.prisonerNumber.lowercase() == trimmedSearchTerm.lowercase() || prisoner.firstName.lowercase().startsWith(trimmedSearchTerm.lowercase()) || prisoner.lastName.lowercase().startsWith(trimmedSearchTerm.lowercase())
 }
+
+fun generateLinkOnlyDeliusCaseNoteText(nomsId: String, assessmentType: ResettlementAssessmentType, psfrBaseUrl: String) = """
+  ${assessmentType.displayName} report completed.
+  
+  View accommodation report information in PSfR: $psfrBaseUrl/accommodation/?prisonerNumber=$nomsId&fromDelius=true#assessment-information
+  View attitudes, thinking and behaviour report information in PSfR: $psfrBaseUrl/attitudes-thinking-and-behaviour/?prisonerNumber=$nomsId&fromDelius=true#assessment-information
+  View children, families and communities report information in PSfR: $psfrBaseUrl/children-families-and-communities/?prisonerNumber=$nomsId&fromDelius=true#assessment-information
+  View drugs and alcohol report information in PSfR: $psfrBaseUrl/drugs-and-alcohol/?prisonerNumber=$nomsId&fromDelius=true#assessment-information
+  View education, skills and work report information in PSfR: $psfrBaseUrl/education-skills-and-work/?prisonerNumber=$nomsId&fromDelius=true#assessment-information
+  View finance and ID report information in PSfR: $psfrBaseUrl/finance-and-id/?prisonerNumber=$nomsId&fromDelius=true#assessment-information
+  View health report information in PSfR: $psfrBaseUrl/health-status/?prisonerNumber=$nomsId&fromDelius=true#assessment-information
+""".trimIndent()

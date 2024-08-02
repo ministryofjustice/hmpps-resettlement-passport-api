@@ -79,3 +79,6 @@ clamav:
 
 doc.conversion:
   use.stub: true
+
+psfr:
+  base.url: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk

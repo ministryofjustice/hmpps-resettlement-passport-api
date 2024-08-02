@@ -221,6 +221,7 @@ class ResettlementPassportDeliusApiMockServer : WireMockServerBase() {
       """
       {
         "type": "$type",
+        "description": null,
         "dateTime": "$fakeNow",
         "notes": "$caseNoteText",
         "author": {

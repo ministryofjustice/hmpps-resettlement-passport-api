@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource
 
-import io.opentelemetry.api.trace.SpanKind
-import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
@@ -69,7 +67,6 @@ class ResettlementAssessmentController(
       ),
     ],
   )
-  @WithSpan(kind = SpanKind.SERVER)
   fun postGetNextAssessmentPage(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -116,7 +113,6 @@ class ResettlementAssessmentController(
       ),
     ],
   )
-  @WithSpan(kind = SpanKind.SERVER)
   fun getAssessmentPage(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -170,7 +166,6 @@ class ResettlementAssessmentController(
       ),
     ],
   )
-  @WithSpan(kind = SpanKind.SERVER)
   fun getResettlementAssessmentSummaryByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -210,7 +205,6 @@ class ResettlementAssessmentController(
       ),
     ],
   )
-  @WithSpan(kind = SpanKind.SERVER)
   fun postCompleteAssessmentByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -258,7 +252,6 @@ class ResettlementAssessmentController(
       ),
     ],
   )
-  @WithSpan(kind = SpanKind.SERVER)
   fun postSubmitAssessmentByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -309,7 +302,6 @@ class ResettlementAssessmentController(
       ),
     ],
   )
-  @WithSpan(kind = SpanKind.SERVER)
   fun getResettlementAssessmentByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -350,7 +342,6 @@ class ResettlementAssessmentController(
       ),
     ],
   )
-  @WithSpan(kind = SpanKind.SERVER)
   fun postSkipAssessmentByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -403,7 +394,6 @@ class ResettlementAssessmentController(
       ),
     ],
   )
-  @WithSpan(kind = SpanKind.SERVER)
   fun getLatestResettlementAssessmentVersionByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")

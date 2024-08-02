@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource
 
-import io.opentelemetry.api.trace.SpanKind
-import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
@@ -65,7 +63,6 @@ class LicenceConditionResourceController(
       ),
     ],
   )
-  @WithSpan(kind = SpanKind.SERVER)
   fun getLicenceConditionByNomsId(
     @PathVariable("nomsId")
     @Parameter(required = true)
@@ -127,7 +124,6 @@ class LicenceConditionResourceController(
       ),
     ],
   )
-  @WithSpan(kind = SpanKind.SERVER)
   fun getLicenceConditionImage(
     @PathVariable("nomsId")
     @Parameter(required = true)
@@ -175,7 +171,6 @@ class LicenceConditionResourceController(
     "/{nomsId}/licence-condition/seen",
     produces = [MediaType.IMAGE_JPEG_VALUE, MediaType.APPLICATION_JSON_VALUE],
   )
-  @WithSpan(kind = SpanKind.SERVER)
   fun markLicenceConditionsSeen(
     @PathVariable("nomsId")
     @Parameter(required = true)

@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource
 
-import io.opentelemetry.api.trace.SpanKind
-import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
@@ -67,7 +65,6 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
       ),
     ],
   )
-  @WithSpan(kind = SpanKind.SERVER)
   fun getIdApplicationByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -105,7 +102,6 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
       ),
     ],
   )
-  @WithSpan(kind = SpanKind.SERVER)
   fun postIdApplicationByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -144,7 +140,6 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
       ),
     ],
   )
-  @WithSpan(kind = SpanKind.SERVER)
   fun deleteIdApplicationByNomsId(
     @PathVariable("nomsId")
     @Parameter(required = true)
@@ -197,7 +192,6 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
       ),
     ],
   )
-  @WithSpan(kind = SpanKind.SERVER)
   fun patchIdApplicationByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
@@ -251,7 +245,6 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
       ),
     ],
   )
-  @WithSpan(kind = SpanKind.SERVER)
   fun getAllIdApplicationsByNomsId(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")

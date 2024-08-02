@@ -81,6 +81,7 @@ class ResettlementAssessmentServiceTest {
       prisonerSearchApiService,
       resettlementPassportDeliusApiService,
       caseNoteRetryRepository,
+      "https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk",
     )
   }
 

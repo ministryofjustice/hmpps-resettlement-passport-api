@@ -258,9 +258,11 @@ class ResettlementAssessmentController(
     nomsId: String,
     @RequestParam("assessmentType")
     assessmentType: ResettlementAssessmentType,
+    @RequestParam("useNewDeliusCaseNoteFormat")
+    useNewDeliusCaseNoteFormat: Boolean = false,
     @RequestHeader("Authorization")
     auth: String,
-  ) = resettlementAssessmentService.submitResettlementAssessmentByNomsId(nomsId, assessmentType, auth)
+  ) = resettlementAssessmentService.submitResettlementAssessmentByNomsId(nomsId, assessmentType, useNewDeliusCaseNoteFormat, auth)
 
   @GetMapping("/{nomsId}/resettlement-assessment/{pathway}/latest", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(

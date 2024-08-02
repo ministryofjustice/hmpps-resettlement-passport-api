@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
@@ -45,6 +46,7 @@ class ResettlementAssessmentService(
   private val prisonerSearchApiService: PrisonerSearchApiService,
   private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
   private val caseNoteRetryRepository: CaseNoteRetryRepository,
+  @Value("\${psfr.base.url}") private val psfrBaseUrl: String,
 ) {
 
   companion object {
@@ -98,12 +100,15 @@ class ResettlementAssessmentService(
     )
 
   @Transactional
-  fun submitResettlementAssessmentByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType, auth: String): ResettlementAssessmentSubmitResponse {
+  fun submitResettlementAssessmentByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType, useNewDeliusCaseNoteFormat: Boolean, auth: String): ResettlementAssessmentSubmitResponse {
     // Check auth - must be NOMIS
     val authSource = getClaimFromJWTToken(auth, "auth_source")?.lowercase()
     if (authSource != "nomis") {
       throw ServerWebInputException("Endpoint must be called with a user token with authSource of NOMIS")
     }
+
+    val name = getClaimFromJWTToken(auth, "name") ?: throw ServerWebInputException("Cannot get name from auth token")
+    val userId = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get sub from auth token")
 
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
@@ -166,7 +171,13 @@ class ResettlementAssessmentService(
     }
 
     val crn = resettlementPassportDeliusApiService.getCrn(nomsId)
-    val groupedAssessmentsDelius = processAndGroupAssessmentCaseNotes(assessmentList, false, assessmentType)
+
+    // If new format is required, just send a single case note to Delius, otherwise use the old method
+    val groupedAssessmentsDelius = if (useNewDeliusCaseNoteFormat) {
+      listOf(generateLinkOnlyDeliusCaseNote(prisonerEntity.nomsId, name, userId, assessmentType))
+    } else {
+      processAndGroupAssessmentCaseNotes(assessmentList, false, assessmentType)
+    }
 
     if (crn != null) {
       groupedAssessmentsDelius.forEach {
@@ -289,7 +300,7 @@ class ResettlementAssessmentService(
     val user: User,
     val caseNoteText: String,
     val deliusCaseNoteType: DeliusCaseNoteType,
-    val description: String?,
+    val description: String? = null,
   )
 
   data class User(
@@ -443,6 +454,14 @@ class ResettlementAssessmentService(
         reason = request.reason,
         moreInfo = request.moreInfo,
       ),
+    )
+  }
+
+  fun generateLinkOnlyDeliusCaseNote(nomsId: String, name: String, userId: String, assessmentType: ResettlementAssessmentType): UserAndCaseNote {
+    return UserAndCaseNote(
+      user = User(userId, name),
+      deliusCaseNoteType = convertToDeliusCaseNoteType(assessmentType),
+      caseNoteText = generateLinkOnlyDeliusCaseNoteText(nomsId, assessmentType, psfrBaseUrl),
     )
   }
 }

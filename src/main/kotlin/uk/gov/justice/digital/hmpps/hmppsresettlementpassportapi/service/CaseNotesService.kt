@@ -2,15 +2,20 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotePathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesMeta
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DpsCaseNoteSubType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CaseNotesApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
+import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.util.Objects
 
@@ -20,6 +25,7 @@ class CaseNotesService(
   val deliusContactService: DeliusContactService,
   val prisonerRepository: PrisonerRepository,
   val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
+  val resettlementAssessmentRepository: ResettlementAssessmentRepository,
 ) {
   fun getCaseNotesByNomsId(nomsId: String, page: Int, size: Int, sort: String, days: Int, caseNoteType: CaseNoteType, createdByUserId: Int): CaseNotesList {
     if (page < 0 || size <= 0) {
@@ -32,7 +38,8 @@ class CaseNotesService(
     if (nomsId.isBlank()) {
       throw NoDataWithCodeFoundException("Prisoner", nomsId)
     }
-
+    val prisoner = prisonerRepository.findByNomsId(nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     var combinedCaseNotes = mutableListOf<PathwayCaseNote>()
 
     // Get case notes from DPS Case Notes API, delius_contact table and dps_case_notes
@@ -40,6 +47,7 @@ class CaseNotesService(
     if (createdByUserId == 0) { // RP2-900 For now for can't filter non-DPS case notes by the user. In this case just don't show anything from the database/Delius
       combinedCaseNotes.addAll(deliusContactService.getCaseNotesByNomsId(nomsId, caseNoteType))
     }
+    combinedCaseNotes.addAll(getResettlementAssessmentCaseNotes(prisoner.id(), caseNoteType))
 
     // Remove duplicates
     combinedCaseNotes = removeDuplicates(combinedCaseNotes)
@@ -87,9 +95,80 @@ class CaseNotesService(
     return CaseNotesList(null, null, null, null, 0, false)
   }
 
-  fun getCaseNotesCreatorsByPathway(nomsId: String, caseNoteType: CaseNoteType): List<CaseNotesMeta> {
-    return caseNotesApiService.getCaseNotesCreatorsByPathway(nomsId, caseNoteType)
+  private fun getResettlementAssessmentCaseNotes(prisonerId: Long, caseNoteType: CaseNoteType): List<PathwayCaseNote> =
+    when (caseNoteType) {
+      CaseNoteType.All -> emptyList()
+      CaseNoteType.ACCOMMODATION -> makePathwayCaseNotes(
+        resettlementAssessmentRepository.findCaseNotesFor(
+          prisonerId,
+          Pathway.ACCOMMODATION,
+        ),
+      )
+
+      CaseNoteType.HEALTH -> makePathwayCaseNotes(
+        resettlementAssessmentRepository.findCaseNotesFor(
+          prisonerId,
+          Pathway.HEALTH,
+        ),
+      )
+
+      CaseNoteType.FINANCE_AND_ID -> makePathwayCaseNotes(
+        resettlementAssessmentRepository.findCaseNotesFor(
+          prisonerId,
+          Pathway.FINANCE_AND_ID,
+        ),
+      )
+
+      CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY -> makePathwayCaseNotes(
+        resettlementAssessmentRepository.findCaseNotesFor(
+          prisonerId,
+          Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
+        ),
+      )
+
+      CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR -> makePathwayCaseNotes(
+        resettlementAssessmentRepository.findCaseNotesFor(
+          prisonerId,
+          Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+        ),
+      )
+
+      CaseNoteType.EDUCATION_SKILLS_AND_WORK -> makePathwayCaseNotes(
+        resettlementAssessmentRepository.findCaseNotesFor(
+          prisonerId,
+          Pathway.EDUCATION_SKILLS_AND_WORK,
+        ),
+      )
+
+      CaseNoteType.DRUGS_AND_ALCOHOL -> makePathwayCaseNotes(
+        resettlementAssessmentRepository.findCaseNotesFor(
+          prisonerId,
+          Pathway.DRUGS_AND_ALCOHOL,
+        ),
+      )
+    }
+
+  private fun makePathwayCaseNotes(results: List<List<Any>>): List<PathwayCaseNote> = results.map { row ->
+    val id = row[0] as String
+    val caseNotePathway = convertPathwayToCaseNotePathway(row[1] as Pathway)
+    val creationDate = row[2] as LocalDateTime
+    val submissionDate = (row[3] as? LocalDateTime) ?: creationDate
+    val createdBy = row[4] as String
+    val caseNoteText = row[5] as String
+    PathwayCaseNote(id, caseNotePathway, creationDate, submissionDate, createdBy, caseNoteText)
   }
+
+  private fun convertPathwayToCaseNotePathway(pathway: Pathway): CaseNotePathway = when (pathway) {
+    Pathway.ACCOMMODATION -> CaseNotePathway.ACCOMMODATION
+    Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR -> CaseNotePathway.ATTITUDES_THINKING_AND_BEHAVIOUR
+    Pathway.CHILDREN_FAMILIES_AND_COMMUNITY -> CaseNotePathway.CHILDREN_FAMILIES_AND_COMMUNITY
+    Pathway.DRUGS_AND_ALCOHOL -> CaseNotePathway.DRUGS_AND_ALCOHOL
+    Pathway.EDUCATION_SKILLS_AND_WORK -> CaseNotePathway.EDUCATION_SKILLS_AND_WORK
+    Pathway.FINANCE_AND_ID -> CaseNotePathway.FINANCE_AND_ID
+    Pathway.HEALTH -> CaseNotePathway.HEALTH
+  }
+
+  fun getCaseNotesCreatorsByPathway(nomsId: String, caseNoteType: CaseNoteType): List<CaseNotesMeta> = caseNotesApiService.getCaseNotesCreatorsByPathway(nomsId, caseNoteType)
 
   // Remove duplicates based on the createdBy + text + creationDate + occurrenceDate + pathway
   fun removeDuplicates(caseNotes: List<PathwayCaseNote>) = caseNotes.distinctBy { Objects.hash(it.createdBy, it.text, it.creationDateTime.toLocalDate(), it.occurenceDateTime.toLocalDate(), it.pathway) }.toMutableList()
@@ -108,15 +187,13 @@ class CaseNotesService(
     )
   }
 
-  fun postBCSTCaseNoteToDelius(crn: String, prisonCode: String, notes: String, name: String, deliusCaseNoteType: DeliusCaseNoteType, description: String?): Boolean {
-    return resettlementPassportDeliusApiService.createCaseNote(
-      crn = crn,
-      type = deliusCaseNoteType,
-      dateTime = OffsetDateTime.now(),
-      notes = notes,
-      author = convertFromNameToDeliusAuthor(prisonCode, name),
-      description = description,
+  fun postBCSTCaseNoteToDelius(crn: String, prisonCode: String, notes: String, name: String, deliusCaseNoteType: DeliusCaseNoteType, description: String?): Boolean = resettlementPassportDeliusApiService.createCaseNote(
+    crn = crn,
+    type = deliusCaseNoteType,
+    dateTime = OffsetDateTime.now(),
+    notes = notes,
+    author = convertFromNameToDeliusAuthor(prisonCode, name),
+    description = description,
 
-    )
-  }
+  )
 }

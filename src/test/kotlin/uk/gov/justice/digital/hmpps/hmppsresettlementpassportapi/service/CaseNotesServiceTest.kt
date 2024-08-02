@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.MethodSource
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotePathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CaseNotesApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDateTime
@@ -20,7 +21,13 @@ class CaseNotesServiceTest {
   @ParameterizedTest
   @MethodSource("test remove duplicates data")
   fun `test remove duplicates`(inputList: List<PathwayCaseNote>, expectedList: List<PathwayCaseNote>) {
-    val caseNotesService = CaseNotesService(mockkClass(CaseNotesApiService::class), mockkClass(DeliusContactService::class), mockkClass(PrisonerRepository::class), mockkClass(ResettlementPassportDeliusApiService::class))
+    val caseNotesService = CaseNotesService(
+      mockkClass(CaseNotesApiService::class),
+      mockkClass(DeliusContactService::class),
+      mockkClass(PrisonerRepository::class),
+      mockkClass(ResettlementPassportDeliusApiService::class),
+      mockkClass(ResettlementAssessmentRepository::class),
+    )
     Assertions.assertEquals(expectedList, caseNotesService.removeDuplicates(inputList))
   }
 

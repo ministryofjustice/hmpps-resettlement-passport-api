@@ -1,6 +1,14 @@
 {
   "content": [
     {
+      "caseNoteId": "ResettlementAssessmentCaseNote1",
+      "pathway": "ACCOMMODATION",
+      "creationDateTime": "2024-07-30T19:02:45",
+      "occurenceDateTime": "2024-07-30T19:02:45",
+      "createdBy": "A User",
+      "text": "Some accom case notes"
+    },
+    {
       "caseNoteId": "47028492",
       "pathway": "ACCOMMODATION",
       "creationDateTime": "2023-09-05T13:57:13.214269427",
@@ -9,9 +17,9 @@
       "text": "This is a test case note message from Resettlement Passport"
     }
   ],
-  "pageSize": 1,
+  "pageSize": 2,
   "page": 0,
   "sortName": "occurenceDateTime,DESC",
-  "totalElements": 1,
+  "totalElements": 2,
   "last": true
 }

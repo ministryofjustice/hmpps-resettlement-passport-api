@@ -16,7 +16,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.yesNoOp
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import java.util.stream.Stream
 
-class AttitudesThinkingAndBehaviourV2ResettlementAssessmentAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR) {
+class AttitudesThinkingAndBehaviourV2ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR) {
 
   @ParameterizedTest(name = "{1} -> {2}")
   @MethodSource("test next page function flow - no existing assessment data")
@@ -134,10 +134,6 @@ class AttitudesThinkingAndBehaviourV2ResettlementAssessmentAssessmentStrategyTes
                 ResettlementAssessmentOption(
                   id = "SUPPORT_GAMBLING_PROBLEMS",
                   displayText = "Support for problems with gambling",
-                ),
-                ResettlementAssessmentOption(
-                  id = "OTHER",
-                  displayText = "Other",
                 ),
                 ResettlementAssessmentOption(
                   id = "NO_SUPPORT_NEEDS",

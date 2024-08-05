@@ -25,6 +25,8 @@ pages:
             displayText: "Passport"
           - id: "DRIVING_LICENCE"
             displayText: "Driving licence"
+          - id: "MARRIAGE_CERTIFICATE"
+            displayText: "Marriage or civil partnership certificate"
           - id: "DIVORCE_CERTIFICATE"
             displayText: "Divorce decree absolute certificate"
           - id: "BIOMETRIC_RESIDENCE_PERMIT"
@@ -56,8 +58,6 @@ pages:
             displayText: "Personal independence payment (PIP)"
           - id: "STATE_PENSION"
             displayText: "State pension"
-          - id: "OTHER"
-            displayText: "Other"
           - id: "NO_BENEFITS"
             displayText: "No benefits"
             exclusive: true
@@ -91,8 +91,6 @@ pages:
             displayText: "Support to manage debts or arrears"
           - id: "HELP_TO_CONTACT_BANK"
             displayText: "Help to contact their bank to manage their account"
-          - id: "OTHER"
-            displayText: "Other"
           - id: "NO_SUPPORT_NEEDS"
             displayText: "No support needs identified"
             exclusive: true

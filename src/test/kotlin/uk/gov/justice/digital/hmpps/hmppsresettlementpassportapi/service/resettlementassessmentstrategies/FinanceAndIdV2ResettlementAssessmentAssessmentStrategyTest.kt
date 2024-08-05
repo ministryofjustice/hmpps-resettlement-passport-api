@@ -121,6 +121,10 @@ class FinanceAndIdV2ResettlementAssessmentAssessmentStrategyTest : BaseResettlem
                   displayText = "Driving licence",
                 ),
                 ResettlementAssessmentOption(
+                  id = "MARRIAGE_CERTIFICATE",
+                  displayText = "Marriage or civil partnership certificate"
+                ),
+                ResettlementAssessmentOption(
                   id = "DIVORCE_CERTIFICATE",
                   displayText = "Divorce decree absolute certificate",
                 ),
@@ -182,10 +186,6 @@ class FinanceAndIdV2ResettlementAssessmentAssessmentStrategyTest : BaseResettlem
                   displayText = "State pension",
                 ),
                 ResettlementAssessmentOption(
-                  id = "OTHER",
-                  displayText = "Other",
-                ),
-                ResettlementAssessmentOption(
                   id = "NO_BENEFITS",
                   displayText = "No benefits",
                   exclusive = true,
@@ -238,10 +238,6 @@ class FinanceAndIdV2ResettlementAssessmentAssessmentStrategyTest : BaseResettlem
                 ResettlementAssessmentOption(
                   id = "HELP_TO_CONTACT_BANK",
                   displayText = "Help to contact their bank to manage their account",
-                ),
-                ResettlementAssessmentOption(
-                  id = "OTHER",
-                  displayText = "Other",
                 ),
                 ResettlementAssessmentOption(
                   id = "NO_SUPPORT_NEEDS",

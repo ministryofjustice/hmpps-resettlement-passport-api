@@ -1,28 +1,28 @@
 version: 2
-pathway: ATTITUDES_THINKING_AND_BEHAVIOUR
+pathway: "ATTITUDES_THINKING_AND_BEHAVIOUR"
 pages:
-  - id: ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT
+  - id: "ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT"
     title: "Attitudes, thinking and behaviour report"
     questions:
-      - id: HELP_TO_MANAGE_ANGER
+      - id: "HELP_TO_MANAGE_ANGER"
         title: "Does the person in prison have any issues managing their emotions?"
-        type: RADIO
+        type: "RADIO"
         options:
-          - id: YES
+          - id: "YES"
             displayText: "Yes"
-          - id: NO
+          - id: "NO"
             displayText: "No"
-          - id: NO_ANSWER
+          - id: "NO_ANSWER"
             displayText: "No answer provided"
-      - id: ISSUES_WITH_GAMBLING
+      - id: "ISSUES_WITH_GAMBLING"
         title: "Does the person in prison have any issues with gambling?"
-        type: RADIO
+        type: "RADIO"
         options:
-          - id: YES
+          - id: "YES"
             displayText: "Yes"
-          - id: NO
+          - id: "NO"
             displayText: "No"
-          - id: NO_ANSWER
+          - id: "NO_ANSWER"
             displayText: "No answer provided"
     nextPageLogic:
       - nextPageId: "SUPPORT_REQUIREMENTS"
@@ -37,8 +37,6 @@ pages:
             displayText: "Support to manage their emotions"
           - id: "SUPPORT_GAMBLING_PROBLEMS"
             displayText: "Support for problems with gambling"
-          - id: "OTHER"
-            displayText: "Other"
           - id: "NO_SUPPORT_NEEDS"
             displayText: "No support needs identified"
             exclusive: true

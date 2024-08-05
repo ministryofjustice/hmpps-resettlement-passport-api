@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBas
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.AllocationManagerApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ArnApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CaseNotesApiMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CuriousApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CvlApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.EducationEmploymentApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.HmppsAuthMockServer
@@ -30,7 +31,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wir
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonRegisterApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonerSearchApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ResettlementPassportDeliusApiMockServer
-
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 @Sql(scripts = ["classpath:testdata/sql/clear-all-data.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -92,6 +92,9 @@ abstract class IntegrationTestBase : TestBase() {
     @JvmField
     val popUserApiMockServer = PoPUserApiMockServer()
 
+    @JvmField
+    val curiousApiMockServer = CuriousApiMockServer()
+
     @BeforeAll
     @JvmStatic
     fun startMocks() {
@@ -109,6 +112,7 @@ abstract class IntegrationTestBase : TestBase() {
       educationEmploymentApiMockServer.start()
       interventionsServiceApiMockServer.start()
       popUserApiMockServer.start()
+      curiousApiMockServer.start()
     }
 
     @AfterAll
@@ -126,6 +130,7 @@ abstract class IntegrationTestBase : TestBase() {
       deliusApiMockServer.stop()
       educationEmploymentApiMockServer.stop()
       interventionsServiceApiMockServer.stop()
+      curiousApiMockServer.stop()
     }
 
     @JvmStatic
@@ -144,6 +149,7 @@ abstract class IntegrationTestBase : TestBase() {
       registry.add("api.base.url.education-employment") { "http://localhost:${educationEmploymentApiMockServer.port()}" }
       registry.add("api.base.url.interventions-service") { "http://localhost:${interventionsServiceApiMockServer.port()}" }
       registry.add("api.base.url.pop-user-service") { "http://localhost:${popUserApiMockServer.port()}" }
+      registry.add("api.base.url.curious-service") { "http://localhost:${curiousApiMockServer.port()}" }
     }
   }
 

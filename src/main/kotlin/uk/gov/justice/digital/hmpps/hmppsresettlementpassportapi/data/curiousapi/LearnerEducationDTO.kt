@@ -66,13 +66,13 @@ data class LearnersEducationList(
   val empty: Boolean,
   val first: Boolean,
   val last: Boolean,
-  val number: Int?,
-  val numberOfElements: Int?,
+  val number: Int = 0,
+  val numberOfElements: Int = 0,
   val pageable: Pageable?,
-  val size: Int?,
+  val size: Int = 0,
   val sort: List<Any>,
-  var totalElements: Int?,
-  val totalPages: Int?,
+  var totalElements: Int = 0,
+  val totalPages: Int = 0,
 )
 
 data class Pageable(

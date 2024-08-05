@@ -5,7 +5,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWi
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LearnersCourse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LearnersCourseList
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.curiousapi.LearnersEducationList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.curiousapi.LearnerEducationDTO
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CuriousApiService
 
@@ -25,24 +25,35 @@ class LearnersEducationService(
       )
 
     if (pageNumber < 0 || pageSize <= 0) {
+    }
+
+    val courses = learnersEducationApiService.getLearnersEducation(prisoner.nomsId, pageSize, pageNumber)
+
+    val startIndex = (pageNumber * pageSize)
+    if (courses != null) {
+      if (startIndex >= courses.content?.size!!) {
+        throw NoDataWithCodeFoundException(
+          "Data",
+          "Page $pageNumber",
+        )
+      }
+    }
+    val courseList = objectMapper(courses?.content)
+
+    if (courses != null && courseList.isEmpty()) {
+      throw NoDataWithCodeFoundException(
+        "Data",
+        "Page $pageNumber",
+      )
+    } else if (courses != null) {
+      return LearnersCourseList(courseList, courses.empty, courses.first, courses.last, courses.number, courses.numberOfElements, courses.pageable!!, courses.sort, courses.size, courses.totalElements, courses.totalPages)
+    } else {
       throw NoDataWithCodeFoundException(
         "Data",
         "Page $pageNumber and Size $pageSize",
       )
     }
-
-    val courses = learnersEducationApiService.getLearnersEducation(prisoner.nomsId)
-
-    val startIndex = (pageNumber * pageSize)
-    if (startIndex >= courses.content?.size!!) {
-      throw NoDataWithCodeFoundException(
-        "Data",
-        "Page $pageNumber",
-      )
-    }
-    val courseList = objectMapper(courses)
-
-    val endIndex = (pageNumber * pageSize) + (pageSize)
+   /* val endIndex = (pageNumber * pageSize) + (pageSize)
     if (startIndex < endIndex && endIndex <= courseList.size) {
       val cList = courseList.subList(startIndex, endIndex)
       return LearnersCourseList(cList, cList.toList().size, pageNumber, courseList.size, (endIndex == courses.size))
@@ -50,12 +61,16 @@ class LearnersEducationService(
       val cList = courseList.subList(startIndex, courseList.size)
       return LearnersCourseList(cList, cList.toList().size, pageNumber, courseList.size, true)
     }
+
+
     return LearnersCourseList(emptyList(), 0, 0, 0, true)
+
+    */
   }
 
-  fun objectMapper(courses: LearnersEducationList): List<LearnersCourse> {
+  fun objectMapper(courses: MutableList<LearnerEducationDTO>?): List<LearnersCourse> {
     val courseList = mutableListOf<LearnersCourse>()
-    courses.content?.forEach { course ->
+    courses?.forEach { course ->
       val learnersCourse = LearnersCourse(
         course.nomsId,
         course.establishmentId,

@@ -19,8 +19,15 @@ data class LearnersCourse(
 
 data class LearnersCourseList(
   val content: List<LearnersCourse>?,
-  val pageSize: Int?,
-  val page: Int?,
-  val totalElements: Int?,
+  val empty: Boolean,
+  val first: Boolean,
   val last: Boolean,
+  val number: Int,
+  val numberOfElements: Int,
+  val pageable: uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.curiousapi.Pageable,
+  val sort: List<Any>,
+  val size: Int,
+  val totalElements: Int,
+  val totalPages: Int,
+
 )

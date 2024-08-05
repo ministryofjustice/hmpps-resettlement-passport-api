@@ -19,37 +19,29 @@ class CuriousApiService(
   }
 
   @Cacheable("curious-api-get-learner-education-by-noms-id")
-  fun getLearnersEducation(nomsId: String): LearnersEducationList {
+  fun getLearnersEducation(nomsId: String, pageSize: Int, pageNumber: Int): LearnersEducationList? {
     val listToReturn = LearnersEducationList(
       mutableListOf<LearnerEducationDTO>(), true, false, false, 0, 0, null, 0, emptyList(), 0, 0,
     )
 
     var page = 0
-    do {
-      val data = curiousWebClientCredentials.get()
-        .uri(
-          "/sequation-virtual-campus2-api/learnerEducation/{nomsId}?size={size}&page={page}",
-          mapOf(
-            "nomsId" to nomsId,
-            "size" to 1,
-            "page" to page,
+    val data = curiousWebClientCredentials.get()
+      .uri(
+        "/sequation-virtual-campus2-api/learnerEducation/{nomsId}?size={size}&page={page}",
+        mapOf(
+          "nomsId" to nomsId,
+          "size" to 1,
+          "page" to page,
 
-          ),
-        )
-        .retrieve()
-        .onStatus(
-          { it == HttpStatus.NOT_FOUND },
-          { throw ResourceNotFoundException("Prisoner $nomsId not found in learner education curious api") },
-        )
+        ),
+      )
+      .retrieve()
+      .onStatus(
+        { it == HttpStatus.NOT_FOUND },
+        { throw ResourceNotFoundException("Prisoner $nomsId not found in learner education curious api") },
+      )
 
-      val pageOfData = data.bodyToMono(LearnersEducationList::class.java).block()
-      if (pageOfData != null) {
-        listToReturn.content?.addAll(pageOfData.content!!)
-      }
-      page += 1
-    } while (!pageOfData?.last!!)
-    listToReturn.totalElements = listToReturn.content?.size
-
-    return listToReturn
+    val pageOfData = data.bodyToMono(LearnersEducationList::class.java).block()
+    return pageOfData
   }
 }

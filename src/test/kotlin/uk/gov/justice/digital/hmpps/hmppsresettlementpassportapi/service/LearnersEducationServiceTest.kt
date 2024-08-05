@@ -40,13 +40,13 @@ class LearnersEducationServiceTest {
   }
 
   @Test
-  fun `test get PrisonersList happy path full json`() {
+  fun `test get Course happy path full json`() {
     val prisonerEntity = PrisonerEntity(1, "A8339DY", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
     val prisonerId = "A8339DY"
     val expectedCoursename = "Dummy_Automated_320"
 
     val mockedJsonResponse: LearnersEducationList = readFileAsObject("testdata/curious-api/learners-education-list.json")
-    whenever(curiousApiService.getLearnersEducation(prisonerId)).thenReturn(mockedJsonResponse)
+    whenever(curiousApiService.getLearnersEducation(prisonerId, 1, 0)).thenReturn(mockedJsonResponse)
     whenever(prisonerRepository.findByNomsId(prisonerId)).thenReturn(prisonerEntity)
     val learnersCourseList =
       learnersEducationService.getLearnersEducationCourseData(

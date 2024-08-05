@@ -38,6 +38,7 @@ class CachingConfiguration {
       .withCacheConfiguration("resettlement-passport-delius-api-get-com-by-noms-id", getCacheConfiguration(Duration.ofHours(2)))
       .withCacheConfiguration("resettlement-passport-delius-api-fetch-accommodation", getCacheConfiguration(Duration.ofHours(1)))
       .withCacheConfiguration("resettlement-passport-delius-api-get-personal-details", getCacheConfiguration(Duration.ofHours(1)))
+      .withCacheConfiguration("curious-api-get-learner-education-by-noms-id", getCacheConfiguration(Duration.ofHours(1)))
       .build()
   }
 

@@ -53,19 +53,6 @@ class LearnersEducationService(
         "Page $pageNumber and Size $pageSize",
       )
     }
-   /* val endIndex = (pageNumber * pageSize) + (pageSize)
-    if (startIndex < endIndex && endIndex <= courseList.size) {
-      val cList = courseList.subList(startIndex, endIndex)
-      return LearnersCourseList(cList, cList.toList().size, pageNumber, courseList.size, (endIndex == courses.size))
-    } else if (startIndex < endIndex) {
-      val cList = courseList.subList(startIndex, courseList.size)
-      return LearnersCourseList(cList, cList.toList().size, pageNumber, courseList.size, true)
-    }
-
-
-    return LearnersCourseList(emptyList(), 0, 0, 0, true)
-
-    */
   }
 
   fun objectMapper(courses: MutableList<LearnerEducationDTO>?): List<LearnersCourse> {

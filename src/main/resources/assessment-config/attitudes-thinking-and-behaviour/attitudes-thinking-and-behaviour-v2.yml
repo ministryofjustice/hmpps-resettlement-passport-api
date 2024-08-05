@@ -1,7 +1,7 @@
 version: 2
 pathway: ATTITUDES_THINKING_AND_BEHAVIOUR
 pages:
-  - id: ANGER_AND_GAMBLING
+  - id: ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT
     title: "Attitudes, thinking and behaviour report"
     questions:
       - id: HELP_TO_MANAGE_ANGER
@@ -25,20 +25,21 @@ pages:
           - id: NO_ANSWER
             displayText: "No answer provided"
     nextPageLogic:
-      - nextPageId: "SUPPORT_NEEDS"
-  - id: "SUPPORT_NEEDS"
+      - nextPageId: "SUPPORT_REQUIREMENTS"
+  - id: "SUPPORT_REQUIREMENTS"
     questions:
       - id: "SUPPORT_REQUIREMENTS"
         title: "Support needs"
         subTitle: "Select any needs you have identified that could be met by prison or probation staff."
         type: "CHECKBOX"
-        validationType: "OPTIONAL"
         options:
           - id: "SUPPORT_MANAGING_EMOTIONS"
             displayText: "Support to manage their emotions"
           - id: "SUPPORT_GAMBLING_PROBLEMS"
             displayText: "Support for problems with gambling"
-          - id: "NO_SUPPORT_NEEDS_IDENTIFIED"
+          - id: "OTHER"
+            displayText: "Other"
+          - id: "NO_SUPPORT_NEEDS"
             displayText: "No support needs identified"
             exclusive: true
     nextPageLogic:

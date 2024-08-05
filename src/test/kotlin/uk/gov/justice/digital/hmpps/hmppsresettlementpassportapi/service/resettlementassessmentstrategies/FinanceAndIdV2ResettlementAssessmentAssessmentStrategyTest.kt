@@ -122,7 +122,7 @@ class FinanceAndIdV2ResettlementAssessmentAssessmentStrategyTest : BaseResettlem
                 ),
                 ResettlementAssessmentOption(
                   id = "MARRIAGE_CERTIFICATE",
-                  displayText = "Marriage or civil partnership certificate"
+                  displayText = "Marriage or civil partnership certificate",
                 ),
                 ResettlementAssessmentOption(
                   id = "DIVORCE_CERTIFICATE",

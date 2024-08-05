@@ -22,6 +22,7 @@ api:
       interventions-service: http://localhost:9105
       pop-user-service: http://localhost:9106
       gotenberg-api: http://localhost:8091
+      curious-service: http://localhost:9107
 
 schedule:
   expression:

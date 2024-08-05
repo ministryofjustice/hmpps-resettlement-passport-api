@@ -32,6 +32,8 @@ api:
       #pop-user-service: http://localhost:9193/pop-user-api
       pop-user-service: https://person-on-probation-user-api-dev.hmpps.service.justice.gov.uk
       gotenberg-api: http://localhost:8091
+      curious-service: http://localhost:9193/curious-api
+      #curious-service: https://testservices.sequation.net
 schedule:
   expression:
     custom-metrics: 0 0/15 * * * ?

@@ -29,6 +29,7 @@ generic-service:
     interventions-api-integration_crsAppointmentsEnabled: true
     API_BASE_URL_gotenberg-api: http://hmpps-resettlement-passport-api-gotenberg
     PSFR_BASE_URL: https://resettlement-passport-ui-preprod.hmpps.service.justice.gov.uk
+    API_BASE_URL_CURIOUS_SERVICE: https://preprodservices.sequation.net
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts

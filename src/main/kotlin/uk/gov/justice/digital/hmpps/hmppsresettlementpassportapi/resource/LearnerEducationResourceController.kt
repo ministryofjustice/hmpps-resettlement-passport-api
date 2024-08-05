@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource
 
-import io.opentelemetry.api.trace.SpanKind
-import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
@@ -28,7 +26,6 @@ class LearnerEducationResourceController(
   private val learnersEducationService: LearnersEducationService,
 ) {
 
-  @WithSpan(kind = SpanKind.SERVER)
   @GetMapping("/{nomsId}/learner-education", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get all courses", description = "Get all courses the prisoner (learner) has been enrolled")
   @ApiResponses(

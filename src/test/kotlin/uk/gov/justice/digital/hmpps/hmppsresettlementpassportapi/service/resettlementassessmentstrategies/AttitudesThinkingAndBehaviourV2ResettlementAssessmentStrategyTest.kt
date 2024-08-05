@@ -11,7 +11,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
@@ -38,7 +37,7 @@ class AttitudesThinkingAndBehaviourV2ResettlementAssessmentAssessmentStrategyTes
       pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
       assessmentType = ResettlementAssessmentType.BCST2,
       currentPage = currentPage,
-      version = 2
+      version = 2,
     )
     Assertions.assertEquals(expectedPage, nextPage)
   }
@@ -81,7 +80,7 @@ class AttitudesThinkingAndBehaviourV2ResettlementAssessmentAssessmentStrategyTes
       pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
       assessmentType = ResettlementAssessmentType.BCST2,
       pageId = pageIdInput,
-      version = 2
+      version = 2,
     )
     Assertions.assertEquals(expectedPage, page)
   }

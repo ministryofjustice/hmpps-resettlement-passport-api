@@ -432,6 +432,38 @@ class ServiceUtilsTest {
     prisonName = "HMP ABC",
     youthOffender = null,
   )
+
+  @Test
+  fun `test generateLinkOnlyDeliusCaseNoteText - immediate needs report`() {
+    val expectedCaseNote = """
+      Immediate needs report completed.
+  
+      View accommodation report information in PSfR: https://example.com/accommodation/?prisonerNumber=ABC1234&fromDelius=true#assessment-information
+      View attitudes, thinking and behaviour report information in PSfR: https://example.com/attitudes-thinking-and-behaviour/?prisonerNumber=ABC1234&fromDelius=true#assessment-information
+      View children, families and communities report information in PSfR: https://example.com/children-families-and-communities/?prisonerNumber=ABC1234&fromDelius=true#assessment-information
+      View drugs and alcohol report information in PSfR: https://example.com/drugs-and-alcohol/?prisonerNumber=ABC1234&fromDelius=true#assessment-information
+      View education, skills and work report information in PSfR: https://example.com/education-skills-and-work/?prisonerNumber=ABC1234&fromDelius=true#assessment-information
+      View finance and ID report information in PSfR: https://example.com/finance-and-id/?prisonerNumber=ABC1234&fromDelius=true#assessment-information
+      View health report information in PSfR: https://example.com/health-status/?prisonerNumber=ABC1234&fromDelius=true#assessment-information
+    """.trimIndent()
+    Assertions.assertEquals(expectedCaseNote, generateLinkOnlyDeliusCaseNoteText("ABC1234", ResettlementAssessmentType.BCST2, "https://example.com"))
+  }
+
+  @Test
+  fun `test generateLinkOnlyDeliusCaseNoteText - pre-release report`() {
+    val expectedCaseNote = """
+      Pre-release report completed.
+  
+      View accommodation report information in PSfR: https://example.com/accommodation/?prisonerNumber=ABC1234&fromDelius=true#assessment-information
+      View attitudes, thinking and behaviour report information in PSfR: https://example.com/attitudes-thinking-and-behaviour/?prisonerNumber=ABC1234&fromDelius=true#assessment-information
+      View children, families and communities report information in PSfR: https://example.com/children-families-and-communities/?prisonerNumber=ABC1234&fromDelius=true#assessment-information
+      View drugs and alcohol report information in PSfR: https://example.com/drugs-and-alcohol/?prisonerNumber=ABC1234&fromDelius=true#assessment-information
+      View education, skills and work report information in PSfR: https://example.com/education-skills-and-work/?prisonerNumber=ABC1234&fromDelius=true#assessment-information
+      View finance and ID report information in PSfR: https://example.com/finance-and-id/?prisonerNumber=ABC1234&fromDelius=true#assessment-information
+      View health report information in PSfR: https://example.com/health-status/?prisonerNumber=ABC1234&fromDelius=true#assessment-information
+    """.trimIndent()
+    Assertions.assertEquals(expectedCaseNote, generateLinkOnlyDeliusCaseNoteText("ABC1234", ResettlementAssessmentType.RESETTLEMENT_PLAN, "https://example.com"))
+  }
 }
 
 enum class TestEnum {

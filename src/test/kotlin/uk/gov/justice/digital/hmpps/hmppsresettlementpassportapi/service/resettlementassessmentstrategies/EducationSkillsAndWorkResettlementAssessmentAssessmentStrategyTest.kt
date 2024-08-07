@@ -476,6 +476,7 @@ class EducationSkillsAndWorkResettlementAssessmentAssessmentStrategyTest : BaseR
             question = ResettlementAssessmentQuestion(
               id = "TYPE_OF_EMPLOYMENT_CONTRACT",
               title = "Type of employment contract",
+              subTitle = "Select all that apply.",
               type = TypeOfQuestion.CHECKBOX,
               options = listOf(
                 ResettlementAssessmentOption(id = "FULL_TIME_CONTRACT", displayText = "Full-time contract"),

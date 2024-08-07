@@ -11,8 +11,7 @@
     }
   },
   "selfDiagnostics": {
-    "destination": "console",
-    "level": "INFO"
+    "destination": "console"
   },
   "sampling": {
     "requestsPerSecond": 5.0,

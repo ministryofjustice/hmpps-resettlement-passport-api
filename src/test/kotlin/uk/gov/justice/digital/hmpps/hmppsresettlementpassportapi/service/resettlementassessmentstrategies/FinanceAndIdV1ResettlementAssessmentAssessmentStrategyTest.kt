@@ -254,7 +254,7 @@ class FinanceAndIdV1ResettlementAssessmentAssessmentStrategyTest : BaseResettlem
             question = ResettlementAssessmentQuestion(
               id = "WHAT_ID_DOCUMENTS",
               title = "What ID documents does the person in prison have?",
-              subTitle = null,
+              subTitle = "Select all that apply.",
               type = TypeOfQuestion.CHECKBOX,
               options = listOf(
                 ResettlementAssessmentOption(id = "BIRTH_CERTIFICATE", displayText = "Birth or adoption certificate"),
@@ -318,7 +318,7 @@ class FinanceAndIdV1ResettlementAssessmentAssessmentStrategyTest : BaseResettlem
             question = ResettlementAssessmentQuestion(
               id = "SELECT_BENEFITS",
               title = "Select benefits the person in prison received before custody",
-              subTitle = null,
+              subTitle = "Select all that apply.",
               type = TypeOfQuestion.CHECKBOX,
               options = listOf(
                 ResettlementAssessmentOption(id = "ESA", displayText = "Employment and support allowance (ESA)"),

@@ -30,6 +30,7 @@ pages:
     questions:
       - id: TYPE_OF_EMPLOYMENT_CONTRACT
         title: "Type of employment contract"
+        subTitle: "Select all that apply."
         type: "CHECKBOX"
         options:
           - id: FULL_TIME_CONTRACT

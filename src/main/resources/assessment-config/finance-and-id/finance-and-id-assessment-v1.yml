@@ -44,6 +44,7 @@ pages:
     questions:
       - id: WHAT_ID_DOCUMENTS
         title: "What ID documents does the person in prison have?"
+        subTitle: "Select all that apply."
         type: CHECKBOX
         options:
           - id: "BIRTH_CERTIFICATE"
@@ -111,6 +112,7 @@ pages:
     questions:
       - id: SELECT_BENEFITS
         title: "Select benefits the person in prison received before custody"
+        subTitle: "Select all that apply."
         type: CHECKBOX
         options:
           - id: "ESA"

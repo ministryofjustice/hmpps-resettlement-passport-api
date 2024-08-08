@@ -3,9 +3,9 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
+import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
 import jakarta.validation.ValidationException
-import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -24,6 +24,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.VirusSc
 import java.io.InputStream
 import java.time.LocalDateTime
 import java.util.UUID
+
+private val logger = KotlinLogging.logger {}
 
 @Service
 class DocumentService(
@@ -48,13 +50,14 @@ class DocumentService(
           "pdf",
         )!!
       ) {
+        logger.info { "Received unsupported filename ${document.originalFilename}" }
         throw ValidationException("Unsupported document format, only .doc or pdf allowed")
       }
 
       when (val virusScanResult = virusScanner.scan(document.bytes)) {
         NoVirusFound -> Success(convertAndStoreDocument(nomsId, document, category))
         is VirusFound -> {
-          log.info(VirusFoundEvent(nomsId, virusScanResult.foundViruses).toString())
+          logger.info { VirusFoundEvent(nomsId, virusScanResult.foundViruses) }
           Failure(virusScanResult)
         }
       }
@@ -83,7 +86,7 @@ class DocumentService(
     )
 
     val docEntity = documentsRepository.save(documents)
-    log.info("Document key ${docEntity.originalDocumentKey} and id is ${docEntity.id}")
+    logger.info { "Document key ${docEntity.originalDocumentKey} and id is ${docEntity.id}" }
     // saving the documents entity
     // return documentsRepository.save(documents)
     return docEntity

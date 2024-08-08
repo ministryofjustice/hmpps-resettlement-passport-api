@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/resettlement-passport-and-delius-api/probation-cases/G5384GE/crn"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "resettlement-passport-and-delius-api-getPrisonerByNomsNumber-G5384GE-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

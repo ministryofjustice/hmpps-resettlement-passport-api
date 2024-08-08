@@ -1,0 +1,13 @@
+{
+    "crn": "U338862",
+    "name": {
+        "forename": "Coneway",
+        "surname": "Boyd"
+    },
+    "dateOfBirth": "1982-10-24",
+    "contactDetails": {
+        "telephone": "987654321",
+        "mobile": "0779999999",
+        "email": "boyd.coneway@test.com"
+    }
+}

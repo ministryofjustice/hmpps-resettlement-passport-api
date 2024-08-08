@@ -14,10 +14,9 @@
     "destination": "console"
   },
   "sampling": {
-    "requestsPerSecond": 5.0,
+    "percentage": 100,
     "overrides": [
       {
-        "percentage": 10,
         "telemetryType": "request",
         "attributes": [
           {
@@ -25,7 +24,8 @@
             "value": "https?://[^/]+/health.*",
             "matchType": "regexp"
           }
-        ]
+        ],
+        "percentage": 10
       }
     ]
   }

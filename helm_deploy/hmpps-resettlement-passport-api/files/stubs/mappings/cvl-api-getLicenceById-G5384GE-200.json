@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/cvl-api/licence/id/202"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "cvl-api-getLicenceById-G5384GE-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

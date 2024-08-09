@@ -1,0 +1,432 @@
+{
+  "results": [
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Community Work"
+      },
+      "dateTime": "{{now format='yyyy-MM-dd\'T\'HH:mm:ss'}}+01:00",
+      "duration": "PT30M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Bob",
+          "surname": "Example"
+        },
+        "email": "charity@test.com"
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "Swansea town centre",
+        "address": {
+          "buildingName": "",
+          "buildingNumber": "",
+          "streetName": "",
+          "district": "",
+          "town": "",
+          "county": "Swansea",
+          "postcode": "SA1 1JG"
+        }
+      },
+      "description": "Appointment with Charity ABC"
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Rehabilitation meeting"
+      },
+      "dateTime": "{{now offset='2 hours' format='yyyy-MM-dd\'T\'HH:mm:ss'}}+01:00",
+      "duration": "PT30M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Carl",
+          "surname": "Jones"
+        },
+        "email": "rehab@test.com"
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "Cardiff town centre",
+        "address": {
+          "buildingName": "",
+          "buildingNumber": "",
+          "streetName": "",
+          "district": "",
+          "town": "",
+          "county": "Cardiff",
+          "postcode": "CF1 1AB"
+        }
+      },
+      "description": "Same day Appointment with Rehabilitation"
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Community Work"
+      },
+      "dateTime": "{{now offset='-10 days' format='yyyy-MM-dd\'T\'HH:mm:ss'}}+01:00",
+      "duration": "PT30M",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Bob",
+          "surname": "Example"
+        },
+        "email": "charity@test.com"
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "Swansea town centre",
+        "address": {
+          "buildingName": "",
+          "buildingNumber": "",
+          "streetName": "",
+          "district": "",
+          "town": "",
+          "county": "Swansea",
+          "postcode": "SA1 1JG"
+        }
+      },
+      "description": "Past Appointment with Charity ABC"
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Jobs centre plus"
+      },
+      "dateTime": "{{now offset='1 days' format='yyyy-MM-dd\'T\'HH:mm:ss'}}+01:00",
+      "duration": "PT1H",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "CRSUATU",
+          "surname": "Staff"
+        },
+        "email": "CRSUATU.staff@test.com"
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "Swansea Parc Tawe Jobcentre",
+        "address": {
+          "buildingName": "",
+          "buildingNumber": "Unit 7",
+          "streetName": "Parc Tawe North",
+          "district": "",
+          "town": "Swansea",
+          "county": "Swansea",
+          "postcode": "SA1 2AA"
+        }
+      },
+      "description": "Appointment with Jobs centre plus"
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "{{now offset='-5 days' format='yyyy-MM-dd\'T\'HH:mm:ss'}}+01:00",
+      "duration": "PT2XXXH",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "CRSUATU",
+          "surname": "Staff"
+        },
+        "email": "CRSUATU.staff@test.com"
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location",
+        "address": {
+          "buildingName": "",
+          "buildingNumber": "77",
+          "streetName": "High Street",
+          "district": "",
+          "town": "EDINBURGH",
+          "county": "",
+          "postcode": "EH50 2GR"
+        }
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "AFTA",
+        "description": "Failed to Attend"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "description"
+    },
+    "dateTime": "{{now offset='30 days' format='yyyy-MM-dd\'T\'HH:mm:ss'}}+01:00",
+    "duration": "PT2XXXH",
+    "staff": {
+      "code": "CRSUATU",
+      "name": {
+        "forename": "CRSUATU",
+        "surname": "Staff"
+      },
+      "email": "CRSUATU.staff@test.com"
+    },
+    "location": {
+      "code": "CRSEXTL",
+      "description": "CRS Provider Location",
+      "address": {
+        "buildingName": "",
+        "buildingNumber": "77",
+        "streetName": "High Street",
+        "district": "",
+        "town": "EDINBURGH",
+        "county": "",
+        "postcode": "EH50 2GR"
+      }
+    },
+    "description": "Appointment with CRS Staff (NS)",
+    "outcome": {
+      "code": "AFTA",
+      "description": "Failed to Attend"
+    }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "description"
+      },
+      "dateTime": "{{now offset='35 days' format='yyyy-MM-dd\'T\'HH:mm:ss'}}+01:00",
+      "duration": "PT2XXXH",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "Bob",
+          "surname": "Jones"
+        },
+        "email": "description"
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location",
+        "address": {
+          "buildingName": "",
+          "buildingNumber": "77",
+          "streetName": "High Street",
+          "district": "",
+          "town": "EDINBURGH",
+          "county": "",
+          "postcode": "EH50 2GR"
+        }
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "AFTA",
+        "description": "Failed to Attend"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2024-09-14T14:05:00+01:00",
+      "duration": "PT2XXXH",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "CRSUATU",
+          "surname": "Staff"
+        },
+        "email": "email@test.com"
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location",
+        "address": {
+          "buildingName": "",
+          "buildingNumber": "77",
+          "streetName": "High Street",
+          "district": "",
+          "town": "EDINBURGH",
+          "county": "",
+          "postcode": "EH50 2GR"
+        }
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "AFTA",
+        "description": "Failed to Attend"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2024-09-14T14:05:00+01:00",
+      "duration": "PT2XXXH",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "CRSUATU",
+          "surname": "Staff"
+        },
+        "email": "CRSUATU.staff@test.com"
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location",
+        "address": {
+          "buildingName": "",
+          "buildingNumber": "2",
+          "streetName": "High Street",
+          "district": "",
+          "town": "EDINBURGH",
+          "county": "",
+          "postcode": "EH50 2GR"
+        }
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "AFTA",
+        "description": "Failed to Attend"
+      }
+    },    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2024-09-14T14:05:00+01:00",
+      "duration": "PT2XXXH",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "CRSUATU",
+          "surname": "Staff"
+        },
+        "email": "CRSUATU.staff@test.com"
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location",
+        "address": {
+          "buildingName": "",
+          "buildingNumber": "77",
+          "streetName": "London Road",
+          "district": "",
+          "town": "EDINBURGH",
+          "county": "",
+          "postcode": "EH50 2GR"
+        }
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "AFTA",
+        "description": "Failed to Attend"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2024-09-14T14:05:00+01:00",
+      "duration": "PT2XXXH",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "CRSUATU",
+          "surname": "Staff"
+        },
+        "email": "CRSUATU.staff@test.com"
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location",
+        "address": {
+          "buildingName": "",
+          "buildingNumber": "77",
+          "streetName": "High Street",
+          "district": "",
+          "town": "London",
+    "county": "",
+    "postcode": "EH50 2GR"
+    }
+  },
+    "description": "Appointment with CRS Staff (NS)",
+    "outcome": {
+      "code": "AFTA",
+      "description": "Failed to Attend"
+    }
+    },    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2024-09-14T14:05:00+01:00",
+      "duration": "PT2XXXH",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "CRSUATU",
+          "surname": "Staff"
+        },
+        "email": "CRSUATU.staff@test.com"
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location",
+        "address": {
+          "buildingName": "",
+          "buildingNumber": "77",
+          "streetName": "High Street",
+          "district": "",
+          "town": "EDINBURGH",
+          "county": "‘; alert(1);",
+          "postcode": "EH50 2GR"
+        }
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "AFTA",
+        "description": "Failed to Attend"
+      }
+    },
+    {
+      "type": {
+        "code": "CRSSAA",
+        "description": "Appointment with CRS Staff (NS)"
+      },
+      "dateTime": "2024-09-14T14:05:00+01:00",
+      "duration": "PT2XXXH",
+      "staff": {
+        "code": "CRSUATU",
+        "name": {
+          "forename": "CRSUATU",
+          "surname": "Staff"
+        },
+        "email": "CRSUATU.staff@test.com"
+      },
+      "location": {
+        "code": "CRSEXTL",
+        "description": "CRS Provider Location",
+        "address": {
+          "buildingName": "",
+          "buildingNumber": "77",
+          "streetName": "High Street",
+          "district": "",
+          "town": "EDINBURGH",
+          "county": "",
+          "postcode": "SW1"
+        }
+      },
+      "description": "Appointment with CRS Staff (NS)",
+      "outcome": {
+        "code": "AFTA",
+        "description": "Failed to Attend"
+      }
+    }
+  ],
+  "totalElements": 11,
+  "totalPages": 1,
+  "page": 0,
+  "size": 50
+}

@@ -74,6 +74,7 @@ class PrisonerService(
     pageSize: Int,
     sort: String,
     watchList: Boolean?,
+    includePastReleaseDates: Boolean,
     auth: String,
   ): PrisonersList {
     if (pathwayStatus != null && pathwayView == null) {
@@ -88,7 +89,7 @@ class PrisonerService(
     val staffUsername = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get name from auth token")
 
     val prisoners = mutableListOf<PrisonersSearch>()
-    if (prisonId.isBlank() || prisonId.isEmpty()) {
+    if (prisonId.isBlank()) {
       throw NoDataWithCodeFoundException("Prisoners", prisonId)
     }
 
@@ -108,12 +109,13 @@ class PrisonerService(
     }
 
     if (days > 0) {
-      val earliestReleaseDate = LocalDate.now().minusDays(1)
       val latestReleaseDate = LocalDate.now().plusDays(days.toLong())
-      prisoners.removeAll { it.displayReleaseDate == null || it.displayReleaseDate!! <= earliestReleaseDate || it.displayReleaseDate!! > latestReleaseDate }
-    } else {
+      prisoners.removeAll { it.displayReleaseDate == null || it.displayReleaseDate!! > latestReleaseDate }
+    }
+
+    if (!includePastReleaseDates) {
       val earliestReleaseDate = LocalDate.now().minusDays(1)
-      prisoners.removeAll { (it.displayReleaseDate != null && it.displayReleaseDate!! <= earliestReleaseDate) }
+      prisoners.removeAll { it.displayReleaseDate != null && it.displayReleaseDate!! <= earliestReleaseDate }
     }
 
     if (prisoners.isEmpty()) {

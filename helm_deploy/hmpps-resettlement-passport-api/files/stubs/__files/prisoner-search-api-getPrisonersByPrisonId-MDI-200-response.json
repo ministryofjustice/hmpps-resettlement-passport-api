@@ -249,17 +249,7 @@
             "facialHair": "Clean Shaven",
             "shapeOfFace": "Oval",
             "build": "Heavy",
-            "shoeSize": 9,
-            "otherMarks": [
-                {
-                    "bodyPart": "Head",
-                    "comment": "tTUMPsqpfMtTUMPsqpf"
-                },
-                {
-                    "bodyPart": "Torso",
-                    "comment": "MMqnXrIEhtaMMqnXrIEhta"
-                }
-            ]
+            "shoeSize": 9
         },
         {
             "prisonerNumber": "G7218GI",
@@ -428,16 +418,7 @@
             "facialHair": "Clean Shaven",
             "shapeOfFace": "Oval",
             "build": "Medium",
-            "shoeSize": 9,
-            "otherMarks": [
-                {
-                    "bodyPart": "Torso"
-                },
-                {
-                    "bodyPart": "Torso",
-                    "comment": "lgIVyMJzXpAflgIVyMJzXpAf"
-                }
-            ]
+            "shoeSize": 9
         },
         {
             "prisonerNumber": "A3775DZ",
@@ -1997,16 +1978,6 @@
             "facialHair": "Clean Shaven",
             "shapeOfFace": "Oval",
             "build": "Medium",
-            "otherMarks": [
-                {
-                    "bodyPart": "Head",
-                    "comment": "UgkNKCGqUgkNKCGq"
-                },
-                {
-                    "bodyPart": "Torso",
-                    "comment": "WfNrnFIEqFtKWvaOhrYTcKWfNrnFIEqFtKWvaOhrYTcK"
-                }
-            ]
         },
         {
             "prisonerNumber": "G1498UC",
@@ -2189,17 +2160,7 @@
             "leftEyeColour": "Green",
             "facialHair": "Clean Shaven",
             "shapeOfFace": "Oval",
-            "build": "Heavy",
-            "otherMarks": [
-                {
-                    "bodyPart": "Head",
-                    "comment": "GZmvYpgIlDjYyGZmvYpgIlDjYy"
-                },
-                {
-                    "bodyPart": "Torso",
-                    "comment": "jyknRLaNMTDqjyknRLaNMTD"
-                }
-            ]
+            "build": "Heavy"
         },
         {
             "prisonerNumber": "A0770DZ",
@@ -4943,17 +4904,7 @@
             "leftEyeColour": "Brown",
             "facialHair": "Clean Shaven",
             "shapeOfFace": "Oval",
-            "build": "Thin",
-            "otherMarks": [
-                {
-                    "bodyPart": "Torso",
-                    "comment": "zfCvqEcvAXfzfCvqEcvAXf"
-                },
-                {
-                    "bodyPart": "Torso",
-                    "comment": "VuYloVuYlo"
-                }
-            ]
+            "build": "Thin"
         },
         {
             "prisonerNumber": "A8511DY",
@@ -5886,13 +5837,7 @@
             "leftEyeColour": "Blue",
             "facialHair": "Clean Shaven",
             "shapeOfFace": "Oval",
-            "build": "Medium",
-            "otherMarks": [
-                {
-                    "bodyPart": "Torso",
-                    "comment": "OREDPZaRvOYAXHfUEcVOREDPZaRvOYAXHfUEc"
-                }
-            ]
+            "build": "Medium"
         },
         {
             "prisonerNumber": "G3115UC",
@@ -6602,12 +6547,6 @@
                     "bodyPart": "Arm",
                     "comment": "zLFQdBVtTvKzLFQdBVtTv"
                 }
-            ],
-            "otherMarks": [
-                {
-                    "bodyPart": "Torso",
-                    "comment": "snSnRHtpCsnSnRHtp"
-                }
             ]
         },
         {
@@ -7235,13 +7174,7 @@
             "leftEyeColour": "Green",
             "facialHair": "Clean Shaven",
             "shapeOfFace": "Oval",
-            "build": "Medium",
-            "otherMarks": [
-                {
-                    "bodyPart": "Torso",
-                    "comment": "nDRqbnDRqb"
-                }
-            ]
+            "build": "Medium"
         },
         {
             "prisonerNumber": "G9419UO",
@@ -7760,33 +7693,7 @@
             "leftEyeColour": "Brown",
             "facialHair": "Moustache Only",
             "shapeOfFace": "Oval",
-            "build": "Medium",
-            "otherMarks": [
-                {
-                    "bodyPart": "Head",
-                    "comment": "VJNjajjIVJNjajjI"
-                },
-                {
-                    "bodyPart": "Torso",
-                    "comment": "CNAlocaAkoPbxbhpZHsyQItSzLBsFCNAlocaAkoPbxbhpZHsyQItSzLBsF"
-                },
-                {
-                    "bodyPart": "Head",
-                    "comment": "bSFEIhujbSFEIhuj"
-                },
-                {
-                    "bodyPart": "Torso",
-                    "comment": "bAhrrUZHrRubAhrrUZHrR"
-                },
-                {
-                    "bodyPart": "Head",
-                    "comment": "RFirscaBYBdtEtRFirscaBYBdtE"
-                },
-                {
-                    "bodyPart": "Torso",
-                    "comment": "GoxwWgDhXRyMXYzLMGoxwWgDhXRyMXYzL"
-                }
-            ]
+            "build": "Medium"
         },
         {
             "prisonerNumber": "A8360DY",
@@ -8096,16 +8003,6 @@
             "scars": [
                 {
                     "bodyPart": "Face"
-                }
-            ],
-            "otherMarks": [
-                {
-                    "bodyPart": "Head",
-                    "comment": "eeXMEeeXME"
-                },
-                {
-                    "bodyPart": "Torso",
-                    "comment": "UVGjvJkTfNUVGjvJkTf"
                 }
             ]
         },

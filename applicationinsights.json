@@ -14,7 +14,6 @@
     "destination": "console"
   },
   "sampling": {
-    "percentage": 100,
     "overrides": [
       {
         "telemetryType": "request",
@@ -26,6 +25,17 @@
           }
         ],
         "percentage": 10
+      },
+      {
+        "telemetryType": "request",
+        "attributes": [
+          {
+            "key": "http.url",
+            "value": "https?://[^/]+/resettlement-passport.*",
+            "matchType": "regexp"
+          }
+        ],
+        "percentage": 100
       }
     ]
   }

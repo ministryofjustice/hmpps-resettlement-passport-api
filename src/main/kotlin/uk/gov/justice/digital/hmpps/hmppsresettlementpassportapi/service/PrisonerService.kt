@@ -108,15 +108,7 @@ class PrisonerService(
       prisoners.retainAll { searchTermMatchesPrisoner(searchTerm, it) }
     }
 
-    if (days > 0) {
-      val latestReleaseDate = LocalDate.now().plusDays(days.toLong())
-      prisoners.removeAll { it.displayReleaseDate == null || it.displayReleaseDate!! > latestReleaseDate }
-    }
-
-    if (!includePastReleaseDates) {
-      val earliestReleaseDate = LocalDate.now().minusDays(1)
-      prisoners.removeAll { it.displayReleaseDate != null && it.displayReleaseDate!! <= earliestReleaseDate }
-    }
+    processReleaseDateFiltering(days, prisoners, includePastReleaseDates)
 
     if (prisoners.isEmpty()) {
       return PrisonersList(emptyList(), pageSize, pageNumber, sort, 0, true)
@@ -143,6 +135,22 @@ class PrisonerService(
       return PrisonersList(pList, pList.toList().size, pageNumber, sort, fullList.size, true)
     }
     return PrisonersList(emptyList(), 0, 0, sort, 0, false)
+  }
+
+  fun processReleaseDateFiltering(
+    days: Int,
+    prisoners: MutableList<PrisonersSearch>,
+    includePastReleaseDates: Boolean,
+  ) {
+    if (days > 0) {
+      val latestReleaseDate = LocalDate.now().plusDays(days.toLong())
+      prisoners.removeAll { it.displayReleaseDate == null || it.displayReleaseDate!! > latestReleaseDate }
+    }
+
+    if (!includePastReleaseDates) {
+      val earliestReleaseDate = LocalDate.now().minusDays(1)
+      prisoners.removeAll { it.displayReleaseDate != null && it.displayReleaseDate!! <= earliestReleaseDate }
+    }
   }
 
   fun sortPrisoners(sort: String?, prisoners: MutableList<Prisoners>) {

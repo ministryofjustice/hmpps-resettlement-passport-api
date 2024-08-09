@@ -1,0 +1,214 @@
+{
+  "offenderId": "G5384GE",
+  "bookingId": 123456,
+  "createdBy": "BJDEV",
+  "createdDateTime": "2023-10-13T09:00:34.123456",
+  "modifiedBy": "BJDEV",
+  "modifiedDateTime": "2023-10-13T09:00:34.123456",
+  "schemaVersion": "1.0",
+  "profileData": {
+    "status": "READY_TO_WORK",
+    "statusChange": true,
+    "statusChangeDate": "2023-10-13T09:00:34.123456",
+    "prisonName": "Moorland (HMP & YOI)",
+    "statusChangeType": "ACCEPTED_TO_READY_TO_WORK",
+    "supportDeclined_history": [
+      {
+        "modifiedBy": "BJDEV",
+        "modifiedDateTime": "2023-07-28T14:05:22.97390408",
+        "supportToWorkDeclinedReason": [
+          "RETURNING_TO_JOB"
+        ],
+        "supportToWorkDeclinedReasonOther": "",
+        "circumstanceChangesRequiredToWork": [
+          "DEPENDENCY_SUPPORT"
+        ],
+        "circumstanceChangesRequiredToWorkOther": ""
+      }
+    ],
+    "supportAccepted_history": [
+      {
+        "modifiedBy": "BJDEV",
+        "modifiedDateTime": "2023-07-28T14:08:16.048569075",
+        "actionsRequired": {
+          "modifiedBy": "BJDEV",
+          "modifiedDateTime": "2023-07-28T13:08:16.023",
+          "actions": [
+            {
+              "todoItem": "BANK_ACCOUNT",
+              "status": "NOT_STARTED",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "CV_AND_COVERING_LETTER",
+              "status": "NOT_STARTED",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "DISCLOSURE_LETTER",
+              "status": "NOT_STARTED",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "EMAIL",
+              "status": "COMPLETED",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "PHONE",
+              "status": "NOT_STARTED",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "HOUSING",
+              "status": "NOT_STARTED",
+              "other": null,
+              "id": null
+            },
+            {
+              "todoItem": "ID",
+              "status": "COMPLETED",
+              "other": "",
+              "id": [
+                "PASSPORT",
+                "DRIVING_LICENCE"
+              ]
+            }
+          ]
+        },
+        "workImpacts": {
+          "modifiedBy": "BJDEV",
+          "modifiedDateTime": "2023-07-28T13:08:16.023",
+          "abilityToWorkImpactedBy": [
+            "MENTAL_HEALTH_ISSUES",
+            "DEPENDENCY_ISSUES"
+          ],
+          "caringResponsibilitiesFullTime": false,
+          "ableToManageMentalHealth": false,
+          "ableToManageDependencies": true
+        },
+        "workInterests": {
+          "modifiedBy": "BJDEV",
+          "modifiedDateTime": "2023-07-28T13:08:16.023",
+          "workTypesOfInterest": [
+            "WAREHOUSING"
+          ],
+          "workTypesOfInterestOther": "",
+          "jobOfParticularInterest": ""
+        },
+        "workExperience": {
+          "modifiedBy": "BJDEV",
+          "modifiedDateTime": "2023-07-28T13:08:16.023",
+          "previousWorkOrVolunteering": "",
+          "qualificationsAndTraining": [
+            "TRADE"
+          ],
+          "qualificationsAndTrainingOther": ""
+        }
+      }
+    ],
+    "supportDeclined": {
+      "modifiedBy": "BJDEV",
+      "modifiedDateTime": "2023-08-22T11:14:47.051818982",
+      "supportToWorkDeclinedReason": [
+        "HEALTH",
+        "RETURNING_TO_JOB"
+      ],
+      "supportToWorkDeclinedReasonOther": "",
+      "circumstanceChangesRequiredToWork": [
+        "ID_ON_RELEASE",
+        "DEPENDENCY_SUPPORT"
+      ],
+      "circumstanceChangesRequiredToWorkOther": ""
+    },
+    "supportAccepted": {
+      "modifiedBy": "BJDEV",
+      "modifiedDateTime": "2023-07-28T14:08:16.048569075",
+      "actionsRequired": {
+        "modifiedBy": "BJDEV",
+        "modifiedDateTime": "2023-07-28T13:08:16.023",
+        "actions": [
+          {
+            "todoItem": "BANK_ACCOUNT",
+            "status": "NOT_STARTED",
+            "other": null,
+            "id": null
+          },
+          {
+            "todoItem": "CV_AND_COVERING_LETTER",
+            "status": "NOT_STARTED",
+            "other": null,
+            "id": null
+          },
+          {
+            "todoItem": "DISCLOSURE_LETTER",
+            "status": "NOT_STARTED",
+            "other": null,
+            "id": null
+          },
+          {
+            "todoItem": "EMAIL",
+            "status": "COMPLETED",
+            "other": null,
+            "id": null
+          },
+          {
+            "todoItem": "PHONE",
+            "status": "NOT_STARTED",
+            "other": null,
+            "id": null
+          },
+          {
+            "todoItem": "HOUSING",
+            "status": "NOT_STARTED",
+            "other": null,
+            "id": null
+          },
+          {
+            "todoItem": "ID",
+            "status": "COMPLETED",
+            "other": "",
+            "id": [
+              "PASSPORT",
+              "DRIVING_LICENCE"
+            ]
+          }
+        ]
+      },
+      "workImpacts": {
+        "modifiedBy": "BJDEV",
+        "modifiedDateTime": "2023-07-28T13:08:16.023",
+        "abilityToWorkImpactedBy": [
+          "MENTAL_HEALTH_ISSUES",
+          "DEPENDENCY_ISSUES"
+        ],
+        "caringResponsibilitiesFullTime": false,
+        "ableToManageMentalHealth": false,
+        "ableToManageDependencies": true
+      },
+      "workInterests": {
+        "modifiedBy": "BJDEV",
+        "modifiedDateTime": "2023-07-28T13:08:16.023",
+        "workTypesOfInterest": [
+          "WAREHOUSING"
+        ],
+        "workTypesOfInterestOther": "",
+        "jobOfParticularInterest": ""
+      },
+      "workExperience": {
+        "modifiedBy": "BJDEV",
+        "modifiedDateTime": "2023-07-28T13:08:16.023",
+        "previousWorkOrVolunteering": "",
+        "qualificationsAndTraining": [
+          "TRADE"
+        ],
+        "qualificationsAndTrainingOther": ""
+      }
+    }
+  }
+}

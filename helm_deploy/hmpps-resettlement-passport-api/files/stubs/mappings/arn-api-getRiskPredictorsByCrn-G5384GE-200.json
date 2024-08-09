@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/arn-api/risks/crn/U338862/predictors/all"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "arn-api-getRiskPredictorsByCrn-G5384GE-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

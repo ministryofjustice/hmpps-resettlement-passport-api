@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/resettlement-passport-and-delius-api/duty-to-refer-nsi/U338862"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "resettlement-passport-and-delius-api-getAccommodations-G5384GE-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

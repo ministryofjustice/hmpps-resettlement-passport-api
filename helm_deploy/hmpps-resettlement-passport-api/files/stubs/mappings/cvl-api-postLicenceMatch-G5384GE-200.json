@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/cvl-api/licence/match",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{\"nomsId\":[\"G5384GE\"]}"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "cvl-api-postLicenceMatch-G5384GE-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

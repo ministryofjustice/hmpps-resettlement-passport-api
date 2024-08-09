@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/education-employment-api/readiness-profiles/G5384GE"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "education-employment-api-getReadinessProfileByNomsId-G5384GE-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

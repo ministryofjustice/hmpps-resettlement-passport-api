@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/allocation-manager-api/api/allocation/G5384GE"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "allocation-manager-api-getPomsByNomsId-G5384GE-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

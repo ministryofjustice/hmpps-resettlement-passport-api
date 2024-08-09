@@ -14,9 +14,9 @@
     "destination": "console"
   },
   "sampling": {
+    "percentage": 100,
     "overrides": [
       {
-        "telemetryType": "request",
         "attributes": [
           {
             "key": "http.url",
@@ -27,7 +27,6 @@
         "percentage": 10
       },
       {
-        "telemetryType": "request",
         "attributes": [
           {
             "key": "http.url",

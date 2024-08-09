@@ -32,6 +32,21 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-9.sql")
+  fun `Get All Prisoners happy path - including past release dates`() {
+    val expectedOutput = readFile("testdata/expectation/prisoners-include-past-release-dates.json")
+    val prisonId = "MDI"
+    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, 500, 0, 200)
+    webTestClient.get()
+      .uri("/resettlement-passport/prison/$prisonId/prisoners?term=&page=0&size=10&sort=releaseDate,DESC&includePastReleaseDates=true")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput, true)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-9.sql")
   fun `Get All Prisoners - PSFR-1495 check caching with and without a search search gets same results`() {
     val prisonId = "MDI"
 

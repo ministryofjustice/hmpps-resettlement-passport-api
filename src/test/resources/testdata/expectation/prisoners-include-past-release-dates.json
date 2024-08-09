@@ -1,0 +1,539 @@
+{
+  "content": [
+    {
+      "prisonerNumber": "A8339DY",
+      "firstName": "MR",
+      "middleNames": "BRIDGILLA",
+      "lastName": "CRD-LR-TEST",
+      "releaseDate": null,
+      "releaseType": "PRRD",
+      "lastUpdatedDate": "2023-06-14",
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-06-14"
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "DONE",
+          "lastDateChange": "2023-06-15"
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "NOT_STARTED",
+          "lastDateChange": "2023-06-16"
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-06-17"
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "SUPPORT_NOT_REQUIRED",
+          "lastDateChange": "2023-06-18"
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-06-19"
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "DONE",
+          "lastDateChange": "2023-06-20"
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": null,
+      "paroleEligibilityDate": null,
+      "releaseEligibilityDate": null,
+      "releaseEligibilityType": null,
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": false
+    },
+    {
+      "prisonerNumber": "G1458GV",
+      "firstName": "FINN",
+      "middleNames": "CHANDLEVIEVE",
+      "lastName": "CRAWFIS",
+      "releaseDate": "2099-09-12",
+      "releaseType": "CRD",
+      "lastUpdatedDate": "2023-05-17",
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "NOT_STARTED",
+          "lastDateChange": "2023-05-17"
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-05-18"
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "SUPPORT_NOT_REQUIRED",
+          "lastDateChange": "2023-05-19"
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-05-20"
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "DONE",
+          "lastDateChange": "2023-05-21"
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "NOT_STARTED",
+          "lastDateChange": "2023-05-22"
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-05-23"
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": "2018-10-16",
+      "paroleEligibilityDate": null,
+      "releaseEligibilityDate": "2018-10-16",
+      "releaseEligibilityType": "HDCED",
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": true
+    },
+    {
+      "prisonerNumber": "A8229DY",
+      "firstName": "STEPHEN",
+      "middleNames": null,
+      "lastName": "MCVEIGH",
+      "releaseDate": "2099-08-01",
+      "releaseType": "CRD",
+      "lastUpdatedDate": "2023-07-19",
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-07-19"
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "DONE",
+          "lastDateChange": "2023-07-20"
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "NOT_STARTED",
+          "lastDateChange": "2023-07-21"
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-07-22"
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "SUPPORT_NOT_REQUIRED",
+          "lastDateChange": "2023-07-23"
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-07-24"
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "DONE",
+          "lastDateChange": "2023-07-25"
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": "2021-02-03",
+      "paroleEligibilityDate": null,
+      "releaseEligibilityDate": "2021-02-03",
+      "releaseEligibilityType": "HDCED",
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": true
+    },
+    {
+      "prisonerNumber": "A8258DY",
+      "firstName": "COBBIE",
+      "middleNames": null,
+      "lastName": "FEDDER",
+      "releaseDate": "2023-07-15",
+      "releaseType": "CRD",
+      "lastUpdatedDate": "2023-06-28",
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "SUPPORT_NOT_REQUIRED",
+          "lastDateChange": "2023-06-28"
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-06-29"
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "DONE",
+          "lastDateChange": "2023-06-30"
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "NOT_STARTED",
+          "lastDateChange": "2023-07-01"
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-07-02"
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "SUPPORT_NOT_REQUIRED",
+          "lastDateChange": "2023-07-03"
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-07-04"
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": null,
+      "paroleEligibilityDate": null,
+      "releaseEligibilityDate": null,
+      "releaseEligibilityType": null,
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": true
+    },
+    {
+      "prisonerNumber": "A8257DY",
+      "firstName": "GLENN",
+      "middleNames": null,
+      "lastName": "MCGRATH",
+      "releaseDate": "2022-08-28",
+      "releaseType": "CRD",
+      "lastUpdatedDate": "2023-07-05",
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "DONE",
+          "lastDateChange": "2023-07-05"
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "NOT_STARTED",
+          "lastDateChange": "2023-07-06"
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-07-07"
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "SUPPORT_NOT_REQUIRED",
+          "lastDateChange": "2023-07-08"
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-07-09"
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "DONE",
+          "lastDateChange": "2023-07-10"
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "NOT_STARTED",
+          "lastDateChange": "2023-07-11"
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": "2022-05-07",
+      "paroleEligibilityDate": "2023-04-28",
+      "releaseEligibilityDate": "2022-05-07",
+      "releaseEligibilityType": "HDCED",
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": true
+    },
+    {
+      "prisonerNumber": "A8314DY",
+      "firstName": "CHAIM",
+      "middleNames": null,
+      "lastName": "WITTKOPP",
+      "releaseDate": "2022-04-13",
+      "releaseType": "CRD",
+      "lastUpdatedDate": "2023-07-12",
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-07-12"
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "SUPPORT_NOT_REQUIRED",
+          "lastDateChange": "2023-07-13"
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-07-14"
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "DONE",
+          "lastDateChange": "2023-07-15"
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "NOT_STARTED",
+          "lastDateChange": "2023-07-16"
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-07-17"
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "SUPPORT_NOT_REQUIRED",
+          "lastDateChange": "2023-07-18"
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": "2021-12-07",
+      "paroleEligibilityDate": null,
+      "releaseEligibilityDate": "2021-12-07",
+      "releaseEligibilityType": "HDCED",
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": true
+    },
+    {
+      "prisonerNumber": "G6933GF",
+      "firstName": "BUSTER",
+      "middleNames": "CHRISTABERT HECTUR",
+      "lastName": "CORALLO",
+      "releaseDate": "2021-10-14",
+      "releaseType": "CRD",
+      "lastUpdatedDate": "2023-06-07",
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-06-07"
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "SUPPORT_NOT_REQUIRED",
+          "lastDateChange": "2023-06-08"
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-06-09"
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "DONE",
+          "lastDateChange": "2023-06-10"
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "NOT_STARTED",
+          "lastDateChange": "2023-06-11"
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-06-12"
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "SUPPORT_NOT_REQUIRED",
+          "lastDateChange": "2023-06-13"
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": null,
+      "paroleEligibilityDate": "2019-03-28",
+      "releaseEligibilityDate": "2019-03-28",
+      "releaseEligibilityType": "PED",
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": true
+    },
+    {
+      "prisonerNumber": "G6335VX",
+      "firstName": "GARRETT",
+      "middleNames": "SYLVANNA",
+      "lastName": "COUTCHER",
+      "releaseDate": "2017-05-11",
+      "releaseType": "PRRD",
+      "lastUpdatedDate": "2023-05-31",
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "DONE",
+          "lastDateChange": "2023-05-31"
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "NOT_STARTED",
+          "lastDateChange": "2023-06-01"
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-06-02"
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "SUPPORT_NOT_REQUIRED",
+          "lastDateChange": "2023-06-03"
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-06-04"
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "DONE",
+          "lastDateChange": "2023-06-05"
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "NOT_STARTED",
+          "lastDateChange": "2023-06-06"
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": null,
+      "paroleEligibilityDate": null,
+      "releaseEligibilityDate": null,
+      "releaseEligibilityType": null,
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": true
+    },
+    {
+      "prisonerNumber": "G6628UE",
+      "firstName": "ALLIE",
+      "middleNames": "MARCISHA",
+      "lastName": "COSNER",
+      "releaseDate": "2017-03-31",
+      "releaseType": "CRD",
+      "lastUpdatedDate": "2023-05-24",
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "SUPPORT_NOT_REQUIRED",
+          "lastDateChange": "2023-05-24"
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-05-25"
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "DONE",
+          "lastDateChange": "2023-05-26"
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "NOT_STARTED",
+          "lastDateChange": "2023-05-27"
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-05-28"
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "SUPPORT_NOT_REQUIRED",
+          "lastDateChange": "2023-05-29"
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-05-30"
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": "2017-01-01",
+      "paroleEligibilityDate": "2016-08-28",
+      "releaseEligibilityDate": "2016-08-28",
+      "releaseEligibilityType": "PED",
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": true
+    },
+    {
+      "prisonerNumber": "A8132DY",
+      "firstName": "GEORGE",
+      "middleNames": null,
+      "lastName": "HAMILTON",
+      "releaseDate": "2015-07-23",
+      "releaseType": "CRD",
+      "lastUpdatedDate": "2023-06-21",
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "NOT_STARTED",
+          "lastDateChange": "2023-06-21"
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-06-22"
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "SUPPORT_NOT_REQUIRED",
+          "lastDateChange": "2023-06-23"
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "SUPPORT_DECLINED",
+          "lastDateChange": "2023-06-24"
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "DONE",
+          "lastDateChange": "2023-06-25"
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "NOT_STARTED",
+          "lastDateChange": "2023-06-26"
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "IN_PROGRESS",
+          "lastDateChange": "2023-06-27"
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": "2015-05-09",
+      "paroleEligibilityDate": null,
+      "releaseEligibilityDate": "2015-05-09",
+      "releaseEligibilityType": "HDCED",
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": true
+    }
+  ],
+  "pageSize": 10,
+  "page": 0,
+  "sortName": "releaseDate,DESC",
+  "totalElements": 10,
+  "last": true
+}

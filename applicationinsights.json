@@ -14,10 +14,7 @@
     "destination": "console"
   },
   "sampling": {
-    "percentage": 100
-  },
-  "preview": {
-    "sampling": {
+    "percentage": 100,
       "overrides": [
         {
           "telemetryType": "request",
@@ -28,9 +25,8 @@
               "matchType": "regexp"
             }
           ],
-          "percentage": 0
+          "percentage": 10
         }
       ]
     }
-  }
 }

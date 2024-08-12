@@ -50,6 +50,18 @@ pages:
             displayText: "No"
           - id: "NO_ANSWER"
             displayText: "No answer provided"
+      - id: "EDUCATION_WHEN_RELEASED"
+        title: "Does the person in prison have education or training in place for when they are released?"
+        type: "RADIO"
+        options:
+          - id: "YES_SAME_EDUCATION"
+            displayText: "Yes, returning to same education or training"
+          - id: "YES_STARTING_NEW_EDUCATION"
+            displayText: "Yes, starting new education or training"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
     nextPageLogic:
       - nextPageId: "SUPPORT_REQUIREMENTS"
   - id: "SUPPORT_REQUIREMENTS"

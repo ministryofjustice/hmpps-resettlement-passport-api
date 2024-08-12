@@ -188,6 +188,33 @@ class EducationSkillsAndWorkV2ResettlementAssessmentStrategyTest : BaseResettlem
             ),
             originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
           ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
+              id = "EDUCATION_WHEN_RELEASED",
+              title = "Does the person in prison have education or training in place for when they are released?",
+              subTitle = null,
+              type = TypeOfQuestion.RADIO,
+              options = listOf(
+                ResettlementAssessmentOption(
+                  id = "YES_SAME_EDUCATION",
+                  displayText = "Yes, returning to same education or training",
+                ),
+                ResettlementAssessmentOption(
+                  id = "YES_STARTING_NEW_EDUCATION",
+                  displayText = "Yes, starting new education or training",
+                ),
+                ResettlementAssessmentOption(
+                  id = "NO",
+                  displayText = "No",
+                ),
+                ResettlementAssessmentOption(
+                  id = "NO_ANSWER",
+                  displayText = "No answer provided",
+                ),
+              ),
+            ),
+            originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
+          ),
         ),
       ),
     ),

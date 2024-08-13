@@ -329,6 +329,8 @@ class ResettlementAssessmentStrategy(
             it.type,
             it.options?.mapToResettlementAssessmentOptions(page.id),
             it.validationType,
+            it.detailsTitle,
+            it.detailsContent,
           ),
           answer = null,
           originalPageId = page.id,

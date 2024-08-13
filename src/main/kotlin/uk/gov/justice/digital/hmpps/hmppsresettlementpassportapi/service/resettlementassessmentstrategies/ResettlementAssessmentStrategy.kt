@@ -459,6 +459,8 @@ data class AssessmentConfigQuestion(
   val type: TypeOfQuestion,
   val options: List<AssessmentConfigOption>? = null,
   val validationType: ValidationType = ValidationType.MANDATORY,
+  val detailsTitle: String? = null,
+  val detailsContent: String? = null,
 )
 
 data class AssessmentConfigOption(

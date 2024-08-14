@@ -216,7 +216,7 @@ class PrisonerService(
 
     // Find the pathway statuses for prisoners in prison
     val prisonerPathwayStatusesFromDatabase = pathwayStatusRepository.findByPrison(prisonId)
-    val nomsIdToPrisonerPathwayStatusesFromDatabaseMap = prisonerPathwayStatusesFromDatabase.associate { pps -> Pair(pps.nomsId, prisonerPathwayStatusesFromDatabase.asSequence().filter { pps.nomsId == it.nomsId }.asIterable()) }
+    val nomsIdToPrisonerPathwayStatusesFromDatabaseMap = prisonerPathwayStatusesFromDatabase.groupBy { it.nomsId }
 
     val defaultPathwayStatuses = getDefaultPathwayStatuses()
     val watchedOffenders = watchlistService.findAllWatchedPrisonerForStaff(staffUsername)

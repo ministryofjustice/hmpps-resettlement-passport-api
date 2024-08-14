@@ -64,6 +64,8 @@ pages:
         title: "Case note"
         subTitle: "Include any relevant information about why you have chosen that resettlement status. Do not include any special category data. This information will be displayed in PSFR on the overview tab and the attitudes, thinking and behaviour tab."
         type: "LONG_TEXT"
+        detailsTitle: "Help with special category data"
+        detailsContent: "Special category data includes any personal data concerning someone's health, sex life or sexual orientation. Or any personal data revealing someone's racial or ethnic origin, religious or philosophical beliefs or trade union membership."
     nextPageLogic:
       - nextPageId: "CHECK_ANSWERS"
   - id: "PRERELEASE_ASSESSMENT_SUMMARY"
@@ -93,6 +95,8 @@ pages:
         title: "Case note"
         subTitle: "Include any relevant information about why you have chosen that resettlement status. Do not include any special category data. This information will be displayed in PSFR on the overview tab and the attitudes, thinking and behaviour tab."
         type: "LONG_TEXT"
+        detailsTitle: "Help with special category data"
+        detailsContent: "Special category data includes any personal data concerning someone's health, sex life or sexual orientation. Or any personal data revealing someone's racial or ethnic origin, religious or philosophical beliefs or trade union membership."
     nextPageLogic:
       - nextPageId: "CHECK_ANSWERS"
   - id: "CHECK_ANSWERS"

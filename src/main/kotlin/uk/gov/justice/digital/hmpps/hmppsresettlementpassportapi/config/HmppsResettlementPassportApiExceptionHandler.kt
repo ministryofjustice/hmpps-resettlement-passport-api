@@ -157,4 +157,4 @@ class NoDataWithCodeFoundException(dataType: String, code: String) : ResourceNot
 
 open class DuplicateDataFoundException(message: String) : RuntimeException(message)
 
-class NoContentException(message: String): RuntimeException(message)
+class NoContentException(message: String) : RuntimeException(message)

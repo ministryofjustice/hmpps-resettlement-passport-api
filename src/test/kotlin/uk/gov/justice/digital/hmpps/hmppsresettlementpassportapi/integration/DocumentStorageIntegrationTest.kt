@@ -30,7 +30,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
     val nomsId = "ABC1234"
     webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/documents/upload")
-      .body(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "LICENCE_CONDITIONS"))
+      .body(generateMultiPartFormRequestWeb("testdata/PD1_example.docx"))
       .headers(setAuthorisation())
       .exchange()
       .expectStatus().isForbidden
@@ -41,7 +41,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
     val nomsId = "ABC123"
     webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/documents/upload")
-      .body(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "LICENCE_CONDITIONS"))
+      .body(generateMultiPartFormRequestWeb("testdata/PD1_example.docx"))
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isEqualTo(404)
@@ -97,15 +97,16 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(404)
   }
 
-  private fun generateMultiPartFormRequestWeb(fileName: String, category: String): BodyInserters.MultipartInserter {
+  private fun generateMultiPartFormRequestWeb(fileName: String, originalFilename: String? = null): BodyInserters.MultipartInserter {
     val uploadFile = Resources.getResource(fileName)
     val multipartBodyBuilder = MultipartBodyBuilder()
     val contentsAsResource: ByteArrayResource = object : ByteArrayResource(uploadFile.readBytes()) {
       override fun getFilename(): String = fileName.split("/").last()
     }
     multipartBodyBuilder.part("file", contentsAsResource)
-    multipartBodyBuilder.part("metadata", 1)
-    multipartBodyBuilder.part("category", category)
+    if(originalFilename != null) {
+      multipartBodyBuilder.part("originalFilename", originalFilename)
+    }
     return BodyInserters.fromMultipartData(multipartBodyBuilder.build())
   }
 
@@ -116,7 +117,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
 
     webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/documents/upload")
-      .bodyValue(generateMultiPartFormRequestWeb("testdata/pop-user-api/pop-user-details.json", "LICENCE_CONDITIONS"))
+      .bodyValue(generateMultiPartFormRequestWeb("testdata/pop-user-api/pop-user-details.json"))
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isBadRequest
@@ -131,7 +132,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
 
     webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/documents/upload")
-      .bodyValue(generateMultiPartFormRequestWeb("testdata/PD1_example_oversized.docx", "LICENCE_CONDITIONS"))
+      .bodyValue(generateMultiPartFormRequestWeb("testdata/PD1_example_oversized.docx"))
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isBadRequest
@@ -144,7 +145,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
 
     webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/documents/upload")
-      .bodyValue(generateMultiPartFormRequestWeb("testdata/PD1_example.docx", "NOT_EXISTS_CATEGORY"))
+      .bodyValue(generateMultiPartFormRequestWeb("testdata/PD1_example.docx"))
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isBadRequest
@@ -201,7 +202,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
   private fun uploadDocument(nomsId: String, filename: String = "testdata/PD1_example.docx") {
     val response = webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/documents/upload")
-      .body(generateMultiPartFormRequestWeb(filename, "LICENCE_CONDITIONS"))
+      .body(generateMultiPartFormRequestWeb(filename))
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -288,9 +289,9 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
     val nomsId = "ABC1234"
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    val response = webTestClient.post()
+    webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/documents/upload")
-      .body(generateMultiPartFormRequestWeb("testdata/example-doc.pdf", "LICENCE_CONDITIONS"))
+      .body(generateMultiPartFormRequestWeb("testdata/example-doc.pdf"))
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -305,5 +306,22 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectHeader().contentType("application/pdf")
       .expectBody()
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-document-upload.sql")
+  fun `Uses original filename field when it is supplied`() {
+    val nomsId = "ABC1234"
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+    webTestClient.post()
+      .uri("/resettlement-passport/prisoner/$nomsId/documents/upload")
+      .body(generateMultiPartFormRequestWeb("testdata/example-doc.pdf", originalFilename = "original-filename.pdf"))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody(DocumentResponse::class.java)
+      .value { document -> assertThat(document.value.originalDocumentFileName).isEqualTo("original-filename.pdf") }
   }
 }

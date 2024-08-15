@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
@@ -52,11 +53,13 @@ class DocumentStorageResourceController(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     nomsId: String,
-    @RequestParam("file")
+    @RequestPart
     file: MultipartFile,
     @RequestParam(defaultValue = "LICENCE_CONDITIONS", required = false)
     category: DocumentCategory,
-  ) = uploadService.processDocument(nomsId, file, category)
+    @RequestPart(required = false)
+    originalFilename: String?
+  ) = uploadService.processDocument(nomsId, file, originalFilename, category)
 
   @GetMapping("/documents/{documentId}/download", produces = [MediaType.APPLICATION_PDF_VALUE])
   @Operation(

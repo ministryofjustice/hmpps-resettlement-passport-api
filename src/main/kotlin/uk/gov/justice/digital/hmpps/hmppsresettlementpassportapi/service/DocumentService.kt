@@ -26,6 +26,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 private val logger = KotlinLogging.logger {}
+private val allowableFileExtensions = setOf("docx", "pdf", "doc")
 
 @Service
 class DocumentService(
@@ -41,21 +42,22 @@ class DocumentService(
   fun processDocument(
     nomsId: String,
     document: MultipartFile,
+    originalFilename: String?,
     category: DocumentCategory,
   ): Result<DocumentsEntity, VirusFound> =
     forExistingPrisoner(nomsId) {
-      if (!document.originalFilename?.endsWith("docx")!! &&
-        !document.originalFilename?.endsWith("doc")!! &&
-        !document.originalFilename?.endsWith(
-          "pdf",
-        )!!
-      ) {
-        logger.info { "Received unsupported filename ${document.originalFilename}" }
+      val filename: String = originalFilename ?: document.originalFilename
+      ?: throw ValidationException("filename is required")
+      println("$filename $originalFilename")
+
+      val extension = filename.substringAfterLast(".", "")
+      if (extension !in allowableFileExtensions) {
+        logger.info { "Received unsupported filename $filename" }
         throw ValidationException("Unsupported document format, only .doc or pdf allowed")
       }
 
       when (val virusScanResult = virusScanner.scan(document.bytes)) {
-        NoVirusFound -> Success(convertAndStoreDocument(nomsId, document, category))
+        NoVirusFound -> Success(convertAndStoreDocument(nomsId, document, category, filename))
         is VirusFound -> {
           logger.info { VirusFoundEvent(nomsId, virusScanResult.foundViruses) }
           Failure(virusScanResult)
@@ -64,14 +66,20 @@ class DocumentService(
     }
 
   @Transactional
-  fun convertAndStoreDocument(nomsId: String, document: MultipartFile, category: DocumentCategory): DocumentsEntity {
+  fun convertAndStoreDocument(
+    nomsId: String,
+    document: MultipartFile,
+    category: DocumentCategory,
+    originalFilename: String,
+  ): DocumentsEntity {
     // using nomsId to find the prisoner entity
     val prisoner = findPrisonerByNomsId(nomsId)
 
     val key = UUID.randomUUID()
     var convertedDocumentKey = key
     uploadDocumentToS3(document, bucketName, key)
-    if (!document.originalFilename?.endsWith("pdf", true)!!) {
+
+    if (!originalFilename.endsWith("pdf", true)) {
       convertedDocumentKey = documentConversionService.convert(document)
     }
 
@@ -81,14 +89,11 @@ class DocumentService(
       pdfDocumentKey = convertedDocumentKey,
       creationDate = LocalDateTime.now(),
       category = category,
-      originalDocumentFileName = document.originalFilename!!,
-
+      originalDocumentFileName = originalFilename,
     )
 
     val docEntity = documentsRepository.save(documents)
     logger.info { "Document key ${docEntity.originalDocumentKey} and id is ${docEntity.id}" }
-    // saving the documents entity
-    // return documentsRepository.save(documents)
     return docEntity
   }
 
@@ -133,7 +138,8 @@ class DocumentService(
   }
 
   fun getLatestDocumentByCategory(nomsId: String, category: DocumentCategory): InputStream {
-    val latest = documentsRepository.findFirstByNomsIdAndCategory(nomsId, category) ?: throw ResourceNotFoundException("No $category documents found for $nomsId")
+    val latest = documentsRepository.findFirstByNomsIdAndCategory(nomsId, category)
+      ?: throw ResourceNotFoundException("No $category documents found for $nomsId")
     return getDocument(latest.pdfDocumentKey.toString())
   }
 

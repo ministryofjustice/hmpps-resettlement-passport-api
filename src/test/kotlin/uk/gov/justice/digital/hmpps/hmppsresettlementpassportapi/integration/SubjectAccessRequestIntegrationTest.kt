@@ -203,4 +203,15 @@ class SubjectAccessRequestIntegrationTest : IntegrationTestBase() {
     assertThat(responseContent).contains(expectedStatusSummary)
     assertThat(responseContent).contains(expectedResettlementAssessment)
   }
+
+  @Test
+  fun `SAR request when nomsId not found`() {
+    val nomsId = "abc"
+
+    webTestClient.get()
+      .uri("/subject-access-request?prn=$nomsId")
+      .headers(setAuthorisation(roles = listOf("ROLE_SAR_DATA_ACCESS")))
+      .exchange()
+      .expectStatus().isEqualTo(204)
+  }
 }

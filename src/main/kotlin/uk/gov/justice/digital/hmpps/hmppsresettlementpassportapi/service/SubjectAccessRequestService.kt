@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoContentException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplicationResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
@@ -38,7 +38,7 @@ class SubjectAccessRequestService(
     val endDate = toDate ?: LocalDate.now()
 
     val prisonerEntity = prisonerRepository.findByNomsId(prn)
-      ?: throw ResourceNotFoundException("Prisoner with id $prn not found in database")
+      ?: throw NoContentException("Prisoner with id $prn not found in database")
 
     val assessmentData = getAssessment(prn, startDate, endDate)
     val bankApplicationData = getBankAccount(prn, startDate, endDate)

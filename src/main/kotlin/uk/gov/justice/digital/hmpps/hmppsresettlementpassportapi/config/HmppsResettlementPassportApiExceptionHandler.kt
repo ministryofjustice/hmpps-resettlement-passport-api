@@ -104,19 +104,14 @@ class HmppsResettlementPassportApiExceptionHandler {
       )
   }
 
+  @ExceptionHandler(NoContentException::class)
+  fun handleNoContentException(e: NoContentException): ResponseEntity<ErrorResponse> {
+    log.info("No content exception: {}", e.message)
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+  }
+
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
-  }
-}
-
-open class ResettlementPassportException(override val message: String? = null, override val cause: Throwable? = null) :
-  Exception(message, cause) {
-  override fun toString(): String {
-    return if (this.message == null) {
-      this.javaClass.simpleName
-    } else {
-      "${this.javaClass.simpleName}: ${this.message}"
-    }
   }
 }
 
@@ -137,31 +132,10 @@ data class ErrorResponse(
     this(status.value(), errorCode, userMessage, developerMessage, moreInfo)
 }
 
-/**
- * Codes that can be used by api clients to uniquely discriminate between error types,
- * instead of relying on non-constant text descriptions.
- *
- * NB: Once defined, the values must not be changed
- */
-enum class ErrorCode(val errorCode: Int) {
-  IncentiveLevelActiveIfRequired(100),
-  IncentiveLevelActiveIfActiveInPrison(101),
-  IncentiveLevelCodeNotUnique(102),
-  IncentiveLevelReorderNeedsFullSet(103),
-
-  PrisonIncentiveLevelActiveIfRequired(200),
-  PrisonIncentiveLevelActiveIfDefault(201),
-  PrisonIncentiveLevelActiveIfPrisonersExist(202),
-  PrisonIncentiveLevelNotGloballyActive(203),
-  PrisonIncentiveLevelDefaultRequired(204),
-}
-
 open class ResourceNotFoundException(message: String) : RuntimeException(message)
 
 class NoDataWithCodeFoundException(dataType: String, code: String) : ResourceNotFoundException("No $dataType found for code `$code`")
 
 open class DuplicateDataFoundException(message: String) : RuntimeException(message)
 
-class DuplicateWithCodeFoundException(dataType: String, code: String) : DuplicateDataFoundException("Duplicate $dataType found for code `$code`")
-
-class ClientTimeoutException(clientName: String, errorType: String) : ResettlementPassportException("$clientName: [$errorType]")
+class NoContentException(message: String) : RuntimeException(message)

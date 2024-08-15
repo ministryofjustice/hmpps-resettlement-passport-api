@@ -4,6 +4,7 @@ import com.google.common.io.Resources
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
+import org.assertj.core.api.Assertions.within
 import org.junit.jupiter.api.Test
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.client.MultipartBodyBuilder
@@ -11,6 +12,7 @@ import org.springframework.test.context.jdbc.Sql
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DocumentResponse
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 class DocumentStorageIntegrationTest : IntegrationTestBase() {
 
@@ -97,14 +99,17 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(404)
   }
 
-  private fun generateMultiPartFormRequestWeb(fileName: String, originalFilename: String? = null): BodyInserters.MultipartInserter {
+  private fun generateMultiPartFormRequestWeb(
+    fileName: String,
+    originalFilename: String? = null,
+  ): BodyInserters.MultipartInserter {
     val uploadFile = Resources.getResource(fileName)
     val multipartBodyBuilder = MultipartBodyBuilder()
     val contentsAsResource: ByteArrayResource = object : ByteArrayResource(uploadFile.readBytes()) {
       override fun getFilename(): String = fileName.split("/").last()
     }
     multipartBodyBuilder.part("file", contentsAsResource)
-    if(originalFilename != null) {
+    if (originalFilename != null) {
       multipartBodyBuilder.part("originalFilename", originalFilename)
     }
     return BodyInserters.fromMultipartData(multipartBodyBuilder.build())
@@ -200,7 +205,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
   }
 
   private fun uploadDocument(nomsId: String, filename: String = "testdata/PD1_example.docx") {
-    val response = webTestClient.post()
+    webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/documents/upload")
       .body(generateMultiPartFormRequestWeb(filename))
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -224,8 +229,37 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
       .json(
         """
         [
-          {"id": 2, "fileName": "example-doc.pdf"},
-          {"id": 1, "fileName": "PD1_example.docx"},
+          {"id": 2, "fileName": "example-doc.pdf", "category": "LICENCE_CONDITIONS"},
+          {"id": 1, "fileName": "PD1_example.docx", "category": "LICENCE_CONDITIONS"},
+        ]     
+        """.trimIndent(),
+      )
+      .jsonPath("$.[0].creationDate").value { dateString: String ->
+        assertThat(LocalDateTime.parse(dateString)).isCloseTo(
+          LocalDateTime.now(),
+          within(10, ChronoUnit.SECONDS),
+        )
+      }
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-document-upload.sql")
+  fun `Get document list without category`() {
+    val nomsId = "ABC1234"
+    uploadDocument(nomsId, filename = "testdata/PD1_example.docx")
+    uploadDocument(nomsId, filename = "testdata/example-doc.pdf")
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/documents")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(
+        """
+        [
+          {"id": 2, "fileName": "example-doc.pdf", "category": "LICENCE_CONDITIONS"},
+          {"id": 1, "fileName": "PD1_example.docx", "category": "LICENCE_CONDITIONS"},
         ]     
         """.trimIndent(),
       )

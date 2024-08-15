@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DocumentCategory
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.DocumentService
+import java.time.LocalDateTime
 
 @RestController
 @Validated
@@ -58,7 +59,7 @@ class DocumentStorageResourceController(
     @RequestParam(defaultValue = "LICENCE_CONDITIONS", required = false)
     category: DocumentCategory,
     @RequestPart(required = false)
-    originalFilename: String?
+    originalFilename: String?,
   ) = uploadService.processDocument(nomsId, file, originalFilename, category)
 
   @GetMapping("/documents/{documentId}/download", produces = [MediaType.APPLICATION_PDF_VALUE])
@@ -186,13 +187,15 @@ class DocumentStorageResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-    @RequestParam(required = true)
-    category: DocumentCategory,
+    @RequestParam(required = false)
+    category: DocumentCategory?,
   ): Collection<DocumentResponse> = uploadService.listDocuments(nomsId, category)
-    .map { DocumentResponse(it.id!!, it.originalDocumentFileName) }
+    .map { DocumentResponse(it.id!!, it.originalDocumentFileName, it.creationDate, it.category) }
 
   data class DocumentResponse(
     val id: Long,
     val fileName: String,
+    val creationDate: LocalDateTime,
+    val category: DocumentCategory,
   )
 }

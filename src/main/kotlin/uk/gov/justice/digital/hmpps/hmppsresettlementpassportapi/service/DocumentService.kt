@@ -46,9 +46,8 @@ class DocumentService(
     category: DocumentCategory,
   ): Result<DocumentsEntity, VirusFound> =
     forExistingPrisoner(nomsId) {
-      val filename: String = originalFilename ?: document.originalFilename
-      ?: throw ValidationException("filename is required")
-      println("$filename $originalFilename")
+      val filename: String =
+        originalFilename ?: document.originalFilename ?: throw ValidationException("filename is required")
 
       val extension = filename.substringAfterLast(".", "")
       if (extension !in allowableFileExtensions) {
@@ -150,6 +149,10 @@ class DocumentService(
 
   data class VirusFoundEvent(val nomsId: String, val foundViruses: Map<String, Collection<String>>)
 
-  fun listDocuments(nomsId: String, category: DocumentCategory): Collection<DocumentsEntity> =
-    documentsRepository.findAllByNomsIdAndCategory(nomsId, category)
+  fun listDocuments(nomsId: String, category: DocumentCategory?): Collection<DocumentsEntity> =
+    if (category == null) {
+      documentsRepository.findAllByNomsId(nomsId)
+    } else {
+      documentsRepository.findAllByNomsIdAndCategory(nomsId, category)
+    }
 }

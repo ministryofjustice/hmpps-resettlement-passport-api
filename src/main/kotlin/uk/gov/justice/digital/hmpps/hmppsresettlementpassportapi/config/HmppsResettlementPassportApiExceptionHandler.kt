@@ -104,19 +104,14 @@ class HmppsResettlementPassportApiExceptionHandler {
       )
   }
 
+  @ExceptionHandler(NoContentException::class)
+  fun handleNoContentException(e: NoContentException): ResponseEntity<ErrorResponse> {
+    log.info("No content exception: {}", e.message)
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+  }
+
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
-  }
-}
-
-open class ResettlementPassportException(override val message: String? = null, override val cause: Throwable? = null) :
-  Exception(message, cause) {
-  override fun toString(): String {
-    return if (this.message == null) {
-      this.javaClass.simpleName
-    } else {
-      "${this.javaClass.simpleName}: ${this.message}"
-    }
   }
 }
 
@@ -162,6 +157,4 @@ class NoDataWithCodeFoundException(dataType: String, code: String) : ResourceNot
 
 open class DuplicateDataFoundException(message: String) : RuntimeException(message)
 
-class DuplicateWithCodeFoundException(dataType: String, code: String) : DuplicateDataFoundException("Duplicate $dataType found for code `$code`")
-
-class ClientTimeoutException(clientName: String, errorType: String) : ResettlementPassportException("$clientName: [$errorType]")
+class NoContentException(message: String): RuntimeException(message)

@@ -132,25 +132,6 @@ data class ErrorResponse(
     this(status.value(), errorCode, userMessage, developerMessage, moreInfo)
 }
 
-/**
- * Codes that can be used by api clients to uniquely discriminate between error types,
- * instead of relying on non-constant text descriptions.
- *
- * NB: Once defined, the values must not be changed
- */
-enum class ErrorCode(val errorCode: Int) {
-  IncentiveLevelActiveIfRequired(100),
-  IncentiveLevelActiveIfActiveInPrison(101),
-  IncentiveLevelCodeNotUnique(102),
-  IncentiveLevelReorderNeedsFullSet(103),
-
-  PrisonIncentiveLevelActiveIfRequired(200),
-  PrisonIncentiveLevelActiveIfDefault(201),
-  PrisonIncentiveLevelActiveIfPrisonersExist(202),
-  PrisonIncentiveLevelNotGloballyActive(203),
-  PrisonIncentiveLevelDefaultRequired(204),
-}
-
 open class ResourceNotFoundException(message: String) : RuntimeException(message)
 
 class NoDataWithCodeFoundException(dataType: String, code: String) : ResourceNotFoundException("No $dataType found for code `$code`")

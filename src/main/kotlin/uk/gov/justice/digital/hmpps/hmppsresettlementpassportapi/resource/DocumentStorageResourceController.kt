@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DocumentCategory
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.DocumentService
+import java.time.LocalDateTime
 
 @RestController
 @Validated
@@ -52,11 +54,13 @@ class DocumentStorageResourceController(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     nomsId: String,
-    @RequestParam("file")
+    @RequestPart
     file: MultipartFile,
     @RequestParam(defaultValue = "LICENCE_CONDITIONS", required = false)
     category: DocumentCategory,
-  ) = uploadService.processDocument(nomsId, file, category)
+    @RequestPart(required = false)
+    originalFilename: String?,
+  ) = uploadService.processDocument(nomsId, file, originalFilename, category)
 
   @GetMapping("/documents/{documentId}/download", produces = [MediaType.APPLICATION_PDF_VALUE])
   @Operation(
@@ -183,13 +187,15 @@ class DocumentStorageResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-    @RequestParam(required = true)
-    category: DocumentCategory,
+    @RequestParam(required = false)
+    category: DocumentCategory?,
   ): Collection<DocumentResponse> = uploadService.listDocuments(nomsId, category)
-    .map { DocumentResponse(it.id!!, it.originalDocumentFileName) }
+    .map { DocumentResponse(it.id!!, it.originalDocumentFileName, it.creationDate, it.category) }
 
   data class DocumentResponse(
     val id: Long,
     val fileName: String,
+    val creationDate: LocalDateTime,
+    val category: DocumentCategory,
   )
 }

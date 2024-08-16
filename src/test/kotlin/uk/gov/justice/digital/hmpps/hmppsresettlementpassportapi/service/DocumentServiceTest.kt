@@ -69,7 +69,7 @@ class DocumentServiceTest {
     whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
     whenever(documentsRepository.save(any())).thenReturn(documentsEntity)
     whenever(documentConversionService.convert(eq(file))).thenReturn(pdfDocumentKey)
-    val response = documentService.processDocument("acb", file, DocumentCategory.LICENCE_CONDITIONS)
+    val response = documentService.processDocument("acb", file, null, DocumentCategory.LICENCE_CONDITIONS)
     Assertions.assertEquals(documentsEntity, response.valueOrNull())
   }
 

@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCase
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DpsCaseNoteSubType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayAndStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.TagAndQuestionMapping
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.AssessmentSkipRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.LatestResettlementAssessmentResponse
@@ -24,11 +25,14 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.AssessmentSkipEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseNoteRetryEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ProfileTagList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ProfileTagsEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentSkipRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseNoteRetryRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ProfileTagsRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
@@ -46,6 +50,7 @@ class ResettlementAssessmentService(
   private val prisonerSearchApiService: PrisonerSearchApiService,
   private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
   private val caseNoteRetryRepository: CaseNoteRetryRepository,
+  private val profileTagsRepository: ProfileTagsRepository,
   @Value("\${psfr.base.url}") private val psfrBaseUrl: String,
 ) {
 
@@ -114,7 +119,8 @@ class ResettlementAssessmentService(
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
 
     val assessmentList = mutableListOf<ResettlementAssessmentEntity>()
-
+    val profileTagList = ProfileTagList(listOf())
+    var tagList = profileTagList.tagAndQuestionMappings
     // For each pathway, get the latest complete assessment
     Pathway.entries.forEach { pathway ->
       val resettlementAssessment = resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
@@ -125,8 +131,10 @@ class ResettlementAssessmentService(
       )
       if (resettlementAssessment != null) {
         assessmentList.add(resettlementAssessment)
+        tagList = tagList + processProfileTags(resettlementAssessment)
       }
     }
+    profileTagList.tagAndQuestionMappings = tagList
 
     if (assessmentList.size != Pathway.entries.size) {
       throw RuntimeException("Found [${assessmentList.size}] assessments for prisoner [$nomsId]. This should be all ${Pathway.entries.size} pathways!")
@@ -152,7 +160,23 @@ class ResettlementAssessmentService(
       assessment.submissionDate = LocalDateTime.now()
       resettlementAssessmentRepository.save(assessment)
     }
-
+    log.info(
+      "profileTagList process completed and count is ${profileTagList.tagAndQuestionMappings
+        .size}",
+    )
+    if (profileTagList.tagAndQuestionMappings.isNotEmpty()) {
+      val profileTagsEntity = prisonerEntity.id?.let {
+        ProfileTagsEntity(
+          id = null,
+          prisonerId = it,
+          profileTags = profileTagList,
+          updatedDate = LocalDateTime.now(),
+        )
+      }
+      if (profileTagsEntity != null) {
+        profileTagsRepository.save(profileTagsEntity)
+      }
+    }
     val failedCaseNotes = mutableListOf<UserAndCaseNote>()
     val prisonCode = prisonerSearchApiService.findPrisonerPersonalDetails(prisonerEntity.nomsId).prisonId
     val dpsSubType = when (assessmentType) {
@@ -463,5 +487,17 @@ class ResettlementAssessmentService(
       deliusCaseNoteType = convertToDeliusCaseNoteType(assessmentType),
       caseNoteText = generateLinkOnlyDeliusCaseNoteText(nomsId, assessmentType, psfrBaseUrl),
     )
+  }
+
+  fun processProfileTags(resettlementAssessmentEntity: ResettlementAssessmentEntity): List<TagAndQuestionMapping> {
+    val tagList = mutableListOf<TagAndQuestionMapping>()
+    resettlementAssessmentEntity.assessment.assessment.forEach {
+      if (it.questionId == TagAndQuestionMapping.NO_FIXED_ABODE.questionOptionId.toString()) {
+        tagList.add(TagAndQuestionMapping.NO_FIXED_ABODE)
+      } else if (it.questionId == TagAndQuestionMapping.HOME_ADAPTION_POST_RELEASE.questionOptionId.toString()) {
+        tagList.add(TagAndQuestionMapping.HOME_ADAPTION_POST_RELEASE)
+      }
+    }
+    return tagList
   }
 }

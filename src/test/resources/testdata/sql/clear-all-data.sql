@@ -1,3 +1,5 @@
+DELETE from profile_tag;
+ALTER SEQUENCE profile_tag_id_seq RESTART WITH 1;
 DELETE from document_location;
 ALTER SEQUENCE document_location_id_seq RESTART WITH 1;
 DELETE from licence_conditions_change_audit;

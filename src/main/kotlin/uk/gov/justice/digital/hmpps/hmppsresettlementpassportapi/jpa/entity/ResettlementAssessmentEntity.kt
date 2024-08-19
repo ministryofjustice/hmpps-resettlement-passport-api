@@ -46,7 +46,7 @@ data class ResettlementAssessmentEntity(
   @Column(name = "assessment")
   @JdbcTypeCode(SqlTypes.JSON)
   @Convert(converter = ResettlementAssessmentConverter::class)
-  val assessment: ResettlementAssessmentQuestionAndAnswerList,
+  var assessment: ResettlementAssessmentQuestionAndAnswerList,
 
   @Column(name = "created_date")
   val creationDate: LocalDateTime,
@@ -80,7 +80,7 @@ enum class ResettlementAssessmentType(val displayName: String, val alternativeDi
 }
 
 data class ResettlementAssessmentQuestionAndAnswerList(
-  val assessment: List<ResettlementAssessmentSimpleQuestionAndAnswer>,
+  var assessment: List<ResettlementAssessmentSimpleQuestionAndAnswer>,
 )
 
 data class ResettlementAssessmentSimpleQuestionAndAnswer(

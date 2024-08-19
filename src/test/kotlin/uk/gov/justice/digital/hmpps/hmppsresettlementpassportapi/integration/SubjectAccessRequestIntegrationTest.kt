@@ -25,7 +25,6 @@ class SubjectAccessRequestIntegrationTest : IntegrationTestBase() {
     assertThatJson(response)
       .`when`(IGNORING_ARRAY_ORDER)
       .isEqualTo(readFile("testdata/expectation/sar-without-dates.json"))
-
   }
 
   @Test
@@ -40,7 +39,6 @@ class SubjectAccessRequestIntegrationTest : IntegrationTestBase() {
     assertThatJson(responseContentYesterday)
       .`when`(IGNORING_ARRAY_ORDER)
       .isEqualTo(readFile("testdata/expectation/sar-with-dates-1.json"))
-
 
     val responseContent = getSarData(nomsId, fromLastYear)
     assertThatJson(responseContent)

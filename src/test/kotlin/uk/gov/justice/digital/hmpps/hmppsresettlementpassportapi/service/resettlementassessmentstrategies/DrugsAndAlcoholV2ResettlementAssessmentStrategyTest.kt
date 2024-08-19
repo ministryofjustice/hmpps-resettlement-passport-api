@@ -112,7 +112,7 @@ class DrugsAndAlcoholV2ResettlementAssessmentStrategyTest : BaseResettlementAsse
             ),
             originalPageId = "DRUGS_AND_ALCOHOL_REPORT",
           ),
-        )
+        ),
       ),
     ),
     Arguments.of(

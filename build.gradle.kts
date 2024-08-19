@@ -87,6 +87,7 @@ dependencies {
   testImplementation("io.mockk:mockk:1.13.10")
   testImplementation("com.github.victools:jsonschema-generator:4.35.0")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
+  testImplementation("net.javacrumbs.json-unit:json-unit-assertj:3.4.1")
 
   if (project.hasProperty("docs")) {
     implementation("com.h2database:h2")

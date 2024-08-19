@@ -11,15 +11,14 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import java.util.stream.Stream
 
-class DrugsAndAlcoholResettlementAssessmentAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.DRUGS_AND_ALCOHOL) {
+class DrugsAndAlcoholV2ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.DRUGS_AND_ALCOHOL) {
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "{1} -> {2}")
   @MethodSource("test next page function flow - no existing assessment data")
   fun `test next page function flow - no existing assessment`(
     questionsAndAnswers: List<ResettlementAssessmentRequestQuestionAndAnswer<*>>,
@@ -38,6 +37,7 @@ class DrugsAndAlcoholResettlementAssessmentAssessmentStrategyTest : BaseResettle
       pathway = Pathway.DRUGS_AND_ALCOHOL,
       assessmentType = ResettlementAssessmentType.BCST2,
       currentPage = currentPage,
+      version = 2,
     )
     Assertions.assertEquals(expectedPage, nextPage)
   }
@@ -47,79 +47,29 @@ class DrugsAndAlcoholResettlementAssessmentAssessmentStrategyTest : BaseResettle
     Arguments.of(
       listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(),
       null,
-      "DRUG_ISSUES",
+      "DRUGS_AND_ALCOHOL_REPORT",
     ),
-    // If the answer to DRUG_ISSUES is YES, go to SUPPORT_WITH_DRUG_ISSUES
+    // Any answer to DRUGS_AND_ALCOHOL_REPORT, go to SUPPORT_REQUIREMENTS
     Arguments.of(
-      listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
-        ResettlementAssessmentRequestQuestionAndAnswer("DRUG_ISSUES", answer = StringAnswer("YES")),
-      ),
-      "DRUG_ISSUES",
-      "SUPPORT_WITH_DRUG_ISSUES",
+      listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(),
+      "DRUGS_AND_ALCOHOL_REPORT",
+      "SUPPORT_REQUIREMENTS",
     ),
-    // If the answer to DRUG_ISSUES is NO, go to ALCOHOL_ISSUES
+    // Any answer to SUPPORT_REQUIREMENTS, go to ASSESSMENT_SUMMARY
     Arguments.of(
-      listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
-        ResettlementAssessmentRequestQuestionAndAnswer("DRUG_ISSUES", answer = StringAnswer("NO")),
-      ),
-      "DRUG_ISSUES",
-      "ALCOHOL_ISSUES",
-    ),
-    // Any answer to SUPPORT_WITH_DRUG_ISSUES, go to ALCOHOL_ISSUES
-    Arguments.of(
-      listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
-        ResettlementAssessmentRequestQuestionAndAnswer("DRUG_ISSUES", answer = StringAnswer("YES")),
-        ResettlementAssessmentRequestQuestionAndAnswer("SUPPORT_WITH_DRUG_ISSUES", answer = StringAnswer("NO")),
-      ),
-      "SUPPORT_WITH_DRUG_ISSUES",
-      "ALCOHOL_ISSUES",
-    ),
-    // If the answer to ALCOHOL_ISSUES is YES, go to SUPPORT_WITH_ALCOHOL_ISSUES
-    Arguments.of(
-      listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
-        ResettlementAssessmentRequestQuestionAndAnswer("DRUG_ISSUES", answer = StringAnswer("YES")),
-        ResettlementAssessmentRequestQuestionAndAnswer("SUPPORT_WITH_DRUG_ISSUES", answer = StringAnswer("NO")),
-        ResettlementAssessmentRequestQuestionAndAnswer("ALCOHOL_ISSUES", answer = StringAnswer("YES")),
-      ),
-      "ALCOHOL_ISSUES",
-      "SUPPORT_WITH_ALCOHOL_ISSUES",
-    ),
-    // If the answer to ALCOHOL_ISSUES is NO, go to ASSESSMENT_SUMMARY
-    Arguments.of(
-      listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
-        ResettlementAssessmentRequestQuestionAndAnswer("DRUG_ISSUES", answer = StringAnswer("YES")),
-        ResettlementAssessmentRequestQuestionAndAnswer("SUPPORT_WITH_DRUG_ISSUES", answer = StringAnswer("NO")),
-        ResettlementAssessmentRequestQuestionAndAnswer("ALCOHOL_ISSUES", answer = StringAnswer("NO")),
-      ),
-      "ALCOHOL_ISSUES",
-      "ASSESSMENT_SUMMARY",
-    ),
-    // Any answer to SUPPORT_WITH_ALCOHOL_ISSUES, go to ASSESSMENT_SUMMARY
-    Arguments.of(
-      listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
-        ResettlementAssessmentRequestQuestionAndAnswer("DRUG_ISSUES", answer = StringAnswer("YES")),
-        ResettlementAssessmentRequestQuestionAndAnswer("SUPPORT_WITH_DRUG_ISSUES", answer = StringAnswer("NO")),
-        ResettlementAssessmentRequestQuestionAndAnswer("ALCOHOL_ISSUES", answer = StringAnswer("NO")),
-        ResettlementAssessmentRequestQuestionAndAnswer("SUPPORT_WITH_ALCOHOL_ISSUES", answer = StringAnswer("YES")),
-      ),
-      "SUPPORT_WITH_ALCOHOL_ISSUES",
+      listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(),
+      "SUPPORT_REQUIREMENTS",
       "ASSESSMENT_SUMMARY",
     ),
     // Any answer to ASSESSMENT_SUMMARY, go to CHECK_ANSWERS
     Arguments.of(
-      listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
-        ResettlementAssessmentRequestQuestionAndAnswer("DRUG_ISSUES", answer = StringAnswer("YES")),
-        ResettlementAssessmentRequestQuestionAndAnswer("SUPPORT_WITH_DRUG_ISSUES", answer = StringAnswer("NO")),
-        ResettlementAssessmentRequestQuestionAndAnswer("ALCOHOL_ISSUES", answer = StringAnswer("NO")),
-        ResettlementAssessmentRequestQuestionAndAnswer("SUPPORT_WITH_ALCOHOL_ISSUES", answer = StringAnswer("YES")),
-        ResettlementAssessmentRequestQuestionAndAnswer("CASE_NOTE_SUMMARY", answer = StringAnswer("My case note summary.")),
-      ),
+      listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(),
       "ASSESSMENT_SUMMARY",
       "CHECK_ANSWERS",
     ),
   )
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "{0} page")
   @MethodSource("test get page from Id - no existing assessment data")
   fun `test get page from Id - no existing assessment`(pageIdInput: String, expectedPage: ResettlementAssessmentResponsePage) {
     val nomsId = "123"
@@ -130,79 +80,73 @@ class DrugsAndAlcoholResettlementAssessmentAssessmentStrategyTest : BaseResettle
       pathway = Pathway.DRUGS_AND_ALCOHOL,
       assessmentType = ResettlementAssessmentType.BCST2,
       pageId = pageIdInput,
+      version = 2,
     )
     Assertions.assertEquals(expectedPage, page)
   }
 
   private fun `test get page from Id - no existing assessment data`() = Stream.of(
     Arguments.of(
-      "DRUG_ISSUES",
+      "DRUGS_AND_ALCOHOL_REPORT",
       ResettlementAssessmentResponsePage(
-        id = "DRUG_ISSUES",
+        id = "DRUGS_AND_ALCOHOL_REPORT",
+        title = "Drugs and alcohol report",
         questionsAndAnswers = listOf(
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
-              id = "DRUG_ISSUES",
+              id = "DRUG_MISUSE_ISSUES",
               title = "Does the person in prison have any previous or current drug misuse issues?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
               options = yesNoOptions,
             ),
-            originalPageId = "DRUG_ISSUES",
+            originalPageId = "DRUGS_AND_ALCOHOL_REPORT",
           ),
-        ),
-      ),
-    ),
-    Arguments.of(
-      "SUPPORT_WITH_DRUG_ISSUES",
-      ResettlementAssessmentResponsePage(
-        id = "SUPPORT_WITH_DRUG_ISSUES",
-        questionsAndAnswers = listOf(
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
-              id = "SUPPORT_WITH_DRUG_ISSUES",
-              title = "Does the person in prison want support with drug issues from the drug and alcohol team to help them prepare for release?",
-              subTitle = null,
-              type = TypeOfQuestion.RADIO,
-              options = yesNoOptions,
-            ),
-            originalPageId = "SUPPORT_WITH_DRUG_ISSUES",
-          ),
-        ),
-      ),
-    ),
-    Arguments.of(
-      "ALCOHOL_ISSUES",
-      ResettlementAssessmentResponsePage(
-        id = "ALCOHOL_ISSUES",
-        questionsAndAnswers = listOf(
-          ResettlementAssessmentQuestionAndAnswer(
-            question = ResettlementAssessmentQuestion(
-              id = "ALCOHOL_ISSUES",
+              id = "ALCOHOL_MISUSE_ISSUES",
               title = "Does the person in prison have any previous or current alcohol misuse issues?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
               options = yesNoOptions,
             ),
-            originalPageId = "ALCOHOL_ISSUES",
+            originalPageId = "DRUGS_AND_ALCOHOL_REPORT",
           ),
         ),
       ),
     ),
     Arguments.of(
-      "SUPPORT_WITH_ALCOHOL_ISSUES",
+      "SUPPORT_REQUIREMENTS",
       ResettlementAssessmentResponsePage(
-        id = "SUPPORT_WITH_ALCOHOL_ISSUES",
+        id = "SUPPORT_REQUIREMENTS",
         questionsAndAnswers = listOf(
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
-              id = "SUPPORT_WITH_ALCOHOL_ISSUES",
-              title = "Does the person in prison want support with alcohol issues from the drug and alcohol team to help them prepare for release?",
-              subTitle = null,
-              type = TypeOfQuestion.RADIO,
-              options = yesNoOptions,
+              id = "SUPPORT_REQUIREMENTS",
+              title = "Support needs",
+              subTitle = "Select any needs you have identified that could be met by prison or probation staff.",
+              type = TypeOfQuestion.CHECKBOX,
+              options = listOf(
+                ResettlementAssessmentOption(
+                  id = "SUPPORT_FOR_DRUG_ISSUES",
+                  displayText = "Support from drug and alcohol team for drug issues",
+                ),
+                ResettlementAssessmentOption(
+                  id = "SUPPORT_FOR_ALCOHOL_ISSUES",
+                  displayText = "Support from drug and alcohol team for alcohol issues",
+                ),
+                ResettlementAssessmentOption(
+                  id = "CONTACT_SUPPORT_SERVICES_OUTSIDE_PRISON",
+                  displayText = "Contact any support services they have used outside of prison",
+                ),
+                ResettlementAssessmentOption(
+                  id = "NO_SUPPORT_NEEDS",
+                  displayText = "No support needs identified",
+                  exclusive = true,
+                ),
+              ),
             ),
-            originalPageId = "SUPPORT_WITH_ALCOHOL_ISSUES",
+            originalPageId = "SUPPORT_REQUIREMENTS",
           ),
         ),
       ),
@@ -216,7 +160,7 @@ class DrugsAndAlcoholResettlementAssessmentAssessmentStrategyTest : BaseResettle
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "SUPPORT_NEEDS",
-              title = "Drugs and alcohol support needs",
+              title = "Drugs and alcohol resettlement status",
               subTitle = "Select one option.",
               type = TypeOfQuestion.RADIO,
               options = listOf(
@@ -238,9 +182,11 @@ class DrugsAndAlcoholResettlementAssessmentAssessmentStrategyTest : BaseResettle
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "CASE_NOTE_SUMMARY",
-              title = "Case note summary",
-              subTitle = "This will be displayed as a case note in both DPS and nDelius",
+              title = "Case note",
+              subTitle = "Include any relevant information about why you have chosen that resettlement status. This information will be only displayed in PSfR. Do not include any information that could identify anyone other than the person in prison, or any  special category data.",
               type = TypeOfQuestion.LONG_TEXT,
+              detailsTitle = "Help with special category data",
+              detailsContent = "Special category data includes any personal data concerning someone's health, sex life or sexual orientation. Or any personal data revealing someone's racial or ethnic origin, religious or philosophical beliefs or trade union membership.",
             ),
             originalPageId = "ASSESSMENT_SUMMARY",
           ),

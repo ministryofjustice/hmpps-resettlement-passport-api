@@ -507,7 +507,6 @@ class ResettlementAssessmentService(
   fun processProfileTags(resettlementAssessmentEntity: ResettlementAssessmentEntity, pathway: Pathway): List<String> {
     val tagList = mutableListOf<String>()
     resettlementAssessmentEntity.assessment.assessment.forEach {
-      log.info("Answer value for question id ${it.questionId} is ${it.answer.answer}")
       val tag = getProfileTag(it.questionId, it.answer, pathway)
       if (tag != null) {
         tagList.add(tag)

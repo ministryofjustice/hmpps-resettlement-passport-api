@@ -120,7 +120,7 @@ class ResettlementAssessmentService(
 
     val assessmentList = mutableListOf<ResettlementAssessmentEntity>()
     val profileTagList = ProfileTagList(listOf())
-    var tagList = profileTagList.tagAndQuestionMappings
+    var tagList = profileTagList.tags
     // For each pathway, get the latest complete assessment
     Pathway.entries.forEach { pathway ->
       val resettlementAssessment = resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
@@ -131,10 +131,10 @@ class ResettlementAssessmentService(
       )
       if (resettlementAssessment != null) {
         assessmentList.add(resettlementAssessment)
-        tagList = tagList + processProfileTags(resettlementAssessment)
+        tagList = tagList + processProfileTags(resettlementAssessment, pathway)
       }
     }
-    profileTagList.tagAndQuestionMappings = tagList
+    profileTagList.tags = tagList
 
     if (assessmentList.size != Pathway.entries.size) {
       throw RuntimeException("Found [${assessmentList.size}] assessments for prisoner [$nomsId]. This should be all ${Pathway.entries.size} pathways!")
@@ -160,11 +160,13 @@ class ResettlementAssessmentService(
       assessment.submissionDate = LocalDateTime.now()
       resettlementAssessmentRepository.save(assessment)
     }
-    log.info(
-      "profileTagList process completed and count is ${profileTagList.tagAndQuestionMappings
-        .size}",
-    )
-    if (profileTagList.tagAndQuestionMappings.isNotEmpty()) {
+    if (profileTagList.tags.isNotEmpty()) {
+      val profileTagsEntityList = prisonerEntity.id?.let { profileTagsRepository.findByPrisonerId(it) }
+      if (!profileTagsEntityList.isNullOrEmpty()) {
+        profileTagsEntityList.forEach {
+          profileTagsRepository.delete(it)
+        }
+      }
       val profileTagsEntity = prisonerEntity.id?.let {
         ProfileTagsEntity(
           id = null,
@@ -173,6 +175,7 @@ class ResettlementAssessmentService(
           updatedDate = LocalDateTime.now(),
         )
       }
+
       if (profileTagsEntity != null) {
         profileTagsRepository.save(profileTagsEntity)
       }
@@ -489,13 +492,24 @@ class ResettlementAssessmentService(
     )
   }
 
-  fun processProfileTags(resettlementAssessmentEntity: ResettlementAssessmentEntity): List<TagAndQuestionMapping> {
-    val tagList = mutableListOf<TagAndQuestionMapping>()
+  fun getProfileTag(questionId: String, answer: Answer<*>, pathway: Pathway): String? {
+    TagAndQuestionMapping.entries.forEach {
+      if ((questionId == it.questionId) &&
+        (answer.answer.toString().contains(it.optionId)) &&
+        (pathway.name == it.pathway.name)
+      ) {
+        return it.name
+      }
+    }
+    return null
+  }
+
+  fun processProfileTags(resettlementAssessmentEntity: ResettlementAssessmentEntity, pathway: Pathway): List<String> {
+    val tagList = mutableListOf<String>()
     resettlementAssessmentEntity.assessment.assessment.forEach {
-      if (it.questionId == TagAndQuestionMapping.NO_FIXED_ABODE.questionOptionId.toString()) {
-        tagList.add(TagAndQuestionMapping.NO_FIXED_ABODE)
-      } else if (it.questionId == TagAndQuestionMapping.HOME_ADAPTION_POST_RELEASE.questionOptionId.toString()) {
-        tagList.add(TagAndQuestionMapping.HOME_ADAPTION_POST_RELEASE)
+      val tag = getProfileTag(it.questionId, it.answer, pathway)
+      if (tag != null) {
+        tagList.add(tag)
       }
     }
     return tagList

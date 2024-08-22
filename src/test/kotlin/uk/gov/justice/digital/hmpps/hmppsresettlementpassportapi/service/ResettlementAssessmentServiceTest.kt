@@ -621,7 +621,7 @@ class ResettlementAssessmentServiceTest {
     assessment.assessment.toMutableList().add(assessmentQA2)
     val resettlementAssessmentEntity = createSubmittedResettlementAssessmentEntity(Pathway.ACCOMMODATION, user, "${Pathway.ACCOMMODATION.displayName} case note - $caseNotePostfix")
     resettlementAssessmentEntity.assessment.assessment = assessment.assessment
-    val profileTagList = resettlementAssessmentService.processProfileTags(resettlementAssessmentEntity)
+    val profileTagList = resettlementAssessmentService.processProfileTags(resettlementAssessmentEntity, Pathway.ACCOMMODATION)
     val expectedTagAndQuestionMappingList = emptyList<TagAndQuestionMapping>()
     expectedTagAndQuestionMappingList.toMutableList().add(TagAndQuestionMapping.NO_FIXED_ABODE)
     expectedTagAndQuestionMappingList.toMutableList().add(TagAndQuestionMapping.HOME_ADAPTION_POST_RELEASE)

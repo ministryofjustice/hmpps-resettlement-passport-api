@@ -4,15 +4,19 @@ import com.github.tomakehurst.wiremock.client.WireMock.equalTo
 import com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath
 import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
+import io.mockk.every
+import io.mockk.mockkStatic
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 import org.springframework.test.context.jdbc.Sql
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CreateAppointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CreateAppointmentAddress
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Category
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 class AppointmentsIntegrationTest : IntegrationTestBase() {
+  private val fakeNow = LocalDate.parse("2024-08-19")
 
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
@@ -135,6 +139,8 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-6.sql")
   fun `Get All Appointments happy path - including database`() {
+    mockkStatic(LocalDate::class)
+    every { LocalDate.now() } returns fakeNow
     val expectedOutput = readFile("testdata/expectation/appointments-2.json")
     val nomsId = "G1458GV"
     val crn = "CRN1"
@@ -263,6 +269,8 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
   fun `Get All Future Appointments only happy path`() {
+    mockkStatic(LocalDate::class)
+    every { LocalDate.now() } returns fakeNow
     val expectedOutput = readFile("testdata/expectation/appointments-1.json")
     val nomsId = "G1458GV"
     val crn = "CRN1"

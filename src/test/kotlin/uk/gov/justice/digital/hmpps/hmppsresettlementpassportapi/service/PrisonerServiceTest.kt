@@ -37,6 +37,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerWithStatusProjection
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ProfileTagsRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
@@ -80,6 +81,9 @@ class PrisonerServiceTest {
   @Mock
   private lateinit var prisonRegisterApiService: PrisonRegisterApiService
 
+  @Mock
+  private lateinit var profileTagsRepository: ProfileTagsRepository
+
   @BeforeEach
   fun beforeEach() {
     prisonerService = PrisonerService(
@@ -88,6 +92,7 @@ class PrisonerServiceTest {
       prisonerRepository,
       pathwayStatusRepository,
       resettlementAssessmentRepository,
+      profileTagsRepository,
       watchlistService,
       pathwayAndStatusService,
       deliusApiService,
@@ -127,6 +132,7 @@ class PrisonerServiceTest {
     val prisoner =
       prisonerService.getPrisonerDetailsByNomsId(
         expectedPrisonerId,
+        false,
         "123",
       )
     Assertions.assertTrue(prisoner.personalDetails?.isHomeDetention!!)

@@ -14,7 +14,6 @@ import jakarta.persistence.Table
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.type.SqlTypes
 import org.springframework.stereotype.Component
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.TagAndQuestionMapping
 import java.io.IOException
 import java.time.LocalDateTime
 
@@ -37,11 +36,11 @@ data class ProfileTagsEntity(
   var updatedDate: LocalDateTime? = null,
 
 ) {
-  val tags: List<TagAndQuestionMapping>
-    get() = profileTags.tagAndQuestionMappings
+  val tags: ProfileTagList
+    get() = profileTags
 }
 data class ProfileTagList(
-  var tagAndQuestionMappings: List<TagAndQuestionMapping>,
+  var tags: List<String>,
 )
 
 @Converter(autoApply = true)

@@ -55,10 +55,18 @@
       "lastDateChange": "2023-08-17"
     }
   ],
-  "assessmentRequired": false,
-  "resettlementReviewAvailable":false,
-  "immediateNeedsSubmitted": true,
-  "preReleaseSubmitted": true,
+  "assessmentRequired": true,
+  "resettlementReviewAvailable": false,
+  "immediateNeedsSubmitted": false,
+  "preReleaseSubmitted": false,
   "isInWatchlist": false,
-  "profile": {"tags":[]}
+  "profile": {
+    "tags":[
+      "KEEP_THEIR_HOME",
+      "GAMBLING_ISSUE",
+      "MEET_CHILDREN",
+      "COMMUNITY_ORG_SUPPORT",
+      "CARE_HEALTH_SUPPORT",
+      "MANAGE_DEBT_ARREARS"
+    ]}
 }

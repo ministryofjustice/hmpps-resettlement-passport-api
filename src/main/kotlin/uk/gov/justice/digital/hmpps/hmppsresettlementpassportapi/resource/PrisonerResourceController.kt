@@ -143,9 +143,12 @@ class PrisonerResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
+    @Parameter(description = "Include prisoners with profile tags in results")
+    @RequestParam(value = "includeProfileTags")
+    includeProfileTags: Boolean = false,
     @RequestHeader("Authorization")
     auth: String,
-  ): Prisoner = prisonerService.getPrisonerDetailsByNomsId(nomsId, auth)
+  ): Prisoner = prisonerService.getPrisonerDetailsByNomsId(nomsId, includeProfileTags, auth)
 
   @GetMapping(
     "/prisoner/{nomsId}/image/{id}",

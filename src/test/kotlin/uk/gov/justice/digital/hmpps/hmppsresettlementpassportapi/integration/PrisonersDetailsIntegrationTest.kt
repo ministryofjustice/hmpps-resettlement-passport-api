@@ -9,6 +9,7 @@ import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CvlApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ProfileTagsRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Period
@@ -18,6 +19,9 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
 
   @Autowired
   lateinit var prisonerRepository: PrisonerRepository
+
+  @Autowired
+  lateinit var profileTagsRepository: ProfileTagsRepository
 
   @Test
   fun `Get Prisoner Details happy path - blank database - with caching`() {
@@ -341,6 +345,25 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
       .jsonPath("$.resettlementReviewAvailable").isEqualTo(true)
       .jsonPath("$.immediateNeedsSubmitted").isEqualTo(false)
       .jsonPath("$.preReleaseSubmitted").isEqualTo(false)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-13.sql")
+  fun `Get Prisoner Details with profile tags happy path - database seeded`() {
+    val expectedOutput = readFileAndReplaceAge("testdata/expectation/prisoner-details-7.json")
+    val nomsId = "123"
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
+    deliusApiMockServer.stubGetPersonalDetailsFromCrn("abc", 200)
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId?includeProfileTags=true")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput, true)
   }
 
   private fun readFileAndReplaceAge(resourceName: String): String {

@@ -21,9 +21,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ProfileTagList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ProfileTagsRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
@@ -40,6 +42,7 @@ class PrisonerService(
   private val prisonerRepository: PrisonerRepository,
   private val pathwayStatusRepository: PathwayStatusRepository,
   private val resettlementAssessmentRepository: ResettlementAssessmentRepository,
+  private val profileTagsRepository: ProfileTagsRepository,
   private val watchlistService: WatchlistService,
   private val pathwayAndStatusService: PathwayAndStatusService,
   private val deliusApiService: ResettlementPassportDeliusApiService,
@@ -285,7 +288,7 @@ class PrisonerService(
     return prisonersList
   }
 
-  fun getPrisonerDetailsByNomsId(nomsId: String, auth: String): Prisoner {
+  fun getPrisonerDetailsByNomsId(nomsId: String, includeProfileTags: Boolean, auth: String): Prisoner {
     val prisonerSearch = prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)
     setDisplayedReleaseDate(prisonerSearch)
 
@@ -337,7 +340,12 @@ class PrisonerService(
     val assessmentStatus = isAssessmentRequired(prisonerEntity)
     val staffUsername = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get name from auth token")
     val isInWatchlist = watchlistService.isPrisonerInWatchList(staffUsername, prisonerEntity)
-    return Prisoner(
+    var profileTagList = ProfileTagList(listOf())
+    if (includeProfileTags) {
+      profileTagList = getProfileTags(prisonerEntity.nomsId)
+    }
+
+    val pr = Prisoner(
       personalDetails = prisonerPersonal,
       pathways = pathwayStatuses,
       assessmentRequired = assessmentStatus.assessmentRequired,
@@ -345,7 +353,10 @@ class PrisonerService(
       immediateNeedsSubmitted = assessmentStatus.immediateNeedsSubmitted,
       preReleaseSubmitted = assessmentStatus.preReleaseSubmitted,
       isInWatchlist = isInWatchlist,
+      profile = profileTagList,
     )
+    log.info("Profile Tag List ${pr.profile}")
+    return pr
   }
 
   private fun hasHomeDetentionDates(prisonerSearch: PrisonersSearch): Boolean = prisonerSearch.homeDetentionCurfewActualDate != null ||
@@ -484,6 +495,15 @@ class PrisonerService(
   }
 
   fun getPrisonerEntity(nomsId: String): PrisonerEntity = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Unable to find prisoner $nomsId in database.")
+  private fun getProfileTags(nomsId: String): ProfileTagList {
+    val profileTagList = ProfileTagList(listOf())
+    val profileTagEntity = profileTagsRepository.findByNomsId(nomsId) // nomsId.let { profileTagsRepository.findByNomsId(it) }
+    return if (profileTagEntity.isNotEmpty()) {
+      profileTagEntity[0].profileTags
+    } else {
+      profileTagList
+    }
+  }
 }
 
 private data class AssessmentRequiredResult(

@@ -21,14 +21,17 @@ class IdApplicationIntegrationTest : IntegrationTestBase() {
 
     val expectedOutput = readFile("testdata/expectation/id-application-post-result.json")
     val expectedOutput2 = readFile("testdata/expectation/id-application-patch-result.json")
+    val expectedOutput3 = readFile("testdata/expectation/id-application-get-result.json")
 
     val nomsId = "123"
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$nomsId/idapplication")
+      .uri("/resettlement-passport/prisoner/$nomsId/idapplication/all")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
-      .expectStatus().isNotFound
+      .expectStatus().isOk
+      .expectBody()
+      .json("[]")
 
     webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/idapplication")
@@ -67,12 +70,12 @@ class IdApplicationIntegrationTest : IntegrationTestBase() {
       .json(expectedOutput2)
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$nomsId/idapplication")
+      .uri("/resettlement-passport/prisoner/$nomsId/idapplication/all")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectBody()
-      .json(expectedOutput2)
+      .json(expectedOutput3)
 
     webTestClient.delete()
       .uri("/resettlement-passport/prisoner/$nomsId/idapplication/1")
@@ -81,9 +84,11 @@ class IdApplicationIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
 
     webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$nomsId/idapplication")
+      .uri("/resettlement-passport/prisoner/$nomsId/idapplication/all")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
-      .expectStatus().isNotFound
+      .expectStatus().isOk
+      .expectBody()
+      .json("[]")
   }
 }

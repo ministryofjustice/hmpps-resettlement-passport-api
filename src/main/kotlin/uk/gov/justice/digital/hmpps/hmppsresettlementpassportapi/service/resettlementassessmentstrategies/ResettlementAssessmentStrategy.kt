@@ -341,7 +341,7 @@ class ResettlementAssessmentStrategy(
 
     // If there is an existing assessment, add the answer into the question
     // Do not populate the case notes
-    if (existingAssessment != null) {
+    if (existingAssessment != null && existingAssessment.version == version) {
       if (resettlementAssessmentResponsePage.id == "CHECK_ANSWERS") {
         // If the existing assessment is submitted we are in an edit and don't want to send back the ASSESSMENT_SUMMARY or PRERELEASE_ASSESSMENT_SUMMARY questions
         val questionsToExclude = if (edit) {

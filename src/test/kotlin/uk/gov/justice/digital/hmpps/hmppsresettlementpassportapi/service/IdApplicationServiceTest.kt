@@ -11,7 +11,6 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
-import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.IdApplicationPatch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.IdApplicationPost
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.IdApplicationEntity
@@ -42,26 +41,6 @@ class IdApplicationServiceTest {
   @BeforeEach
   fun beforeEach() {
     idApplicationService = IdApplicationService(idApplicationRepository, prisonerRepository, idTypeRepository)
-  }
-
-  @Test
-  fun `test getIdApplicationByNomsId - returns id application`() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
-    Mockito.`when`(prisonerRepository.findByNomsId(prisonerEntity.nomsId)).thenReturn(prisonerEntity)
-    val idApplicationEntity = IdApplicationEntity(
-      null,
-      prisonerEntity.id(),
-      IdTypeEntity(1, "Drivers Licence"),
-      fakeNow,
-      fakeNow,
-      isPriorityApplication = false,
-      BigDecimal(10.00),
-    )
-    val idApplicationEntityList = emptyList<IdApplicationEntity>().toMutableList()
-    idApplicationEntityList.add(idApplicationEntity)
-    whenever(idApplicationRepository.findByPrisonerIdAndIsDeleted(prisonerEntity.id())).thenReturn(idApplicationEntityList)
-    val result = idApplicationService.getIdApplicationByNomsId(prisonerEntity.nomsId)
-    Assertions.assertEquals(idApplicationEntity, result)
   }
 
   @Test

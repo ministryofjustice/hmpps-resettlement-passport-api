@@ -6,4 +6,9 @@
         <packageUrl>pkg:maven/xyz.capybara/clamav-client@2.1.2</packageUrl>
         <cve>CVE-2016-1405</cve>
     </suppress>
+    <suppress>
+        <notes>prometheus- False positive</notes>
+        <packageUrl regex="true">^pkg:maven/io\.prometheus/prometheus\-metrics\-.*@.*$</packageUrl>
+        <cve>CVE-2019-3826</cve>
+    </suppress>
 </suppressions>

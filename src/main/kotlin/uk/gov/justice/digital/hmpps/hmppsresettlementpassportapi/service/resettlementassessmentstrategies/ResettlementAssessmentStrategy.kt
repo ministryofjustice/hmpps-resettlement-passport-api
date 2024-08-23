@@ -81,7 +81,8 @@ class ResettlementAssessmentStrategy(
       throw ServerWebInputException("Cannot get the next question from CHECK_ANSWERS as this is the end of the flow for this pathway.")
     } else {
       // Option 3 - If none of the above calculate next page from the config
-      val pageConfig = config.pages.find { it.id == currentPage } ?: throw ServerWebInputException("Cannot find page $currentPage on pathway $pathway")
+      val pageConfig = config.pages.find { it.id == currentPage }
+        ?: throw ServerWebInputException("Cannot find page $currentPage on pathway $pathway")
       val nextPage = chooseNextPage(pageConfig, assessment.questionsAndAnswers ?: emptyList(), edit, assessmentType)
 
       return nextPage
@@ -95,11 +96,12 @@ class ResettlementAssessmentStrategy(
     assessmentType: ResettlementAssessmentType,
   ): String {
     // If there is just a single nextPageId then just send that back
-    val nextPageId = if (pageConfig.nextPageLogic != null && pageConfig.nextPageLogic.size == 1 && pageConfig.nextPageLogic[0].questionId == null) {
-      pageConfig.nextPageLogic[0].nextPageId
-    } else {
-      pageConfig.nextPageLogic?.firstOrNull { npl -> npl.answers?.contains(questionsAndAnswers.first { it.question == npl.questionId }.answer) == true }?.nextPageId
-    }
+    val nextPageId =
+      if (pageConfig.nextPageLogic != null && pageConfig.nextPageLogic.size == 1 && pageConfig.nextPageLogic[0].questionId == null) {
+        pageConfig.nextPageLogic[0].nextPageId
+      } else {
+        pageConfig.nextPageLogic?.firstOrNull { npl -> npl.answers?.contains(questionsAndAnswers.first { it.question == npl.questionId }.answer) == true }?.nextPageId
+      }
 
     if (nextPageId == null) {
       throw RuntimeException("Cannot find next page id. This could be the answer to a mandatory question is missing or invalid configuration.")
@@ -225,11 +227,21 @@ class ResettlementAssessmentStrategy(
             } else {
               false
             }
-          } ?: throw ServerWebInputException("Error validating questions and answers - cannot find a node with question [${qa.question}]")
+          }
+          ?: throw ServerWebInputException("Error validating questions and answers - cannot find a node with question [${qa.question}]")
       }
       .mapValues { entry ->
         entry.value.map {
-          ResettlementAssessmentQuestionAndAnswer(getFlattenedQuestionList(pathway, assessmentType, assessment.version).firstOrNull { q -> q.id == it.question } ?: throw ServerWebInputException("Error validating questions and answers - cannot find a question with id [${it.question}]"), it.answer, findPageIdFromQuestionId(it.question, assessmentType, pathway, assessment.version))
+          ResettlementAssessmentQuestionAndAnswer(
+            getFlattenedQuestionList(
+              pathway,
+              assessmentType,
+              assessment.version,
+            ).firstOrNull { q -> q.id == it.question }
+              ?: throw ServerWebInputException("Error validating questions and answers - cannot find a question with id [${it.question}]"),
+            it.answer,
+            findPageIdFromQuestionId(it.question, assessmentType, pathway, assessment.version),
+          )
         }
       }
 
@@ -252,7 +264,12 @@ class ResettlementAssessmentStrategy(
     while (true) {
       try {
         val actualPage: AssessmentConfigPage? = nodeToQuestionMap.keys.elementAtOrNull(pageNumber)
-        val expectedPage: String = if (currentNode != null) chooseNextPage(currentNode, assessment.questionsAndAnswers, edit, assessmentType) else getConfig(pathway, assessmentType, assessment.version).pages[0].id
+        val expectedPage: String = if (currentNode != null) chooseNextPage(
+          currentNode,
+          assessment.questionsAndAnswers,
+          edit,
+          assessmentType,
+        ) else getConfig(pathway, assessmentType, assessment.version).pages[0].id
         if (expectedPage == "CHECK_ANSWERS") {
           break
         }
@@ -309,66 +326,85 @@ class ResettlementAssessmentStrategy(
             ),
           )
         }
-        existingAssessment = existingAssessment.copy(assessment = ResettlementAssessmentQuestionAndAnswerList(questions.toList()))
+        existingAssessment =
+          existingAssessment.copy(assessment = ResettlementAssessmentQuestionAndAnswerList(questions.toList()))
       }
     }
 
     // Get the current page
     val config = getConfig(pathway, assessmentType, version)
-    val page = config.pages.find { it.id == pageId } ?: throw ServerWebInputException("Page requested [$pageId] does not exist in config.")
 
-    // Convert to ResettlementAssessmentPage DTO
-    var resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(
-      id = page.id,
-      questionsAndAnswers = page.questions?.map {
-        ResettlementAssessmentQuestionAndAnswer(
-          ResettlementAssessmentQuestion(
-            it.id,
-            it.title,
-            it.subTitle,
-            it.type,
-            it.options?.mapToResettlementAssessmentOptions(page.id),
-            it.validationType,
-            it.detailsTitle,
-            it.detailsContent,
-          ),
-          answer = null,
-          originalPageId = page.id,
-        )
-      } ?: listOf(),
-      title = page.title,
-    )
+  val page = config.pages.find { it.id == pageId }
+    ?: throw ServerWebInputException("Page requested [$pageId] does not exist in config.")
 
-    // If there is an existing assessment, add the answer into the question
-    // Do not populate the case notes
-    if (existingAssessment != null && existingAssessment.version == version) {
-      if (resettlementAssessmentResponsePage.id == "CHECK_ANSWERS") {
-        // If the existing assessment is submitted we are in an edit and don't want to send back the ASSESSMENT_SUMMARY or PRERELEASE_ASSESSMENT_SUMMARY questions
-        val questionsToExclude = if (edit) {
-          config.pages.filter { it.questions != null && it.id == "ASSESSMENT_SUMMARY" || it.id == "PRERELEASE_ASSESSMENT_SUMMARY" }
-            .flatMap { it.questions!! }.map { it.mapToResettlementAssessmentQuestion(page.id) }
-        } else {
-          listOf()
-        }
-        val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer> =
-          existingAssessment.assessment.assessment.map {
-            ResettlementAssessmentQuestionAndAnswer(
-              question = getFlattenedQuestionList(pathway, assessmentType, version).first { q -> q.id == it.questionId }.removeNestedQuestions(),
-              answer = it.answer,
-              originalPageId = findPageIdFromQuestionId(it.questionId, assessmentType, pathway, version),
-            )
-          }.filter { it.question !in questionsToExclude }
-        resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(
-          resettlementAssessmentResponsePage.id,
-          questionsAndAnswers = questionsAndAnswers,
-        )
+  // Convert to ResettlementAssessmentPage DTO
+  var resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(
+    id = page.id,
+    questionsAndAnswers = page.questions?.map {
+      ResettlementAssessmentQuestionAndAnswer(
+        ResettlementAssessmentQuestion(
+          it.id,
+          it.title,
+          it.subTitle,
+          it.type,
+          it.options?.mapToResettlementAssessmentOptions(page.id),
+          it.validationType,
+          it.detailsTitle,
+          it.detailsContent,
+        ),
+        answer = null,
+        originalPageId = page.id,
+      )
+    } ?: listOf(),
+    title = page.title,
+  )
+
+  // If there is an existing assessment, add the answer into the question
+  // Do not populate the case notes
+  if (existingAssessment != null) {
+    if (resettlementAssessmentResponsePage.id == "CHECK_ANSWERS") {
+      // If the existing assessment is submitted we are in an edit and don't want to send back the ASSESSMENT_SUMMARY or PRERELEASE_ASSESSMENT_SUMMARY questions
+      val questionsToExclude = if (edit) {
+        config.pages.filter { it.questions != null && it.id == "ASSESSMENT_SUMMARY" || it.id == "PRERELEASE_ASSESSMENT_SUMMARY" }
+          .flatMap { it.questions!! }.map { it.mapToResettlementAssessmentQuestion(page.id) }
       } else {
-        // Need to add in the answer foe all questions include those nested within options. Only support one level of nesting.
-        (
-          resettlementAssessmentResponsePage.questionsAndAnswers + resettlementAssessmentResponsePage.questionsAndAnswers.filter { it.question.options != null }
-            .flatMap { it.question.options!! }.filter { it.nestedQuestions != null }
-            .flatMap { it.nestedQuestions!! }
-          ).forEach { q ->
+        listOf()
+      }
+      val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer> =
+        existingAssessment.assessment.assessment.mapNotNull { assessment ->
+          val questionList =
+            getFlattenedQuestionList(
+              pathway,
+              assessmentType,
+              version,
+            ).firstOrNull { q -> q.id == assessment.questionId }
+          if (questionList == null) {
+            null
+          } else {
+            ResettlementAssessmentQuestionAndAnswer(
+              question = getFlattenedQuestionList(
+                pathway,
+                assessmentType,
+                version,
+              ).first { q -> q.id == assessment.questionId }
+                .removeNestedQuestions(),
+              answer = assessment.answer,
+              originalPageId = findPageIdFromQuestionId(assessment.questionId, assessmentType, pathway, version),
+            )
+          }
+        }.filter { it.question !in questionsToExclude }
+
+      resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(
+        resettlementAssessmentResponsePage.id,
+        questionsAndAnswers = questionsAndAnswers,
+      )
+    } else {
+      // Need to add in the answer foe all questions include those nested within options. Only support one level of nesting.
+      (
+        resettlementAssessmentResponsePage.questionsAndAnswers + resettlementAssessmentResponsePage.questionsAndAnswers.filter { it.question.options != null }
+          .flatMap { it.question.options!! }.filter { it.nestedQuestions != null }
+          .flatMap { it.nestedQuestions!! }
+        ).forEach { q ->
           val existingAnswer = existingAssessment.assessment.assessment.find { it.questionId == q.question.id }
           // Copy in existing answers _but_ we don't want to copy case notes from BCST2 to RESETTLEMENT_PLAN
           if (existingAnswer != null && !(resettlementPlanCopy && q.question.id == "CASE_NOTE_SUMMARY")) {
@@ -378,63 +414,86 @@ class ResettlementAssessmentStrategy(
             q.answer = loadPathwayStatusAnswer(pathway, nomsId) ?: existingAnswer?.answer
           }
         }
-      }
     }
-
-    return resettlementAssessmentResponsePage
   }
 
-  fun getQuestionById(id: String, pathway: Pathway, assessmentType: ResettlementAssessmentType, version: Int): ResettlementAssessmentQuestion {
-    return getFlattenedQuestionList(pathway, assessmentType, version).first { it.id == id }
-  }
+  return resettlementAssessmentResponsePage
+}
 
-  fun findPageIdFromQuestionId(
-    questionId: String,
-    assessmentType: ResettlementAssessmentType,
-    pathway: Pathway,
-    version: Int,
-  ): String {
-    return getConfig(pathway, assessmentType, version).pages.firstOrNull { p -> (p.questions?.getFlattenedListOfQuestions()?.any { q -> q.id == questionId } == true) }?.id ?: throw RuntimeException("Cannot find page for question [$questionId] - check that the question is used in a page!")
-  }
+fun getQuestionById(
+  id: String,
+  pathway: Pathway,
+  assessmentType: ResettlementAssessmentType,
+  version: Int,
+): ResettlementAssessmentQuestion {
+  return getFlattenedQuestionList(pathway, assessmentType, version).first { it.id == id }
+}
 
-  private fun getFlattenedQuestionList(pathway: Pathway, assessmentType: ResettlementAssessmentType, version: Int): List<ResettlementAssessmentQuestion> = getConfig(pathway, assessmentType, version).pages.filter { it.questions != null }.flatMap { it.questions!! }.getFlattenedListOfQuestions().map { it.mapToResettlementAssessmentQuestion(findPageIdFromQuestionId(it.id, assessmentType, pathway, version)) }
+fun findPageIdFromQuestionId(
+  questionId: String,
+  assessmentType: ResettlementAssessmentType,
+  pathway: Pathway,
+  version: Int,
+): String {
+  return getConfig(
+    pathway,
+    assessmentType,
+    version,
+  ).pages.firstOrNull { p -> (p.questions?.getFlattenedListOfQuestions()?.any { q -> q.id == questionId } == true) }?.id
+    ?: throw RuntimeException("Cannot find page for question [$questionId] - check that the question is used in a page!")
+}
 
-  private fun saveAssessment(assessment: ResettlementAssessmentEntity): ResettlementAssessmentEntity = resettlementAssessmentRepository.save(assessment)
+private fun getFlattenedQuestionList(
+  pathway: Pathway,
+  assessmentType: ResettlementAssessmentType,
+  version: Int,
+): List<ResettlementAssessmentQuestion> =
+  getConfig(pathway, assessmentType, version).pages.filter { it.questions != null }.flatMap { it.questions!! }
+    .getFlattenedListOfQuestions()
+    .map { it.mapToResettlementAssessmentQuestion(findPageIdFromQuestionId(it.id, assessmentType, pathway, version)) }
 
-  private fun loadPrisoner(nomsId: String) = (
-    prisonerRepository.findByNomsId(nomsId)
-      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    )
+private fun saveAssessment(assessment: ResettlementAssessmentEntity): ResettlementAssessmentEntity =
+  resettlementAssessmentRepository.save(assessment)
 
-  private fun getExistingAssessment(
-    nomsId: String,
-    pathway: Pathway,
-    assessmentType: ResettlementAssessmentType,
-  ): ResettlementAssessmentEntity? {
-    // Obtain prisoner from database, if exists
-    val prisonerEntity = loadPrisoner(nomsId)
+private fun loadPrisoner(nomsId: String) = (
+  prisonerRepository.findByNomsId(nomsId)
+    ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+  )
 
-    // Define COMPLETE and SUBMITTED resettlement statuses
-    val resettlementAssessmentStatuses = listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED)
+private fun getExistingAssessment(
+  nomsId: String,
+  pathway: Pathway,
+  assessmentType: ResettlementAssessmentType,
+): ResettlementAssessmentEntity? {
+  // Obtain prisoner from database, if exists
+  val prisonerEntity = loadPrisoner(nomsId)
 
-    return resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-      prisonerEntity.id(),
-      pathway,
-      assessmentType,
-      resettlementAssessmentStatuses,
-    )
-  }
+  // Define COMPLETE and SUBMITTED resettlement statuses
+  val resettlementAssessmentStatuses =
+    listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED)
 
-  private fun loadPathwayStatusAnswer(pathway: Pathway, nomsId: String): StringAnswer? {
-    val prisonerEntity = loadPrisoner(nomsId)
-    val pathwayStatus = pathwayStatusRepository.findByPathwayAndPrisonerId(pathway, prisonerEntity.id()) ?: return null
+  return resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
+    prisonerEntity.id(),
+    pathway,
+    assessmentType,
+    resettlementAssessmentStatuses,
+  )
+}
 
-    return StringAnswer(pathwayStatus.status.name)
-  }
+private fun loadPathwayStatusAnswer(pathway: Pathway, nomsId: String): StringAnswer? {
+  val prisonerEntity = loadPrisoner(nomsId)
+  val pathwayStatus = pathwayStatusRepository.findByPathwayAndPrisonerId(pathway, prisonerEntity.id()) ?: return null
 
-  fun getLatestResettlementAssessmentVersion(nomsId: String, assessmentType: ResettlementAssessmentType, pathway: Pathway): ResettlementAssessmentVersion {
-    return ResettlementAssessmentVersion(getExistingAssessment(nomsId, pathway, assessmentType)?.version)
-  }
+  return StringAnswer(pathwayStatus.status.name)
+}
+
+fun getLatestResettlementAssessmentVersion(
+  nomsId: String,
+  assessmentType: ResettlementAssessmentType,
+  pathway: Pathway,
+): ResettlementAssessmentVersion {
+  return ResettlementAssessmentVersion(getExistingAssessment(nomsId, pathway, assessmentType)?.version)
+}
 }
 
 data class AssessmentQuestionSets(
@@ -473,4 +532,8 @@ data class AssessmentConfigOption(
   val nestedQuestions: List<AssessmentConfigQuestion>? = null,
 )
 
-data class AssessmentConfigNextPageOption(val questionId: String? = null, val nextPageId: String, val answers: List<Answer<*>>? = null)
+data class AssessmentConfigNextPageOption(
+  val questionId: String? = null,
+  val nextPageId: String,
+  val answers: List<Answer<*>>? = null,
+)

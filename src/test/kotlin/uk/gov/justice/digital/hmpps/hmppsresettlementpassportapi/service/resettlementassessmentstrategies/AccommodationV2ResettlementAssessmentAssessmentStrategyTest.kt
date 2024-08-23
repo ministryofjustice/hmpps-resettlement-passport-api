@@ -921,7 +921,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
       pageId = "CHECK_ANSWERS",
       version = 2,
     )
-    Assertions.assertEquals(expectedPage, page)
+    org.assertj.core.api.Assertions.assertThat(page).usingRecursiveComparison().isEqualTo(expectedPage)
   }
 
   @Test

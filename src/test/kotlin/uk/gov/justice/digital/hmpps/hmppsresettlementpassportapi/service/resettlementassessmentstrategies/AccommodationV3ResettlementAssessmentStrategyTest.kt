@@ -411,6 +411,5 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
       .hasSize(1)
       .extracting({ it.question.id })
       .contains(Tuple("WHERE_DID_THEY_LIVE"))
-
   }
 }

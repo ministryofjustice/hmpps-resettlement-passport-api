@@ -1,6 +1,8 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies
 
+import org.assertj.core.groups.Tuple
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -11,9 +13,14 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentSimpleQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import java.util.stream.Stream
+import org.assertj.core.api.Assertions as AssertJAssertions
 
 class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.ACCOMMODATION) {
 
@@ -376,4 +383,33 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
       ),
     ),
   )
+
+  @Test
+  fun `should ignore any question ids that are not in the current config when building check your answers`() {
+    val nomsId = "123"
+
+    val existingAssessment = ResettlementAssessmentQuestionAndAnswerList(
+      listOf(
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE", StringAnswer("FAMILY_OR_FRIENDS")),
+        ResettlementAssessmentSimpleQuestionAndAnswer("ARE_THEY_A_POTATO", StringAnswer("NO")),
+        ResettlementAssessmentSimpleQuestionAndAnswer("DO_THEY_KNOW_HOW_TO_TANGO", StringAnswer("YES")),
+      ),
+    )
+
+    setUpMocks("123", true, existingAssessment, ResettlementAssessmentStatus.SUBMITTED)
+
+    val page = resettlementAssessmentStrategy.getPageFromId(
+      nomsId = nomsId,
+      pathway = Pathway.ACCOMMODATION,
+      assessmentType = ResettlementAssessmentType.BCST2,
+      pageId = "CHECK_ANSWERS",
+      version = 3,
+    )
+
+    AssertJAssertions.assertThat(page.id).isEqualTo("CHECK_ANSWERS")
+    AssertJAssertions.assertThat(page.questionsAndAnswers)
+      .hasSize(1)
+      .extracting({ it.question.id })
+      .contains(Tuple("WHERE_DID_THEY_LIVE"))
+  }
 }

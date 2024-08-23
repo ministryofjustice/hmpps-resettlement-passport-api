@@ -30,48 +30,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.IdAppli
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class IdApplicationResourceController(private val idApplicationService: IdApplicationService) {
 
-  @GetMapping("/{nomsId}/idapplication", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Get id application by noms Id", description = "Id application based on noms Id")
-  @ApiResponses(
-    value = [
-      ApiResponse(
-        responseCode = "200",
-        description = "Successful Operation",
-      ),
-      ApiResponse(
-        description = "Not found",
-        responseCode = "404",
-        content = [Content(mediaType = MediaType.APPLICATION_JSON_VALUE)],
-      ),
-      ApiResponse(
-        responseCode = "401",
-        description = "Unauthorized to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-      ApiResponse(
-        responseCode = "403",
-        description = "Forbidden, requires an appropriate role",
-        content = [
-          Content(
-            mediaType = MediaType.APPLICATION_JSON_VALUE,
-            schema = Schema(implementation = ErrorResponse::class),
-          ),
-        ],
-      ),
-      ApiResponse(
-        responseCode = "400",
-        description = "Incorrect information provided to perform assessment match",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-    ],
-  )
-  fun getIdApplicationByNomsId(
-    @Schema(example = "AXXXS", required = true)
-    @PathVariable("nomsId")
-    @Parameter(required = true)
-    nomsId: String,
-  ) = idApplicationService.getIdApplicationByNomsId(nomsId)
-
   @PostMapping("/{nomsId}/idapplication", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create id application", description = "Create id application")
   @ApiResponses(

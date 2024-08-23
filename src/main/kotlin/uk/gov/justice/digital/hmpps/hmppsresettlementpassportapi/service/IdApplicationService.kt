@@ -22,18 +22,6 @@ class IdApplicationService(
 ) {
 
   @Transactional
-  fun getIdApplicationByNomsId(nomsId: String): IdApplicationEntity? {
-    val prisoner = prisonerRepository.findByNomsId(nomsId)
-      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val idApplicationEntityList = idApplicationRepository.findByPrisonerIdAndIsDeleted(prisoner.id())
-    if (idApplicationEntityList.isEmpty()) {
-      throw ResourceNotFoundException("No active ID application found for prisoner with id $nomsId")
-    } else {
-      return idApplicationEntityList[0]
-    }
-  }
-
-  @Transactional
   fun getIdApplicationByNomsIdAndCreationDate(
     nomsId: String,
     fromDate: LocalDate,

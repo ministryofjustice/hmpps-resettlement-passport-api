@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 
 internal fun convertFromSupportNeedAnswerToStatus(supportNeed: Answer<*>?): Status {
   if (supportNeed is StringAnswer) {
@@ -56,6 +57,9 @@ internal fun AssessmentConfigQuestion.mapToResettlementAssessmentQuestion(origin
     type = this.type,
     options = this.options.mapToResettlementAssessmentOptions(originalPageId),
     validationType = this.validationType,
+    validationRegex = this.validationRegex,
+    detailsTitle = this.detailsTitle,
+    detailsContent = this.detailsContent,
   )
 
 internal fun List<AssessmentConfigQuestion>?.getFlattenedListOfQuestions() =
@@ -79,4 +83,27 @@ internal fun ResettlementAssessmentQuestion.removeNestedQuestions() = Resettleme
     )
   },
   validationType = this.validationType,
+  validationRegex = this.validationRegex,
+  detailsTitle = this.detailsTitle,
+  detailsContent = this.detailsContent,
 )
+
+fun validateAnswer(questionAndAnswer: ResettlementAssessmentQuestionAndAnswer) {
+  if (questionAndAnswer.answer == null && questionAndAnswer.question.validationType == ValidationType.MANDATORY) {
+    throw ServerWebInputException("No answer to mandatory question [${questionAndAnswer.question.id}] with regex validation")
+  }
+  if (questionAndAnswer.question.validationRegex != null) {
+    // We must have a StringAnswer if there's a regex
+    if (questionAndAnswer.answer is StringAnswer) {
+      val regex = Regex(questionAndAnswer.question.validationRegex)
+      val answer = (questionAndAnswer.answer as StringAnswer).answer
+      if (answer != null) {
+        if (!regex.matches(answer)) {
+          throw ServerWebInputException("Invalid answer to question [${questionAndAnswer.question.id}] as failed to match regex [${questionAndAnswer.question.validationRegex}]")
+        }
+      }
+    } else {
+      throw ServerWebInputException("Invalid answer format to question [${questionAndAnswer.question.id}]. Must be a StringAnswer as regex validation is enabled.")
+    }
+  }
+}

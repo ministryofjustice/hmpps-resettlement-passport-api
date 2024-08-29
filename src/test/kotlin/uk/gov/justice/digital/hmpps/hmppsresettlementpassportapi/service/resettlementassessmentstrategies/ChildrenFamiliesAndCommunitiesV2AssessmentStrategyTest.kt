@@ -128,6 +128,7 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
                         id = "NUMBER_OF_CHILDREN",
                         title = "Number of children",
                         type = TypeOfQuestion.SHORT_TEXT,
+                        validationRegex = "^\\d+$"
                       ),
                       originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
                     ),

@@ -298,6 +298,10 @@ class ResettlementAssessmentStrategy(
     if (pageNumber != nodeToQuestionMap.size) {
       throw ServerWebInputException("Error validating questions and answers - incorrect number of pages found - expected [$pageNumber] but found [${nodeToQuestionMap.size}]")
     }
+
+    // TODO Check any questions with a regex have a valid answer
+    val questionsRequiringValidation = nodeToQuestionMap.values.flatten().filter { it.question.validationRegex != null }
+    questionsRequiringValidation.forEach { validateAnswer(it) }
   }
 
   fun getPageFromId(
@@ -352,20 +356,7 @@ class ResettlementAssessmentStrategy(
     var resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(
       id = page.id,
       questionsAndAnswers = page.questions?.map {
-        ResettlementAssessmentQuestionAndAnswer(
-          ResettlementAssessmentQuestion(
-            it.id,
-            it.title,
-            it.subTitle,
-            it.type,
-            it.options?.mapToResettlementAssessmentOptions(page.id),
-            it.validationType,
-            it.detailsTitle,
-            it.detailsContent,
-          ),
-          answer = null,
-          originalPageId = page.id,
-        )
+        it.mapToResettlementAssessmentQuestionAndAnswer(pageId)
       } ?: listOf(),
       title = page.title,
     )
@@ -582,6 +573,7 @@ data class AssessmentConfigQuestion(
   val type: TypeOfQuestion,
   val options: List<AssessmentConfigOption>? = null,
   val validationType: ValidationType = ValidationType.MANDATORY,
+  val validationRegex: String? = null,
   val detailsTitle: String? = null,
   val detailsContent: String? = null,
 )

@@ -162,7 +162,7 @@ fun validateAnswer(questionAndAnswer: ResettlementAssessmentQuestionAndAnswer) {
     throw ServerWebInputException("Answer cannot be null for [${questionAndAnswer.question.id}]")
   }
 
-  // Answer value can only be null if the validation type is mandatory
+  // Answer value can't be null if the validation type is mandatory
   if (questionAndAnswer.answer!!.answer == null && questionAndAnswer.question.validationType == ValidationType.MANDATORY) {
     throw ServerWebInputException("No answer provided for mandatory question [${questionAndAnswer.question.id}]")
   }

@@ -5,6 +5,7 @@ import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.TagAndQuestionMapping
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentCompleteRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
@@ -17,12 +18,16 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ProfileTagList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ProfileTagsEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentSimpleQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ProfileTagsRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClaimFromJWTToken
 import java.time.LocalDateTime
@@ -33,6 +38,7 @@ class ResettlementAssessmentStrategy(
   private val resettlementAssessmentRepository: ResettlementAssessmentRepository,
   private val prisonerRepository: PrisonerRepository,
   private val pathwayStatusRepository: PathwayStatusRepository,
+  private val profileTagsRepository: ProfileTagsRepository,
 ) {
 
   fun getConfig(pathway: Pathway, assessmentType: ResettlementAssessmentType, version: Int): AssessmentQuestionSet {
@@ -209,6 +215,7 @@ class ResettlementAssessmentStrategy(
     )
 
     saveAssessment(resettlementAssessmentEntity)
+    generateProfileTags(resettlementAssessmentEntity, prisonerEntity, pathway)
   }
 
   fun validateQuestionAndAnswerSet(
@@ -497,6 +504,57 @@ class ResettlementAssessmentStrategy(
     pathway: Pathway,
   ): ResettlementAssessmentVersion {
     return ResettlementAssessmentVersion(getExistingAssessment(nomsId, pathway, assessmentType)?.version)
+  }
+
+  fun getProfileTag(questionId: String, answer: Answer<*>, pathway: Pathway): String? {
+    TagAndQuestionMapping.entries.forEach {
+      if ((questionId == it.questionId) &&
+        (answer.answer.toString().contains(it.optionId)) &&
+        (pathway.name == it.pathway.name)
+      ) {
+        return it.name
+      }
+    }
+    return null
+  }
+
+  fun processProfileTags(resettlementAssessmentEntity: ResettlementAssessmentEntity, pathway: Pathway): List<String> {
+    val tagList = mutableListOf<String>()
+    resettlementAssessmentEntity.assessment.assessment.forEach {
+      val tag = getProfileTag(it.questionId, it.answer, pathway)
+      if (tag != null) {
+        tagList.add(tag)
+      }
+    }
+    return tagList
+  }
+
+  private fun generateProfileTags(assessment: ResettlementAssessmentEntity, prisonerEntity: PrisonerEntity, pathway: Pathway) {
+    val profileTagsList = ProfileTagList(listOf())
+    var profileTagList = emptyList<String>()
+    val profileTagsEntityList = profileTagsRepository.findByPrisonerId(prisonerEntity.id())
+
+    val tagList = processProfileTags(assessment, pathway)
+    if (profileTagsEntityList.isNotEmpty() && tagList.isNotEmpty()) {
+      profileTagsEntityList.forEach {
+        profileTagList = profileTagList + profileTagsEntityList[0].profileTags.tags
+        profileTagsRepository.delete(it)
+      }
+    }
+    if (tagList.isNotEmpty()) {
+      profileTagsList.tags = profileTagList + tagList
+      val profileTagsEntity = prisonerEntity.id?.let {
+        ProfileTagsEntity(
+          id = null,
+          prisonerId = it,
+          profileTags = profileTagsList,
+          updatedDate = LocalDateTime.now(),
+        )
+      }
+      if (profileTagsEntity != null) {
+        profileTagsRepository.save(profileTagsEntity)
+      }
+    }
   }
 }
 

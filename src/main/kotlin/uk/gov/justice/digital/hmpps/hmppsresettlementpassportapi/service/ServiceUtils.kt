@@ -3,11 +3,15 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import com.nimbusds.jwt.JWTParser
 import org.apache.commons.text.WordUtils
 import org.slf4j.LoggerFactory
+import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusAuthor
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AppointmentsService.Companion.SECTION_DELIMITER
 import java.util.concurrent.ThreadLocalRandom
@@ -151,3 +155,29 @@ fun generateLinkOnlyDeliusCaseNoteText(nomsId: String, assessmentType: Resettlem
   View finance and ID report information in PSfR: $psfrBaseUrl/finance-and-id/?prisonerNumber=$nomsId&fromDelius=true#assessment-information
   View health report information in PSfR: $psfrBaseUrl/health-status/?prisonerNumber=$nomsId&fromDelius=true#assessment-information
 """.trimIndent()
+
+fun validateAnswer(questionAndAnswer: ResettlementAssessmentQuestionAndAnswer) {
+  // Answer field can't be null at this point
+  if (questionAndAnswer.answer == null) {
+    throw ServerWebInputException("Answer cannot be null for [${questionAndAnswer.question.id}]")
+  }
+
+  // Answer value can't be null if the validation type is mandatory
+  if (questionAndAnswer.answer!!.answer == null && questionAndAnswer.question.validationType == ValidationType.MANDATORY) {
+    throw ServerWebInputException("No answer provided for mandatory question [${questionAndAnswer.question.id}]")
+  }
+  if (questionAndAnswer.question.validationRegex != null) {
+    // We must have a StringAnswer if there's a regex
+    if (questionAndAnswer.answer is StringAnswer) {
+      val regex = Regex(questionAndAnswer.question.validationRegex)
+      val answer = (questionAndAnswer.answer as StringAnswer).answer
+      if (answer != null) {
+        if (!regex.matches(answer)) {
+          throw ServerWebInputException("Invalid answer to question [${questionAndAnswer.question.id}] as failed to match regex [${questionAndAnswer.question.validationRegex}]")
+        }
+      }
+    } else {
+      throw ServerWebInputException("Invalid answer format to question [${questionAndAnswer.question.id}]. Must be a StringAnswer as regex validation is enabled.")
+    }
+  }
+}

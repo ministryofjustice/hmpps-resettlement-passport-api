@@ -30,6 +30,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ProfileTagsRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClaimFromJWTToken
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.validateAnswer
 import java.time.LocalDateTime
 
 @Service
@@ -299,9 +300,8 @@ class ResettlementAssessmentStrategy(
       throw ServerWebInputException("Error validating questions and answers - incorrect number of pages found - expected [$pageNumber] but found [${nodeToQuestionMap.size}]")
     }
 
-    // TODO Check any questions with a regex have a valid answer
-    val questionsRequiringValidation = nodeToQuestionMap.values.flatten().filter { it.question.validationRegex != null }
-    questionsRequiringValidation.forEach { validateAnswer(it) }
+    // Validation any mandatory and regex validation for each question
+    nodeToQuestionMap.values.flatten().forEach { validateAnswer(it) }
   }
 
   fun getPageFromId(

@@ -26,7 +26,7 @@ import java.time.LocalDateTime
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension::class)
-open class BaseResettlementAssessmentStrategyTest(private val pathway: Pathway) {
+open class BaseResettlementAssessmentStrategyTest(val pathway: Pathway) {
   lateinit var resettlementAssessmentStrategy: ResettlementAssessmentStrategy
 
   @Mock

@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ProfileTagsRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -37,6 +38,9 @@ open class BaseResettlementAssessmentStrategyTest(private val pathway: Pathway) 
   @Mock
   lateinit var pathwayStatusRepository: PathwayStatusRepository
 
+  @Mock
+  lateinit var profileTagsRepository: ProfileTagsRepository
+
   val testDate: LocalDateTime = LocalDateTime.parse("2023-08-16T12:00:00")
 
   @BeforeEach
@@ -46,6 +50,7 @@ open class BaseResettlementAssessmentStrategyTest(private val pathway: Pathway) 
       resettlementAssessmentRepository,
       prisonerRepository,
       pathwayStatusRepository,
+      profileTagsRepository,
     )
   }
 

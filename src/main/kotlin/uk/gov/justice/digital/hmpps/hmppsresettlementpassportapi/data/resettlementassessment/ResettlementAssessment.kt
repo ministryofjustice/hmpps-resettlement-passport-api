@@ -40,6 +40,7 @@ data class ResettlementAssessmentQuestion(
   val type: TypeOfQuestion,
   val options: List<ResettlementAssessmentOption>? = null,
   val validationType: ValidationType = ValidationType.MANDATORY,
+  val validationRegex: String? = null,
   val detailsTitle: String? = null,
   val detailsContent: String? = null,
 )

@@ -166,14 +166,14 @@ fun validateAnswer(questionAndAnswer: ResettlementAssessmentQuestionAndAnswer) {
   if (questionAndAnswer.answer!!.answer == null && questionAndAnswer.question.validationType == ValidationType.MANDATORY) {
     throw ServerWebInputException("No answer provided for mandatory question [${questionAndAnswer.question.id}]")
   }
-  if (questionAndAnswer.question.validationRegex != null) {
+  if (questionAndAnswer.question.customValidation != null) {
     // We must have a StringAnswer if there's a regex
     if (questionAndAnswer.answer is StringAnswer) {
-      val regex = Regex(questionAndAnswer.question.validationRegex)
+      val regex = Regex(questionAndAnswer.question.customValidation.regex)
       val answer = (questionAndAnswer.answer as StringAnswer).answer
       if (answer != null) {
         if (!regex.matches(answer)) {
-          throw ServerWebInputException("Invalid answer to question [${questionAndAnswer.question.id}] as failed to match regex [${questionAndAnswer.question.validationRegex}]")
+          throw ServerWebInputException("Invalid answer to question [${questionAndAnswer.question.id}] as failed to match regex [${questionAndAnswer.question.customValidation.regex}]")
         }
       }
     } else {

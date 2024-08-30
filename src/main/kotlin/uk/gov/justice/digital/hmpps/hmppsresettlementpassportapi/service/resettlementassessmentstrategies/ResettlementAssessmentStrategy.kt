@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.TagAndQuestionMapping
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.CustomValidation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentCompleteRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
@@ -573,7 +574,7 @@ data class AssessmentConfigQuestion(
   val type: TypeOfQuestion,
   val options: List<AssessmentConfigOption>? = null,
   val validationType: ValidationType = ValidationType.MANDATORY,
-  val validationRegex: String? = null,
+  val customValidation: CustomValidation? = null,
   val detailsTitle: String? = null,
   val detailsContent: String? = null,
 )

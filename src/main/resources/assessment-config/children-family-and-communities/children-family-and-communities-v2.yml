@@ -35,7 +35,9 @@ pages:
               - id: "NUMBER_OF_CHILDREN"
                 title: "Number of children"
                 type: "SHORT_TEXT"
-                validationRegex: "^\\d+$"
+                customValidation:
+                  regex: "^\\d+$"
+                  message: "This field must be a positive number"
           - id: "NO"
             displayText: "No"
           - id: "NO_ANSWER"

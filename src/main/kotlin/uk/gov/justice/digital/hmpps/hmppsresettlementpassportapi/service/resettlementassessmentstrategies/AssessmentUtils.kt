@@ -56,6 +56,9 @@ internal fun AssessmentConfigQuestion.mapToResettlementAssessmentQuestion(origin
     type = this.type,
     options = this.options.mapToResettlementAssessmentOptions(originalPageId),
     validationType = this.validationType,
+    validationRegex = this.validationRegex,
+    detailsTitle = this.detailsTitle,
+    detailsContent = this.detailsContent,
   )
 
 internal fun List<AssessmentConfigQuestion>?.getFlattenedListOfQuestions() =
@@ -79,4 +82,7 @@ internal fun ResettlementAssessmentQuestion.removeNestedQuestions() = Resettleme
     )
   },
   validationType = this.validationType,
+  validationRegex = this.validationRegex,
+  detailsTitle = this.detailsTitle,
+  detailsContent = this.detailsContent,
 )

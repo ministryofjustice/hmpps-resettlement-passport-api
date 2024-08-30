@@ -848,7 +848,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
         ),
       ),
       null,
-      ServerWebInputException("Support need [StringAnswer(answer=null)] is not a valid option"),
+      ServerWebInputException("No answer provided for mandatory question [SUPPORT_NEEDS]"),
       null,
     ),
     // Throw exception if SUPPORT_NEEDS answer is not a valid option
@@ -956,7 +956,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
         ),
       ),
       null,
-      ServerWebInputException("Answer [StringAnswer(answer=null)] must not be null"),
+      ServerWebInputException("No answer provided for mandatory question [CASE_NOTE_SUMMARY]"),
       null,
     ),
     // Happy path - BCST2 and no existing assessment

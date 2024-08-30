@@ -30,6 +30,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ProfileTagsRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClaimFromJWTToken
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.validateAnswer
 import java.time.LocalDateTime
 
 @Service
@@ -298,6 +299,9 @@ class ResettlementAssessmentStrategy(
     if (pageNumber != nodeToQuestionMap.size) {
       throw ServerWebInputException("Error validating questions and answers - incorrect number of pages found - expected [$pageNumber] but found [${nodeToQuestionMap.size}]")
     }
+
+    // Validation any mandatory and regex validation for each question
+    nodeToQuestionMap.values.flatten().forEach { validateAnswer(it) }
   }
 
   fun getPageFromId(
@@ -352,20 +356,7 @@ class ResettlementAssessmentStrategy(
     var resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(
       id = page.id,
       questionsAndAnswers = page.questions?.map {
-        ResettlementAssessmentQuestionAndAnswer(
-          ResettlementAssessmentQuestion(
-            it.id,
-            it.title,
-            it.subTitle,
-            it.type,
-            it.options?.mapToResettlementAssessmentOptions(page.id),
-            it.validationType,
-            it.detailsTitle,
-            it.detailsContent,
-          ),
-          answer = null,
-          originalPageId = page.id,
-        )
+        it.mapToResettlementAssessmentQuestionAndAnswer(pageId)
       } ?: listOf(),
       title = page.title,
     )
@@ -599,6 +590,7 @@ data class AssessmentConfigQuestion(
   val type: TypeOfQuestion,
   val options: List<AssessmentConfigOption>? = null,
   val validationType: ValidationType = ValidationType.MANDATORY,
+  val validationRegex: String? = null,
   val detailsTitle: String? = null,
   val detailsContent: String? = null,
 )

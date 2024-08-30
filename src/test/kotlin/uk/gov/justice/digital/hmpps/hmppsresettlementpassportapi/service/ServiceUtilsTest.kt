@@ -7,11 +7,18 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusAuthor
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import java.util.stream.Stream
 
@@ -464,6 +471,164 @@ class ServiceUtilsTest {
     """.trimIndent()
     Assertions.assertEquals(expectedCaseNote, generateLinkOnlyDeliusCaseNoteText("ABC1234", ResettlementAssessmentType.RESETTLEMENT_PLAN, "https://example.com"))
   }
+
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("test validateAnswer data")
+  fun `validate answer`(title: String, questionAndAnswer: ResettlementAssessmentQuestionAndAnswer, expectedException: ServerWebInputException?) {
+    if (expectedException == null) {
+      validateAnswer(questionAndAnswer)
+    } else {
+      Assertions.assertEquals(expectedException.message, assertThrows<ServerWebInputException> { validateAnswer(questionAndAnswer) }.message)
+    }
+  }
+
+  private fun `test validateAnswer data`() = Stream.of(
+    Arguments.of(
+      "Optional question not answered",
+      ResettlementAssessmentQuestionAndAnswer(
+        question = ResettlementAssessmentQuestion(
+          id = "MY_QUESTION",
+          title = "My question",
+          type = TypeOfQuestion.LONG_TEXT,
+          validationType = ValidationType.OPTIONAL,
+        ),
+        originalPageId = "MY_PAGE",
+        answer = StringAnswer(null),
+      ),
+      null,
+    ),
+    Arguments.of(
+      "Optional question answered",
+      ResettlementAssessmentQuestionAndAnswer(
+        question = ResettlementAssessmentQuestion(
+          id = "MY_QUESTION",
+          title = "My question",
+          type = TypeOfQuestion.LONG_TEXT,
+          validationType = ValidationType.OPTIONAL,
+        ),
+        originalPageId = "MY_PAGE",
+        answer = StringAnswer("Here is some text"),
+      ),
+      null,
+    ),
+    Arguments.of(
+      "Mandatory question answered",
+      ResettlementAssessmentQuestionAndAnswer(
+        question = ResettlementAssessmentQuestion(
+          id = "MY_QUESTION",
+          title = "My question",
+          type = TypeOfQuestion.LONG_TEXT,
+          validationType = ValidationType.MANDATORY,
+        ),
+        originalPageId = "MY_PAGE",
+        answer = StringAnswer("Here is some text"),
+      ),
+      null,
+    ),
+    Arguments.of(
+      "Mandatory question not answered",
+      ResettlementAssessmentQuestionAndAnswer(
+        question = ResettlementAssessmentQuestion(
+          id = "MY_QUESTION",
+          title = "My question",
+          type = TypeOfQuestion.LONG_TEXT,
+          validationType = ValidationType.MANDATORY,
+        ),
+        originalPageId = "MY_PAGE",
+        answer = StringAnswer(null),
+      ),
+      ServerWebInputException("No answer provided for mandatory question [MY_QUESTION]"),
+    ),
+    Arguments.of(
+      "Mandatory question with missing (null) answer",
+      ResettlementAssessmentQuestionAndAnswer(
+        question = ResettlementAssessmentQuestion(
+          id = "MY_QUESTION",
+          title = "My question",
+          type = TypeOfQuestion.LONG_TEXT,
+          validationType = ValidationType.MANDATORY,
+        ),
+        originalPageId = "MY_PAGE",
+        answer = null,
+      ),
+      ServerWebInputException("Answer cannot be null for [MY_QUESTION]"),
+    ),
+    Arguments.of(
+      "Optional question with regex not answered",
+      ResettlementAssessmentQuestionAndAnswer(
+        question = ResettlementAssessmentQuestion(
+          id = "MY_QUESTION",
+          title = "My question",
+          type = TypeOfQuestion.LONG_TEXT,
+          validationType = ValidationType.OPTIONAL,
+          validationRegex = "^\\d+$",
+        ),
+        originalPageId = "MY_PAGE",
+        answer = StringAnswer(null),
+      ),
+      null,
+    ),
+    Arguments.of(
+      "Question with answer matching regex",
+      ResettlementAssessmentQuestionAndAnswer(
+        question = ResettlementAssessmentQuestion(
+          id = "MY_QUESTION",
+          title = "My question",
+          type = TypeOfQuestion.LONG_TEXT,
+          validationType = ValidationType.OPTIONAL,
+          validationRegex = "^\\d+$",
+        ),
+        originalPageId = "MY_PAGE",
+        answer = StringAnswer("1234"),
+      ),
+      null,
+    ),
+    Arguments.of(
+      "Question with answer not matching regex",
+      ResettlementAssessmentQuestionAndAnswer(
+        question = ResettlementAssessmentQuestion(
+          id = "MY_QUESTION",
+          title = "My question",
+          type = TypeOfQuestion.LONG_TEXT,
+          validationType = ValidationType.MANDATORY,
+          validationRegex = "^\\d+$",
+        ),
+        originalPageId = "MY_PAGE",
+        answer = StringAnswer("abcd"),
+      ),
+      ServerWebInputException("Invalid answer to question [MY_QUESTION] as failed to match regex [^\\d+$]"),
+    ),
+    Arguments.of(
+      "Question with answer only partially matching regex (should fail)",
+      ResettlementAssessmentQuestionAndAnswer(
+        question = ResettlementAssessmentQuestion(
+          id = "MY_QUESTION",
+          title = "My question",
+          type = TypeOfQuestion.LONG_TEXT,
+          validationType = ValidationType.MANDATORY,
+          validationRegex = "^\\d+$",
+        ),
+        originalPageId = "MY_PAGE",
+        answer = StringAnswer("123abc"),
+      ),
+      ServerWebInputException("Invalid answer to question [MY_QUESTION] as failed to match regex [^\\d+$]"),
+    ),
+    Arguments.of(
+      "Question with regex validation but wrong type of answer",
+      ResettlementAssessmentQuestionAndAnswer(
+        question = ResettlementAssessmentQuestion(
+          id = "MY_QUESTION",
+          title = "My question",
+          type = TypeOfQuestion.LONG_TEXT,
+          validationType = ValidationType.MANDATORY,
+          validationRegex = "^\\d+$",
+        ),
+        originalPageId = "MY_PAGE",
+        answer = ListAnswer(listOf("123", "456")),
+      ),
+      ServerWebInputException("Invalid answer format to question [MY_QUESTION]. Must be a StringAnswer as regex validation is enabled."),
+    ),
+  )
 }
 
 enum class TestEnum {

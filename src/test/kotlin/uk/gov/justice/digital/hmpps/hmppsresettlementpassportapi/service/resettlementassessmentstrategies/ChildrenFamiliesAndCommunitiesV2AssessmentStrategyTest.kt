@@ -13,6 +13,7 @@ import org.mockito.kotlin.whenever
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.CustomValidation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentCompleteRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
@@ -147,7 +148,7 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
                         id = "NUMBER_OF_CHILDREN",
                         title = "Number of children",
                         type = TypeOfQuestion.SHORT_TEXT,
-                        validationRegex = "^\\d+$",
+                        customValidation = CustomValidation(regex = "^\\d+$", message = "This field must be a positive number"),
                       ),
                       originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
                     ),

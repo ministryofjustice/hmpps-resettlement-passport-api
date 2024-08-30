@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 
 enum class TagAndQuestionMapping(val questionId: String, val optionId: String, val pathway: Pathway) {
 
-  // TEST_TAG("WHERE_DID_THEY_LIVE", "NO_PERMANENT_OR_FIXED", Pathway.ACCOMMODATION),
   NO_FIXED_ABODE("SUPPORT_REQUIREMENTS", "HELP_TO_FIND_ACCOMMODATION", Pathway.ACCOMMODATION),
   HOME_ADAPTION_POST_RELEASE("SUPPORT_REQUIREMENTS", "HOME_ADAPTATIONS", Pathway.ACCOMMODATION),
   KEEP_THEIR_HOME("SUPPORT_REQUIREMENTS", "HELP_TO_KEEP_HOME", Pathway.ACCOMMODATION),

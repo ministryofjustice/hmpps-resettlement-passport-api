@@ -215,7 +215,7 @@ class ResettlementAssessmentStrategy(
     )
 
     saveAssessment(resettlementAssessmentEntity)
-    generateProfileTags(resettlementAssessmentEntity, prisonerEntity, pathway)
+    generateProfileTags(prisonerEntity)
   }
 
   fun validateQuestionAndAnswerSet(
@@ -529,18 +529,35 @@ class ResettlementAssessmentStrategy(
     return tagList
   }
 
-  private fun generateProfileTags(assessment: ResettlementAssessmentEntity, prisonerEntity: PrisonerEntity, pathway: Pathway) {
+  private fun generateProfileTags(prisonerEntity: PrisonerEntity) {
     val profileTagsList = ProfileTagList(listOf())
     var profileTagList = emptyList<String>()
     val profileTagsEntityList = profileTagsRepository.findByPrisonerId(prisonerEntity.id())
+    var tagList = emptyList<String>()
+    ResettlementAssessmentType.entries.forEach {
+      Pathway.entries.forEach { pathway ->
+        val resettlementAssessment =
+          resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
+            prisonerId = prisonerEntity.id(),
+            pathway = pathway,
+            assessmentType = it,
+            assessmentStatus = listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED),
+          )
+        if (resettlementAssessment != null) {
+          val processProfileTagList = processProfileTags(resettlementAssessment, pathway)
+          if (processProfileTagList.isNotEmpty()) {
+            tagList = tagList + processProfileTagList
+          }
+        }
+      }
+    }
 
-    val tagList = processProfileTags(assessment, pathway)
     if (profileTagsEntityList.isNotEmpty() && tagList.isNotEmpty()) {
       profileTagsEntityList.forEach {
-        profileTagList = profileTagList + profileTagsEntityList[0].profileTags.tags
         profileTagsRepository.delete(it)
       }
     }
+
     if (tagList.isNotEmpty()) {
       profileTagsList.tags = profileTagList + tagList
       val profileTagsEntity = prisonerEntity.id?.let {

@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCase
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusAuthor
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.CustomValidation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
@@ -561,7 +562,7 @@ class ServiceUtilsTest {
           title = "My question",
           type = TypeOfQuestion.LONG_TEXT,
           validationType = ValidationType.OPTIONAL,
-          validationRegex = "^\\d+$",
+          customValidation = CustomValidation(regex = "^\\d+$", message = "Failed validation"),
         ),
         originalPageId = "MY_PAGE",
         answer = StringAnswer(null),
@@ -576,7 +577,7 @@ class ServiceUtilsTest {
           title = "My question",
           type = TypeOfQuestion.LONG_TEXT,
           validationType = ValidationType.OPTIONAL,
-          validationRegex = "^\\d+$",
+          customValidation = CustomValidation(regex = "^\\d+$", message = "Failed validation"),
         ),
         originalPageId = "MY_PAGE",
         answer = StringAnswer("1234"),
@@ -591,7 +592,7 @@ class ServiceUtilsTest {
           title = "My question",
           type = TypeOfQuestion.LONG_TEXT,
           validationType = ValidationType.MANDATORY,
-          validationRegex = "^\\d+$",
+          customValidation = CustomValidation(regex = "^\\d+$", message = "Failed validation"),
         ),
         originalPageId = "MY_PAGE",
         answer = StringAnswer("abcd"),
@@ -606,7 +607,7 @@ class ServiceUtilsTest {
           title = "My question",
           type = TypeOfQuestion.LONG_TEXT,
           validationType = ValidationType.MANDATORY,
-          validationRegex = "^\\d+$",
+          customValidation = CustomValidation(regex = "^\\d+$", message = "Failed validation"),
         ),
         originalPageId = "MY_PAGE",
         answer = StringAnswer("123abc"),
@@ -621,7 +622,7 @@ class ServiceUtilsTest {
           title = "My question",
           type = TypeOfQuestion.LONG_TEXT,
           validationType = ValidationType.MANDATORY,
-          validationRegex = "^\\d+$",
+          customValidation = CustomValidation(regex = "^\\d+$", message = "Failed validation"),
         ),
         originalPageId = "MY_PAGE",
         answer = ListAnswer(listOf("123", "456")),

@@ -446,8 +446,6 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
 
     val profileTagsList = ProfileTagList(listOf())
     val tagList = mutableListOf<String>()
-//    tagList.add(TagAndQuestionMapping.NO_FIXED_ABODE.name)
-//    tagList.add(TagAndQuestionMapping.HOME_ADAPTION_POST_RELEASE.name)
     profileTagsList.tags = tagList
 
     val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23"))

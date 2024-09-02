@@ -498,24 +498,25 @@ class ResettlementAssessmentStrategy(
     return ResettlementAssessmentVersion(getExistingAssessment(nomsId, pathway, assessmentType)?.version)
   }
 
-  fun getProfileTag(questionId: String, answer: Answer<*>, pathway: Pathway): String? {
+  fun getProfileTag(questionId: String, answer: Answer<*>, pathway: Pathway): List<String> {
+    val tagFound = mutableListOf<String>()
     TagAndQuestionMapping.entries.forEach {
       if ((questionId == it.questionId) &&
         (answer.answer.toString().contains(it.optionId)) &&
         (pathway.name == it.pathway.name)
       ) {
-        return it.name
+        tagFound.add(it.name)
       }
     }
-    return null
+    return tagFound.distinct()
   }
 
   fun processProfileTags(resettlementAssessmentEntity: ResettlementAssessmentEntity, pathway: Pathway): List<String> {
     val tagList = mutableListOf<String>()
     resettlementAssessmentEntity.assessment.assessment.forEach {
-      val tag = getProfileTag(it.questionId, it.answer, pathway)
-      if (tag != null) {
-        tagList.add(tag)
+      val tagFound = getProfileTag(it.questionId, it.answer, pathway)
+      if (tagFound.isNotEmpty()) {
+        tagList.addAll(tagFound)
       }
     }
     return tagList
@@ -526,20 +527,17 @@ class ResettlementAssessmentStrategy(
     var profileTagList = emptyList<String>()
     val profileTagsEntityList = profileTagsRepository.findByPrisonerId(prisonerEntity.id())
     var tagList = emptyList<String>()
-    ResettlementAssessmentType.entries.forEach {
-      Pathway.entries.forEach { pathway ->
-        val resettlementAssessment =
-          resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-            prisonerId = prisonerEntity.id(),
-            pathway = pathway,
-            assessmentType = it,
-            assessmentStatus = listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED),
-          )
-        if (resettlementAssessment != null) {
-          val processProfileTagList = processProfileTags(resettlementAssessment, pathway)
-          if (processProfileTagList.isNotEmpty()) {
-            tagList = tagList + processProfileTagList
-          }
+    Pathway.entries.forEach { pathway ->
+      val resettlementAssessment =
+        resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusInOrderByCreationDateDesc(
+          prisonerId = prisonerEntity.id(),
+          pathway = pathway,
+          assessmentStatus = listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED),
+        )
+      if (resettlementAssessment != null) {
+        val processProfileTagList = processProfileTags(resettlementAssessment, pathway)
+        if (processProfileTagList.isNotEmpty()) {
+          tagList = tagList + processProfileTagList
         }
       }
     }

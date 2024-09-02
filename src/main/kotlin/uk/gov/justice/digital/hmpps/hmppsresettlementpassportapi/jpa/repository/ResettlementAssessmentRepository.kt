@@ -102,4 +102,10 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
     """,
   )
   fun findCaseNotesFor(prisonerId: Long, pathway: Pathway): List<List<Any>>
+
+  fun findFirstByPrisonerIdAndPathwayAndAssessmentStatusInOrderByCreationDateDesc(
+    prisonerId: Long,
+    pathway: Pathway,
+    assessmentStatus: List<ResettlementAssessmentStatus>,
+  ): ResettlementAssessmentEntity?
 }

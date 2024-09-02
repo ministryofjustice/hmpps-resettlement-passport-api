@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies
 
-import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
@@ -500,8 +499,7 @@ class ResettlementAssessmentStrategy(
   }
 
   fun getProfileTag(questionId: String, answer: Answer<*>, pathway: Pathway): List<String> {
-    log.info("Question Id is $questionId")
-    var tagFound = mutableListOf<String>()
+    val tagFound = mutableListOf<String>()
     TagAndQuestionMapping.entries.forEach {
       if ((questionId == it.questionId) &&
         (answer.answer.toString().contains(it.optionId)) &&
@@ -515,7 +513,6 @@ class ResettlementAssessmentStrategy(
 
   fun processProfileTags(resettlementAssessmentEntity: ResettlementAssessmentEntity, pathway: Pathway): List<String> {
     val tagList = mutableListOf<String>()
-    log.info("In the processProfileTags ${resettlementAssessmentEntity.assessment.assessment}")
     resettlementAssessmentEntity.assessment.assessment.forEach {
       val tagFound = getProfileTag(it.questionId, it.answer, pathway)
       if (tagFound.isNotEmpty()) {
@@ -538,11 +535,8 @@ class ResettlementAssessmentStrategy(
           pathway = pathway,
           assessmentStatus = listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED),
         )
-      log.info("resettlement assessment entry for pathway $pathway is $resettlementAssessment")
-      log.info("TagList now $tagList")
       if (resettlementAssessment != null) {
         val processProfileTagList = processProfileTags(resettlementAssessment, pathway)
-        log.info("processProfileTagList for $pathway is $processProfileTagList")
         if (processProfileTagList.isNotEmpty()) {
           tagList = tagList + processProfileTagList
         }

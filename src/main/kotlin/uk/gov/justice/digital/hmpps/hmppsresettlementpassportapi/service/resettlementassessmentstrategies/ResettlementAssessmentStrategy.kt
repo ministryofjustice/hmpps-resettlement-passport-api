@@ -527,7 +527,6 @@ class ResettlementAssessmentStrategy(
     var profileTagList = emptyList<String>()
     val profileTagsEntityList = profileTagsRepository.findByPrisonerId(prisonerEntity.id())
     var tagList = emptyList<String>()
-    // ResettlementAssessmentType.entries.forEach {
     Pathway.entries.forEach { pathway ->
       val resettlementAssessment =
         resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusInOrderByCreationDateDesc(
@@ -542,7 +541,6 @@ class ResettlementAssessmentStrategy(
         }
       }
     }
-    // }
 
     if (profileTagsEntityList.isNotEmpty() && tagList.isNotEmpty()) {
       profileTagsEntityList.forEach {

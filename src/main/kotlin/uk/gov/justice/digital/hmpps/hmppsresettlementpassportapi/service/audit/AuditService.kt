@@ -20,5 +20,5 @@ class AuditService(private val auditService: AuditSdkService) {
 
 enum class AuditAction {
   IMMEDIATE_NEEDS_REPORT_SUBMITTED_SUCCESS,
-  PRE_RELEASE_REPORT_SUBMITTED_SUCCESS
+  PRE_RELEASE_REPORT_SUBMITTED_SUCCESS,
 }

@@ -37,7 +37,7 @@ pages:
                 type: "SHORT_TEXT"
                 customValidation:
                   regex: "^\\d+$"
-                  message: "This field must be a positive number"
+                  message: "Number of children must be a whole number"
           - id: "NO"
             displayText: "No"
           - id: "NO_ANSWER"

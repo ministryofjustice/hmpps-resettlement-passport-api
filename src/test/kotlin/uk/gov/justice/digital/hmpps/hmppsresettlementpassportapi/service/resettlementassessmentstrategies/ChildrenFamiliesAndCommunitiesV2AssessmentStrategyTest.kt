@@ -148,7 +148,7 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
                         id = "NUMBER_OF_CHILDREN",
                         title = "Number of children",
                         type = TypeOfQuestion.SHORT_TEXT,
-                        customValidation = CustomValidation(regex = "^\\d+$", message = "This field must be a positive number"),
+                        customValidation = CustomValidation(regex = "^\\d+$", message = "Number of children must be a whole number"),
                       ),
                       originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
                     ),

@@ -21,6 +21,8 @@ private val RECALL_EVENT_CODES = setOf(
   "24",
   // Recall from Emergency Temporary Release
   "ETRLR",
+  // Licence Revokee
+  "L",
 )
 
 @Service

@@ -5,7 +5,6 @@ import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.TagAndQuestionMapping
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.CustomValidation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentCompleteRequest
@@ -496,30 +495,6 @@ class ResettlementAssessmentStrategy(
     pathway: Pathway,
   ): ResettlementAssessmentVersion {
     return ResettlementAssessmentVersion(getExistingAssessment(nomsId, pathway, assessmentType)?.version)
-  }
-
-  fun getProfileTag(questionId: String, answer: Answer<*>, pathway: Pathway): List<String> {
-    val tagFound = mutableListOf<String>()
-    TagAndQuestionMapping.entries.forEach {
-      if ((questionId == it.questionId) &&
-        (answer.answer.toString().contains(it.optionId)) &&
-        (pathway.name == it.pathway.name)
-      ) {
-        tagFound.add(it.name)
-      }
-    }
-    return tagFound.distinct()
-  }
-
-  fun processProfileTags(resettlementAssessmentEntity: ResettlementAssessmentEntity, pathway: Pathway): List<String> {
-    val tagList = mutableListOf<String>()
-    resettlementAssessmentEntity.assessment.assessment.forEach {
-      val tagFound = getProfileTag(it.questionId, it.answer, pathway)
-      if (tagFound.isNotEmpty()) {
-        tagList.addAll(tagFound)
-      }
-    }
-    return tagList
   }
 
   private fun generateProfileTags(prisonerEntity: PrisonerEntity) {

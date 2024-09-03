@@ -10,7 +10,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCase
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DpsCaseNoteSubType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayAndStatus
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.TagAndQuestionMapping
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.AssessmentSkipRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.LatestResettlementAssessmentResponse
@@ -37,6 +36,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.ResettlementAssessmentStrategy
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.processProfileTags
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -490,28 +490,5 @@ class ResettlementAssessmentService(
       deliusCaseNoteType = convertToDeliusCaseNoteType(assessmentType),
       caseNoteText = generateLinkOnlyDeliusCaseNoteText(nomsId, assessmentType, psfrBaseUrl),
     )
-  }
-
-  fun getProfileTag(questionId: String, answer: Answer<*>, pathway: Pathway): String? {
-    TagAndQuestionMapping.entries.forEach {
-      if ((questionId == it.questionId) &&
-        (answer.answer.toString().contains(it.optionId)) &&
-        (pathway.name == it.pathway.name)
-      ) {
-        return it.name
-      }
-    }
-    return null
-  }
-
-  fun processProfileTags(resettlementAssessmentEntity: ResettlementAssessmentEntity, pathway: Pathway): List<String> {
-    val tagList = mutableListOf<String>()
-    resettlementAssessmentEntity.assessment.assessment.forEach {
-      val tag = getProfileTag(it.questionId, it.answer, pathway)
-      if (tag != null) {
-        tagList.add(tag)
-      }
-    }
-    return tagList
   }
 }

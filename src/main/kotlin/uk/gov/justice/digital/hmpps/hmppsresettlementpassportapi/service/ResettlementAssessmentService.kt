@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DpsCaseNoteSubType
@@ -33,6 +34,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ProfileTagsRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.ResettlementAssessmentStrategy
@@ -52,6 +54,7 @@ class ResettlementAssessmentService(
   private val caseNoteRetryRepository: CaseNoteRetryRepository,
   private val profileTagsRepository: ProfileTagsRepository,
   @Value("\${psfr.base.url}") private val psfrBaseUrl: String,
+  private val auditService: AuditService,
 ) {
 
   companion object {
@@ -242,8 +245,16 @@ class ResettlementAssessmentService(
         )
       },
     )
-
+    auditReportSubmission(assessmentType, nomsId, name)
     return ResettlementAssessmentSubmitResponse(deliusCaseNoteFailed = failedCaseNotes.isNotEmpty())
+  }
+
+  private fun auditReportSubmission(assessmentType: ResettlementAssessmentType, nomsId: String, userName: String) {
+    val auditAction = when (assessmentType) {
+      ResettlementAssessmentType.BCST2 -> AuditAction.IMMEDIATE_NEEDS_REPORT_SUBMITTED_SUCCESS
+      ResettlementAssessmentType.RESETTLEMENT_PLAN -> AuditAction.PRE_RELEASE_REPORT_SUBMITTED_SUCCESS
+    }
+    auditService.audit(auditAction, nomsId, userName)
   }
 
   fun processAndGroupAssessmentCaseNotes(assessmentList: List<ResettlementAssessmentEntity>, limitChars: Boolean, assessmentType: ResettlementAssessmentType): List<UserAndCaseNote> {

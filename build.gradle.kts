@@ -65,6 +65,7 @@ dependencies {
   implementation("com.pauldijou:jwt-core_2.11:5.0.0")
 
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.0.1")
+  implementation("uk.gov.justice.service.hmpps:hmpps-audit-sdk:1.0.0")
 
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 

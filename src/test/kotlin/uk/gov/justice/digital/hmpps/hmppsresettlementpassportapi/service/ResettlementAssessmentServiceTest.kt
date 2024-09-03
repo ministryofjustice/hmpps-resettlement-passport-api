@@ -36,6 +36,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.processProfileTags
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.stream.Stream
@@ -621,7 +622,7 @@ class ResettlementAssessmentServiceTest {
     assessment.assessment.toMutableList().add(assessmentQA2)
     val resettlementAssessmentEntity = createSubmittedResettlementAssessmentEntity(Pathway.ACCOMMODATION, user, "${Pathway.ACCOMMODATION.displayName} case note - $caseNotePostfix")
     resettlementAssessmentEntity.assessment.assessment = assessment.assessment
-    val profileTagList = resettlementAssessmentService.processProfileTags(resettlementAssessmentEntity, Pathway.ACCOMMODATION)
+    val profileTagList = processProfileTags(resettlementAssessmentEntity, Pathway.ACCOMMODATION)
     val expectedTagAndQuestionMappingList = emptyList<TagAndQuestionMapping>()
     expectedTagAndQuestionMappingList.toMutableList().add(TagAndQuestionMapping.NO_FIXED_ABODE)
     expectedTagAndQuestionMappingList.toMutableList().add(TagAndQuestionMapping.HOME_ADAPTION_POST_RELEASE)

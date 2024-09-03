@@ -1,12 +1,15 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies
 
 import org.springframework.web.server.ServerWebInputException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.TagAndQuestionMapping
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 
 internal fun convertFromSupportNeedAnswerToStatus(supportNeed: Answer<*>?): Status {
   if (supportNeed is StringAnswer) {
@@ -86,3 +89,27 @@ internal fun ResettlementAssessmentQuestion.removeNestedQuestions() = Resettleme
   detailsTitle = this.detailsTitle,
   detailsContent = this.detailsContent,
 )
+
+internal fun getProfileTag(questionId: String, answer: Answer<*>, pathway: Pathway): List<String> {
+  val tagFound = mutableListOf<String>()
+  TagAndQuestionMapping.entries.forEach {
+    if ((questionId == it.questionId) &&
+      (answer.answer.toString().contains(it.optionId)) &&
+      (pathway.name == it.pathway.name)
+    ) {
+      tagFound.add(it.name)
+    }
+  }
+  return tagFound.distinct()
+}
+
+internal fun processProfileTags(resettlementAssessmentEntity: ResettlementAssessmentEntity, pathway: Pathway): List<String> {
+  val tagList = mutableListOf<String>()
+  resettlementAssessmentEntity.assessment.assessment.forEach {
+    val tagFound = getProfileTag(it.questionId, it.answer, pathway)
+    if (tagFound.isNotEmpty()) {
+      tagList.addAll(tagFound)
+    }
+  }
+  return tagList
+}

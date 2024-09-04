@@ -666,30 +666,52 @@ class ResettlementAssessmentServiceTest {
       youthOffender = false,
       prisonId = prisonId,
       prisonName = "Test Prison",
-      cellLocation = "Location1")
+      cellLocation = "Location1",
+    )
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-      prisonerEntity.id(), Pathway.ACCOMMODATION, assessmentType, listOf(ResettlementAssessmentStatus.COMPLETE)))
-      .thenReturn(accommodationResettlementAssessmentEntity)
+      prisonerEntity.id(),
+      Pathway.ACCOMMODATION,
+      assessmentType,
+      listOf(ResettlementAssessmentStatus.COMPLETE))
+    ).thenReturn(accommodationResettlementAssessmentEntity)
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-      prisonerEntity.id(), Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, assessmentType, listOf(ResettlementAssessmentStatus.COMPLETE)))
-      .thenReturn(attitudesResettlementAssessmentEntity)
+      prisonerEntity.id(),
+      Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+      assessmentType,
+      listOf(ResettlementAssessmentStatus.COMPLETE))
+    ).thenReturn(attitudesResettlementAssessmentEntity)
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-      prisonerEntity.id(), Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, assessmentType, listOf(ResettlementAssessmentStatus.COMPLETE)))
-      .thenReturn(childrenFamiliesResettlementAssessmentEntity)
+      prisonerEntity.id(),
+      Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
+      assessmentType,
+      listOf(ResettlementAssessmentStatus.COMPLETE))
+    ).thenReturn(childrenFamiliesResettlementAssessmentEntity)
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-      prisonerEntity.id(), Pathway.DRUGS_AND_ALCOHOL, assessmentType, listOf(ResettlementAssessmentStatus.COMPLETE)))
-      .thenReturn(drugsAlcoholResettlementAssessmentEntity)
+      prisonerEntity.id(),
+      Pathway.DRUGS_AND_ALCOHOL,
+      assessmentType,
+      listOf(ResettlementAssessmentStatus.COMPLETE))
+    ).thenReturn(drugsAlcoholResettlementAssessmentEntity)
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-      prisonerEntity.id(), Pathway.EDUCATION_SKILLS_AND_WORK, assessmentType, listOf(ResettlementAssessmentStatus.COMPLETE)))
-      .thenReturn(educationSkillsResettlementAssessmentEntity)
+      prisonerEntity.id(),
+      Pathway.EDUCATION_SKILLS_AND_WORK,
+      assessmentType,
+      listOf(ResettlementAssessmentStatus.COMPLETE))
+    ).thenReturn(educationSkillsResettlementAssessmentEntity)
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-      prisonerEntity.id(), Pathway.FINANCE_AND_ID, assessmentType, listOf(ResettlementAssessmentStatus.COMPLETE)))
-      .thenReturn(financeAndIdResettlementAssessmentEntity)
+      prisonerEntity.id(),
+      Pathway.FINANCE_AND_ID,
+      assessmentType,
+      listOf(ResettlementAssessmentStatus.COMPLETE))
+    ).thenReturn(financeAndIdResettlementAssessmentEntity)
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-      prisonerEntity.id(), Pathway.HEALTH, assessmentType, listOf(ResettlementAssessmentStatus.COMPLETE)))
-      .thenReturn(healthResettlementAssessmentEntity)
+      prisonerEntity.id(),
+      Pathway.HEALTH,
+      assessmentType,
+      listOf(ResettlementAssessmentStatus.COMPLETE))
+    ).thenReturn(healthResettlementAssessmentEntity)
 
     Mockito.`when`(prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)).thenReturn(prisonerSearch)
 
@@ -730,26 +752,47 @@ class ResettlementAssessmentServiceTest {
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-      prisonerEntity.id(), Pathway.ACCOMMODATION, assessmentType, listOf(ResettlementAssessmentStatus.COMPLETE)))
-      .thenReturn(accommodationResettlementAssessmentEntity)
+      prisonerEntity.id(),
+      Pathway.ACCOMMODATION,
+      assessmentType,
+      listOf(ResettlementAssessmentStatus.COMPLETE))
+    ).thenReturn(accommodationResettlementAssessmentEntity)
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-      prisonerEntity.id(), Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, assessmentType, listOf(ResettlementAssessmentStatus.COMPLETE)))
-      .thenReturn(attitudesResettlementAssessmentEntity)
+      prisonerEntity.id(),
+      Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+      assessmentType,
+      listOf(ResettlementAssessmentStatus.COMPLETE))
+    ).thenReturn(attitudesResettlementAssessmentEntity)
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-      prisonerEntity.id(), Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, assessmentType, listOf(ResettlementAssessmentStatus.COMPLETE)))
-      .thenReturn(childrenFamiliesResettlementAssessmentEntity)
+      prisonerEntity.id(),
+      Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
+      assessmentType,
+      listOf(ResettlementAssessmentStatus.COMPLETE))
+    ).thenReturn(childrenFamiliesResettlementAssessmentEntity)
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-      prisonerEntity.id(), Pathway.DRUGS_AND_ALCOHOL, assessmentType, listOf(ResettlementAssessmentStatus.COMPLETE)))
-      .thenReturn(drugsAlcoholResettlementAssessmentEntity)
+      prisonerEntity.id(),
+      Pathway.DRUGS_AND_ALCOHOL,
+      assessmentType,
+      listOf(ResettlementAssessmentStatus.COMPLETE))
+    ).thenReturn(drugsAlcoholResettlementAssessmentEntity)
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-      prisonerEntity.id(), Pathway.EDUCATION_SKILLS_AND_WORK, assessmentType, listOf(ResettlementAssessmentStatus.COMPLETE)))
-      .thenReturn(educationSkillsResettlementAssessmentEntity)
+      prisonerEntity.id(),
+      Pathway.EDUCATION_SKILLS_AND_WORK,
+      assessmentType,
+      listOf(ResettlementAssessmentStatus.COMPLETE))
+    ).thenReturn(educationSkillsResettlementAssessmentEntity)
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-      prisonerEntity.id(), Pathway.FINANCE_AND_ID, assessmentType, listOf(ResettlementAssessmentStatus.COMPLETE)))
-      .thenReturn(financeAndIdResettlementAssessmentEntity)
+      prisonerEntity.id(),
+      Pathway.FINANCE_AND_ID,
+      assessmentType,
+      listOf(ResettlementAssessmentStatus.COMPLETE))
+    ).thenReturn(financeAndIdResettlementAssessmentEntity)
     Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-      prisonerEntity.id(), Pathway.HEALTH, assessmentType, listOf(ResettlementAssessmentStatus.COMPLETE)))
-      .thenReturn(healthResettlementAssessmentEntity)
+      prisonerEntity.id(),
+      Pathway.HEALTH,
+      assessmentType,
+      listOf(ResettlementAssessmentStatus.COMPLETE))
+    ).thenReturn(healthResettlementAssessmentEntity)
 
     Mockito.`when`(prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)).thenReturn(prisonerSearch)
 

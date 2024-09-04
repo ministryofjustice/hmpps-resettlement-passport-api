@@ -776,7 +776,8 @@ class ResettlementAssessmentServiceTest {
       youthOffender = false,
       prisonId = prisonId,
       prisonName = "Test Prison",
-      cellLocation = "Location1")
+      cellLocation = "Location1"
+    )
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
     Mockito.`when`(

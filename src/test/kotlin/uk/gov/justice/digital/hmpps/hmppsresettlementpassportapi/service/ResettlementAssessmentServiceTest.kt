@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
@@ -78,6 +79,8 @@ class ResettlementAssessmentServiceTest {
 
   @Mock
   private lateinit var auditService: AuditService
+
+  private var jwtAuthHelper = JwtAuthHelper()
 
   @Mock
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
@@ -641,7 +644,8 @@ class ResettlementAssessmentServiceTest {
   fun `test submitResettlementAssessmentByNomsId - Audit submission Immediate needs report`() {
     val nomsId = "GY3245"
     val prisonId = "xyz1"
-    val auth = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYXV0aF9zb3VyY2UiOiJOT01JUyJ9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+    val token = jwtAuthHelper.createJwt("John Doe", authSource = "NOMIS")
+    val auth = "Bearer $token"
     val assessmentType = ResettlementAssessmentType.BCST2
     val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "crn", prisonId, LocalDate.parse("2025-01-23"))
     val accommodationResettlementAssessmentEntity =
@@ -751,7 +755,8 @@ class ResettlementAssessmentServiceTest {
   fun `test submitResettlementAssessmentByNomsId - Audit submission pre-release report`() {
     val nomsId = "GY3245"
     val prisonId = "xyz1"
-    val auth = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYXV0aF9zb3VyY2UiOiJOT01JUyJ9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+    val token = jwtAuthHelper.createJwt("John Doe", authSource = "NOMIS")
+    val auth = "Bearer $token"
     val assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN
     val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "crn", prisonId, LocalDate.parse("2025-01-23"))
     val accommodationResettlementAssessmentEntity =

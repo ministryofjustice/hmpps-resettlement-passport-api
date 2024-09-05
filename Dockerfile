@@ -1,23 +1,19 @@
 FROM --platform=$BUILDPLATFORM eclipse-temurin:21-jre-jammy AS builder
 
-ARG BUILD_NUMBER
-ENV BUILD_NUMBER ${BUILD_NUMBER:-1_0_0}
-
 # Copy just gradle download step so that it's cached unless gradle version is changed
 WORKDIR /app
 COPY gradlew build.gradle.kts gradle.properties ./
 COPY gradle/ ./gradle
 RUN ./gradlew downloadDependencies
 
+ARG BUILD_NUMBER
+ENV BUILD_NUMBER ${BUILD_NUMBER:-1_0_0}
 # Copy the rest
 COPY . .
 RUN ./gradlew --no-daemon assemble
 
 FROM eclipse-temurin:21-jre-jammy
 LABEL maintainer="HMPPS Digital Studio <info@digital.justice.gov.uk>"
-
-ARG BUILD_NUMBER
-ENV BUILD_NUMBER ${BUILD_NUMBER:-1_0_0}
 
 ENV TZ=Europe/London
 RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
@@ -40,5 +36,7 @@ ADD --chown=appuser:appgroup https://github.com/microsoft/ApplicationInsights-Ja
 COPY --from=builder --chown=appuser:appgroup /app/applicationinsights.json /app
 
 USER 2000
+ARG BUILD_NUMBER
+ENV BUILD_NUMBER ${BUILD_NUMBER:-1_0_0}
 
 ENTRYPOINT ["java", "-XX:+AlwaysActAsServerClassMachine", "-javaagent:/app/agent.jar", "-jar", "/app/app.jar"]

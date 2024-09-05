@@ -148,7 +148,7 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
                         id = "NUMBER_OF_CHILDREN",
                         title = "Number of children",
                         type = TypeOfQuestion.SHORT_TEXT,
-                        customValidation = CustomValidation(regex = "^\\d+$", message = "Number of children must be a whole number"),
+                        customValidation = CustomValidation(regex = "^(?:[1-9])(\\d+)?$", message = "Number of children must be a whole number"),
                       ),
                       originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
                     ),
@@ -429,87 +429,7 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
     // Happy path - including a nested question answer with matching regex
     Arguments.of(
       ResettlementAssessmentType.BCST2,
-      ResettlementAssessmentCompleteRequest(
-        version = 2,
-        questionsAndAnswers = listOf(
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "PARTNER_OR_SPOUSE",
-            answer = StringAnswer("YES"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "PARENTAL_RESPONSIBILITY",
-            answer = StringAnswer("YES"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "PRIMARY_CARER_FOR_CHILDREN",
-            answer = StringAnswer("YES"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "NUMBER_OF_CHILDREN",
-            answer = StringAnswer("3"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "CHILDREN_SERVICE_INVOLVED",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "CARING_RESPONSIBILITIES_FOR_ADULTS",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "SOCIAL_SERVICE_INVOLVED",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "RECEIVED_SUPPORT_FROM_SOCIAL_SERVICES",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "DO_THEY_HAVE_SUPPORT_FROM_FAMILY_FRIENDS_COMMUNITY",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "INVOLVEMENT_IN_GANG_ACTIVITY",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "UNDER_THREAT_OUTSIDE_PRISON",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "VICTIM_OF_DOMESTIC_ABUSE",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "PERPETRATOR_OF_DOMESTIC_ABUSE",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "VICTIM_OF_SEXUAL_ABUSE",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "PERPETRATOR_OF_SEXUAL_ABUSE",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "WORKED_IN_SEX_INDUSTRY",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "SUPPORT_REQUIREMENTS",
-            answer = ListAnswer(listOf("SUPPORT_WHEN_MEETING_CHILDREN_SERVICES", "INTERNAL_SUPPORT_SERVICES")),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "SUPPORT_NEEDS",
-            answer = StringAnswer("SUPPORT_REQUIRED"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "CASE_NOTE_SUMMARY",
-            answer = StringAnswer("Some text"),
-          ),
-        ),
-      ),
+      getCompleteRequestWithNumberOfChildren("3"),
       ResettlementAssessmentEntity(id = null, prisonerId = 1, pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, statusChangedTo = Status.SUPPORT_REQUIRED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "PARTNER_OR_SPOUSE", answer = StringAnswer(answer = "YES")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "PARENTAL_RESPONSIBILITY", answer = StringAnswer(answer = "YES")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "PRIMARY_CARER_FOR_CHILDREN", answer = StringAnswer(answer = "YES")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "NUMBER_OF_CHILDREN", answer = StringAnswer(answer = "3")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "CHILDREN_SERVICE_INVOLVED", answer = StringAnswer(answer = "NO")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "CARING_RESPONSIBILITIES_FOR_ADULTS", answer = StringAnswer(answer = "NO")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SOCIAL_SERVICE_INVOLVED", answer = StringAnswer(answer = "NO")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "RECEIVED_SUPPORT_FROM_SOCIAL_SERVICES", answer = StringAnswer(answer = "NO")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "DO_THEY_HAVE_SUPPORT_FROM_FAMILY_FRIENDS_COMMUNITY", answer = StringAnswer(answer = "NO")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "INVOLVEMENT_IN_GANG_ACTIVITY", answer = StringAnswer(answer = "NO")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "UNDER_THREAT_OUTSIDE_PRISON", answer = StringAnswer(answer = "NO")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "VICTIM_OF_DOMESTIC_ABUSE", answer = StringAnswer(answer = "NO")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "PERPETRATOR_OF_DOMESTIC_ABUSE", answer = StringAnswer(answer = "NO")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "VICTIM_OF_SEXUAL_ABUSE", answer = StringAnswer(answer = "NO")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "PERPETRATOR_OF_SEXUAL_ABUSE", answer = StringAnswer(answer = "NO")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WORKED_IN_SEX_INDUSTRY", answer = StringAnswer(answer = "NO")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS", answer = ListAnswer(answer = listOf("SUPPORT_WHEN_MEETING_CHILDREN_SERVICES", "INTERNAL_SUPPORT_SERVICES"))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "CASE_NOTE_SUMMARY", answer = StringAnswer(answer = "Some text")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = "Some text", createdByUserId = "USER_1", version = 2, submissionDate = null),
       null,
       null,
@@ -517,90 +437,132 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
     // Throw exception if NUMBER_OF_CHILDREN answer does not match regex (i.e. not numerical)
     Arguments.of(
       ResettlementAssessmentType.BCST2,
-      ResettlementAssessmentCompleteRequest(
-        version = 2,
-        questionsAndAnswers = listOf(
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "PARTNER_OR_SPOUSE",
-            answer = StringAnswer("YES"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "PARENTAL_RESPONSIBILITY",
-            answer = StringAnswer("YES"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "PRIMARY_CARER_FOR_CHILDREN",
-            answer = StringAnswer("YES"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "NUMBER_OF_CHILDREN",
-            answer = StringAnswer("not a number"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "CHILDREN_SERVICE_INVOLVED",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "CARING_RESPONSIBILITIES_FOR_ADULTS",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "SOCIAL_SERVICE_INVOLVED",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "RECEIVED_SUPPORT_FROM_SOCIAL_SERVICES",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "DO_THEY_HAVE_SUPPORT_FROM_FAMILY_FRIENDS_COMMUNITY",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "INVOLVEMENT_IN_GANG_ACTIVITY",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "UNDER_THREAT_OUTSIDE_PRISON",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "VICTIM_OF_DOMESTIC_ABUSE",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "PERPETRATOR_OF_DOMESTIC_ABUSE",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "VICTIM_OF_SEXUAL_ABUSE",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "PERPETRATOR_OF_SEXUAL_ABUSE",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "WORKED_IN_SEX_INDUSTRY",
-            answer = StringAnswer("NO"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "SUPPORT_REQUIREMENTS",
-            answer = ListAnswer(listOf("SUPPORT_WHEN_MEETING_CHILDREN_SERVICES", "INTERNAL_SUPPORT_SERVICES")),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "SUPPORT_NEEDS",
-            answer = StringAnswer("SUPPORT_REQUIRED"),
-          ),
-          ResettlementAssessmentRequestQuestionAndAnswer(
-            question = "CASE_NOTE_SUMMARY",
-            answer = StringAnswer("Some text"),
-          ),
-        ),
+      getCompleteRequestWithNumberOfChildren("not a number"),
+      null,
+      ServerWebInputException("Invalid answer to question [NUMBER_OF_CHILDREN] as failed to match regex [^(?:[1-9])(\\d+)?$]"),
+      null,
+    ),
+    // Throw exception if NUMBER_OF_CHILDREN answer is 0
+    Arguments.of(
+      ResettlementAssessmentType.BCST2,
+      getCompleteRequestWithNumberOfChildren("0"),
+      null,
+      ServerWebInputException("Invalid answer to question [NUMBER_OF_CHILDREN] as failed to match regex [^(?:[1-9])(\\d+)?$]"),
+      null,
+    ),
+    // Throw exception if NUMBER_OF_CHILDREN answer is negative
+    Arguments.of(
+      ResettlementAssessmentType.BCST2,
+      getCompleteRequestWithNumberOfChildren("-2"),
+      null,
+      ServerWebInputException("Invalid answer to question [NUMBER_OF_CHILDREN] as failed to match regex [^(?:[1-9])(\\d+)?$]"),
+      null,
+    ),
+    // Throw exception if NUMBER_OF_CHILDREN answer is not whole
+    Arguments.of(
+      ResettlementAssessmentType.BCST2,
+      getCompleteRequestWithNumberOfChildren("4.5"),
+      null,
+      ServerWebInputException("Invalid answer to question [NUMBER_OF_CHILDREN] as failed to match regex [^(?:[1-9])(\\d+)?$]"),
+      null,
+    ),
+    // Throw exception if NUMBER_OF_CHILDREN answer is not empty
+    Arguments.of(
+      ResettlementAssessmentType.BCST2,
+      getCompleteRequestWithNumberOfChildren(""),
+      null,
+      ServerWebInputException("Invalid answer to question [NUMBER_OF_CHILDREN] as failed to match regex [^(?:[1-9])(\\d+)?$]"),
+      null,
+    ),
+    // Throw exception if NUMBER_OF_CHILDREN answer is not blank
+    Arguments.of(
+      ResettlementAssessmentType.BCST2,
+      getCompleteRequestWithNumberOfChildren(" "),
+      null,
+      ServerWebInputException("Invalid answer to question [NUMBER_OF_CHILDREN] as failed to match regex [^(?:[1-9])(\\d+)?$]"),
+      null,
+    ),
+  )
+
+  private fun getCompleteRequestWithNumberOfChildren(numberOfChildren: String) = ResettlementAssessmentCompleteRequest(
+    version = 2,
+    questionsAndAnswers = listOf(
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "PARTNER_OR_SPOUSE",
+        answer = StringAnswer("YES"),
       ),
-      null,
-      ServerWebInputException("Invalid answer to question [NUMBER_OF_CHILDREN] as failed to match regex [^\\d+$]"),
-      null,
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "PARENTAL_RESPONSIBILITY",
+        answer = StringAnswer("YES"),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "PRIMARY_CARER_FOR_CHILDREN",
+        answer = StringAnswer("YES"),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "NUMBER_OF_CHILDREN",
+        answer = StringAnswer(numberOfChildren),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "CHILDREN_SERVICE_INVOLVED",
+        answer = StringAnswer("NO"),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "CARING_RESPONSIBILITIES_FOR_ADULTS",
+        answer = StringAnswer("NO"),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "SOCIAL_SERVICE_INVOLVED",
+        answer = StringAnswer("NO"),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "RECEIVED_SUPPORT_FROM_SOCIAL_SERVICES",
+        answer = StringAnswer("NO"),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "DO_THEY_HAVE_SUPPORT_FROM_FAMILY_FRIENDS_COMMUNITY",
+        answer = StringAnswer("NO"),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "INVOLVEMENT_IN_GANG_ACTIVITY",
+        answer = StringAnswer("NO"),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "UNDER_THREAT_OUTSIDE_PRISON",
+        answer = StringAnswer("NO"),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "VICTIM_OF_DOMESTIC_ABUSE",
+        answer = StringAnswer("NO"),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "PERPETRATOR_OF_DOMESTIC_ABUSE",
+        answer = StringAnswer("NO"),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "VICTIM_OF_SEXUAL_ABUSE",
+        answer = StringAnswer("NO"),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "PERPETRATOR_OF_SEXUAL_ABUSE",
+        answer = StringAnswer("NO"),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "WORKED_IN_SEX_INDUSTRY",
+        answer = StringAnswer("NO"),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "SUPPORT_REQUIREMENTS",
+        answer = ListAnswer(listOf("SUPPORT_WHEN_MEETING_CHILDREN_SERVICES", "INTERNAL_SUPPORT_SERVICES")),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "SUPPORT_NEEDS",
+        answer = StringAnswer("SUPPORT_REQUIRED"),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "CASE_NOTE_SUMMARY",
+        answer = StringAnswer("Some text"),
+      ),
     ),
   )
 }

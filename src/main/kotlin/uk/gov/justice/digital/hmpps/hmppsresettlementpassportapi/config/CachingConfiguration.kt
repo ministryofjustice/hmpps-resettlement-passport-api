@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import io.micrometer.observation.ObservationRegistry
+import org.springframework.boot.info.BuildProperties
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -17,10 +17,10 @@ import java.time.Duration
 
 @EnableCaching
 @Configuration
-class CachingConfiguration {
+class CachingConfiguration(private val buildProperties: BuildProperties) {
 
   @Bean
-  fun cacheManager(connectionFactory: RedisConnectionFactory, observationRegistry: ObservationRegistry): RedisCacheManager {
+  fun cacheManager(connectionFactory: RedisConnectionFactory): RedisCacheManager {
     return RedisCacheManager.builder(connectionFactory)
       .withCacheConfiguration("prisoner-search-api-find-prisoners-by-prison-id", getCacheConfiguration(Duration.ofMinutes(10)))
       .withCacheConfiguration("prisoner-search-api-find-prisoners-personal-details", getCacheConfiguration(Duration.ofMinutes(5)))
@@ -47,7 +47,7 @@ class CachingConfiguration {
     val jackson2JsonRedisSerializer = GenericJackson2JsonRedisSerializer(customObjectMapper)
     return RedisCacheConfiguration.defaultCacheConfig()
       .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jackson2JsonRedisSerializer))
-      .prefixCacheNameWith(this.javaClass.packageName + ".")
+      .prefixCacheNameWith("${buildProperties.version}-")
       .entryTtl(ttl)
   }
 }

@@ -143,6 +143,7 @@ class WebClientConfiguration(
     return WebClient.builder()
       .baseUrl(clientRegistration.providerDetails.tokenUri)
       .filter(ExchangeFilterFunctions.basicAuthentication(clientRegistration.clientId, clientRegistration.clientSecret))
+      .observationRegistry(observationRegistry)
       .build()
   }
 
@@ -168,6 +169,7 @@ class WebClientConfiguration(
           ),
         )
       }
+      .observationRegistry(observationRegistry)
       .build()
   }
 

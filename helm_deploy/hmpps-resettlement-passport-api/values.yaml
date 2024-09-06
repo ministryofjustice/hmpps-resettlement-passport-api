@@ -84,6 +84,9 @@ generic-service:
       OFFENDER_EVENT_DLQ_NAME: "sqs_dlq_queue_name"
     s3-bucket-document-storage:
       S3_DOCUMENT_BUCKET_NAME: bucket_name
+    sqs-hmpps-audit-secret:
+      AUDIT_SQS_QUEUE_URL: "sqs_queue_url"
+      AUDIT_SQS_QUEUE_NAME: "sqs_queue_name"
 
   allowlist:
     groups:

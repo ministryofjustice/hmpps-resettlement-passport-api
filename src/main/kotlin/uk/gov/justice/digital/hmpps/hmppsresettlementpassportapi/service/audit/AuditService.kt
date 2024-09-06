@@ -1,20 +1,21 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit
 
-import org.springframework.context.annotation.Import
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
-import uk.gov.justice.digital.hmpps.hmppsauditsdk.AuditService as AuditSdkService
+import uk.gov.justice.hmpps.sqs.audit.HmppsAuditService
 
 @Component
-@Import(AuditSdkService::class)
-class AuditService(private val auditService: AuditSdkService) {
-  fun audit(what: AuditAction, nomsId: String, userName: String?) {
-    auditService.publishEvent(
-      what = what.name,
-      who = userName,
-      subjectId = nomsId,
-      subjectType = "USER_ID",
-      service = "hmpps-resettlement-passport-api",
-    )
+class AuditService(private val auditService: HmppsAuditService) {
+  fun audit(what: AuditAction, nomsId: String, userName: String) {
+    runBlocking {
+      auditService.publishEvent(
+        what = what.name,
+        who = userName,
+        subjectId = nomsId,
+        subjectType = "USER_ID",
+        service = "hmpps-resettlement-passport-api",
+      )
+    }
   }
 }
 

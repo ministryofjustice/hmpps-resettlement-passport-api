@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.micrometer.observation.ObservationRegistry
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -38,11 +39,13 @@ class WebClientConfiguration(
   @Value("\${api.base.url.curious-service}") private val curiousRootUri: String,
   private val objectMapper: ObjectMapper,
   val clientRegistrationRepo: ClientRegistrationRepository,
+  private val observationRegistry: ObservationRegistry,
+
 ) {
 
   @Bean
-  fun prisonRegisterWebClientClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, prisonRegisterRootUri)
+  fun prisonRegisterWebClientClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager, observationRegistry: ObservationRegistry): WebClient {
+    return getWebClientCredentials(authorizedClientManager, prisonRegisterRootUri, observationRegistry)
   }
 
   @Bean
@@ -64,55 +67,55 @@ class WebClientConfiguration(
 
   @Bean
   fun cvlWebClientClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, cvlRootUri)
+    return getWebClientCredentials(authorizedClientManager, cvlRootUri, observationRegistry)
   }
 
   @Bean
   fun prisonerSearchWebClientClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, prisonerSearchRootUri)
+    return getWebClientCredentials(authorizedClientManager, prisonerSearchRootUri, observationRegistry)
   }
 
   @Bean
   fun arnWebClientClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, arnRootUri)
+    return getWebClientCredentials(authorizedClientManager, arnRootUri, observationRegistry)
   }
 
   @Bean
   fun prisonWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, prisonRootUri)
+    return getWebClientCredentials(authorizedClientManager, prisonRootUri, observationRegistry)
   }
 
   @Bean
   fun keyWorkerWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, keyWorkerRootUri)
+    return getWebClientCredentials(authorizedClientManager, keyWorkerRootUri, observationRegistry)
   }
 
   @Bean
   fun caseNotesWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, caseNotesRootUri)
+    return getWebClientCredentials(authorizedClientManager, caseNotesRootUri, observationRegistry)
   }
 
   @Bean
   fun allocationManagerWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, allocationManagerRootUri)
+    return getWebClientCredentials(authorizedClientManager, allocationManagerRootUri, observationRegistry)
   }
 
   @Bean
   fun rpDeliusWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, rpDeliusRootUri)
+    return getWebClientCredentials(authorizedClientManager, rpDeliusRootUri, observationRegistry)
   }
 
   @Bean
   fun educationEmploymentWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, educationEmploymentRootUri)
+    return getWebClientCredentials(authorizedClientManager, educationEmploymentRootUri, observationRegistry)
   }
 
   @Bean
   fun interventionsWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, interventionsRootUri)
+    return getWebClientCredentials(authorizedClientManager, interventionsRootUri, observationRegistry)
   }
 
-  private fun getWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager, baseUrl: String): WebClient {
+  private fun getWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager, baseUrl: String, observationRegistry: ObservationRegistry): WebClient {
     val oauth2Client = ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
     oauth2Client.setDefaultClientRegistrationId(SYSTEM_USERNAME)
 
@@ -129,6 +132,7 @@ class WebClientConfiguration(
           ),
         )
       }
+      .observationRegistry(observationRegistry)
       .build()
   }
 
@@ -144,7 +148,7 @@ class WebClientConfiguration(
 
   @Bean
   fun popUserWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, popUserRootUri)
+    return getWebClientCredentials(authorizedClientManager, popUserRootUri, observationRegistry)
   }
 
   @Bean
@@ -169,6 +173,6 @@ class WebClientConfiguration(
 
   @Bean
   fun curiousWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, curiousRootUri)
+    return getWebClientCredentials(authorizedClientManager, curiousRootUri, observationRegistry)
   }
 }

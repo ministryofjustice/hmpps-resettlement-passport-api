@@ -3,10 +3,10 @@ kind: PrometheusRule
 metadata:
   labels:
     role: alert-rules
-  name: hmpps-resettlement-passport-external-api-custom
+  name: {{ include "app.fullname" . }}-custom
 spec:
   groups:
-    - name: resettlement-passport-api-rule
+    - name: resettlement-passport-application-rules
       rules:
         - alert: ExternalAPICritical
           expr: (sum(rate(http_client_requests_seconds_sum{status="CLIENT_ERROR"}[5m])) / sum(rate(http_client_requests_seconds_sum{status="CLIENT_ERROR"}[5m]))) > 0.05
@@ -16,5 +16,5 @@ spec:
           annotations:
             message: The External API's error rate for HTTP requests has exceed 5% for 5 mins on host {{ .Values.host}}
             runbook_url: https://dsdmoj.atlassian.net/wiki/spaces/RR/pages/5119475840/External+API+Failures
-            dashboard_url: {{ $.Values.grafanaUrl }}/d/application-alerts/application-alerts?orgId=1&var-namespace={{ .Values.namespace }}
+            dashboard_url: {{ $.Values.grafanaUrl }}/d/application-alerts/application-alerts?orgId=1&var-namespace={{ $targetNamespace }}
             summary: External API's Failures

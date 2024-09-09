@@ -6,7 +6,7 @@ metadata:
   name: hmpps-resettlement-passport-external-api-custom
 spec:
   groups:
-    - name: application-rules
+    - name: resettlement-passport-api-rule
       rules:
         - alert: ExternalAPICritical
           expr: (sum(rate(http_client_requests_seconds_sum{status="CLIENT_ERROR"}[5m])) / sum(rate(http_client_requests_seconds_sum{status="CLIENT_ERROR"}[5m]))) > 0.05

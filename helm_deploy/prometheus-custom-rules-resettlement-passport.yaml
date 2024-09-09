@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  namespace: hmpps-resettlement-passport-dev
+  labels:
+    role: alert-rules
+  name: hmpps-resettlement-passport-external-api-rules
+spec:
+  groups:
+    - name: application-rules
+      rules:
+        - alert: ExternalAPICritical
+          expr: (sum(rate(http_client_requests_seconds_sum{status="CLIENT_ERROR"}[5m])) / sum(rate(http_client_requests_seconds_sum[5m]))) > 0.05
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            message: The External API's error rate for HTTP requests has exceed 5% for 5 mins on host {{$labels.instance}}

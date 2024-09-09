@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.micrometer.observation.ObservationRegistry
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -38,6 +39,8 @@ class WebClientConfiguration(
   @Value("\${api.base.url.curious-service}") private val curiousRootUri: String,
   private val objectMapper: ObjectMapper,
   val clientRegistrationRepo: ClientRegistrationRepository,
+  private val observationRegistry: ObservationRegistry,
+
 ) {
 
   @Bean
@@ -129,6 +132,7 @@ class WebClientConfiguration(
           ),
         )
       }
+      .observationRegistry(observationRegistry)
       .build()
   }
 
@@ -139,6 +143,7 @@ class WebClientConfiguration(
     return WebClient.builder()
       .baseUrl(clientRegistration.providerDetails.tokenUri)
       .filter(ExchangeFilterFunctions.basicAuthentication(clientRegistration.clientId, clientRegistration.clientSecret))
+      .observationRegistry(observationRegistry)
       .build()
   }
 
@@ -164,6 +169,7 @@ class WebClientConfiguration(
           ),
         )
       }
+      .observationRegistry(observationRegistry)
       .build()
   }
 

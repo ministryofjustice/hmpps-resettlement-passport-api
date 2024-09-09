@@ -10,7 +10,7 @@ spec:
     - name: application-rules
       rules:
         - alert: ExternalAPICritical
-          expr: (sum(rate(http_client_requests_seconds_sum{status="CLIENT_ERROR"}[5m])) / sum(rate(http_client_requests_seconds_sum[5m]))) > 0.05
+          expr: (sum(rate(http_client_requests_seconds_sum{status="CLIENT_ERROR"}[5m])) / sum(rate(http_client_requests_seconds_sum{status="CLIENT_ERROR"}[5m]))) > 0.05
           for: 5m
           labels:
             severity: critical

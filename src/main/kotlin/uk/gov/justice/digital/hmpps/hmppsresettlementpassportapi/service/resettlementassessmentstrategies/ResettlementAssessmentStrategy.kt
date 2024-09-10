@@ -258,7 +258,7 @@ class ResettlementAssessmentStrategy(
       val expectedBaseQuestions = key.questions?.map { it.mapToResettlementAssessmentQuestion(key.id) } ?: listOf()
       val nestedQuestions = key.questions.getNestedQuestions().map { it.mapToResettlementAssessmentQuestion(key.id) }
       val actualBaseQuestions = value.map { it.question } - nestedQuestions.toSet()
-      if (expectedBaseQuestions != actualBaseQuestions) {
+      if (expectedBaseQuestions.sortedBy { it.id } != actualBaseQuestions.sortedBy { it.id }) {
         throw ServerWebInputException("Error validating questions and answers - wrong questions answered on page [${key.id}]. Expected [${expectedBaseQuestions.map { it.id }}] but found [${actualBaseQuestions.map { it.id }}]")
       }
     }

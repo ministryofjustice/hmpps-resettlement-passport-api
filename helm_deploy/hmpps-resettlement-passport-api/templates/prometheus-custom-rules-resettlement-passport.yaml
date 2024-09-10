@@ -1,3 +1,4 @@
+{{- $targetNamespace := .Release.Namespace }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -16,5 +17,5 @@ spec:
           annotations:
             message: The External API's error rate for HTTP requests has exceed 5% for 5 mins on host {{ .Values.host}}
             runbook_url: https://dsdmoj.atlassian.net/wiki/spaces/RR/pages/5119475840/External+API+Failures
-            dashboard_url: {{ $.Values.grafanaUrl }}/d/application-alerts/application-alerts?orgId=1&var-namespace={{ .Values.host}}
+            dashboard_url: {{ $.Values.grafanaUrl }}/d/application-alerts/application-alerts?orgId=1&var-namespace={{ $targetNamespace }}
             summary: External API's Failures

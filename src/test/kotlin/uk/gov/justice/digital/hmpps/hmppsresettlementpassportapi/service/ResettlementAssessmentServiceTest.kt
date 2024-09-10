@@ -36,6 +36,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.AssessmentConfigOption
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.processProfileTags
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -323,7 +324,7 @@ class ResettlementAssessmentServiceTest {
 
   @ParameterizedTest
   @MethodSource("test convertAnswerToString data")
-  fun `test convertAnswerToString`(options: List<ResettlementAssessmentOption>?, answer: Answer<*>, expectedString: String) {
+  fun `test convertAnswerToString`(options: List<AssessmentConfigOption>?, answer: Answer<*>, expectedString: String) {
     Assertions.assertEquals(expectedString, resettlementAssessmentService.convertAnswerToString(options, answer))
   }
 
@@ -331,7 +332,7 @@ class ResettlementAssessmentServiceTest {
     Arguments.of(null, StringAnswer("My answer"), "My answer"),
     Arguments.of(null, StringAnswer("My answer"), "My answer"),
     Arguments.of(
-      listOf(ResettlementAssessmentOption("MY_ANSWER", "My answer"), ResettlementAssessmentOption("OTHER_OPTION", "Other option")),
+      listOf(AssessmentConfigOption("MY_ANSWER", "My answer"), AssessmentConfigOption("OTHER_OPTION", "Other option")),
       StringAnswer("MY_ANSWER"),
       "My answer",
     ),
@@ -351,7 +352,7 @@ class ResettlementAssessmentServiceTest {
     Arguments.of(null, MapAnswer(listOf(mapOf(), mapOf(), mapOf(), mapOf())), ""),
     Arguments.of(null, MapAnswer(listOf()), ""),
     Arguments.of(
-      listOf(ResettlementAssessmentOption("ANSWER_1", "Answer 1"), ResettlementAssessmentOption("ANSWER_2", "Answer 2")),
+      listOf(AssessmentConfigOption("ANSWER_1", "Answer 1"), AssessmentConfigOption("ANSWER_2", "Answer 2")),
       ListAnswer(listOf("ANSWER_1", "ANSWER_2", "ANSWER_3")),
       "Answer 1\nAnswer 2\nANSWER_3",
     ),

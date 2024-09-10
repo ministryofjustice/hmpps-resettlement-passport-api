@@ -17,7 +17,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.MapAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.PrisonerResettlementAssessment
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentSubmitResponse
@@ -35,6 +34,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.AssessmentConfigOption
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.ResettlementAssessmentStrategy
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.processProfileTags
 import java.time.LocalDate
@@ -412,13 +412,14 @@ class ResettlementAssessmentService(
   }
 
   fun convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(resettlementAssessmentEntity: ResettlementAssessmentEntity, resettlementAssessmentStrategies: ResettlementAssessmentStrategy): ResettlementAssessmentResponse {
-    val questionsAndAnswers = resettlementAssessmentEntity.assessment.assessment.mapNotNull {
-      val question = resettlementAssessmentStrategies.getQuestionById(it.questionId, resettlementAssessmentEntity.pathway, resettlementAssessmentEntity.assessmentType, resettlementAssessmentEntity.version)
-      if (question.id !in listOf("SUPPORT_NEEDS", "SUPPORT_NEEDS_PRERELEASE", "CASE_NOTE_SUMMARY")) {
+    val config = resettlementAssessmentStrategies.getConfig(resettlementAssessmentEntity.pathway, resettlementAssessmentEntity.assessmentType, resettlementAssessmentEntity.version)
+    val questionsAndAnswers = config.pages.filter { it.questions != null }.flatMap { it.questions!! }.mapNotNull { questionFromConfig ->
+      val questionAndAnswerFromDatabase = resettlementAssessmentEntity.assessment.assessment.firstOrNull { it.questionId == questionFromConfig.id }
+      if (questionAndAnswerFromDatabase != null && questionAndAnswerFromDatabase.questionId !in listOf("SUPPORT_NEEDS", "SUPPORT_NEEDS_PRERELEASE", "CASE_NOTE_SUMMARY")) {
         LatestResettlementAssessmentResponseQuestionAndAnswer(
-          questionTitle = question.title,
-          answer = convertAnswerToString(question.options, it.answer),
-          originalPageId = resettlementAssessmentStrategies.findPageIdFromQuestionId(it.questionId, resettlementAssessmentEntity.assessmentType, resettlementAssessmentEntity.pathway, resettlementAssessmentEntity.version),
+          questionTitle = questionFromConfig.title,
+          answer = convertAnswerToString(questionFromConfig.options, questionAndAnswerFromDatabase.answer),
+          originalPageId = resettlementAssessmentStrategies.findPageIdFromQuestionId(questionFromConfig.id, resettlementAssessmentEntity.assessmentType, resettlementAssessmentEntity.pathway, resettlementAssessmentEntity.version),
         )
       } else {
         null
@@ -433,7 +434,7 @@ class ResettlementAssessmentService(
     )
   }
 
-  fun convertAnswerToString(options: List<ResettlementAssessmentOption>?, answer: Answer<*>): String? {
+  fun convertAnswerToString(options: List<AssessmentConfigOption>?, answer: Answer<*>): String? {
     val answerComponents: List<String>? = when (answer) {
       is StringAnswer -> listOf(answer.answer as String)
       is ListAnswer -> {
@@ -454,7 +455,7 @@ class ResettlementAssessmentService(
     return if (answerComponents != null) convertFromListToStringWithLineBreaks(answerComponents, options) else null
   }
 
-  fun convertFromListToStringWithLineBreaks(stringElements: List<String>, options: List<ResettlementAssessmentOption>?) =
+  fun convertFromListToStringWithLineBreaks(stringElements: List<String>, options: List<AssessmentConfigOption>?) =
     stringElements
       .filter { it.isNotBlank() }
       .map { it.trim() }

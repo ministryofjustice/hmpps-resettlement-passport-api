@@ -5,6 +5,7 @@ metadata:
   labels:
     role: alert-rules
   name: {{ include "app.fullname" . }}-external-api-custom
+
 spec:
   groups:
     - name: resettlement-passport-application-rules

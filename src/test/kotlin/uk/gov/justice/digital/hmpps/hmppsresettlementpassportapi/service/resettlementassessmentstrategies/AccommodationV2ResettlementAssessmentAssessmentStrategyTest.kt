@@ -1358,6 +1358,43 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
       ),
       true,
     ),
+    // Happy path 1a - correct full set of questions asked - no nested - different order
+    Arguments.of(
+      ResettlementAssessmentCompleteRequest(
+        version = 2,
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "ADDITIONAL_INFORMATION_WHERE_DID_THEY_LIVE",
+            answer = StringAnswer("Some extra info here"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE",
+            answer = StringAnswer("NO_PERMANENT_OR_FIXED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE",
+            answer = StringAnswer("NO_PERMANENT_OR_FIXED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "CASE_NOTE_SUMMARY",
+            answer = StringAnswer("My case note summary..."),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "ACCOMMODATION_SUPPORT_NEEDS_CHECKBOXES",
+            answer = ListAnswer(listOf("HELP_TO_KEEP_HOME", "ARRANGE_STORAGE")),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "SUPPORT_NEEDS",
+            answer = StringAnswer("SUPPORT_REQUIRED"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "ADDITIONAL_INFORMATION_WHERE_WILL_THEY_LIVE",
+            answer = StringAnswer("Some more information here"),
+          ),
+        ),
+      ),
+      true,
+    ),
     // Happy path 2 - correct full set of questions - with nested
     Arguments.of(
       ResettlementAssessmentCompleteRequest(

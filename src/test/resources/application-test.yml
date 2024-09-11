@@ -30,6 +30,7 @@ schedule:
     release-day-metrics: 0 0 12 * * *
     reconcile-release-dates: 0 0 2 * * *
     delete-expired-otp: 0 0 3 * * *
+    custom-popuser-metrics: 0 0 8 * * *
 
 spring:
   devtools:

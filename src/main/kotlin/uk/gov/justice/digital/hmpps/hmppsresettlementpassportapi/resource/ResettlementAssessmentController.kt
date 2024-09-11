@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -21,12 +23,18 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.AssessmentSkipRequest
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.LatestResettlementAssessmentResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.PrisonerResettlementAssessment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentCompleteRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentNextPage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentSubmitResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettlementAssessmentService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditDetails
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.ResettlementAssessmentStrategy
 
 @RestController
@@ -36,6 +44,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettl
 class ResettlementAssessmentController(
   private val resettlementAssessmentStrategy: ResettlementAssessmentStrategy,
   private val resettlementAssessmentService: ResettlementAssessmentService,
+  private val auditService: AuditService,
 ) {
   @PostMapping("/{nomsId}/resettlement-assessment/{pathway}/next-page", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Returns next page of resettlement assessment", description = "Returns next page of resettlement assessment")
@@ -173,7 +182,12 @@ class ResettlementAssessmentController(
     nomsId: String,
     @RequestParam("assessmentType", required = false, defaultValue = "BCST2")
     assessmentType: ResettlementAssessmentType,
-  ) = resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId, assessmentType)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): List<PrisonerResettlementAssessment> {
+    auditService.audit(AuditAction.GET_ASSESSMENT_SUMMARY, nomsId, auth, buildDetails(assessmentType, null))
+    return resettlementAssessmentService.getResettlementAssessmentSummaryByNomsId(nomsId, assessmentType)
+  }
 
   @PostMapping("/{nomsId}/resettlement-assessment/{pathway}/complete", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Completes a resettlement assessment for the given nomsId and pathway", description = "Completes a resettlement assessment for the given nomsId and pathway")
@@ -218,6 +232,7 @@ class ResettlementAssessmentController(
     @RequestHeader("Authorization")
     auth: String,
   ): ResponseEntity<Void> {
+    auditService.audit(AuditAction.COMPLETE_ASSESSMENT, nomsId, auth, buildDetails(assessmentType, pathway))
     resettlementAssessmentStrategy.completeAssessment(nomsId, pathway, assessmentType, resettlementAssessmentCompleteRequest, auth)
     return ResponseEntity.ok().build()
   }
@@ -262,7 +277,10 @@ class ResettlementAssessmentController(
     useNewDeliusCaseNoteFormat: Boolean = false,
     @RequestHeader("Authorization")
     auth: String,
-  ) = resettlementAssessmentService.submitResettlementAssessmentByNomsId(nomsId, assessmentType, useNewDeliusCaseNoteFormat, auth)
+  ): ResettlementAssessmentSubmitResponse {
+    auditService.audit(AuditAction.SUBMIT_ASSESSMENT, nomsId, auth, buildDetails(assessmentType, null))
+    return resettlementAssessmentService.submitResettlementAssessmentByNomsId(nomsId, assessmentType, useNewDeliusCaseNoteFormat, auth)
+  }
 
   @GetMapping("/{nomsId}/resettlement-assessment/{pathway}/latest", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
@@ -310,7 +328,12 @@ class ResettlementAssessmentController(
     @PathVariable("pathway")
     @Parameter(required = true)
     pathway: Pathway,
-  ) = resettlementAssessmentService.getLatestResettlementAssessmentByNomsIdAndPathway(nomsId, pathway, resettlementAssessmentStrategy)
+    @RequestHeader("Authorization")
+    auth: String,
+  ) : LatestResettlementAssessmentResponse {
+    auditService.audit(AuditAction.GET_ASSESSMENT, nomsId, auth, buildDetails(null, pathway))
+    return resettlementAssessmentService.getLatestResettlementAssessmentByNomsIdAndPathway(nomsId, pathway, resettlementAssessmentStrategy)
+  }
 
   @PostMapping("/{nomsId}/resettlement-assessment/skip", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Skip an assessment")
@@ -405,4 +428,8 @@ class ResettlementAssessmentController(
     @RequestParam("assessmentType")
     assessmentType: ResettlementAssessmentType,
   ) = resettlementAssessmentStrategy.getLatestResettlementAssessmentVersion(nomsId, assessmentType, pathway)
+}
+
+private fun buildDetails(assessmentType: ResettlementAssessmentType?, pathway: Pathway? ): String {
+  return Json.encodeToString(AuditDetails(assessmentType, pathway))
 }

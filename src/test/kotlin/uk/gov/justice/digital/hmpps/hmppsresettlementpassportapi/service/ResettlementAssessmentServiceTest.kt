@@ -17,7 +17,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCase
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.TagAndQuestionMapping
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.MapAnswer
@@ -25,7 +24,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
@@ -36,8 +34,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ProfileTagsRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.processProfileTags
@@ -78,11 +74,6 @@ class ResettlementAssessmentServiceTest {
   private lateinit var profileTagsRepository: ProfileTagsRepository
 
   @Mock
-  private lateinit var auditService: AuditService
-
-  private var jwtAuthHelper = JwtAuthHelper()
-
-  @Mock
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
@@ -99,7 +90,6 @@ class ResettlementAssessmentServiceTest {
       caseNoteRetryRepository,
       profileTagsRepository,
       "https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk",
-      auditService,
     )
   }
 
@@ -638,227 +628,5 @@ class ResettlementAssessmentServiceTest {
     expectedTagAndQuestionMappingList.toMutableList().add(TagAndQuestionMapping.HOME_ADAPTION_POST_RELEASE)
 
     Assertions.assertEquals(expectedTagAndQuestionMappingList, profileTagList)
-  }
-
-  @Test
-  fun `test submitResettlementAssessmentByNomsId - Audit submission Immediate needs report`() {
-    val nomsId = "GY3245"
-    val prisonId = "xyz1"
-    val token = jwtAuthHelper.createJwt("John Doe", authSource = "NOMIS")
-    val auth = "Bearer $token"
-    val assessmentType = ResettlementAssessmentType.BCST2
-    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "crn", prisonId, LocalDate.parse("2025-01-23"))
-    val accommodationResettlementAssessmentEntity =
-      createCompleteResettlementAssessmentEntity(1, Pathway.ACCOMMODATION)
-    val attitudesResettlementAssessmentEntity =
-      createCompleteResettlementAssessmentEntity(2, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR)
-    val childrenFamiliesResettlementAssessmentEntity =
-      createCompleteResettlementAssessmentEntity(3, Pathway.CHILDREN_FAMILIES_AND_COMMUNITY)
-    val drugsAlcoholResettlementAssessmentEntity =
-      createCompleteResettlementAssessmentEntity(4, Pathway.DRUGS_AND_ALCOHOL)
-    val educationSkillsResettlementAssessmentEntity =
-      createCompleteResettlementAssessmentEntity(5, Pathway.EDUCATION_SKILLS_AND_WORK)
-    val financeAndIdResettlementAssessmentEntity =
-      createCompleteResettlementAssessmentEntity(6, Pathway.FINANCE_AND_ID)
-    val healthResettlementAssessmentEntity =
-      createCompleteResettlementAssessmentEntity(7, Pathway.HEALTH)
-
-    val prisonerSearch = PrisonersSearch(
-      nomsId,
-      "John",
-      lastName = "Smith",
-      youthOffender = false,
-      prisonId = prisonId,
-      prisonName = "Test Prison",
-      cellLocation = "Location1",
-    )
-
-    Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
-    Mockito.`when`(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-        prisonerEntity.id(),
-        Pathway.ACCOMMODATION,
-        assessmentType,
-        listOf(
-          ResettlementAssessmentStatus.COMPLETE,
-        ),
-      ),
-    ).thenReturn(accommodationResettlementAssessmentEntity)
-    Mockito.`when`(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-        prisonerEntity.id(),
-        Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
-        assessmentType,
-        listOf(
-          ResettlementAssessmentStatus.COMPLETE,
-        ),
-      ),
-    ).thenReturn(attitudesResettlementAssessmentEntity)
-    Mockito.`when`(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-        prisonerEntity.id(),
-        Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
-        assessmentType,
-        listOf(
-          ResettlementAssessmentStatus.COMPLETE,
-        ),
-      ),
-    ).thenReturn(childrenFamiliesResettlementAssessmentEntity)
-    Mockito.`when`(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-        prisonerEntity.id(),
-        Pathway.DRUGS_AND_ALCOHOL,
-        assessmentType,
-        listOf(
-          ResettlementAssessmentStatus.COMPLETE,
-        ),
-      ),
-    ).thenReturn(drugsAlcoholResettlementAssessmentEntity)
-    Mockito.`when`(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-        prisonerEntity.id(),
-        Pathway.EDUCATION_SKILLS_AND_WORK,
-        assessmentType,
-        listOf(
-          ResettlementAssessmentStatus.COMPLETE,
-        ),
-      ),
-    ).thenReturn(educationSkillsResettlementAssessmentEntity)
-    Mockito.`when`(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-        prisonerEntity.id(),
-        Pathway.FINANCE_AND_ID,
-        assessmentType,
-        listOf(
-          ResettlementAssessmentStatus.COMPLETE,
-        ),
-      ),
-    ).thenReturn(financeAndIdResettlementAssessmentEntity)
-    Mockito.`when`(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-        prisonerEntity.id(),
-        Pathway.HEALTH,
-        assessmentType,
-        listOf(
-          ResettlementAssessmentStatus.COMPLETE,
-        ),
-      ),
-    ).thenReturn(healthResettlementAssessmentEntity)
-
-    Mockito.`when`(prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)).thenReturn(prisonerSearch)
-
-    resettlementAssessmentService.submitResettlementAssessmentByNomsId(nomsId, assessmentType, true, auth)
-    Mockito.verify(auditService).audit(AuditAction.IMMEDIATE_NEEDS_REPORT_SUBMITTED_SUCCESS, nomsId, "John Doe")
-  }
-
-  @Test
-  fun `test submitResettlementAssessmentByNomsId - Audit submission pre-release report`() {
-    val nomsId = "GY3245"
-    val prisonId = "xyz1"
-    val token = jwtAuthHelper.createJwt("John Doe", authSource = "NOMIS")
-    val auth = "Bearer $token"
-    val assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN
-    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "crn", prisonId, LocalDate.parse("2025-01-23"))
-    val accommodationResettlementAssessmentEntity =
-      createCompleteResettlementAssessmentEntity(1, Pathway.ACCOMMODATION)
-    val attitudesResettlementAssessmentEntity =
-      createCompleteResettlementAssessmentEntity(2, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR)
-    val childrenFamiliesResettlementAssessmentEntity =
-      createCompleteResettlementAssessmentEntity(3, Pathway.CHILDREN_FAMILIES_AND_COMMUNITY)
-    val drugsAlcoholResettlementAssessmentEntity =
-      createCompleteResettlementAssessmentEntity(4, Pathway.DRUGS_AND_ALCOHOL)
-    val educationSkillsResettlementAssessmentEntity =
-      createCompleteResettlementAssessmentEntity(5, Pathway.EDUCATION_SKILLS_AND_WORK)
-    val financeAndIdResettlementAssessmentEntity =
-      createCompleteResettlementAssessmentEntity(6, Pathway.FINANCE_AND_ID)
-    val healthResettlementAssessmentEntity =
-      createCompleteResettlementAssessmentEntity(7, Pathway.HEALTH)
-
-    val prisonerSearch = PrisonersSearch(
-      nomsId,
-      "John",
-      lastName = "Smith",
-      youthOffender = false,
-      prisonId = prisonId,
-      prisonName = "Test Prison",
-      cellLocation = "Location1",
-    )
-
-    Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
-    Mockito.`when`(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-        prisonerEntity.id(),
-        Pathway.ACCOMMODATION,
-        assessmentType,
-        listOf(
-          ResettlementAssessmentStatus.COMPLETE,
-        ),
-      ),
-    ).thenReturn(accommodationResettlementAssessmentEntity)
-    Mockito.`when`(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-        prisonerEntity.id(),
-        Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
-        assessmentType,
-        listOf(
-          ResettlementAssessmentStatus.COMPLETE,
-        ),
-      ),
-    ).thenReturn(attitudesResettlementAssessmentEntity)
-    Mockito.`when`(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-        prisonerEntity.id(),
-        Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
-        assessmentType,
-        listOf(
-          ResettlementAssessmentStatus.COMPLETE,
-        ),
-      ),
-    ).thenReturn(childrenFamiliesResettlementAssessmentEntity)
-    Mockito.`when`(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-        prisonerEntity.id(),
-        Pathway.DRUGS_AND_ALCOHOL,
-        assessmentType,
-        listOf(
-          ResettlementAssessmentStatus.COMPLETE,
-        ),
-      ),
-    ).thenReturn(drugsAlcoholResettlementAssessmentEntity)
-    Mockito.`when`(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-        prisonerEntity.id(),
-        Pathway.EDUCATION_SKILLS_AND_WORK,
-        assessmentType,
-        listOf(
-          ResettlementAssessmentStatus.COMPLETE,
-        ),
-      ),
-    ).thenReturn(educationSkillsResettlementAssessmentEntity)
-    Mockito.`when`(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-        prisonerEntity.id(),
-        Pathway.FINANCE_AND_ID,
-        assessmentType,
-        listOf(
-          ResettlementAssessmentStatus.COMPLETE,
-        ),
-      ),
-    ).thenReturn(financeAndIdResettlementAssessmentEntity)
-    Mockito.`when`(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
-        prisonerEntity.id(),
-        Pathway.HEALTH,
-        assessmentType,
-        listOf(
-          ResettlementAssessmentStatus.COMPLETE,
-        ),
-      ),
-    ).thenReturn(healthResettlementAssessmentEntity)
-
-    Mockito.`when`(prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)).thenReturn(prisonerSearch)
-
-    resettlementAssessmentService.submitResettlementAssessmentByNomsId(nomsId, assessmentType, true, auth)
-    Mockito.verify(auditService).audit(AuditAction.PRE_RELEASE_REPORT_SUBMITTED_SUCCESS, nomsId, "John Doe")
   }
 }

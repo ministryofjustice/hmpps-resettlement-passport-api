@@ -1,0 +1,22 @@
+{{- $targetNamespace := .Release.Namespace }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    role: alert-rules
+  name: {{ include "app.fullname" . }}-external-api-custom
+
+spec:
+  groups:
+    - name: resettlement-passport-application-rules
+      rules:
+          - alert: ExternalAPICritical
+            expr: (sum by (client_name) (rate(http_client_requests_seconds_count{namespace = "{{ $targetNamespace }}", status!="200", status!="404", client_name!=""}[24h])) * 86400) > 0
+            for: 5m
+            labels:
+              severity: {{ index .Values "generic-prometheus-alerts" "alertSeverity" }}
+            annotations:
+              message: The External API's errors for HTTP request {{ `{{` }} $labels.client_name }} has exceeded the threshold on host {{ index .Values "generic-service" "ingress" "host"}}
+              runbook_url: https://dsdmoj.atlassian.net/wiki/spaces/RR/pages/5119475840/External+API+Failures
+              dashboard_url: {{ $.Values.grafanaUrl }}/d/application-alerts/application-alerts?orgId=1&var-namespace={{ $targetNamespace }}
+              summary: External API's Failures

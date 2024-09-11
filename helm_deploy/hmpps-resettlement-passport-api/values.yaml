@@ -154,4 +154,5 @@ gotenberg:
 # Also update the environment variables to point the application to the mocked services (on port 80) e.g. http://cvl-stub-api
 deploy_stubs: false
 
+grafanaUrl: https://grafana.live.cloud-platform.service.justice.gov.uk
 

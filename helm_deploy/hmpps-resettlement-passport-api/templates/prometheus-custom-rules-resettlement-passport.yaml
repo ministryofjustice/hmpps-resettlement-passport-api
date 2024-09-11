@@ -1,10 +1,4 @@
 {{- $targetNamespace := .Release.Namespace }}
-parameters:
-  - name: targets
-    type: object
-    default:
-      - dev
-      - prod
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:

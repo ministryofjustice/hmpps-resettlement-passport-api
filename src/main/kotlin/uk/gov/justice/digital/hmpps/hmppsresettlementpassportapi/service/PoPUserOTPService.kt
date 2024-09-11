@@ -7,15 +7,18 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserOTP
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.KnowledgeBasedVerification
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.OneLoginData
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PoPUserOTPEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PoPUserOTPRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PoPUserApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerMatchRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import java.time.LocalDateTime
-import java.util.Optional
+import kotlin.jvm.optionals.getOrNull
 
 @Service
 class PoPUserOTPService(
@@ -90,36 +93,49 @@ class PoPUserOTPService(
   }
 
   @Transactional
-  fun getPoPUserVerified(oneLoginData: OneLoginData): PoPUserResponse? {
-    if (oneLoginData.otp != null && oneLoginData.dob != null && oneLoginData.urn != null) {
-      val popUserOTPEntityExists = popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(
-        oneLoginData.otp,
-        oneLoginData.dob,
-        LocalDateTime.now(),
-      )
-        ?: throw ResourceNotFoundException("Person On Probation User otp  ${oneLoginData.otp}  not found in database or expired.")
+  fun getPoPUserVerified(oneLoginData: OneLoginData): PoPUserResponse {
+    val popUserOTPEntityExists = popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(
+      oneLoginData.otp,
+      oneLoginData.dob,
+      LocalDateTime.now(),
+    ) ?: throw ResourceNotFoundException(
+      "Person On Probation User otp  ${oneLoginData.otp}  not found in database or expired.",
+    )
 
-      val prisonerEntity: Optional<PrisonerEntity>? = prisonerRepository.findById(popUserOTPEntityExists.prisonerId)
-      val prisoner = prisonerSearchApiService.findPrisonerPersonalDetails(prisonerEntity!!.get().nomsId)
+    val prisonerEntity: PrisonerEntity = prisonerRepository.findById(popUserOTPEntityExists.prisonerId).getOrNull()
+      ?: throw ResourceNotFoundException("Prisoner with id ${popUserOTPEntityExists.prisonerId}  not found in database")
 
-      if (!prisonerEntity.isEmpty) {
-        val response = popUserApiService.postPoPUserVerification(
-          oneLoginData,
-          prisonerEntity,
-          prisoner,
-        )
-        if (response != null) {
-          popUserOTPRepository.delete(popUserOTPEntityExists)
-        } else {
-          throw RuntimeException("Person On Probation User Verification failed for prisonerId ${popUserOTPEntityExists.prisonerId} ")
-        }
-        return response
-      } else {
-        throw ResourceNotFoundException("Prisoner with id ${popUserOTPEntityExists.prisonerId}  not found in database")
-      }
-    } else {
-      throw ValidationException("required data otp, urn or dob  is missing")
+    val response = popUserApiService.postPoPUserVerification(
+      oneLoginData.urn,
+      prisonerEntity,
+    )
+
+    popUserOTPRepository.delete(popUserOTPEntityExists)
+    return response
+  }
+
+  @Transactional
+  fun verifyFromKnowledgeQuestions(formData: KnowledgeBasedVerification): PoPUserResponse {
+    val matches =
+      prisonerSearchApiService.match(PrisonerMatchRequest(firstName = formData.firstName, lastName = formData.lastName))
+        .filter(exactlyMatching(formData))
+    if (matches.size != 1) {
+      throw ValidationException("No exact match found")
     }
+
+    val match = matches.first()
+    val prisoner = prisonerRepository.findByNomsId(match.prisonerNumber)
+      ?: throw ResourceNotFoundException("Prisoner with nomsId ${match.prisonerNumber}  not found in database")
+    val response = popUserApiService.postPoPUserVerification(
+      formData.urn,
+      prisoner,
+    )
+    // Cleanup any unused OTP
+    val otp = popUserOTPRepository.findByPrisonerId(prisoner.id())
+    if (otp != null) {
+      popUserOTPRepository.delete(otp)
+    }
+    return response
   }
 
   @Transactional
@@ -131,7 +147,15 @@ class PoPUserOTPService(
 
   @Transactional
   fun getPoPUserOTPByPrisoner(prisoner: PrisonerEntity): PoPUserOTPEntity {
-    val popUserOTP = popUserOTPRepository.findByPrisonerId(prisoner.id()) ?: throw ResourceNotFoundException("OTP for Prisoner with id ${prisoner.id} not found in database")
+    val popUserOTP = popUserOTPRepository.findByPrisonerId(prisoner.id())
+      ?: throw ResourceNotFoundException("OTP for Prisoner with id ${prisoner.id} not found in database")
     return popUserOTP
   }
+}
+
+private fun exactlyMatching(formData: KnowledgeBasedVerification): (PrisonersSearch) -> Boolean = { ps ->
+  formData.firstName == ps.firstName &&
+    formData.lastName == ps.lastName &&
+    formData.dateOfBirth == ps.dateOfBirth &&
+    formData.nomsId == ps.prisonerNumber
 }

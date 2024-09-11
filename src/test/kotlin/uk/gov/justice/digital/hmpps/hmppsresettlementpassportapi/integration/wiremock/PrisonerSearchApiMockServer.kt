@@ -1,7 +1,9 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock
 
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import com.github.tomakehurst.wiremock.client.WireMock.equalToJson
 import com.github.tomakehurst.wiremock.client.WireMock.get
+import com.github.tomakehurst.wiremock.client.WireMock.post
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 
 class PrisonerSearchApiMockServer : WireMockServerBase() {
@@ -15,12 +17,7 @@ class PrisonerSearchApiMockServer : WireMockServerBase() {
     stubFor(
       get("/prison/$prisonId/prisoners?size=$size&page=$page&sort=prisonerNumber").willReturn(
         if (status == 200) {
-          aResponse()
-            .withHeader("Content-Type", "application/json")
-            .withBody(
-              prisonersListJSON,
-            )
-            .withStatus(status)
+          jsonSuccess(prisonersListJSON)
         } else {
           aResponse()
             .withHeader("Content-Type", "application/json")
@@ -36,12 +33,7 @@ class PrisonerSearchApiMockServer : WireMockServerBase() {
     stubFor(
       get("/prisoner/$nomsId").willReturn(
         if (status == 200) {
-          aResponse()
-            .withHeader("Content-Type", "application/json")
-            .withBody(
-              prisonerDataJSON,
-            )
-            .withStatus(status)
+          jsonSuccess(prisonerDataJSON)
         } else {
           aResponse()
             .withHeader("Content-Type", "application/json")
@@ -49,6 +41,16 @@ class PrisonerSearchApiMockServer : WireMockServerBase() {
             .withStatus(status)
         },
       ),
+    )
+  }
+
+  fun stubMatchPrisonerOneMatch() {
+    stubFor(
+      post("/prisoner-search/match-prisoners").withRequestBody(
+        equalToJson(
+          """{ "firstName": "John", "lastName": "Smith" }""",
+        ),
+      ).willReturn(jsonSuccess(readFile("testdata/prisoner-search-api/match-response-1-match.json"))),
     )
   }
 }

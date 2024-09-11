@@ -242,7 +242,6 @@ class ResettlementAssessmentService(
         )
       },
     )
-
     return ResettlementAssessmentSubmitResponse(deliusCaseNoteFailed = failedCaseNotes.isNotEmpty())
   }
 

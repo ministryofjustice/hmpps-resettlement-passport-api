@@ -93,7 +93,7 @@ internal fun ResettlementAssessmentQuestion.removeNestedQuestions() = Resettleme
 internal fun getProfileTag(questionId: String, answer: Answer<*>, pathway: Pathway): List<String> {
   val tagFound = mutableListOf<String>()
   TagAndQuestionMapping.entries.forEach {
-    if ((questionId == it.questionId) &&
+    if ((it.questionId.contains(questionId)) &&
       (answer.answer.toString().contains(it.optionId)) &&
       (pathway.name == it.pathway.name)
     ) {

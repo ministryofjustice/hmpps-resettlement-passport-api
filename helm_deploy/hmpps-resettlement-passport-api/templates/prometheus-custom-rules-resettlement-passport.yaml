@@ -1,4 +1,10 @@
 {{- $targetNamespace := .Release.Namespace }}
+parameters:
+  - name: targets
+    type: object
+    default:
+      - dev
+      - prod
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -10,13 +16,13 @@ spec:
   groups:
     - name: resettlement-passport-application-rules
       rules:
-        - alert: ExternalAPICritical
-          expr: (sum(rate(http_client_requests_seconds_sum{status="CLIENT_ERROR"}[5m])) / sum(rate(http_client_requests_seconds_sum{status="CLIENT_ERROR"}[5m]))) > 0.05
-          for: 5m
-          labels:
-            severity: {{ index .Values "generic-prometheus-alerts" "alertSeverity" }}
-          annotations:
-            message: The External API's error rate for HTTP requests has exceed 5% for 5 mins on host {{ index .Values "generic-service" "ingress" "host"}}
-            runbook_url: https://dsdmoj.atlassian.net/wiki/spaces/RR/pages/5119475840/External+API+Failures
-            dashboard_url: {{ $.Values.grafanaUrl }}/d/application-alerts/application-alerts?orgId=1&var-namespace={{ $targetNamespace }}
-            summary: External API's Failures
+          - alert: ExternalAPICritical
+            expr: (sum by (client_name) (rate(http_client_requests_seconds_count{namespace = "{{ $targetNamespace }}", status!="200", status!="404", client_name!=""}[24h])) * 86400) > 0
+            for: 5m
+            labels:
+              severity: {{ index .Values "generic-prometheus-alerts" "alertSeverity" }}
+            annotations:
+              message: The External API's errors for HTTP request {{ `{{` }} $labels.client_name }} has exceeded the threshold on host {{ index .Values "generic-service" "ingress" "host"}}
+              runbook_url: https://dsdmoj.atlassian.net/wiki/spaces/RR/pages/5119475840/External+API+Failures
+              dashboard_url: {{ $.Values.grafanaUrl }}/d/application-alerts/application-alerts?orgId=1&var-namespace={{ $targetNamespace }}
+              summary: External API's Failures

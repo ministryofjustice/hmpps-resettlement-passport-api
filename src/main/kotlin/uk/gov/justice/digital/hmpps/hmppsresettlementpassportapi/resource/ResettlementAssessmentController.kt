@@ -330,7 +330,7 @@ class ResettlementAssessmentController(
     pathway: Pathway,
     @RequestHeader("Authorization")
     auth: String,
-  ) : LatestResettlementAssessmentResponse {
+  ): LatestResettlementAssessmentResponse {
     auditService.audit(AuditAction.GET_ASSESSMENT, nomsId, auth, buildDetails(null, pathway))
     return resettlementAssessmentService.getLatestResettlementAssessmentByNomsIdAndPathway(nomsId, pathway, resettlementAssessmentStrategy)
   }
@@ -430,6 +430,6 @@ class ResettlementAssessmentController(
   ) = resettlementAssessmentStrategy.getLatestResettlementAssessmentVersion(nomsId, assessmentType, pathway)
 }
 
-private fun buildDetails(assessmentType: ResettlementAssessmentType?, pathway: Pathway? ): String {
+private fun buildDetails(assessmentType: ResettlementAssessmentType?, pathway: Pathway?): String {
   return Json.encodeToString(AuditDetails(assessmentType, pathway))
 }

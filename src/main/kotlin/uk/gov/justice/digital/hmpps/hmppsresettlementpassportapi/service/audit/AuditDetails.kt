@@ -7,6 +7,5 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 @Serializable
 data class AuditDetails(
   val assessmentType: ResettlementAssessmentType? = null,
-  val pathway: Pathway? = null
+  val pathway: Pathway? = null,
 )
-

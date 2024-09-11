@@ -17,8 +17,10 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettl
 class ResettlementAssessmentControllerTest {
   @Mock
   private lateinit var resettlementAssessmentStrategy: ResettlementAssessmentStrategy
+
   @Mock
   private lateinit var resettlementAssessmentService: ResettlementAssessmentService
+
   @Mock
   private lateinit var auditService: AuditService
 

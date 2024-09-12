@@ -192,7 +192,7 @@ class PopUserOTPResourceController(
   fun verifyOTPByOneLoginURN(
     @RequestBody
     oneLoginUserData: OneLoginData,
-  ): PoPUserResponse? {
+  ): PoPUserResponse {
     logger.debug { "In verifyOTPByOneLoginURN" }
     return popUserOTPService.getPoPUserVerified(oneLoginUserData)
   }

@@ -120,7 +120,7 @@ class PoPUserOTPService(
       prisonerSearchApiService.match(PrisonerMatchRequest(firstName = formData.firstName, lastName = formData.lastName))
         .filter(exactlyMatching(formData))
     if (matches.size != 1) {
-      throw ValidationException("No exact match found")
+      throw ResourceNotFoundException("No exact match found")
     }
 
     val match = matches.first()

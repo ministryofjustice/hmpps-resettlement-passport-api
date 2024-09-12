@@ -289,4 +289,154 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
         assertThat(response.id).isGreaterThanOrEqualTo(1)
       }
   }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
+  fun `reject verification of probation user by knowledge questions when dob is wrong`() {
+    val nomsId = "G4161UF"
+    val urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8"
+    val dob = "2010-01-01"
+    val email = "john@smith.com"
+
+    popUserApiMockServer.stubPostPoPUserVerification(200)
+    prisonerSearchApiMockServer.stubMatchPrisonerOneMatch()
+
+    webTestClient.post()
+      .uri("/resettlement-passport/popUser/onelogin/verify-answers")
+      .bodyValue(
+        mapOf(
+          "urn" to urn,
+          "dateOfBirth" to dob,
+          "email" to email,
+          "nomsId" to nomsId,
+          "firstName" to "John",
+          "lastName" to "Smith",
+        ),
+
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
+  fun `reject verification of probation user by knowledge questions when nomis id is wrong`() {
+    val urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8"
+    val dob = "2010-01-01"
+    val email = "john@smith.com"
+
+    popUserApiMockServer.stubPostPoPUserVerification(200)
+    prisonerSearchApiMockServer.stubMatchPrisonerOneMatch()
+
+    webTestClient.post()
+      .uri("/resettlement-passport/popUser/onelogin/verify-answers")
+      .bodyValue(
+        mapOf(
+          "urn" to urn,
+          "dateOfBirth" to dob,
+          "email" to email,
+          "nomsId" to "WRONG",
+          "firstName" to "John",
+          "lastName" to "Smith",
+        ),
+
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
+  fun `reject verification of probation user by knowledge questions when no match found in search service`() {
+    val nomsId = "G4161UF"
+    val urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8"
+    val dob = "1982-10-24"
+    val email = "john@smith.com"
+
+    popUserApiMockServer.stubPostPoPUserVerification(200)
+    prisonerSearchApiMockServer.stubMatchPrisonerNoMatch()
+
+    webTestClient.post()
+      .uri("/resettlement-passport/popUser/onelogin/verify-answers")
+      .bodyValue(
+        mapOf(
+          "urn" to urn,
+          "dateOfBirth" to dob,
+          "email" to email,
+          "nomsId" to nomsId,
+          "firstName" to "John",
+          "lastName" to "Smith",
+        ),
+
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
+  fun `reject verification of probation user by knowledge questions duplicate match found`() {
+    val nomsId = "G4161UF"
+    val urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8"
+    val dob = "1982-10-24"
+    val email = "john@smith.com"
+
+    popUserApiMockServer.stubPostPoPUserVerification(200)
+    prisonerSearchApiMockServer.stubMatchPrisonerDuplicatedMatch()
+
+    webTestClient.post()
+      .uri("/resettlement-passport/popUser/onelogin/verify-answers")
+      .bodyValue(
+        mapOf(
+          "urn" to urn,
+          "dateOfBirth" to dob,
+          "email" to email,
+          "nomsId" to nomsId,
+          "firstName" to "John",
+          "lastName" to "Smith",
+        ),
+
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  fun `unauthenticated verification`() {
+    webTestClient.post()
+      .uri("/resettlement-passport/popUser/onelogin/verify-answers")
+      .bodyValue(
+        mapOf(
+          "urn" to "urn",
+          "dateOfBirth" to "2021-01-01",
+          "email" to "email@email.com",
+          "nomsId" to "123",
+          "firstName" to "John",
+          "lastName" to "Smith",
+        ),
+      ).exchange()
+      .expectStatus().isUnauthorized
+  }
+
+  @Test
+  fun `unauthorized verification`() {
+    webTestClient.post()
+      .uri("/resettlement-passport/popUser/onelogin/verify-answers")
+      .headers(setAuthorisation(roles = listOf("FISH")))
+      .bodyValue(
+        mapOf(
+          "urn" to "urn",
+          "dateOfBirth" to "2021-01-01",
+          "email" to "email@email.com",
+          "nomsId" to "123",
+          "firstName" to "John",
+          "lastName" to "Smith",
+        ),
+      ).exchange()
+      .expectStatus().isForbidden
+  }
 }

@@ -231,7 +231,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
       .jsonPath("userMessage").isEqualTo("Validation failure - please check request parameters and try again")
       .jsonPath("developerMessage").value { message: String ->
         assertThat(message).contains(
-          """Cannot deserialize value of type `uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway` from String "FAKE_PATHWAY": not one of the values accepted for Enum class: [ACCOMMODATION, CHILDREN_FAMILIES_AND_COMMUNITY, FINANCE_AND_ID, DRUGS_AND_ALCOHOL, ATTITUDES_THINKING_AND_BEHAVIOUR, EDUCATION_SKILLS_AND_WORK, HEALTH]""",
+          """pathway: must be one of [ACCOMMODATION, ATTITUDES_THINKING_AND_BEHAVIOUR, CHILDREN_FAMILIES_AND_COMMUNITY, DRUGS_AND_ALCOHOL, EDUCATION_SKILLS_AND_WORK, FINANCE_AND_ID, HEALTH]""",
         )
       }
       .jsonPath("moreInfo").isEmpty

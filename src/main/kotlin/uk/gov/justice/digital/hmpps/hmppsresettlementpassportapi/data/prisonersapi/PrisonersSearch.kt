@@ -18,10 +18,10 @@ data class PrisonersSearch(
   val nonDtoReleaseDateType: String? = null,
   val releaseOnTemporaryLicenceDate: LocalDate? = null,
   val dateOfBirth: LocalDate? = null,
-  val youthOffender: Boolean?,
+  val youthOffender: Boolean? = null,
   val prisonId: String,
   val prisonName: String,
-  val cellLocation: String?,
+  val cellLocation: String? = null,
   var displayReleaseDate: LocalDate? = null,
   val recall: Boolean = false,
 )

@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config
 
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import jakarta.validation.ValidationException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import org.springframework.web.server.ServerWebInputException
+import java.time.LocalDate
+import java.util.UUID
 
 @RestControllerAdvice
 class HmppsResettlementPassportApiExceptionHandler {
@@ -51,16 +54,55 @@ class HmppsResettlementPassportApiExceptionHandler {
   fun handleValidationException(e: Exception): ResponseEntity<ErrorResponse> {
     val exceptionMessage = if (e.cause != null) e.cause?.message else e.message
     log.info("Validation exception: {}", exceptionMessage)
+    return when (val cause = e.cause) {
+      is MismatchedInputException -> handleMismatchedInputCause(e, cause)
+      else ->
+        ResponseEntity
+          .status(BAD_REQUEST)
+          .body(
+            ErrorResponse(
+              status = BAD_REQUEST,
+              userMessage = "Validation failure - please check request parameters and try again",
+              developerMessage = exceptionMessage,
+            ),
+          )
+    }
+  }
+
+  private fun handleMismatchedInputCause(
+    e: Exception,
+    cause: MismatchedInputException,
+  ): ResponseEntity<ErrorResponse> {
+    val message = "${variablePath(cause)}: ${mismatchedInputMessage(cause)}"
+    log.info("Mismatched input: {}", e.message)
     return ResponseEntity
       .status(BAD_REQUEST)
       .body(
         ErrorResponse(
           status = BAD_REQUEST,
           userMessage = "Validation failure - please check request parameters and try again",
-          developerMessage = exceptionMessage,
+          developerMessage = message,
         ),
       )
   }
+
+  private fun mismatchedInputMessage(cause: MismatchedInputException): String {
+    if (cause.message?.contains("missing", ignoreCase = true) == true) {
+      return "is required"
+    }
+
+    val type = cause.targetType
+    return when {
+      type == LocalDate::class.java -> "must be a date in format yyyy-MM-dd"
+      type == Boolean::class.java -> "must be a boolean true|false"
+      type.isEnum -> "must be one of [${type.enumConstants.joinToString { it.toString() }}]"
+      type == UUID::class.java -> "must be a valid UUID"
+      else -> "is invalid"
+    }
+  }
+
+  private fun variablePath(cause: MismatchedInputException) =
+    cause.path.joinToString(".") { it.fieldName ?: "[${it.index}]" }
 
   @ExceptionHandler(ResourceNotFoundException::class)
   fun handleResourceNotFoundException(e: ResourceNotFoundException): ResponseEntity<ErrorResponse> {

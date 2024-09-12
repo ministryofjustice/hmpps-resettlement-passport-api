@@ -4,6 +4,7 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.bodyToFlux
 import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
@@ -44,21 +45,33 @@ class PrisonerSearchApiService(
   }
 
   @Cacheable("prisoner-search-api-find-prisoners-personal-details")
-  fun findPrisonerPersonalDetails(nomsId: String): PrisonersSearch {
-    return prisonerSearchWebClientClientCredentials
-      .get()
-      .uri(
-        "/prisoner/{nomsId}",
-        mapOf(
-          "nomsId" to nomsId,
-        ),
-      )
-      .retrieve()
-      .onStatus(
-        { it == HttpStatus.NOT_FOUND },
-        { throw ResourceNotFoundException("Prisoner $nomsId not found in prisoner search api") },
-      )
-      .bodyToMono<PrisonersSearch>()
-      .block() ?: throw RuntimeException("Unexpected null returned from request.")
-  }
+  fun findPrisonerPersonalDetails(nomsId: String): PrisonersSearch = prisonerSearchWebClientClientCredentials
+    .get()
+    .uri(
+      "/prisoner/{nomsId}",
+      mapOf(
+        "nomsId" to nomsId,
+      ),
+    )
+    .retrieve()
+    .onStatus(
+      { it == HttpStatus.NOT_FOUND },
+      { throw ResourceNotFoundException("Prisoner $nomsId not found in prisoner search api") },
+    )
+    .bodyToMono<PrisonersSearch>()
+    .block() ?: throw RuntimeException("Unexpected null returned from request.")
+
+  @Cacheable("prisoner-search-api-match-prisoners")
+  fun match(matchRequest: PrisonerMatchRequest): List<PrisonersSearch> = prisonerSearchWebClientClientCredentials.post()
+    .uri("/prisoner-search/match-prisoners")
+    .bodyValue(matchRequest)
+    .retrieve()
+    .bodyToFlux<PrisonersSearch>()
+    .collectList()
+    .block() ?: throw RuntimeException("Unexpected null returned from request.")
 }
+
+data class PrisonerMatchRequest(
+  val firstName: String,
+  val lastName: String,
+)

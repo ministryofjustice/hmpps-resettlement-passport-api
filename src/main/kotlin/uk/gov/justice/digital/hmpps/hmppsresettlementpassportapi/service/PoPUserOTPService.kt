@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerMatchRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import kotlin.jvm.optionals.getOrNull
 
 @Service
@@ -62,7 +63,7 @@ class PoPUserOTPService(
 
   @Transactional
   fun createPoPUserOTP(prisoner: PrisonerEntity): PoPUserOTP {
-    val now = LocalDateTime.now()
+    val now = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
     val popUserOTPExists = popUserOTPRepository.findByPrisonerId(prisoner.id())
     val prisonerDOB = prisonerSearchApiService.findPrisonerPersonalDetails(prisoner.nomsId).dateOfBirth
       ?: throw ValidationException("Person On Probation User DOB not found in Prisoner Search Service.")

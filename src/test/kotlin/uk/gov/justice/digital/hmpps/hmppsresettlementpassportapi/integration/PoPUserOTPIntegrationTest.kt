@@ -1,28 +1,22 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
+import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
+import org.assertj.core.api.Assertions.within
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.randomAlphaNumericString
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserOTP
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserResponse
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 class PoPUserOTPIntegrationTest : IntegrationTestBase() {
-
-  private val fakeNow = LocalDateTime.parse("2024-02-19T10:18:22.636066")
+  @BeforeEach
+  fun resetMappings() = popUserApiMockServer.resetMappings()
 
   @Test
   @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
   fun `Create, update and delete person on probation user otp - happy path`() {
-    mockkStatic(LocalDateTime::class)
-    mockkStatic(::randomAlphaNumericString)
-    every { LocalDateTime.now() } returns fakeNow
-    every {
-      randomAlphaNumericString()
-    } returns "1X3456"
-
-    val expectedOutput = readFile("testdata/expectation/pop-user-otp-post-result.json")
     val nomsId = "G4161UF"
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
 
@@ -32,22 +26,21 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isNotFound
 
-    webTestClient.post()
+    val postResponse: PoPUserOTP = webTestClient.post()
       .uri("/resettlement-passport/popUser/$nomsId/otp")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody()
-      .json(expectedOutput)
+      .returnBody<PoPUserOTP>()
+    verifyOtpResponse(postResponse)
 
     webTestClient.get()
       .uri("/resettlement-passport/popUser/$nomsId/otp")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
-      .expectBody()
-      .json(expectedOutput)
+      .expectBody<PoPUserOTP>(postResponse)
 
     webTestClient.delete()
       .uri("/resettlement-passport/popUser/$nomsId/otp")
@@ -60,12 +53,15 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
-    unmockkStatic(LocalDateTime::class)
   }
 
-  @Test
-  @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
-  fun `Get All OTP of Person on Probation Users - happy path`() {
+  private fun verifyOtpResponse(response: PoPUserOTP) {
+    val now = LocalDateTime.now()
+    val inSevenDaysAtMidnight = now.plusDays(7).withHour(23).withMinute(59).withSecond(59)
+    assertThat(response.id).isGreaterThanOrEqualTo(1)
+    assertThat(response.otp).hasSize(6)
+    assertThat(response.creationDate).isCloseTo(now, within(10, ChronoUnit.SECONDS))
+    assertThat(response.expiryDate).isCloseTo(inSevenDaysAtMidnight, within(10, ChronoUnit.SECONDS))
   }
 
   @Test
@@ -81,15 +77,6 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
   fun `Create Person on Probation User OTP another entry`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
-    mockkStatic(::randomAlphaNumericString)
-    every {
-      randomAlphaNumericString()
-    } returns "1X3456"
-
-    val expectedOutput = readFile("testdata/expectation/pop-user-otp-post-result.json")
-    val expectedOutput2 = readFile("testdata/expectation/pop-user-otp-post-result-2.json")
     val nomsId = "G4161UF"
 
     webTestClient.get()
@@ -98,37 +85,33 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isNotFound
 
-    webTestClient.post()
+    val firstOtp: PoPUserOTP = webTestClient.post()
       .uri("/resettlement-passport/popUser/$nomsId/otp")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody()
-      .json(expectedOutput)
+      .returnBody<PoPUserOTP>()
+    verifyOtpResponse(firstOtp)
 
-    mockkStatic(::randomAlphaNumericString)
-    every {
-      randomAlphaNumericString()
-    } returns "5X7891"
-
-    webTestClient.post()
+    val secondOtp: PoPUserOTP = webTestClient.post()
       .uri("/resettlement-passport/popUser/$nomsId/otp")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody()
-      .json(expectedOutput2)
+      .returnBody<PoPUserOTP>()
+
+    verifyOtpResponse(secondOtp)
+    assertThat(secondOtp.id).isGreaterThan(firstOtp.id)
+    assertThat(secondOtp.otp).isNotEqualTo(firstOtp.otp)
 
     webTestClient.get()
       .uri("/resettlement-passport/popUser/$nomsId/otp")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
-      .expectBody()
-      .json(expectedOutput2)
-    unmockkStatic(LocalDateTime::class)
+      .expectBody<PoPUserOTP>(secondOtp)
   }
 
   @Test
@@ -156,57 +139,48 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
   fun `Verify Person on Probation User OTP - happy path`() {
-    popUserApiMockServer.resetMappings()
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
-    mockkStatic(::randomAlphaNumericString)
-    every {
-      randomAlphaNumericString()
-    } returns "1X3456"
-
-    val expectedOutput1 = readFile("testdata/expectation/pop-user-otp-post-result.json")
     val nomsId = "G4161UF"
+    val urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8"
+    val dob = "1982-10-24"
+    val email = "dave@dave.com"
+
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
-    webTestClient.post()
+    val createOtpResponse = webTestClient.post()
       .uri("/resettlement-passport/popUser/$nomsId/otp")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
-      .expectHeader().contentType("application/json")
-      .expectBody()
-      .json(expectedOutput1)
+      .returnBody<PoPUserOTP>()
 
-    val expectedOutput2 = readFile("testdata/expectation/pop-user-verify-post-result.json")
     popUserApiMockServer.stubPostPoPUserVerification(200)
-    webTestClient.post()
+    verifyOtpResponse(createOtpResponse)
+
+    val verifyResponse = webTestClient.post()
       .uri("/resettlement-passport/popUser/onelogin/verify")
       .bodyValue(
         mapOf(
-          "urn" to "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
-          "otp" to "1X3456",
-          "dob" to "1982-10-24",
+          "urn" to urn,
+          "otp" to createOtpResponse.otp,
+          "dob" to dob,
+          "email" to email,
         ),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
-      .expectHeader().contentType("application/json")
-      .expectBody()
-      .json(expectedOutput2)
+      .returnBody<PoPUserResponse>()
+
+    assertThat(verifyResponse.verified).isTrue
+    assertThat(verifyResponse.id).isEqualTo(createOtpResponse.id)
+    assertThat(verifyResponse.oneLoginUrn).isEqualTo(urn)
+    assertThat(verifyResponse.nomsId).isEqualTo(nomsId)
+    assertThat(verifyResponse.crn).isEqualTo("abc")
+    assertThat(verifyResponse.cprId).isEqualTo("NA")
   }
 
   @Test
   @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
   fun `Verify Person on Probation User OTP - Invalid OTP`() {
-    popUserApiMockServer.resetMappings()
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
-    mockkStatic(::randomAlphaNumericString)
-    every {
-      randomAlphaNumericString()
-    } returns "1X3456"
-
-    val expectedOutput1 = readFile("testdata/expectation/pop-user-otp-post-result.json")
     val nomsId = "G4161UF"
 
     webTestClient.post()
@@ -215,8 +189,7 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody()
-      .json(expectedOutput1)
+      .assertBody<PoPUserOTP>(::verifyOtpResponse)
 
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     popUserApiMockServer.stubPostPoPUserVerification(200)
@@ -227,26 +200,18 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
           "urn" to "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
           "otp" to "123457",
           "dob" to "1982-10-24",
+          "email" to "dave@dave.com",
         ),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
-    unmockkStatic(LocalDateTime::class)
   }
 
   @Test
   @Sql("classpath:testdata/sql/seed-pop-user-otp-2.sql")
   fun `Verify Person on Probation User OTP - Expired OTP`() {
-    popUserApiMockServer.resetMappings()
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow.plusDays(9)
-    mockkStatic(::randomAlphaNumericString)
-    every {
-      randomAlphaNumericString()
-    } returns "1X3456"
     val nomsId = "G4161UF"
-
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     popUserApiMockServer.stubPostPoPUserVerification(200)
 
@@ -257,25 +222,17 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
           "urn" to "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
           "otp" to "1X3456",
           "dob" to "1982-10-24",
+          "email" to "dave@dave.com",
         ),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
-    unmockkStatic(LocalDateTime::class)
   }
 
   @Test
   @Sql("classpath:testdata/sql/seed-pop-user-otp-2.sql")
   fun `Verify Person on Probation User OTP - DOB no match`() {
-    popUserApiMockServer.resetMappings()
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
-    mockkStatic(::randomAlphaNumericString)
-    every {
-      randomAlphaNumericString()
-    } returns "1X3456"
-
     val nomsId = "G4161UF"
 
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
@@ -287,12 +244,199 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
           "urn" to "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8",
           "otp" to "123456",
           "dob" to "2000-01-01",
+          "email" to "dave@dave.com",
         ),
 
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
-    unmockkStatic(LocalDateTime::class)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
+  fun `successfully verify probation user by knowledge questions`() {
+    val nomsId = "G4161UF"
+    val urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8"
+    val dob = "1982-10-24"
+    val email = "john@smith.com"
+
+    popUserApiMockServer.stubPostPoPUserVerification(200)
+    prisonerSearchApiMockServer.stubMatchPrisonerOneMatch()
+
+    webTestClient.post()
+      .uri("/resettlement-passport/popUser/onelogin/verify-answers")
+      .bodyValue(
+        mapOf(
+          "urn" to urn,
+          "dateOfBirth" to dob,
+          "email" to email,
+          "nomsId" to nomsId,
+          "firstName" to "John",
+          "lastName" to "Smith",
+        ),
+
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .assertBody<PoPUserResponse> { response ->
+        assertThat(response.verified).isTrue()
+        assertThat(response.oneLoginUrn).isEqualTo(urn)
+        assertThat(response.nomsId).isEqualTo(nomsId)
+        assertThat(response.crn).isEqualTo("abc")
+        assertThat(response.cprId).isEqualTo("NA")
+        assertThat(response.id).isGreaterThanOrEqualTo(1)
+      }
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
+  fun `reject verification of probation user by knowledge questions when dob is wrong`() {
+    val nomsId = "G4161UF"
+    val urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8"
+    val dob = "2010-01-01"
+    val email = "john@smith.com"
+
+    popUserApiMockServer.stubPostPoPUserVerification(200)
+    prisonerSearchApiMockServer.stubMatchPrisonerOneMatch()
+
+    webTestClient.post()
+      .uri("/resettlement-passport/popUser/onelogin/verify-answers")
+      .bodyValue(
+        mapOf(
+          "urn" to urn,
+          "dateOfBirth" to dob,
+          "email" to email,
+          "nomsId" to nomsId,
+          "firstName" to "John",
+          "lastName" to "Smith",
+        ),
+
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
+  fun `reject verification of probation user by knowledge questions when nomis id is wrong`() {
+    val urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8"
+    val dob = "2010-01-01"
+    val email = "john@smith.com"
+
+    popUserApiMockServer.stubPostPoPUserVerification(200)
+    prisonerSearchApiMockServer.stubMatchPrisonerOneMatch()
+
+    webTestClient.post()
+      .uri("/resettlement-passport/popUser/onelogin/verify-answers")
+      .bodyValue(
+        mapOf(
+          "urn" to urn,
+          "dateOfBirth" to dob,
+          "email" to email,
+          "nomsId" to "WRONG",
+          "firstName" to "John",
+          "lastName" to "Smith",
+        ),
+
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
+  fun `reject verification of probation user by knowledge questions when no match found in search service`() {
+    val nomsId = "G4161UF"
+    val urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8"
+    val dob = "1982-10-24"
+    val email = "john@smith.com"
+
+    popUserApiMockServer.stubPostPoPUserVerification(200)
+    prisonerSearchApiMockServer.stubMatchPrisonerNoMatch()
+
+    webTestClient.post()
+      .uri("/resettlement-passport/popUser/onelogin/verify-answers")
+      .bodyValue(
+        mapOf(
+          "urn" to urn,
+          "dateOfBirth" to dob,
+          "email" to email,
+          "nomsId" to nomsId,
+          "firstName" to "John",
+          "lastName" to "Smith",
+        ),
+
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
+  fun `reject verification of probation user by knowledge questions duplicate match found`() {
+    val nomsId = "G4161UF"
+    val urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8"
+    val dob = "1982-10-24"
+    val email = "john@smith.com"
+
+    popUserApiMockServer.stubPostPoPUserVerification(200)
+    prisonerSearchApiMockServer.stubMatchPrisonerDuplicatedMatch()
+
+    webTestClient.post()
+      .uri("/resettlement-passport/popUser/onelogin/verify-answers")
+      .bodyValue(
+        mapOf(
+          "urn" to urn,
+          "dateOfBirth" to dob,
+          "email" to email,
+          "nomsId" to nomsId,
+          "firstName" to "John",
+          "lastName" to "Smith",
+        ),
+
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  fun `unauthenticated verification`() {
+    webTestClient.post()
+      .uri("/resettlement-passport/popUser/onelogin/verify-answers")
+      .bodyValue(
+        mapOf(
+          "urn" to "urn",
+          "dateOfBirth" to "2021-01-01",
+          "email" to "email@email.com",
+          "nomsId" to "123",
+          "firstName" to "John",
+          "lastName" to "Smith",
+        ),
+      ).exchange()
+      .expectStatus().isUnauthorized
+  }
+
+  @Test
+  fun `unauthorized verification`() {
+    webTestClient.post()
+      .uri("/resettlement-passport/popUser/onelogin/verify-answers")
+      .headers(setAuthorisation(roles = listOf("FISH")))
+      .bodyValue(
+        mapOf(
+          "urn" to "urn",
+          "dateOfBirth" to "2021-01-01",
+          "email" to "email@email.com",
+          "nomsId" to "123",
+          "firstName" to "John",
+          "lastName" to "Smith",
+        ),
+      ).exchange()
+      .expectStatus().isForbidden
   }
 }

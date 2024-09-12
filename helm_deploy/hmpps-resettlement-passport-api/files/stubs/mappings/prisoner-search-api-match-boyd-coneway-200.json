@@ -1,0 +1,141 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/prisoner-search-api/prisoner-search/match-prisoners",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{ \"firstName\": \"Boyd\", \"lastName\": \"Coneway\"}"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    },
+    "jsonBody": [
+      {
+        "prisonerNumber": "G5384GE",
+        "pncNumber": "00/502298A",
+        "pncNumberCanonicalShort": "00/502298A",
+        "pncNumberCanonicalLong": "2000/502298A",
+        "croNumber": "332383/00K",
+        "bookingId": "1083266",
+        "bookNumber": "W02135",
+        "firstName": "BOYD",
+        "middleNames": "KENDRIE",
+        "lastName": "CONEWAY",
+        "dateOfBirth": "1988-11-07",
+        "gender": "Male",
+        "ethnicity": "Black/Black British: Any other Backgr'nd",
+        "youthOffender": false,
+        "maritalStatus": "Single-not married/in civil partnership",
+        "religion": "Christian",
+        "nationality": "British",
+        "status": "ACTIVE IN",
+        "lastMovementTypeCode": "ADM",
+        "lastMovementReasonCode": "INT",
+        "inOutStatus": "IN",
+        "prisonId": "MDI",
+        "prisonName": "Moorland (HMP & YOI)",
+        "cellLocation": "2-3-037",
+        "aliases": [
+          {
+            "firstName": "EASTZO",
+            "middleNames": "TOMELYN",
+            "lastName": "DAISHIE",
+            "dateOfBirth": "1988-11-16",
+            "gender": "Male",
+            "ethnicity": "Black/Black British: Any other Backgr'nd"
+          },
+          {
+            "firstName": "EASTZO",
+            "lastName": "JOVIVER",
+            "dateOfBirth": "1988-11-07",
+            "gender": "Male",
+            "ethnicity": "Black/Black British: Any other Backgr'nd"
+          }
+        ],
+        "alerts": [
+          {
+            "alertType": "P",
+            "alertCode": "PVN",
+            "active": true,
+            "expired": false
+          },
+          {
+            "alertType": "D",
+            "alertCode": "DOCGM",
+            "active": true,
+            "expired": false
+          },
+          {
+            "alertType": "R",
+            "alertCode": "ROH",
+            "active": true,
+            "expired": false
+          },
+          {
+            "alertType": "V",
+            "alertCode": "VI",
+            "active": true,
+            "expired": false
+          },
+          {
+            "alertType": "R",
+            "alertCode": "RST",
+            "active": true,
+            "expired": false
+          },
+          {
+            "alertType": "R",
+            "alertCode": "RDV",
+            "active": true,
+            "expired": false
+          },
+          {
+            "alertType": "X",
+            "alertCode": "XVL",
+            "active": true,
+            "expired": false
+          }
+        ],
+        "csra": "Standard",
+        "legalStatus": "SENTENCED",
+        "imprisonmentStatus": "ADIMP_ORA",
+        "imprisonmentStatusDescription": "ORA CJA03 Standard Determinate Sentence",
+        "mostSeriousOffence": "Assault a person thereby occasioning them actual bodily harm",
+        "recall": false,
+        "indeterminateSentence": false,
+        "sentenceStartDate": "2016-05-02",
+        "releaseDate": "{{now offset='3 months' format='yyyy-MM-dd'}}",
+        "sentenceExpiryDate": "2018-11-15",
+        "licenceExpiryDate": "2018-11-11",
+        "homeDetentionCurfewEligibilityDate": "2018-08-20",
+        "nonDtoReleaseDate": "2027-08-07",
+        "nonDtoReleaseDateType": "CRD",
+        "receptionDate": "2016-03-23",
+        "conditionalReleaseDate": "{{now offset='3 months' format='yyyy-MM-dd'}}",
+        "locationDescription": "Moorland (HMP & YOI)",
+        "restrictedPatient": false,
+        "currentIncentive": {
+          "level": {
+            "code": "ENH",
+            "description": "Enhanced"
+          },
+          "dateTime": "2022-04-29T16:53:23",
+          "nextReviewDate": "2023-04-29"
+        },
+        "heightCentimetres": 183,
+        "weightKilograms": 84,
+        "hairColour": "Black",
+        "rightEyeColour": "Brown",
+        "leftEyeColour": "Brown",
+        "facialHair": "Moustache Only",
+        "shapeOfFace": "Oval",
+        "build": "Medium"
+      }
+    ]
+  }
+}

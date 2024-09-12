@@ -1,0 +1,15 @@
+{
+  "priority": 100,
+  "request": {
+    "method": "POST",
+    "urlPath": "/prisoner-search-api/prisoner-search/match-prisoners"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": [],
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

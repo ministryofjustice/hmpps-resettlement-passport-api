@@ -9,14 +9,14 @@ import uk.gov.justice.hmpps.sqs.audit.HmppsAuditService
 @Component
 class AuditService(private val auditService: HmppsAuditService) {
   fun audit(what: AuditAction, nomsId: String, auth: String, vararg details: String) {
-    val userName = getClaimFromJWTToken(auth, "name") ?: throw ServerWebInputException("Cannot get name from auth token")
+    val userName = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get name from auth token")
 
     runBlocking {
       auditService.publishEvent(
         what = what.name,
         who = userName,
         subjectId = nomsId,
-        subjectType = "USER_ID",
+        subjectType = "PRISONER_ID",
         service = "hmpps-resettlement-passport-api",
         details = details.firstOrNull(),
       )

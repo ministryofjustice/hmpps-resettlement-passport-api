@@ -155,9 +155,9 @@ class PoPUserOTPService(
   }
 }
 
-private fun exactlyMatching(formData: KnowledgeBasedVerification): (PrisonersSearch) -> Boolean = { ps ->
-  formData.firstName == ps.firstName &&
-    formData.lastName == ps.lastName &&
-    formData.dateOfBirth == ps.dateOfBirth &&
+internal fun exactlyMatching(formData: KnowledgeBasedVerification): (PrisonersSearch) -> Boolean = { ps ->
+  formData.firstName.equals(ps.firstName, ignoreCase = true)
+  formData.lastName.equals(ps.lastName, ignoreCase = true)
+  formData.dateOfBirth == ps.dateOfBirth &&
     formData.nomsId == ps.prisonerNumber
 }

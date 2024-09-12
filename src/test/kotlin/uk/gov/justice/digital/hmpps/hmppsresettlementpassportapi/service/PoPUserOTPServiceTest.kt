@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -15,6 +16,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.KnowledgeBasedVerification
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.OneLoginData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PoPUserOTPEntity
@@ -48,7 +50,8 @@ class PoPUserOTPServiceTest {
 
   @BeforeEach
   fun beforeEach() {
-    popUserOTPService = PoPUserOTPService(popUserOTPRepository, prisonerRepository, popUserApiService, prisonerSearchApiService)
+    popUserOTPService =
+      PoPUserOTPService(popUserOTPRepository, prisonerRepository, popUserApiService, prisonerSearchApiService)
   }
 
   @Test
@@ -160,7 +163,13 @@ class PoPUserOTPServiceTest {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val oneLoginData = OneLoginData("urn1", "123457", "email@test.com", LocalDate.parse("1982-10-24"))
-    whenever(popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(oneLoginData.otp, LocalDate.parse("1982-10-24"), LocalDateTime.now())).thenReturn(null)
+    whenever(
+      popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(
+        oneLoginData.otp,
+        LocalDate.parse("1982-10-24"),
+        LocalDateTime.now(),
+      ),
+    ).thenReturn(null)
     val thrown = assertThrows<ResourceNotFoundException> { popUserOTPService.getPoPUserVerified(oneLoginData) }
     Assertions.assertEquals("Person On Probation User otp  123457  not found in database or expired.", thrown.message)
     unmockkStatic(LocalDateTime::class)
@@ -194,7 +203,13 @@ class PoPUserOTPServiceTest {
     )
 
     whenever(prisoner.id?.let { prisonerRepository.findById(it) }).thenReturn(Optional.of(prisoner))
-    whenever(popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(oneLoginUserData.otp, LocalDate.parse("1982-10-24"), LocalDateTime.now())).thenReturn(popUserOTPEntity)
+    whenever(
+      popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(
+        oneLoginUserData.otp,
+        LocalDate.parse("1982-10-24"),
+        LocalDateTime.now(),
+      ),
+    ).thenReturn(popUserOTPEntity)
     whenever(prisonerSearchApiService.findPrisonerPersonalDetails(prisoner.nomsId)).thenReturn(prisonerResponse)
     whenever(popUserApiService.postPoPUserVerification(oneLoginUserData.urn, prisoner)).thenReturn(popUserResponse)
     val result = popUserOTPService.getPoPUserVerified(oneLoginUserData)
@@ -219,7 +234,13 @@ class PoPUserOTPServiceTest {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val oneLoginData = OneLoginData("urn1", "123457", "email@test.com", LocalDate.parse("1982-10-24"))
-    Mockito.lenient().`when`(popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(oneLoginData.otp ?: "0", testDate.toLocalDate(), testDate)).thenReturn(null)
+    Mockito.lenient().`when`(
+      popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(
+        oneLoginData.otp,
+        testDate.toLocalDate(),
+        testDate,
+      ),
+    ).thenReturn(null)
     assertThrows<ResourceNotFoundException> { popUserOTPService.getPoPUserVerified(oneLoginData) }
     unmockkStatic(LocalDateTime::class)
   }
@@ -230,7 +251,9 @@ class PoPUserOTPServiceTest {
     every { LocalDateTime.now() } returns fakeNow
     val oneLoginData = OneLoginData("urn1", "123457", "email@test.com", LocalDate.parse("1982-10-24"))
     val dob = testDate.toLocalDate()
-    Mockito.lenient().`when`(popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(oneLoginData.otp ?: "0", dob, testDate)).thenReturn(null)
+    Mockito.lenient()
+      .`when`(popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(oneLoginData.otp ?: "0", dob, testDate))
+      .thenReturn(null)
     assertThrows<ResourceNotFoundException> { popUserOTPService.getPoPUserVerified(oneLoginData) }
     unmockkStatic(LocalDateTime::class)
   }
@@ -253,5 +276,71 @@ class PoPUserOTPServiceTest {
     whenever(popUserOTPRepository.findAll()).thenReturn(popUserOTPList)
     val result = popUserOTPService.getAllOTPs()
     Assertions.assertEquals(popUserOTPList, result)
+  }
+
+  @Test
+  fun `matches knowledge answers to search response - match`() {
+    val formData = KnowledgeBasedVerification(
+      firstName = "firstName",
+      lastName = "lastName",
+      dateOfBirth = LocalDate.parse("1982-10-24"),
+      urn = "urn",
+      email = "email@test.com",
+      nomsId = "noms1",
+    )
+    val searchResponse = PrisonersSearch(
+      prisonerNumber = "noms1",
+      firstName = "FIRSTNAME",
+      lastName = "LASTNAME",
+      dateOfBirth = LocalDate.parse("1982-10-24"),
+      prisonId = "prisonId",
+      prisonName = "prisonName",
+    )
+
+    assertThat(exactlyMatching(formData)(searchResponse)).isTrue()
+  }
+
+  @Test
+  fun `matches knowledge answers to search response - date of birth no match`() {
+    val formData = KnowledgeBasedVerification(
+      firstName = "firstName",
+      lastName = "lastName",
+      dateOfBirth = LocalDate.parse("1982-10-24"),
+      urn = "urn",
+      email = "email@test.com",
+      nomsId = "noms1",
+    )
+    val searchResponse = PrisonersSearch(
+      prisonerNumber = "noms1",
+      firstName = "FIRSTNAME",
+      lastName = "LASTNAME",
+      dateOfBirth = LocalDate.parse("1982-10-25"),
+      prisonId = "prisonId",
+      prisonName = "prisonName",
+    )
+
+    assertThat(exactlyMatching(formData)(searchResponse)).isFalse()
+  }
+
+  @Test
+  fun `matches knowledge answers to search response - nomis id no match`() {
+    val formData = KnowledgeBasedVerification(
+      firstName = "firstName",
+      lastName = "lastName",
+      dateOfBirth = LocalDate.parse("1982-10-24"),
+      urn = "urn",
+      email = "email@test.com",
+      nomsId = "noms2",
+    )
+    val searchResponse = PrisonersSearch(
+      prisonerNumber = "noms1",
+      firstName = "FIRSTNAME",
+      lastName = "LASTNAME",
+      dateOfBirth = LocalDate.parse("1982-10-24"),
+      prisonId = "prisonId",
+      prisonName = "prisonName",
+    )
+
+    assertThat(exactlyMatching(formData)(searchResponse)).isFalse()
   }
 }

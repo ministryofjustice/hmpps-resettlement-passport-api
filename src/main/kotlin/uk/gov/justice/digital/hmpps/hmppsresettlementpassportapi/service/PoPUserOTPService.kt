@@ -72,15 +72,16 @@ class PoPUserOTPService(
     if (popUserOTPExists != null) {
       popUserOTPRepository.delete(popUserOTPExists)
     }
-    val popUserOTPEntity = PoPUserOTPEntity(
-      id = null,
-      prisonerId = prisoner.id(),
-      creationDate = now,
-      expiryDate = now.plusDays(7).withHour(23).withMinute(59).withSecond(59),
-      otp = otpValue,
-      dob = prisonerDOB,
+    val popUserOTPEntity = popUserOTPRepository.save(
+      PoPUserOTPEntity(
+        id = null,
+        prisonerId = prisoner.id(),
+        creationDate = now,
+        expiryDate = now.plusDays(7).withHour(23).withMinute(59).withSecond(59),
+        otp = otpValue,
+        dob = prisonerDOB,
+      ),
     )
-    popUserOTPRepository.save(popUserOTPEntity)
     val popUserOTP =
       PoPUserOTP(
         popUserOTPEntity.id,

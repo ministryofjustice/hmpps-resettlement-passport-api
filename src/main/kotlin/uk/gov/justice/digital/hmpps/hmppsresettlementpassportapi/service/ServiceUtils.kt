@@ -14,13 +14,14 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AppointmentsService.Companion.SECTION_DELIMITER
-import java.util.concurrent.ThreadLocalRandom
+import java.security.SecureRandom
 import kotlin.reflect.KClass
 import kotlin.streams.asSequence
 
 private val log = LoggerFactory.getLogger(object {}::class.java.`package`.name)
 
-val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+private val random = ThreadLocal.withInitial { SecureRandom() }
+private val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 const val STRING_LENGTH = 6
 const val BCST_CASE_NOTE_PREFIX = "Case note summary from"
 const val BCST_CASE_NOTE_POSTFIX = "report"
@@ -113,7 +114,7 @@ fun extractSectionFromNotes(customFields: List<String>, section: String, id: Lon
 
 fun extractSectionFromNotesTrimToNull(customFields: List<String>, section: String, id: Long?) = extractSectionFromNotes(customFields, section, id).ifBlank { null }
 
-fun randomAlphaNumericString(): String = ThreadLocalRandom.current()
+fun randomAlphaNumericString(): String = random.get()
   .ints(STRING_LENGTH.toLong(), 0, charPool.size)
   .asSequence()
   .map(charPool::get)

@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external
 
-import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -14,10 +13,6 @@ class PoPUserApiService(
 
   private val popUserWebClientCredentials: WebClient,
 ) {
-
-  companion object {
-    private val log = LoggerFactory.getLogger(this::class.java)
-  }
 
   fun postPoPUserVerification(oneLoginUrn: String, prisoner: PrisonerEntity): PoPUserResponse = popUserWebClientCredentials.post()
     .uri(

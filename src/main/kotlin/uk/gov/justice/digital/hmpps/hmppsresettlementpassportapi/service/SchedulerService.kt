@@ -23,7 +23,6 @@ class SchedulerService(
   @Scheduled(cron = "\${schedule.expression.custom-metrics}")
   fun metricsScheduledTask() {
     metricsService.recordCustomMetrics()
-    popUserMetricsService.recordCustomMetrics()
   }
 
   @Scheduled(cron = "\${schedule.expression.reconcile-release-dates}")
@@ -52,5 +51,10 @@ class SchedulerService(
   @Scheduled(cron = "\${schedule.expression.release-day-metrics}")
   fun metricsProbationUsersScheduledTask() {
     popUserMetricsService.recordReleaseDayProbationUserAppointmentsMetrics()
+  }
+
+  @Scheduled(cron = "\${schedule.expression.custom-popuser-metrics}")
+  fun popUserMetricsScheduledTask() {
+    popUserMetricsService.recordCustomMetrics()
   }
 }

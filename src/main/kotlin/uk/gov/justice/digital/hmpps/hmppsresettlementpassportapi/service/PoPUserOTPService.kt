@@ -104,6 +104,8 @@ class PoPUserOTPService(
 
     val prisonerEntity: PrisonerEntity = prisonerRepository.findById(popUserOTPEntityExists.prisonerId).getOrNull()
       ?: throw ResourceNotFoundException("Prisoner with id ${popUserOTPEntityExists.prisonerId}  not found in database")
+    // Check we can look up details
+    prisonerSearchApiService.findPrisonerPersonalDetails(prisonerEntity.nomsId)
 
     val response = popUserApiService.postPoPUserVerification(
       oneLoginData.urn,

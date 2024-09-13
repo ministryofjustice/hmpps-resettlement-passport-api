@@ -11,7 +11,7 @@ spec:
     - name: resettlement-passport-application-rules
       rules:
           - alert: ExternalAPICritical
-            expr: (sum by (client_name) (rate(http_client_requests_seconds_count{namespace = "{{ $targetNamespace }}", status!~"2\\d{2}",, status!="404", client_name!=""}[24h])) * 86400) > 0
+            expr: (sum by (client_name) (rate(http_client_requests_seconds_count{namespace = "{{ $targetNamespace }}", status!~"2\\d{2}", status!="404", client_name!=""}[24h])) * 86400) > 0
             for: 5m
             labels:
               severity: {{ index .Values "generic-prometheus-alerts" "alertSeverity" }}

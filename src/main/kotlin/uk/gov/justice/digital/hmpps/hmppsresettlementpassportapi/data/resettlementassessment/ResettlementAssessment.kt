@@ -15,6 +15,7 @@ data class ResettlementAssessmentCompleteRequest(
 data class ResettlementAssessmentRequestQuestionAndAnswer<T>(
   val question: String,
   val answer: Answer<T>,
+  val profileTag: String? = "",
 )
 
 data class ResettlementAssessmentNextPage(

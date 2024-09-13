@@ -43,6 +43,7 @@ internal fun List<AssessmentConfigOption>?.mapToResettlementAssessmentOptions(or
     exclusive = it.exclusive,
     freeText = it.freeText,
     nestedQuestions = it.nestedQuestions?.map { nq -> nq.mapToResettlementAssessmentQuestionAndAnswer(originalPageId) },
+    profileTag = it.profileTag,
   )
 }
 

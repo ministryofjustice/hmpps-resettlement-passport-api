@@ -194,6 +194,7 @@ class ResettlementAssessmentStrategy(
         ResettlementAssessmentSimpleQuestionAndAnswer(
           it.question,
           it.answer,
+          it.profileTag,
         )
       },
     )

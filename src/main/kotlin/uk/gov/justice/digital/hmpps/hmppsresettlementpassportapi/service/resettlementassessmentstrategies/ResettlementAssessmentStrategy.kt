@@ -575,6 +575,7 @@ data class AssessmentConfigOption(
   val description: String? = null,
   val exclusive: Boolean = false,
   val nestedQuestions: List<AssessmentConfigQuestion>? = null,
+  val freeText: Boolean = false,
 )
 
 data class AssessmentConfigNextPageOption(

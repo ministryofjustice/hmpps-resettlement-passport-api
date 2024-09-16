@@ -51,6 +51,7 @@ data class ResettlementAssessmentOption(
   val description: String? = null,
   val exclusive: Boolean = false,
   val nestedQuestions: List<ResettlementAssessmentQuestionAndAnswer>? = null,
+  val freeText: Boolean = false,
 )
 
 data class LatestResettlementAssessmentResponse(

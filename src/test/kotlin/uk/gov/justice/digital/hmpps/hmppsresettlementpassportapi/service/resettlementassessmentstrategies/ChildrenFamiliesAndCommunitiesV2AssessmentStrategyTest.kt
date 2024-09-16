@@ -318,6 +318,11 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
                   displayText = "Mentoring support on release",
                 ),
                 ResettlementAssessmentOption(
+                  id = "OTHER_SUPPORT_NEEDS",
+                  displayText = "Other",
+                  freeText = true,
+                ),
+                ResettlementAssessmentOption(
                   id = "NO_SUPPORT_NEEDS",
                   displayText = "No support needs identified",
                   exclusive = true,

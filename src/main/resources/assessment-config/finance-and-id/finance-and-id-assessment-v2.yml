@@ -91,6 +91,9 @@ pages:
             displayText: "Support to manage debts or arrears"
           - id: "HELP_TO_CONTACT_BANK"
             displayText: "Help to contact their bank to manage their account"
+          - id: "OTHER_SUPPORT_NEEDS"
+            displayText: "Other"
+            freeText: true
           - id: "NO_SUPPORT_NEEDS"
             displayText: "No support needs identified"
             exclusive: true

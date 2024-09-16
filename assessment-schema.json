@@ -58,6 +58,9 @@
                       "exclusive" : {
                         "type" : "boolean"
                       },
+                      "freeText" : {
+                        "type" : "boolean"
+                      },
                       "id" : {
                         "type" : "string"
                       }

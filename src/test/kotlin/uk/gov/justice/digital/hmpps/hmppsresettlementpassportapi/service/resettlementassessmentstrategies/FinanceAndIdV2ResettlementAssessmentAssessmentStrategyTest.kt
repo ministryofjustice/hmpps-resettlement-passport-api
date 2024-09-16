@@ -240,6 +240,11 @@ class FinanceAndIdV2ResettlementAssessmentAssessmentStrategyTest : BaseResettlem
                   displayText = "Help to contact their bank to manage their account",
                 ),
                 ResettlementAssessmentOption(
+                  id = "OTHER_SUPPORT_NEEDS",
+                  displayText = "Other",
+                  freeText = true,
+                ),
+                ResettlementAssessmentOption(
                   id = "NO_SUPPORT_NEEDS",
                   displayText = "No support needs identified",
                   exclusive = true,

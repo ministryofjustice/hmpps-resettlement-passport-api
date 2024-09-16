@@ -255,6 +255,11 @@ class EducationSkillsAndWorkV2ResettlementAssessmentStrategyTest : BaseResettlem
                   displayText = "Information about bursaries and grants for courses or training",
                 ),
                 ResettlementAssessmentOption(
+                  id = "OTHER_SUPPORT_NEEDS",
+                  displayText = "Other",
+                  freeText = true,
+                ),
+                ResettlementAssessmentOption(
                   id = "NO_SUPPORT_NEEDS",
                   displayText = "No support needs identified",
                   exclusive = true,

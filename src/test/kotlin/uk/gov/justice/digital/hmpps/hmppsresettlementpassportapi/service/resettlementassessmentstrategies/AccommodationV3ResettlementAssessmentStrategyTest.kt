@@ -340,6 +340,11 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
                   displayText = "Arrange storage for personal possessions",
                 ),
                 ResettlementAssessmentOption(
+                  id = "OTHER_SUPPORT_NEEDS",
+                  displayText = "Other",
+                  freeText = true,
+                ),
+                ResettlementAssessmentOption(
                   id = "NO_SUPPORT_NEEDS",
                   displayText = "No support needs identified",
                   exclusive = true,

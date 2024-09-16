@@ -39,6 +39,9 @@ pages:
             displayText: "Support from drug and alcohol team for alcohol issues"
           - id: "CONTACT_SUPPORT_SERVICES_OUTSIDE_PRISON"
             displayText: "Contact any support services they have used outside of prison"
+          - id: "OTHER_SUPPORT_NEEDS"
+            displayText: "Other"
+            freeText: true
           - id: "NO_SUPPORT_NEEDS"
             displayText: "No support needs identified"
             exclusive: true

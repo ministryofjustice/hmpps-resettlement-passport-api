@@ -136,6 +136,11 @@ class AttitudesThinkingAndBehaviourV2ResettlementAssessmentStrategyTest : BaseRe
                   displayText = "Support for problems with gambling",
                 ),
                 ResettlementAssessmentOption(
+                  id = "OTHER_SUPPORT_NEEDS",
+                  displayText = "Other",
+                  freeText = true,
+                ),
+                ResettlementAssessmentOption(
                   id = "NO_SUPPORT_NEEDS",
                   displayText = "No support needs identified",
                   exclusive = true,

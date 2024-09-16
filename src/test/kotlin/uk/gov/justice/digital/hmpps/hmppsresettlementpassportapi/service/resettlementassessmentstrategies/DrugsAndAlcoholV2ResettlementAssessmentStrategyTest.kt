@@ -140,6 +140,11 @@ class DrugsAndAlcoholV2ResettlementAssessmentStrategyTest : BaseResettlementAsse
                   displayText = "Contact any support services they have used outside of prison",
                 ),
                 ResettlementAssessmentOption(
+                  id = "OTHER_SUPPORT_NEEDS",
+                  displayText = "Other",
+                  freeText = true,
+                ),
+                ResettlementAssessmentOption(
                   id = "NO_SUPPORT_NEEDS",
                   displayText = "No support needs identified",
                   exclusive = true,

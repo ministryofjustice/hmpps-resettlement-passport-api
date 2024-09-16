@@ -41,6 +41,7 @@ internal fun List<AssessmentConfigOption>?.mapToResettlementAssessmentOptions(or
     displayText = it.displayText,
     description = it.description,
     exclusive = it.exclusive,
+    freeText = it.freeText,
     nestedQuestions = it.nestedQuestions?.map { nq -> nq.mapToResettlementAssessmentQuestionAndAnswer(originalPageId) },
   )
 }
@@ -82,6 +83,7 @@ internal fun ResettlementAssessmentQuestion.removeNestedQuestions() = Resettleme
       description = it.description,
       exclusive = it.exclusive,
       nestedQuestions = null,
+      freeText = it.freeText,
     )
   },
   validationType = this.validationType,

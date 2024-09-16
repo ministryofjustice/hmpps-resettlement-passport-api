@@ -83,6 +83,9 @@ pages:
             displayText: "Support contacting an education or training provider"
           - id: "INFORMATION_ABOUT_GRANTS_AND_TRAINING"
             displayText: "Information about bursaries and grants for courses or training"
+          - id: "OTHER_SUPPORT_NEEDS"
+            displayText: "Other"
+            freeText: true
           - id: "NO_SUPPORT_NEEDS"
             displayText: "No support needs identified"
             exclusive: true

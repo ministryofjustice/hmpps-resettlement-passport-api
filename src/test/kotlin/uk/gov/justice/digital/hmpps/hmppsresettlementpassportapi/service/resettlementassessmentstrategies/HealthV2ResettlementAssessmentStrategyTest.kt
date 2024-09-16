@@ -144,6 +144,11 @@ class HealthV2ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStr
                   displayText = "Support from social care when they are released from prison",
                 ),
                 ResettlementAssessmentOption(
+                  id = "OTHER_SUPPORT_NEEDS",
+                  displayText = "Other",
+                  freeText = true,
+                ),
+                ResettlementAssessmentOption(
                   id = "NO_SUPPORT_NEEDS",
                   displayText = "No support needs identified",
                   exclusive = true,

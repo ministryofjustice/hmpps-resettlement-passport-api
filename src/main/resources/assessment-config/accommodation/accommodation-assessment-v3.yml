@@ -105,6 +105,9 @@ pages:
             displayText: "Set up payment for rent arrears"
           - id: "ARRANGE_STORAGE"
             displayText: "Arrange storage for personal possessions"
+          - id: "OTHER_SUPPORT_NEEDS"
+            displayText: "Other"
+            freeText: true
           - id: "NO_SUPPORT_NEEDS"
             displayText: "No support needs identified"
             exclusive: true

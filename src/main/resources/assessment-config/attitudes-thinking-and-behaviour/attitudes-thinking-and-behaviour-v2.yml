@@ -37,6 +37,9 @@ pages:
             displayText: "Support to manage their emotions"
           - id: "SUPPORT_GAMBLING_PROBLEMS"
             displayText: "Support for problems with gambling"
+          - id: "OTHER_SUPPORT_NEEDS"
+            displayText: "Other"
+            freeText: true
           - id: "NO_SUPPORT_NEEDS"
             displayText: "No support needs identified"
             exclusive: true

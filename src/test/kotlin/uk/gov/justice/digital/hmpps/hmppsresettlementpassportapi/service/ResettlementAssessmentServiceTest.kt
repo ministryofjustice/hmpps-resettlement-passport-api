@@ -13,6 +13,8 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResettlementAssessmentConfig
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
@@ -30,12 +32,14 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentSkipRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseNoteRetryRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ProfileTagsRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.AssessmentConfigOption
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.ResettlementAssessmentStrategy
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.processProfileTags
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -45,6 +49,8 @@ import java.util.stream.Stream
 @ExtendWith(MockitoExtension::class)
 class ResettlementAssessmentServiceTest {
   private lateinit var resettlementAssessmentService: ResettlementAssessmentService
+
+  private lateinit var resettlementAssessmentStrategy: ResettlementAssessmentStrategy
 
   @Mock
   private lateinit var prisonerRepository: PrisonerRepository
@@ -74,6 +80,9 @@ class ResettlementAssessmentServiceTest {
   private lateinit var profileTagsRepository: ProfileTagsRepository
 
   @Mock
+  private lateinit var pathwayStatusRepository: PathwayStatusRepository
+
+  @Mock
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
@@ -91,7 +100,19 @@ class ResettlementAssessmentServiceTest {
       profileTagsRepository,
       "https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk",
     )
+
+    resettlementAssessmentStrategy = ResettlementAssessmentStrategy(
+      getTestConfig(),
+      resettlementAssessmentRepository,
+      prisonerRepository,
+      pathwayStatusRepository,
+      profileTagsRepository,
+    )
   }
+
+  private fun getTestConfig() = ResettlementAssessmentConfig().assessmentQuestionSets(
+    PathMatchingResourcePatternResolver(),
+  )
 
   @Test
   fun `processAndGroupAssessmentCaseNotes - should add description to Delius case notes when there are multiple case notes`() {
@@ -622,10 +643,13 @@ class ResettlementAssessmentServiceTest {
     assessment.assessment.toMutableList().add(assessmentQA2)
     val resettlementAssessmentEntity = createSubmittedResettlementAssessmentEntity(Pathway.ACCOMMODATION, user, "${Pathway.ACCOMMODATION.displayName} case note - $caseNotePostfix")
     resettlementAssessmentEntity.assessment.assessment = assessment.assessment
-    val profileTagList = processProfileTags(resettlementAssessmentEntity, Pathway.ACCOMMODATION)
+    val profileTagList = processProfileTags(
+      resettlementAssessmentEntity,
+      resettlementAssessmentStrategy.getConfigPages(ResettlementAssessmentType.BCST2, Pathway.ACCOMMODATION, 2),
+    )
     val expectedTagAndQuestionMappingList = emptyList<TagAndQuestionMapping>()
     expectedTagAndQuestionMappingList.toMutableList().add(TagAndQuestionMapping.NO_FIXED_ABODE)
-    expectedTagAndQuestionMappingList.toMutableList().add(TagAndQuestionMapping.HOME_ADAPTION_POST_RELEASE)
+    expectedTagAndQuestionMappingList.toMutableList().add(TagAndQuestionMapping.HOME_ADAPTATIONS_POST_RELEASE)
 
     Assertions.assertEquals(expectedTagAndQuestionMappingList, profileTagList)
   }

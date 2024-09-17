@@ -130,10 +130,12 @@ class AttitudesThinkingAndBehaviourV2ResettlementAssessmentStrategyTest : BaseRe
                 ResettlementAssessmentOption(
                   id = "SUPPORT_MANAGING_EMOTIONS",
                   displayText = "Support to manage their emotions",
+                  tag = "MANAGE_EMOTIONS",
                 ),
                 ResettlementAssessmentOption(
                   id = "SUPPORT_GAMBLING_PROBLEMS",
                   displayText = "Support for problems with gambling",
+                  tag = "GAMBLING_ISSUE",
                 ),
                 ResettlementAssessmentOption(
                   id = "OTHER_SUPPORT_NEEDS",

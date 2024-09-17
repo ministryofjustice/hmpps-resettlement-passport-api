@@ -35,8 +35,10 @@ pages:
         options:
           - id: "SUPPORT_FOR_DRUG_ISSUES"
             displayText: "Support from drug and alcohol team for drug issues"
+            tag: "DRUG_ISSUE"
           - id: "SUPPORT_FOR_ALCOHOL_ISSUES"
             displayText: "Support from drug and alcohol team for alcohol issues"
+            tag: "ALCOHOL_ISSUE"
           - id: "CONTACT_SUPPORT_SERVICES_OUTSIDE_PRISON"
             displayText: "Contact any support services they have used outside of prison"
           - id: "OTHER_SUPPORT_NEEDS"

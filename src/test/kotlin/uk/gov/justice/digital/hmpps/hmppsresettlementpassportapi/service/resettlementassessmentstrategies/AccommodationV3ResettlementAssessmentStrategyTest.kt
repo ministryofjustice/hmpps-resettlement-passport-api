@@ -314,14 +314,17 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
                 ResettlementAssessmentOption(
                   id = "HELP_TO_FIND_ACCOMMODATION",
                   displayText = "Help to find accommodation",
+                  tag = "NO_FIXED_ABODE",
                 ),
                 ResettlementAssessmentOption(
                   id = "HOME_ADAPTATIONS",
                   displayText = "Home adaptations",
+                  tag = "HOME_ADAPTATIONS_POST_RELEASE",
                 ),
                 ResettlementAssessmentOption(
                   id = "HELP_TO_KEEP_HOME",
                   displayText = "Help to keep their home while in prison",
+                  tag = "KEEP_THEIR_HOME",
                 ),
                 ResettlementAssessmentOption(
                   id = "HOMELESS_APPLICATION",
@@ -330,14 +333,17 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
                 ResettlementAssessmentOption(
                   id = "CANCEL_A_TENANCY",
                   displayText = "Cancel a tenancy",
+                  tag = "CANCEL_TENANCY",
                 ),
                 ResettlementAssessmentOption(
                   id = "SET_UP_RENT_ARREARS",
                   displayText = "Set up payment for rent arrears",
+                  tag = "PAYMENT_FOR_RENT_ARREARS",
                 ),
                 ResettlementAssessmentOption(
                   id = "ARRANGE_STORAGE",
                   displayText = "Arrange storage for personal possessions",
+                  tag = "ARRANGE_STORAGE_FOR_PERSONAL",
                 ),
                 ResettlementAssessmentOption(
                   id = "OTHER_SUPPORT_NEEDS",
@@ -458,7 +464,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
     val profileTagsEntity = ProfileTagsEntity(1, 1, profileTagsList, LocalDateTime.parse("2023-08-16T12:00"))
     Mockito.lenient().`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
 
-    Mockito.lenient().`when`(profileTagsRepository.findByPrisonerId(1)).thenReturn(listOf(profileTagsEntity))
+    Mockito.lenient().`when`(profileTagsRepository.findByPrisonerId(1)).thenReturn(profileTagsEntity)
     Mockito.lenient().`when`(profileTagsRepository.save(any())).thenReturn(expectedProfileTagsEntity)
     if (existingAssessment != null) {
       whenever(
@@ -479,7 +485,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
       resettlementAssessmentStrategy.completeAssessment(nomsId, pathway, assessmentType, assessment, "string")
       Mockito.verify(resettlementAssessmentRepository).save(expectedEntity!!)
       if (existingAssessment != null) {
-        Mockito.lenient().`when`(profileTagsRepository.findByPrisonerId(1)).thenReturn(emptyList())
+        Mockito.lenient().`when`(profileTagsRepository.findByPrisonerId(1)).thenReturn(profileTagsEntity)
         if (existingAssessment.assessmentStatus == ResettlementAssessmentStatus.SUBMITTED) {
           Mockito.verify(profileTagsRepository).save(expectedProfileTagsEntity!!)
         }
@@ -699,7 +705,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
       ResettlementAssessmentEntity(id = null, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_REQUIRED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "NO_PERMANENT_OR_FIXED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING", answer = StringAnswer(answer = "RETURN_TO_PREVIOUS_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE", answer = StringAnswer(answer = "MOVE_TO_NEW_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS", answer = StringAnswer(answer = "Some more information here")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS", answer = ListAnswer(answer = listOf("HELP_TO_FIND_ACCOMMODATION", "HOME_ADAPTATIONS", "HELP_TO_KEEP_HOME", "HOMELESS_APPLICATION", "CANCEL_A_TENANCY"))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "CASE_NOTE_SUMMARY", answer = StringAnswer(answer = "My case note summary...")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = "My case note summary...", createdByUserId = "USER_1", version = 3, submissionDate = null),
       null,
       ResettlementAssessmentEntity(id = 12, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_REQUIRED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "NO_PERMANENT_OR_FIXED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING", answer = StringAnswer(answer = "RETURN_TO_PREVIOUS_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE", answer = StringAnswer(answer = "MOVE_TO_NEW_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS", answer = StringAnswer(answer = "Some more information here")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS", answer = ListAnswer(answer = listOf("HELP_TO_KEEP_HOME"))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "CASE_NOTE_SUMMARY", answer = StringAnswer(answer = "My case note summary...")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = "My case note summary...", createdByUserId = "USER_1", version = 3, submissionDate = null),
-      ProfileTagsEntity(id = null, prisonerId = 1, ProfileTagList(listOf(TagAndQuestionMapping.NO_FIXED_ABODE.name, TagAndQuestionMapping.HOME_ADAPTION_POST_RELEASE.name, TagAndQuestionMapping.KEEP_THEIR_HOME.name, TagAndQuestionMapping.CANCEL_TENANCY.name)), LocalDateTime.parse("2023-08-16T12:00")),
+      ProfileTagsEntity(id = null, prisonerId = 1, ProfileTagList(listOf(TagAndQuestionMapping.NO_FIXED_ABODE.name, TagAndQuestionMapping.HOME_ADAPTATIONS_POST_RELEASE.name, TagAndQuestionMapping.KEEP_THEIR_HOME.name, TagAndQuestionMapping.CANCEL_TENANCY.name)), LocalDateTime.parse("2023-08-16T12:00")),
     ),
   )
 }

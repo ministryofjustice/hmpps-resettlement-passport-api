@@ -279,7 +279,7 @@ class ResettlementAssessmentController(
     auth: String,
   ): ResettlementAssessmentSubmitResponse {
     auditService.audit(AuditAction.SUBMIT_ASSESSMENT, nomsId, auth, buildDetails(assessmentType, null))
-    return resettlementAssessmentService.submitResettlementAssessmentByNomsId(nomsId, assessmentType, useNewDeliusCaseNoteFormat, auth)
+    return resettlementAssessmentService.submitResettlementAssessmentByNomsId(nomsId, assessmentType, useNewDeliusCaseNoteFormat, auth, resettlementAssessmentStrategy)
   }
 
   @GetMapping("/{nomsId}/resettlement-assessment/{pathway}/latest", produces = [MediaType.APPLICATION_JSON_VALUE])

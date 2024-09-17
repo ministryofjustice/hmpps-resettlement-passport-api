@@ -226,18 +226,22 @@ class FinanceAndIdV2ResettlementAssessmentAssessmentStrategyTest : BaseResettlem
                 ResettlementAssessmentOption(
                   id = "APPLY_FOR_BANK_ACCOUNT",
                   displayText = "Apply for a bank account",
+                  tag = "NO_BANK_ACCOUNT",
                 ),
                 ResettlementAssessmentOption(
                   id = "APPLY_FOR_ID",
                   displayText = "Apply for ID documents",
+                  tag = "MANAGE_ID_DOCUMENTS",
                 ),
                 ResettlementAssessmentOption(
                   id = "SUPPORT_TO_MANAGE_DEBT",
                   displayText = "Support to manage debts or arrears",
+                  tag = "MANAGE_DEBT_ARREARS",
                 ),
                 ResettlementAssessmentOption(
                   id = "HELP_TO_CONTACT_BANK",
                   displayText = "Help to contact their bank to manage their account",
+                  tag = "HELP_TO_CONTACT_BANK",
                 ),
                 ResettlementAssessmentOption(
                   id = "OTHER_SUPPORT_NEEDS",

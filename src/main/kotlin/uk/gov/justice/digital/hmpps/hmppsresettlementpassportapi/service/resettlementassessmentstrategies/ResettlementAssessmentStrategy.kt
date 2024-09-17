@@ -42,6 +42,19 @@ class ResettlementAssessmentStrategy(
   private val profileTagsRepository: ProfileTagsRepository,
 ) {
 
+  fun getConfigPages(
+    assessmentType: ResettlementAssessmentType,
+    pathway: Pathway,
+    version: Int,
+  ): List<AssessmentConfigPage> {
+    val pages = getConfig(
+      pathway,
+      assessmentType,
+      version,
+    ).pages
+
+    return pages
+  }
   fun getConfig(pathway: Pathway, assessmentType: ResettlementAssessmentType, version: Int): AssessmentQuestionSet {
     val pathwayConfig = config.questionSets.first { it.pathway == pathway && it.version == version }
 
@@ -216,7 +229,7 @@ class ResettlementAssessmentStrategy(
     )
 
     saveAssessment(resettlementAssessmentEntity)
-    generateProfileTags(prisonerEntity)
+    generateProfileTags(prisonerEntity, assessmentType)
   }
 
   fun validateQuestionAndAnswerSet(
@@ -441,7 +454,9 @@ class ResettlementAssessmentStrategy(
       pathway,
       assessmentType,
       version,
-    ).pages.firstOrNull { p -> (p.questions?.getFlattenedListOfQuestions()?.any { q -> q.id == questionId } == true) }?.id
+    ).pages.firstOrNull { p ->
+      (p.questions?.getFlattenedListOfQuestions()?.any { q -> q.id == questionId } == true)
+    }?.id
       ?: throw RuntimeException("Cannot find page for question [$questionId] - check that the question is used in a page!")
   }
 
@@ -497,11 +512,11 @@ class ResettlementAssessmentStrategy(
     return ResettlementAssessmentVersion(getExistingAssessment(nomsId, pathway, assessmentType)?.version)
   }
 
-  private fun generateProfileTags(prisonerEntity: PrisonerEntity) {
-    val profileTagsList = ProfileTagList(listOf())
-    var profileTagList = emptyList<String>()
-    val profileTagsEntityList = profileTagsRepository.findByPrisonerId(prisonerEntity.id())
-    var tagList = emptyList<String>()
+  fun generateProfileTags(prisonerEntity: PrisonerEntity, assessmentType: ResettlementAssessmentType) {
+    val profileTagList = ProfileTagList(listOf())
+    val profileTagsEntity: ProfileTagsEntity
+    var tagList = profileTagList.tags
+
     Pathway.entries.forEach { pathway ->
       val resettlementAssessment =
         resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusInOrderByCreationDateDesc(
@@ -510,30 +525,30 @@ class ResettlementAssessmentStrategy(
           assessmentStatus = listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED),
         )
       if (resettlementAssessment != null) {
-        val processProfileTagList = processProfileTags(resettlementAssessment, pathway)
+        val pages = getConfigPages(assessmentType, pathway, resettlementAssessment.version)
+        val processProfileTagList = processProfileTags(resettlementAssessment, pages)
         if (processProfileTagList.isNotEmpty()) {
           tagList = tagList + processProfileTagList
         }
       }
     }
-
-    if (profileTagsEntityList.isNotEmpty() && tagList.isNotEmpty()) {
-      profileTagsEntityList.forEach {
-        profileTagsRepository.delete(it)
-      }
-    }
+    profileTagList.tags = tagList
 
     if (tagList.isNotEmpty()) {
-      profileTagsList.tags = profileTagList + tagList
-      val profileTagsEntity = prisonerEntity.id?.let {
-        ProfileTagsEntity(
-          id = null,
-          prisonerId = it,
-          profileTags = profileTagsList,
-          updatedDate = LocalDateTime.now(),
-        )
-      }
-      if (profileTagsEntity != null) {
+      if (prisonerEntity.id?.let { profileTagsRepository.existsProfileTagsEntityByPrisonerId(it) } == true) {
+        profileTagsEntity = profileTagsRepository.findFirstByPrisonerId(prisonerEntity.id())
+        profileTagsEntity.profileTags = profileTagList
+        profileTagsEntity.updatedDate = LocalDateTime.now()
+        profileTagsRepository.save(profileTagsEntity)
+      } else {
+        profileTagsEntity = prisonerEntity.id?.let {
+          ProfileTagsEntity(
+            id = null,
+            prisonerId = it,
+            profileTags = profileTagList,
+            updatedDate = LocalDateTime.now(),
+          )
+        }!!
         profileTagsRepository.save(profileTagsEntity)
       }
     }
@@ -576,6 +591,7 @@ data class AssessmentConfigOption(
   val exclusive: Boolean = false,
   val nestedQuestions: List<AssessmentConfigQuestion>? = null,
   val freeText: Boolean = false,
+  val tag: String? = null,
 )
 
 data class AssessmentConfigNextPageOption(

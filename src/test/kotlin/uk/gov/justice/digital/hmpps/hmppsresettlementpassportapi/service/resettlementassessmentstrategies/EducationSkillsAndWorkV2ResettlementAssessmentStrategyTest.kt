@@ -233,6 +233,7 @@ class EducationSkillsAndWorkV2ResettlementAssessmentStrategyTest : BaseResettlem
                 ResettlementAssessmentOption(
                   id = "HELP_TO_FIND_JOB",
                   displayText = "Help to find a job for release",
+                  tag = "FIND_A_JOB",
                 ),
                 ResettlementAssessmentOption(
                   id = "SUPPORT_TO_CONTACT_EMPLOYER_FROM_BEFORE_CUSTODY",
@@ -241,18 +242,22 @@ class EducationSkillsAndWorkV2ResettlementAssessmentStrategyTest : BaseResettlem
                 ResettlementAssessmentOption(
                   id = "SUPPORT_TO_CONTACT_EMPLOYER_FOR_AFTER_RELEASE",
                   displayText = "Support contacting employer for after release",
+                  tag = "CONTACT_EMPLOYER",
                 ),
                 ResettlementAssessmentOption(
                   id = "HELP_FIND_EDUCATION_FOR_RELEASE",
                   displayText = "Help to find education or training for release",
+                  tag = "FIND_EDUCATION_TRAINING",
                 ),
                 ResettlementAssessmentOption(
                   id = "SUPPORT_CONTACTING_TRAINING_PROVIDER",
                   displayText = "Support contacting an education or training provider",
+                  tag = "CONTACT_EDUCATION_TRAINING",
                 ),
                 ResettlementAssessmentOption(
                   id = "INFORMATION_ABOUT_GRANTS_AND_TRAINING",
                   displayText = "Information about bursaries and grants for courses or training",
+                  tag = "BURSARIES_AND_GRANTS_TRAINING",
                 ),
                 ResettlementAssessmentOption(
                   id = "OTHER_SUPPORT_NEEDS",

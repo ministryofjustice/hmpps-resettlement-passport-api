@@ -85,12 +85,16 @@ pages:
         options:
           - id: "APPLY_FOR_BANK_ACCOUNT"
             displayText: "Apply for a bank account"
+            tag: "NO_BANK_ACCOUNT"
           - id: "APPLY_FOR_ID"
             displayText: "Apply for ID documents"
+            tag: "MANAGE_ID_DOCUMENTS"
           - id: "SUPPORT_TO_MANAGE_DEBT"
             displayText: "Support to manage debts or arrears"
+            tag: "MANAGE_DEBT_ARREARS"
           - id: "HELP_TO_CONTACT_BANK"
             displayText: "Help to contact their bank to manage their account"
+            tag: "HELP_TO_CONTACT_BANK"
           - id: "OTHER_SUPPORT_NEEDS"
             displayText: "Other"
             freeText: true

@@ -35,12 +35,14 @@ pages:
         options:
           - id: "HELP_TO_REGISTER_WITH_GP"
             displayText: "Help to register with a GP surgery"
+            tag: "REGISTERING_GP_SURGERY"
           - id: "MEET_WITH_HEALTHCARE_FOR_PHYSICAL_HEALTH_NEED"
             displayText: "Meet with prison healthcare team for physical health need"
           - id: "MEET_WITH_HEALTHCARE_FOR_MENTAL_HEALTH_NEED"
             displayText: "Meet with prison healthcare team for mental health need"
           - id: "SUPPORT_FROM_SOCIAL_CARE"
             displayText: "Support from social care when they are released from prison"
+            tag: "CARE_HEALTH_SUPPORT"
           - id: "OTHER_SUPPORT_NEEDS"
             displayText: "Other"
             freeText: true

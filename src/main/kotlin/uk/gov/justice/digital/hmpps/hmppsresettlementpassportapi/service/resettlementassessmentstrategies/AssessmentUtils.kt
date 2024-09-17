@@ -1,9 +1,8 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies
 
+import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.web.server.ServerWebInputException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.TagAndQuestionMapping
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
@@ -43,7 +42,7 @@ internal fun List<AssessmentConfigOption>?.mapToResettlementAssessmentOptions(or
     exclusive = it.exclusive,
     freeText = it.freeText,
     nestedQuestions = it.nestedQuestions?.map { nq -> nq.mapToResettlementAssessmentQuestionAndAnswer(originalPageId) },
-    profileTag = it.profileTag,
+    tag = it.tag,
   )
 }
 
@@ -85,6 +84,7 @@ internal fun ResettlementAssessmentQuestion.removeNestedQuestions() = Resettleme
       exclusive = it.exclusive,
       nestedQuestions = null,
       freeText = it.freeText,
+      tag = it.tag,
     )
   },
   validationType = this.validationType,
@@ -93,26 +93,49 @@ internal fun ResettlementAssessmentQuestion.removeNestedQuestions() = Resettleme
   detailsContent = this.detailsContent,
 )
 
-internal fun getProfileTag(questionId: String, answer: Answer<*>, pathway: Pathway): List<String> {
+internal fun getProfileTag(answer: Answer<*>, options: List<AssessmentConfigOption>): List<String> {
   val tagFound = mutableListOf<String>()
-  TagAndQuestionMapping.entries.forEach {
-    if ((it.questionId.contains(questionId)) &&
-      (answer.answer.toString().contains(it.optionId)) &&
-      (pathway.name == it.pathway.name)
-    ) {
-      tagFound.add(it.name)
+
+  options.forEach { opt ->
+    log.info("Option Id ${opt.id} and answer id ${answer.answer}")
+    if (answer.answer.toString().contains(opt.id)) {
+      opt.tag?.let { tagFound.add(it) }
     }
   }
+  log.info("Tag Found is ${tagFound.size}")
   return tagFound.distinct()
 }
 
-internal fun processProfileTags(resettlementAssessmentEntity: ResettlementAssessmentEntity, pathway: Pathway): List<String> {
+internal fun processProfileTags(resettlementAssessmentEntity: ResettlementAssessmentEntity, pages: List<AssessmentConfigPage>): List<String> {
   val tagList = mutableListOf<String>()
   resettlementAssessmentEntity.assessment.assessment.forEach {
-    val tagFound = getProfileTag(it.questionId, it.answer, pathway)
+    log.info("question id ${it.questionId}")
+    val options = findOptionsListFromQuestionId(it.questionId, pages)
+    log.info("Options List size ${options.size} and options are $options")
+    val tagFound = getProfileTag(it.answer, options)
+    log.info("Tag Found size ${tagFound.size} for answer ${it.answer}")
+
     if (tagFound.isNotEmpty()) {
       tagList.addAll(tagFound)
     }
   }
   return tagList
+}
+
+internal fun findOptionsListFromQuestionId(
+  questionId: String,
+  pages: List<AssessmentConfigPage>,
+): List<AssessmentConfigOption> {
+  var optionsList = emptyList<AssessmentConfigOption>()
+  log.info("Question Id in findOptionsListFromQuestionId $questionId")
+
+  pages.forEach { p ->
+    log.info("PageId ${p.id} and questions are ${p.questions}")
+    p.questions?.forEach { q ->
+      if (q.id == questionId && q.options != null) {
+        optionsList = q.options
+      }
+    }
+  }
+  return optionsList
 }

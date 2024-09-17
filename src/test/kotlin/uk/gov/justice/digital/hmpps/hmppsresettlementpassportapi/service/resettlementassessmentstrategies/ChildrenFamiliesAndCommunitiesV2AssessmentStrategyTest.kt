@@ -304,10 +304,12 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
                 ResettlementAssessmentOption(
                   id = "SUPPORT_WHEN_MEETING_CHILDREN_SERVICES",
                   displayText = "Support when they meet with children's services",
+                  tag = "MEET_CHILDREN",
                 ),
                 ResettlementAssessmentOption(
                   id = "SUPPORT_FROM_COMMUNITY_ORGANISATION_OUTSIDE_PRISON",
                   displayText = "Support from community organisations outside of prison",
+                  tag = "COMMUNITY_ORG_SUPPORT",
                 ),
                 ResettlementAssessmentOption(
                   id = "INTERNAL_SUPPORT_SERVICES",
@@ -316,6 +318,7 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
                 ResettlementAssessmentOption(
                   id = "MENTORING_SUPPORT_ON_RELEASE",
                   displayText = "Mentoring support on release",
+                  tag = "MENTORING_SUPPORT",
                 ),
                 ResettlementAssessmentOption(
                   id = "OTHER_SUPPORT_NEEDS",

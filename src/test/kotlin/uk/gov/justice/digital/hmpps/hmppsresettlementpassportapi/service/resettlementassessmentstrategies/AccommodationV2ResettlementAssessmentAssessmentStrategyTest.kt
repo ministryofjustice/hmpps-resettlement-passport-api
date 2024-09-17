@@ -205,6 +205,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
                 ResettlementAssessmentOption(
                   id = "PRIVATE_RENTED_HOUSING",
                   displayText = "Private rented housing",
+                  tag = null,
                   nestedQuestions = listOf(
                     ResettlementAssessmentQuestionAndAnswer(
                       question = ResettlementAssessmentQuestion(
@@ -219,6 +220,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
                 ResettlementAssessmentOption(
                   id = "PRIVATE_HOUSING_OWNED",
                   displayText = "Private housing owned by them",
+                  tag = null,
                   nestedQuestions = listOf(
                     ResettlementAssessmentQuestionAndAnswer(
                       question = ResettlementAssessmentQuestion(
@@ -233,6 +235,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
                 ResettlementAssessmentOption(
                   id = "FAMILY_OR_FRIENDS",
                   displayText = "With family or friends",
+                  tag = null,
                   nestedQuestions = listOf(
                     ResettlementAssessmentQuestionAndAnswer(
                       question = ResettlementAssessmentQuestion(
@@ -247,6 +250,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
                 ResettlementAssessmentOption(
                   id = "SOCIAL_HOUSING",
                   displayText = "Social housing",
+                  tag = null,
                   nestedQuestions = listOf(
                     ResettlementAssessmentQuestionAndAnswer(
                       question = ResettlementAssessmentQuestion(
@@ -261,6 +265,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
                 ResettlementAssessmentOption(
                   id = "LOCAL_AUTHORITY_OR_SUPPORTED_HOUSING",
                   displayText = "Local authority care or supported housing",
+                  tag = null,
                   nestedQuestions = listOf(
                     ResettlementAssessmentQuestionAndAnswer(
                       question = ResettlementAssessmentQuestion(
@@ -275,6 +280,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
                 ResettlementAssessmentOption(
                   id = "HOSTEL",
                   displayText = "Hostel",
+                  tag = null,
                   nestedQuestions = listOf(
                     ResettlementAssessmentQuestionAndAnswer(
                       question = ResettlementAssessmentQuestion(
@@ -289,6 +295,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
                 ResettlementAssessmentOption(
                   id = "APPROVED_PREMISES",
                   displayText = "Approved premises",
+                  tag = null,
                   nestedQuestions = listOf(
                     ResettlementAssessmentQuestionAndAnswer(
                       question = ResettlementAssessmentQuestion(
@@ -303,10 +310,12 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
                 ResettlementAssessmentOption(
                   id = "NO_PERMANENT_OR_FIXED",
                   displayText = "No permanent or fixed address",
+                  tag = null,
                 ),
                 ResettlementAssessmentOption(
                   id = "NO_ANSWER",
                   displayText = "No answer provided",
+                  tag = null,
                 ),
               ),
             ),
@@ -330,10 +339,12 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
                 ResettlementAssessmentOption(
                   id = "RETURN_TO_PREVIOUS_ADDRESS",
                   displayText = "Return to their previous address",
+                  tag = null,
                 ),
                 ResettlementAssessmentOption(
                   id = "MOVE_TO_NEW_ADDRESS",
                   displayText = "Move to a new address",
+                  tag = null,
                   nestedQuestions = listOf(
                     ResettlementAssessmentQuestionAndAnswer(
                       question = ResettlementAssessmentQuestion(
@@ -356,10 +367,12 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
                 ResettlementAssessmentOption(
                   id = "DOES_NOT_HAVE_ANYWHERE",
                   displayText = "Does not have anywhere to live",
+                  tag = null,
                 ),
                 ResettlementAssessmentOption(
                   id = "NO_ANSWER",
                   displayText = "No answer provided",
+                  tag = null,
                 ),
               ),
             ),
@@ -393,14 +406,17 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
                 ResettlementAssessmentOption(
                   id = "HELP_TO_FIND_ACCOMMODATION",
                   displayText = "Help to find accommodation",
+                  tag = "NO_FIXED_ABODE",
                 ),
                 ResettlementAssessmentOption(
                   id = "HOME_ADAPTATIONS",
                   displayText = "Home adaptations",
+                  tag = "HOME_ADAPTATIONS_POST_RELEASE",
                 ),
                 ResettlementAssessmentOption(
                   id = "HELP_TO_KEEP_HOME",
                   displayText = "Help to keep their home while in prison",
+                  tag = "KEEP_THEIR_HOME",
                 ),
                 ResettlementAssessmentOption(
                   id = "HOMELESS_APPLICATION",
@@ -409,14 +425,17 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
                 ResettlementAssessmentOption(
                   id = "CANCEL_A_TENANCY",
                   displayText = "Cancel a tenancy",
+                  tag = "CANCEL_TENANCY",
                 ),
                 ResettlementAssessmentOption(
                   id = "SET_UP_RENT_ARREARS",
                   displayText = "Set up rent arrears",
+                  tag = "PAYMENT_FOR_RENT_ARREARS",
                 ),
                 ResettlementAssessmentOption(
                   id = "ARRANGE_STORAGE",
                   displayText = "Arrange storage for personal possessions",
+                  tag = "ARRANGE_STORAGE_FOR_PERSONAL",
                 ),
               ),
               validationType = ValidationType.OPTIONAL,
@@ -433,16 +452,19 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
                   id = "SUPPORT_REQUIRED",
                   displayText = "Support required",
                   description = "a need for support has been identified and is accepted",
+                  tag = null,
                 ),
                 ResettlementAssessmentOption(
                   id = "SUPPORT_NOT_REQUIRED",
                   displayText = "Support not required",
                   description = "no need was identified",
+                  tag = null,
                 ),
                 ResettlementAssessmentOption(
                   id = "SUPPORT_DECLINED",
                   displayText = "Support declined",
                   description = "a need has been identified but support is declined",
+                  tag = null,
                 ),
               ),
             ),
@@ -500,6 +522,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
               ResettlementAssessmentOption(
                 id = "PRIVATE_RENTED_HOUSING",
                 displayText = "Private rented housing",
+                tag = null,
                 nestedQuestions = listOf(
                   ResettlementAssessmentQuestionAndAnswer(
                     question = ResettlementAssessmentQuestion(
@@ -514,6 +537,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
               ResettlementAssessmentOption(
                 id = "PRIVATE_HOUSING_OWNED",
                 displayText = "Private housing owned by them",
+                tag = null,
                 nestedQuestions = listOf(
                   ResettlementAssessmentQuestionAndAnswer(
                     question = ResettlementAssessmentQuestion(
@@ -528,6 +552,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
               ResettlementAssessmentOption(
                 id = "FAMILY_OR_FRIENDS",
                 displayText = "With family or friends",
+                tag = null,
                 nestedQuestions = listOf(
                   ResettlementAssessmentQuestionAndAnswer(
                     question = ResettlementAssessmentQuestion(
@@ -543,6 +568,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
               ResettlementAssessmentOption(
                 id = "SOCIAL_HOUSING",
                 displayText = "Social housing",
+                tag = null,
                 nestedQuestions = listOf(
                   ResettlementAssessmentQuestionAndAnswer(
                     question = ResettlementAssessmentQuestion(
@@ -557,6 +583,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
               ResettlementAssessmentOption(
                 id = "LOCAL_AUTHORITY_OR_SUPPORTED_HOUSING",
                 displayText = "Local authority care or supported housing",
+                tag = null,
                 nestedQuestions = listOf(
                   ResettlementAssessmentQuestionAndAnswer(
                     question = ResettlementAssessmentQuestion(
@@ -571,6 +598,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
               ResettlementAssessmentOption(
                 id = "HOSTEL",
                 displayText = "Hostel",
+                tag = null,
                 nestedQuestions = listOf(
                   ResettlementAssessmentQuestionAndAnswer(
                     question = ResettlementAssessmentQuestion(
@@ -585,6 +613,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
               ResettlementAssessmentOption(
                 id = "APPROVED_PREMISES",
                 displayText = "Approved premises",
+                tag = null,
                 nestedQuestions = listOf(
                   ResettlementAssessmentQuestionAndAnswer(
                     question = ResettlementAssessmentQuestion(
@@ -599,10 +628,12 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
               ResettlementAssessmentOption(
                 id = "NO_PERMANENT_OR_FIXED",
                 displayText = "No permanent or fixed address",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "NO_ANSWER",
                 displayText = "No answer provided",
+                tag = null,
               ),
             ),
           ),
@@ -628,10 +659,12 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
               ResettlementAssessmentOption(
                 id = "RETURN_TO_PREVIOUS_ADDRESS",
                 displayText = "Return to their previous address",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "MOVE_TO_NEW_ADDRESS",
                 displayText = "Move to a new address",
+                tag = null,
                 nestedQuestions = listOf(
                   ResettlementAssessmentQuestionAndAnswer(
                     question = ResettlementAssessmentQuestion(
@@ -656,10 +689,12 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
               ResettlementAssessmentOption(
                 id = "DOES_NOT_HAVE_ANYWHERE",
                 displayText = "Does not have anywhere to live",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "NO_ANSWER",
                 displayText = "No answer provided",
+                tag = null,
               ),
             ),
           ),
@@ -722,38 +757,47 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
               ResettlementAssessmentOption(
                 id = "PRIVATE_RENTED_HOUSING",
                 displayText = "Private rented housing",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "PRIVATE_HOUSING_OWNED",
                 displayText = "Private housing owned by them",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "FAMILY_OR_FRIENDS",
                 displayText = "With family or friends",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "SOCIAL_HOUSING",
                 displayText = "Social housing",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "LOCAL_AUTHORITY_OR_SUPPORTED_HOUSING",
                 displayText = "Local authority care or supported housing",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "HOSTEL",
                 displayText = "Hostel",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "APPROVED_PREMISES",
                 displayText = "Approved premises",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "NO_PERMANENT_OR_FIXED",
                 displayText = "No permanent or fixed address",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "NO_ANSWER",
                 displayText = "No answer provided",
+                tag = null,
               ),
             ),
           ),
@@ -788,18 +832,22 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
               ResettlementAssessmentOption(
                 id = "RETURN_TO_PREVIOUS_ADDRESS",
                 displayText = "Return to their previous address",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "MOVE_TO_NEW_ADDRESS",
                 displayText = "Move to a new address",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "DOES_NOT_HAVE_ANYWHERE",
                 displayText = "Does not have anywhere to live",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "NO_ANSWER",
                 displayText = "No answer provided",
+                tag = null,
               ),
             ),
           ),
@@ -844,14 +892,17 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
               ResettlementAssessmentOption(
                 id = "HELP_TO_FIND_ACCOMMODATION",
                 displayText = "Help to find accommodation",
+                tag = "NO_FIXED_ABODE",
               ),
               ResettlementAssessmentOption(
                 id = "HOME_ADAPTATIONS",
                 displayText = "Home adaptations",
+                tag = "HOME_ADAPTATIONS_POST_RELEASE",
               ),
               ResettlementAssessmentOption(
                 id = "HELP_TO_KEEP_HOME",
                 displayText = "Help to keep their home while in prison",
+                tag = "KEEP_THEIR_HOME",
               ),
               ResettlementAssessmentOption(
                 id = "HOMELESS_APPLICATION",
@@ -860,14 +911,17 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
               ResettlementAssessmentOption(
                 id = "CANCEL_A_TENANCY",
                 displayText = "Cancel a tenancy",
+                tag = "CANCEL_TENANCY",
               ),
               ResettlementAssessmentOption(
                 id = "SET_UP_RENT_ARREARS",
                 displayText = "Set up rent arrears",
+                tag = "PAYMENT_FOR_RENT_ARREARS",
               ),
               ResettlementAssessmentOption(
                 id = "ARRANGE_STORAGE",
                 displayText = "Arrange storage for personal possessions",
+                tag = "ARRANGE_STORAGE_FOR_PERSONAL",
               ),
             ),
             validationType = ValidationType.OPTIONAL,
@@ -884,16 +938,19 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
               ResettlementAssessmentOption(
                 id = "SUPPORT_REQUIRED",
                 displayText = "Support required",
+                tag = null,
                 description = "a need for support has been identified and is accepted",
               ),
               ResettlementAssessmentOption(
                 id = "SUPPORT_NOT_REQUIRED",
                 displayText = "Support not required",
+                tag = null,
                 description = "no need was identified",
               ),
               ResettlementAssessmentOption(
                 id = "SUPPORT_DECLINED",
                 displayText = "Support declined",
+                tag = null,
                 description = "a need has been identified but support is declined",
               ),
             ),
@@ -957,38 +1014,47 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
               ResettlementAssessmentOption(
                 id = "PRIVATE_RENTED_HOUSING",
                 displayText = "Private rented housing",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "PRIVATE_HOUSING_OWNED",
                 displayText = "Private housing owned by them",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "FAMILY_OR_FRIENDS",
                 displayText = "With family or friends",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "SOCIAL_HOUSING",
                 displayText = "Social housing",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "LOCAL_AUTHORITY_OR_SUPPORTED_HOUSING",
                 displayText = "Local authority care or supported housing",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "HOSTEL",
                 displayText = "Hostel",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "APPROVED_PREMISES",
                 displayText = "Approved premises",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "NO_PERMANENT_OR_FIXED",
                 displayText = "No permanent or fixed address",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "NO_ANSWER",
                 displayText = "No answer provided",
+                tag = null,
               ),
             ),
           ),
@@ -1023,18 +1089,22 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
               ResettlementAssessmentOption(
                 id = "RETURN_TO_PREVIOUS_ADDRESS",
                 displayText = "Return to their previous address",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "MOVE_TO_NEW_ADDRESS",
                 displayText = "Move to a new address",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "DOES_NOT_HAVE_ANYWHERE",
                 displayText = "Does not have anywhere to live",
+                tag = null,
               ),
               ResettlementAssessmentOption(
                 id = "NO_ANSWER",
                 displayText = "No answer provided",
+                tag = null,
               ),
             ),
           ),
@@ -1556,6 +1626,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
               AssessmentConfigOption(
                 id = "PRIVATE_RENTED_HOUSING",
                 displayText = "Private rented housing",
+                tag = null,
                 nestedQuestions = listOf(
                   AssessmentConfigQuestion(
                     id = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING",
@@ -1707,14 +1778,17 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
               AssessmentConfigOption(
                 id = "HELP_TO_FIND_ACCOMMODATION",
                 displayText = "Help to find accommodation",
+                tag = "NO_FIXED_ABODE",
               ),
               AssessmentConfigOption(
                 id = "HOME_ADAPTATIONS",
                 displayText = "Home adaptations",
+                tag = "HOME_ADAPTATIONS_POST_RELEASE",
               ),
               AssessmentConfigOption(
                 id = "HELP_TO_KEEP_HOME",
                 displayText = "Help to keep their home while in prison",
+                tag = "KEEP_THEIR_HOME",
               ),
               AssessmentConfigOption(
                 id = "HOMELESS_APPLICATION",
@@ -1723,14 +1797,17 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
               AssessmentConfigOption(
                 id = "CANCEL_A_TENANCY",
                 displayText = "Cancel a tenancy",
+                tag = "CANCEL_TENANCY",
               ),
               AssessmentConfigOption(
                 id = "SET_UP_RENT_ARREARS",
                 displayText = "Set up rent arrears",
+                tag = "PAYMENT_FOR_RENT_ARREARS",
               ),
               AssessmentConfigOption(
                 id = "ARRANGE_STORAGE",
                 displayText = "Arrange storage for personal possessions",
+                tag = "ARRANGE_STORAGE_FOR_PERSONAL",
               ),
             ),
             validationType = ValidationType.OPTIONAL,

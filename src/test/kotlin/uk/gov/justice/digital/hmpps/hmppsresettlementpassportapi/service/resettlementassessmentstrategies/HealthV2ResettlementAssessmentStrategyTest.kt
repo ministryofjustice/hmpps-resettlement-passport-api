@@ -130,6 +130,7 @@ class HealthV2ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStr
                 ResettlementAssessmentOption(
                   id = "HELP_TO_REGISTER_WITH_GP",
                   displayText = "Help to register with a GP surgery",
+                  tag = "REGISTERING_GP_SURGERY",
                 ),
                 ResettlementAssessmentOption(
                   id = "MEET_WITH_HEALTHCARE_FOR_PHYSICAL_HEALTH_NEED",
@@ -142,6 +143,7 @@ class HealthV2ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStr
                 ResettlementAssessmentOption(
                   id = "SUPPORT_FROM_SOCIAL_CARE",
                   displayText = "Support from social care when they are released from prison",
+                  tag = "CARE_HEALTH_SUPPORT",
                 ),
                 ResettlementAssessmentOption(
                   id = "OTHER_SUPPORT_NEEDS",

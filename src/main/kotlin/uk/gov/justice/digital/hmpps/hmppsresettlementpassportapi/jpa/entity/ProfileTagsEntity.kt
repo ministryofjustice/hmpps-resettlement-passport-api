@@ -30,7 +30,7 @@ data class ProfileTagsEntity(
   @Column(name = "profile_tags")
   @JdbcTypeCode(SqlTypes.JSON)
   @Convert(converter = ProfileTagConverter::class)
-  val profileTags: ProfileTagList,
+  var profileTags: ProfileTagList,
 
   @Column(name = "updated_date")
   var updatedDate: LocalDateTime? = null,

@@ -8,7 +8,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Prof
 @Repository
 interface ProfileTagsRepository : JpaRepository<ProfileTagsEntity, Long> {
 
-  fun findByPrisonerId(prisonerId: Long): List<ProfileTagsEntity>
+  fun findByPrisonerId(prisonerId: Long): ProfileTagsEntity
+
+  fun findFirstByPrisonerId(prisonerId: Long): ProfileTagsEntity
+
+  fun existsProfileTagsEntityByPrisonerId(prisonerId: Long): Boolean
 
   @Query(
     value = """

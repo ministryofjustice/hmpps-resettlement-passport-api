@@ -86,7 +86,6 @@ data class ResettlementAssessmentQuestionAndAnswerList(
 data class ResettlementAssessmentSimpleQuestionAndAnswer(
   val questionId: String,
   val answer: Answer<*>,
-  val profileTag: String? = "",
 )
 
 @Converter(autoApply = true)

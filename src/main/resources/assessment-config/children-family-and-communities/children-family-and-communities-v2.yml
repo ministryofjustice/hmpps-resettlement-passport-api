@@ -173,12 +173,15 @@ pages:
         options:
           - id: "SUPPORT_WHEN_MEETING_CHILDREN_SERVICES"
             displayText: "Support when they meet with children's services"
+            tag: "MEET_CHILDREN"
           - id: "SUPPORT_FROM_COMMUNITY_ORGANISATION_OUTSIDE_PRISON"
             displayText: "Support from community organisations outside of prison"
+            tag: "COMMUNITY_ORG_SUPPORT"
           - id: "INTERNAL_SUPPORT_SERVICES"
             displayText: "Internal support services"
           - id: "MENTORING_SUPPORT_ON_RELEASE"
             displayText: "Mentoring support on release"
+            tag: "MENTORING_SUPPORT"
           - id: "OTHER_SUPPORT_NEEDS"
             displayText: "Other"
             freeText: true

@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external
 
-import org.hibernate.query.sqm.tree.SqmNode.log
+import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -14,6 +14,9 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.interventi
 class InterventionsApiService(
   private val interventionsWebClientCredentials: WebClient,
 ) {
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+  }
 
   @Cacheable("interventions-api-fetch-probation-case-referrals")
   fun fetchProbationCaseReferrals(crn: String): List<ReferralDTO> = interventionsWebClientCredentials.get()

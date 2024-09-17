@@ -105,7 +105,7 @@ class ResettlementAssessmentService(
     )
 
   @Transactional
-  fun submitResettlementAssessmentByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType, useNewDeliusCaseNoteFormat: Boolean, auth: String): ResettlementAssessmentSubmitResponse {
+  fun submitResettlementAssessmentByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType, useNewDeliusCaseNoteFormat: Boolean, auth: String, resettlementAssessmentStrategies: ResettlementAssessmentStrategy): ResettlementAssessmentSubmitResponse {
     // Check auth - must be NOMIS
     val authSource = getClaimFromJWTToken(auth, "auth_source")?.lowercase()
     if (authSource != "nomis") {
@@ -123,6 +123,7 @@ class ResettlementAssessmentService(
     var tagList = profileTagList.tags
     // For each pathway, get the latest complete assessment
     Pathway.entries.forEach { pathway ->
+
       val resettlementAssessment = resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
         prisonerId = prisonerEntity.id(),
         pathway = pathway,
@@ -130,11 +131,14 @@ class ResettlementAssessmentService(
         assessmentStatus = listOf(ResettlementAssessmentStatus.COMPLETE),
       )
       if (resettlementAssessment != null) {
+        val pages = resettlementAssessmentStrategies.getConfigPages(assessmentType, pathway, resettlementAssessment.version)
+        log.info("Pages size ${pages.size}")
         assessmentList.add(resettlementAssessment)
-        tagList = tagList + processProfileTags(resettlementAssessment, pathway)
+        tagList = tagList + processProfileTags(resettlementAssessment, pages)
       }
     }
     profileTagList.tags = tagList
+    log.info("ProfileTagList size ${profileTagList.tags.size}")
 
     if (assessmentList.size != Pathway.entries.size) {
       throw RuntimeException("Found [${assessmentList.size}] assessments for prisoner [$nomsId]. This should be all ${Pathway.entries.size} pathways!")
@@ -160,25 +164,23 @@ class ResettlementAssessmentService(
       assessment.submissionDate = LocalDateTime.now()
       resettlementAssessmentRepository.save(assessment)
     }
+    val profileTagsEntity: ProfileTagsEntity
     if (profileTagList.tags.isNotEmpty()) {
-      val profileTagsEntityList = prisonerEntity.id?.let { profileTagsRepository.findByPrisonerId(it) }
-      if (!profileTagsEntityList.isNullOrEmpty()) {
-        profileTagsEntityList.forEach {
-          profileTagsRepository.delete(it)
-        }
+      if (prisonerEntity.id?.let { profileTagsRepository.existsProfileTagsEntityByPrisonerId(it) } == true) {
+        profileTagsEntity = profileTagsRepository.findFirstByPrisonerId(prisonerEntity.id())
+        profileTagsEntity.profileTags = profileTagList
+        profileTagsEntity.updatedDate = LocalDateTime.now()
+      } else {
+        profileTagsEntity = prisonerEntity.id?.let {
+          ProfileTagsEntity(
+            id = null,
+            prisonerId = it,
+            profileTags = profileTagList,
+            updatedDate = LocalDateTime.now(),
+          )
+        }!!
       }
-      val profileTagsEntity = prisonerEntity.id?.let {
-        ProfileTagsEntity(
-          id = null,
-          prisonerId = it,
-          profileTags = profileTagList,
-          updatedDate = LocalDateTime.now(),
-        )
-      }
-
-      if (profileTagsEntity != null) {
-        profileTagsRepository.save(profileTagsEntity)
-      }
+      profileTagsRepository.save(profileTagsEntity)
     }
     val failedCaseNotes = mutableListOf<UserAndCaseNote>()
     val prisonCode = prisonerSearchApiService.findPrisonerPersonalDetails(prisonerEntity.nomsId).prisonId

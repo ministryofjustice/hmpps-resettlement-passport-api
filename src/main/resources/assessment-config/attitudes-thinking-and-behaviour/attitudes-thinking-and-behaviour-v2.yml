@@ -35,8 +35,10 @@ pages:
         options:
           - id: "SUPPORT_MANAGING_EMOTIONS"
             displayText: "Support to manage their emotions"
+            tag: "MANAGE_EMOTIONS"
           - id: "SUPPORT_GAMBLING_PROBLEMS"
             displayText: "Support for problems with gambling"
+            tag: "GAMBLING_ISSUE"
           - id: "OTHER_SUPPORT_NEEDS"
             displayText: "Other"
             freeText: true

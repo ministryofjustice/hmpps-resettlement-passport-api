@@ -130,10 +130,12 @@ class DrugsAndAlcoholV2ResettlementAssessmentStrategyTest : BaseResettlementAsse
                 ResettlementAssessmentOption(
                   id = "SUPPORT_FOR_DRUG_ISSUES",
                   displayText = "Support from drug and alcohol team for drug issues",
+                  tag = "DRUG_ISSUE",
                 ),
                 ResettlementAssessmentOption(
                   id = "SUPPORT_FOR_ALCOHOL_ISSUES",
                   displayText = "Support from drug and alcohol team for alcohol issues",
+                  tag = "ALCOHOL_ISSUE",
                 ),
                 ResettlementAssessmentOption(
                   id = "CONTACT_SUPPORT_SERVICES_OUTSIDE_PRISON",

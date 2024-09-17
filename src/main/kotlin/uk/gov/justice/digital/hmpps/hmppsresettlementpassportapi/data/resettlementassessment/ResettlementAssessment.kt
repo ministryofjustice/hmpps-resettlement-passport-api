@@ -15,6 +15,7 @@ data class ResettlementAssessmentCompleteRequest(
 data class ResettlementAssessmentRequestQuestionAndAnswer<T>(
   val question: String,
   val answer: Answer<T>,
+  val profileTag: String? = "",
 )
 
 data class ResettlementAssessmentNextPage(
@@ -52,6 +53,7 @@ data class ResettlementAssessmentOption(
   val exclusive: Boolean = false,
   val nestedQuestions: List<ResettlementAssessmentQuestionAndAnswer>? = null,
   val freeText: Boolean = false,
+  val tag: String? = null,
 )
 
 data class LatestResettlementAssessmentResponse(

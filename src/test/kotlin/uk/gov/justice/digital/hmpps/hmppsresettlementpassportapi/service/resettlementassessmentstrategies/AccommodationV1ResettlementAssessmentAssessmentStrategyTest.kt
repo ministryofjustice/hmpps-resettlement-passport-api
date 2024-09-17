@@ -787,7 +787,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
   }
 
   private fun `test complete assessment data`() = Stream.of(
-    // Throw exception if SUPPORT_NEEDS question not answered
+    // Throw exception if SUPPORT_NEEDS question not answered 1
     Arguments.of(
       ResettlementAssessmentType.BCST2,
       ResettlementAssessmentCompleteRequest(questionsAndAnswers = listOf(), version = 1),
@@ -795,7 +795,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
       ServerWebInputException("Error validating questions and answers - error validating page flow [400 BAD_REQUEST \"Error validating questions and answers - expected page [WHERE_DID_THEY_LIVE] is different to actual page [null] at index [0]\"]"),
       null,
     ),
-    // Throw exception if SUPPORT_NEEDS answer in wrong format
+    // Throw exception if SUPPORT_NEEDS answer in wrong format 2
     Arguments.of(
       ResettlementAssessmentType.BCST2,
       ResettlementAssessmentCompleteRequest(
@@ -823,7 +823,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
       ServerWebInputException("Support need [ListAnswer(answer=[SUPPORT_REQUIRED, SUPPORT_DECLINED])] must be a StringAnswer"),
       null,
     ),
-    // Throw exception if SUPPORT_NEEDS answer is null
+    // Throw exception if SUPPORT_NEEDS answer is null 3
     Arguments.of(
       ResettlementAssessmentType.BCST2,
       ResettlementAssessmentCompleteRequest(
@@ -851,7 +851,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
       ServerWebInputException("No answer provided for mandatory question [SUPPORT_NEEDS]"),
       null,
     ),
-    // Throw exception if SUPPORT_NEEDS answer is not a valid option
+    // Throw exception if SUPPORT_NEEDS answer is not a valid option 4
     Arguments.of(
       ResettlementAssessmentType.BCST2,
       ResettlementAssessmentCompleteRequest(
@@ -879,7 +879,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
       ServerWebInputException("Support need [StringAnswer(answer=SUPPORT_WANTED)] is not a valid option"),
       null,
     ),
-    // Throw exception if CASE_NOTE_SUMMARY question not answered
+    // Throw exception if CASE_NOTE_SUMMARY question not answered 5
     Arguments.of(
       ResettlementAssessmentType.BCST2,
       ResettlementAssessmentCompleteRequest(
@@ -903,7 +903,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
       ServerWebInputException("Error validating questions and answers - wrong questions answered on page [ASSESSMENT_SUMMARY]. Expected [[SUPPORT_NEEDS, CASE_NOTE_SUMMARY]] but found [[SUPPORT_NEEDS]]"),
       null,
     ),
-    // Throw exception if CASE_NOTE_SUMMARY answer in wrong format
+    // Throw exception if CASE_NOTE_SUMMARY answer in wrong format 6
     Arguments.of(
       ResettlementAssessmentType.BCST2,
       ResettlementAssessmentCompleteRequest(
@@ -931,7 +931,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
       ServerWebInputException("Answer [ListAnswer(answer=[hello, world])] must be a StringAnswer"),
       null,
     ),
-    // Throw exception if CASE_NOTE_SUMMARY is null
+    // Throw exception if CASE_NOTE_SUMMARY is null 7
     Arguments.of(
       ResettlementAssessmentType.BCST2,
       ResettlementAssessmentCompleteRequest(
@@ -959,7 +959,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
       ServerWebInputException("No answer provided for mandatory question [CASE_NOTE_SUMMARY]"),
       null,
     ),
-    // Happy path - BCST2 and no existing assessment
+    // Happy path - BCST2 and no existing assessment 8
     Arguments.of(
       ResettlementAssessmentType.BCST2,
       ResettlementAssessmentCompleteRequest(
@@ -987,7 +987,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
       null,
       null,
     ),
-    // Happy path - RESETTLEMENT_PLAN and no existing assessment
+    // Happy path - RESETTLEMENT_PLAN and no existing assessment 9
     Arguments.of(
       ResettlementAssessmentType.RESETTLEMENT_PLAN,
       ResettlementAssessmentCompleteRequest(
@@ -1015,7 +1015,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
       null,
       null,
     ),
-    // Happy path - existing COMPLETE assessment
+    // Happy path - existing COMPLETE assessment 10
     Arguments.of(
       ResettlementAssessmentType.BCST2,
       ResettlementAssessmentCompleteRequest(
@@ -1043,7 +1043,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
       null,
       ResettlementAssessmentEntity(id = 12, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_NOT_REQUIRED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "NO_ANSWER")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_2", answer = StringAnswer(answer = "NO_ANSWER")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_NOT_REQUIRED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "CASE_NOTE_SUMMARY", answer = StringAnswer(answer = "My case note summary...")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = "My case note summary...", createdByUserId = "USER_1", submissionDate = null, version = 1),
     ),
-    // Happy path - existing SUBMITTED assessment
+    // Happy path - existing SUBMITTED assessment 11
     Arguments.of(
       ResettlementAssessmentType.BCST2,
       ResettlementAssessmentCompleteRequest(

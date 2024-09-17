@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import org.hibernate.query.sqm.tree.SqmNode.log
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -137,7 +136,6 @@ class AppointmentsServiceTest {
     Mockito.`when`(rpDeliusApiService.fetchAppointments(eq(nomisId), any(), any(), any())).thenReturn(listOf())
     Mockito.`when`(interventionsApiService.fetchCRSAppointments("crn")).thenReturn(createCRSAppointments())
     val appointments = appointmentsService.getAppointmentsByNomsId(nomisId, LocalDate.MIN.plusDays(1), LocalDate.MAX.minusDays(1), true)
-    log.info("Result size ${appointments.results.size }")
     Assertions.assertTrue(appointments.results.size == 1)
     Assertions.assertTrue(appointments.results[0].location?.postcode != null)
   }

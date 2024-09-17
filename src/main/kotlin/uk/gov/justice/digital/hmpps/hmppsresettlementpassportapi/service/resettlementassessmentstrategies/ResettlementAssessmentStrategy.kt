@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies
 
-import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
@@ -528,16 +527,12 @@ class ResettlementAssessmentStrategy(
       if (resettlementAssessment != null) {
         val pages = getConfigPages(assessmentType, pathway, resettlementAssessment.version)
         val processProfileTagList = processProfileTags(resettlementAssessment, pages)
-        log.info("processProfileTags $processProfileTagList")
         if (processProfileTagList.isNotEmpty()) {
           tagList = tagList + processProfileTagList
         }
       }
-      log.info("pathway $pathway Tag list $tagList")
     }
     profileTagList.tags = tagList
-
-    log.info("Full tag list $tagList")
 
     if (tagList.isNotEmpty()) {
       if (prisonerEntity.id?.let { profileTagsRepository.existsProfileTagsEntityByPrisonerId(it) } == true) {

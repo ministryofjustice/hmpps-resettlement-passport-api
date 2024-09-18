@@ -105,7 +105,7 @@ class ResettlementAssessmentService(
     )
 
   @Transactional
-  fun submitResettlementAssessmentByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType, useNewDeliusCaseNoteFormat: Boolean, auth: String, resettlementAssessmentStrategies: ResettlementAssessmentStrategy): ResettlementAssessmentSubmitResponse {
+  fun submitResettlementAssessmentByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType, useNewDeliusCaseNoteFormat: Boolean, auth: String, resettlementAssessmentStrategies: ResettlementAssessmentStrategy, declaration: Boolean): ResettlementAssessmentSubmitResponse {
     // Check auth - must be NOMIS
     val authSource = getClaimFromJWTToken(auth, "auth_source")?.lowercase()
     if (authSource != "nomis") {
@@ -162,6 +162,11 @@ class ResettlementAssessmentService(
       // Update assessment status to SUBMITTED
       assessment.assessmentStatus = ResettlementAssessmentStatus.SUBMITTED
       assessment.submissionDate = LocalDateTime.now()
+      // Update values for declaration
+      if (declaration) {
+        assessment.declarationBy = userId
+        assessment.declarationDate = LocalDateTime.now()
+      }
       resettlementAssessmentRepository.save(assessment)
     }
     val profileTagsEntity: ProfileTagsEntity

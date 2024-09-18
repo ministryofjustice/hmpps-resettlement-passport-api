@@ -393,6 +393,8 @@ class ResettlementAssessmentServiceTest {
     createdByUserId = "USER_1",
     submissionDate = null,
     version = 1,
+    declarationBy = null,
+    declarationDate = null,
   )
 
   private fun createCompleteResettlementAssessmentEntity(id: Long, pathway: Pathway) = ResettlementAssessmentEntity(
@@ -409,6 +411,8 @@ class ResettlementAssessmentServiceTest {
     createdByUserId = "USER_1",
     submissionDate = null,
     version = 1,
+    declarationBy = null,
+    declarationDate = null,
   )
 
   private fun createSubmittedResettlementAssessmentEntity(pathway: Pathway, user: String, caseNoteText: String) = ResettlementAssessmentEntity(
@@ -425,6 +429,8 @@ class ResettlementAssessmentServiceTest {
     createdByUserId = user,
     submissionDate = null,
     version = 1,
+    declarationBy = null,
+    declarationDate = null,
   )
 
   private fun getSubmittedResettlementAssessmentEntities(user: String, caseNotePostfix: String) = listOf(

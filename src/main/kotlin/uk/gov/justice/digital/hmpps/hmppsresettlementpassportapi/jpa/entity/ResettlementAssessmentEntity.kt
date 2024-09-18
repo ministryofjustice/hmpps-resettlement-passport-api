@@ -69,6 +69,12 @@ data class ResettlementAssessmentEntity(
 
   @Column(name = "submission_date")
   var submissionDate: LocalDateTime?,
+
+  @Column(name = "declaration_by")
+  var declarationBy: String?,
+
+  @Column(name = "declaration_date")
+  var declarationDate: LocalDateTime?,
 ) {
   val questionsAndAnswers: List<ResettlementAssessmentSimpleQuestionAndAnswer>
     get() = assessment.assessment

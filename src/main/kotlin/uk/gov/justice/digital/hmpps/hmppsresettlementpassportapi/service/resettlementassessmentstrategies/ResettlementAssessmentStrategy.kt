@@ -226,6 +226,8 @@ class ResettlementAssessmentStrategy(
       createdByUserId = userId,
       submissionDate = if (edit) LocalDateTime.now() else null,
       version = assessment.version,
+      declarationBy = userId,
+      declarationDate = LocalDateTime.now()
     )
 
     saveAssessment(resettlementAssessmentEntity)

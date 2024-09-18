@@ -275,11 +275,13 @@ class ResettlementAssessmentController(
     assessmentType: ResettlementAssessmentType,
     @RequestParam("useNewDeliusCaseNoteFormat")
     useNewDeliusCaseNoteFormat: Boolean = false,
+    @RequestParam("declaration")
+    declaration: Boolean = false,
     @RequestHeader("Authorization")
     auth: String,
   ): ResettlementAssessmentSubmitResponse {
     auditService.audit(AuditAction.SUBMIT_ASSESSMENT, nomsId, auth, buildDetails(assessmentType, null))
-    return resettlementAssessmentService.submitResettlementAssessmentByNomsId(nomsId, assessmentType, useNewDeliusCaseNoteFormat, auth, resettlementAssessmentStrategy)
+    return resettlementAssessmentService.submitResettlementAssessmentByNomsId(nomsId, assessmentType, useNewDeliusCaseNoteFormat, auth, resettlementAssessmentStrategy, declaration)
   }
 
   @GetMapping("/{nomsId}/resettlement-assessment/{pathway}/latest", produces = [MediaType.APPLICATION_JSON_VALUE])

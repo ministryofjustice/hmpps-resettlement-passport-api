@@ -81,7 +81,7 @@ class ResettlementAssessmentControllerTest {
       {"assessmentType":"BCST2"}
     """.trim().trimIndent()
 
-    resettlementAssessmentController.postSubmitAssessmentByNomsId(nomsId, assessmentType, true, auth)
+    resettlementAssessmentController.postSubmitAssessmentByNomsId(nomsId, assessmentType, true, true, auth)
 
     verify(auditService).audit(AuditAction.SUBMIT_ASSESSMENT, nomsId, auth, details)
   }

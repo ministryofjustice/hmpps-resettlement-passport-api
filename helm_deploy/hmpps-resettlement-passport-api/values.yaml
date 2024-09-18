@@ -85,8 +85,7 @@ generic-service:
     s3-bucket-document-storage:
       S3_DOCUMENT_BUCKET_NAME: bucket_name
     sqs-hmpps-audit-secret:
-      AUDIT_SQS_QUEUE_URL: "sqs_queue_url"
-      AUDIT_SQS_QUEUE_NAME: "sqs_queue_name"
+      HMPPS_SQS_QUEUES_AUDIT_QUEUE_NAME: "sqs_queue_name"
 
   allowlist:
     groups:

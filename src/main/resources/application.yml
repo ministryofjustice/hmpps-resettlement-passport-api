@@ -132,12 +132,6 @@ hmpps.s3:
     document-management:
       bucketName: ${S3_DOCUMENT_BUCKET_NAME}
 
-hmpps.sqs:
-  useWebToken: true
-  queues:
-    audit:
-      queueName: Digital-Prison-Services-${ENVIRONMENT:dev}-hmpps_audit_queue
-
 clamav:
   hostname: localhost
   port: 3310

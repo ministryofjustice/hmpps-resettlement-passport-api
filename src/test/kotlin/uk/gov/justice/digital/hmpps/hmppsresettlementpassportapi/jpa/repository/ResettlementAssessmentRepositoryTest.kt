@@ -99,8 +99,8 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       createdByUserId = "ABC1234",
       submissionDate = null,
       version = 1,
-      declarationBy = null,
-      declarationDate = null,
+      declarationBy = "ABC1234",
+      declarationDate = LocalDateTime.parse("2022-01-01T12:00:00"),
     )
     resettlementAssessmentRepository.save(resettlementAssessment)
     resettlementAssessmentRepository.save(resettlementAssessment2)

@@ -77,8 +77,8 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       createdByUserId = "JWILLIAMS_GEN",
       submissionDate = null,
       version = 1,
-      declarationBy = null,
-      declarationDate = null,
+      declarationBy = "JWILLIAMS_GEN",
+      declarationDate = LocalDateTime.parse("2022-01-01T12:00:00"),
     )
     val resettlementAssessment2 = ResettlementAssessmentEntity(
       id = null,

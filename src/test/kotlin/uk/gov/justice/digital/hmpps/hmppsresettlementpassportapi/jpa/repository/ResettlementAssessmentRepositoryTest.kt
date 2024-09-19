@@ -44,7 +44,7 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       createdByUserId = "JSMITH_GEN",
       submissionDate = null,
       version = 1,
-      userDeclaration = null,
+      userDeclaration = false,
     )
     resettlementAssessmentRepository.save(resettlementAssessmentQuestionAndAnswerList)
 
@@ -177,6 +177,6 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       createdByUserId = "USER_1",
       submissionDate = null,
       version = 1,
-      userDeclaration = null,
+      userDeclaration = false,
     )
 }

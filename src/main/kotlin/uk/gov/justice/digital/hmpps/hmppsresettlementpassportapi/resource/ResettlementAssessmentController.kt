@@ -276,7 +276,7 @@ class ResettlementAssessmentController(
     @RequestParam("useNewDeliusCaseNoteFormat")
     useNewDeliusCaseNoteFormat: Boolean = false,
     @RequestParam("declaration")
-    declaration: Boolean?,
+    declaration: Boolean = false,
     @RequestHeader("Authorization")
     auth: String,
   ): ResettlementAssessmentSubmitResponse {

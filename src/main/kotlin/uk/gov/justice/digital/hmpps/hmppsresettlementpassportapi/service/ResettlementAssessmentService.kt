@@ -105,7 +105,7 @@ class ResettlementAssessmentService(
     )
 
   @Transactional
-  fun submitResettlementAssessmentByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType, useNewDeliusCaseNoteFormat: Boolean, auth: String, resettlementAssessmentStrategies: ResettlementAssessmentStrategy, declaration: Boolean?): ResettlementAssessmentSubmitResponse {
+  fun submitResettlementAssessmentByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType, useNewDeliusCaseNoteFormat: Boolean, auth: String, resettlementAssessmentStrategies: ResettlementAssessmentStrategy, declaration: Boolean): ResettlementAssessmentSubmitResponse {
     // Check auth - must be NOMIS
     val authSource = getClaimFromJWTToken(auth, "auth_source")?.lowercase()
     if (authSource != "nomis") {

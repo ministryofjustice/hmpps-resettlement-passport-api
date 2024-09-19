@@ -44,8 +44,7 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       createdByUserId = "JSMITH_GEN",
       submissionDate = null,
       version = 1,
-      declarationBy = null,
-      declarationDate = null,
+      userDeclaration = null,
     )
     resettlementAssessmentRepository.save(resettlementAssessmentQuestionAndAnswerList)
 
@@ -77,8 +76,7 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       createdByUserId = "JWILLIAMS_GEN",
       submissionDate = null,
       version = 1,
-      declarationBy = "JWILLIAMS_GEN",
-      declarationDate = LocalDateTime.parse("2022-01-01T12:00:00"),
+      userDeclaration = true,
     )
     val resettlementAssessment2 = ResettlementAssessmentEntity(
       id = null,
@@ -99,8 +97,7 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       createdByUserId = "ABC1234",
       submissionDate = null,
       version = 1,
-      declarationBy = "ABC1234",
-      declarationDate = LocalDateTime.parse("2022-01-01T12:00:00"),
+      userDeclaration = true,
     )
     resettlementAssessmentRepository.save(resettlementAssessment)
     resettlementAssessmentRepository.save(resettlementAssessment2)
@@ -180,7 +177,6 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       createdByUserId = "USER_1",
       submissionDate = null,
       version = 1,
-      declarationBy = null,
-      declarationDate = null,
+      userDeclaration = null,
     )
 }

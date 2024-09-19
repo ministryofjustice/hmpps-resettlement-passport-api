@@ -158,8 +158,7 @@ class ATBResettlementAssessmentIntegrationTest : IntegrationTestBase() {
         createdByUserId = "JSMITH_GEN",
         submissionDate = null,
         version = 1,
-        declarationBy = null,
-        declarationDate = null,
+        userDeclaration = null,
       ),
       ResettlementAssessmentEntity(
         id = 1,
@@ -194,8 +193,7 @@ class ATBResettlementAssessmentIntegrationTest : IntegrationTestBase() {
         createdByUserId = "RESETTLEMENTPASSPORT_ADM",
         submissionDate = null,
         version = 1,
-        declarationBy = "RESETTLEMENTPASSPORT_ADM",
-        declarationDate = null,
+        userDeclaration = null,
       ),
     )
     val actualResettlementAssessments = resettlementAssessmentRepository.findAll()

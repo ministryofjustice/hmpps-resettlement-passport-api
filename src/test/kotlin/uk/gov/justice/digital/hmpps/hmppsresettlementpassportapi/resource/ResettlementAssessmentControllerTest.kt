@@ -66,7 +66,7 @@ class ResettlementAssessmentControllerTest {
       {"assessmentType":"RESETTLEMENT_PLAN","pathway":"HEALTH"}
     """.trim().trimIndent()
 
-    resettlementAssessmentController.postCompleteAssessmentByNomsId(nomsId, pathway, request, assessmentType, auth)
+    resettlementAssessmentController.postCompleteAssessmentByNomsId(nomsId, pathway, request, assessmentType, true, auth)
 
     verify(auditService).audit(AuditAction.COMPLETE_ASSESSMENT, nomsId, auth, details)
   }
@@ -81,7 +81,7 @@ class ResettlementAssessmentControllerTest {
       {"assessmentType":"BCST2"}
     """.trim().trimIndent()
 
-    resettlementAssessmentController.postSubmitAssessmentByNomsId(nomsId, assessmentType, true, true, auth)
+    resettlementAssessmentController.postSubmitAssessmentByNomsId(nomsId, assessmentType, true, auth)
 
     verify(auditService).audit(AuditAction.SUBMIT_ASSESSMENT, nomsId, auth, details)
   }

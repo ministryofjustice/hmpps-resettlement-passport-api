@@ -158,7 +158,7 @@ class ATBResettlementAssessmentIntegrationTest : IntegrationTestBase() {
         createdByUserId = "JSMITH_GEN",
         submissionDate = null,
         version = 1,
-        userDeclaration = null,
+        userDeclaration = false,
       ),
       ResettlementAssessmentEntity(
         id = 1,

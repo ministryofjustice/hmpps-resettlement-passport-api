@@ -76,7 +76,7 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       createdByUserId = "JWILLIAMS_GEN",
       submissionDate = null,
       version = 1,
-      userDeclaration = true,
+      userDeclaration = false,
     )
     val resettlementAssessment2 = ResettlementAssessmentEntity(
       id = null,
@@ -97,7 +97,7 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       createdByUserId = "ABC1234",
       submissionDate = null,
       version = 1,
-      userDeclaration = true,
+      userDeclaration = false,
     )
     resettlementAssessmentRepository.save(resettlementAssessment)
     resettlementAssessmentRepository.save(resettlementAssessment2)

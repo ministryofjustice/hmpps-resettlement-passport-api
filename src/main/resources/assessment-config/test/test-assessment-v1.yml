@@ -1,0 +1,181 @@
+version: 1
+pathway: "TEST_ASSESSMENT"
+pages:
+  - id: SINGLE_QUESTION_ON_A_PAGE
+    questions:
+      - id: "SINGLE_QUESTION_ON_A_PAGE"
+        title: "This is a radio Question?"
+        type: "RADIO"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - nextPageId: MULTIPLE_QUESTIONS_ON_A_PAGE
+  - id: MULTIPLE_QUESTIONS_ON_A_PAGE
+    questions:
+      - id: MULTIPLE_QUESTIONS_ON_A_PAGE
+        title: "Radio question with regex validation?"
+        type: "RADIO"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+            nestedQuestions:
+              - id: "REGEX_NUMBER"
+                title: "Number Regex"
+                type: "SHORT_TEXT"
+                customValidation:
+                  regex: "^(?:[1-9])(\\d+)?$"
+                  message: "Number must be a whole number"
+      - id: "ADDRESS_QUESTION"
+        title: "Enter the address"
+        type: "ADDRESS"
+      - id: "NESTED_RADIO_QUESTION_TYPES"
+        title: "Nested Radio question types?"
+        type: "RADIO"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+            nestedQuestions:
+              - id: "SHORT_TEXT_NESTED"
+                title: "Short text nested"
+                type: "SHORT_TEXT"
+              - id: "ADDRESS_NESTED"
+                title: "Enter the address nested"
+                type: "ADDRESS"
+              - id: "LONG_TEXT_NESTED"
+                title: "Long text nested"
+                type: "LONG_TEXT"                
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"                  
+      - id: "LONG_TEXT_QUESTION"
+        title: "Case note summary"
+        subTitle: "This will be displayed as a case note in both DPS and nDelius"
+        type: "LONG_TEXT"
+      - id: "CHECKBOX_QUESTION_WITH_EXCLUSIVE_OPTIONS"
+        title: "Checkbox question with exclusive options?"
+        subTitle: "Select all that apply"
+        type: "CHECKBOX"
+        options:
+          - id: "ESA"
+            displayText: "Employment and support allowance (ESA)"
+          - id: "HOUSING_BENEFIT"
+            displayText: "Housing benefit"
+          - id: "UNIVERSAL_CREDIT_HOUSING_ELEMENT"
+            displayText: "Universal credit housing element"
+          - id: "UNIVERSAL_CREDIT"
+            displayText: "Universal credit"
+          - id: "PIP"
+            displayText: "Personal independence payment (PIP)"
+          - id: "STATE_PENSION"
+            displayText: "State pension"
+          - id: "NO_BENEFITS"
+            displayText: "No benefits"
+            exclusive: true
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+            exclusive: true
+    nextPageLogic:
+      - nextPageId: DIVERGENT_FLOW_OPTIONS
+  - id: DIVERGENT_FLOW_OPTIONS
+    questions:
+      - id: DIVERGENT_FLOW_OPTIONS
+        title: Divergent flow options yes for divergent flow?
+        type: RADIO
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - questionId: DIVERGENT_FLOW_OPTIONS
+        answers:
+          - "@class": "StringAnswer"
+            answer: "YES"
+        nextPageId: DIVERGENT_OPTION
+      - questionId: DIVERGENT_FLOW_OPTIONS
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO"
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
+        nextPageId: MANDATORY_AND_OPTIONAL_QUESTIONS
+  - id: DIVERGENT_OPTION
+    questions:
+      - id: DIVERGENT_OPTION
+        title: "Divergent option route?"
+        type: CHECKBOX
+        options:
+          - id: PHYSICAL_HEALTH
+            displayText: "Physical health"
+          - id: MENTAL_HEALTH
+            displayText: "Mental health"
+          - id: NO_ANSWER
+            displayText: "No answer provided"
+            exclusive: true
+    nextPageLogic:
+      - nextPageId: MANDATORY_AND_OPTIONAL_QUESTIONS
+  - id: MANDATORY_AND_OPTIONAL_QUESTIONS
+    title: "Mandatory and optional questions"
+    questions:
+      - id: "MANDATORY_QUESTION"
+        title: "Mandatory question status"
+        subTitle: "Select one option."
+        type: "RADIO"
+        options:
+          - id: "SUPPORT_REQUIRED"
+            displayText: "Support required"
+            description: "a need for support has been identified and is accepted"
+          - id: "SUPPORT_NOT_REQUIRED"
+            displayText: "Support not required"
+            description: "no need was identified"
+          - id: "SUPPORT_DECLINED"
+            displayText: "Support declined"
+            description: "a need has been identified but support is declined"   
+      - id: "OPTIONAL_QUESTION"
+        title: "This is an optional question to enter address select private social or homeowner?"
+        type: "RADIO"
+        options:
+          - id: "PRIVATE_RENTED_HOUSING"
+            displayText: "Private rented housing"
+          - id: "SOCIAL_HOUSING"
+            displayText: "Social housing"
+          - id: "HOMEOWNER"
+            displayText: "Homeowner"
+          - id: "NO_PERMANENT_OR_FIXED"
+            displayText: "No permanent or fixed address"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+    nextPageLogic:
+      - questionId: "WHERE_DID_THEY_LIVE"
+        answers:
+          - "@class": "StringAnswer"
+            answer: "PRIVATE_RENTED_HOUSING"
+          - "@class": "StringAnswer"
+            answer: "SOCIAL_HOUSING"
+          - "@class": "StringAnswer"
+            answer: "HOMEOWNER"
+        nextPageId: "WHERE_DID_THEY_LIVE_ADDRESS"
+      - questionId: "WHERE_DID_THEY_LIVE"
+        answers:
+          - "@class": "StringAnswer"
+            answer: "NO_PERMANENT_OR_FIXED"
+          - "@class": "StringAnswer"
+            answer: "NO_ANSWER"
+        nextPageId: "CHECK_ANSWERS"
+  - id: "WHERE_DID_THEY_LIVE_ADDRESS"
+    title: "Where did the person in prison live before custody?"
+    questions:
+      - id: "WHERE_DID_THEY_LIVE_ADDRESS"
+        title: "Enter the address"
+        type: "ADDRESS"
+    nextPageLogic:
+      - nextPageId: "CHECK_ANSWERS"
+  - id: "CHECK_ANSWERS"        

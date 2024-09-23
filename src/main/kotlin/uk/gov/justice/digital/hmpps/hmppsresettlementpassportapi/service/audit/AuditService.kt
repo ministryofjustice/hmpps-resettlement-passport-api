@@ -11,6 +11,7 @@ import uk.gov.justice.hmpps.sqs.audit.HmppsAuditService
 class AuditService(private val auditService: HmppsAuditService) {
   private val log = LoggerFactory.getLogger(this::class.java)
 
+  @Throws(Exception::class)
   fun audit(what: AuditAction, nomsId: String, auth: String, vararg details: String) {
     val userName = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get name from auth token")
 
@@ -26,6 +27,7 @@ class AuditService(private val auditService: HmppsAuditService) {
         )
       } catch (e: Exception) {
         log.error("Unable to publish audit event", e)
+        throw e
       }
     }
   }

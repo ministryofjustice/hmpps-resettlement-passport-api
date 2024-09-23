@@ -239,6 +239,51 @@ class ResettlementAssessmentController(
     return ResponseEntity.ok().build()
   }
 
+  @PostMapping("/{nomsId}/resettlement-assessment/{pathway}/validate", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(summary = "Validates the given resettlement assessment", description = "Validates the given resettlement assessment")
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Report information is valid",
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [
+          Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "400",
+        description = "Report information is invalid",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  fun getValidateAssessmentByNomsId(
+    @Schema(example = "AXXXS", required = true)
+    @PathVariable("nomsId")
+    nomsId: String,
+    @PathVariable("pathway")
+    pathway: Pathway,
+    @RequestBody
+    resettlementAssessmentCompleteRequest: ResettlementAssessmentCompleteRequest,
+    @RequestParam("assessmentType")
+    assessmentType: ResettlementAssessmentType,
+  ): ResponseEntity<Void> {
+    resettlementAssessmentStrategy.validateAssessment(nomsId, pathway, assessmentType, resettlementAssessmentCompleteRequest)
+    return ResponseEntity.ok().build()
+  }
+
   @PostMapping("/{nomsId}/resettlement-assessment/submit", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Submit a completed resettlement assessment for the given nomsId", description = "Submit a completed resettlement assessment for the given nomsId")
   @ApiResponses(

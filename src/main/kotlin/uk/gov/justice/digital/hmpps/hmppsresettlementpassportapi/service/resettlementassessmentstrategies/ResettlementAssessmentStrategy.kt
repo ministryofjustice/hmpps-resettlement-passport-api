@@ -379,7 +379,8 @@ class ResettlementAssessmentStrategy(
     // If there is an existing assessment, add the answer into the question
     // Do not populate the case notes
     if (existingAssessment != null) {
-      if (resettlementAssessmentResponsePage.id == "CHECK_ANSWERS") {
+      // Only prefill CHECK_ANSWERS if existing report is the same type as the requested type
+      if (resettlementAssessmentResponsePage.id == "CHECK_ANSWERS" && existingAssessment.assessmentType == assessmentType) {
         // If the existing assessment is submitted we are in an edit and don't want to send back the ASSESSMENT_SUMMARY or PRERELEASE_ASSESSMENT_SUMMARY questions
         val questionsToExclude = if (edit) {
           config.pages.filter { it.questions != null && it.id == "ASSESSMENT_SUMMARY" || it.id == "PRERELEASE_ASSESSMENT_SUMMARY" }
@@ -416,7 +417,7 @@ class ResettlementAssessmentStrategy(
           questionsAndAnswers = questionsAndAnswers,
         )
       } else {
-        // Need to add in the answer foe all questions include those nested within options. Only support one level of nesting.
+        // Need to add in the answer for all questions include those nested within options. Only support one level of nesting.
         (
           resettlementAssessmentResponsePage.questionsAndAnswers + resettlementAssessmentResponsePage.questionsAndAnswers.filter { it.question.options != null }
             .flatMap { it.question.options!! }.filter { it.nestedQuestions != null }
@@ -435,15 +436,6 @@ class ResettlementAssessmentStrategy(
     }
 
     return resettlementAssessmentResponsePage
-  }
-
-  fun getQuestionById(
-    id: String,
-    pathway: Pathway,
-    assessmentType: ResettlementAssessmentType,
-    version: Int,
-  ): ResettlementAssessmentQuestion {
-    return getFlattenedQuestionList(pathway, assessmentType, version).first { it.id == id }
   }
 
   fun findPageIdFromQuestionId(
@@ -554,6 +546,17 @@ class ResettlementAssessmentStrategy(
         profileTagsRepository.save(profileTagsEntity)
       }
     }
+  }
+
+  fun validateAssessment(nomsId: String, pathway: Pathway, assessmentType: ResettlementAssessmentType, resettlementAssessmentCompleteRequest: ResettlementAssessmentCompleteRequest) {
+    // Check if the latest assessment is submitted - if so this is an edit
+    val edit = getExistingAssessment(
+      nomsId,
+      pathway,
+      assessmentType,
+    )?.assessmentStatus == ResettlementAssessmentStatus.SUBMITTED
+
+    validateQuestionAndAnswerSet(pathway, resettlementAssessmentCompleteRequest, edit, assessmentType)
   }
 }
 

@@ -229,11 +229,13 @@ class ResettlementAssessmentController(
     resettlementAssessmentCompleteRequest: ResettlementAssessmentCompleteRequest,
     @RequestParam("assessmentType")
     assessmentType: ResettlementAssessmentType,
+    @RequestParam("declaration")
+    declaration: Boolean = false,
     @RequestHeader("Authorization")
     auth: String,
   ): ResponseEntity<Void> {
     auditService.audit(AuditAction.COMPLETE_ASSESSMENT, nomsId, auth, buildDetails(assessmentType, pathway))
-    resettlementAssessmentStrategy.completeAssessment(nomsId, pathway, assessmentType, resettlementAssessmentCompleteRequest, auth)
+    resettlementAssessmentStrategy.completeAssessment(nomsId, pathway, assessmentType, resettlementAssessmentCompleteRequest, auth, declaration)
     return ResponseEntity.ok().build()
   }
 

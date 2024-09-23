@@ -1220,4 +1220,107 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isBadRequest
   }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-3.sql")
+  fun `Post resettlement assessment validate - happy path`() {
+    val nomsId = "ABC1234"
+    val pathway = "ACCOMMODATION"
+    val assessmentType = "BCST2"
+    webTestClient.post()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/validate?assessmentType=$assessmentType")
+      .contentType(MediaType.APPLICATION_JSON)
+      .bodyValue(
+        """
+        {
+          "questionsAndAnswers": [
+            {
+              "question": "WHERE_DID_THEY_LIVE",
+              "answer": {
+                "answer": "NO_PERMANENT_OR_FIXED",
+                "@class": "StringAnswer"
+              }
+            },
+            {
+              "question": "WHERE_WILL_THEY_LIVE_2",
+              "answer": {
+                "answer": "DOES_NOT_HAVE_ANYWHERE",
+                "@class": "StringAnswer"
+              }
+            },
+            {
+              "question": "SUPPORT_NEEDS",
+              "answer": {
+                "answer": "SUPPORT_REQUIRED",
+                "@class": "StringAnswer"
+              }
+            },
+            {
+              "question": "CASE_NOTE_SUMMARY",
+              "answer": {
+                "answer": "My case note summary...",
+                "@class": "StringAnswer"
+              }
+            }
+          ]
+        }
+        """.trimIndent(),
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-3.sql")
+  fun `Post resettlement assessment validate - invalid`() {
+    val nomsId = "ABC1234"
+    val pathway = "ACCOMMODATION"
+    val assessmentType = "BCST2"
+    webTestClient.post()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/validate?assessmentType=$assessmentType")
+      .contentType(MediaType.APPLICATION_JSON)
+      .bodyValue(
+        """
+        {
+          "questionsAndAnswers": []
+        }
+        """.trimIndent(),
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isBadRequest
+  }
+
+  @Test
+  fun `Post resettlement assessment validate - unauthorised`() {
+    val nomsId = "ABC1234"
+    val pathway = "ACCOMMODATION"
+    val assessmentType = "BCST2"
+    webTestClient.post()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/validate?assessmentType=$assessmentType")
+      .contentType(MediaType.APPLICATION_JSON)
+      .exchange()
+      .expectStatus().isUnauthorized
+  }
+
+  @Test
+  fun `Post resettlement assessment validate - forbidden`() {
+    val nomsId = "ABC1234"
+    val pathway = "ACCOMMODATION"
+    val assessmentType = "BCST2"
+    webTestClient.post()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/validate?assessmentType=$assessmentType")
+      .contentType(MediaType.APPLICATION_JSON)
+      .bodyValue(
+        """
+        {
+          "questionsAndAnswers": []
+        }
+        """.trimIndent(),
+      )
+      .headers(setAuthorisation(roles = listOf()))
+      .exchange()
+      .expectStatus().isForbidden
+  }
 }

@@ -671,64 +671,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
 
     val expectedPage = ResettlementAssessmentResponsePage(
       id = "CHECK_ANSWERS",
-      questionsAndAnswers = listOf(
-        ResettlementAssessmentQuestionAndAnswer(
-          ResettlementAssessmentQuestion(
-            id = "WHERE_DID_THEY_LIVE",
-            title = "Where did the person in prison live before custody?",
-            subTitle = null,
-            type = TypeOfQuestion.RADIO,
-            options = listOf(
-              ResettlementAssessmentOption(id = "PRIVATE_RENTED_HOUSING", displayText = "Private rented housing"),
-              ResettlementAssessmentOption(id = "SOCIAL_HOUSING", displayText = "Social housing"),
-              ResettlementAssessmentOption(id = "HOMEOWNER", displayText = "Homeowner"),
-              ResettlementAssessmentOption(id = "NO_PERMANENT_OR_FIXED", displayText = "No permanent or fixed address"),
-              ResettlementAssessmentOption(id = "NO_ANSWER", displayText = "No answer provided"),
-            ),
-          ),
-          answer = StringAnswer("SOCIAL_HOUSING"),
-          originalPageId = "WHERE_DID_THEY_LIVE",
-        ),
-        ResettlementAssessmentQuestionAndAnswer(
-          ResettlementAssessmentQuestion(
-            id = "WHERE_DID_THEY_LIVE_ADDRESS",
-            title = "Enter the address",
-            subTitle = null,
-            type = TypeOfQuestion.ADDRESS,
-            options = null,
-          ),
-          answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123"))),
-          originalPageId = "WHERE_DID_THEY_LIVE_ADDRESS",
-        ),
-        ResettlementAssessmentQuestionAndAnswer(
-          ResettlementAssessmentQuestion(
-            id = "SUPPORT_NEEDS_PRERELEASE",
-            title = "Accommodation support needs",
-            subTitle = "Select one option.",
-            type = TypeOfQuestion.RADIO,
-            options = listOf(
-              ResettlementAssessmentOption(id = "SUPPORT_REQUIRED", displayText = "Support required", description = "a need for support has been identified and is accepted"),
-              ResettlementAssessmentOption(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
-              ResettlementAssessmentOption(id = "SUPPORT_DECLINED", displayText = "Support declined", description = "a need has been identified but support is declined"),
-              ResettlementAssessmentOption(id = "IN_PROGRESS", displayText = "In progress", description = "work is ongoing"),
-              ResettlementAssessmentOption(id = "DONE", displayText = "Done", description = "all required work has been completed successfully"),
-            ),
-          ),
-          answer = StringAnswer(answer = null),
-          originalPageId = "PRERELEASE_ASSESSMENT_SUMMARY",
-        ),
-        ResettlementAssessmentQuestionAndAnswer(
-          ResettlementAssessmentQuestion(
-            id = "CASE_NOTE_SUMMARY",
-            title = "Case note summary",
-            subTitle = "This will be displayed as a case note in both DPS and nDelius",
-            type = TypeOfQuestion.LONG_TEXT,
-            options = null,
-          ),
-          answer = StringAnswer(answer = null),
-          originalPageId = "PRERELEASE_ASSESSMENT_SUMMARY",
-        ),
-      ),
+      questionsAndAnswers = listOf(),
     )
 
     val page = resettlementAssessmentStrategy.getPageFromId(

@@ -150,6 +150,7 @@ class ResettlementAssessmentStrategy(
     assessmentType: ResettlementAssessmentType,
     assessment: ResettlementAssessmentCompleteRequest,
     auth: String,
+    declaration: Boolean,
   ) {
     // Check auth - must be NOMIS
     val authSource = getClaimFromJWTToken(auth, "auth_source")?.lowercase()
@@ -226,6 +227,7 @@ class ResettlementAssessmentStrategy(
       createdByUserId = userId,
       submissionDate = if (edit) LocalDateTime.now() else null,
       version = assessment.version,
+      userDeclaration = declaration,
     )
 
     saveAssessment(resettlementAssessmentEntity)

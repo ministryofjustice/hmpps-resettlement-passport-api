@@ -11,7 +11,7 @@ spec:
     - name: resettlement-passport-application-rules
       rules:
           - alert: ExternalAPICritical
-            expr:((count by (client_name) ((rate(http_client_requests_seconds_count{namespace = "hmpps-resettlement-passport-preprod", status!~"2\\d{2}", status!="404"}[24h]))) / (count by (client_name) (rate(http_client_requests_seconds_count{namespace = "hmpps-resettlement-passport-preprod"}[24h]))))) * 100 > 5
+            expr: (((count by (client_name) ((rate(http_client_requests_seconds_count{namespace = "{{ $targetNamespace }}", status!~"2\\d{2}", status!="404"}[24h]))) / (count by (client_name) (rate(http_client_requests_seconds_count{namespace = "{{ $targetNamespace }}" }[24h]))))) * 100) > 5
             for: 5m
             labels:
               severity: {{ index .Values "generic-prometheus-alerts" "alertSeverity" }}

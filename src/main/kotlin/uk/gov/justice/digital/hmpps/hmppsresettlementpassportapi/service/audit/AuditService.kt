@@ -15,18 +15,14 @@ class AuditService(private val auditService: HmppsAuditService) {
     val userName = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get name from auth token")
 
     runBlocking {
-      try {
-        auditService.publishEvent(
-          what = what.name,
-          who = userName,
-          subjectId = nomsId,
-          subjectType = "PRISONER_ID",
-          service = "hmpps-resettlement-passport-api",
-          details = details.firstOrNull(),
-        )
-      } catch (e: Exception) {
-        log.error("Unable to publish audit event", e)
-      }
+      auditService.publishEvent(
+        what = what.name,
+        who = userName,
+        subjectId = nomsId,
+        subjectType = "PRISONER_ID",
+        service = "hmpps-resettlement-passport-api",
+        details = details.firstOrNull(),
+      )
     }
   }
 }

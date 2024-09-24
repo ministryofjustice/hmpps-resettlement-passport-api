@@ -11,12 +11,12 @@ spec:
     - name: resettlement-passport-application-rules
       rules:
           - alert: ExternalAPICritical
-            expr: (sum by (client_name) (rate(http_client_requests_seconds_count{namespace = "{{ $targetNamespace }}", status!~"2\\d{2}", status!="404", client_name!=""}[24h])) * 86400) > 0
+            expr: (((count by (client_name) ((rate(http_client_requests_seconds_count{namespace = "{{ $targetNamespace }}", status!~"2\\d{2}", status!="404"}[24h]))) / (count by (client_name) (rate(http_client_requests_seconds_count{namespace = "{{ $targetNamespace }}" }[24h]))))) * 100) > 5
             for: 5m
             labels:
               severity: {{ index .Values "generic-prometheus-alerts" "alertSeverity" }}
             annotations:
-              message: The External API's errors for HTTP request {{ `{{` }} $labels.client_name }} has exceeded the threshold on host {{ index .Values "generic-service" "ingress" "host"}}
+              message: The External API's errors for HTTP request {{ `{{` }} $labels.client_name }} got  {{ `{{` }} $labels.value}}% failures on host {{ index .Values "generic-service" "ingress" "host"}} exceeds the threshold 5%
               runbook_url: https://dsdmoj.atlassian.net/wiki/spaces/RR/pages/5119475840/External+API+Failures
               dashboard_url: {{ $.Values.grafanaUrl }}/d/application-alerts/application-alerts?orgId=1&var-namespace={{ $targetNamespace }}
               summary: External API's Failures

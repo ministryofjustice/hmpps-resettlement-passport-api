@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -47,6 +48,27 @@ class TodoResourceController(private val todoService: TodoService) {
     @RequestBody
     createRequest: TodoCreateRequest,
   ) = todoService.createEntry(nomsId, createRequest)
+
+  @GetMapping("/{nomsId}/todo", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(summary = "Get todo list for a person")
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "List of items in person's todo lsit",
+      ),
+      ApiResponse(
+        responseCode = "404",
+        description = "Person not found",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  fun getTodoList(
+    @Schema(example = "AXXXS", required = true)
+    @PathVariable("nomsId")
+    nomsId: String,
+  ) = todoService.getList(nomsId)
 }
 
 data class TodoCreateRequest(

@@ -40,7 +40,7 @@ abstract class IntegrationTestBase : TestBase() {
 
   @Autowired
   lateinit var webTestClient: WebTestClient
-  protected val authedWebTestClient by lazy {
+  protected val authedWebTestClient: WebTestClient by lazy {
     webTestClient
       .mutateWith { builder, _, _ ->
         builder.defaultHeader(

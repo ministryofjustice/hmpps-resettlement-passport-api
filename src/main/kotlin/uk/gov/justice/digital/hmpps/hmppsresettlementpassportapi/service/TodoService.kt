@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.TodoEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.TodoRepository
@@ -13,11 +14,18 @@ class TodoService(
   private val prisonerRepository: PrisonerRepository,
 ) {
   fun createEntry(nomsId: String, createRequest: TodoCreateRequest): TodoEntity {
-    val prisonerRecord = prisonerRepository.findByNomsId(nomsId)
-      ?: throw ResourceNotFoundException("No person found with id $nomsId")
+    val prisonerRecord = getPrisoner(nomsId)
 
     return todoRepository.save(createRequest.toEntity(prisonerRecord.id()))
   }
+
+  fun getList(nomsId: String): List<TodoEntity> {
+    val prisonerRecord = getPrisoner(nomsId)
+    return todoRepository.findAllByPrisonerIdOrderById(prisonerRecord.id())
+  }
+
+  private fun getPrisoner(nomsId: String): PrisonerEntity = prisonerRepository.findByNomsId(nomsId)
+    ?: throw ResourceNotFoundException("No person found with id $nomsId")
 }
 
 internal fun TodoCreateRequest.toEntity(prisonerId: Long) = TodoEntity(

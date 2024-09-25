@@ -5,4 +5,6 @@ import org.springframework.stereotype.Repository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.TodoEntity
 
 @Repository
-interface TodoRepository : JpaRepository<TodoEntity, Long>
+interface TodoRepository : JpaRepository<TodoEntity, Long> {
+  fun findAllByPrisonerIdOrderById(prisonerId: Long): List<TodoEntity>
+}

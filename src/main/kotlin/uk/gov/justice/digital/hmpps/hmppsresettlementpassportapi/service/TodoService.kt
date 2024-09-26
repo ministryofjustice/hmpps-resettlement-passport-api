@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import io.github.oshai.kotlinlogging.KotlinLogging
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
@@ -7,6 +9,9 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Todo
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.TodoRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource.TodoCreateRequest
+import java.util.UUID
+
+private val logger = KotlinLogging.logger {}
 
 @Service
 class TodoService(
@@ -26,6 +31,18 @@ class TodoService(
 
   private fun getPrisoner(nomsId: String): PrisonerEntity = prisonerRepository.findByNomsId(nomsId)
     ?: throw ResourceNotFoundException("No person found with id $nomsId")
+
+  @Transactional
+  fun deleteItem(nomsId: String, id: UUID) {
+    val deleteCount = todoRepository.deleteByIdAndNomsId(id, nomsId)
+    if (deleteCount == 0) {
+      throw ResourceNotFoundException("Todo item not found by $nomsId/$id")
+    }
+    if (deleteCount > 1) {
+      logger.error { "Multiple rows in delete todo item $nomsId/$id" }
+      throw IllegalStateException("Unexpected multiple items deletion of $nomsId/$id")
+    }
+  }
 }
 
 internal fun TodoCreateRequest.toEntity(prisonerId: Long) = TodoEntity(

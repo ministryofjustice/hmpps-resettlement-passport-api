@@ -1,6 +1,6 @@
 create table todo_item
 (
-    id             serial primary key,
+    id             uuid primary key,
     prisoner_id    bigint                   not null references prisoner (id),
 
     task           text,

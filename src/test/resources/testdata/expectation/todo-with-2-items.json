@@ -1,10 +1,8 @@
 [
   {
-    "id": 1,
     "task": "do the first thing"
   },
   {
-    "id": 2,
     "task": "do the second thing",
     "notes": "note this",
     "dueDate": "2020-11-30"

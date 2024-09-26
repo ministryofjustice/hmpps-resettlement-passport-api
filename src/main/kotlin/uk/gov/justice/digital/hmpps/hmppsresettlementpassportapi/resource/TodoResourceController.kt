@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.TodoService
 import java.time.LocalDate
+import java.util.UUID
 
 @RestController
 @Validated
@@ -69,6 +71,29 @@ class TodoResourceController(private val todoService: TodoService) {
     @PathVariable("nomsId")
     nomsId: String,
   ) = todoService.getList(nomsId)
+
+  @DeleteMapping("/{nomsId}/todo/{id}")
+  @Operation(summary = "Delete a todo list item for a person")
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "204",
+        description = "Item is deleted",
+      ),
+      ApiResponse(
+        responseCode = "404",
+        description = "Person or item not found",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  fun deleteItem(
+    @Schema(example = "AXXXS", required = true)
+    @PathVariable("nomsId")
+    nomsId: String,
+    @PathVariable("id") id: UUID,
+  ) = todoService.deleteItem(nomsId, id)
 }
 
 data class TodoCreateRequest(

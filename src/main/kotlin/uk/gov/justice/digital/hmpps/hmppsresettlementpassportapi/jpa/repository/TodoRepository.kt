@@ -23,4 +23,6 @@ interface TodoRepository : JpaRepository<TodoEntity, Long> {
     """,
   )
   fun deleteByIdAndNomsId(id: UUID, nomsId: String): Int
+
+  fun findByIdAndPrisonerId(id: UUID, prisonerId: Long): TodoEntity?
 }

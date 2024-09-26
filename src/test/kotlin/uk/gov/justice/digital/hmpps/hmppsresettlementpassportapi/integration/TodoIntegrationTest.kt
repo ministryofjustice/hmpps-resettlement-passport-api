@@ -186,15 +186,83 @@ class TodoIntegrationTest : IntegrationTestBase() {
     @Test
     fun `should 401 with no authentication header on delete`() {
       webTestClient.delete()
+        .uri("/resettlement-passport/person/UNKNOWN/todo/${UUID.randomUUID()}")
         .exchange()
         .expectStatus()
         .isUnauthorized()
     }
 
     @Test
-    fun `should 403 with incorrect role header on get`() {
+    fun `should 403 with incorrect role header on delete`() {
       webTestClient.delete()
         .uri("/resettlement-passport/person/G4161UF/todo/${UUID.randomUUID()}")
+        .headers(setAuthorisation(roles = listOf("SOME_ROLE_IDK")))
+        .exchange()
+        .expectStatus()
+        .isForbidden()
+    }
+  }
+
+  @Nested
+  inner class UpdateTodoItem {
+
+    @Test
+    @Sql("/testdata/sql/seed-pop-user-otp.sql")
+    fun `should update todo item`() {
+      val id = createTodoItem("task" to "make some toast", "urn" to "urn5")["id"]
+      authedWebTestClient.put()
+        .uri("/resettlement-passport/person/G4161UF/todo/$id")
+        .bodyValue(
+          mapOf(
+            "urn" to "urn6",
+            "task" to "slice some bread",
+            "notes" to "do not toast",
+            "dueDate" to "2024-09-28",
+          ),
+        )
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody()
+        .json(readFile("testdata/expectation/todo-update-response.json"))
+    }
+
+    @Test
+    @Sql("/testdata/sql/seed-pop-user-otp.sql")
+    fun `should 404 when todo item not found for update`() {
+      authedWebTestClient.put()
+        .uri("/resettlement-passport/person/G4161UF/todo/${UUID.randomUUID()}")
+        .bodyValue(minimalTask)
+        .exchange()
+        .expectStatus()
+        .isNotFound()
+    }
+
+    @Test
+    fun `should 404 when person item not found for update`() {
+      authedWebTestClient.put()
+        .uri("/resettlement-passport/person/UNKNOWN/todo/${UUID.randomUUID()}")
+        .bodyValue(minimalTask)
+        .exchange()
+        .expectStatus()
+        .isNotFound()
+    }
+
+    @Test
+    fun `should 401 with no authentication header on update`() {
+      webTestClient.put()
+        .uri("/resettlement-passport/person/UNKNOWN/todo/${UUID.randomUUID()}")
+        .bodyValue(minimalTask)
+        .exchange()
+        .expectStatus()
+        .isUnauthorized()
+    }
+
+    @Test
+    fun `should 403 with incorrect role header on update`() {
+      webTestClient.put()
+        .uri("/resettlement-passport/person/G4161UF/todo/${UUID.randomUUID()}")
+        .bodyValue(minimalTask)
         .headers(setAuthorisation(roles = listOf("SOME_ROLE_IDK")))
         .exchange()
         .expectStatus()

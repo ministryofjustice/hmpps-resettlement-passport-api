@@ -8,7 +8,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.TodoEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.TodoRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource.TodoCreateRequest
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource.TodoRequest
+import java.time.LocalDateTime
 import java.util.UUID
 
 private val logger = KotlinLogging.logger {}
@@ -18,7 +19,7 @@ class TodoService(
   private val todoRepository: TodoRepository,
   private val prisonerRepository: PrisonerRepository,
 ) {
-  fun createEntry(nomsId: String, createRequest: TodoCreateRequest): TodoEntity {
+  fun createEntry(nomsId: String, createRequest: TodoRequest): TodoEntity {
     val prisonerRecord = getPrisoner(nomsId)
 
     return todoRepository.save(createRequest.toEntity(prisonerRecord.id()))
@@ -43,9 +44,26 @@ class TodoService(
       throw IllegalStateException("Unexpected multiple items deletion of $nomsId/$id")
     }
   }
+
+  @Transactional
+  fun updateItem(nomsId: String, id: UUID, request: TodoRequest): TodoEntity {
+    val prisonerRecord = getPrisoner(nomsId)
+    val todoItem = todoRepository.findByIdAndPrisonerId(id, prisonerRecord.id())
+      ?: throw ResourceNotFoundException("No item found for $id")
+
+    return todoRepository.save(
+      todoItem.copy(
+        task = request.task,
+        notes = request.notes,
+        dueDate = request.dueDate,
+        updatedByUrn = request.urn,
+        updatedAt = LocalDateTime.now(),
+      ),
+    )
+  }
 }
 
-internal fun TodoCreateRequest.toEntity(prisonerId: Long) = TodoEntity(
+internal fun TodoRequest.toEntity(prisonerId: Long) = TodoEntity(
   prisonerId = prisonerId,
   task = this.task,
   notes = this.notes,

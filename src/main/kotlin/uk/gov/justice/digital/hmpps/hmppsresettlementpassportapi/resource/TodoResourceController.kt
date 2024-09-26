@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -48,7 +49,7 @@ class TodoResourceController(private val todoService: TodoService) {
     @PathVariable("nomsId")
     nomsId: String,
     @RequestBody
-    createRequest: TodoCreateRequest,
+    createRequest: TodoRequest,
   ) = todoService.createEntry(nomsId, createRequest)
 
   @GetMapping("/{nomsId}/todo", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -94,9 +95,33 @@ class TodoResourceController(private val todoService: TodoService) {
     nomsId: String,
     @PathVariable("id") id: UUID,
   ) = todoService.deleteItem(nomsId, id)
+
+  @PutMapping("/{nomsId}/todo/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(summary = "Update a todo list item for a person")
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Item is updated",
+      ),
+      ApiResponse(
+        responseCode = "404",
+        description = "Person or item not found",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  fun updateItem(
+    @Schema(example = "AXXXS", required = true)
+    @PathVariable("nomsId")
+    nomsId: String,
+    @PathVariable("id") id: UUID,
+    @RequestBody
+    request: TodoRequest,
+  ) = todoService.updateItem(nomsId, id, request)
 }
 
-data class TodoCreateRequest(
+data class TodoRequest(
   val urn: String,
   val task: String,
   val notes: String? = null,

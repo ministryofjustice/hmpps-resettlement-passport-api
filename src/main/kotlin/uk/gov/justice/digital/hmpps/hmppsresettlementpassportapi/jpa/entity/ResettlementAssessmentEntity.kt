@@ -72,6 +72,12 @@ data class ResettlementAssessmentEntity(
 
   @Column(name = "user_declaration")
   var userDeclaration: Boolean?,
+
+  @Column(name = "is_deleted")
+  var deleted: Boolean = false,
+
+  @Column(name = "deleted_date")
+  var deletedDate: LocalDateTime? = null,
 ) {
   val questionsAndAnswers: List<ResettlementAssessmentSimpleQuestionAndAnswer>
     get() = assessment.assessment

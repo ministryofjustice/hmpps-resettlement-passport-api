@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -119,6 +120,30 @@ class TodoResourceController(private val todoService: TodoService) {
     @RequestBody
     request: TodoRequest,
   ) = todoService.updateItem(nomsId, id, request)
+
+  @PatchMapping("/{nomsId}/todo/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(summary = "Patch a todo list item for a person")
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Item is updated",
+      ),
+      ApiResponse(
+        responseCode = "404",
+        description = "Person or item not found",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  fun patchItem(
+    @Schema(example = "AXXXS", required = true)
+    @PathVariable("nomsId")
+    nomsId: String,
+    @PathVariable("id") id: UUID,
+    @RequestBody
+    request: TodoPatchRequest,
+  ) = todoService.patchItem(nomsId, id, request)
 }
 
 data class TodoRequest(
@@ -126,4 +151,9 @@ data class TodoRequest(
   val task: String,
   val notes: String? = null,
   val dueDate: LocalDate? = null,
+)
+
+data class TodoPatchRequest(
+  val urn: String,
+  val completed: Boolean,
 )

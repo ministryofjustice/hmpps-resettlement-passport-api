@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.TodoEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.TodoRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource.TodoPatchRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource.TodoRequest
 import java.time.LocalDateTime
 import java.util.UUID
@@ -56,6 +57,21 @@ class TodoService(
         task = request.task,
         notes = request.notes,
         dueDate = request.dueDate,
+        updatedByUrn = request.urn,
+        updatedAt = LocalDateTime.now(),
+      ),
+    )
+  }
+
+  @Transactional
+  fun patchItem(nomsId: String, id: UUID, request: TodoPatchRequest): TodoEntity {
+    val prisonerRecord = getPrisoner(nomsId)
+    val todoItem = todoRepository.findByIdAndPrisonerId(id, prisonerRecord.id())
+      ?: throw ResourceNotFoundException("No item found for $id")
+
+    return todoRepository.save(
+      todoItem.copy(
+        completed = request.completed,
         updatedByUrn = request.urn,
         updatedAt = LocalDateTime.now(),
       ),

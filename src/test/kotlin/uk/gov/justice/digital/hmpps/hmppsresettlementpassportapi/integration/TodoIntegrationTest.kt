@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
 import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
@@ -16,6 +17,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
   )
 
   @Nested
+  @DisplayName("create")
   inner class CreateTodoItem {
     @Test
     @Sql("/testdata/sql/seed-pop-user-otp.sql")
@@ -86,6 +88,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
   }
 
   @Nested
+  @DisplayName("get")
   inner class GetTodoList {
     @Test
     @Sql("/testdata/sql/seed-pop-user-otp.sql")
@@ -149,6 +152,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType(MediaType.APPLICATION_JSON)
 
   @Nested
+  @DisplayName("delete")
   inner class DeleteTodoItem {
     @Test
     @Sql("/testdata/sql/seed-pop-user-otp.sql")
@@ -204,6 +208,73 @@ class TodoIntegrationTest : IntegrationTestBase() {
   }
 
   @Nested
+  @DisplayName("patch")
+  inner class PatchTodoItem {
+
+    @Test
+    @Sql("/testdata/sql/seed-pop-user-otp.sql")
+    fun `should be able complete an item`() {
+      val id = createTodoItem("task" to "make some toast", "urn" to "urn5")["id"]
+      authedWebTestClient.patch()
+        .uri("/resettlement-passport/person/G4161UF/todo/$id")
+        .bodyValue(
+          mapOf(
+            "urn" to "urn6",
+            "completed" to true,
+          ),
+        )
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody()
+        .json(readFile("testdata/expectation/todo-patch-response.json"))
+    }
+
+    @Test
+    @Sql("/testdata/sql/seed-pop-user-otp.sql")
+    fun `should 404 when todo item not found for patch`() {
+      authedWebTestClient.patch()
+        .uri("/resettlement-passport/person/G4161UF/todo/${UUID.randomUUID()}")
+        .bodyValue(minimalTask)
+        .exchange()
+        .expectStatus()
+        .isNotFound()
+    }
+
+    @Test
+    fun `should 404 when person item not found for patch`() {
+      authedWebTestClient.put()
+        .uri("/resettlement-passport/person/UNKNOWN/todo/${UUID.randomUUID()}")
+        .bodyValue(minimalTask)
+        .exchange()
+        .expectStatus()
+        .isNotFound()
+    }
+
+    @Test
+    fun `should 401 with no authentication header on patch`() {
+      webTestClient.put()
+        .uri("/resettlement-passport/person/UNKNOWN/todo/${UUID.randomUUID()}")
+        .bodyValue(minimalTask)
+        .exchange()
+        .expectStatus()
+        .isUnauthorized()
+    }
+
+    @Test
+    fun `should 403 with incorrect role header on patch`() {
+      webTestClient.put()
+        .uri("/resettlement-passport/person/G4161UF/todo/${UUID.randomUUID()}")
+        .bodyValue(minimalTask)
+        .headers(setAuthorisation(roles = listOf("SOME_ROLE_IDK")))
+        .exchange()
+        .expectStatus()
+        .isForbidden()
+    }
+  }
+
+  @Nested
+  @DisplayName("update")
   inner class UpdateTodoItem {
 
     @Test

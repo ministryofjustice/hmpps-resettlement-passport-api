@@ -54,7 +54,7 @@ class TodoService(
 
     return todoRepository.save(
       todoItem.copy(
-        task = request.task,
+        title = request.title,
         notes = request.notes,
         dueDate = request.dueDate,
         updatedByUrn = request.urn,
@@ -81,7 +81,7 @@ class TodoService(
 
 internal fun TodoRequest.toEntity(prisonerId: Long) = TodoEntity(
   prisonerId = prisonerId,
-  task = this.task,
+  title = this.title,
   notes = this.notes,
   dueDate = this.dueDate,
   createdByUrn = this.urn,

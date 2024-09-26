@@ -12,7 +12,7 @@ import java.util.UUID
 
 class TodoIntegrationTest : IntegrationTestBase() {
   private val minimalTask = mapOf(
-    "task" to "make some tea",
+    "title" to "make some tea",
     "urn" to "urn123",
   )
 
@@ -41,7 +41,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
         .contentType(MediaType.APPLICATION_JSON)
         .bodyValue(
           mapOf(
-            "task" to "make some coffee",
+            "title" to "make some coffee",
             "urn" to "urn456",
             "dueDate" to "2020-11-30",
             "notes" to "No milk",
@@ -93,9 +93,9 @@ class TodoIntegrationTest : IntegrationTestBase() {
     @Test
     @Sql("/testdata/sql/seed-pop-user-otp.sql")
     fun `view list with 2 items`() {
-      createTodoItem("task" to "do the first thing", "urn" to "urn1")
+      createTodoItem("title" to "do the first thing", "urn" to "urn1")
       createTodoItem(
-        "task" to "do the second thing",
+        "title" to "do the second thing",
         "urn" to "urn1",
         "notes" to "note this",
         "dueDate" to "2020-11-30",
@@ -157,7 +157,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
     @Test
     @Sql("/testdata/sql/seed-pop-user-otp.sql")
     fun `can delete an item from todo list`() {
-      val id = createTodoItem("task" to "make some toast", "urn" to "urn5")["id"]
+      val id = createTodoItem("title" to "make some toast", "urn" to "urn5")["id"]
 
       authedWebTestClient.delete()
         .uri("/resettlement-passport/person/G4161UF/todo/$id")
@@ -214,7 +214,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
     @Test
     @Sql("/testdata/sql/seed-pop-user-otp.sql")
     fun `should be able complete an item`() {
-      val id = createTodoItem("task" to "make some toast", "urn" to "urn5")["id"]
+      val id = createTodoItem("title" to "make some toast", "urn" to "urn5")["id"]
       authedWebTestClient.patch()
         .uri("/resettlement-passport/person/G4161UF/todo/$id")
         .bodyValue(
@@ -280,13 +280,13 @@ class TodoIntegrationTest : IntegrationTestBase() {
     @Test
     @Sql("/testdata/sql/seed-pop-user-otp.sql")
     fun `should update todo item`() {
-      val id = createTodoItem("task" to "make some toast", "urn" to "urn5")["id"]
+      val id = createTodoItem("title" to "make some toast", "urn" to "urn5")["id"]
       authedWebTestClient.put()
         .uri("/resettlement-passport/person/G4161UF/todo/$id")
         .bodyValue(
           mapOf(
             "urn" to "urn6",
-            "task" to "slice some bread",
+            "title" to "slice some bread",
             "notes" to "do not toast",
             "dueDate" to "2024-09-28",
           ),

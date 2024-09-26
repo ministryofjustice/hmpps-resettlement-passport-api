@@ -3,7 +3,7 @@ create table todo_item
     id             uuid primary key,
     prisoner_id    bigint                   not null references prisoner (id),
 
-    task           text,
+    title          text,
     notes          text,
     due_date       date,
     completed      boolean,

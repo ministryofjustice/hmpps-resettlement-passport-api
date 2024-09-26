@@ -148,7 +148,7 @@ class TodoResourceController(private val todoService: TodoService) {
 
 data class TodoRequest(
   val urn: String,
-  val task: String,
+  val title: String,
   val notes: String? = null,
   val dueDate: LocalDate? = null,
 )

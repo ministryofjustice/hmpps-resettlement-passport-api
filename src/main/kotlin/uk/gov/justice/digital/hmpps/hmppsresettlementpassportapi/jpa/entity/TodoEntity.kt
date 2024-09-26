@@ -14,7 +14,7 @@ data class TodoEntity(
   val id: UUID = UUID.randomUUID(),
 
   val prisonerId: Long,
-  val task: String,
+  val title: String,
   val notes: String? = null,
   val dueDate: LocalDate? = null,
   val completed: Boolean = false,

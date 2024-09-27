@@ -162,6 +162,35 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
     Assertions.assertEquals(setOf(prisoner2.id, prisoner4.id), resettlementAssessmentRepository.findPrisonersWithAllAssessmentsInStatus("MDI", ResettlementAssessmentType.BCST2, ResettlementAssessmentStatus.SUBMITTED, Pathway.entries.size))
   }
 
+  @Test
+  fun `test persist deleted resettlement assessment`() {
+    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.parse("2022-12-20T10:13:03"), "crn1", "xyz1", LocalDate.parse("2025-01-23"))
+    prisonerRepository.save(prisoner)
+
+    val entityToSave = ResettlementAssessmentEntity(
+      id = null,
+      prisonerId = prisoner.id(),
+      pathway = Pathway.ACCOMMODATION,
+      statusChangedTo = Status.SUPPORT_DECLINED,
+      assessmentType = ResettlementAssessmentType.BCST2,
+      creationDate = LocalDateTime.parse("2023-01-01T12:00:00"),
+      createdBy = "Human, A",
+      assessment = ResettlementAssessmentQuestionAndAnswerList(listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_1", answer = StringAnswer("Test Answer 1")))),
+      assessmentStatus = ResettlementAssessmentStatus.NOT_STARTED,
+      caseNoteText = "Some case note text",
+      createdByUserId = "STURNER_GEN",
+      submissionDate = null,
+      version = 1,
+      userDeclaration = false,
+      deleted = true,
+      deletedDate = LocalDateTime.parse("2023-01-01T12:00:00"),
+    )
+    resettlementAssessmentRepository.save(entityToSave)
+
+    val resettlementAssessmentsFromDB = resettlementAssessmentRepository.findAll()
+    assertThat(resettlementAssessmentsFromDB).usingRecursiveComparison().isEqualTo(listOf(entityToSave))
+  }
+
   fun generateResettlementAssessmentEntity(prisoner: PrisonerEntity, pathway: Pathway, status: ResettlementAssessmentStatus, creationDate: LocalDateTime) =
     ResettlementAssessmentEntity(
       id = null,

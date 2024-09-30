@@ -19,6 +19,10 @@ import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.util.Objects
 
+const val PROFILE_RESET_TEXT_PREFIX = "Prepare someone for release (PSfR) profile reset\n\nReason for reset: "
+const val PROFILE_RESET_TEXT_SUFFIX = "\n\nAny previous immediate needs and pre-release reports have been cleared\n\nAll pathway resettlement statuses have been set back to 'Not Started'."
+const val PROFILE_RESET_TEXT_SUPPORT = "\n\nPlease contact support if you think there's a problem."
+
 @Service
 class CaseNotesService(
   val caseNotesApiService: CaseNotesApiService,
@@ -48,6 +52,9 @@ class CaseNotesService(
       combinedCaseNotes.addAll(deliusContactService.getCaseNotesByNomsId(nomsId, caseNoteType))
     }
     combinedCaseNotes.addAll(getResettlementAssessmentCaseNotes(prisoner.id(), caseNoteType))
+    if (caseNoteType !== CaseNoteType.All) {
+      combinedCaseNotes.addAll(getProfileResetCaseNotes(nomsId, days, createdByUserId))
+    }
 
     // Remove duplicates
     combinedCaseNotes = removeDuplicates(combinedCaseNotes)
@@ -93,6 +100,15 @@ class CaseNotesService(
     }
 
     return CaseNotesList(null, null, null, null, 0, false)
+  }
+
+  fun sendProfileResetCaseNote(nomsId: String, userId: String, reason: String) {
+    val noteText = PROFILE_RESET_TEXT_PREFIX + reason + PROFILE_RESET_TEXT_SUFFIX + PROFILE_RESET_TEXT_SUPPORT
+    postBCSTCaseNoteToDps(nomsId, noteText, userId, DpsCaseNoteSubType.GEN)
+  }
+
+  private fun getProfileResetCaseNotes(nomsId: String, days: Int, createdByUserId: Int): List<PathwayCaseNote> {
+    return caseNotesApiService.getCaseNotesByNomsId(nomsId, days, CaseNoteType.All, createdByUserId).filter { it.text.startsWith(PROFILE_RESET_TEXT_PREFIX) }
   }
 
   private fun getResettlementAssessmentCaseNotes(prisonerId: Long, caseNoteType: CaseNoteType): List<PathwayCaseNote> =

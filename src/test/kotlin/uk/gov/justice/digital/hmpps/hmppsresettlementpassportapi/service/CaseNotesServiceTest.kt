@@ -3,20 +3,38 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import io.mockk.mockkClass
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.junit.jupiter.MockitoExtension
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotePathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CaseNotesApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ExtendWith(MockitoExtension::class)
 class CaseNotesServiceTest {
+  @Mock
+  private lateinit var prisonerRepository: PrisonerRepository
+
+  @Mock
+  private lateinit var caseNotesApiService: CaseNotesApiService
+
+  @Mock
+  private lateinit var resettlementAssessmentRepository: ResettlementAssessmentRepository
 
   @ParameterizedTest
   @MethodSource("test remove duplicates data")
@@ -44,6 +62,65 @@ class CaseNotesServiceTest {
     // Test where the occurrenceDate is in the same Date but different time
     Arguments.of(generatePathwayCaseNotesSameOccurrenceDate(number = 100), generatePathwayCaseNotesSameOccurrenceDate(number = 1)),
   )
+
+  @ParameterizedTest
+  @MethodSource("test get case notes data")
+  fun `test get case notes`(caseNoteType: CaseNoteType, pathway: Pathway?, expectedList: List<PathwayCaseNote>) {
+    val nomsId = "12345"
+    val createdBy = 1
+    val days = 100
+    val prisoner = PrisonerEntity(1, nomsId, LocalDateTime.now(), null, null, LocalDate.parse("2025-01-23"))
+
+    Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisoner)
+    Mockito.`when`(caseNotesApiService.getCaseNotesByNomsId(nomsId, days, caseNoteType, createdBy)).thenReturn(emptyList())
+    if (caseNoteType !== CaseNoteType.All) {
+      Mockito.`when`(resettlementAssessmentRepository.findCaseNotesFor(1, pathway!!)).thenReturn(emptyList())
+
+      Mockito.`when`(caseNotesApiService.getCaseNotesByNomsId(nomsId, days, CaseNoteType.All, createdBy))
+        .thenReturn(expectedList)
+    }
+
+    val caseNotesService = CaseNotesService(
+      caseNotesApiService,
+      mockkClass(DeliusContactService::class),
+      prisonerRepository,
+      mockkClass(ResettlementPassportDeliusApiService::class),
+      resettlementAssessmentRepository,
+    )
+    val size = expectedList.size
+
+    Assertions.assertEquals(
+      CaseNotesList(content = expectedList, pageSize = size, page = 0, sortName = "", totalElements = size, last = true),
+      caseNotesService.getCaseNotesByNomsId(nomsId, 0, 1, "", days, caseNoteType, createdBy),
+    )
+  }
+
+  private fun `test get case notes data`() = Stream.of(
+    // All shouldn't try and get profile reset case note as it should already be returned in initial call
+    Arguments.of(CaseNoteType.All, null, emptyList<PathwayCaseNote>()),
+    // Profile reset note returned for each pathway
+    Arguments.of(CaseNoteType.HEALTH, Pathway.HEALTH, generateProfileResetCaseNote()),
+    Arguments.of(CaseNoteType.ACCOMMODATION, Pathway.ACCOMMODATION, generateProfileResetCaseNote()),
+    Arguments.of(CaseNoteType.FINANCE_AND_ID, Pathway.FINANCE_AND_ID, generateProfileResetCaseNote()),
+    Arguments.of(CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY, Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, generateProfileResetCaseNote()),
+    Arguments.of(CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, generateProfileResetCaseNote()),
+    Arguments.of(CaseNoteType.DRUGS_AND_ALCOHOL, Pathway.DRUGS_AND_ALCOHOL, generateProfileResetCaseNote()),
+    Arguments.of(CaseNoteType.EDUCATION_SKILLS_AND_WORK, Pathway.EDUCATION_SKILLS_AND_WORK, generateProfileResetCaseNote()),
+    // No profile reset notes returned
+    Arguments.of(CaseNoteType.HEALTH, Pathway.HEALTH, emptyList<PathwayCaseNote>()),
+  )
+
+  private fun generateProfileResetCaseNote() =
+    mutableListOf(
+      PathwayCaseNote(
+        caseNoteId = "caseNoteId",
+        pathway = CaseNotePathway.OTHER,
+        creationDateTime = LocalDateTime.parse("2023-09-01T12:13:12"),
+        occurenceDateTime = LocalDateTime.parse("2023-09-01T12:13:12"),
+        createdBy = "user1",
+        text = PROFILE_RESET_TEXT_PREFIX + "some reason" + PROFILE_RESET_TEXT_SUFFIX + PROFILE_RESET_TEXT_SUPPORT,
+      ),
+    )
 
   private fun generatePathwayCaseNote(seed: Long, createdBy: String, text: String, creationDateTime: LocalDateTime, occurrenceDateTime: LocalDateTime, pathway: CaseNotePathway) =
     PathwayCaseNote(

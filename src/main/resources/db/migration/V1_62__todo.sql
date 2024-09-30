@@ -15,3 +15,4 @@ create table todo_item
 );
 
 create index todo_prisoner_id on todo_item (prisoner_id);
+create index prisoner_crn on prisoner(crn);

@@ -20,35 +20,35 @@ class TodoService(
   private val todoRepository: TodoRepository,
   private val prisonerRepository: PrisonerRepository,
 ) {
-  fun createEntry(nomsId: String, createRequest: TodoRequest): TodoEntity {
-    val prisonerRecord = getPrisoner(nomsId)
+  fun createEntry(crn: String, createRequest: TodoRequest): TodoEntity {
+    val prisonerRecord = getPrisoner(crn)
 
     return todoRepository.save(createRequest.toEntity(prisonerRecord.id()))
   }
 
-  fun getList(nomsId: String): List<TodoEntity> {
-    val prisonerRecord = getPrisoner(nomsId)
+  fun getList(crn: String): List<TodoEntity> {
+    val prisonerRecord = getPrisoner(crn)
     return todoRepository.findAllByPrisonerIdOrderById(prisonerRecord.id())
   }
 
-  private fun getPrisoner(nomsId: String): PrisonerEntity = prisonerRepository.findByNomsId(nomsId)
-    ?: throw ResourceNotFoundException("No person found with id $nomsId")
+  private fun getPrisoner(crn: String): PrisonerEntity = prisonerRepository.findByCrn(crn)
+    ?: throw ResourceNotFoundException("No person found with crn $crn")
 
   @Transactional
-  fun deleteItem(nomsId: String, id: UUID) {
-    val deleteCount = todoRepository.deleteByIdAndNomsId(id, nomsId)
+  fun deleteItem(crn: String, id: UUID) {
+    val deleteCount = todoRepository.deleteByIdAndCrn(id, crn)
     if (deleteCount == 0) {
-      throw ResourceNotFoundException("Todo item not found by $nomsId/$id")
+      throw ResourceNotFoundException("Todo item not found by $crn/$id")
     }
     if (deleteCount > 1) {
-      logger.error { "Multiple rows in delete todo item $nomsId/$id" }
-      throw IllegalStateException("Unexpected multiple items deletion of $nomsId/$id")
+      logger.error { "Multiple rows in delete todo item $crn/$id" }
+      throw IllegalStateException("Unexpected multiple items deletion of $crn/$id")
     }
   }
 
   @Transactional
-  fun updateItem(nomsId: String, id: UUID, request: TodoRequest): TodoEntity {
-    val prisonerRecord = getPrisoner(nomsId)
+  fun updateItem(crn: String, id: UUID, request: TodoRequest): TodoEntity {
+    val prisonerRecord = getPrisoner(crn)
     val todoItem = todoRepository.findByIdAndPrisonerId(id, prisonerRecord.id())
       ?: throw ResourceNotFoundException("No item found for $id")
 
@@ -64,8 +64,8 @@ class TodoService(
   }
 
   @Transactional
-  fun patchItem(nomsId: String, id: UUID, request: TodoPatchRequest): TodoEntity {
-    val prisonerRecord = getPrisoner(nomsId)
+  fun patchItem(crn: String, id: UUID, request: TodoPatchRequest): TodoEntity {
+    val prisonerRecord = getPrisoner(crn)
     val todoItem = todoRepository.findByIdAndPrisonerId(id, prisonerRecord.id())
       ?: throw ResourceNotFoundException("No item found for $id")
 

@@ -10,6 +10,8 @@ interface PrisonerRepository : JpaRepository<PrisonerEntity, Long> {
 
   fun findByNomsId(nomsId: String): PrisonerEntity?
 
+  fun findByCrn(crn: String): PrisonerEntity?
+
   fun findByPrisonId(prisonId: String): List<PrisonerEntity>
 
   fun findByReleaseDateGreaterThanEqualAndReleaseDateLessThanEqual(releaseDate: LocalDate, releaseDate2: LocalDate): List<PrisonerEntity>

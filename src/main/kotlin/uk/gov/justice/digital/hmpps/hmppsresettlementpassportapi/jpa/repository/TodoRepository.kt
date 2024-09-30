@@ -18,11 +18,11 @@ interface TodoRepository : JpaRepository<TodoEntity, Long> {
       where t.id = :id
       and t.prisonerId = (
         select p.id from PrisonerEntity p 
-        where p.nomsId = :nomsId
+        where p.crn = :crn
     )
     """,
   )
-  fun deleteByIdAndNomsId(id: UUID, nomsId: String): Int
+  fun deleteByIdAndCrn(id: UUID, crn: String): Int
 
   fun findByIdAndPrisonerId(id: UUID, prisonerId: Long): TodoEntity?
 }

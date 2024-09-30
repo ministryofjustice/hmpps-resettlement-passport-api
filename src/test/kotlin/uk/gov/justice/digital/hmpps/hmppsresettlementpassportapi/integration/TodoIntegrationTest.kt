@@ -88,7 +88,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
   }
 
   @Nested
-  @DisplayName("get")
+  @DisplayName("get all")
   inner class GetTodoList {
     @Test
     @Sql("/testdata/sql/seed-1-prisoner.sql")
@@ -104,6 +104,18 @@ class TodoIntegrationTest : IntegrationTestBase() {
       getTodoItems()
         .expectBody()
         .json(readFile("testdata/expectation/todo-with-2-items.json"))
+    }
+
+    @Test
+    @Sql("/testdata/sql/seed-1-prisoner.sql")
+    fun `view list with 2 items sorted by date`() {
+      createTodoItem("title" to "early", "urn" to "urn1", "dueDate" to "2024-10-01")
+      createTodoItem("title" to "later", "urn" to "urn1", "dueDate" to "2024-11-30")
+
+      getTodoItems("sortField=dueDate&sortDirection=DESC")
+        .expectBody()
+        .jsonPath("$.[0].title").isEqualTo("later")
+        .jsonPath("$.[1].title").isEqualTo("early")
     }
 
     @Test
@@ -141,15 +153,35 @@ class TodoIntegrationTest : IntegrationTestBase() {
         .expectStatus()
         .isNotFound()
     }
+
+    @Test
+    fun `should 400 when an invalid sort field is given`() {
+      authedWebTestClient.get()
+        .uri("/resettlement-passport/person/123/todo?sortField=potato")
+        .exchange()
+        .expectStatus()
+        .isBadRequest()
+    }
+
+    @Test
+    fun `should 400 when an invalid sort direction is given`() {
+      authedWebTestClient.get()
+        .uri("/resettlement-passport/person/123/todo?sortDirection=SIDEWAYS")
+        .exchange()
+        .expectStatus()
+        .isBadRequest()
+    }
   }
 
-  private fun getTodoItems(): WebTestClient.ResponseSpec =
-    authedWebTestClient.get()
-      .uri("/resettlement-passport/person/CRN123/todo")
+  private fun getTodoItems(params: String = ""): WebTestClient.ResponseSpec {
+    val query = if (params.isNotEmpty()) "?$params" else ""
+    return authedWebTestClient.get()
+      .uri("/resettlement-passport/person/CRN123/todo$query")
       .exchange()
       .expectStatus()
       .isOk()
       .expectHeader().contentType(MediaType.APPLICATION_JSON)
+  }
 
   @Nested
   @DisplayName("delete")

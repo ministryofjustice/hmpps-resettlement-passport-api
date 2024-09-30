@@ -2,6 +2,8 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
+import jakarta.validation.ValidationException
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
@@ -12,8 +14,10 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource.TodoPa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource.TodoRequest
 import java.time.LocalDateTime
 import java.util.UUID
+import kotlin.reflect.full.declaredMemberProperties
 
 private val logger = KotlinLogging.logger {}
+private val validSortFields = TodoEntity::class.declaredMemberProperties.map { it.name }.toSet()
 
 @Service
 class TodoService(
@@ -26,9 +30,18 @@ class TodoService(
     return todoRepository.save(createRequest.toEntity(prisonerRecord.id()))
   }
 
-  fun getList(crn: String): List<TodoEntity> {
+  fun getList(crn: String, sortField: String? = null, sortDirection: Sort.Direction? = null): List<TodoEntity> {
+    val sort = if (sortField != null) {
+      if (sortField !in validSortFields) {
+        throw ValidationException("Invalid sort field $sortField")
+      }
+      Sort.by(sortDirection ?: Sort.Direction.ASC, sortField)
+    } else {
+      Sort.unsorted()
+    }
+
     val prisonerRecord = getPrisoner(crn)
-    return todoRepository.findAllByPrisonerIdOrderById(prisonerRecord.id())
+    return todoRepository.findAllByPrisonerIdOrderById(prisonerRecord.id(), sort)
   }
 
   private fun getPrisoner(crn: String): PrisonerEntity = prisonerRepository.findByCrn(crn)

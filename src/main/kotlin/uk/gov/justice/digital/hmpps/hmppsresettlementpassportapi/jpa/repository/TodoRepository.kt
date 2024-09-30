@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository
 
+import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
@@ -9,7 +10,7 @@ import java.util.UUID
 
 @Repository
 interface TodoRepository : JpaRepository<TodoEntity, Long> {
-  fun findAllByPrisonerIdOrderById(prisonerId: Long): List<TodoEntity>
+  fun findAllByPrisonerIdOrderById(prisonerId: Long, sort: Sort = Sort.unsorted()): List<TodoEntity>
 
   @Modifying
   @Query(

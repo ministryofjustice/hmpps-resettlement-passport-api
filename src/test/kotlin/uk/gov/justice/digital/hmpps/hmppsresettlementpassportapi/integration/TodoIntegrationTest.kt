@@ -108,14 +108,16 @@ class TodoIntegrationTest : IntegrationTestBase() {
 
     @Test
     @Sql("/testdata/sql/seed-1-prisoner.sql")
-    fun `view list with 2 items sorted by date`() {
+    fun `view list with 3 items sorted by date`() {
       createTodoItem("title" to "early", "urn" to "urn1", "dueDate" to "2024-10-01")
       createTodoItem("title" to "later", "urn" to "urn1", "dueDate" to "2024-11-30")
+      createTodoItem("title" to "middle", "urn" to "urn1", "dueDate" to "2024-10-15")
 
       getTodoItems("sortField=dueDate&sortDirection=DESC")
         .expectBody()
         .jsonPath("$.[0].title").isEqualTo("later")
-        .jsonPath("$.[1].title").isEqualTo("early")
+        .jsonPath("$.[1].title").isEqualTo("middle")
+        .jsonPath("$.[2].title").isEqualTo("early")
     }
 
     @Test
@@ -366,6 +368,68 @@ class TodoIntegrationTest : IntegrationTestBase() {
       webTestClient.put()
         .uri("/resettlement-passport/person/CRN123/todo/${UUID.randomUUID()}")
         .bodyValue(minimalTask)
+        .headers(setAuthorisation(roles = listOf("SOME_ROLE_IDK")))
+        .exchange()
+        .expectStatus()
+        .isForbidden()
+    }
+  }
+
+  @Nested
+  @DisplayName("get one")
+  inner class GetTodoItem {
+
+    @Test
+    @Sql("/testdata/sql/seed-1-prisoner.sql")
+    fun `should get single todo item`() {
+      val id = createTodoItem(
+        "title" to "make some toast",
+        "urn" to "urn5",
+        "notes" to "white bread",
+        "dueDate" to "2024-09-30",
+      )["id"]
+
+      authedWebTestClient.get()
+        .uri("/resettlement-passport/person/CRN123/todo/$id")
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody()
+        .json(readFile("testdata/expectation/todo-get-response.json"))
+    }
+
+    @Test
+    @Sql("/testdata/sql/seed-1-prisoner.sql")
+    fun `should 404 when todo item not found for get`() {
+      authedWebTestClient.get()
+        .uri("/resettlement-passport/person/CRN123/todo/${UUID.randomUUID()}")
+        .exchange()
+        .expectStatus()
+        .isNotFound()
+    }
+
+    @Test
+    fun `should 404 when person item not found for get`() {
+      authedWebTestClient.get()
+        .uri("/resettlement-passport/person/UNKNOWN/todo/${UUID.randomUUID()}")
+        .exchange()
+        .expectStatus()
+        .isNotFound()
+    }
+
+    @Test
+    fun `should 401 with no authentication header on update`() {
+      webTestClient.get()
+        .uri("/resettlement-passport/person/UNKNOWN/todo/${UUID.randomUUID()}")
+        .exchange()
+        .expectStatus()
+        .isUnauthorized()
+    }
+
+    @Test
+    fun `should 403 with incorrect role header on get`() {
+      webTestClient.get()
+        .uri("/resettlement-passport/person/CRN123/todo/${UUID.randomUUID()}")
         .headers(setAuthorisation(roles = listOf("SOME_ROLE_IDK")))
         .exchange()
         .expectStatus()

@@ -10,7 +10,7 @@ import java.util.UUID
 
 @Repository
 interface TodoRepository : JpaRepository<TodoEntity, Long> {
-  fun findAllByPrisonerIdOrderById(prisonerId: Long, sort: Sort = Sort.unsorted()): List<TodoEntity>
+  fun findAllByPrisonerId(prisonerId: Long, sort: Sort = Sort.unsorted()): List<TodoEntity>
 
   @Modifying
   @Query(

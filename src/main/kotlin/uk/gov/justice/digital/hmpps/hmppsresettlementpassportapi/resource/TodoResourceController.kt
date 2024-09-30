@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.TodoEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.TodoService
 import java.time.LocalDate
 import java.util.UUID
@@ -150,6 +151,28 @@ class TodoResourceController(private val todoService: TodoService) {
     @RequestBody
     request: TodoPatchRequest,
   ) = todoService.patchItem(crn, id, request)
+
+  @GetMapping("/{crn}/todo/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(summary = "Get a single todo list item for a person")
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Item is updated",
+      ),
+      ApiResponse(
+        responseCode = "404",
+        description = "Person or item not found",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  fun getItem(
+    @Schema(example = "AXXXS", required = true)
+    @PathVariable("crn")
+    crn: String,
+    @PathVariable("id") id: UUID,
+  ): TodoEntity = todoService.getOne(crn, id)
 }
 
 data class TodoRequest(

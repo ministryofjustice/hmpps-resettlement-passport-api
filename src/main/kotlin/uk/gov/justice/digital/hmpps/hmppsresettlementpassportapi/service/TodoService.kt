@@ -30,6 +30,12 @@ class TodoService(
     return todoRepository.save(createRequest.toEntity(prisonerRecord.id()))
   }
 
+  fun getOne(crn: String, id: UUID): TodoEntity {
+    val prisonerRecord = getPrisoner(crn)
+    return todoRepository.findByIdAndPrisonerId(id, prisonerRecord.id())
+      ?: throw ResourceNotFoundException("No item found for $id")
+  }
+
   fun getList(crn: String, sortField: String? = null, sortDirection: Sort.Direction? = null): List<TodoEntity> {
     val sort = if (sortField != null) {
       if (sortField !in validSortFields) {
@@ -41,7 +47,7 @@ class TodoService(
     }
 
     val prisonerRecord = getPrisoner(crn)
-    return todoRepository.findAllByPrisonerIdOrderById(prisonerRecord.id(), sort)
+    return todoRepository.findAllByPrisonerId(prisonerRecord.id(), sort)
   }
 
   private fun getPrisoner(crn: String): PrisonerEntity = prisonerRepository.findByCrn(crn)

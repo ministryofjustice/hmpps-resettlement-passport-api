@@ -108,4 +108,12 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
     pathway: Pathway,
     assessmentStatus: List<ResettlementAssessmentStatus>,
   ): ResettlementAssessmentEntity?
+
+  fun findAllByPrisonerId(prisonerId: Long): List<ResettlementAssessmentEntity>
+
+  override fun delete(resettlementAssessmentEntity: ResettlementAssessmentEntity) {
+    resettlementAssessmentEntity.deleted = true
+    resettlementAssessmentEntity.deletedDate = LocalDateTime.now()
+    save(resettlementAssessmentEntity)
+  }
 }

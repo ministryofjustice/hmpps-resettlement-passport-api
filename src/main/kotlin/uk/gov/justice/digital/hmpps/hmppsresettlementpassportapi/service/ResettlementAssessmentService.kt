@@ -493,4 +493,13 @@ class ResettlementAssessmentService(
       caseNoteText = generateLinkOnlyDeliusCaseNoteText(nomsId, assessmentType, psfrBaseUrl),
     )
   }
+
+  fun deleteAllResettlementAssessments(nomsId: String) {
+    val prisoner = getPrisonerEntityOrThrow(nomsId)
+
+    resettlementAssessmentRepository.findAllByPrisonerId(prisoner.id!!).forEach {
+        assessment ->
+      resettlementAssessmentRepository.delete(assessment)
+    }
+  }
 }

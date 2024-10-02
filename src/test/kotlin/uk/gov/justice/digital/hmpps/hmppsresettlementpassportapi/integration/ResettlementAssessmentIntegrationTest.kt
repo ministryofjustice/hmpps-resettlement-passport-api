@@ -184,6 +184,27 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-1-deleted.sql")
+  fun `Get resettlement assessment summary by noms ID - happy path with deleted entries`() {
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+    val expectedOutput = readFile("testdata/expectation/resettlement-assessment-summary-1.json")
+
+    val nomsId = "G4161UF"
+    val assessmentType = "BCST2"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/summary?assessmentType=$assessmentType")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
+    unmockkAll()
+  }
+
+  @Test
   @Sql("classpath:testdata/sql/seed-resettlement-assessment-2.sql")
   fun `Get resettlement assessment summary by noms ID- no assessments in DB - happy path`() {
     mockkStatic(LocalDateTime::class)
@@ -913,6 +934,25 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-5-deleted.sql")
+  fun `Get latest resettlement assessment summary - happy path multiple assessments and deleted`() {
+    val expectedOutput = readFile("testdata/expectation/latest-resettlement-assessment-1.json")
+
+    val nomsId = "G4161UF"
+    val pathway = "ACCOMMODATION"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/latest")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput, true)
+    unmockkAll()
+  }
+
+  @Test
   @Sql("classpath:testdata/sql/seed-resettlement-assessment-16.sql")
   fun `Get latest resettlement assessment summary - happy path multiple assessments - check ordering`() {
     val expectedOutput = readFile("testdata/expectation/latest-resettlement-assessment-1.json")
@@ -1214,6 +1254,30 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-resettlement-assessment-15.sql")
   fun `test get latest resettlement assessment version - happy path - assessment in database`() {
+    val nomsId = "G4161UF"
+    val pathway = "ACCOMMODATION"
+    val assessmentType = "BCST2"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/resettlement-assessment/$pathway/version?assessmentType=$assessmentType")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(
+        """
+        {
+          "version": 3
+        }
+        """.trimIndent(),
+        true,
+      )
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-15-deleted.sql")
+  fun `test get latest resettlement assessment version - happy path - assessment in database and deleted`() {
     val nomsId = "G4161UF"
     val pathway = "ACCOMMODATION"
     val assessmentType = "BCST2"

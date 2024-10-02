@@ -16,6 +16,7 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
         select *, rank() over (partition by pathway order by id desc, created_date desc) as rank from resettlement_assessment
         where assessment_type = :#{#assessmentType.toString()}
         and prisoner_id = :prisonerId
+        and is_deleted = false
       ) by_pathway where rank = 1;
     """,
     nativeQuery = true,
@@ -30,6 +31,7 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
         and prisoner_id = :#{#prisonerId}
         and created_date >= :#{#fromDate}
         and created_date <= :#{#toDate}
+        and is_deleted = false
       ) by_pathway where rank = 1;
     """,
     nativeQuery = true,
@@ -46,6 +48,7 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
       select * from (
         select *, rank() over (partition by assessment_type,pathway order by id desc, created_date desc) as rank from resettlement_assessment
         where prisoner_id = :prisonerId
+        and is_deleted = false
       ) by_pathway where rank = 1;
     """,
     nativeQuery = true,
@@ -80,10 +83,10 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
     assessmentStatus: List<ResettlementAssessmentStatus>,
   ): ResettlementAssessmentEntity?
 
-  @Query("select count(distinct(a.pathway)) from ResettlementAssessmentEntity a join PrisonerEntity p on a.prisonerId = p.id where p.nomsId = :nomsId and a.assessmentType = :assessmentType and a.assessmentStatus = :assessmentStatus")
+  @Query("select count(distinct(a.pathway)) from ResettlementAssessmentEntity a join PrisonerEntity p on a.prisonerId = p.id where p.nomsId = :nomsId and a.assessmentType = :assessmentType and a.assessmentStatus = :assessmentStatus and a.deleted = false")
   fun countByNomsIdAndAssessmentTypeAndAssessmentStatus(nomsId: String, assessmentType: ResettlementAssessmentType, assessmentStatus: ResettlementAssessmentStatus): Int
 
-  @Query("select ra.prisonerId from ResettlementAssessmentEntity ra inner join PrisonerEntity p on ra.prisonerId = p.id where p.prisonId = :prisonId and ra.assessmentType = :assessmentType and ra.assessmentStatus = :assessmentStatus group by ra.prisonerId having count(distinct (ra.pathway)) = :numOfPathways")
+  @Query("select ra.prisonerId from ResettlementAssessmentEntity ra inner join PrisonerEntity p on ra.prisonerId = p.id where p.prisonId = :prisonId and ra.assessmentType = :assessmentType and ra.assessmentStatus = :assessmentStatus and ra.deleted = false group by ra.prisonerId having count(distinct (ra.pathway)) = :numOfPathways")
   fun findPrisonersWithAllAssessmentsInStatus(prisonId: String, assessmentType: ResettlementAssessmentType, assessmentStatus: ResettlementAssessmentStatus, numOfPathways: Int): Set<Long>
 
   @Query(
@@ -99,6 +102,7 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
       where prisonerId = :prisonerId
       and pathway = :pathway
       and caseNoteText is not null
+      and deleted = false
     """,
   )
   fun findCaseNotesFor(prisonerId: Long, pathway: Pathway): List<List<Any>>
@@ -108,4 +112,12 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
     pathway: Pathway,
     assessmentStatus: List<ResettlementAssessmentStatus>,
   ): ResettlementAssessmentEntity?
+
+  fun findAllByPrisonerId(prisonerId: Long): List<ResettlementAssessmentEntity>
+
+  override fun delete(resettlementAssessmentEntity: ResettlementAssessmentEntity) {
+    resettlementAssessmentEntity.deleted = true
+    resettlementAssessmentEntity.deletedDate = LocalDateTime.now()
+    save(resettlementAssessmentEntity)
+  }
 }

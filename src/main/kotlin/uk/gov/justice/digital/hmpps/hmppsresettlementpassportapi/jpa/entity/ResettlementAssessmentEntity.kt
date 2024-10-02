@@ -14,6 +14,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.annotations.SQLRestriction
 import org.hibernate.type.SqlTypes
 import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
@@ -25,6 +26,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "resettlement_assessment")
+@SQLRestriction("is_deleted = false")
 data class ResettlementAssessmentEntity(
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

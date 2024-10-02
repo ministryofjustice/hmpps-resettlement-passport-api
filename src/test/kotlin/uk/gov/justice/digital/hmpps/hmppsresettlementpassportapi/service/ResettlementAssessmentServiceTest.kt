@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -12,9 +13,13 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.Mockito
+import org.mockito.Mockito.verify
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.verifyNoInteractions
+import org.mockito.kotlin.verifyNoMoreInteractions
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResettlementAssessmentConfig
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
@@ -638,7 +643,6 @@ class ResettlementAssessmentServiceTest {
     val user = "A user"
     val caseNotePostfix = "short text"
 
-    val questions = emptyList<ResettlementAssessmentSimpleQuestionAndAnswer>()
     val assessment = ResettlementAssessmentQuestionAndAnswerList(listOf())
     val assessmentQA1 = ResettlementAssessmentSimpleQuestionAndAnswer("HELP_TO_FIND_ACCOMMODATION", StringAnswer("YES"))
     val assessmentQA2 = ResettlementAssessmentSimpleQuestionAndAnswer("HOME_ADAPTATIONS", StringAnswer("YES"))
@@ -656,4 +660,88 @@ class ResettlementAssessmentServiceTest {
 
     Assertions.assertEquals(expectedTagAndQuestionMappingList, profileTagList)
   }
+
+  @Test
+  fun `test deleteAllResettlementAssessments - no prisoner`() {
+    val nomsId = "12345"
+
+    assertThrows<ResourceNotFoundException> {
+      resettlementAssessmentService.deleteAllResettlementAssessments(nomsId)
+    }
+
+    verify(prisonerRepository).findByNomsId(nomsId)
+    verifyNoInteractions(resettlementAssessmentRepository)
+  }
+
+  @Test
+  fun `test deleteAllResettlementAssessments - no resettlement assessments`() {
+    val nomsId = "12345"
+    val prisonerId = 1L
+
+    val prisoner = PrisonerEntity(
+      prisonerId,
+      nomsId,
+      LocalDateTime.now(),
+      null,
+      null,
+      null,
+    )
+
+    Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisoner)
+    Mockito.`when`(resettlementAssessmentRepository.findAllByPrisonerId(prisonerId))
+      .thenReturn(emptyList())
+
+    resettlementAssessmentService.deleteAllResettlementAssessments(nomsId)
+
+    verify(prisonerRepository).findByNomsId(nomsId)
+    verify(resettlementAssessmentRepository).findAllByPrisonerId(prisonerId)
+    verifyNoMoreInteractions(resettlementAssessmentRepository)
+  }
+
+  @Test
+  fun `test deleteAllResettlementAssessments - happy path`() {
+    val nomsId = "12345"
+    val prisonerId = 1L
+
+    val prisoner = PrisonerEntity(
+      prisonerId,
+      nomsId,
+      LocalDateTime.now(),
+      null,
+      null,
+      null,
+    )
+
+    val resettlementAssessmentEntity1 = makeResettlementAssessment(1, prisonerId)
+    val resettlementAssessmentEntity2 = makeResettlementAssessment(2, prisonerId)
+
+    Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisoner)
+    Mockito.`when`(resettlementAssessmentRepository.findAllByPrisonerId(prisonerId))
+      .thenReturn(listOf(resettlementAssessmentEntity1, resettlementAssessmentEntity2))
+
+    resettlementAssessmentService.deleteAllResettlementAssessments(nomsId)
+
+    verify(prisonerRepository).findByNomsId(nomsId)
+    verify(resettlementAssessmentRepository).findAllByPrisonerId(prisonerId)
+    verify(resettlementAssessmentRepository).delete(resettlementAssessmentEntity1)
+    verify(resettlementAssessmentRepository).delete(resettlementAssessmentEntity2)
+  }
+
+  private fun makeResettlementAssessment(id: Long, prisonerId: Long) =
+    ResettlementAssessmentEntity(
+      id = id,
+      prisonerId = prisonerId,
+      pathway = Pathway.HEALTH,
+      statusChangedTo = null,
+      assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN,
+      assessment = ResettlementAssessmentQuestionAndAnswerList(emptyList()),
+      creationDate = LocalDateTime.now(),
+      createdBy = "aUser",
+      assessmentStatus = ResettlementAssessmentStatus.COMPLETE,
+      caseNoteText = null,
+      createdByUserId = "123",
+      version = 1,
+      submissionDate = null,
+      userDeclaration = true,
+    )
 }

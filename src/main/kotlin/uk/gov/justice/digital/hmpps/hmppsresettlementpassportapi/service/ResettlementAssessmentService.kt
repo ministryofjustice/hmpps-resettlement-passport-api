@@ -499,7 +499,9 @@ class ResettlementAssessmentService(
 
     resettlementAssessmentRepository.findAllByPrisonerId(prisoner.id!!).forEach {
         assessment ->
-      resettlementAssessmentRepository.delete(assessment)
+      assessment.deleted = true
+      assessment.deletedDate = LocalDateTime.now()
+      resettlementAssessmentRepository.save(assessment)
     }
   }
 }

@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 
-data class ProfileReset (
+data class ProfileReset(
   val resetReason: ResetReason,
   val additionalDetails: String?,
 )

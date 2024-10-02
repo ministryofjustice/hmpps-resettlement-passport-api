@@ -27,7 +27,7 @@ class ProfileResetIntegrationTest : IntegrationTestBase() {
 
   @Autowired
   private lateinit var pathwayStatusRepository: PathwayStatusRepository
-  
+
   private val fakeNow = LocalDateTime.parse("2024-10-01T12:00:00")
 
   @Test
@@ -36,9 +36,13 @@ class ProfileResetIntegrationTest : IntegrationTestBase() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
 
-    val nomsId = "123456"
+    val nomsId = "ABC1234"
     val prisonId = "MDI"
-    val expectedCaseNotes = "TODO"
+    val expectedCaseNotes = "Prepare someone for release reports and statuses reset\\n\\n" +
+      "Reason for reset: Some additional details\\n\\n" +
+      "Any previous immediate needs and pre-release reports have been cleared.\\n\\n" +
+      "All pathway resettlement statuses have been set back to 'Not Started'.\\n\\n" +
+      "Contact the service desk if you think there's a problem."
 
     caseNotesApiMockServer.stubPostCaseNotes(
       nomsId = nomsId,
@@ -49,25 +53,28 @@ class ProfileResetIntegrationTest : IntegrationTestBase() {
       status = 200,
     )
 
-    authedWebTestClient.post()
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+
+    webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/reset-profile")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), authSource = "nomis"))
       .bodyValue(
         ProfileReset(
           resetReason = ResetReason.OTHER,
           additionalDetails = "Some additional details",
-        )
+        ),
       )
       .exchange()
       .expectStatus().isOk
 
     val expectedPathwayStatuses = listOf(
-      PathwayStatusEntity(id = 1, prisonerId = 1, pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, updatedDate = LocalDateTime.parse("2023-08-16T12:21:44.234")),
-      PathwayStatusEntity(id = 2, prisonerId = 1, pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, status = Status.NOT_STARTED, updatedDate = LocalDateTime.parse("2023-08-16T12:21:44.234")),
-      PathwayStatusEntity(id = 3, prisonerId = 1, pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, status = Status.NOT_STARTED, updatedDate = LocalDateTime.parse("2023-08-16T12:21:44.234")),
-      PathwayStatusEntity(id = 4, prisonerId = 1, pathway = Pathway.DRUGS_AND_ALCOHOL, status = Status.NOT_STARTED, updatedDate = LocalDateTime.parse("2023-08-16T12:21:44.234")),
-      PathwayStatusEntity(id = 5, prisonerId = 1, pathway = Pathway.EDUCATION_SKILLS_AND_WORK, status = Status.NOT_STARTED, updatedDate = LocalDateTime.parse("2023-08-16T12:21:44.234")),
-      PathwayStatusEntity(id = 6, prisonerId = 1, pathway = Pathway.FINANCE_AND_ID, status = Status.NOT_STARTED, updatedDate = LocalDateTime.parse("2023-08-16T12:21:44.234")),
-      PathwayStatusEntity(id = 7, prisonerId = 1, pathway = Pathway.HEALTH, status = Status.NOT_STARTED, updatedDate = LocalDateTime.parse("2023-08-16T12:21:44.234")),
+      PathwayStatusEntity(id = 1, prisonerId = 1, pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, updatedDate = fakeNow),
+      PathwayStatusEntity(id = 2, prisonerId = 1, pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, status = Status.NOT_STARTED, updatedDate = fakeNow),
+      PathwayStatusEntity(id = 3, prisonerId = 1, pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, status = Status.NOT_STARTED, updatedDate = fakeNow),
+      PathwayStatusEntity(id = 4, prisonerId = 1, pathway = Pathway.DRUGS_AND_ALCOHOL, status = Status.NOT_STARTED, updatedDate = fakeNow),
+      PathwayStatusEntity(id = 5, prisonerId = 1, pathway = Pathway.EDUCATION_SKILLS_AND_WORK, status = Status.NOT_STARTED, updatedDate = fakeNow),
+      PathwayStatusEntity(id = 6, prisonerId = 1, pathway = Pathway.FINANCE_AND_ID, status = Status.NOT_STARTED, updatedDate = fakeNow),
+      PathwayStatusEntity(id = 7, prisonerId = 1, pathway = Pathway.HEALTH, status = Status.NOT_STARTED, updatedDate = fakeNow),
     )
 
     val expectedResettlementAssessments = listOf(
@@ -90,10 +97,11 @@ class ProfileResetIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `POST reset profile - 400 invalid body`() {
-    val nomsId = "123456"
+    val nomsId = "ABC1234"
 
-    authedWebTestClient.post()
+    webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/reset-profile")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), authSource = "nomis"))
       .bodyValue("{}")
       .exchange()
       .expectStatus().isBadRequest
@@ -101,15 +109,16 @@ class ProfileResetIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `POST reset profile - 404 no prisoner found`() {
-    val nomsId = "123456"
+    val nomsId = "ABC1234"
 
-    authedWebTestClient.post()
+    webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/reset-profile")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), authSource = "nomis"))
       .bodyValue(
         ProfileReset(
           resetReason = ResetReason.OTHER,
           additionalDetails = "Some additional details",
-        )
+        ),
       )
       .exchange()
       .expectStatus().isNotFound
@@ -117,7 +126,7 @@ class ProfileResetIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `POST reset profile - 401 unauthorised`() {
-    val nomsId = "123456"
+    val nomsId = "ABC1234"
 
     webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/reset-profile")
@@ -127,11 +136,17 @@ class ProfileResetIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `POST reset profile - 403 forbidden`() {
-    val nomsId = "123456"
+    val nomsId = "ABC1234"
 
     webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/reset-profile")
       .headers(setAuthorisation())
+      .bodyValue(
+        ProfileReset(
+          resetReason = ResetReason.OTHER,
+          additionalDetails = "Some additional details",
+        ),
+      )
       .exchange()
       .expectStatus().isForbidden
   }

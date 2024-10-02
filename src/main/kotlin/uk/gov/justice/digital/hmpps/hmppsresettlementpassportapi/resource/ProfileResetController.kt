@@ -18,12 +18,13 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ProfileReset
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettlementAssessmentResetService
 
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
-class ProfileResetController {
+class ProfileResetController(private val resettlementAssessmentResetService: ResettlementAssessmentResetService) {
   @PostMapping("/{prisonerId}/reset-profile")
   @Operation(summary = "Reset a profile", description = "Resets a prisoner's profile by removing any resettlement assessments and resetting statuses to NOT_STARTED. Also sends a case note with reason to DPS.")
   @ApiResponses(
@@ -63,5 +64,8 @@ class ProfileResetController {
     profileReset: ProfileReset,
     @RequestHeader("Authorization")
     auth: String,
-  ): ResponseEntity<Void> = TODO()
+  ): ResponseEntity<Void> {
+    resettlementAssessmentResetService.resetProfile(prisonerId, profileReset, auth)
+    return ResponseEntity.ok().build()
+  }
 }

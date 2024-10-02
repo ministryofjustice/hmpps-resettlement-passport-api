@@ -182,13 +182,15 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       submissionDate = null,
       version = 1,
       userDeclaration = false,
-      deleted = true,
-      deletedDate = LocalDateTime.parse("2023-01-01T12:00:00"),
     )
     resettlementAssessmentRepository.save(entityToSave)
 
     val resettlementAssessmentsFromDB = resettlementAssessmentRepository.findAll()
     assertThat(resettlementAssessmentsFromDB).usingRecursiveComparison().isEqualTo(listOf(entityToSave))
+
+    resettlementAssessmentRepository.delete(entityToSave)
+    val afterDeleteFromDB = resettlementAssessmentRepository.findAll()
+    assertThat(afterDeleteFromDB).isEmpty()
   }
 
   fun generateResettlementAssessmentEntity(prisoner: PrisonerEntity, pathway: Pathway, status: ResettlementAssessmentStatus, creationDate: LocalDateTime) =

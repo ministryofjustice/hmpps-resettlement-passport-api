@@ -1171,7 +1171,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
 
     if (existingAssessment != null) {
       whenever(
-        resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
+        resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInAndDeletedIsFalseOrderByCreationDateDesc(
           1,
           Pathway.ACCOMMODATION,
           assessmentType,

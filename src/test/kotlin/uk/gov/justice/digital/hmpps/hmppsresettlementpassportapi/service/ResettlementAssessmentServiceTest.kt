@@ -1,5 +1,8 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import io.mockk.every
+import io.mockk.mockkStatic
+import io.mockk.unmockkAll
 import org.apache.commons.lang3.RandomStringUtils
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -688,18 +691,21 @@ class ResettlementAssessmentServiceTest {
     )
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisoner)
-    Mockito.`when`(resettlementAssessmentRepository.findAllByPrisonerId(prisonerId))
+    Mockito.`when`(resettlementAssessmentRepository.findAllByPrisonerIdAndDeletedIsFalse(prisonerId))
       .thenReturn(emptyList())
 
     resettlementAssessmentService.deleteAllResettlementAssessments(nomsId)
 
     verify(prisonerRepository).findByNomsId(nomsId)
-    verify(resettlementAssessmentRepository).findAllByPrisonerId(prisonerId)
+    verify(resettlementAssessmentRepository).findAllByPrisonerIdAndDeletedIsFalse(prisonerId)
     verifyNoMoreInteractions(resettlementAssessmentRepository)
   }
 
   @Test
   fun `test deleteAllResettlementAssessments - happy path`() {
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+
     val nomsId = "12345"
     val prisonerId = 1L
 
@@ -716,18 +722,23 @@ class ResettlementAssessmentServiceTest {
     val resettlementAssessmentEntity2 = makeResettlementAssessment(2, prisonerId)
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisoner)
-    Mockito.`when`(resettlementAssessmentRepository.findAllByPrisonerId(prisonerId))
+    Mockito.`when`(resettlementAssessmentRepository.findAllByPrisonerIdAndDeletedIsFalse(prisonerId))
       .thenReturn(listOf(resettlementAssessmentEntity1, resettlementAssessmentEntity2))
 
     resettlementAssessmentService.deleteAllResettlementAssessments(nomsId)
 
+    val deletedResettlementAssessmentEntity1 = makeResettlementAssessment(1, prisonerId, true)
+    val deletedResettlementAssessmentEntity2 = makeResettlementAssessment(2, prisonerId, true)
+
     verify(prisonerRepository).findByNomsId(nomsId)
-    verify(resettlementAssessmentRepository).findAllByPrisonerId(prisonerId)
-    verify(resettlementAssessmentRepository).delete(resettlementAssessmentEntity1)
-    verify(resettlementAssessmentRepository).delete(resettlementAssessmentEntity2)
+    verify(resettlementAssessmentRepository).findAllByPrisonerIdAndDeletedIsFalse(prisonerId)
+    verify(resettlementAssessmentRepository).save(deletedResettlementAssessmentEntity1)
+    verify(resettlementAssessmentRepository).save(deletedResettlementAssessmentEntity2)
+
+    unmockkAll()
   }
 
-  private fun makeResettlementAssessment(id: Long, prisonerId: Long) =
+  private fun makeResettlementAssessment(id: Long, prisonerId: Long, deleted: Boolean = false) =
     ResettlementAssessmentEntity(
       id = id,
       prisonerId = prisonerId,
@@ -743,5 +754,7 @@ class ResettlementAssessmentServiceTest {
       version = 1,
       submissionDate = null,
       userDeclaration = true,
+      deleted = deleted,
+      deletedDate = if (deleted) LocalDateTime.now() else null,
     )
 }

@@ -406,7 +406,7 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
 
     if (existingAssessment != null) {
       whenever(
-        resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
+        resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInAndDeletedIsFalseOrderByCreationDateDesc(
           1,
           pathway,
           assessmentType,

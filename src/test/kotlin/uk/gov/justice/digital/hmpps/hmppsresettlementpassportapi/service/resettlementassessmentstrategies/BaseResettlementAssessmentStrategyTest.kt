@@ -69,7 +69,7 @@ open class BaseResettlementAssessmentStrategyTest(val pathway: Pathway) {
     val resettlementAssessmentEntity = if (returnResettlementAssessmentEntity) ResettlementAssessmentEntity(1, 1, pathway, Status.NOT_STARTED, ResettlementAssessmentType.BCST2, assessment, testDate, "", assessmentStatus, "some text", "USER_1", submissionDate = null, version = 1, userDeclaration = false) else null
     whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
     whenever(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
+      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInAndDeletedIsFalseOrderByCreationDateDesc(
         1,
         pathway,
         ResettlementAssessmentType.BCST2,

@@ -483,7 +483,7 @@ class ResettlementAssessmentStrategy(
     val resettlementAssessmentStatuses =
       listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED)
 
-    return resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
+    return resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInAndDeletedIsFalseOrderByCreationDateDesc(
       prisonerEntity.id(),
       pathway,
       assessmentType,
@@ -513,7 +513,7 @@ class ResettlementAssessmentStrategy(
 
     Pathway.entries.forEach { pathway ->
       val resettlementAssessment =
-        resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusInOrderByCreationDateDesc(
+        resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusInAndDeletedIsFalseOrderByCreationDateDesc(
           prisonerId = prisonerEntity.id(),
           pathway = pathway,
           assessmentStatus = listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED),

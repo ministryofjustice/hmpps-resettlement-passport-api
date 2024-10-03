@@ -124,7 +124,7 @@ class ResettlementAssessmentService(
     // For each pathway, get the latest complete assessment
     Pathway.entries.forEach { pathway ->
 
-      val resettlementAssessment = resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
+      val resettlementAssessment = resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInAndDeletedIsFalseOrderByCreationDateDesc(
         prisonerId = prisonerEntity.id(),
         pathway = pathway,
         assessmentType = assessmentType,
@@ -341,13 +341,13 @@ class ResettlementAssessmentService(
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
 
     val latestResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusOrderByCreationDateDesc(prisonerEntity.id(), pathway, ResettlementAssessmentStatus.SUBMITTED)
+      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndDeletedIsFalseOrderByCreationDateDesc(prisonerEntity.id(), pathway, ResettlementAssessmentStatus.SUBMITTED)
         ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"),
       resettlementAssessmentStrategies,
     )
 
     val originalResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusOrderByCreationDateAsc(prisonerEntity.id(), pathway, ResettlementAssessmentStatus.SUBMITTED)
+      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndDeletedIsFalseOrderByCreationDateAsc(prisonerEntity.id(), pathway, ResettlementAssessmentStatus.SUBMITTED)
         ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"),
       resettlementAssessmentStrategies,
     )
@@ -376,7 +376,7 @@ class ResettlementAssessmentService(
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
 
     val latestResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndCreationDateBetweenOrderByCreationDateDesc(
+      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndCreationDateBetweenAndDeletedIsFalseOrderByCreationDateDesc(
         prisonerEntity.id(),
         pathway,
         ResettlementAssessmentStatus.SUBMITTED,
@@ -388,7 +388,7 @@ class ResettlementAssessmentService(
     )
 
     val originalResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndCreationDateBetweenOrderByCreationDateAsc(
+      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndCreationDateBetweenAndDeletedIsFalseOrderByCreationDateAsc(
         prisonerEntity.id(),
         pathway,
         ResettlementAssessmentStatus.SUBMITTED,
@@ -497,7 +497,7 @@ class ResettlementAssessmentService(
   fun deleteAllResettlementAssessments(nomsId: String) {
     val prisoner = getPrisonerEntityOrThrow(nomsId)
 
-    resettlementAssessmentRepository.findAllByPrisonerId(prisoner.id!!).forEach {
+    resettlementAssessmentRepository.findAllByPrisonerIdAndDeletedIsFalse(prisoner.id!!).forEach {
         assessment ->
       assessment.deleted = true
       assessment.deletedDate = LocalDateTime.now()

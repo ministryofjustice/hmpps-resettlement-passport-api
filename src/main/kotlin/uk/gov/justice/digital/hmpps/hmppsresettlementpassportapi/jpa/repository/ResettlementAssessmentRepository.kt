@@ -55,12 +55,12 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
   )
   fun findLatestForEachPathwayAndType(prisonerId: Long): List<ResettlementAssessmentEntity>
 
-  fun findFirstByPrisonerIdAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisonerId: Long, pathway: Pathway, assessmentType: ResettlementAssessmentType): ResettlementAssessmentEntity?
+  fun findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndDeletedIsFalseOrderByCreationDateDesc(prisonerId: Long, pathway: Pathway, assessmentType: ResettlementAssessmentType): ResettlementAssessmentEntity?
 
-  fun findFirstByPrisonerIdAndPathwayAndAssessmentStatusOrderByCreationDateDesc(prisonerId: Long, pathway: Pathway, assessmentStatus: ResettlementAssessmentStatus): ResettlementAssessmentEntity?
-  fun findFirstByPrisonerIdAndPathwayAndAssessmentStatusOrderByCreationDateAsc(prisonerId: Long, pathway: Pathway, assessmentStatus: ResettlementAssessmentStatus): ResettlementAssessmentEntity?
+  fun findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndDeletedIsFalseOrderByCreationDateDesc(prisonerId: Long, pathway: Pathway, assessmentStatus: ResettlementAssessmentStatus): ResettlementAssessmentEntity?
+  fun findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndDeletedIsFalseOrderByCreationDateAsc(prisonerId: Long, pathway: Pathway, assessmentStatus: ResettlementAssessmentStatus): ResettlementAssessmentEntity?
 
-  fun findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndCreationDateBetweenOrderByCreationDateDesc(
+  fun findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndCreationDateBetweenAndDeletedIsFalseOrderByCreationDateDesc(
     prisonerId: Long,
     pathway: Pathway,
     assessmentStatus: ResettlementAssessmentStatus,
@@ -68,7 +68,7 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
     toDate: LocalDateTime,
   ): ResettlementAssessmentEntity?
 
-  fun findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndCreationDateBetweenOrderByCreationDateAsc(
+  fun findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndCreationDateBetweenAndDeletedIsFalseOrderByCreationDateAsc(
     prisonerId: Long,
     pathway: Pathway,
     assessmentStatus: ResettlementAssessmentStatus,
@@ -76,7 +76,7 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
     toDate: LocalDateTime,
   ): ResettlementAssessmentEntity?
 
-  fun findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
+  fun findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInAndDeletedIsFalseOrderByCreationDateDesc(
     prisonerId: Long,
     pathway: Pathway,
     assessmentType: ResettlementAssessmentType,
@@ -107,11 +107,11 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
   )
   fun findCaseNotesFor(prisonerId: Long, pathway: Pathway): List<List<Any>>
 
-  fun findFirstByPrisonerIdAndPathwayAndAssessmentStatusInOrderByCreationDateDesc(
+  fun findFirstByPrisonerIdAndPathwayAndAssessmentStatusInAndDeletedIsFalseOrderByCreationDateDesc(
     prisonerId: Long,
     pathway: Pathway,
     assessmentStatus: List<ResettlementAssessmentStatus>,
   ): ResettlementAssessmentEntity?
 
-  fun findAllByPrisonerId(prisonerId: Long): List<ResettlementAssessmentEntity>
+  fun findAllByPrisonerIdAndDeletedIsFalse(prisonerId: Long): List<ResettlementAssessmentEntity>
 }

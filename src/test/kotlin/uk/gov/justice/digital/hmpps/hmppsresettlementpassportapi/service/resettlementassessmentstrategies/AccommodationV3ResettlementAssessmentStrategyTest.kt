@@ -468,7 +468,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
     Mockito.lenient().`when`(profileTagsRepository.save(any())).thenReturn(expectedProfileTagsEntity)
     if (existingAssessment != null) {
       whenever(
-        resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInOrderByCreationDateDesc(
+        resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInAndDeletedIsFalseOrderByCreationDateDesc(
           1,
           Pathway.ACCOMMODATION,
           assessmentType,

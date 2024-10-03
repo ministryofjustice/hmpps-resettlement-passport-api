@@ -102,7 +102,7 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
     resettlementAssessmentRepository.save(resettlementAssessment)
     resettlementAssessmentRepository.save(resettlementAssessment2)
 
-    val resettlementAssessmentsFromDB = resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeOrderByCreationDateDesc(prisoner.id(), Pathway.ACCOMMODATION, ResettlementAssessmentType.RESETTLEMENT_PLAN)
+    val resettlementAssessmentsFromDB = resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndDeletedIsFalseOrderByCreationDateDesc(prisoner.id(), Pathway.ACCOMMODATION, ResettlementAssessmentType.RESETTLEMENT_PLAN)
     assertThat(resettlementAssessmentsFromDB).usingRecursiveComparison().isEqualTo(resettlementAssessment)
   }
 

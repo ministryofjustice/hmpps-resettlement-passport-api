@@ -691,13 +691,13 @@ class ResettlementAssessmentServiceTest {
     )
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisoner)
-    Mockito.`when`(resettlementAssessmentRepository.findAllByPrisonerId(prisonerId))
+    Mockito.`when`(resettlementAssessmentRepository.findAllByPrisonerIdAndDeletedIsFalse(prisonerId))
       .thenReturn(emptyList())
 
     resettlementAssessmentService.deleteAllResettlementAssessments(nomsId)
 
     verify(prisonerRepository).findByNomsId(nomsId)
-    verify(resettlementAssessmentRepository).findAllByPrisonerId(prisonerId)
+    verify(resettlementAssessmentRepository).findAllByPrisonerIdAndDeletedIsFalse(prisonerId)
     verifyNoMoreInteractions(resettlementAssessmentRepository)
   }
 
@@ -722,7 +722,7 @@ class ResettlementAssessmentServiceTest {
     val resettlementAssessmentEntity2 = makeResettlementAssessment(2, prisonerId)
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisoner)
-    Mockito.`when`(resettlementAssessmentRepository.findAllByPrisonerId(prisonerId))
+    Mockito.`when`(resettlementAssessmentRepository.findAllByPrisonerIdAndDeletedIsFalse(prisonerId))
       .thenReturn(listOf(resettlementAssessmentEntity1, resettlementAssessmentEntity2))
 
     resettlementAssessmentService.deleteAllResettlementAssessments(nomsId)
@@ -731,7 +731,7 @@ class ResettlementAssessmentServiceTest {
     val deletedResettlementAssessmentEntity2 = makeResettlementAssessment(2, prisonerId, true)
 
     verify(prisonerRepository).findByNomsId(nomsId)
-    verify(resettlementAssessmentRepository).findAllByPrisonerId(prisonerId)
+    verify(resettlementAssessmentRepository).findAllByPrisonerIdAndDeletedIsFalse(prisonerId)
     verify(resettlementAssessmentRepository).save(deletedResettlementAssessmentEntity1)
     verify(resettlementAssessmentRepository).save(deletedResettlementAssessmentEntity2)
 

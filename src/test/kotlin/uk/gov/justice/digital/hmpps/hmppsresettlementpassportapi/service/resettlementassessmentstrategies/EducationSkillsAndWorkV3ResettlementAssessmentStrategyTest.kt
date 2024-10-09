@@ -105,16 +105,16 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
                   nestedQuestions = listOf(
                     ResettlementAssessmentQuestionAndAnswer(
                       question = ResettlementAssessmentQuestion(
-                        id = "DID_THEY_HAVE_JOB_BEFORE_CUSTODY_EMPLOYER_NAME",
-                        title = "Employer name",
+                        id = "DID_THEY_HAVE_JOB_BEFORE_CUSTODY_JOB_TITLE",
+                        title = "Job title",
                         type = TypeOfQuestion.SHORT_TEXT,
                       ),
                       originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
                     ),
                     ResettlementAssessmentQuestionAndAnswer(
                       question = ResettlementAssessmentQuestion(
-                        id = "DID_THEY_HAVE_JOB_BEFORE_CUSTODY_JOB_TITLE",
-                        title = "Job title",
+                        id = "DID_THEY_HAVE_JOB_BEFORE_CUSTODY_EMPLOYER_NAME",
+                        title = "Employer name",
                         type = TypeOfQuestion.SHORT_TEXT,
                       ),
                       originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
@@ -150,16 +150,16 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
                   nestedQuestions = listOf(
                     ResettlementAssessmentQuestionAndAnswer(
                       question = ResettlementAssessmentQuestion(
-                        id = "STARTING_NEW_JOB_EMPLOYER_NAME",
-                        title = "Employer name",
+                        id = "STARTING_NEW_JOB_JOB_TITLE",
+                        title = "Job title",
                         type = TypeOfQuestion.SHORT_TEXT,
                       ),
                       originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
                     ),
                     ResettlementAssessmentQuestionAndAnswer(
                       question = ResettlementAssessmentQuestion(
-                        id = "STARTING_NEW_JOB_JOB_TITLE",
-                        title = "Job title",
+                        id = "STARTING_NEW_JOB_EMPLOYER_NAME",
+                        title = "Employer name",
                         type = TypeOfQuestion.SHORT_TEXT,
                       ),
                       originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",

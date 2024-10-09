@@ -11,13 +11,12 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import java.util.stream.Stream
 
-class AttitudesThinkingAndBehaviourV2ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR) {
+class AttitudesThinkingAndBehaviourV3ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR) {
 
   @ParameterizedTest(name = "{1} -> {2}")
   @MethodSource("test next page function flow - no existing assessment data")
@@ -38,7 +37,7 @@ class AttitudesThinkingAndBehaviourV2ResettlementAssessmentStrategyTest : BaseRe
       pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
       assessmentType = ResettlementAssessmentType.BCST2,
       currentPage = currentPage,
-      version = 2,
+      version = 3,
     )
     Assertions.assertEquals(expectedPage, nextPage)
   }
@@ -50,20 +49,21 @@ class AttitudesThinkingAndBehaviourV2ResettlementAssessmentStrategyTest : BaseRe
       null,
       "ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT",
     ),
-    // Any answer to ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT, go to ASSESSMENT_SUMMARY
+    // Any answer to ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT, go to SUPPORT_REQUIREMENTS
     Arguments.of(
-      listOf(
-        ResettlementAssessmentRequestQuestionAndAnswer("HELP_TO_MANAGE_ANGER", answer = StringAnswer("YES")),
-      ),
+      listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(),
       "ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT",
+      "SUPPORT_REQUIREMENTS",
+    ),
+    // Any answer to SUPPORT_REQUIREMENTS, go to ASSESSMENT_SUMMARY
+    Arguments.of(
+      listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(),
+      "SUPPORT_REQUIREMENTS",
       "ASSESSMENT_SUMMARY",
     ),
     // Any answer to ASSESSMENT_SUMMARY, go to CHECK_ANSWERS
     Arguments.of(
-      listOf(
-        ResettlementAssessmentRequestQuestionAndAnswer("HELP_TO_MANAGE_ANGER", answer = StringAnswer("YES")),
-        ResettlementAssessmentRequestQuestionAndAnswer("ISSUES_WITH_GAMBLING", answer = StringAnswer("NO_ANSWER")),
-      ),
+      listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(),
       "ASSESSMENT_SUMMARY",
       "CHECK_ANSWERS",
     ),
@@ -80,7 +80,7 @@ class AttitudesThinkingAndBehaviourV2ResettlementAssessmentStrategyTest : BaseRe
       pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
       assessmentType = ResettlementAssessmentType.BCST2,
       pageId = pageIdInput,
-      version = 2,
+      version = 3,
     )
     Assertions.assertEquals(expectedPage, page)
   }
@@ -95,7 +95,7 @@ class AttitudesThinkingAndBehaviourV2ResettlementAssessmentStrategyTest : BaseRe
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "HELP_TO_MANAGE_ANGER",
-              title = "Does the person in prison want support managing their emotions?",
+              title = "Does the person in prison have any issues managing their emotions?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
               options = yesNoOptions,
@@ -105,12 +105,51 @@ class AttitudesThinkingAndBehaviourV2ResettlementAssessmentStrategyTest : BaseRe
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "ISSUES_WITH_GAMBLING",
-              title = "Does the person in prison want support with gambling issues?",
+              title = "Does the person in prison have any issues with gambling?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
               options = yesNoOptions,
             ),
             originalPageId = "ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT",
+          ),
+        ),
+      ),
+    ),
+    Arguments.of(
+      "SUPPORT_REQUIREMENTS",
+      ResettlementAssessmentResponsePage(
+        id = "SUPPORT_REQUIREMENTS",
+        questionsAndAnswers = listOf(
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
+              id = "SUPPORT_REQUIREMENTS",
+              title = "Support needs",
+              subTitle = "Select any needs you have identified that could be met by prison or probation staff.",
+              type = TypeOfQuestion.CHECKBOX,
+              options = listOf(
+                ResettlementAssessmentOption(
+                  id = "SUPPORT_MANAGING_EMOTIONS",
+                  displayText = "Support to manage their emotions",
+                  tag = "MANAGE_EMOTIONS",
+                ),
+                ResettlementAssessmentOption(
+                  id = "SUPPORT_GAMBLING_PROBLEMS",
+                  displayText = "Support for problems with gambling",
+                  tag = "GAMBLING_ISSUE",
+                ),
+                ResettlementAssessmentOption(
+                  id = "OTHER_SUPPORT_NEEDS",
+                  displayText = "Other",
+                  freeText = true,
+                ),
+                ResettlementAssessmentOption(
+                  id = "NO_SUPPORT_NEEDS",
+                  displayText = "No support needs identified",
+                  exclusive = true,
+                ),
+              ),
+            ),
+            originalPageId = "SUPPORT_REQUIREMENTS",
           ),
         ),
       ),
@@ -124,7 +163,7 @@ class AttitudesThinkingAndBehaviourV2ResettlementAssessmentStrategyTest : BaseRe
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "SUPPORT_NEEDS",
-              title = "Attitudes, thinking and behaviour support needs",
+              title = "Attitudes, thinking and behaviour resettlement status",
               subTitle = "Select one option.",
               type = TypeOfQuestion.RADIO,
               options = listOf(
@@ -146,9 +185,11 @@ class AttitudesThinkingAndBehaviourV2ResettlementAssessmentStrategyTest : BaseRe
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "CASE_NOTE_SUMMARY",
-              title = "Case note summary",
-              subTitle = "This will be displayed as a case note in both DPS and nDelius",
+              title = "Case note",
+              subTitle = "Include any relevant information about why you have chosen that resettlement status. Do not include any special category data. This information will be displayed in PSFR on the overview tab and the attitudes, thinking and behaviour tab.",
               type = TypeOfQuestion.LONG_TEXT,
+              detailsTitle = "Help with special category data",
+              detailsContent = "Special category data includes any personal data concerning someone's health, sex life or sexual orientation. Or any personal data revealing someone's racial or ethnic origin, religious or philosophical beliefs or trade union membership.",
             ),
             originalPageId = "ASSESSMENT_SUMMARY",
           ),

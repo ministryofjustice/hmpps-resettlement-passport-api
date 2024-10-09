@@ -1,11 +1,11 @@
-version: 2
+version: 3
 pathway: "ATTITUDES_THINKING_AND_BEHAVIOUR"
 pages:
   - id: "ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT"
     title: "Attitudes, thinking and behaviour report"
     questions:
       - id: "HELP_TO_MANAGE_ANGER"
-        title: "Does the person in prison want support managing their emotions?"
+        title: "Does the person in prison have any issues managing their emotions?"
         type: "RADIO"
         options:
           - id: "YES"
@@ -15,7 +15,7 @@ pages:
           - id: "NO_ANSWER"
             displayText: "No answer provided"
       - id: "ISSUES_WITH_GAMBLING"
-        title: "Does the person in prison want support with gambling issues?"
+        title: "Does the person in prison have any issues with gambling?"
         type: "RADIO"
         options:
           - id: "YES"
@@ -25,13 +25,34 @@ pages:
           - id: "NO_ANSWER"
             displayText: "No answer provided"
     nextPageLogic:
+      - nextPageId: "SUPPORT_REQUIREMENTS"
+  - id: "SUPPORT_REQUIREMENTS"
+    questions:
+      - id: "SUPPORT_REQUIREMENTS"
+        title: "Support needs"
+        subTitle: "Select any needs you have identified that could be met by prison or probation staff."
+        type: "CHECKBOX"
+        options:
+          - id: "SUPPORT_MANAGING_EMOTIONS"
+            displayText: "Support to manage their emotions"
+            tag: "MANAGE_EMOTIONS"
+          - id: "SUPPORT_GAMBLING_PROBLEMS"
+            displayText: "Support for problems with gambling"
+            tag: "GAMBLING_ISSUE"
+          - id: "OTHER_SUPPORT_NEEDS"
+            displayText: "Other"
+            freeText: true
+          - id: "NO_SUPPORT_NEEDS"
+            displayText: "No support needs identified"
+            exclusive: true
+    nextPageLogic:
       - nextPageId: "FINAL_QUESTION_NEXT_PAGE"
   # In subsequent versions do not change page and question ids below this point due to custom logic elsewhere in the code
   - id: "ASSESSMENT_SUMMARY"
     title: "Attitudes, thinking and behaviour report summary"
     questions:
       - id: "SUPPORT_NEEDS"
-        title: "Attitudes, thinking and behaviour support needs"
+        title: "Attitudes, thinking and behaviour resettlement status"
         subTitle: "Select one option."
         type: "RADIO"
         options:
@@ -45,16 +66,18 @@ pages:
             displayText: "Support declined"
             description: "a need has been identified but support is declined"
       - id: "CASE_NOTE_SUMMARY"
-        title: "Case note summary"
-        subTitle: "This will be displayed as a case note in both DPS and nDelius"
+        title: "Case note"
+        subTitle: "Include any relevant information about why you have chosen that resettlement status. Do not include any special category data. This information will be displayed in PSFR on the overview tab and the attitudes, thinking and behaviour tab."
         type: "LONG_TEXT"
+        detailsTitle: "Help with special category data"
+        detailsContent: "Special category data includes any personal data concerning someone's health, sex life or sexual orientation. Or any personal data revealing someone's racial or ethnic origin, religious or philosophical beliefs or trade union membership."
     nextPageLogic:
       - nextPageId: "CHECK_ANSWERS"
   - id: "PRERELEASE_ASSESSMENT_SUMMARY"
     title: "Attitudes, thinking and behaviour report summary"
     questions:
       - id: "SUPPORT_NEEDS_PRERELEASE"
-        title: "Attitudes, thinking and behaviour support needs"
+        title: "Attitudes, thinking and behaviour resettlement status"
         subTitle: "Select one option."
         type: "RADIO"
         options:
@@ -74,9 +97,11 @@ pages:
             displayText: "Done"
             description: "all required work has been completed successfully"
       - id: "CASE_NOTE_SUMMARY"
-        title: "Case note summary"
-        subTitle: "This will be displayed as a case note in both DPS and nDelius"
+        title: "Case note"
+        subTitle: "Include any relevant information about why you have chosen that resettlement status. Do not include any special category data. This information will be displayed in PSFR on the overview tab and the attitudes, thinking and behaviour tab."
         type: "LONG_TEXT"
+        detailsTitle: "Help with special category data"
+        detailsContent: "Special category data includes any personal data concerning someone's health, sex life or sexual orientation. Or any personal data revealing someone's racial or ethnic origin, religious or philosophical beliefs or trade union membership."
     nextPageLogic:
       - nextPageId: "CHECK_ANSWERS"
   - id: "CHECK_ANSWERS"

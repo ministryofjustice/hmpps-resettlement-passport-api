@@ -40,7 +40,7 @@ import java.time.LocalDateTime
 import java.util.stream.Stream
 import org.assertj.core.api.Assertions as AssertJAssertions
 
-class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.ACCOMMODATION) {
+class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.ACCOMMODATION, 3) {
 
   @ParameterizedTest(name = "{1} -> {2}")
   @MethodSource("test next page function flow - no existing assessment data")

@@ -37,7 +37,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.stream.Stream
 
-class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.ACCOMMODATION) {
+class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.ACCOMMODATION, 1) {
 
   @ParameterizedTest
   @MethodSource("test next page function flow - no existing assessment data")
@@ -634,6 +634,54 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
       pathway = Pathway.ACCOMMODATION,
       assessmentType = ResettlementAssessmentType.BCST2,
       pageId = "CHECK_ANSWERS",
+    )
+    Assertions.assertEquals(expectedPage, page)
+  }
+
+  @Test
+  fun `test get page from Id - RESETTLEMENT_PLAN with existing BCST2`() {
+    val nomsId = "123"
+
+    val existingAssessment = ResettlementAssessmentQuestionAndAnswerList(
+      listOf(
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE", StringAnswer("SOCIAL_HOUSING")),
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
+        ResettlementAssessmentSimpleQuestionAndAnswer("SUPPORT_NEEDS", StringAnswer("SUPPORT_NOT_REQUIRED")),
+        ResettlementAssessmentSimpleQuestionAndAnswer("CASE_NOTE_SUMMARY", StringAnswer("Some case notes text...")),
+      ),
+    )
+
+    whenever(resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInAndDeletedIsFalseOrderByCreationDateDesc(1, Pathway.ACCOMMODATION, ResettlementAssessmentType.RESETTLEMENT_PLAN, listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED))).thenReturn(null)
+    setUpMocks("123", true, existingAssessment, ResettlementAssessmentStatus.SUBMITTED)
+
+    val expectedPage = ResettlementAssessmentResponsePage(
+      id = "WHERE_DID_THEY_LIVE",
+      questionsAndAnswers = listOf(
+        ResettlementAssessmentQuestionAndAnswer(
+          ResettlementAssessmentQuestion(
+            id = "WHERE_DID_THEY_LIVE",
+            title = "Where did the person in prison live before custody?",
+            subTitle = null,
+            type = TypeOfQuestion.RADIO,
+            options = listOf(
+              ResettlementAssessmentOption(id = "PRIVATE_RENTED_HOUSING", displayText = "Private rented housing"),
+              ResettlementAssessmentOption(id = "SOCIAL_HOUSING", displayText = "Social housing"),
+              ResettlementAssessmentOption(id = "HOMEOWNER", displayText = "Homeowner"),
+              ResettlementAssessmentOption(id = "NO_PERMANENT_OR_FIXED", displayText = "No permanent or fixed address"),
+              ResettlementAssessmentOption(id = "NO_ANSWER", displayText = "No answer provided"),
+            ),
+          ),
+          answer = StringAnswer("SOCIAL_HOUSING"),
+          originalPageId = "WHERE_DID_THEY_LIVE",
+        ),
+      ),
+    )
+
+    val page = resettlementAssessmentStrategy.getPageFromId(
+      nomsId = nomsId,
+      pathway = Pathway.ACCOMMODATION,
+      assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN,
+      pageId = "WHERE_DID_THEY_LIVE",
     )
     Assertions.assertEquals(expectedPage, page)
   }

@@ -342,7 +342,7 @@ class ATBResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-resettlement-assessment-7.sql")
-  fun `Uses pathway status for pre release assessment summary`() {
+  fun `Does not pre-fill status for pre release assessment summary`() {
     val nomsId = "G4161UF"
     val pathway = "ATTITUDES_THINKING_AND_BEHAVIOUR"
     val assessmentType = "RESETTLEMENT_PLAN"
@@ -402,7 +402,7 @@ class ATBResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody()
       .jsonPath("questionsAndAnswers[?(@.question.id == 'CASE_NOTE_SUMMARY')].answer").isEqualTo(null)
-      .jsonPath("questionsAndAnswers[?(@.question.id == 'SUPPORT_NEEDS_PRERELEASE')].answer.answer").isEqualTo("DONE")
+      .jsonPath("questionsAndAnswers[?(@.question.id == 'SUPPORT_NEEDS_PRERELEASE')].answer.answer").isEqualTo(null)
   }
 
   @Test

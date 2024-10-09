@@ -431,6 +431,9 @@ class ResettlementAssessmentStrategy(
           if (existingAnswer != null && !(resettlementPlanCopy && q.question.id == "CASE_NOTE_SUMMARY")) {
             q.answer = existingAnswer.answer
           }
+          if (q.question.id == "SUPPORT_NEEDS_PRERELEASE") {
+            q.answer = loadPathwayStatusAnswer(pathway, nomsId) ?: existingAnswer?.answer
+          }
         }
       }
     }
@@ -489,6 +492,13 @@ class ResettlementAssessmentStrategy(
       assessmentType,
       resettlementAssessmentStatuses,
     )
+  }
+
+  private fun loadPathwayStatusAnswer(pathway: Pathway, nomsId: String): StringAnswer? {
+    val prisonerEntity = loadPrisoner(nomsId)
+    val pathwayStatus = pathwayStatusRepository.findByPathwayAndPrisonerId(pathway, prisonerEntity.id()) ?: return null
+
+    return StringAnswer(pathwayStatus.status.name)
   }
 
   fun getLatestResettlementAssessmentVersion(

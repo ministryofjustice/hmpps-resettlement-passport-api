@@ -16,7 +16,9 @@ import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.TagAndQuestionMapping
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.MapAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentCompleteRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
@@ -112,192 +114,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
   private fun `test get page from Id - no existing assessment data`() = Stream.of(
     Arguments.of(
       "ACCOMMODATION_REPORT",
-      ResettlementAssessmentResponsePage(
-        id = "ACCOMMODATION_REPORT",
-        title = "Accommodation report",
-        questionsAndAnswers = listOf(
-          ResettlementAssessmentQuestionAndAnswer(
-            question = ResettlementAssessmentQuestion(
-              id = "WHERE_DID_THEY_LIVE",
-              title = "Where did the person in prison live before custody?",
-              type = TypeOfQuestion.RADIO,
-              options = listOf(
-                ResettlementAssessmentOption(
-                  id = "PRIVATE_RENTED_HOUSING",
-                  displayText = "Private housing rented by them",
-                  nestedQuestions = listOf(
-                    ResettlementAssessmentQuestionAndAnswer(
-                      question = ResettlementAssessmentQuestion(
-                        id = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING",
-                        title = "Enter the address",
-                        type = TypeOfQuestion.ADDRESS,
-                      ),
-                      originalPageId = "ACCOMMODATION_REPORT",
-                    ),
-                  ),
-                ),
-                ResettlementAssessmentOption(
-                  id = "PRIVATE_HOUSING_OWNED",
-                  displayText = "Private housing owned by them",
-                  nestedQuestions = listOf(
-                    ResettlementAssessmentQuestionAndAnswer(
-                      question = ResettlementAssessmentQuestion(
-                        id = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_HOUSING_OWNED",
-                        title = "Enter the address",
-                        type = TypeOfQuestion.ADDRESS,
-                      ),
-                      originalPageId = "ACCOMMODATION_REPORT",
-                    ),
-                  ),
-                ),
-                ResettlementAssessmentOption(
-                  id = "FAMILY_OR_FRIENDS",
-                  displayText = "With family or friends",
-                  nestedQuestions = listOf(
-                    ResettlementAssessmentQuestionAndAnswer(
-                      question = ResettlementAssessmentQuestion(
-                        id = "WHERE_DID_THEY_LIVE_ADDRESS_FAMILY_OR_FRIENDS",
-                        title = "Enter the address",
-                        type = TypeOfQuestion.ADDRESS,
-                      ),
-                      originalPageId = "ACCOMMODATION_REPORT",
-                    ),
-                  ),
-                ),
-                ResettlementAssessmentOption(
-                  id = "SOCIAL_HOUSING",
-                  displayText = "Social housing",
-                  nestedQuestions = listOf(
-                    ResettlementAssessmentQuestionAndAnswer(
-                      question = ResettlementAssessmentQuestion(
-                        id = "WHERE_DID_THEY_LIVE_ADDRESS_SOCIAL_HOUSING",
-                        title = "Enter the address",
-                        type = TypeOfQuestion.ADDRESS,
-                      ),
-                      originalPageId = "ACCOMMODATION_REPORT",
-                    ),
-                  ),
-                ),
-                ResettlementAssessmentOption(
-                  id = "LOCAL_AUTHORITY_OR_SUPPORTED_HOUSING",
-                  displayText = "Local authority care or supported housing",
-                  nestedQuestions = listOf(
-                    ResettlementAssessmentQuestionAndAnswer(
-                      question = ResettlementAssessmentQuestion(
-                        id = "WHERE_DID_THEY_LIVE_ADDRESS_LOCAL_AUTHORITY_OR_SUPPORTED_HOUSING",
-                        title = "Enter the address",
-                        type = TypeOfQuestion.ADDRESS,
-                      ),
-                      originalPageId = "ACCOMMODATION_REPORT",
-                    ),
-                  ),
-                ),
-                ResettlementAssessmentOption(
-                  id = "HOSTEL",
-                  displayText = "Hostel",
-                  nestedQuestions = listOf(
-                    ResettlementAssessmentQuestionAndAnswer(
-                      question = ResettlementAssessmentQuestion(
-                        id = "WHERE_DID_THEY_LIVE_ADDRESS_HOSTEL",
-                        title = "Enter the address",
-                        type = TypeOfQuestion.ADDRESS,
-                      ),
-                      originalPageId = "ACCOMMODATION_REPORT",
-                    ),
-                  ),
-                ),
-                ResettlementAssessmentOption(
-                  id = "EMERGENCY_HOUSING",
-                  displayText = "Emergency housing from the council",
-                  nestedQuestions = listOf(
-                    ResettlementAssessmentQuestionAndAnswer(
-                      question = ResettlementAssessmentQuestion(
-                        id = "WHERE_DID_THEY_LIVE_ADDRESS_EMERGENCY_HOUSING",
-                        title = "Enter the address",
-                        type = TypeOfQuestion.ADDRESS,
-                      ),
-                      originalPageId = "ACCOMMODATION_REPORT",
-                    ),
-                  ),
-                ),
-                ResettlementAssessmentOption(
-                  id = "APPROVED_PREMISES",
-                  displayText = "Community accommodation, including approved premises, CAS2 and CAS3",
-                  nestedQuestions = listOf(
-                    ResettlementAssessmentQuestionAndAnswer(
-                      question = ResettlementAssessmentQuestion(
-                        id = "WHERE_DID_THEY_LIVE_ADDRESS_APPROVED_PREMISES",
-                        title = "Enter the address",
-                        type = TypeOfQuestion.ADDRESS,
-                      ),
-                      originalPageId = "ACCOMMODATION_REPORT",
-                    ),
-                  ),
-                ),
-                ResettlementAssessmentOption(
-                  id = "IMMIGRATION_ACCOMMODATION",
-                  displayText = "Immigration accommodation provided by the Home Office",
-                  nestedQuestions = listOf(
-                    ResettlementAssessmentQuestionAndAnswer(
-                      question = ResettlementAssessmentQuestion(
-                        id = "WHERE_DID_THEY_LIVE_ADDRESS_IMMIGRATION_ACCOMMODATION",
-                        title = "Enter the address",
-                        type = TypeOfQuestion.ADDRESS,
-                      ),
-                      originalPageId = "ACCOMMODATION_REPORT",
-                    ),
-                  ),
-                ),
-                ResettlementAssessmentOption(
-                  id = "NO_PERMANENT_OR_FIXED",
-                  displayText = "No permanent or fixed address",
-                ),
-                ResettlementAssessmentOption(
-                  id = "NO_ANSWER",
-                  displayText = "No answer provided",
-                ),
-              ),
-            ),
-            originalPageId = "ACCOMMODATION_REPORT",
-          ),
-          ResettlementAssessmentQuestionAndAnswer(
-            question = ResettlementAssessmentQuestion(
-              id = "WHERE_WILL_THEY_LIVE",
-              title = "Where will the person in prison live when they are released?",
-              type = TypeOfQuestion.RADIO,
-              options = listOf(
-                ResettlementAssessmentOption(
-                  id = "RETURN_TO_PREVIOUS_ADDRESS",
-                  displayText = "Return to their previous address",
-                ),
-                ResettlementAssessmentOption(
-                  id = "MOVE_TO_NEW_ADDRESS",
-                  displayText = "Move to a new address",
-                  nestedQuestions = listOf(
-                    ResettlementAssessmentQuestionAndAnswer(
-                      question = ResettlementAssessmentQuestion(
-                        id = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS",
-                        title = "Enter the address",
-                        type = TypeOfQuestion.ADDRESS,
-                      ),
-                      originalPageId = "ACCOMMODATION_REPORT",
-                    ),
-                  ),
-                ),
-                ResettlementAssessmentOption(
-                  id = "DOES_NOT_HAVE_ANYWHERE",
-                  displayText = "Does not have anywhere to live",
-                ),
-                ResettlementAssessmentOption(
-                  id = "NO_ANSWER",
-                  displayText = "No answer provided",
-                ),
-              ),
-            ),
-            originalPageId = "ACCOMMODATION_REPORT",
-          ),
-        ),
-      ),
+      getExpectedAccommodationReportPage(),
     ),
     Arguments.of(
       "SUPPORT_REQUIREMENTS",
@@ -412,6 +229,102 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
       ),
     ),
   )
+
+  @Test
+  fun `test get page from Id - RESETTLEMENT_PLAN with existing BCST2 on same version`() {
+    val nomsId = "123"
+
+    val existingAssessment = ResettlementAssessmentQuestionAndAnswerList(
+      listOf(
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE", StringAnswer("SOCIAL_HOUSING")),
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS_SOCIAL_HOUSING", MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_WILL_THEY_LIVE", StringAnswer("NO_ANSWER")),
+        ResettlementAssessmentSimpleQuestionAndAnswer("SUPPORT_REQUIREMENTS", ListAnswer(listOf("HELP_TO_KEEP_HOME", "HOMELESS_APPLICATION"))),
+        ResettlementAssessmentSimpleQuestionAndAnswer("SUPPORT_NEEDS", StringAnswer("SUPPORT_NOT_REQUIRED")),
+        ResettlementAssessmentSimpleQuestionAndAnswer("CASE_NOTE_SUMMARY", StringAnswer("Some case notes text...")),
+      ),
+    )
+
+    val resettlementAssessmentEntity = ResettlementAssessmentEntity(1, 1, pathway, Status.IN_PROGRESS, ResettlementAssessmentType.BCST2, existingAssessment, testDate, "", ResettlementAssessmentStatus.SUBMITTED, "some text", "USER_1", submissionDate = null, version = 3, userDeclaration = false)
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23")))
+    whenever(
+      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInAndDeletedIsFalseOrderByCreationDateDesc(
+        1,
+        pathway,
+        ResettlementAssessmentType.BCST2,
+        listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED),
+      ),
+    ).thenReturn(resettlementAssessmentEntity)
+    whenever(
+      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInAndDeletedIsFalseOrderByCreationDateDesc(
+        1,
+        pathway,
+        ResettlementAssessmentType.RESETTLEMENT_PLAN,
+        listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED),
+      ),
+    ).thenReturn(null)
+
+    // Answers from BCST2 should be pre-populated
+    val expectedPage = getExpectedAccommodationReportPage(
+      mapOf(
+        "WHERE_DID_THEY_LIVE" to StringAnswer("SOCIAL_HOUSING"),
+        "WHERE_DID_THEY_LIVE_ADDRESS_SOCIAL_HOUSING" to MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123"))),
+        "WHERE_WILL_THEY_LIVE" to StringAnswer("NO_ANSWER"),
+      ),
+    )
+    val page = resettlementAssessmentStrategy.getPageFromId(
+      nomsId = nomsId,
+      pathway = Pathway.ACCOMMODATION,
+      assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN,
+      pageId = "ACCOMMODATION_REPORT",
+      version = 3,
+    )
+    Assertions.assertEquals(expectedPage, page)
+  }
+
+  @Test
+  fun `test get page from Id - RESETTLEMENT_PLAN with existing BCST2 on older version`() {
+    val nomsId = "123"
+
+    val existingAssessment = ResettlementAssessmentQuestionAndAnswerList(
+      listOf(
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE", StringAnswer("SOCIAL_HOUSING")),
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
+        ResettlementAssessmentSimpleQuestionAndAnswer("SUPPORT_NEEDS", StringAnswer("SUPPORT_NOT_REQUIRED")),
+        ResettlementAssessmentSimpleQuestionAndAnswer("CASE_NOTE_SUMMARY", StringAnswer("Some case notes text...")),
+      ),
+    )
+
+    val resettlementAssessmentEntity = ResettlementAssessmentEntity(1, 1, pathway, Status.NOT_STARTED, ResettlementAssessmentType.BCST2, existingAssessment, testDate, "", ResettlementAssessmentStatus.SUBMITTED, "some text", "USER_1", submissionDate = null, version = 1, userDeclaration = false)
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23")))
+    whenever(
+      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInAndDeletedIsFalseOrderByCreationDateDesc(
+        1,
+        pathway,
+        ResettlementAssessmentType.BCST2,
+        listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED),
+      ),
+    ).thenReturn(resettlementAssessmentEntity)
+    whenever(
+      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInAndDeletedIsFalseOrderByCreationDateDesc(
+        1,
+        pathway,
+        ResettlementAssessmentType.RESETTLEMENT_PLAN,
+        listOf(ResettlementAssessmentStatus.COMPLETE, ResettlementAssessmentStatus.SUBMITTED),
+      ),
+    ).thenReturn(null)
+
+    // Answers from BCST2 should NOT be pre-populated as the version is different
+    val expectedPage = getExpectedAccommodationReportPage()
+    val page = resettlementAssessmentStrategy.getPageFromId(
+      nomsId = nomsId,
+      pathway = Pathway.ACCOMMODATION,
+      assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN,
+      pageId = "ACCOMMODATION_REPORT",
+      version = 3,
+    )
+    Assertions.assertEquals(expectedPage, page)
+  }
 
   @Test
   fun `should ignore any question ids that are not in the current config when building check your answers`() {
@@ -706,6 +619,205 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
       null,
       ResettlementAssessmentEntity(id = 12, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_REQUIRED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "NO_PERMANENT_OR_FIXED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING", answer = StringAnswer(answer = "RETURN_TO_PREVIOUS_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE", answer = StringAnswer(answer = "MOVE_TO_NEW_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS", answer = StringAnswer(answer = "Some more information here")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS", answer = ListAnswer(answer = listOf("HELP_TO_KEEP_HOME"))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "CASE_NOTE_SUMMARY", answer = StringAnswer(answer = "My case note summary...")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = "My case note summary...", createdByUserId = "USER_1", version = 3, submissionDate = null, userDeclaration = true),
       ProfileTagsEntity(id = null, prisonerId = 1, ProfileTagList(listOf(TagAndQuestionMapping.NO_FIXED_ABODE.name, TagAndQuestionMapping.HOME_ADAPTATIONS_POST_RELEASE.name, TagAndQuestionMapping.KEEP_THEIR_HOME.name, TagAndQuestionMapping.CANCEL_TENANCY.name)), LocalDateTime.parse("2023-08-16T12:00")),
+    ),
+  )
+
+  private fun getExpectedAccommodationReportPage(answers: Map<String, Answer<*>>? = null) = ResettlementAssessmentResponsePage(
+    id = "ACCOMMODATION_REPORT",
+    title = "Accommodation report",
+    questionsAndAnswers = listOf(
+      ResettlementAssessmentQuestionAndAnswer(
+        question = ResettlementAssessmentQuestion(
+          id = "WHERE_DID_THEY_LIVE",
+          title = "Where did the person in prison live before custody?",
+          type = TypeOfQuestion.RADIO,
+          options = listOf(
+            ResettlementAssessmentOption(
+              id = "PRIVATE_RENTED_HOUSING",
+              displayText = "Private housing rented by them",
+              nestedQuestions = listOf(
+                ResettlementAssessmentQuestionAndAnswer(
+                  question = ResettlementAssessmentQuestion(
+                    id = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING",
+                    title = "Enter the address",
+                    type = TypeOfQuestion.ADDRESS,
+                  ),
+                  originalPageId = "ACCOMMODATION_REPORT",
+                  answer = answers?.get("WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING"),
+                ),
+              ),
+            ),
+            ResettlementAssessmentOption(
+              id = "PRIVATE_HOUSING_OWNED",
+              displayText = "Private housing owned by them",
+              nestedQuestions = listOf(
+                ResettlementAssessmentQuestionAndAnswer(
+                  question = ResettlementAssessmentQuestion(
+                    id = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_HOUSING_OWNED",
+                    title = "Enter the address",
+                    type = TypeOfQuestion.ADDRESS,
+                  ),
+                  originalPageId = "ACCOMMODATION_REPORT",
+                  answer = answers?.get("WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_HOUSING_OWNED"),
+                ),
+              ),
+            ),
+            ResettlementAssessmentOption(
+              id = "FAMILY_OR_FRIENDS",
+              displayText = "With family or friends",
+              nestedQuestions = listOf(
+                ResettlementAssessmentQuestionAndAnswer(
+                  question = ResettlementAssessmentQuestion(
+                    id = "WHERE_DID_THEY_LIVE_ADDRESS_FAMILY_OR_FRIENDS",
+                    title = "Enter the address",
+                    type = TypeOfQuestion.ADDRESS,
+                  ),
+                  originalPageId = "ACCOMMODATION_REPORT",
+                  answer = answers?.get("WHERE_DID_THEY_LIVE_ADDRESS_FAMILY_OR_FRIENDS"),
+                ),
+              ),
+            ),
+            ResettlementAssessmentOption(
+              id = "SOCIAL_HOUSING",
+              displayText = "Social housing",
+              nestedQuestions = listOf(
+                ResettlementAssessmentQuestionAndAnswer(
+                  question = ResettlementAssessmentQuestion(
+                    id = "WHERE_DID_THEY_LIVE_ADDRESS_SOCIAL_HOUSING",
+                    title = "Enter the address",
+                    type = TypeOfQuestion.ADDRESS,
+                  ),
+                  originalPageId = "ACCOMMODATION_REPORT",
+                  answer = answers?.get("WHERE_DID_THEY_LIVE_ADDRESS_SOCIAL_HOUSING"),
+                ),
+              ),
+            ),
+            ResettlementAssessmentOption(
+              id = "LOCAL_AUTHORITY_OR_SUPPORTED_HOUSING",
+              displayText = "Local authority care or supported housing",
+              nestedQuestions = listOf(
+                ResettlementAssessmentQuestionAndAnswer(
+                  question = ResettlementAssessmentQuestion(
+                    id = "WHERE_DID_THEY_LIVE_ADDRESS_LOCAL_AUTHORITY_OR_SUPPORTED_HOUSING",
+                    title = "Enter the address",
+                    type = TypeOfQuestion.ADDRESS,
+                  ),
+                  originalPageId = "ACCOMMODATION_REPORT",
+                  answer = answers?.get("WHERE_DID_THEY_LIVE_ADDRESS_LOCAL_AUTHORITY_OR_SUPPORTED_HOUSING"),
+                ),
+              ),
+            ),
+            ResettlementAssessmentOption(
+              id = "HOSTEL",
+              displayText = "Hostel",
+              nestedQuestions = listOf(
+                ResettlementAssessmentQuestionAndAnswer(
+                  question = ResettlementAssessmentQuestion(
+                    id = "WHERE_DID_THEY_LIVE_ADDRESS_HOSTEL",
+                    title = "Enter the address",
+                    type = TypeOfQuestion.ADDRESS,
+                  ),
+                  originalPageId = "ACCOMMODATION_REPORT",
+                  answer = answers?.get("WHERE_DID_THEY_LIVE_ADDRESS_HOSTEL"),
+                ),
+              ),
+            ),
+            ResettlementAssessmentOption(
+              id = "EMERGENCY_HOUSING",
+              displayText = "Emergency housing from the council",
+              nestedQuestions = listOf(
+                ResettlementAssessmentQuestionAndAnswer(
+                  question = ResettlementAssessmentQuestion(
+                    id = "WHERE_DID_THEY_LIVE_ADDRESS_EMERGENCY_HOUSING",
+                    title = "Enter the address",
+                    type = TypeOfQuestion.ADDRESS,
+                  ),
+                  originalPageId = "ACCOMMODATION_REPORT",
+                  answer = answers?.get("WHERE_DID_THEY_LIVE_ADDRESS_EMERGENCY_HOUSING"),
+                ),
+              ),
+            ),
+            ResettlementAssessmentOption(
+              id = "APPROVED_PREMISES",
+              displayText = "Community accommodation, including approved premises, CAS2 and CAS3",
+              nestedQuestions = listOf(
+                ResettlementAssessmentQuestionAndAnswer(
+                  question = ResettlementAssessmentQuestion(
+                    id = "WHERE_DID_THEY_LIVE_ADDRESS_APPROVED_PREMISES",
+                    title = "Enter the address",
+                    type = TypeOfQuestion.ADDRESS,
+                  ),
+                  originalPageId = "ACCOMMODATION_REPORT",
+                  answer = answers?.get("WHERE_DID_THEY_LIVE_ADDRESS_APPROVED_PREMISES"),
+                ),
+              ),
+            ),
+            ResettlementAssessmentOption(
+              id = "IMMIGRATION_ACCOMMODATION",
+              displayText = "Immigration accommodation provided by the Home Office",
+              nestedQuestions = listOf(
+                ResettlementAssessmentQuestionAndAnswer(
+                  question = ResettlementAssessmentQuestion(
+                    id = "WHERE_DID_THEY_LIVE_ADDRESS_IMMIGRATION_ACCOMMODATION",
+                    title = "Enter the address",
+                    type = TypeOfQuestion.ADDRESS,
+                  ),
+                  originalPageId = "ACCOMMODATION_REPORT",
+                  answer = answers?.get("WHERE_DID_THEY_LIVE_ADDRESS_IMMIGRATION_ACCOMMODATION"),
+                ),
+              ),
+            ),
+            ResettlementAssessmentOption(
+              id = "NO_PERMANENT_OR_FIXED",
+              displayText = "No permanent or fixed address",
+            ),
+            ResettlementAssessmentOption(
+              id = "NO_ANSWER",
+              displayText = "No answer provided",
+            ),
+          ),
+        ),
+        originalPageId = "ACCOMMODATION_REPORT",
+        answer = answers?.get("WHERE_DID_THEY_LIVE"),
+      ),
+      ResettlementAssessmentQuestionAndAnswer(
+        question = ResettlementAssessmentQuestion(
+          id = "WHERE_WILL_THEY_LIVE",
+          title = "Where will the person in prison live when they are released?",
+          type = TypeOfQuestion.RADIO,
+          options = listOf(
+            ResettlementAssessmentOption(
+              id = "RETURN_TO_PREVIOUS_ADDRESS",
+              displayText = "Return to their previous address",
+            ),
+            ResettlementAssessmentOption(
+              id = "MOVE_TO_NEW_ADDRESS",
+              displayText = "Move to a new address",
+              nestedQuestions = listOf(
+                ResettlementAssessmentQuestionAndAnswer(
+                  question = ResettlementAssessmentQuestion(
+                    id = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS",
+                    title = "Enter the address",
+                    type = TypeOfQuestion.ADDRESS,
+                  ),
+                  originalPageId = "ACCOMMODATION_REPORT",
+                  answer = answers?.get("WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS"),
+                ),
+              ),
+            ),
+            ResettlementAssessmentOption(
+              id = "DOES_NOT_HAVE_ANYWHERE",
+              displayText = "Does not have anywhere to live",
+            ),
+            ResettlementAssessmentOption(
+              id = "NO_ANSWER",
+              displayText = "No answer provided",
+            ),
+          ),
+        ),
+        originalPageId = "ACCOMMODATION_REPORT",
+        answer = answers?.get("WHERE_WILL_THEY_LIVE"),
+      ),
     ),
   )
 }

@@ -44,7 +44,7 @@
       },
       "answer": {
         "@class": "StringAnswer",
-        "answer": null
+        "answer": "DONE"
       },
       "originalPageId": "PRERELEASE_ASSESSMENT_SUMMARY"
     },

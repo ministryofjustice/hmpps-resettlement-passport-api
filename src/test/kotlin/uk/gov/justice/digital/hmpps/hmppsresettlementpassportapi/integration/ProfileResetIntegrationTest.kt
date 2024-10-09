@@ -40,7 +40,7 @@ class ProfileResetIntegrationTest : IntegrationTestBase() {
     val prisonId = "MDI"
     val expectedCaseNotes = "Prepare someone for release reports and statuses reset\\n\\n" +
       "Reason for reset: Some additional details\\n\\n" +
-      "Any previous immediate needs and pre-release reports have been cleared.\\n\\n" +
+      "Any previous immediate needs and pre-release reports have been saved in our archive, but are no longer visible in PSfR.\\n\\n" +
       "All pathway resettlement statuses have been set back to 'Not Started'.\\n\\n" +
       "Contact the service desk if you think there's a problem."
 

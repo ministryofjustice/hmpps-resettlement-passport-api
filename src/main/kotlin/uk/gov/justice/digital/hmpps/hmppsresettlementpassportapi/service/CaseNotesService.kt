@@ -20,7 +20,7 @@ import java.time.OffsetDateTime
 import java.util.Objects
 
 const val PROFILE_RESET_TEXT_PREFIX = "Prepare someone for release reports and statuses reset\n\nReason for reset: "
-const val PROFILE_RESET_TEXT_SUFFIX = "\n\nAny previous immediate needs and pre-release reports have been cleared.\n\nAll pathway resettlement statuses have been set back to 'Not Started'."
+const val PROFILE_RESET_TEXT_SUFFIX = "\n\nAny previous immediate needs and pre-release reports have been saved in our archive, but are no longer visible in PSfR.\n\nAll pathway resettlement statuses have been set back to 'Not Started'."
 const val PROFILE_RESET_TEXT_SUPPORT = "\n\nContact the service desk if you think there's a problem."
 
 @Service

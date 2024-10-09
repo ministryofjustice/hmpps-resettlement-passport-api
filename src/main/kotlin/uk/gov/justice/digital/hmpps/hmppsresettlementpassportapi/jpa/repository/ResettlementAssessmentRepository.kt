@@ -102,7 +102,7 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
       where prisonerId = :prisonerId
       and pathway = :pathway
       and caseNoteText is not null
-      and deleted = false
+      and assessmentStatus = 'SUBMITTED'
     """,
   )
   fun findCaseNotesFor(prisonerId: Long, pathway: Pathway): List<List<Any>>

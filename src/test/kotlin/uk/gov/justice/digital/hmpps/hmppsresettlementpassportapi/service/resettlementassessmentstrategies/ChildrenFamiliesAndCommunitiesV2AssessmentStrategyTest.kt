@@ -36,7 +36,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.stream.Stream
 
-class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY) {
+class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, 2) {
 
   @ParameterizedTest(name = "{1} -> {2}")
   @MethodSource("test next page function flow - no existing assessment data")

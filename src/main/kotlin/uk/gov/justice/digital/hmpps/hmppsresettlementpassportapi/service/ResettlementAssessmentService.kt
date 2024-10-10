@@ -105,7 +105,7 @@ class ResettlementAssessmentService(
     )
 
   @Transactional
-  fun submitResettlementAssessmentByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType, useNewDeliusCaseNoteFormat: Boolean, auth: String, resettlementAssessmentStrategies: ResettlementAssessmentStrategy): ResettlementAssessmentSubmitResponse {
+  fun submitResettlementAssessmentByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType, useNewDeliusCaseNoteFormat: Boolean, useNewDpsCaseNoteFormat: Boolean, auth: String, resettlementAssessmentStrategy: ResettlementAssessmentStrategy): ResettlementAssessmentSubmitResponse {
     // Check auth - must be NOMIS
     val authSource = getClaimFromJWTToken(auth, "auth_source")?.lowercase()
     if (authSource != "nomis") {
@@ -131,7 +131,7 @@ class ResettlementAssessmentService(
         assessmentStatus = listOf(ResettlementAssessmentStatus.COMPLETE),
       )
       if (resettlementAssessment != null) {
-        val pages = resettlementAssessmentStrategies.getConfigPages(assessmentType, pathway, resettlementAssessment.version)
+        val pages = resettlementAssessmentStrategy.getConfigPages(assessmentType, pathway, resettlementAssessment.version)
         log.info("Pages size ${pages.size}")
         assessmentList.add(resettlementAssessment)
         tagList = tagList + processProfileTags(resettlementAssessment, pages)
@@ -189,7 +189,13 @@ class ResettlementAssessmentService(
       ResettlementAssessmentType.RESETTLEMENT_PLAN -> DpsCaseNoteSubType.PRR
     }
 
-    val groupedAssessmentsDps = processAndGroupAssessmentCaseNotes(assessmentList, true, assessmentType)
+    // If new format is required, just send a single case note to DPS, otherwise use the old method
+    val groupedAssessmentsDps = if (useNewDpsCaseNoteFormat) {
+      listOf(generateContentOnlyDpsCaseNote(name, userId, assessmentType))
+    } else {
+      processAndGroupAssessmentCaseNotes(assessmentList, true, assessmentType)
+    }
+
     groupedAssessmentsDps.forEach {
       caseNotesService.postBCSTCaseNoteToDps(
         nomsId = prisonerEntity.nomsId,
@@ -503,5 +509,13 @@ class ResettlementAssessmentService(
       assessment.deletedDate = LocalDateTime.now()
       resettlementAssessmentRepository.save(assessment)
     }
+  }
+
+  fun generateContentOnlyDpsCaseNote(name: String, userId: String, assessmentType: ResettlementAssessmentType): UserAndCaseNote {
+    return UserAndCaseNote(
+      user = User(userId, name),
+      deliusCaseNoteType = convertToDeliusCaseNoteType(assessmentType),
+      caseNoteText = generateContentOnlyDpsCaseNoteText(assessmentType),
+    )
   }
 }

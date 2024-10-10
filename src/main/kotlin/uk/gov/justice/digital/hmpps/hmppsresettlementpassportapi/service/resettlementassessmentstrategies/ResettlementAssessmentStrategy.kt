@@ -378,44 +378,47 @@ class ResettlementAssessmentStrategy(
 
     // If there is an existing assessment, add the answer into the question
     // Do not populate the case notes
-    if (existingAssessment != null) {
+    // PSFR-1664 Only populate if the existing assessment is at the same version
+    if (existingAssessment != null && existingAssessment.version == version) {
       // Only prefill CHECK_ANSWERS if existing report is the same type as the requested type
-      if (resettlementAssessmentResponsePage.id == "CHECK_ANSWERS" && existingAssessment.assessmentType == assessmentType) {
-        // If the existing assessment is submitted we are in an edit and don't want to send back the ASSESSMENT_SUMMARY or PRERELEASE_ASSESSMENT_SUMMARY questions
-        val questionsToExclude = if (edit) {
-          config.pages.filter { it.questions != null && it.id == "ASSESSMENT_SUMMARY" || it.id == "PRERELEASE_ASSESSMENT_SUMMARY" }
-            .flatMap { it.questions!! }.map { it.mapToResettlementAssessmentQuestion(page.id) }
-        } else {
-          listOf()
-        }
-        val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer> =
-          existingAssessment.assessment.assessment.mapNotNull { assessment ->
-            val questionList =
-              getFlattenedQuestionList(
-                pathway,
-                assessmentType,
-                version,
-              ).firstOrNull { q -> q.id == assessment.questionId }
-            if (questionList == null) {
-              null
-            } else {
-              ResettlementAssessmentQuestionAndAnswer(
-                question = getFlattenedQuestionList(
+      if (resettlementAssessmentResponsePage.id == "CHECK_ANSWERS") {
+        if (existingAssessment.assessmentType == assessmentType) {
+          // If the existing assessment is submitted we are in an edit and don't want to send back the ASSESSMENT_SUMMARY or PRERELEASE_ASSESSMENT_SUMMARY questions
+          val questionsToExclude = if (edit) {
+            config.pages.filter { it.questions != null && it.id == "ASSESSMENT_SUMMARY" || it.id == "PRERELEASE_ASSESSMENT_SUMMARY" }
+              .flatMap { it.questions!! }.map { it.mapToResettlementAssessmentQuestion(page.id) }
+          } else {
+            listOf()
+          }
+          val questionsAndAnswers: List<ResettlementAssessmentQuestionAndAnswer> =
+            existingAssessment.assessment.assessment.mapNotNull { assessment ->
+              val questionList =
+                getFlattenedQuestionList(
                   pathway,
                   assessmentType,
                   version,
-                ).first { q -> q.id == assessment.questionId }
-                  .removeNestedQuestions(),
-                answer = assessment.answer,
-                originalPageId = findPageIdFromQuestionId(assessment.questionId, assessmentType, pathway, version),
-              )
-            }
-          }.filter { it.question !in questionsToExclude }
+                ).firstOrNull { q -> q.id == assessment.questionId }
+              if (questionList == null) {
+                null
+              } else {
+                ResettlementAssessmentQuestionAndAnswer(
+                  question = getFlattenedQuestionList(
+                    pathway,
+                    assessmentType,
+                    version,
+                  ).first { q -> q.id == assessment.questionId }
+                    .removeNestedQuestions(),
+                  answer = assessment.answer,
+                  originalPageId = findPageIdFromQuestionId(assessment.questionId, assessmentType, pathway, version),
+                )
+              }
+            }.filter { it.question !in questionsToExclude }
 
-        resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(
-          resettlementAssessmentResponsePage.id,
-          questionsAndAnswers = questionsAndAnswers,
-        )
+          resettlementAssessmentResponsePage = ResettlementAssessmentResponsePage(
+            resettlementAssessmentResponsePage.id,
+            questionsAndAnswers = questionsAndAnswers,
+          )
+        }
       } else {
         // Need to add in the answer for all questions include those nested within options. Only support one level of nesting.
         (

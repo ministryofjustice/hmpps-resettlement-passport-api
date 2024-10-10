@@ -16,7 +16,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.yesNoOp
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import java.util.stream.Stream
 
-class EducationSkillsAndWorkV2ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.EDUCATION_SKILLS_AND_WORK) {
+class EducationSkillsAndWorkV2ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.EDUCATION_SKILLS_AND_WORK, 2) {
 
   @ParameterizedTest(name = "{1} -> {2}")
   @MethodSource("test next page function flow - no existing assessment data")

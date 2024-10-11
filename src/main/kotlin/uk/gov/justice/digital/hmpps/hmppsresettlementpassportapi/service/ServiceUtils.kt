@@ -182,3 +182,9 @@ fun validateAnswer(questionAndAnswer: ResettlementAssessmentQuestionAndAnswer) {
     }
   }
 }
+
+fun generateContentOnlyDpsCaseNoteText(assessmentType: ResettlementAssessmentType) = """
+  ${assessmentType.displayName} report completed.
+  
+  Go to prepare someone for release (PSfR) service to see the report information.
+""".trimIndent()

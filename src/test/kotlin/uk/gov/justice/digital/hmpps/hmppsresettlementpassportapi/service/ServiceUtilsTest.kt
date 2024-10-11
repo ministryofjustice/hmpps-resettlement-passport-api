@@ -630,6 +630,26 @@ class ServiceUtilsTest {
       ServerWebInputException("Invalid answer format to question [MY_QUESTION]. Must be a StringAnswer as regex validation is enabled."),
     ),
   )
+
+  @Test
+  fun `test generateContentOnlyDpsCaseNoteText - immediate needs report`() {
+    val expectedCaseNote = """
+      Immediate needs report completed.
+  
+      Go to prepare someone for release (PSfR) service to see the report information.
+    """.trimIndent()
+    Assertions.assertEquals(expectedCaseNote, generateContentOnlyDpsCaseNoteText(ResettlementAssessmentType.BCST2))
+  }
+
+  @Test
+  fun `test generateContentOnlyDpsCaseNoteText - pre-release report`() {
+    val expectedCaseNote = """
+      Pre-release report completed.
+  
+      Go to prepare someone for release (PSfR) service to see the report information.
+    """.trimIndent()
+    Assertions.assertEquals(expectedCaseNote, generateContentOnlyDpsCaseNoteText(ResettlementAssessmentType.RESETTLEMENT_PLAN))
+  }
 }
 
 enum class TestEnum {

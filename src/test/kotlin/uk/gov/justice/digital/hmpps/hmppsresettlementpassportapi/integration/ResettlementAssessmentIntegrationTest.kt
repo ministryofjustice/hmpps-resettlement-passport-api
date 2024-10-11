@@ -526,7 +526,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-resettlement-assessment-4.sql")
-  fun `Post resettlement assessment submit - happy path - sendCombinedCaseNotes`() {
+  fun `Post resettlement assessment submit - happy path`() {
     val nomsId = "ABC1234"
     val crn = "123"
     val assessmentType = "BCST2"
@@ -545,7 +545,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     deliusApiMockServer.stubPostCaseNote(crn, "IMMEDIATE_NEEDS_REPORT", prisonId, forename, surname, caseNoteText, fakeNowOffset.toString())
 
     webTestClient.post()
-      .uri("resettlement-passport/prisoner/$nomsId/resettlement-assessment/submit?assessmentType=$assessmentType&sendCombinedCaseNotes=true")
+      .uri("resettlement-passport/prisoner/$nomsId/resettlement-assessment/submit?assessmentType=$assessmentType")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), authSource = "nomis"))
       .exchange()
       .expectStatus().isOk
@@ -586,14 +586,14 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-resettlement-assessment-4.sql")
-  fun `Post resettlement assessment submit - happy path - send delius case notes in new format`() {
+  fun `Post resettlement assessment submit - happy path - send delius and dps case notes in new format`() {
     val nomsId = "ABC1234"
     val crn = "123"
     val assessmentType = "BCST2"
     val prisonId = "MDI"
     val forename = "Jane"
     val surname = "Smith"
-    val dpsCaseNoteText = "Accommodation\\n\\nCase note related to accommodation\\n\\n\\nAttitudes, thinking and behaviour\\n\\nCase note related to Attitudes, thinking and behaviour\\n\\n\\nChildren, families and communities\\n\\nCase note related to Children, family and communities\\n\\n\\nDrugs and alcohol\\n\\nCase note related to Drugs and alcohol\\n\\n\\nEducation, skills and work\\n\\nCase note related to education, skills and work\\n\\n\\nFinance and ID\\n\\nCase note related to Finance and ID\\n\\n\\nHealth\\n\\nCase note related to Health"
+    val dpsCaseNoteText = "Immediate needs report completed.\\n\\nGo to prepare someone for release (PSfR) service to see the report information."
     val deliusCaseNoteText = "Immediate needs report completed.\\n\\nView accommodation report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/accommodation/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView attitudes, thinking and behaviour report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/attitudes-thinking-and-behaviour/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView children, families and communities report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/children-families-and-communities/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView drugs and alcohol report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/drugs-and-alcohol/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView education, skills and work report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/education-skills-and-work/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView finance and ID report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/finance-and-id/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView health report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/health-status/?prisonerNumber=ABC1234&fromDelius=true#assessment-information"
     val fakeNowOffset = OffsetDateTime.parse("2024-06-04T09:16:04+01:00")
 
@@ -606,7 +606,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     deliusApiMockServer.stubPostCaseNote(crn, "IMMEDIATE_NEEDS_REPORT", prisonId, forename, surname, deliusCaseNoteText, fakeNowOffset.toString())
 
     webTestClient.post()
-      .uri("resettlement-passport/prisoner/$nomsId/resettlement-assessment/submit?assessmentType=$assessmentType&useNewDeliusCaseNoteFormat=true")
+      .uri("resettlement-passport/prisoner/$nomsId/resettlement-assessment/submit?assessmentType=$assessmentType&useNewDeliusCaseNoteFormat=true&useNewDpsCaseNoteFormat=true")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), authSource = "nomis", user = "Jane Smith"))
       .exchange()
       .expectStatus().isOk
@@ -672,7 +672,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     deliusApiMockServer.stubPostCaseNote(crn, "IMMEDIATE_NEEDS_REPORT", prisonId, forename2, surname2, caseNoteText2, fakeNowOffset.toString(), description = "NOMIS - Immediate needs report - Part 2 of 2")
 
     webTestClient.post()
-      .uri("resettlement-passport/prisoner/$nomsId/resettlement-assessment/submit?assessmentType=$assessmentType&sendCombinedCaseNotes=true")
+      .uri("resettlement-passport/prisoner/$nomsId/resettlement-assessment/submit?assessmentType=$assessmentType")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), authSource = "nomis"))
       .exchange()
       .expectStatus().isOk
@@ -709,7 +709,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-resettlement-assessment-4.sql")
-  fun `Post resettlement assessment submit - delius issue - sendCombinedCaseNotes`() {
+  fun `Post resettlement assessment submit - delius issue`() {
     val nomsId = "ABC1234"
     val crn = "123"
     val assessmentType = "BCST2"
@@ -726,7 +726,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     deliusApiMockServer.stubPostCaseNoteError(crn, 404)
 
     webTestClient.post()
-      .uri("resettlement-passport/prisoner/$nomsId/resettlement-assessment/submit?assessmentType=$assessmentType&sendCombinedCaseNotes=true")
+      .uri("resettlement-passport/prisoner/$nomsId/resettlement-assessment/submit?assessmentType=$assessmentType")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), authSource = "nomis"))
       .exchange()
       .expectStatus().isOk
@@ -782,7 +782,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-resettlement-assessment-4.sql")
-  fun `Post resettlement assessment submit - no crn found - sendCombinedCaseNotes`() {
+  fun `Post resettlement assessment submit - no crn found`() {
     val nomsId = "ABC1234"
     val assessmentType = "BCST2"
     val prisonId = "MDI"
@@ -797,7 +797,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     deliusApiMockServer.stubGetCrnFromNomsIdNotFound(nomsId)
 
     webTestClient.post()
-      .uri("resettlement-passport/prisoner/$nomsId/resettlement-assessment/submit?assessmentType=$assessmentType&sendCombinedCaseNotes=true")
+      .uri("resettlement-passport/prisoner/$nomsId/resettlement-assessment/submit?assessmentType=$assessmentType")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), authSource = "nomis"))
       .exchange()
       .expectStatus().isOk

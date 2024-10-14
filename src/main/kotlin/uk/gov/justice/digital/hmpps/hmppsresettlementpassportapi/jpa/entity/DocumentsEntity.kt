@@ -22,7 +22,7 @@ class DocumentsEntity(
   val prisonerId: Long,
 
   @Column(name = "original_document_key")
-  var originalDocumentKey: UUID?,
+  val originalDocumentKey: UUID?,
 
   @Column(name = "pdf_document_key")
   val pdfDocumentKey: UUID?,

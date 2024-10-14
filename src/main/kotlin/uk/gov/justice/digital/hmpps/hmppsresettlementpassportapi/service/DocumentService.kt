@@ -204,26 +204,23 @@ class DocumentService(
       throw ValidationException("Given document category ${category.name} does not exists")
     }
     val prisoner = findPrisonerByNomsId(nomsId)
-    val documentsEntityList: List<DocumentsEntity> = documentsRepository.findAllByNomsIdAndCategory(prisoner.nomsId, category)
-    if (documentsEntityList.isEmpty()) {
-      throw ResourceNotFoundException("No document exists for category ${category.name} and prisoner id $nomsId ")
-    }
+    val documentEntity: DocumentsEntity = documentsRepository.findFirstByNomsIdAndCategory(prisoner.nomsId, category, false) ?: throw ResourceNotFoundException("No document exists for category ${category.name} and prisoner id $nomsId ")
 
     val keyList = ArrayList<UUID?>()
-    for (documentEntity in documentsEntityList) {
-      keyList.add(documentEntity.originalDocumentKey)
-      keyList.add(documentEntity.pdfDocumentKey)
-    }
+
+    keyList.add(documentEntity.originalDocumentKey)
+    keyList.add(documentEntity.pdfDocumentKey)
+
     try {
       deleteDocumentsInS3(keyList, nomsId)
     } catch (ex: Exception) {
       throw Exception("Failed to delete the documents in S3 for nomsId $nomsId", ex)
     }
-    for (documentEntity in documentsEntityList) {
-      documentEntity.isDeleted = true
-      documentEntity.deletionDate = LocalDateTime.now()
-      documentsRepository.save(documentEntity)
-    }
+
+    documentEntity.isDeleted = true
+    documentEntity.deletionDate = LocalDateTime.now()
+    documentsRepository.save(documentEntity)
+
     return documentsRepository.findFirstByNomsIdAndCategory(nomsId, category, true)
   }
 }

@@ -186,8 +186,7 @@ class DocumentServiceTest {
 
     whenever(documentsRepository.findFirstByNomsIdAndCategory(prisonerEntity.nomsId, DocumentCategory.LICENCE_CONDITIONS, true)).thenReturn(documentsEntity)
     whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
-//    whenever(documentsRepository.findByPrisonerIdAndId(1, 1)).thenReturn(documentsEntity)
-    whenever(documentsRepository.findAllByNomsIdAndCategory(prisonerEntity.nomsId, DocumentCategory.LICENCE_CONDITIONS)).thenReturn(list)
+    whenever(documentsRepository.findFirstByNomsIdAndCategory(prisonerEntity.nomsId, DocumentCategory.LICENCE_CONDITIONS, false)).thenReturn(documentsEntity)
     whenever(s3Client.copyObject(copyRequest)).thenReturn(any())
     Mockito.lenient().whenever(s3Client.deleteObjects(deleteObjectRequest)).thenReturn(any())
     val response = documentService.deleteUploadDocumentByNomisId("acb", DocumentCategory.LICENCE_CONDITIONS)

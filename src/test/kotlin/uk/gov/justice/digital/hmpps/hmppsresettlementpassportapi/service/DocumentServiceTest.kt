@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
@@ -15,8 +16,12 @@ import org.springframework.mock.web.MockMultipartFile
 import software.amazon.awssdk.core.ResponseInputStream
 import software.amazon.awssdk.http.AbortableInputStream
 import software.amazon.awssdk.services.s3.S3Client
+import software.amazon.awssdk.services.s3.model.CopyObjectRequest
+import software.amazon.awssdk.services.s3.model.Delete
+import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest
 import software.amazon.awssdk.services.s3.model.GetObjectRequest
 import software.amazon.awssdk.services.s3.model.GetObjectResponse
+import software.amazon.awssdk.services.s3.model.ObjectIdentifier
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DocumentCategory
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DocumentsEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
@@ -95,7 +100,7 @@ class DocumentServiceTest {
       .key(pdfDocumentKey.toString())
       .build()
 
-    whenever(documentsRepository.findFirstByNomsIdAndCategory("acb", DocumentCategory.LICENCE_CONDITIONS)).thenReturn(documentsEntity)
+    whenever(documentsRepository.findFirstByNomsIdAndCategory("acb", DocumentCategory.LICENCE_CONDITIONS, false)).thenReturn(documentsEntity)
     whenever(s3Client.getObject(request)).thenReturn(res)
     val response = documentService.getLatestDocumentByCategory("acb", DocumentCategory.LICENCE_CONDITIONS)
     Assertions.assertEquals(file.size.toInt(), response.readAllBytes().size)
@@ -124,9 +129,69 @@ class DocumentServiceTest {
       .build()
 
     whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
-    whenever(documentsRepository.getReferenceById(1)).thenReturn(documentsEntity)
+    whenever(documentsRepository.findByPrisonerIdAndId(prisonerEntity.id!!, 1)).thenReturn(documentsEntity)
     whenever(s3Client.getObject(request)).thenReturn(res)
     val response = documentService.getDocumentByNomisIdAndDocumentId("acb", 1)
     Assertions.assertEquals(file.size.toInt(), response.readAllBytes().size)
+  }
+
+  @Test
+  fun `test deleteDocumentByNomisId - returns document`() {
+    val pdfDocumentKey = UUID.randomUUID()
+    val originalDocumentKey = UUID.randomUUID()
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
+    val documentsEntity = DocumentsEntity(1, 1, originalDocumentKey, pdfDocumentKey, fakeNow, DocumentCategory.LICENCE_CONDITIONS, "Filename.doc")
+    val list = mutableListOf<DocumentsEntity>()
+    list.add(documentsEntity)
+    val file = MockMultipartFile(
+      "file",
+      "hello.doc",
+      MediaType.TEXT_PLAIN_VALUE,
+      "Hello, World!".toByteArray(),
+    )
+    val res = ResponseInputStream(
+      GetObjectResponse.builder().build(),
+      AbortableInputStream.create(file.inputStream),
+    )
+
+    val request = GetObjectRequest.builder()
+      .bucket("document-storage")
+      .key(pdfDocumentKey.toString())
+      .build()
+
+    val copyRequest = CopyObjectRequest.builder()
+      .sourceBucket("document-storage")
+      .sourceKey(originalDocumentKey.toString())
+      .destinationBucket("document-storage")
+      .destinationKey(originalDocumentKey.toString() + "_deleted")
+      .build()
+    val toDelete = ArrayList<ObjectIdentifier>()
+    toDelete.add(
+      ObjectIdentifier.builder()
+        .key(originalDocumentKey.toString())
+        .build(),
+    )
+    toDelete.add(
+      ObjectIdentifier.builder()
+        .key(pdfDocumentKey.toString())
+        .build(),
+    )
+    val deleteObjectRequest: DeleteObjectsRequest = DeleteObjectsRequest.builder()
+      .bucket("document-storage")
+      .delete(
+        Delete.builder()
+          .objects(toDelete).build(),
+      )
+      .build()
+
+    whenever(documentsRepository.findFirstByNomsIdAndCategory(prisonerEntity.nomsId, DocumentCategory.LICENCE_CONDITIONS, true)).thenReturn(documentsEntity)
+    whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
+//    whenever(documentsRepository.findByPrisonerIdAndId(1, 1)).thenReturn(documentsEntity)
+    whenever(documentsRepository.findAllByNomsIdAndCategory(prisonerEntity.nomsId, DocumentCategory.LICENCE_CONDITIONS)).thenReturn(list)
+    whenever(s3Client.copyObject(copyRequest)).thenReturn(any())
+    Mockito.lenient().whenever(s3Client.deleteObjects(deleteObjectRequest)).thenReturn(any())
+    val response = documentService.deleteUploadDocumentByNomisId("acb", DocumentCategory.LICENCE_CONDITIONS)
+    Assertions.assertTrue(response!!.isDeleted)
+    Assertions.assertNotNull(response.deletionDate)
   }
 }

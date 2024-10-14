@@ -217,8 +217,7 @@ class DocumentService(
     try {
       deleteDocumentsInS3(keyList, nomsId)
     } catch (ex: Exception) {
-      logger.error { ex.message }
-      throw Exception("Failed to delete the documents in S3 for nomsId $nomsId ")
+      throw Exception("Failed to delete the documents in S3 for nomsId $nomsId", ex)
     }
     for (documentEntity in documentsEntityList) {
       documentEntity.isDeleted = true

@@ -22,7 +22,7 @@ class DocumentsEntity(
   val prisonerId: Long,
 
   @Column(name = "original_document_key")
-  val originalDocumentKey: UUID?,
+  var originalDocumentKey: UUID?,
 
   @Column(name = "pdf_document_key")
   val pdfDocumentKey: UUID?,
@@ -35,4 +35,10 @@ class DocumentsEntity(
 
   @Column(name = "original_document_file_name")
   val originalDocumentFileName: String,
+
+  @Column(name = "is_deleted")
+  var isDeleted: Boolean = false,
+
+  @Column(name = "deleted_date")
+  var deletionDate: LocalDateTime? = null,
 )

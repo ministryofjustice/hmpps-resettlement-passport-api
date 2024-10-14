@@ -11,11 +11,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
-import software.amazon.awssdk.services.s3.model.CopyObjectRequest
-import software.amazon.awssdk.services.s3.model.Delete
-import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest
 import software.amazon.awssdk.services.s3.model.GetObjectRequest
-import software.amazon.awssdk.services.s3.model.ObjectIdentifier
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DocumentCategory
@@ -160,62 +156,12 @@ class DocumentService(
       documentsRepository.findAllByNomsIdAndCategory(nomsId, category)
     }
 
-  fun deleteDocumentsInS3(keys: ArrayList<UUID?>, nomsId: String) {
-    val toDelete = ArrayList<ObjectIdentifier>()
-    for (objKey in keys) {
-      toDelete.add(
-        ObjectIdentifier.builder()
-          .key(objKey.toString())
-          .build(),
-      )
-
-      val request = GetObjectRequest.builder()
-        .bucket(bucketName)
-        .key(objKey.toString())
-        .build()
-
-      if (request == null) {
-        logger.info { "Document object key $objKey not found in S3 for nomsId $nomsId" }
-        continue
-      }
-
-      val copyRequest = CopyObjectRequest.builder()
-        .sourceBucket(bucketName)
-        .sourceKey(objKey.toString())
-        .destinationBucket(bucketName)
-        .destinationKey(objKey.toString() + "_deleted")
-        .build()
-      s3Client.copyObject(copyRequest)
-    }
-
-    val deleteObjectRequest: DeleteObjectsRequest = DeleteObjectsRequest.builder()
-      .bucket(bucketName)
-      .delete(
-        Delete.builder()
-          .objects(toDelete).build(),
-      )
-      .build()
-
-    s3Client.deleteObjects(deleteObjectRequest)
-  }
-
   fun deleteUploadDocumentByNomisId(nomsId: String, category: DocumentCategory): DocumentsEntity? {
     if (!DocumentCategory.entries.contains(category)) {
       throw ValidationException("Given document category ${category.name} does not exists")
     }
     val prisoner = findPrisonerByNomsId(nomsId)
     val documentEntity: DocumentsEntity = documentsRepository.findFirstByNomsIdAndCategory(prisoner.nomsId, category, false) ?: throw ResourceNotFoundException("No document exists for category ${category.name} and prisoner id $nomsId ")
-
-    val keyList = ArrayList<UUID?>()
-
-    keyList.add(documentEntity.originalDocumentKey)
-    keyList.add(documentEntity.pdfDocumentKey)
-
-    try {
-      deleteDocumentsInS3(keyList, nomsId)
-    } catch (ex: Exception) {
-      throw Exception("Failed to delete the documents in S3 for nomsId $nomsId", ex)
-    }
 
     documentEntity.isDeleted = true
     documentEntity.deletionDate = LocalDateTime.now()

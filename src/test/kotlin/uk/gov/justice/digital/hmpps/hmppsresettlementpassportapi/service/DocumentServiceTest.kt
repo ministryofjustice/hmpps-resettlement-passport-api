@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
@@ -16,12 +15,8 @@ import org.springframework.mock.web.MockMultipartFile
 import software.amazon.awssdk.core.ResponseInputStream
 import software.amazon.awssdk.http.AbortableInputStream
 import software.amazon.awssdk.services.s3.S3Client
-import software.amazon.awssdk.services.s3.model.CopyObjectRequest
-import software.amazon.awssdk.services.s3.model.Delete
-import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest
 import software.amazon.awssdk.services.s3.model.GetObjectRequest
 import software.amazon.awssdk.services.s3.model.GetObjectResponse
-import software.amazon.awssdk.services.s3.model.ObjectIdentifier
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DocumentCategory
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DocumentsEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
@@ -159,37 +154,9 @@ class DocumentServiceTest {
       .key(pdfDocumentKey.toString())
       .build()
 
-    val copyRequest = CopyObjectRequest.builder()
-      .sourceBucket("document-storage")
-      .sourceKey(originalDocumentKey.toString())
-      .destinationBucket("document-storage")
-      .destinationKey(originalDocumentKey.toString() + "_deleted")
-      .build()
-    val toDelete = ArrayList<ObjectIdentifier>()
-    toDelete.add(
-      ObjectIdentifier.builder()
-        .key(originalDocumentKey.toString())
-        .build(),
-    )
-    toDelete.add(
-      ObjectIdentifier.builder()
-        .key(pdfDocumentKey.toString())
-        .build(),
-    )
-    val deleteObjectRequest: DeleteObjectsRequest = DeleteObjectsRequest.builder()
-      .bucket("document-storage")
-      .delete(
-        Delete.builder()
-          .objects(toDelete).build(),
-      )
-      .build()
-
     whenever(documentsRepository.findFirstByNomsIdAndCategory(prisonerEntity.nomsId, DocumentCategory.LICENCE_CONDITIONS, true)).thenReturn(documentsEntity)
     whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
-//    whenever(documentsRepository.findByPrisonerIdAndId(1, 1)).thenReturn(documentsEntity)
-    whenever(documentsRepository.findAllByNomsIdAndCategory(prisonerEntity.nomsId, DocumentCategory.LICENCE_CONDITIONS)).thenReturn(list)
-    whenever(s3Client.copyObject(copyRequest)).thenReturn(any())
-    Mockito.lenient().whenever(s3Client.deleteObjects(deleteObjectRequest)).thenReturn(any())
+    whenever(documentsRepository.findFirstByNomsIdAndCategory(prisonerEntity.nomsId, DocumentCategory.LICENCE_CONDITIONS, false)).thenReturn(documentsEntity)
     val response = documentService.deleteUploadDocumentByNomisId("acb", DocumentCategory.LICENCE_CONDITIONS)
     Assertions.assertTrue(response!!.isDeleted)
     Assertions.assertNotNull(response.deletionDate)

@@ -21,11 +21,12 @@ interface DocumentsRepository : JpaRepository<DocumentsEntity, Long> {
       join PrisonerEntity p on p.id = d.prisonerId
       where p.nomsId = :nomsId
       and d.category = :category
+      and d.isDeleted = :isDeleted
       order by d.creationDate desc
       limit 1
     """,
   )
-  fun findFirstByNomsIdAndCategory(nomsId: String, category: DocumentCategory): DocumentsEntity?
+  fun findFirstByNomsIdAndCategory(nomsId: String, category: DocumentCategory, isDeleted: Boolean): DocumentsEntity?
 
   @Query(
     value = """
@@ -34,6 +35,7 @@ interface DocumentsRepository : JpaRepository<DocumentsEntity, Long> {
       join PrisonerEntity p on p.id = d.prisonerId
       where p.nomsId = :nomsId
       and d.category = :category
+      and d.isDeleted = false
       order by d.creationDate desc
     """,
   )
@@ -45,6 +47,7 @@ interface DocumentsRepository : JpaRepository<DocumentsEntity, Long> {
       from DocumentsEntity d
       join PrisonerEntity p on p.id = d.prisonerId
       where p.nomsId = :nomsId
+      and d.isDeleted = false
       order by d.creationDate desc
     """,
   )

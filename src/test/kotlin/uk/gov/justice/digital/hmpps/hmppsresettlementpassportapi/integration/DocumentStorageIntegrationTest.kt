@@ -11,6 +11,7 @@ import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DocumentResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DocumentsEntity
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
@@ -357,5 +358,53 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody(DocumentResponse::class.java)
       .value { document -> assertThat(document.value.originalDocumentFileName).isEqualTo("original-filename.pdf") }
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-document-upload.sql")
+  fun `Delete document and get deleted Document - happy path`() {
+    val nomsId = "ABC1234"
+
+    uploadDocument(nomsId)
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/documents/1/download")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/pdf")
+
+    webTestClient.delete()
+      .uri("/resettlement-passport/prisoner/$nomsId/documents/latest")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody(DocumentsEntity::class.java)
+      .value { document -> assertThat(document.isDeleted).isEqualTo(true) }
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/documents/latest/download")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  fun `delete document  gives 403 when unauthorized`() {
+    webTestClient.delete()
+      .uri("/resettlement-passport/prisoner/0/documents/latest")
+      .headers(setAuthorisation(roles = listOf("SOME_ROLE")))
+      .exchange()
+      .expectStatus().isForbidden
+  }
+
+  @Test
+  fun `delete document  gives 404  when not found`() {
+    webTestClient.delete()
+      .uri("/resettlement-passport/prisoner/0/documents/latest")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isNotFound
   }
 }

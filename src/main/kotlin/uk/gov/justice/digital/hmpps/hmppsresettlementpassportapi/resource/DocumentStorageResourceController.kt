@@ -11,6 +11,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -192,6 +193,46 @@ class DocumentStorageResourceController(
   ): Collection<DocumentResponse> = uploadService.listDocuments(nomsId, category)
     .map { DocumentResponse(it.id!!, it.originalDocumentFileName, it.creationDate, it.category) }
 
+  @DeleteMapping("/documents/latest")
+  @Operation(
+    summary = "Delete document  for a prisoner",
+    description = "Delete both original and converted latest document for prisoner Id .",
+  )
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [
+          Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "404",
+        description = "No data found for prisoner id",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  fun deleteDocumentsByNomsId(
+    @PathVariable("nomsId")
+    @Parameter(required = true)
+    nomsId: String,
+    @RequestParam(defaultValue = "LICENCE_CONDITIONS", required = false)
+    category: DocumentCategory,
+  ) = uploadService.deleteUploadDocumentByNomisId(nomsId, category)
   data class DocumentResponse(
     val id: Long,
     val fileName: String,

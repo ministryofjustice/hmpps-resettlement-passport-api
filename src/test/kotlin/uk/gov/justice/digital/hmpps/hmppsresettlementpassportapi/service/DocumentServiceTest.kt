@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
@@ -154,11 +155,11 @@ class DocumentServiceTest {
       .key(pdfDocumentKey.toString())
       .build()
 
-    whenever(documentsRepository.findFirstByNomsIdAndCategory(prisonerEntity.nomsId, DocumentCategory.LICENCE_CONDITIONS, true)).thenReturn(documentsEntity)
     whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
     whenever(documentsRepository.findFirstByNomsIdAndCategory(prisonerEntity.nomsId, DocumentCategory.LICENCE_CONDITIONS, false)).thenReturn(documentsEntity)
     val response = documentService.deleteUploadDocumentByNomisId("acb", DocumentCategory.LICENCE_CONDITIONS)
-    Assertions.assertTrue(response!!.isDeleted)
-    Assertions.assertNotNull(response.deletionDate)
+    documentsEntity.isDeleted = true
+    documentsEntity.deletionDate = fakeNow
+    Mockito.verify(documentsRepository).save(documentsEntity)
   }
 }

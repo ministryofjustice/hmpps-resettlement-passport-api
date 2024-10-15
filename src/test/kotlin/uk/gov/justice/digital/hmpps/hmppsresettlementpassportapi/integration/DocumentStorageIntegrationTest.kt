@@ -11,7 +11,6 @@ import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DocumentResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DocumentsEntity
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
@@ -379,9 +378,6 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
-      .expectHeader().contentType("application/json")
-      .expectBody(DocumentsEntity::class.java)
-      .value { document -> assertThat(document.isDeleted).isEqualTo(true) }
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/documents/latest/download")

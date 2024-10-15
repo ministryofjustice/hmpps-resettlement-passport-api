@@ -437,7 +437,7 @@ class ResettlementAssessmentService(
       assessmentType = resettlementAssessmentEntity.assessmentType,
       lastUpdated = resettlementAssessmentEntity.creationDate,
       updatedBy = resettlementAssessmentEntity.createdBy,
-      questionsAndAnswers = questionsAndAnswers.sortedBy { it.originalPageId },
+      questionsAndAnswers = questionsAndAnswers,
     )
   }
 

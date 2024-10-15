@@ -31,6 +31,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.MapAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.PrisonerResettlementAssessment
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
@@ -352,7 +353,7 @@ class ResettlementAssessmentServiceTest {
 
   @ParameterizedTest
   @MethodSource("test convertAnswerToString data")
-  fun `test convertAnswerToString`(options: List<AssessmentConfigOption>?, answer: Answer<*>, expectedString: String) {
+  fun `test convertAnswerToString`(options: List<ResettlementAssessmentOption>?, answer: Answer<*>, expectedString: String) {
     Assertions.assertEquals(expectedString, resettlementAssessmentService.convertAnswerToString(options, answer))
   }
 
@@ -360,7 +361,7 @@ class ResettlementAssessmentServiceTest {
     Arguments.of(null, StringAnswer("My answer"), "My answer"),
     Arguments.of(null, StringAnswer("My answer"), "My answer"),
     Arguments.of(
-      listOf(AssessmentConfigOption("MY_ANSWER", "My answer"), AssessmentConfigOption("OTHER_OPTION", "Other option")),
+      listOf(ResettlementAssessmentOption("MY_ANSWER", "My answer"), AssessmentConfigOption("OTHER_OPTION", "Other option")),
       StringAnswer("MY_ANSWER"),
       "My answer",
     ),
@@ -380,7 +381,7 @@ class ResettlementAssessmentServiceTest {
     Arguments.of(null, MapAnswer(listOf(mapOf(), mapOf(), mapOf(), mapOf())), ""),
     Arguments.of(null, MapAnswer(listOf()), ""),
     Arguments.of(
-      listOf(AssessmentConfigOption("ANSWER_1", "Answer 1"), AssessmentConfigOption("ANSWER_2", "Answer 2")),
+      listOf(ResettlementAssessmentOption("ANSWER_1", "Answer 1"), ResettlementAssessmentOption("ANSWER_2", "Answer 2")),
       ListAnswer(listOf("ANSWER_1", "ANSWER_2", "ANSWER_3")),
       "Answer 1\nAnswer 2\nANSWER_3",
     ),
@@ -736,6 +737,84 @@ class ResettlementAssessmentServiceTest {
     verify(resettlementAssessmentRepository).save(deletedResettlementAssessmentEntity2)
 
     unmockkAll()
+  }
+
+  @Test
+  fun `test getLatestResettlementAssessmentByNomsIdAndPathway - happy path`() {
+    val nomsId = "12345"
+    val pathway = Pathway.EDUCATION_SKILLS_AND_WORK
+
+    val prisonerId = 1L
+
+    val prisoner = PrisonerEntity(
+      prisonerId,
+      nomsId,
+      LocalDateTime.now(),
+      null,
+      null,
+      null,
+    )
+
+    val nestedQuestion1 = "Job title"
+    val nestedAnswer1 = "Job title 1"
+    val nestedQuestion2 = "Employer name"
+    val nestedAnswer2 = "Employer Here"
+
+    val assessment = ResettlementAssessmentEntity(
+      id = 1,
+      prisonerId = prisonerId,
+      pathway = pathway,
+      statusChangedTo = null,
+      assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN,
+      assessment = ResettlementAssessmentQuestionAndAnswerList(
+        listOf(
+          ResettlementAssessmentSimpleQuestionAndAnswer("DID_THEY_HAVE_JOB_BEFORE_CUSTODY", StringAnswer("YES")),
+          ResettlementAssessmentSimpleQuestionAndAnswer("DID_THEY_HAVE_JOB_BEFORE_CUSTODY_JOB_TITLE", StringAnswer(nestedAnswer1)),
+          ResettlementAssessmentSimpleQuestionAndAnswer("DID_THEY_HAVE_JOB_BEFORE_CUSTODY_EMPLOYER_NAME", StringAnswer(nestedAnswer2)),
+          ResettlementAssessmentSimpleQuestionAndAnswer("DO_THEY_HAVE_JOB_ARRANGED", StringAnswer("YES_RETURNING_TO_SAME_JOB")),
+          ResettlementAssessmentSimpleQuestionAndAnswer("WERE_THEY_IN_EDUCATION_BEFORE_CUSTODY", StringAnswer("YES")),
+          ResettlementAssessmentSimpleQuestionAndAnswer("EDUCATION_WHEN_RELEASED", StringAnswer("YES_SAME_EDUCATION")),
+          ResettlementAssessmentSimpleQuestionAndAnswer("SUPPORT_REQUIREMENTS", ListAnswer(listOf("OTHER_SUPPORT_NEEDS: a different support need"))),
+          ResettlementAssessmentSimpleQuestionAndAnswer("SUPPORT_NEEDS_PRERELEASE", StringAnswer("SUPPORT_DECLINED")),
+          ResettlementAssessmentSimpleQuestionAndAnswer("CASE_NOTE_SUMMARY", StringAnswer("case note 1")),
+        ),
+      ),
+      creationDate = LocalDateTime.now(),
+      createdBy = "aUser",
+      assessmentStatus = ResettlementAssessmentStatus.COMPLETE,
+      caseNoteText = null,
+      createdByUserId = "123",
+      version = 3,
+      submissionDate = null,
+      userDeclaration = true,
+    )
+
+    Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisoner)
+    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndDeletedIsFalseOrderByCreationDateDesc(prisonerId, pathway, ResettlementAssessmentStatus.SUBMITTED))
+      .thenReturn(assessment)
+    Mockito.`when`(resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndDeletedIsFalseOrderByCreationDateAsc(prisonerId, pathway, ResettlementAssessmentStatus.SUBMITTED))
+      .thenReturn(assessment)
+
+    val returnedAssessment = resettlementAssessmentService.getLatestResettlementAssessmentByNomsIdAndPathway(nomsId, pathway, resettlementAssessmentStrategy)
+
+    Assertions.assertNotNull(returnedAssessment)
+    Assertions.assertNotNull(returnedAssessment.latestAssessment)
+    Assertions.assertNotNull(returnedAssessment.latestAssessment.questionsAndAnswers)
+    Assertions.assertEquals(7, returnedAssessment.latestAssessment.questionsAndAnswers.size)
+    var nestedQuestion1Exists = false
+    var nestedQuestion2Exists = false
+    returnedAssessment.latestAssessment.questionsAndAnswers.forEach {
+      if (it.questionTitle == nestedQuestion1) {
+        Assertions.assertEquals(nestedAnswer1, it.answer)
+        nestedQuestion1Exists = true
+      } else if (it.questionTitle == nestedQuestion2) {
+        Assertions.assertEquals(nestedAnswer2, it.answer)
+        nestedQuestion2Exists = true
+      }
+      Assertions.assertFalse(listOf("SUPPORT_NEEDS", "SUPPORT_NEEDS_PRERELEASE", "CASE_NOTE_SUMMARY").contains(it.questionTitle))
+    }
+    Assertions.assertTrue(nestedQuestion1Exists)
+    Assertions.assertTrue(nestedQuestion2Exists)
   }
 
   private fun makeResettlementAssessment(id: Long, prisonerId: Long, deleted: Boolean = false) =

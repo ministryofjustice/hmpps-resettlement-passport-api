@@ -457,7 +457,7 @@ class ResettlementAssessmentStrategy(
       ?: throw RuntimeException("Cannot find page for question [$questionId] - check that the question is used in a page!")
   }
 
-  private fun getFlattenedQuestionList(
+  fun getFlattenedQuestionList(
     pathway: Pathway,
     assessmentType: ResettlementAssessmentType,
     version: Int,

@@ -419,7 +419,7 @@ class ResettlementAssessmentService(
   }
 
   fun convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(resettlementAssessmentEntity: ResettlementAssessmentEntity, resettlementAssessmentStrategies: ResettlementAssessmentStrategy): ResettlementAssessmentResponse {
-    val flattenedQuestions = resettlementAssessmentStrategies.getFlattenedQuestionList(resettlementAssessmentEntity.pathway, resettlementAssessmentEntity.assessmentType, resettlementAssessmentEntity.version)
+    val flattenedQuestions = resettlementAssessmentStrategies.getFlattenedQuestionListPreserveOrder(resettlementAssessmentEntity.pathway, resettlementAssessmentEntity.assessmentType, resettlementAssessmentEntity.version)
     val questionsAndAnswers = flattenedQuestions.mapNotNull { questionFromConfig ->
       val questionAndAnswerFromDatabase = resettlementAssessmentEntity.assessment.assessment.firstOrNull { it.questionId == questionFromConfig.id }
       if (questionAndAnswerFromDatabase != null && questionAndAnswerFromDatabase.questionId !in listOf("SUPPORT_NEEDS", "SUPPORT_NEEDS_PRERELEASE", "CASE_NOTE_SUMMARY")) {
@@ -437,7 +437,7 @@ class ResettlementAssessmentService(
       assessmentType = resettlementAssessmentEntity.assessmentType,
       lastUpdated = resettlementAssessmentEntity.creationDate,
       updatedBy = resettlementAssessmentEntity.createdBy,
-      questionsAndAnswers = questionsAndAnswers,
+      questionsAndAnswers = questionsAndAnswers.sortedBy { it.originalPageId },
     )
   }
 

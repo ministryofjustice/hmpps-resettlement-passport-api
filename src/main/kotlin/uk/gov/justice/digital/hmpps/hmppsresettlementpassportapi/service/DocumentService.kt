@@ -156,7 +156,7 @@ class DocumentService(
       documentsRepository.findAllByNomsIdAndCategory(nomsId, category)
     }
 
-  fun deleteUploadDocumentByNomisId(nomsId: String, category: DocumentCategory): DocumentsEntity? {
+  fun deleteUploadDocumentByNomisId(nomsId: String, category: DocumentCategory) {
     if (!DocumentCategory.entries.contains(category)) {
       throw ValidationException("Given document category ${category.name} does not exists")
     }
@@ -166,7 +166,5 @@ class DocumentService(
     documentEntity.isDeleted = true
     documentEntity.deletionDate = LocalDateTime.now()
     documentsRepository.save(documentEntity)
-
-    return documentsRepository.findByPrisonerIdAndId(prisoner.id!!.toLong(), documentEntity.id!!.toLong())
   }
 }

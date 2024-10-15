@@ -167,6 +167,6 @@ class DocumentService(
     documentEntity.deletionDate = LocalDateTime.now()
     documentsRepository.save(documentEntity)
 
-    return documentsRepository.findFirstByNomsIdAndCategory(nomsId, category, true)
+    return documentsRepository.findByPrisonerIdAndId(prisoner.id!!.toLong(), documentEntity.id!!.toLong())
   }
 }

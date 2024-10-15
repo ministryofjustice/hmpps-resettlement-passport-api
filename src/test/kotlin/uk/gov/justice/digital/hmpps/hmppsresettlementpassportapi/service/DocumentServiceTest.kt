@@ -154,7 +154,7 @@ class DocumentServiceTest {
       .key(pdfDocumentKey.toString())
       .build()
 
-    whenever(documentsRepository.findFirstByNomsIdAndCategory(prisonerEntity.nomsId, DocumentCategory.LICENCE_CONDITIONS, true)).thenReturn(documentsEntity)
+    whenever(documentsRepository.findByPrisonerIdAndId(prisonerEntity.id!!.toLong(), documentsEntity.id!!.toLong())).thenReturn(documentsEntity)
     whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
     whenever(documentsRepository.findFirstByNomsIdAndCategory(prisonerEntity.nomsId, DocumentCategory.LICENCE_CONDITIONS, false)).thenReturn(documentsEntity)
     val response = documentService.deleteUploadDocumentByNomisId("acb", DocumentCategory.LICENCE_CONDITIONS)

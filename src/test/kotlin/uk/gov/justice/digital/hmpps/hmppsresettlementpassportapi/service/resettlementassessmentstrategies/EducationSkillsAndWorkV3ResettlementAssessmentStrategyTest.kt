@@ -304,17 +304,6 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
             ),
             originalPageId = "ASSESSMENT_SUMMARY",
           ),
-          ResettlementAssessmentQuestionAndAnswer(
-            question = ResettlementAssessmentQuestion(
-              id = "CASE_NOTE_SUMMARY",
-              title = "Case note",
-              subTitle = "Include any relevant information about why you have chosen that resettlement status. Do not include any special category data. This information will be displayed in PSFR on the overview tab and the education, skills and work tab.",
-              type = TypeOfQuestion.LONG_TEXT,
-              detailsTitle = "Help with special category data",
-              detailsContent = "Special category data includes any personal data concerning someone's health, sex life or sexual orientation. Or any personal data revealing someone's racial or ethnic origin, religious or philosophical beliefs or trade union membership.",
-            ),
-            originalPageId = "ASSESSMENT_SUMMARY",
-          ),
         ),
       ),
     ),

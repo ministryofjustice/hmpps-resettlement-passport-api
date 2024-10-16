@@ -422,7 +422,7 @@ class ResettlementAssessmentServiceTest {
     userDeclaration = false,
   )
 
-  private fun createSubmittedResettlementAssessmentEntity(pathway: Pathway, user: String, caseNoteText: String) = ResettlementAssessmentEntity(
+  private fun createSubmittedResettlementAssessmentEntity(pathway: Pathway, user: String, caseNoteText: String?) = ResettlementAssessmentEntity(
     id = null,
     prisonerId = 1,
     pathway = pathway,
@@ -439,15 +439,14 @@ class ResettlementAssessmentServiceTest {
     userDeclaration = false,
   )
 
-  private fun getSubmittedResettlementAssessmentEntities(user: String, caseNotePostfix: String) = listOf(
-    createSubmittedResettlementAssessmentEntity(Pathway.ACCOMMODATION, user, "${Pathway.ACCOMMODATION.displayName} case note - $caseNotePostfix"),
-    createSubmittedResettlementAssessmentEntity(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, user, "${Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR.displayName} case note - $caseNotePostfix"),
-    createSubmittedResettlementAssessmentEntity(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, user, "${Pathway.CHILDREN_FAMILIES_AND_COMMUNITY.displayName} case note - $caseNotePostfix"),
-    createSubmittedResettlementAssessmentEntity(Pathway.DRUGS_AND_ALCOHOL, user, "${Pathway.DRUGS_AND_ALCOHOL.displayName} case note - $caseNotePostfix"),
-    createSubmittedResettlementAssessmentEntity(Pathway.EDUCATION_SKILLS_AND_WORK, user, "${Pathway.EDUCATION_SKILLS_AND_WORK.displayName} case note - $caseNotePostfix"),
-    createSubmittedResettlementAssessmentEntity(Pathway.FINANCE_AND_ID, user, "${Pathway.FINANCE_AND_ID.displayName} case note - $caseNotePostfix"),
-    createSubmittedResettlementAssessmentEntity(Pathway.HEALTH, user, "${Pathway.HEALTH.displayName} case note - $caseNotePostfix"),
-  )
+  private fun getSubmittedResettlementAssessmentEntities(user: String, caseNotePostfix: String?, nullCaseNotes: Boolean = false) = Pathway.entries.map {
+    val caseNoteText = if (!nullCaseNotes) {
+      "${it.displayName} case note - $caseNotePostfix"
+    } else {
+      null
+    }
+    createSubmittedResettlementAssessmentEntity(it, user, caseNoteText)
+  }
 
   private fun getExpectedCaseNotesText(pathway: Pathway, caseNotePostfix: String) = "${pathway.displayName}\n\n${pathway.displayName} case note - $caseNotePostfix"
 
@@ -461,6 +460,23 @@ class ResettlementAssessmentServiceTest {
       ResettlementAssessmentService.UserAndCaseNote(
         user = ResettlementAssessmentService.User(user, user),
         caseNoteText = "${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
+        deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
+        description = null,
+      ),
+    )
+
+    Assertions.assertEquals(expectedUserAndCaseNotes, resettlementAssessmentService.processAndGroupAssessmentCaseNotes(assessmentList, false, ResettlementAssessmentType.BCST2))
+  }
+
+  @Test
+  fun `test processAndGroupAssessmentCaseNotes - null text, no limit chars`() {
+    val user = "A user"
+    val assessmentList = getSubmittedResettlementAssessmentEntities(user, null, true)
+
+    val expectedUserAndCaseNotes = listOf(
+      ResettlementAssessmentService.UserAndCaseNote(
+        user = ResettlementAssessmentService.User(user, user),
+        caseNoteText = "Accommodation\n\nNo case note recorded\n\n\nAttitudes, thinking and behaviour\n\nNo case note recorded\n\n\nChildren, families and communities\n\nNo case note recorded\n\n\nDrugs and alcohol\n\nNo case note recorded\n\n\nEducation, skills and work\n\nNo case note recorded\n\n\nFinance and ID\n\nNo case note recorded\n\n\nHealth\n\nNo case note recorded",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
         description = null,
       ),

@@ -195,11 +195,11 @@ class ResettlementAssessmentStrategy(
 
       status = convertFromSupportNeedAnswerToStatus(supportNeedsQuestionAndAnswer.answer)
 
-      // Get caseNoteText out of CASE_NOTE_SUMMARY question as String
+      // Get caseNoteText out of CASE_NOTE_SUMMARY question as String (if available - as of PSFR-1690 this is no longer mandatory)
       val caseNoteQuestionAndAnswer =
-        assessment.questionsAndAnswers.first { it.question == "CASE_NOTE_SUMMARY" }
+        assessment.questionsAndAnswers.find { it.question == "CASE_NOTE_SUMMARY" }
 
-      caseNoteText = convertFromStringAnswer(caseNoteQuestionAndAnswer.answer)
+      caseNoteText = convertFromStringAnswer(caseNoteQuestionAndAnswer?.answer)
     }
 
     // Map assessment into correct format to be added into database

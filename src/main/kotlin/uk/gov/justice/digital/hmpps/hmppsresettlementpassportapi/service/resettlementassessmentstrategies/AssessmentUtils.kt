@@ -25,7 +25,10 @@ internal fun convertFromSupportNeedAnswerToStatus(supportNeed: Answer<*>?): Stat
   }
 }
 
-internal fun convertFromStringAnswer(answer: Answer<*>?): String {
+internal fun convertFromStringAnswer(answer: Answer<*>?): String? {
+  if (answer == null) {
+    return null
+  }
   if (answer is StringAnswer) {
     return answer.answer ?: throw ServerWebInputException("Answer [$answer] must not be null")
   } else {

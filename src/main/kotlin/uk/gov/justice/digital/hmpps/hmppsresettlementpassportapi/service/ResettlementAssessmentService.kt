@@ -265,7 +265,7 @@ class ResettlementAssessmentService(
     val userToCaseNoteMap = assessmentList.map {
       UserAndCaseNote(
         user = User(userId = it.createdByUserId, name = it.createdBy),
-        caseNoteText = "${it.pathway.displayName}\n\n${it.caseNoteText}",
+        caseNoteText = "${it.pathway.displayName}\n\n${it.caseNoteText ?: "No case note recorded"}",
         deliusCaseNoteType = deliusCaseNoteType,
         description = null,
       )

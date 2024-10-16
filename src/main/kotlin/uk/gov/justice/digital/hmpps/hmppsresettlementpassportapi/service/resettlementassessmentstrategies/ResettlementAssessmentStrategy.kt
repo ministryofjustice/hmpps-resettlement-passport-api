@@ -466,6 +466,23 @@ class ResettlementAssessmentStrategy(
       .getFlattenedListOfQuestions()
       .map { it.mapToResettlementAssessmentQuestion(findPageIdFromQuestionId(it.id, assessmentType, pathway, version)) }
 
+  fun getFlattenedQuestionListPreserveOrder(
+    pathway: Pathway,
+    assessmentType: ResettlementAssessmentType,
+    version: Int,
+  ): List<ResettlementAssessmentQuestion> {
+    val result = mutableListOf<AssessmentConfigQuestion>()
+    val questionList = getConfig(pathway, assessmentType, version).pages.filter { it.questions != null }.flatMap { it.questions!! }
+
+    fun addQuestionWithNested(q: AssessmentConfigQuestion) {
+      result.add(q)
+      q.options?.forEach { it.nestedQuestions?.forEach { addQuestionWithNested(it) } }
+    }
+
+    questionList.forEach { addQuestionWithNested(it) }
+    return result.map { it.mapToResettlementAssessmentQuestion(findPageIdFromQuestionId(it.id, assessmentType, pathway, version)) }
+  }
+
   private fun saveAssessment(assessment: ResettlementAssessmentEntity): ResettlementAssessmentEntity =
     resettlementAssessmentRepository.save(assessment)
 

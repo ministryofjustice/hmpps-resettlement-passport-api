@@ -803,15 +803,17 @@ class ResettlementAssessmentServiceTest {
     Assertions.assertEquals(7, returnedAssessment.latestAssessment.questionsAndAnswers.size)
     var nestedQuestion1Exists = false
     var nestedQuestion2Exists = false
-    returnedAssessment.latestAssessment.questionsAndAnswers.forEach {
-      if (it.questionTitle == nestedQuestion1) {
-        Assertions.assertEquals(nestedAnswer1, it.answer)
+    returnedAssessment.latestAssessment.questionsAndAnswers.forEachIndexed { index, value ->
+      if (value.questionTitle == nestedQuestion1) {
+        Assertions.assertEquals(nestedAnswer1, value.answer)
+        Assertions.assertEquals(1, index)
         nestedQuestion1Exists = true
-      } else if (it.questionTitle == nestedQuestion2) {
-        Assertions.assertEquals(nestedAnswer2, it.answer)
+      } else if (value.questionTitle == nestedQuestion2) {
+        Assertions.assertEquals(nestedAnswer2, value.answer)
+        Assertions.assertEquals(2, index)
         nestedQuestion2Exists = true
       }
-      Assertions.assertFalse(listOf("SUPPORT_NEEDS", "SUPPORT_NEEDS_PRERELEASE", "CASE_NOTE_SUMMARY").contains(it.questionTitle))
+      Assertions.assertFalse(listOf("SUPPORT_NEEDS", "SUPPORT_NEEDS_PRERELEASE", "CASE_NOTE_SUMMARY").contains(value.questionTitle))
     }
     Assertions.assertTrue(nestedQuestion1Exists)
     Assertions.assertTrue(nestedQuestion2Exists)

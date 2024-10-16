@@ -457,7 +457,7 @@ class ResettlementAssessmentStrategy(
       ?: throw RuntimeException("Cannot find page for question [$questionId] - check that the question is used in a page!")
   }
 
-  private fun getFlattenedQuestionList(
+  fun getFlattenedQuestionList(
     pathway: Pathway,
     assessmentType: ResettlementAssessmentType,
     version: Int,
@@ -465,6 +465,23 @@ class ResettlementAssessmentStrategy(
     getConfig(pathway, assessmentType, version).pages.filter { it.questions != null }.flatMap { it.questions!! }
       .getFlattenedListOfQuestions()
       .map { it.mapToResettlementAssessmentQuestion(findPageIdFromQuestionId(it.id, assessmentType, pathway, version)) }
+
+  fun getFlattenedQuestionListPreserveOrder(
+    pathway: Pathway,
+    assessmentType: ResettlementAssessmentType,
+    version: Int,
+  ): List<ResettlementAssessmentQuestion> {
+    val result = mutableListOf<AssessmentConfigQuestion>()
+    val questionList = getConfig(pathway, assessmentType, version).pages.filter { it.questions != null }.flatMap { it.questions!! }
+
+    fun addQuestionWithNested(q: AssessmentConfigQuestion) {
+      result.add(q)
+      q.options?.forEach { it.nestedQuestions?.forEach { addQuestionWithNested(it) } }
+    }
+
+    questionList.forEach { addQuestionWithNested(it) }
+    return result.map { it.mapToResettlementAssessmentQuestion(findPageIdFromQuestionId(it.id, assessmentType, pathway, version)) }
+  }
 
   private fun saveAssessment(assessment: ResettlementAssessmentEntity): ResettlementAssessmentEntity =
     resettlementAssessmentRepository.save(assessment)

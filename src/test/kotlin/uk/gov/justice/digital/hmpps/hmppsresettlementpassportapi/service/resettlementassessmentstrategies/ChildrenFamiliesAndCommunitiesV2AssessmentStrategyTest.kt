@@ -437,77 +437,77 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
           assessment = listOf(
             ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "PARTNER_OR_SPOUSE",
-              answer = StringAnswer(answer = "YES")
+              answer = StringAnswer(answer = "YES"),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "PARENTAL_RESPONSIBILITY",
-              answer = StringAnswer(answer = "YES")
+              answer = StringAnswer(answer = "YES"),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "PRIMARY_CARER_FOR_CHILDREN",
-              answer = StringAnswer(answer = "YES")
+              answer = StringAnswer(answer = "YES"),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "NUMBER_OF_CHILDREN",
-              answer = StringAnswer(answer = "3")
+              answer = StringAnswer(answer = "3"),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "CHILDREN_SERVICE_INVOLVED",
-              answer = StringAnswer(answer = "NO")
+              answer = StringAnswer(answer = "NO"),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "CARING_RESPONSIBILITIES_FOR_ADULTS",
-              answer = StringAnswer(answer = "NO")
+              answer = StringAnswer(answer = "NO"),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "SOCIAL_SERVICE_INVOLVED",
-              answer = StringAnswer(answer = "NO")
+              answer = StringAnswer(answer = "NO"),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "RECEIVED_SUPPORT_FROM_SOCIAL_SERVICES",
-              answer = StringAnswer(answer = "NO")
+              answer = StringAnswer(answer = "NO"),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "DO_THEY_HAVE_SUPPORT_FROM_FAMILY_FRIENDS_COMMUNITY",
-              answer = StringAnswer(answer = "NO")
+              answer = StringAnswer(answer = "NO"),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "INVOLVEMENT_IN_GANG_ACTIVITY",
-              answer = StringAnswer(answer = "NO")
+              answer = StringAnswer(answer = "NO"),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "UNDER_THREAT_OUTSIDE_PRISON",
-              answer = StringAnswer(answer = "NO")
+              answer = StringAnswer(answer = "NO"),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "VICTIM_OF_DOMESTIC_ABUSE",
-              answer = StringAnswer(answer = "NO")
+              answer = StringAnswer(answer = "NO"),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "PERPETRATOR_OF_DOMESTIC_ABUSE",
-              answer = StringAnswer(answer = "NO")
+              answer = StringAnswer(answer = "NO"),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "VICTIM_OF_SEXUAL_ABUSE",
-              answer = StringAnswer(answer = "NO")
+              answer = StringAnswer(answer = "NO"),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "PERPETRATOR_OF_SEXUAL_ABUSE",
-              answer = StringAnswer(answer = "NO")
+              answer = StringAnswer(answer = "NO"),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "WORKED_IN_SEX_INDUSTRY",
-              answer = StringAnswer(answer = "NO")
+              answer = StringAnswer(answer = "NO"),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "SUPPORT_REQUIREMENTS",
-              answer = ListAnswer(answer = listOf("SUPPORT_WHEN_MEETING_CHILDREN_SERVICES", "INTERNAL_SUPPORT_SERVICES"))
+              answer = ListAnswer(answer = listOf("SUPPORT_WHEN_MEETING_CHILDREN_SERVICES", "INTERNAL_SUPPORT_SERVICES")),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "SUPPORT_NEEDS",
-              answer = StringAnswer(answer = "SUPPORT_REQUIRED")
-            )
-          )
+              answer = StringAnswer(answer = "SUPPORT_REQUIRED"),
+            ),
+          ),
         ),
         creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000"),
         createdBy = "System user",
@@ -516,7 +516,7 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
         createdByUserId = "USER_1",
         version = 2,
         submissionDate = null,
-        userDeclaration = true
+        userDeclaration = true,
       ),
       null,
       null,

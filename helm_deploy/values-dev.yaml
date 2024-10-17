@@ -10,7 +10,6 @@ generic-service:
 
   env:
     API_BASE_URL_OAUTH: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
-    API_BASE_URL_PRISON-REGISTER: http://hmpps-resettlement-passport-api-stubs/prison-register-api
     API_BASE_URL_PRISONER-SEARCH: http://hmpps-resettlement-passport-api-stubs/prisoner-search-api
     API_BASE_URL_CVL: http://hmpps-resettlement-passport-api-stubs/cvl-api
     API_BASE_URL_ARN: http://hmpps-resettlement-passport-api-stubs/arn-api

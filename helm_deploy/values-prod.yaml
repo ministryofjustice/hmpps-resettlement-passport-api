@@ -9,7 +9,6 @@ generic-service:
 
   env:
     API_BASE_URL_OAUTH: https://sign-in.hmpps.service.justice.gov.uk/auth
-    API_BASE_URL_PRISON-REGISTER: https://prison-register.hmpps.service.justice.gov.uk
     API_BASE_URL_PRISONER-SEARCH: https://prisoner-search.prison.service.justice.gov.uk
     API_BASE_URL_CVL: https://create-and-vary-a-licence-api.hmpps.service.justice.gov.uk
     API_BASE_URL_ARN: https://assess-risks-and-needs.hmpps.service.justice.gov.uk

@@ -9,7 +9,6 @@ api:
   base:
     url:
       oauth: http://localhost:9091
-      prison-register: http://localhost:9093
       prisoner-search: http://localhost:9094
       cvl: http://localhost:9095
       arn: http://localhost:9097

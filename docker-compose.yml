@@ -17,7 +17,6 @@ services:
       - SPRING_FLYWAY_URL=jdbc:postgresql://resettlement-passport-db:5432/resettlement-passport?sslmode=prefer
       - RESETTLEMENT_PASSPORT_API_CLIENT_ID=${RESETTLEMENT_PASSPORT_API_CLIENT_ID}
       - RESETTLEMENT_PASSPORT_API_CLIENT_SECRET=${RESETTLEMENT_PASSPORT_API_CLIENT_SECRET}
-      - API_BASE_URL_PRISON_REGISTER=http://wiremock:8080/prison-register-api
       - API_BASE_URL_PRISONER_SEARCH=http://wiremock:8080/prisoner-search-api
       - API_BASE_URL_CVL=http://wiremock:8080/cvl-api
       - API_BASE_URL_ARN=http://wiremock:8080/arn-api

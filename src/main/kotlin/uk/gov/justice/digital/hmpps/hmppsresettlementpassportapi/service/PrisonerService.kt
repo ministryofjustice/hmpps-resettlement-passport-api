@@ -1,9 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
-import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Slice
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
@@ -33,7 +30,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDate
 import java.time.Period
-import java.util.stream.Stream
 
 @Service
 class PrisonerService(
@@ -288,6 +284,12 @@ class PrisonerService(
     return prisonersList
   }
 
+  fun getPrisonerReleaseDateByNomsId(nomsId: String): LocalDate? {
+    val prisoner = prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)
+    setDisplayedReleaseDate(prisoner)
+    return prisoner.displayReleaseDate
+  }
+
   fun getPrisonerDetailsByNomsId(nomsId: String, includeProfileTags: Boolean, auth: String): Prisoner {
     val prisonerSearch = prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)
     setDisplayedReleaseDate(prisonerSearch)
@@ -296,7 +298,6 @@ class PrisonerService(
     val prisonerEntity = pathwayAndStatusService.getOrCreatePrisoner(
       nomsId,
       prisonerSearch.prisonId,
-      prisonerSearch.displayReleaseDate,
     )
 
     val prisonerImageDetailsList = prisonApiService.findPrisonerImageDetails(nomsId)
@@ -355,7 +356,6 @@ class PrisonerService(
       isInWatchlist = isInWatchlist,
       profile = profileTagList,
     )
-    log.info("Profile Tag List ${pr.profile}")
     return pr
   }
 
@@ -461,38 +461,6 @@ class PrisonerService(
   }
 
   fun getPrisonerImageData(nomsId: String, imageId: Int): ByteArray? = prisonApiService.getPrisonerImageData(nomsId, imageId)
-
-  @Transactional
-  fun getInProgressPrisonersByPrisonId(prisonId: String, earliestReleaseDate: LocalDate, latestReleaseDate: LocalDate): List<PrisonerEntity> {
-    val inProgressPrisoners = mutableListOf<PrisonerEntity>()
-    val inProgressOrDonePrisoners = pathwayStatusRepository.findPrisonersByPrisonIdWithAtLeastOnePathwayNotInNotStarted(prisonId, earliestReleaseDate, latestReleaseDate)
-    val donePrisoners = pathwayStatusRepository.findPrisonersByPrisonWithAllPathwaysDone(prisonId, earliestReleaseDate, latestReleaseDate)
-    inProgressPrisoners.addAll(inProgressOrDonePrisoners)
-    inProgressPrisoners.removeAll(donePrisoners)
-    return inProgressPrisoners
-  }
-
-  @Transactional
-  fun getNotStartedPrisonersByPrisonId(prisonId: String, earliestReleaseDate: LocalDate, latestReleaseDate: LocalDate) = pathwayStatusRepository.findPrisonersByPrisonIdWithAllPathwaysNotStarted(prisonId, earliestReleaseDate, latestReleaseDate)
-
-  @Transactional
-  fun getDonePrisonersByPrisonId(prisonId: String, earliestReleaseDate: LocalDate, latestReleaseDate: LocalDate) = pathwayStatusRepository.findPrisonersByPrisonWithAllPathwaysDone(prisonId, earliestReleaseDate, latestReleaseDate)
-
-  fun getSliceOfAllPrisoners(page: Pageable): Slice<PrisonerEntity> = prisonerRepository.findAll(page)
-
-  @Transactional
-  fun updateAndSaveNewReleaseDates(prisonerEntities: Stream<PrisonerEntity>) {
-    for (prisonerEntity in prisonerEntities) {
-      try {
-        val prisoner = prisonerSearchApiService.findPrisonerPersonalDetails(prisonerEntity.nomsId)
-        setDisplayedReleaseDate(prisoner)
-        prisonerEntity.releaseDate = prisoner.confirmedReleaseDate
-        prisonerRepository.save(prisonerEntity)
-      } catch (e: ResourceNotFoundException) {
-        log.warn("Cannot update release date for prisoner ${prisonerEntity.nomsId} as no results from Prisoner Search API - skipping until next cron run.")
-      }
-    }
-  }
 
   fun getPrisonerEntity(nomsId: String): PrisonerEntity = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Unable to find prisoner $nomsId in database.")
   private fun getProfileTags(nomsId: String): ProfileTagList {

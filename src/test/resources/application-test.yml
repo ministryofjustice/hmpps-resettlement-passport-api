@@ -26,11 +26,7 @@ api:
 
 schedule:
   expression:
-    custom-metrics: 0 0/15 * * * ?
-    release-day-metrics: 0 0 12 * * *
-    reconcile-release-dates: 0 0 2 * * *
     delete-expired-otp: 0 0 3 * * *
-    custom-popuser-metrics: 0 0 8 * * *
 
 spring:
   devtools:
@@ -53,10 +49,6 @@ spring:
 
 feature:
   incentives-reference-data-source-of-truth: true
-
-cron:
-  release-dates:
-    batch-size: 3
 
 interventions-api-integration:
   crsAppointmentsEnabled: true

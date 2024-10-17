@@ -1,5 +1,5 @@
-INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id, release_date)
-VALUES (1, 'A8731DY', '2024-04-02 09:11:34.721525 +00:00', 'U328968', 'MDI', '2024-06-17');
+INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id)
+VALUES (1, 'A8731DY', '2024-04-02 09:11:34.721525 +00:00', 'U328968', 'MDI');
 
 
 INSERT INTO resettlement_assessment (id, prisoner_id, pathway, assessment_status, assessment_type,

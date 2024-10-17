@@ -20,7 +20,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CaseNotesApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.stream.Stream
 
@@ -69,7 +68,7 @@ class CaseNotesServiceTest {
     val nomsId = "12345"
     val createdBy = 1
     val days = 100
-    val prisoner = PrisonerEntity(1, nomsId, LocalDateTime.now(), null, null, LocalDate.parse("2025-01-23"))
+    val prisoner = PrisonerEntity(1, nomsId, LocalDateTime.now(), null, null)
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisoner)
     Mockito.`when`(caseNotesApiService.getCaseNotesByNomsId(nomsId, days, caseNoteType, createdBy)).thenReturn(emptyList())

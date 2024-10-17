@@ -21,15 +21,11 @@ generic-service:
     API_BASE_URL_EDUCATION-EMPLOYMENT:  https://education-employment-api.hmpps.service.justice.gov.uk
     API_BASE_URL_INTERVENTIONS-SERVICE: https://hmpps-interventions-service.apps.live-1.cloud-platform.service.justice.gov.uk
     API_BASE_URL_POP-USER-SERVICE: https://person-on-probation-user-api.hmpps.service.justice.gov.uk
-    SCHEDULE_EXPRESSION_CUSTOM-METRICS: 0 0/15 * * * ?
-    SCHEDULE_EXPRESSION_RELEASE-DAY-METRICS: 0 0 4 * * *
-    SCHEDULE_EXPRESSION_RECONCILE-RELEASE-DATES: 0 0 2 * * *
     SCHEDULE_EXPRESSION_DELETE-EXPIRED-OTP: 0 0 3 * * *
     interventions-api-integration_crsAppointmentsEnabled: true
     API_BASE_URL_gotenberg-api: http://hmpps-resettlement-passport-api-gotenberg
     PSFR_BASE_URL: https://resettlement-passport-ui.hmpps.service.justice.gov.uk
     API_BASE_URL_CURIOUS_SERVICE: https://liveservices.sequation.com
-    SCHEDULE_EXPRESSION_CUSTOM-POPUSER-METRICS: 0 0/20 * * * ?
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts

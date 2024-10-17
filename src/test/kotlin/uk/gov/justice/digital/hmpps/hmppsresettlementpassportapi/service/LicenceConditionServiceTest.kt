@@ -14,7 +14,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.LicenceConditionsChangeAuditRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CvlApiService
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
@@ -41,7 +40,7 @@ class LicenceConditionServiceTest {
 
   @Test
   fun `test verifyCompareAndSave first time - returns compare status`() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
     whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
     whenever(licenceConditionsChangeAuditRepository.findFirstByPrisonerIdOrderByCreationDateDesc(1)).thenReturn(null)
 
@@ -52,7 +51,7 @@ class LicenceConditionServiceTest {
 
   @Test
   fun `test verifyCompareAndSave not first time but no data change - returns compare status`() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
     val licenceConditionChangeAuditEntity = LicenceConditionChangeAuditEntity(
       id = 1,
       prisonerId = prisonerEntity.id!!,
@@ -72,7 +71,7 @@ class LicenceConditionServiceTest {
 
   @Test
   fun `test verifyCompareAndSave not first time but data changed- returns compare status`() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
     val licenceConditionChangeAuditEntity =
       LicenceConditionChangeAuditEntity(
         id = 1,

@@ -56,7 +56,7 @@ class PoPUserOTPServiceTest {
 
   @Test
   fun `test get PoP User OTP - returns PoP User OTP `() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
     val popUserOTPEntity = PoPUserOTPEntity(
       null,
       prisonerEntity.id(),
@@ -73,7 +73,7 @@ class PoPUserOTPServiceTest {
 
   @Test
   fun `test get PoP User OTP - returns PoP User not found `() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
 
     whenever(popUserOTPRepository.findByPrisonerId(any())).thenReturn(null)
     val thrown = assertThrows<ResourceNotFoundException> { popUserOTPService.getOTPByPrisoner(prisonerEntity) }
@@ -84,7 +84,7 @@ class PoPUserOTPServiceTest {
   fun `test delete PoPUserOTP - hard delete`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
     val popUserOTPEntity = PoPUserOTPEntity(
       null,
       prisonerEntity.id(),
@@ -102,7 +102,7 @@ class PoPUserOTPServiceTest {
 
   @Test
   fun `test getAll PoP User OTP - returns PoP User OTP List`() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
     val popUserOTPEntity = PoPUserOTPEntity(
       null,
       prisonerEntity.id(),
@@ -128,7 +128,7 @@ class PoPUserOTPServiceTest {
     every {
       randomAlphaNumericString()
     } returns "1X3456"
-    val prisonerEntity = PrisonerEntity(1, "acb", fakeNow, "crn", "xyz", null)
+    val prisonerEntity = PrisonerEntity(1, "acb", fakeNow, "crn", "xyz")
     val popUserOTPEntity = PoPUserOTPEntity(
       null,
       prisonerEntity.id(),
@@ -180,7 +180,7 @@ class PoPUserOTPServiceTest {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val oneLoginUserData = OneLoginData("urn1", "123457", "email@test.com", LocalDate.parse("1982-10-24"))
-    val prisoner = PrisonerEntity(1, "acb", fakeNow, "crn", "xyz", null)
+    val prisoner = PrisonerEntity(1, "acb", fakeNow, "crn", "xyz")
     val popUserResponse = PoPUserResponse(1, "crn1", "NA", true, fakeNow, fakeNow, "GU1234", "urn1")
     val prisonerResponse = PrisonersSearch(
       prisonerNumber = "A123456",
@@ -260,7 +260,7 @@ class PoPUserOTPServiceTest {
 
   @Test
   fun `test getAll PoP Verified User  - returns PoP Verified User  List`() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
     val popUserOTPEntity = PoPUserOTPEntity(
       null,
       prisonerEntity.id(),

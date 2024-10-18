@@ -110,6 +110,70 @@ class CaseNotesServiceTest {
     Arguments.of(CaseNoteType.HEALTH, Pathway.HEALTH, emptyList<PathwayCaseNote>()),
   )
 
+  @ParameterizedTest
+  @MethodSource("test get case notes data - status update")
+  fun `test get case notes - status update`(caseNoteType: CaseNoteType, pathway: Pathway?, pair: Pair<List<List<Any>>?, List<PathwayCaseNote>>) {
+    val nomsId = "12345"
+    val createdBy = 1
+    val days = 100
+    val prisoner = PrisonerEntity(1, nomsId, LocalDateTime.now(), null, null, LocalDate.parse("2025-01-23"))
+    val (assessmentRepoReturn, expectedList) = pair
+
+    Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisoner)
+    Mockito.`when`(caseNotesApiService.getCaseNotesByNomsId(nomsId, days, caseNoteType, createdBy)).thenReturn(emptyList())
+    if (caseNoteType !== CaseNoteType.All) {
+      Mockito.`when`(resettlementAssessmentRepository.findCaseNotesFor(1, pathway!!)).thenReturn(assessmentRepoReturn)
+
+      Mockito.`when`(caseNotesApiService.getCaseNotesByNomsId(nomsId, days, CaseNoteType.All, createdBy))
+        .thenReturn(emptyList())
+    }
+
+    val caseNotesService = CaseNotesService(
+      caseNotesApiService,
+      mockkClass(DeliusContactService::class),
+      prisonerRepository,
+      mockkClass(ResettlementPassportDeliusApiService::class),
+      resettlementAssessmentRepository,
+    )
+    val size = expectedList.size
+
+    Assertions.assertEquals(
+      CaseNotesList(content = expectedList, pageSize = size, page = 0, sortName = "", totalElements = size, last = true),
+      caseNotesService.getCaseNotesByNomsId(nomsId, 0, 1, "", days, caseNoteType, createdBy),
+    )
+  }
+
+  private fun `test get case notes data - status update`() = Stream.of(
+    Arguments.of(CaseNoteType.All, null, Pair(null, emptyList<PathwayCaseNote>())),
+    Arguments.of(CaseNoteType.HEALTH, Pathway.HEALTH, getCaseNotePair(CaseNotePathway.HEALTH, "Resettlement status set to: SUBMITTED")),
+    Arguments.of(CaseNoteType.ACCOMMODATION, Pathway.ACCOMMODATION, getCaseNotePair(CaseNotePathway.ACCOMMODATION, "Resettlement status set to: SUBMITTED")),
+    Arguments.of(CaseNoteType.FINANCE_AND_ID, Pathway.FINANCE_AND_ID, getCaseNotePair(CaseNotePathway.FINANCE_AND_ID, "Resettlement status set to: SUBMITTED")),
+    Arguments.of(CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY, Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, getCaseNotePair(CaseNotePathway.CHILDREN_FAMILIES_AND_COMMUNITY, "Resettlement status set to: SUBMITTED")),
+    Arguments.of(CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, getCaseNotePair(CaseNotePathway.ATTITUDES_THINKING_AND_BEHAVIOUR, "Resettlement status set to: SUBMITTED")),
+    Arguments.of(CaseNoteType.DRUGS_AND_ALCOHOL, Pathway.DRUGS_AND_ALCOHOL, getCaseNotePair(CaseNotePathway.DRUGS_AND_ALCOHOL, "Resettlement status set to: SUBMITTED")),
+    Arguments.of(CaseNoteType.EDUCATION_SKILLS_AND_WORK, Pathway.EDUCATION_SKILLS_AND_WORK, getCaseNotePair(CaseNotePathway.EDUCATION_SKILLS_AND_WORK, "Some actual case note text")),
+  )
+
+  private fun getCaseNotePair(pathway: CaseNotePathway, caseNoteText: String): Pair<List<List<Any>>, List<PathwayCaseNote>> {
+    val id = "ResettlementAssessmentCaseNote1"
+    val date = LocalDateTime.parse("2023-09-01T12:13:12")
+    val createdBy = "User1"
+
+    return Pair(
+      listOf(listOf(id, Pathway.valueOf(pathway.name), date, date, createdBy, caseNoteText)),
+      mutableListOf(
+        PathwayCaseNote(
+          caseNoteId = id,
+          pathway = pathway,
+          creationDateTime = date,
+          occurenceDateTime = date,
+          createdBy = createdBy,
+          text = caseNoteText,
+        ),
+      ),
+    )
+  }
+
   private fun generateProfileResetCaseNote() =
     mutableListOf(
       PathwayCaseNote(

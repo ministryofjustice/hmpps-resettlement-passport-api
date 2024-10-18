@@ -273,4 +273,21 @@ class CaseNotesIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .json(expectedOutput)
   }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-15.sql")
+  fun `Get case notes for Accommodation - status update`() {
+    val expectedOutput = readFile("testdata/expectation/case-notes-with-accom-status.json")
+    caseNotesApiMockServer.stubGetCaseNotesSpecificPathway("G4274GN", 500, 0, "RESET", "ACCOM", 200)
+    caseNotesApiMockServer.stubGet("/case-notes/G4274GN?page=0&size=500&type=RESET&subType=BCST", 200, "testdata/case-notes-api/case-notes-bcst.json")
+
+    webTestClient.get()
+      .uri("/resettlement-passport/case-notes/G4274GN?page=0&size=30&sort=occurenceDateTime,DESC&days=0&pathwayType=ACCOMMODATION")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
+  }
 }

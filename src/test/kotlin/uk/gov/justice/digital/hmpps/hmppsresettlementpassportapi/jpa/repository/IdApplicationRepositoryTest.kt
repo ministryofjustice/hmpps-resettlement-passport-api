@@ -9,7 +9,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.IdAp
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.IdTypeEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import java.math.BigDecimal
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 class IdApplicationRepositoryTest : RepositoryTestBase() {
@@ -34,7 +33,6 @@ class IdApplicationRepositoryTest : RepositoryTestBase() {
         creationDate = LocalDateTime.now(),
         crn = "crn1",
         prisonId = "xyz1",
-        releaseDate = LocalDate.parse("2025-01-23"),
       ),
     )
 
@@ -67,7 +65,6 @@ class IdApplicationRepositoryTest : RepositoryTestBase() {
         LocalDateTime.now(),
         "crn1",
         "xyz1",
-        LocalDate.parse("2025-01-23"),
       ),
     )
 

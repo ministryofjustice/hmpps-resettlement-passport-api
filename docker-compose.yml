@@ -17,7 +17,6 @@ services:
       - SPRING_FLYWAY_URL=jdbc:postgresql://resettlement-passport-db:5432/resettlement-passport?sslmode=prefer
       - RESETTLEMENT_PASSPORT_API_CLIENT_ID=${RESETTLEMENT_PASSPORT_API_CLIENT_ID}
       - RESETTLEMENT_PASSPORT_API_CLIENT_SECRET=${RESETTLEMENT_PASSPORT_API_CLIENT_SECRET}
-      - API_BASE_URL_PRISON_REGISTER=http://wiremock:8080/prison-register-api
       - API_BASE_URL_PRISONER_SEARCH=http://wiremock:8080/prisoner-search-api
       - API_BASE_URL_CVL=http://wiremock:8080/cvl-api
       - API_BASE_URL_ARN=http://wiremock:8080/arn-api
@@ -29,9 +28,6 @@ services:
       - API_BASE_URL_CASE-NOTES=https://dev.offender-case-notes.service.justice.gov.uk
       - API_BASE_URL_KEY-WORKER=http://wiremock:8080/key-worker-api
       - API_BASE_URL_ALLOCATION-MANAGER=http://wiremock:8080/allocation-manager-api
-      - SCHEDULE_EXPRESSION_CUSTOM-METRICS=0 0/15 * * * ?
-      - SCHEDULE_EXPRESSION_RELEASED-DAY-METRICS=0 0 2 * * *
-      - SCHEDULE_EXPRESSION_RECONCILE-RELEASE-DATES=0 0 2 * * *
       - SCHEDULE_EXPRESSION_DELETE-EXPIRED-OTP=0 0 3 * * *
       - HMPPS_SQS_LOCALSTACK-URL=http://localstack:4566
       - HMPPS_S3_LOCALSTACK-URL=http://localstack:4566

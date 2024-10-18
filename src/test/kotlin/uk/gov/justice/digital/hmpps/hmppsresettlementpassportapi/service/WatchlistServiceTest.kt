@@ -11,7 +11,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.WatchlistEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.WatchlistRepository
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
@@ -34,7 +33,7 @@ class WatchlistServiceTest {
   fun `isPrisonerInWatchlist returns true`() {
     val nomisId = "A8731DY"
     val staffUsername = "Test User"
-    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.now(), "crn", "xyz", LocalDate.now())
+    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.now(), "crn", "xyz")
     Mockito.`when`(watchlistRepository.findByPrisonerIdAndStaffUsername(prisonerEntity.id(), staffUsername)).thenReturn(
       WatchlistEntity(
         id = 55,
@@ -50,7 +49,7 @@ class WatchlistServiceTest {
   fun `isPrisonerInWatchlist returns false`() {
     val nomisId = "A8731DY"
     val staffUsername = "Test User"
-    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.now(), "crn", "xyz", LocalDate.now())
+    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.now(), "crn", "xyz")
     Mockito.`when`(watchlistRepository.findByPrisonerIdAndStaffUsername(prisonerEntity.id(), staffUsername)).thenReturn(null)
     Assertions.assertFalse(watchlistService.isPrisonerInWatchList(staffUsername, prisonerEntity))
   }

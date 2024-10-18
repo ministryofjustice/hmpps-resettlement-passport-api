@@ -33,7 +33,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentSimpleQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClaimFromJWTToken
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.stream.Stream
 
@@ -1143,7 +1142,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
     val nomsId = "abc"
     val pathway = Pathway.ACCOMMODATION
 
-    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23"))
+    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC")
 
     Mockito.lenient().`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
 

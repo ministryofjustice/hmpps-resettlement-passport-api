@@ -22,7 +22,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
@@ -63,7 +62,7 @@ class PathwayAndStatusServiceTest {
     val prisonId = "xyz"
     val pathway = Pathway.ACCOMMODATION
     val newStatus = Status.IN_PROGRESS
-    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, crn, prisonId, LocalDate.parse("2025-01-23"))
+    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, crn, prisonId)
     val oldStatus = Status.NOT_STARTED
     val pathwayStatusEntity = PathwayStatusEntity(1, prisonerEntity.id(), pathway, oldStatus, testDate)
 
@@ -95,7 +94,7 @@ class PathwayAndStatusServiceTest {
     val prisonId = "xyz1"
     val pathway = Pathway.ACCOMMODATION
     val newStatus = Status.IN_PROGRESS
-    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, crn, prisonId, LocalDate.parse("2025-01-23"))
+    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, crn, prisonId)
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
     Mockito.`when`(pathwayStatusRepository.findByPathwayAndPrisonerId(pathway, prisonerEntity.id())).thenReturn(null)

@@ -7,8 +7,6 @@ api:
     url:
       oauth: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
       #oauth: http://localhost:9090/auth
-      prison-register: http://localhost:9193/prison-register-api
-      #prison-register: https://prison-register-dev.hmpps.service.justice.gov.uk
       prisoner-search: http://localhost:9193/prisoner-search-api
       #prisoner-search: https://prisoner-search-dev.prison.service.justice.gov.uk
       cvl: http://localhost:9193/cvl-api
@@ -36,11 +34,7 @@ api:
       #curious-service: https://testservices.sequation.net
 schedule:
   expression:
-    custom-metrics: 0 0/15 * * * ?
-    release-day-metrics: 0 0 12 * * *
-    reconcile-release-dates: 0 0 2 * * *
     delete-expired-otp: 0 0 3 * * *
-    custom-popuser-metrics: 0 0 8 * * *
 
 management.endpoint:
   health.cache.time-to-live: 0

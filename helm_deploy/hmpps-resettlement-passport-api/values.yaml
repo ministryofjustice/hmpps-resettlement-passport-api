@@ -51,9 +51,6 @@ generic-service:
     SPRING_PROFILES_ACTIVE: "logstash,offender-events"
     APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=$(APPINSIGHTS_INSTRUMENTATIONKEY);IngestionEndpoint=https://northeurope-0.in.applicationinsights.azure.com/;LiveEndpoint=https://northeurope.livediagnostics.monitor.azure.com/"
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.json
-    SCHEDULE_EXPRESSION_CUSTOM-METRICS: 0 0/15 * * * ?
-    SCHEDULE_EXPRESSION_RELEASE-DAY-METRICS: 0 0 4 * * *
-    SCHEDULE_EXPRESSION_RECONCILE-RELEASE-DATES: 0 0 2 * * *
     SCHEDULE_EXPRESSION_DELETE-EXPIRED-OTP: 0 0 3 * * *
     CLAMAV_HOSTNAME: hmpps-resettlement-passport-api-clamav
     CLAMAV_PORT: 3310

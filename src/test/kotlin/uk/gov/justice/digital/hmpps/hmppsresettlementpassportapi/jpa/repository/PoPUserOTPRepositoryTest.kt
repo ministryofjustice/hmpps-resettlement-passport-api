@@ -26,7 +26,7 @@ class PoPUserOTPRepositoryTest : RepositoryTestBase() {
 
   @Test
   fun `test get saved PoP User OTP `() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23"))
+    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1")
     prisonerRepository.save(prisoner)
 
     val popUserOTPEntity = PoPUserOTPEntity(
@@ -46,7 +46,7 @@ class PoPUserOTPRepositoryTest : RepositoryTestBase() {
 
   @Test
   fun `test create PoP User OTP `() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23"))
+    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1")
     prisonerRepository.save(prisoner)
 
     val popUserOTPEntity = PoPUserOTPEntity(

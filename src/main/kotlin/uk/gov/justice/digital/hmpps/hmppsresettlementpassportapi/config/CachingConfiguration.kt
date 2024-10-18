@@ -29,7 +29,6 @@ class CachingConfiguration(private val buildProperties: BuildProperties) {
     .withCacheConfiguration("arn-api-get-rosh-data-by-crn", getCacheConfiguration(Duration.ofHours(4)))
     .withCacheConfiguration("education-employment-api-get-readiness-profile-by-noms-id", getCacheConfiguration(Duration.ofHours(2)))
     .withCacheConfiguration("key-worker-api-get-key-worker-name", getCacheConfiguration(Duration.ofHours(2)))
-    .withCacheConfiguration("prison-register-api-get-prisons", getCacheConfiguration(Duration.ofDays(7)))
     .withCacheConfiguration("prison-api-get-prisoner-image-data", getCacheConfiguration(Duration.ofMinutes(30)))
     .withCacheConfiguration("prison-api-find-prisoner-image-details", getCacheConfiguration(Duration.ofMinutes(30)))
     .withCacheConfiguration("resettlement-passport-delius-api-get-crn", getCacheConfiguration(Duration.ofMinutes(2)))

@@ -1,12 +1,12 @@
 INSERT INTO prisoner
-(id, noms_id, creation_date, crn, prison_id, release_date)
-VALUES(1, '123', '2023-08-16 12:21:38.709', null, 'xyz', '2030-09-12');
+(id, noms_id, creation_date, crn, prison_id)
+VALUES(1, '123', '2023-08-16 12:21:38.709', null, 'xyz');
 INSERT INTO prisoner
-(id, noms_id, creation_date, crn, prison_id, release_date)
-VALUES(2, '456', '2023-08-17 12:25:45.306', null, 'xyz', '2032-01-01');
+(id, noms_id, creation_date, crn, prison_id)
+VALUES(2, '456', '2023-08-17 12:25:45.306', null, 'xyz');
 INSERT INTO prisoner
-(id, noms_id, creation_date, crn, prison_id, release_date)
-VALUES(3, '789', '2023-08-17 12:26:03.441', null, 'xyz', '2045-06-30');
+(id, noms_id, creation_date, crn, prison_id)
+VALUES(3, '789', '2023-08-17 12:26:03.441', null, 'xyz');
 
 INSERT INTO pathway_status
 (id, prisoner_id, pathway, status, updated_date)

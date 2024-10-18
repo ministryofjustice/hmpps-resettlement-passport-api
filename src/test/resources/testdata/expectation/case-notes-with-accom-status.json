@@ -14,7 +14,7 @@
       "creationDateTime": "2024-07-31T19:02:45",
       "occurenceDateTime": "2024-07-31T19:02:45",
       "createdBy": "A User",
-      "text": "Resettlement status set to: SUBMITTED"
+      "text": "Resettlement status set to: SUPPORT_DECLINED"
     },
     {
       "caseNoteId": "ResettlementAssessmentCaseNote3",
@@ -22,7 +22,7 @@
       "creationDateTime": "2024-08-01T19:02:45",
       "occurenceDateTime": "2024-08-01T19:02:45",
       "createdBy": "A User",
-      "text": "Resettlement status set to: SUBMITTED"
+      "text": "Resettlement status set to: SUPPORT_DECLINED"
     },
     {
       "caseNoteId": "47028563",

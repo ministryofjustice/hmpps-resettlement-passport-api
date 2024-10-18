@@ -97,7 +97,7 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
       creationDate, 
       submissionDate, 
       createdBy, 
-      coalesce(caseNoteText, 'Resettlement status set to: SUBMITTED')  
+      coalesce(caseNoteText, 'Resettlement status set to: ' || statusChangedTo)  
       from ResettlementAssessmentEntity
       where prisonerId = :prisonerId
       and pathway = :pathway

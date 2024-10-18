@@ -17,7 +17,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.rea
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CuriousApiService
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
@@ -41,7 +40,7 @@ class LearnersEducationServiceTest {
 
   @Test
   fun `test get Course happy path full json`() {
-    val prisonerEntity = PrisonerEntity(1, "A8339DY", testDate, "crn", "xyz", LocalDate.parse("2025-01-23"))
+    val prisonerEntity = PrisonerEntity(1, "A8339DY", testDate, "crn", "xyz")
     val prisonerId = "A8339DY"
     val expectedCoursename = "Dummy_Automated_320"
 

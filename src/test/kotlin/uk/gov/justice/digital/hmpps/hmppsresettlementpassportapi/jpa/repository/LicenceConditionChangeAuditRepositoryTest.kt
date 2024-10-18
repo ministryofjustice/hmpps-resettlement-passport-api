@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceConditions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.LicenceConditionChangeAuditEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 class LicenceConditionChangeAuditRepositoryTest : RepositoryTestBase() {
@@ -28,7 +27,7 @@ class LicenceConditionChangeAuditRepositoryTest : RepositoryTestBase() {
   @Test
   fun `test persist new licence condition change audit`() {
     val confirmationDate = LocalDateTime.of(2024, 1, 1, 0, 0, 0)
-    val prisoner = prisonerRepository.save(PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23")))
+    val prisoner = prisonerRepository.save(PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1"))
 
     val licenceConditionChangeAuditEntity = LicenceConditionChangeAuditEntity(prisonerId = prisoner.id!!, licenceConditions = LicenceConditions(1), confirmationDate = confirmationDate)
 

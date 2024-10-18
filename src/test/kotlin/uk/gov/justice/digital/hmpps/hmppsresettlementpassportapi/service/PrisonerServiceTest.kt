@@ -40,7 +40,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ProfileTagsRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonApiService
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDate
@@ -79,9 +78,6 @@ class PrisonerServiceTest {
   private lateinit var watchlistService: WatchlistService
 
   @Mock
-  private lateinit var prisonRegisterApiService: PrisonRegisterApiService
-
-  @Mock
   private lateinit var profileTagsRepository: ProfileTagsRepository
 
   @BeforeEach
@@ -96,7 +92,6 @@ class PrisonerServiceTest {
       watchlistService,
       pathwayAndStatusService,
       deliusApiService,
-      prisonRegisterApiService,
     )
     mockkStatic(::getClaimFromJWTToken)
     every { getClaimFromJWTToken("123", "sub") } returns "ABC11D"
@@ -117,12 +112,11 @@ class PrisonerServiceTest {
       prisonId = "MDI",
       id = 1L,
       crn = null,
-      releaseDate = null,
     )
 
     val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-1.json")
     whenever(prisonerSearchApiService.findPrisonerPersonalDetails(expectedPrisonerId)).thenReturn(mockedJsonResponse.content!![0])
-    whenever(pathwayAndStatusService.getOrCreatePrisoner(expectedPrisonerId, "MDI", LocalDate.parse("2099-09-12"), null)).thenReturn(mockEntity)
+    whenever(pathwayAndStatusService.getOrCreatePrisoner(expectedPrisonerId, "MDI")).thenReturn(mockEntity)
     whenever(pathwayAndStatusService.findAllPathwayStatusForPrisoner(eq(mockEntity))).thenReturn(
       Pathway.entries.mapIndexed { index, pathway ->
         PathwayStatusEntity(id = index.toLong(), prisonerId = 1, pathway = pathway, status = Status.NOT_STARTED)
@@ -1931,5 +1925,21 @@ class PrisonerServiceTest {
       cellLocation = null,
       displayReleaseDate = if (it != null) LocalDate.parse(it) else null,
     )
+  }
+
+  @Test
+  fun `test getPrisonerReleaseDateByNomsId`() {
+    val nomsId = "123"
+    whenever(prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)).thenReturn(
+      PrisonersSearch(
+        prisonerNumber = "A123456",
+        firstName = "SIMON",
+        lastName = "BAMFORD",
+        prisonId = "MDI",
+        prisonName = "Midlands",
+        confirmedReleaseDate = LocalDate.parse("2024-01-09"),
+      ),
+    )
+    Assertions.assertEquals(LocalDate.parse("2024-01-09"), prisonerService.getPrisonerReleaseDateByNomsId(nomsId))
   }
 }

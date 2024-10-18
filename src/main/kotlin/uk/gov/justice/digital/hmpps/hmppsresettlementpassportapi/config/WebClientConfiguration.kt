@@ -23,7 +23,6 @@ import java.time.Duration
 @Configuration
 @EnableScheduling
 class WebClientConfiguration(
-  @Value("\${api.base.url.prison-register}") private val prisonRegisterRootUri: String,
   @Value("\${api.base.url.prisoner-search}") private val prisonerSearchRootUri: String,
   @Value("\${api.base.url.cvl}") private val cvlRootUri: String,
   @Value("\${api.base.url.arn}") private val arnRootUri: String,
@@ -42,11 +41,6 @@ class WebClientConfiguration(
   private val observationRegistry: ObservationRegistry,
 
 ) {
-
-  @Bean
-  fun prisonRegisterWebClientClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, prisonRegisterRootUri)
-  }
 
   @Bean
   fun authorizedClientManager(

@@ -14,7 +14,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Path
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.DeliusContactRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 class PathwayIntegrationTest : IntegrationTestBase() {
@@ -84,7 +83,6 @@ class PathwayIntegrationTest : IntegrationTestBase() {
       LocalDateTime.parse("2023-08-16T12:21:38.709"),
       "123",
       "MDI",
-      LocalDate.parse("2030-09-12"),
     )
 
     val expectedPathwayStatus =

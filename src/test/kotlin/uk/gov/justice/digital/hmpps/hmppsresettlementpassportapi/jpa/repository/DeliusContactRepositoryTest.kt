@@ -9,7 +9,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Cate
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ContactType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DeliusContactEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 class DeliusContactRepositoryTest : RepositoryTestBase() {
@@ -28,7 +27,7 @@ class DeliusContactRepositoryTest : RepositoryTestBase() {
 
   @Test
   fun `test persist new delius contact - case note`() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.parse("2022-12-20T10:13:03"), "crn1", "xyz1", LocalDate.parse("2025-01-23"))
+    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.parse("2022-12-20T10:13:03"), "crn1", "xyz1")
     prisonerRepository.save(prisoner)
 
     val deliusContact = DeliusContactEntity(
@@ -49,7 +48,7 @@ class DeliusContactRepositoryTest : RepositoryTestBase() {
 
   @Test
   fun `test persist new delius contact - appointments`() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.parse("2022-12-20T10:13:03"), "crn1", "xyz1", LocalDate.parse("2025-01-23"))
+    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.parse("2022-12-20T10:13:03"), "crn1", "xyz1")
     prisonerRepository.save(prisoner)
 
     val deliusContact = DeliusContactEntity(

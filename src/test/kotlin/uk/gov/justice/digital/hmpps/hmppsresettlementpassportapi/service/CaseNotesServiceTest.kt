@@ -115,7 +115,7 @@ class CaseNotesServiceTest {
     val nomsId = "12345"
     val createdBy = 1
     val days = 100
-    val prisoner = PrisonerEntity(1, nomsId, LocalDateTime.now(), null, null, LocalDate.parse("2025-01-23"))
+    val prisoner = PrisonerEntity(1, nomsId, LocalDateTime.now(), null, null)
     val (assessmentRepoReturn, expectedList) = pair
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisoner)

@@ -1926,4 +1926,20 @@ class PrisonerServiceTest {
       displayReleaseDate = if (it != null) LocalDate.parse(it) else null,
     )
   }
+
+  @Test
+  fun `test getPrisonerReleaseDateByNomsId`() {
+    val nomsId = "123"
+    whenever(prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)).thenReturn(
+      PrisonersSearch(
+        prisonerNumber = "A123456",
+        firstName = "SIMON",
+        lastName = "BAMFORD",
+        prisonId = "MDI",
+        prisonName = "Midlands",
+        confirmedReleaseDate = LocalDate.parse("2024-01-09"),
+      ),
+    )
+    Assertions.assertEquals(LocalDate.parse("2024-01-09"), prisonerService.getPrisonerReleaseDateByNomsId(nomsId))
+  }
 }

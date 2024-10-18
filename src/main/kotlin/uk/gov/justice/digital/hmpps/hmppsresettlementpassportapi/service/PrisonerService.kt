@@ -7,7 +7,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWi
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prison
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoner
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerPersonal
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners

@@ -149,10 +149,6 @@ class ResettlementAssessmentService(
         throw RuntimeException("Can't submit assessment with id ${assessment.id} as statusChangedTo is null")
       }
 
-      if (assessment.caseNoteText == null) {
-        throw RuntimeException("Can't submit assessment with id ${assessment.id} as caseNoteText is null")
-      }
-
       // Update pathway status
       pathwayAndStatusService.updatePathwayStatus(
         nomsId = nomsId,

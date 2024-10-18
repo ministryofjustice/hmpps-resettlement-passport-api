@@ -14,7 +14,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 private val logger = KotlinLogging.logger {}
@@ -50,12 +49,12 @@ class PathwayAndStatusService(
     pathwayStatusRepository.save(pathwayStatus)
   }
 
-  fun getOrCreatePrisoner(nomsId: String, prisonId: String?, releaseDate: LocalDate? = null, crn: String? = null): PrisonerEntity {
+  fun getOrCreatePrisoner(nomsId: String, prisonId: String?, crn: String? = null): PrisonerEntity {
     // Seed the Prisoner data into the DB
     val existingPrisonerEntity = prisonerRepository.findByNomsId(nomsId)
     if (existingPrisonerEntity == null) {
       val resolvedCrn = crn ?: resettlementPassportDeliusApiService.getCrn(nomsId)
-      return createPrisoner(nomsId, resolvedCrn, prisonId, releaseDate)
+      return createPrisoner(nomsId, resolvedCrn, prisonId)
     } else if (existingPrisonerEntity.crn == null) {
       // If the CRN failed to be added last time, try again
       val resolvedCrn = crn ?: resettlementPassportDeliusApiService.getCrn(nomsId)
@@ -71,7 +70,6 @@ class PathwayAndStatusService(
     nomsId: String,
     resolvedCrn: String?,
     prisonId: String?,
-    releaseDate: LocalDate?,
   ): PrisonerEntity = try {
     transactionOperations.execute {
       val newPrisonerEntity = prisonerRepository.save(
@@ -79,7 +77,6 @@ class PathwayAndStatusService(
           nomsId = nomsId,
           crn = resolvedCrn,
           prisonId = prisonId,
-          releaseDate = releaseDate,
         ),
       )
       Pathway.entries.forEach {

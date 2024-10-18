@@ -42,18 +42,21 @@ class AppointmentsServiceTest {
   @Mock
   private lateinit var interventionsApiService: InterventionsApiService
 
+  @Mock
+  private lateinit var prisonerService: PrisonerService
+
   private val crsAppointmentIntegrationEnabled: Boolean = true
 
   private val nomisId = "ABC123"
 
   @BeforeEach
   fun beforeEach() {
-    appointmentsService = AppointmentsService(prisonerRepository, rpDeliusApiService, interventionsApiService, crsAppointmentIntegrationEnabled)
+    appointmentsService = AppointmentsService(prisonerRepository, rpDeliusApiService, interventionsApiService, crsAppointmentIntegrationEnabled, prisonerService)
   }
 
   @Test
   fun `getAppointmentsByNomsId gets all appointments including preRelease`() {
-    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz", LocalDate.MIN)
+    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz")
     Mockito.`when`(prisonerRepository.findByNomsId(nomisId)).thenReturn(prisonerEntity)
     Mockito.`when`(rpDeliusApiService.fetchAppointments(eq(nomisId), any(), any(), any())).thenReturn(listOf(createTestDeliusAppointment()))
     Mockito.`when`(interventionsApiService.fetchCRSAppointments("crn")).thenReturn(createEmptyCRSAppointments())
@@ -63,8 +66,9 @@ class AppointmentsServiceTest {
 
   @Test
   fun `getAppointmentsByNomsId gets all appointments excluding preRelease`() {
-    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz", LocalDate.MAX)
+    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz")
     Mockito.`when`(prisonerRepository.findByNomsId(nomisId)).thenReturn(prisonerEntity)
+    Mockito.`when`(prisonerService.getPrisonerReleaseDateByNomsId(nomisId)).thenReturn(LocalDate.MAX)
     Mockito.`when`(rpDeliusApiService.fetchAppointments(eq(nomisId), any(), any(), any())).thenReturn(listOf(createTestDeliusAppointment()))
     Mockito.`when`(interventionsApiService.fetchCRSAppointments("crn")).thenReturn(createEmptyCRSAppointments())
     val appointments = appointmentsService.getAppointmentsByNomsId(nomisId, LocalDate.MIN, LocalDate.MAX, false)
@@ -73,7 +77,7 @@ class AppointmentsServiceTest {
 
   @Test
   fun `getAppointmentsByNomsId gets all appointments handles null releaseDate excluding preRelease`() {
-    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz", null)
+    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz")
     Mockito.`when`(prisonerRepository.findByNomsId(nomisId)).thenReturn(prisonerEntity)
     Mockito.`when`(rpDeliusApiService.fetchAppointments(eq(nomisId), any(), any(), any())).thenReturn(listOf(createTestDeliusAppointment()))
     Mockito.`when`(interventionsApiService.fetchCRSAppointments("crn")).thenReturn(createEmptyCRSAppointments())
@@ -86,7 +90,7 @@ class AppointmentsServiceTest {
     val appointment1 = createTestDeliusAppointment("2024-05-02T12:00:00Z")
     val appointment2 = createTestDeliusAppointment("2024-05-01T10:00:00Z")
     val appointment3 = createTestDeliusAppointment("2024-05-01T15:00:00Z")
-    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz", LocalDate.MIN)
+    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz")
     Mockito.`when`(prisonerRepository.findByNomsId(nomisId)).thenReturn(prisonerEntity)
     Mockito.`when`(rpDeliusApiService.fetchAppointments(eq(nomisId), any(), any(), any())).thenReturn(listOf(appointment1, appointment2, appointment3))
     Mockito.`when`(interventionsApiService.fetchCRSAppointments("crn")).thenReturn(createEmptyCRSAppointments())
@@ -105,8 +109,9 @@ class AppointmentsServiceTest {
     val appointmentAfterRelease = createTestDeliusAppointment("2024-05-03T12:00:00Z")
     val appointmentBeforeRelease1 = createTestDeliusAppointment("2024-05-01T10:00:00Z")
     val appointmentBeforeRelease2 = createTestDeliusAppointment("2024-05-01T15:00:00Z")
-    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz", LocalDate.of(2024, 5, 2))
+    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz")
     Mockito.`when`(prisonerRepository.findByNomsId(nomisId)).thenReturn(prisonerEntity)
+    Mockito.`when`(prisonerService.getPrisonerReleaseDateByNomsId(nomisId)).thenReturn(LocalDate.of(2024, 5, 2))
     Mockito.`when`(rpDeliusApiService.fetchAppointments(eq(nomisId), any(), any(), any())).thenReturn(listOf(appointmentAfterRelease, appointmentBeforeRelease1, appointmentBeforeRelease2))
     Mockito.`when`(interventionsApiService.fetchCRSAppointments("crn")).thenReturn(createEmptyCRSAppointments())
     val appointments = appointmentsService.getAppointmentsByNomsId(nomisId, LocalDate.MIN, LocalDate.MAX, false)
@@ -119,8 +124,9 @@ class AppointmentsServiceTest {
   fun `getAppointmentsByNomsId filter appointments same day as release date`() {
     val appointmentSameDayAsRelease = createTestDeliusAppointment("2024-05-02T00:00:00Z")
     val appointmentBeforeRelease1 = createTestDeliusAppointment("2024-05-01T10:00:00Z")
-    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz", LocalDate.of(2024, 5, 2))
+    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz")
     Mockito.`when`(prisonerRepository.findByNomsId(nomisId)).thenReturn(prisonerEntity)
+    Mockito.`when`(prisonerService.getPrisonerReleaseDateByNomsId(nomisId)).thenReturn(LocalDate.of(2024, 5, 2))
     Mockito.`when`(rpDeliusApiService.fetchAppointments(eq(nomisId), any(), any(), any())).thenReturn(listOf(appointmentSameDayAsRelease, appointmentBeforeRelease1))
     Mockito.`when`(interventionsApiService.fetchCRSAppointments("crn")).thenReturn(createEmptyCRSAppointments())
     val appointments = appointmentsService.getAppointmentsByNomsId(nomisId, LocalDate.MIN, LocalDate.MAX, false)
@@ -131,7 +137,7 @@ class AppointmentsServiceTest {
 
   @Test
   fun `getAppointmentsByNomsId with CRS appointments from intervention service `() {
-    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz", LocalDate.MIN)
+    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz")
     Mockito.`when`(prisonerRepository.findByNomsId(nomisId)).thenReturn(prisonerEntity)
     Mockito.`when`(rpDeliusApiService.fetchAppointments(eq(nomisId), any(), any(), any())).thenReturn(listOf())
     Mockito.`when`(interventionsApiService.fetchCRSAppointments("crn")).thenReturn(createCRSAppointments())
@@ -142,7 +148,7 @@ class AppointmentsServiceTest {
 
   @Test
   fun `getAppointmentsByNomsId with CRS appointments from intervention service in date range `() {
-    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz", LocalDate.MIN)
+    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.MIN, "crn", "xyz")
     Mockito.`when`(prisonerRepository.findByNomsId(nomisId)).thenReturn(prisonerEntity)
     Mockito.`when`(rpDeliusApiService.fetchAppointments(eq(nomisId), any(), any(), any())).thenReturn(listOf())
     Mockito.`when`(interventionsApiService.fetchCRSAppointments("crn")).thenReturn(createCRSAppointments())

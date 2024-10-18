@@ -37,6 +37,7 @@ class AppointmentsService(
   private val rpDeliusApiService: ResettlementPassportDeliusApiService,
   private val interventionsApiService: InterventionsApiService,
   @Value("\${interventions-api-integration.crsAppointmentsEnabled}") private val crsAppointmentIntegrationEnabled: Boolean,
+  private val prisonerService: PrisonerService,
 ) {
 
   companion object {
@@ -75,9 +76,9 @@ class AppointmentsService(
 
     if (crsAppointmentIntegrationEnabled) {
       crsAppointments = interventionsApiService.fetchCRSAppointments(crn)
-      deliusAppointments = deliusAppointments.filter { it -> !it.description.contains("Appointment with CRS") }
+      deliusAppointments = deliusAppointments.filter { !it.description.contains("Appointment with CRS") }
     } else {
-      crsAppointments = CRSAppointmentsDTO(crn, listOf<ReferralAppointment>())
+      crsAppointments = CRSAppointmentsDTO(crn, listOf())
     }
     val appointments = mapAppointmentsFromDeliusAndInterventionsApi(deliusAppointments, crsAppointments, startDate, endDate)
 
@@ -85,8 +86,9 @@ class AppointmentsService(
   }
 
   private fun filterPreReleaseAppointments(appointments: List<Appointment>, prisonerEntity: PrisonerEntity, includePreRelease: Boolean): List<Appointment> {
-    return if (!includePreRelease && prisonerEntity.releaseDate != null) {
-      appointments.filter { prisonerEntity.releaseDate!! <= it.date }
+    val releaseDate = prisonerService.getPrisonerReleaseDateByNomsId(prisonerEntity.nomsId)
+    return if (!includePreRelease && releaseDate != null) {
+      appointments.filter { releaseDate <= it.date }
     } else {
       appointments
     }

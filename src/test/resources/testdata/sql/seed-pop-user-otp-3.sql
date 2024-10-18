@@ -3,16 +3,16 @@ DELETE from person_on_probation_user_otp;
 DELETE from prisoner;
 
 INSERT INTO prisoner
-(id, noms_id, creation_date, crn, prison_id, release_date)
-VALUES(1, 'A8229DY', '2023-05-17T12:21:44','CRN1', 'MDI', '2010-04-03');
+(id, noms_id, creation_date, crn, prison_id)
+VALUES(1, 'A8229DY', '2023-05-17T12:21:44','CRN1', 'MDI');
 
 INSERT INTO prisoner
-(id, noms_id, creation_date, crn, prison_id, release_date)
-VALUES(2, 'A8314DY', '2023-05-17T12:21:44','CRN2', 'MDI', '2027-11-09');
+(id, noms_id, creation_date, crn, prison_id)
+VALUES(2, 'A8314DY', '2023-05-17T12:21:44','CRN2', 'MDI');
 
 INSERT INTO prisoner
-(id, noms_id, creation_date, crn, prison_id, release_date)
-VALUES(3, 'G4161UF', '2023-05-17T12:21:44','CRN3', 'MDI', '2025-08-04');
+(id, noms_id, creation_date, crn, prison_id)
+VALUES(3, 'G4161UF', '2023-05-17T12:21:44','CRN3', 'MDI');
 
 INSERT INTO person_on_probation_user_otp
 (id, prisoner_id, otp, expiry_date, creation_date, dob)

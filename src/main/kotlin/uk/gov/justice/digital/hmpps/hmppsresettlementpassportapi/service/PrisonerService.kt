@@ -1,16 +1,12 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
-import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Slice
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prison
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoner
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerPersonal
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
@@ -28,12 +24,10 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ProfileTagsRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonApiService
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonRegisterApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDate
 import java.time.Period
-import java.util.stream.Stream
 
 @Service
 class PrisonerService(
@@ -46,24 +40,10 @@ class PrisonerService(
   private val watchlistService: WatchlistService,
   private val pathwayAndStatusService: PathwayAndStatusService,
   private val deliusApiService: ResettlementPassportDeliusApiService,
-  private val prisonRegisterApiService: PrisonRegisterApiService,
 ) {
 
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
-  }
-
-  fun getActivePrisonsList(): MutableList<Prison> {
-    val prisons = prisonRegisterApiService.getPrisons()
-
-    val prisonList = mutableListOf<Prison>()
-    for (item in prisons) {
-      if (item.active) {
-        prisonList.add(Prison(item.prisonId, item.prisonName, true))
-      }
-    }
-    prisonList.sortBy { it.name }
-    return prisonList
   }
 
   fun getPrisonersByPrisonId(
@@ -288,6 +268,12 @@ class PrisonerService(
     return prisonersList
   }
 
+  fun getPrisonerReleaseDateByNomsId(nomsId: String): LocalDate? {
+    val prisoner = prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)
+    setDisplayedReleaseDate(prisoner)
+    return prisoner.displayReleaseDate
+  }
+
   fun getPrisonerDetailsByNomsId(nomsId: String, includeProfileTags: Boolean, auth: String): Prisoner {
     val prisonerSearch = prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)
     setDisplayedReleaseDate(prisonerSearch)
@@ -296,7 +282,6 @@ class PrisonerService(
     val prisonerEntity = pathwayAndStatusService.getOrCreatePrisoner(
       nomsId,
       prisonerSearch.prisonId,
-      prisonerSearch.displayReleaseDate,
     )
 
     val prisonerImageDetailsList = prisonApiService.findPrisonerImageDetails(nomsId)
@@ -355,7 +340,6 @@ class PrisonerService(
       isInWatchlist = isInWatchlist,
       profile = profileTagList,
     )
-    log.info("Profile Tag List ${pr.profile}")
     return pr
   }
 
@@ -461,38 +445,6 @@ class PrisonerService(
   }
 
   fun getPrisonerImageData(nomsId: String, imageId: Int): ByteArray? = prisonApiService.getPrisonerImageData(nomsId, imageId)
-
-  @Transactional
-  fun getInProgressPrisonersByPrisonId(prisonId: String, earliestReleaseDate: LocalDate, latestReleaseDate: LocalDate): List<PrisonerEntity> {
-    val inProgressPrisoners = mutableListOf<PrisonerEntity>()
-    val inProgressOrDonePrisoners = pathwayStatusRepository.findPrisonersByPrisonIdWithAtLeastOnePathwayNotInNotStarted(prisonId, earliestReleaseDate, latestReleaseDate)
-    val donePrisoners = pathwayStatusRepository.findPrisonersByPrisonWithAllPathwaysDone(prisonId, earliestReleaseDate, latestReleaseDate)
-    inProgressPrisoners.addAll(inProgressOrDonePrisoners)
-    inProgressPrisoners.removeAll(donePrisoners)
-    return inProgressPrisoners
-  }
-
-  @Transactional
-  fun getNotStartedPrisonersByPrisonId(prisonId: String, earliestReleaseDate: LocalDate, latestReleaseDate: LocalDate) = pathwayStatusRepository.findPrisonersByPrisonIdWithAllPathwaysNotStarted(prisonId, earliestReleaseDate, latestReleaseDate)
-
-  @Transactional
-  fun getDonePrisonersByPrisonId(prisonId: String, earliestReleaseDate: LocalDate, latestReleaseDate: LocalDate) = pathwayStatusRepository.findPrisonersByPrisonWithAllPathwaysDone(prisonId, earliestReleaseDate, latestReleaseDate)
-
-  fun getSliceOfAllPrisoners(page: Pageable): Slice<PrisonerEntity> = prisonerRepository.findAll(page)
-
-  @Transactional
-  fun updateAndSaveNewReleaseDates(prisonerEntities: Stream<PrisonerEntity>) {
-    for (prisonerEntity in prisonerEntities) {
-      try {
-        val prisoner = prisonerSearchApiService.findPrisonerPersonalDetails(prisonerEntity.nomsId)
-        setDisplayedReleaseDate(prisoner)
-        prisonerEntity.releaseDate = prisoner.confirmedReleaseDate
-        prisonerRepository.save(prisonerEntity)
-      } catch (e: ResourceNotFoundException) {
-        log.warn("Cannot update release date for prisoner ${prisonerEntity.nomsId} as no results from Prisoner Search API - skipping until next cron run.")
-      }
-    }
-  }
 
   fun getPrisonerEntity(nomsId: String): PrisonerEntity = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Unable to find prisoner $nomsId in database.")
   private fun getProfileTags(nomsId: String): ProfileTagList {

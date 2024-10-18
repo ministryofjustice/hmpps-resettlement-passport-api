@@ -37,7 +37,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentSimpleQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClaimFromJWTToken
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.stream.Stream
 import org.assertj.core.api.Assertions as AssertJAssertions
@@ -234,7 +233,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
     )
 
     val resettlementAssessmentEntity = ResettlementAssessmentEntity(1, 1, pathway, Status.IN_PROGRESS, ResettlementAssessmentType.BCST2, existingAssessment, testDate, "", ResettlementAssessmentStatus.SUBMITTED, "some text", "USER_1", submissionDate = null, version = 3, userDeclaration = false)
-    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23")))
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(1, nomsId, testDate, "abc", "ABC"))
     whenever(
       resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInAndDeletedIsFalseOrderByCreationDateDesc(
         1,
@@ -283,7 +282,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
     )
 
     val resettlementAssessmentEntity = ResettlementAssessmentEntity(1, 1, pathway, Status.NOT_STARTED, ResettlementAssessmentType.BCST2, existingAssessment, testDate, "", ResettlementAssessmentStatus.SUBMITTED, "some text", "USER_1", submissionDate = null, version = 1, userDeclaration = false)
-    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23")))
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(1, nomsId, testDate, "abc", "ABC"))
     whenever(
       resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInAndDeletedIsFalseOrderByCreationDateDesc(
         1,
@@ -359,7 +358,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
     val tagList = mutableListOf<String>()
     profileTagsList.tags = tagList
 
-    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC", LocalDate.parse("2025-01-23"))
+    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC")
 
     val profileTagsEntity = ProfileTagsEntity(1, 1, profileTagsList, LocalDateTime.parse("2023-08-16T12:00"))
     Mockito.lenient().`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)

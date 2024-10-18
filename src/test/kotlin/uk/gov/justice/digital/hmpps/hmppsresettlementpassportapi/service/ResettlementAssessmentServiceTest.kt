@@ -50,7 +50,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.AssessmentConfigOption
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.ResettlementAssessmentStrategy
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.processProfileTags
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.stream.Stream
 
@@ -214,7 +213,7 @@ class ResettlementAssessmentServiceTest {
   fun `test getResettlementAssessmentSummaryByNomsId - returns assessment- combination of not started and complete`() {
     val nomsId = "GY3245"
     val assessmentType = ResettlementAssessmentType.BCST2
-    val prisonerEntity = PrisonerEntity(1, "GY3245", testDate, "crn", "xyz1", LocalDate.parse("2025-01-23"))
+    val prisonerEntity = PrisonerEntity(1, "GY3245", testDate, "crn", "xyz1")
     val accommodationResettlementAssessmentEntity =
       createNotStartedResettlementAssessmentEntity(1, Pathway.ACCOMMODATION)
     val attitudesResettlementAssessmentEntity =
@@ -263,7 +262,7 @@ class ResettlementAssessmentServiceTest {
   fun `test getResettlementAssessmentSummaryByNomsId with BCST2 type - returns assessment with not started statuses for pathways with null value in resettlement_assessment table`() {
     val nomsId = "GY3245"
     val assessmentType = ResettlementAssessmentType.BCST2
-    val prisonerEntity = PrisonerEntity(1, "GY3245", testDate, "crn", "xyz1", LocalDate.parse("2025-01-23"))
+    val prisonerEntity = PrisonerEntity(1, "GY3245", testDate, "crn", "xyz1")
     val accommodationResettlementAssessmentEntity =
       createNotStartedResettlementAssessmentEntity(1, Pathway.ACCOMMODATION)
     val attitudesResettlementAssessmentEntity =
@@ -308,7 +307,7 @@ class ResettlementAssessmentServiceTest {
   fun `test getResettlementAssessmentSummaryByNomsId with RESETTLEMENT_PLAN type - returns assessment with not started statuses for pathways with null value in resettlement_assessment`() {
     val nomsId = "GY3245"
     val assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN
-    val prisonerEntity = PrisonerEntity(1, "GY3245", testDate, "crn", "xyz1", LocalDate.parse("2025-01-23"))
+    val prisonerEntity = PrisonerEntity(1, "GY3245", testDate, "crn", "xyz1")
     val accommodationResettlementAssessmentEntity =
       createNotStartedResettlementAssessmentEntity(1, Pathway.ACCOMMODATION)
     val attitudesResettlementAssessmentEntity =
@@ -704,7 +703,6 @@ class ResettlementAssessmentServiceTest {
       LocalDateTime.now(),
       null,
       null,
-      null,
     )
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisoner)
@@ -730,7 +728,6 @@ class ResettlementAssessmentServiceTest {
       prisonerId,
       nomsId,
       LocalDateTime.now(),
-      null,
       null,
       null,
     )
@@ -766,7 +763,6 @@ class ResettlementAssessmentServiceTest {
       prisonerId,
       nomsId,
       LocalDateTime.now(),
-      null,
       null,
       null,
     )

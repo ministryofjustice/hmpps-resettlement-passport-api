@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseNoteRetryEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 class CaseNoteRetryRepositoryTest : RepositoryTestBase() {
@@ -90,5 +89,5 @@ class CaseNoteRetryRepositoryTest : RepositoryTestBase() {
     Assertions.assertEquals(expectedResults, actualResults)
   }
 
-  private fun getTestPrisonerEntity(nomsId: String) = PrisonerEntity(1, nomsId, LocalDateTime.parse("2023-09-01T15:09:21"), "D567890", "MDI", LocalDate.parse("2027-01-01"))
+  private fun getTestPrisonerEntity(nomsId: String) = PrisonerEntity(1, nomsId, LocalDateTime.parse("2023-09-01T15:09:21"), "D567890", "MDI")
 }

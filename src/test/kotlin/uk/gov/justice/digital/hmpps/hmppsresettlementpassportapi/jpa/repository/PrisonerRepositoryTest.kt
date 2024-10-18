@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 class PrisonerRepositoryTest : RepositoryTestBase() {
@@ -19,7 +18,7 @@ class PrisonerRepositoryTest : RepositoryTestBase() {
 
   @Test
   fun `test persist new prisoner`() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1", LocalDate.parse("2025-01-23"))
+    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1")
     prisonerRepository.save(prisoner)
 
     val prisonerFromDatabase = prisonerRepository.findAll()[0]

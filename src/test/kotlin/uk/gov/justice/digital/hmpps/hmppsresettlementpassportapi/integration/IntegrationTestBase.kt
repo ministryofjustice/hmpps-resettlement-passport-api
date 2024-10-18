@@ -28,7 +28,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wir
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.KeyWorkerApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PoPUserApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonApiMockServer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonRegisterApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonerSearchApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ResettlementPassportDeliusApiMockServer
 
@@ -62,9 +61,6 @@ abstract class IntegrationTestBase : TestBase() {
   }
 
   companion object {
-
-    @JvmField
-    val prisonRegisterApiMockServer = PrisonRegisterApiMockServer()
 
     @JvmField
     val hmppsAuthMockServer = HmppsAuthMockServer()
@@ -110,7 +106,6 @@ abstract class IntegrationTestBase : TestBase() {
     fun startMocks() {
       hmppsAuthMockServer.start()
       hmppsAuthMockServer.stubGrantToken()
-      prisonRegisterApiMockServer.start()
       cvlApiMockServer.start()
       arnApiMockServer.start()
       prisonerSearchApiMockServer.start()
@@ -128,7 +123,6 @@ abstract class IntegrationTestBase : TestBase() {
     @AfterAll
     @JvmStatic
     fun stopMocks() {
-      prisonRegisterApiMockServer.stop()
       hmppsAuthMockServer.stop()
       cvlApiMockServer.stop()
       arnApiMockServer.stop()
@@ -147,7 +141,6 @@ abstract class IntegrationTestBase : TestBase() {
     @DynamicPropertySource
     fun properties(registry: DynamicPropertyRegistry) {
       registry.add("api.base.url.oauth") { "http://localhost:${hmppsAuthMockServer.port()}" }
-      registry.add("api.base.url.prison-register") { "http://localhost:${prisonRegisterApiMockServer.port()}" }
       registry.add("api.base.url.prisoner-search") { "http://localhost:${prisonerSearchApiMockServer.port()}" }
       registry.add("api.base.url.cvl") { "http://localhost:${cvlApiMockServer.port()}" }
       registry.add("api.base.url.arn") { "http://localhost:${arnApiMockServer.port()}" }

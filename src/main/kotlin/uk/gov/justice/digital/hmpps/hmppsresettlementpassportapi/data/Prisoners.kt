@@ -46,11 +46,7 @@ data class PathwayStatus(
   val status: Status? = null,
   val lastDateChange: LocalDate? = null,
 )
-data class PrisonerRequest(
-  val earliestReleaseDate: String,
-  val latestReleaseDate: String,
-  val prisonIds: List<String>,
-)
+
 data class PrisonersList(
   val content: List<Prisoners>?,
   val pageSize: Int?,

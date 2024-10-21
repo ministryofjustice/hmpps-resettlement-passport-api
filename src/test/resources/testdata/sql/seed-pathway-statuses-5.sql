@@ -52,4 +52,5 @@ VALUES(8, 1, 'HEALTH', 'CASE_NOTE', '2020-01-09 02:09:23.476', NULL, NULL, 'stri
 INSERT INTO resettlement_assessment (id, prisoner_id, pathway, assessment_status, assessment_type, assessment, status_changed_to, created_date, created_by, case_note_text, created_by_user_id) VALUES
 (1, 1, 'ACCOMMODATION', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some accom case notes', 'STURNER_GEN'),
 (2, 1, 'HEALTH', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some health case notes', 'STURNER_GEN'),
-(3, 1, 'HEALTH', 'COMPLETE', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some previous notes', 'STURNER_GEN')
+(3, 1, 'HEALTH', 'COMPLETE', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some previous notes', 'STURNER_GEN'),
+(4, 1, 'HEALTH', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, null, '2024-07-30 19:02:45.000', 'A User', null, 'STURNER_GEN')

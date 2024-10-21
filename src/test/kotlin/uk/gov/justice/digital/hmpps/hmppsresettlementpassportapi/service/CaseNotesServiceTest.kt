@@ -15,7 +15,12 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteTy
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CaseNotesApiService
@@ -73,7 +78,7 @@ class CaseNotesServiceTest {
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisoner)
     Mockito.`when`(caseNotesApiService.getCaseNotesByNomsId(nomsId, days, caseNoteType, createdBy)).thenReturn(emptyList())
     if (caseNoteType !== CaseNoteType.All) {
-      Mockito.`when`(resettlementAssessmentRepository.findCaseNotesFor(1, pathway!!)).thenReturn(emptyList())
+      Mockito.`when`(resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(1, pathway!!)).thenReturn(emptyList())
 
       Mockito.`when`(caseNotesApiService.getCaseNotesByNomsId(nomsId, days, CaseNoteType.All, createdBy))
         .thenReturn(expectedList)
@@ -111,17 +116,17 @@ class CaseNotesServiceTest {
 
   @ParameterizedTest
   @MethodSource("test get case notes data - status update")
-  fun `test get case notes - status update`(caseNoteType: CaseNoteType, pathway: Pathway?, pair: Pair<List<List<Any>>?, List<PathwayCaseNote>>) {
+  fun `test get case notes - status update`(caseNoteType: CaseNoteType, pathway: Pathway?, pair: Pair<List<ResettlementAssessmentEntity>, List<PathwayCaseNote>>) {
     val nomsId = "12345"
     val createdBy = 1
     val days = 100
     val prisoner = PrisonerEntity(1, nomsId, LocalDateTime.now(), null, null)
-    val (assessmentRepoReturn, expectedList) = pair
+    val (resettlementAssessmentEntities, expectedCaseNotes) = pair
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisoner)
     Mockito.`when`(caseNotesApiService.getCaseNotesByNomsId(nomsId, days, caseNoteType, createdBy)).thenReturn(emptyList())
     if (caseNoteType !== CaseNoteType.All) {
-      Mockito.`when`(resettlementAssessmentRepository.findCaseNotesFor(1, pathway!!)).thenReturn(assessmentRepoReturn)
+      Mockito.`when`(resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(1, pathway!!)).thenReturn(resettlementAssessmentEntities)
 
       Mockito.`when`(caseNotesApiService.getCaseNotesByNomsId(nomsId, days, CaseNoteType.All, createdBy))
         .thenReturn(emptyList())
@@ -134,42 +139,63 @@ class CaseNotesServiceTest {
       mockkClass(ResettlementPassportDeliusApiService::class),
       resettlementAssessmentRepository,
     )
-    val size = expectedList.size
 
     Assertions.assertEquals(
-      CaseNotesList(content = expectedList, pageSize = size, page = 0, sortName = "", totalElements = size, last = true),
+      CaseNotesList(content = expectedCaseNotes, pageSize = expectedCaseNotes.size, page = 0, sortName = "", totalElements = expectedCaseNotes.size, last = true),
       caseNotesService.getCaseNotesByNomsId(nomsId, 0, 1, "", days, caseNoteType, createdBy),
     )
   }
 
   private fun `test get case notes data - status update`() = Stream.of(
     Arguments.of(CaseNoteType.All, null, Pair(null, emptyList<PathwayCaseNote>())),
-    Arguments.of(CaseNoteType.HEALTH, Pathway.HEALTH, getCaseNotePair(CaseNotePathway.HEALTH, "Resettlement status set to: SUBMITTED")),
-    Arguments.of(CaseNoteType.ACCOMMODATION, Pathway.ACCOMMODATION, getCaseNotePair(CaseNotePathway.ACCOMMODATION, "Resettlement status set to: SUBMITTED")),
-    Arguments.of(CaseNoteType.FINANCE_AND_ID, Pathway.FINANCE_AND_ID, getCaseNotePair(CaseNotePathway.FINANCE_AND_ID, "Resettlement status set to: SUBMITTED")),
-    Arguments.of(CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY, Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, getCaseNotePair(CaseNotePathway.CHILDREN_FAMILIES_AND_COMMUNITY, "Resettlement status set to: SUBMITTED")),
-    Arguments.of(CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, getCaseNotePair(CaseNotePathway.ATTITUDES_THINKING_AND_BEHAVIOUR, "Resettlement status set to: SUBMITTED")),
-    Arguments.of(CaseNoteType.DRUGS_AND_ALCOHOL, Pathway.DRUGS_AND_ALCOHOL, getCaseNotePair(CaseNotePathway.DRUGS_AND_ALCOHOL, "Resettlement status set to: SUBMITTED")),
-    Arguments.of(CaseNoteType.EDUCATION_SKILLS_AND_WORK, Pathway.EDUCATION_SKILLS_AND_WORK, getCaseNotePair(CaseNotePathway.EDUCATION_SKILLS_AND_WORK, "Some actual case note text")),
+    Arguments.of(CaseNoteType.HEALTH, Pathway.HEALTH, getCaseNotePair(CaseNotePathway.HEALTH, Status.SUPPORT_REQUIRED, null, "Resettlement status set to: Support required")),
+    Arguments.of(CaseNoteType.ACCOMMODATION, Pathway.ACCOMMODATION, getCaseNotePair(CaseNotePathway.ACCOMMODATION, Status.IN_PROGRESS, null, "Resettlement status set to: In progress")),
+    Arguments.of(CaseNoteType.FINANCE_AND_ID, Pathway.FINANCE_AND_ID, getCaseNotePair(CaseNotePathway.FINANCE_AND_ID, Status.DONE, null, "Resettlement status set to: Done")),
+    Arguments.of(CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY, Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, getCaseNotePair(CaseNotePathway.CHILDREN_FAMILIES_AND_COMMUNITY, Status.NOT_STARTED, null, "Resettlement status set to: Not started")),
+    Arguments.of(CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, getCaseNotePair(CaseNotePathway.ATTITUDES_THINKING_AND_BEHAVIOUR, Status.SUPPORT_NOT_REQUIRED, null, "Resettlement status set to: Support not required")),
+    Arguments.of(CaseNoteType.DRUGS_AND_ALCOHOL, Pathway.DRUGS_AND_ALCOHOL, getCaseNotePair(CaseNotePathway.DRUGS_AND_ALCOHOL, Status.DONE, "Some actual case note text", "Some actual case note text")),
+    Arguments.of(CaseNoteType.EDUCATION_SKILLS_AND_WORK, Pathway.EDUCATION_SKILLS_AND_WORK, getCaseNotePair(CaseNotePathway.EDUCATION_SKILLS_AND_WORK, Status.SUPPORT_DECLINED, null, "Resettlement status set to: Support declined")),
+    Arguments.of(CaseNoteType.EDUCATION_SKILLS_AND_WORK, Pathway.EDUCATION_SKILLS_AND_WORK, getCaseNotePair(CaseNotePathway.EDUCATION_SKILLS_AND_WORK, null, null, null)),
   )
 
-  private fun getCaseNotePair(pathway: CaseNotePathway, caseNoteText: String): Pair<List<List<Any>>, List<PathwayCaseNote>> {
-    val id = "ResettlementAssessmentCaseNote1"
+  private fun getCaseNotePair(pathway: CaseNotePathway, status: Status?, caseNoteText: String?, expectedCaseNoteText: String?): Pair<List<ResettlementAssessmentEntity>, List<PathwayCaseNote>> {
+    val id = 1L
     val date = LocalDateTime.parse("2023-09-01T12:13:12")
     val createdBy = "User1"
 
     return Pair(
-      listOf(listOf(id, Pathway.valueOf(pathway.name), date, date, createdBy, caseNoteText)),
-      mutableListOf(
-        PathwayCaseNote(
-          caseNoteId = id,
-          pathway = pathway,
-          creationDateTime = date,
-          occurenceDateTime = date,
+      listOf(
+        ResettlementAssessmentEntity(
+          id = id,
+          prisonerId = 1,
+          pathway = Pathway.valueOf(pathway.name),
+          statusChangedTo = status,
+          assessmentType = ResettlementAssessmentType.BCST2,
+          assessment = ResettlementAssessmentQuestionAndAnswerList(listOf()),
+          creationDate = date,
           createdBy = createdBy,
-          text = caseNoteText,
+          assessmentStatus = ResettlementAssessmentStatus.SUBMITTED,
+          caseNoteText = caseNoteText,
+          createdByUserId = "A_USER",
+          version = 1,
+          submissionDate = date,
+          userDeclaration = null,
         ),
       ),
+      if (expectedCaseNoteText != null) {
+        mutableListOf(
+          PathwayCaseNote(
+            caseNoteId = "ResettlementAssessmentCaseNote$id",
+            pathway = pathway,
+            creationDateTime = date,
+            occurenceDateTime = date,
+            createdBy = createdBy,
+            text = expectedCaseNoteText,
+          ),
+        )
+      } else {
+        mutableListOf()
+      },
     )
   }
 

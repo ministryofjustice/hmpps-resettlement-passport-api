@@ -650,6 +650,20 @@ class ServiceUtilsTest {
     """.trimIndent()
     Assertions.assertEquals(expectedCaseNote, generateContentOnlyDpsCaseNoteText(ResettlementAssessmentType.RESETTLEMENT_PLAN))
   }
+
+  @ParameterizedTest
+  @MethodSource("test removeOtherPrefix data")
+  fun `test removeOtherPrefix`(input: String, expected: String) {
+    Assertions.assertEquals(expected, removeOtherPrefix(input))
+  }
+
+  private fun `test removeOtherPrefix data`() = Stream.of(
+    Arguments.of("", ""),
+    Arguments.of("Random text", "Random text"),
+    Arguments.of("  Random text   ", "Random text"),
+    Arguments.of("OTHER_SUPPORT_NEEDS: Another support need", "Another support need"),
+    Arguments.of("OTHER_SUPPORT_NEEDS:Another support need", "Another support need"),
+  )
 }
 
 enum class TestEnum {

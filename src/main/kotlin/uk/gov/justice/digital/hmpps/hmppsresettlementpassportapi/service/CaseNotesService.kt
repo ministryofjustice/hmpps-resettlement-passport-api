@@ -11,11 +11,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCase
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DpsCaseNoteSubType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CaseNotesApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
-import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.util.Objects
 
@@ -115,64 +115,66 @@ class CaseNotesService(
     when (caseNoteType) {
       CaseNoteType.All -> emptyList()
       CaseNoteType.ACCOMMODATION -> makePathwayCaseNotes(
-        resettlementAssessmentRepository.findCaseNotesFor(
+        resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(
           prisonerId,
           Pathway.ACCOMMODATION,
         ),
       )
 
       CaseNoteType.HEALTH -> makePathwayCaseNotes(
-        resettlementAssessmentRepository.findCaseNotesFor(
+        resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(
           prisonerId,
           Pathway.HEALTH,
         ),
       )
 
       CaseNoteType.FINANCE_AND_ID -> makePathwayCaseNotes(
-        resettlementAssessmentRepository.findCaseNotesFor(
+        resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(
           prisonerId,
           Pathway.FINANCE_AND_ID,
         ),
       )
 
       CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY -> makePathwayCaseNotes(
-        resettlementAssessmentRepository.findCaseNotesFor(
+        resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(
           prisonerId,
           Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
         ),
       )
 
       CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR -> makePathwayCaseNotes(
-        resettlementAssessmentRepository.findCaseNotesFor(
+        resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(
           prisonerId,
           Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
         ),
       )
 
       CaseNoteType.EDUCATION_SKILLS_AND_WORK -> makePathwayCaseNotes(
-        resettlementAssessmentRepository.findCaseNotesFor(
+        resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(
           prisonerId,
           Pathway.EDUCATION_SKILLS_AND_WORK,
         ),
       )
 
       CaseNoteType.DRUGS_AND_ALCOHOL -> makePathwayCaseNotes(
-        resettlementAssessmentRepository.findCaseNotesFor(
+        resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(
           prisonerId,
           Pathway.DRUGS_AND_ALCOHOL,
         ),
       )
     }
 
-  private fun makePathwayCaseNotes(results: List<List<Any>>): List<PathwayCaseNote> = results.map { row ->
-    val id = row[0] as String
-    val caseNotePathway = convertPathwayToCaseNotePathway(row[1] as Pathway)
-    val creationDate = row[2] as LocalDateTime
-    val submissionDate = (row[3] as? LocalDateTime) ?: creationDate
-    val createdBy = row[4] as String
-    val caseNoteText = row[5] as String
-    PathwayCaseNote(id, caseNotePathway, creationDate, submissionDate, createdBy, caseNoteText)
-  }
+  private fun makePathwayCaseNotes(results: List<ResettlementAssessmentEntity>): List<PathwayCaseNote> =
+    results.filter { it.statusChangedTo != null }
+      .map { ra ->
+        val id = "ResettlementAssessmentCaseNote${ra.id ?: throw RuntimeException("id missing from resettlement assessment entity!")}"
+        val caseNotePathway = convertPathwayToCaseNotePathway(ra.pathway)
+        val creationDate = ra.submissionDate ?: ra.creationDate
+        val submissionDate = ra.submissionDate ?: ra.creationDate
+        val createdBy = ra.createdBy
+        val caseNoteText = ra.caseNoteText ?: "Resettlement status set to: ${ra.statusChangedTo!!.displayText}"
+        PathwayCaseNote(id, caseNotePathway, creationDate, submissionDate, createdBy, caseNoteText)
+      }
 
   private fun convertPathwayToCaseNotePathway(pathway: Pathway): CaseNotePathway = when (pathway) {
     Pathway.ACCOMMODATION -> CaseNotePathway.ACCOMMODATION

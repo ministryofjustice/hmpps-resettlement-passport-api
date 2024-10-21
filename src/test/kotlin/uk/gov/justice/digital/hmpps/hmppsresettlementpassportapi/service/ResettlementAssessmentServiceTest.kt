@@ -28,10 +28,13 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.TagAndQuestionMapping
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.LatestResettlementAssessmentResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.LatestResettlementAssessmentResponseQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.MapAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.PrisonerResettlementAssessment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
@@ -767,11 +770,6 @@ class ResettlementAssessmentServiceTest {
       null,
     )
 
-    val nestedQuestion1 = "Job title"
-    val nestedAnswer1 = "Job title 1"
-    val nestedQuestion2 = "Employer name"
-    val nestedAnswer2 = "Employer Here"
-
     val assessment = ResettlementAssessmentEntity(
       id = 1,
       prisonerId = prisonerId,
@@ -781,17 +779,17 @@ class ResettlementAssessmentServiceTest {
       assessment = ResettlementAssessmentQuestionAndAnswerList(
         listOf(
           ResettlementAssessmentSimpleQuestionAndAnswer("DID_THEY_HAVE_JOB_BEFORE_CUSTODY", StringAnswer("YES")),
-          ResettlementAssessmentSimpleQuestionAndAnswer("DID_THEY_HAVE_JOB_BEFORE_CUSTODY_JOB_TITLE", StringAnswer(nestedAnswer1)),
-          ResettlementAssessmentSimpleQuestionAndAnswer("DID_THEY_HAVE_JOB_BEFORE_CUSTODY_EMPLOYER_NAME", StringAnswer(nestedAnswer2)),
+          ResettlementAssessmentSimpleQuestionAndAnswer("DID_THEY_HAVE_JOB_BEFORE_CUSTODY_JOB_TITLE", StringAnswer("Job title 1")),
+          ResettlementAssessmentSimpleQuestionAndAnswer("DID_THEY_HAVE_JOB_BEFORE_CUSTODY_EMPLOYER_NAME", StringAnswer("Employer Here")),
           ResettlementAssessmentSimpleQuestionAndAnswer("DO_THEY_HAVE_JOB_ARRANGED", StringAnswer("YES_RETURNING_TO_SAME_JOB")),
           ResettlementAssessmentSimpleQuestionAndAnswer("WERE_THEY_IN_EDUCATION_BEFORE_CUSTODY", StringAnswer("YES")),
           ResettlementAssessmentSimpleQuestionAndAnswer("EDUCATION_WHEN_RELEASED", StringAnswer("YES_SAME_EDUCATION")),
-          ResettlementAssessmentSimpleQuestionAndAnswer("SUPPORT_REQUIREMENTS", ListAnswer(listOf("OTHER_SUPPORT_NEEDS: a different support need"))),
+          ResettlementAssessmentSimpleQuestionAndAnswer("SUPPORT_REQUIREMENTS", ListAnswer(listOf("Support need 1", "Support need 2", "OTHER_SUPPORT_NEEDS: a different support need"))),
           ResettlementAssessmentSimpleQuestionAndAnswer("SUPPORT_NEEDS_PRERELEASE", StringAnswer("SUPPORT_DECLINED")),
           ResettlementAssessmentSimpleQuestionAndAnswer("CASE_NOTE_SUMMARY", StringAnswer("case note 1")),
         ),
       ),
-      creationDate = LocalDateTime.now(),
+      creationDate = LocalDateTime.parse("2024-10-10T12:00:00"),
       createdBy = "aUser",
       assessmentStatus = ResettlementAssessmentStatus.COMPLETE,
       caseNoteText = null,
@@ -809,26 +807,52 @@ class ResettlementAssessmentServiceTest {
 
     val returnedAssessment = resettlementAssessmentService.getLatestResettlementAssessmentByNomsIdAndPathway(nomsId, pathway, resettlementAssessmentStrategy)
 
-    Assertions.assertNotNull(returnedAssessment)
-    Assertions.assertNotNull(returnedAssessment.latestAssessment)
-    Assertions.assertNotNull(returnedAssessment.latestAssessment.questionsAndAnswers)
-    Assertions.assertEquals(7, returnedAssessment.latestAssessment.questionsAndAnswers.size)
-    var nestedQuestion1Exists = false
-    var nestedQuestion2Exists = false
-    returnedAssessment.latestAssessment.questionsAndAnswers.forEachIndexed { index, value ->
-      if (value.questionTitle == nestedQuestion1) {
-        Assertions.assertEquals(nestedAnswer1, value.answer)
-        Assertions.assertEquals(1, index)
-        nestedQuestion1Exists = true
-      } else if (value.questionTitle == nestedQuestion2) {
-        Assertions.assertEquals(nestedAnswer2, value.answer)
-        Assertions.assertEquals(2, index)
-        nestedQuestion2Exists = true
-      }
-      Assertions.assertFalse(listOf("SUPPORT_NEEDS", "SUPPORT_NEEDS_PRERELEASE", "CASE_NOTE_SUMMARY").contains(value.questionTitle))
-    }
-    Assertions.assertTrue(nestedQuestion1Exists)
-    Assertions.assertTrue(nestedQuestion2Exists)
+    val expectedAssessment = LatestResettlementAssessmentResponse(
+      latestAssessment = ResettlementAssessmentResponse(
+        assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN,
+        lastUpdated = LocalDateTime.parse("2024-10-10T12:00:00"),
+        updatedBy = "aUser",
+        questionsAndAnswers = listOf(
+          LatestResettlementAssessmentResponseQuestionAndAnswer(
+            questionTitle = "Did the person in prison have a job before custody?",
+            answer = "Yes",
+            originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
+          ),
+          LatestResettlementAssessmentResponseQuestionAndAnswer(
+            questionTitle = "Job title",
+            answer = "Job title 1",
+            originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
+          ),
+          LatestResettlementAssessmentResponseQuestionAndAnswer(
+            questionTitle = "Employer name",
+            answer = "Employer Here",
+            originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
+          ),
+          LatestResettlementAssessmentResponseQuestionAndAnswer(
+            questionTitle = "Does the person in prison have a job arranged for when they are released?",
+            answer = "Yes, returning to same job",
+            originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
+          ),
+          LatestResettlementAssessmentResponseQuestionAndAnswer(
+            questionTitle = "Was the person in prison in education or training before custody?",
+            answer = "Yes",
+            originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
+          ),
+          LatestResettlementAssessmentResponseQuestionAndAnswer(
+            questionTitle = "Does the person in prison have education or training in place for when they are released?",
+            answer = "Yes, returning to same education or training",
+            originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
+          ),
+          LatestResettlementAssessmentResponseQuestionAndAnswer(
+            questionTitle = "Support needs",
+            answer = "Support need 1\nSupport need 2\na different support need",
+            originalPageId = "SUPPORT_REQUIREMENTS",
+          ),
+        ),
+      ),
+    )
+
+    Assertions.assertEquals(expectedAssessment, returnedAssessment)
   }
 
   private fun makeResettlementAssessment(id: Long, prisonerId: Long, deleted: Boolean = false) =

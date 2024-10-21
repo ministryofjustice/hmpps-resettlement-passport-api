@@ -441,7 +441,7 @@ class ResettlementAssessmentService(
     val answerComponents: List<String>? = when (answer) {
       is StringAnswer -> listOf(answer.answer as String)
       is ListAnswer -> {
-        answer.answer?.filter { it.isNotBlank() }?.map { it.trim() }
+        answer.answer?.filter { it.isNotBlank() }?.map { removeOtherPrefix(it) }
       }
       is MapAnswer -> {
         if (answer.answer != null) {

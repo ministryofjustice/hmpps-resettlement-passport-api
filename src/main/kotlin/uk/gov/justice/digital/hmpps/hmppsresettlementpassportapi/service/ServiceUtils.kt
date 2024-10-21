@@ -188,3 +188,5 @@ fun generateContentOnlyDpsCaseNoteText(assessmentType: ResettlementAssessmentTyp
   
   Go to prepare someone for release (PSfR) service to see the report information.
 """.trimIndent()
+
+fun removeOtherPrefix(answer: String) = answer.removePrefix("OTHER_SUPPORT_NEEDS:").trim()

@@ -1,12 +1,12 @@
 {
   "content": [
     {
-      "caseNoteId": "ResettlementAssessmentCaseNote1",
+      "caseNoteId": "ResettlementAssessmentCaseNote3",
       "pathway": "ACCOMMODATION",
-      "creationDateTime": "2024-07-30T19:02:45",
-      "occurenceDateTime": "2024-07-30T19:02:45",
+      "creationDateTime": "2024-08-01T19:02:45",
+      "occurenceDateTime": "2024-08-01T19:02:45",
       "createdBy": "A User",
-      "text": "Some accom case note"
+      "text": "Resettlement status set to: Support declined"
     },
     {
       "caseNoteId": "ResettlementAssessmentCaseNote2",
@@ -14,15 +14,15 @@
       "creationDateTime": "2024-07-31T19:02:45",
       "occurenceDateTime": "2024-07-31T19:02:45",
       "createdBy": "A User",
-      "text": "Resettlement status set to: SUPPORT_DECLINED"
+      "text": "Resettlement status set to: Support declined"
     },
     {
-      "caseNoteId": "ResettlementAssessmentCaseNote3",
+      "caseNoteId": "ResettlementAssessmentCaseNote1",
       "pathway": "ACCOMMODATION",
-      "creationDateTime": "2024-08-01T19:02:45",
-      "occurenceDateTime": "2024-08-01T19:02:45",
+      "creationDateTime": "2024-07-30T19:02:45",
+      "occurenceDateTime": "2024-07-30T19:02:45",
       "createdBy": "A User",
-      "text": "Resettlement status set to: SUPPORT_DECLINED"
+      "text": "Some accom case note"
     },
     {
       "caseNoteId": "47028563",

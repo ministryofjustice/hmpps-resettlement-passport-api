@@ -89,22 +89,7 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
   @Query("select ra.prisonerId from ResettlementAssessmentEntity ra inner join PrisonerEntity p on ra.prisonerId = p.id where p.prisonId = :prisonId and ra.assessmentType = :assessmentType and ra.assessmentStatus = :assessmentStatus and ra.deleted = false group by ra.prisonerId having count(distinct (ra.pathway)) = :numOfPathways")
   fun findPrisonersWithAllAssessmentsInStatus(prisonId: String, assessmentType: ResettlementAssessmentType, assessmentStatus: ResettlementAssessmentStatus, numOfPathways: Int): Set<Long>
 
-  @Query(
-    """
-      select 
-      'ResettlementAssessmentCaseNote' || id, 
-      pathway, 
-      creationDate, 
-      submissionDate, 
-      createdBy, 
-      coalesce(caseNoteText, 'Resettlement status set to: ' || statusChangedTo)  
-      from ResettlementAssessmentEntity
-      where prisonerId = :prisonerId
-      and pathway = :pathway
-      and assessmentStatus = 'SUBMITTED'
-    """,
-  )
-  fun findCaseNotesFor(prisonerId: Long, pathway: Pathway): List<List<Any>>
+  fun findAllByPrisonerIdAndPathwayAndAssessmentStatus(prisonerId: Long, pathway: Pathway, assessmentStatus: ResettlementAssessmentStatus = ResettlementAssessmentStatus.SUBMITTED): List<ResettlementAssessmentEntity>
 
   fun findFirstByPrisonerIdAndPathwayAndAssessmentStatusInAndDeletedIsFalseOrderByCreationDateDesc(
     prisonerId: Long,

@@ -159,7 +159,7 @@ class DrugsAndAlcoholV2ResettlementAssessmentStrategyTest : BaseResettlementAsse
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
               id = "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS",
-              title = "Additional details (optional)",
+              title = "Additional details",
               subTitle = "This information will be only displayed in PSfR.",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,

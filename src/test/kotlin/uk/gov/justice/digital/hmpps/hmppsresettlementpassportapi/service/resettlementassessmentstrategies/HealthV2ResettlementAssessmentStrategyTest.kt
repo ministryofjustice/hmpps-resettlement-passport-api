@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import java.util.stream.Stream
@@ -156,6 +157,16 @@ class HealthV2ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStr
                   exclusive = true,
                 ),
               ),
+            ),
+            originalPageId = "SUPPORT_REQUIREMENTS",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
+              id = "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              subTitle = "This information will be only displayed in PSfR.",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
             ),
             originalPageId = "SUPPORT_REQUIREMENTS",
           ),

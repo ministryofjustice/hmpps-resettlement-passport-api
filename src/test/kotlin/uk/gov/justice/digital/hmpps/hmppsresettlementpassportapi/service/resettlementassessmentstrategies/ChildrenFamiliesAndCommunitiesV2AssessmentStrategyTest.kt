@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
@@ -333,6 +334,16 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
             ),
             originalPageId = "SUPPORT_REQUIREMENTS",
           ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
+              id = "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              subTitle = "This information will be only displayed in PSfR.",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
+            ),
+            originalPageId = "SUPPORT_REQUIREMENTS",
+          ),
         ),
       ),
     ),
@@ -503,6 +514,10 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
               answer = ListAnswer(answer = listOf("SUPPORT_WHEN_MEETING_CHILDREN_SERVICES", "INTERNAL_SUPPORT_SERVICES")),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
+              questionId = "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS",
+              answer = StringAnswer(answer = "Long text field answer"),
+            ),
+            ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "SUPPORT_NEEDS",
               answer = StringAnswer(answer = "SUPPORT_REQUIRED"),
             ),
@@ -640,6 +655,10 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
       ResettlementAssessmentRequestQuestionAndAnswer(
         question = "SUPPORT_REQUIREMENTS",
         answer = ListAnswer(listOf("SUPPORT_WHEN_MEETING_CHILDREN_SERVICES", "INTERNAL_SUPPORT_SERVICES")),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS",
+        answer = StringAnswer(answer = "Long text field answer"),
       ),
       ResettlementAssessmentRequestQuestionAndAnswer(
         question = "SUPPORT_NEEDS",

@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM eclipse-temurin:24-jre-jammy AS builder
+FROM --platform=$BUILDPLATFORM eclipse-temurin:21-jre-jammy AS builder
 
 # Copy just gradle download step so that it's cached unless gradle version is changed
 WORKDIR /app

@@ -237,7 +237,9 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
       listOf(
         ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE", StringAnswer("SOCIAL_HOUSING")),
         ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS_SOCIAL_HOUSING", MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDITIONAL_DETAILS", StringAnswer("Some additional details")),
         ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_WILL_THEY_LIVE", StringAnswer("NO_ANSWER")),
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_WILL_THEY_LIVE_ADDITIONAL_DETAILS", StringAnswer("Some more additional details")),
         ResettlementAssessmentSimpleQuestionAndAnswer("SUPPORT_REQUIREMENTS", ListAnswer(listOf("HELP_TO_KEEP_HOME", "HOMELESS_APPLICATION"))),
         ResettlementAssessmentSimpleQuestionAndAnswer("SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS", StringAnswer("Long text field answer")),
         ResettlementAssessmentSimpleQuestionAndAnswer("SUPPORT_NEEDS", StringAnswer("SUPPORT_NOT_REQUIRED")),
@@ -268,7 +270,9 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
       mapOf(
         "WHERE_DID_THEY_LIVE" to StringAnswer("SOCIAL_HOUSING"),
         "WHERE_DID_THEY_LIVE_ADDRESS_SOCIAL_HOUSING" to MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123"))),
+        "WHERE_DID_THEY_LIVE_ADDITIONAL_DETAILS" to StringAnswer("Some additional details"),
         "WHERE_WILL_THEY_LIVE" to StringAnswer("NO_ANSWER"),
+        "WHERE_WILL_THEY_LIVE_ADDITIONAL_DETAILS" to StringAnswer("Some more additional details"),
       ),
     )
     val page = resettlementAssessmentStrategy.getPageFromId(
@@ -428,12 +432,20 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
             answer = StringAnswer("RETURN_TO_PREVIOUS_ADDRESS"),
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE_ADDITIONAL_DETAILS",
+            answer = StringAnswer("Some additional details"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
             question = "WHERE_WILL_THEY_LIVE",
             answer = StringAnswer("MOVE_TO_NEW_ADDRESS"),
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
             question = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS",
             answer = StringAnswer("Some more information here"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_ADDITIONAL_DETAILS",
+            answer = StringAnswer("Some other additional details"),
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
             question = "SUPPORT_REQUIREMENTS",
@@ -449,7 +461,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
           ),
         ),
       ),
-      ResettlementAssessmentEntity(id = null, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_REQUIRED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "PRIVATE_RENTED_HOUSING")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING", answer = StringAnswer(answer = "RETURN_TO_PREVIOUS_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE", answer = StringAnswer(answer = "MOVE_TO_NEW_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS", answer = StringAnswer(answer = "Some more information here")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS", answer = ListAnswer(answer = listOf("HELP_TO_KEEP_HOME", "ARRANGE_STORAGE"))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Long text field answer")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = null, createdByUserId = "USER_1", version = 3, submissionDate = null, userDeclaration = true),
+      ResettlementAssessmentEntity(id = null, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_REQUIRED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "PRIVATE_RENTED_HOUSING")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING", answer = StringAnswer(answer = "RETURN_TO_PREVIOUS_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Some additional details")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE", answer = StringAnswer(answer = "MOVE_TO_NEW_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS", answer = StringAnswer(answer = "Some more information here")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Some other additional details")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS", answer = ListAnswer(answer = listOf("HELP_TO_KEEP_HOME", "ARRANGE_STORAGE"))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Long text field answer")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = null, createdByUserId = "USER_1", version = 3, submissionDate = null, userDeclaration = true),
       null,
       null,
       null,
@@ -469,12 +481,20 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
             answer = StringAnswer("RETURN_TO_PREVIOUS_ADDRESS"),
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE_ADDITIONAL_DETAILS",
+            answer = StringAnswer("Some additional details"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
             question = "WHERE_WILL_THEY_LIVE",
             answer = StringAnswer("MOVE_TO_NEW_ADDRESS"),
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
             question = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS",
             answer = StringAnswer("Some more information here"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_ADDITIONAL_DETAILS",
+            answer = StringAnswer("Some other additional details"),
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
             question = "SUPPORT_REQUIREMENTS",
@@ -490,7 +510,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
           ),
         ),
       ),
-      ResettlementAssessmentEntity(id = null, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_REQUIRED, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "PRIVATE_RENTED_HOUSING")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING", answer = StringAnswer(answer = "RETURN_TO_PREVIOUS_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE", answer = StringAnswer(answer = "MOVE_TO_NEW_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS", answer = StringAnswer(answer = "Some more information here")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS", answer = ListAnswer(answer = listOf("HELP_TO_KEEP_HOME", "ARRANGE_STORAGE"))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Long text field answer")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS_PRERELEASE", answer = StringAnswer(answer = "SUPPORT_REQUIRED")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = null, createdByUserId = "USER_1", version = 3, submissionDate = null, userDeclaration = true),
+      ResettlementAssessmentEntity(id = null, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_REQUIRED, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "PRIVATE_RENTED_HOUSING")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING", answer = StringAnswer(answer = "RETURN_TO_PREVIOUS_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Some additional details")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE", answer = StringAnswer(answer = "MOVE_TO_NEW_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS", answer = StringAnswer(answer = "Some more information here")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Some other additional details")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS", answer = ListAnswer(answer = listOf("HELP_TO_KEEP_HOME", "ARRANGE_STORAGE"))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Long text field answer")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS_PRERELEASE", answer = StringAnswer(answer = "SUPPORT_REQUIRED")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = null, createdByUserId = "USER_1", version = 3, submissionDate = null, userDeclaration = true),
       null,
       null,
       null,
@@ -510,12 +530,20 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
             answer = StringAnswer("RETURN_TO_PREVIOUS_ADDRESS"),
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE_ADDITIONAL_DETAILS",
+            answer = StringAnswer("Some additional details"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
             question = "WHERE_WILL_THEY_LIVE",
             answer = StringAnswer("MOVE_TO_NEW_ADDRESS"),
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
             question = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS",
             answer = StringAnswer("Some more information here"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_ADDITIONAL_DETAILS",
+            answer = StringAnswer("Some other additional details"),
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
             question = "SUPPORT_REQUIREMENTS",
@@ -531,7 +559,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
           ),
         ),
       ),
-      ResettlementAssessmentEntity(id = null, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_REQUIRED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "NO_PERMANENT_OR_FIXED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING", answer = StringAnswer(answer = "RETURN_TO_PREVIOUS_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE", answer = StringAnswer(answer = "MOVE_TO_NEW_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS", answer = StringAnswer(answer = "Some more information here")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS", answer = ListAnswer(answer = listOf("HELP_TO_KEEP_HOME", "ARRANGE_STORAGE"))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Long text field answer")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = null, createdByUserId = "USER_1", version = 3, submissionDate = null, userDeclaration = true),
+      ResettlementAssessmentEntity(id = null, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_REQUIRED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "NO_PERMANENT_OR_FIXED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING", answer = StringAnswer(answer = "RETURN_TO_PREVIOUS_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Some additional details")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE", answer = StringAnswer(answer = "MOVE_TO_NEW_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS", answer = StringAnswer(answer = "Some more information here")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Some other additional details")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS", answer = ListAnswer(answer = listOf("HELP_TO_KEEP_HOME", "ARRANGE_STORAGE"))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Long text field answer")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = null, createdByUserId = "USER_1", version = 3, submissionDate = null, userDeclaration = true),
       null,
       ResettlementAssessmentEntity(id = 12, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_REQUIRED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "NO_PERMANENT_OR_FIXED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING", answer = StringAnswer(answer = "RETURN_TO_PREVIOUS_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE", answer = StringAnswer(answer = "MOVE_TO_NEW_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS", answer = StringAnswer(answer = "Some more information here")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS", answer = ListAnswer(answer = listOf("HELP_TO_KEEP_HOME", "ARRANGE_STORAGE"))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Long text field answer")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = null, createdByUserId = "USER_1", version = 3, submissionDate = null, userDeclaration = true),
       null,
@@ -551,12 +579,20 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
             answer = StringAnswer("RETURN_TO_PREVIOUS_ADDRESS"),
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE_ADDITIONAL_DETAILS",
+            answer = StringAnswer("Some additional details"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
             question = "WHERE_WILL_THEY_LIVE",
             answer = StringAnswer("MOVE_TO_NEW_ADDRESS"),
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
             question = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS",
             answer = StringAnswer("Some more information here"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_ADDITIONAL_DETAILS",
+            answer = StringAnswer("Some other additional details"),
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
             question = "SUPPORT_REQUIREMENTS",
@@ -572,7 +608,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
           ),
         ),
       ),
-      ResettlementAssessmentEntity(id = null, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_REQUIRED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "NO_PERMANENT_OR_FIXED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING", answer = StringAnswer(answer = "RETURN_TO_PREVIOUS_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE", answer = StringAnswer(answer = "MOVE_TO_NEW_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS", answer = StringAnswer(answer = "Some more information here")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS", answer = ListAnswer(answer = listOf("HELP_TO_KEEP_HOME", "ARRANGE_STORAGE"))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Long text field answer")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = null, createdByUserId = "USER_1", version = 3, submissionDate = null, userDeclaration = true),
+      ResettlementAssessmentEntity(id = null, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_REQUIRED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "NO_PERMANENT_OR_FIXED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING", answer = StringAnswer(answer = "RETURN_TO_PREVIOUS_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Some additional details")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE", answer = StringAnswer(answer = "MOVE_TO_NEW_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS", answer = StringAnswer(answer = "Some more information here")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Some other additional details")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS", answer = ListAnswer(answer = listOf("HELP_TO_KEEP_HOME", "ARRANGE_STORAGE"))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Long text field answer")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = null, createdByUserId = "USER_1", version = 3, submissionDate = null, userDeclaration = true),
       null,
       ResettlementAssessmentEntity(id = 12, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_REQUIRED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "NO_PERMANENT_OR_FIXED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING", answer = StringAnswer(answer = "RETURN_TO_PREVIOUS_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE", answer = StringAnswer(answer = "MOVE_TO_NEW_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS", answer = StringAnswer(answer = "Some more information here")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS", answer = ListAnswer(answer = listOf("HELP_TO_KEEP_HOME", "ARRANGE_STORAGE"))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Long text field answer")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = null, createdByUserId = "USER_1", version = 3, submissionDate = null, userDeclaration = true),
       ProfileTagsEntity(id = null, prisonerId = 1, ProfileTagList(listOf(TagAndQuestionMapping.NO_FIXED_ABODE.name)), LocalDateTime.parse("2023-08-16T12:00")),
@@ -592,12 +628,20 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
             answer = StringAnswer("RETURN_TO_PREVIOUS_ADDRESS"),
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_DID_THEY_LIVE_ADDITIONAL_DETAILS",
+            answer = StringAnswer("Some additional details"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
             question = "WHERE_WILL_THEY_LIVE",
             answer = StringAnswer("MOVE_TO_NEW_ADDRESS"),
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
             question = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS",
             answer = StringAnswer("Some more information here"),
+          ),
+          ResettlementAssessmentRequestQuestionAndAnswer(
+            question = "WHERE_WILL_THEY_LIVE_ADDITIONAL_DETAILS",
+            answer = StringAnswer("Some other additional details"),
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
             question = "SUPPORT_REQUIREMENTS",
@@ -613,7 +657,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
           ),
         ),
       ),
-      ResettlementAssessmentEntity(id = null, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_REQUIRED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "NO_PERMANENT_OR_FIXED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING", answer = StringAnswer(answer = "RETURN_TO_PREVIOUS_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE", answer = StringAnswer(answer = "MOVE_TO_NEW_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS", answer = StringAnswer(answer = "Some more information here")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS", answer = ListAnswer(answer = listOf("HELP_TO_FIND_ACCOMMODATION", "HOME_ADAPTATIONS", "HELP_TO_KEEP_HOME", "HOMELESS_APPLICATION", "CANCEL_A_TENANCY"))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Long text field answer")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = null, createdByUserId = "USER_1", version = 3, submissionDate = null, userDeclaration = true),
+      ResettlementAssessmentEntity(id = null, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_REQUIRED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "NO_PERMANENT_OR_FIXED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING", answer = StringAnswer(answer = "RETURN_TO_PREVIOUS_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Some additional details")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE", answer = StringAnswer(answer = "MOVE_TO_NEW_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS", answer = StringAnswer(answer = "Some more information here")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Some other additional details")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS", answer = ListAnswer(answer = listOf("HELP_TO_FIND_ACCOMMODATION", "HOME_ADAPTATIONS", "HELP_TO_KEEP_HOME", "HOMELESS_APPLICATION", "CANCEL_A_TENANCY"))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Long text field answer")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = null, createdByUserId = "USER_1", version = 3, submissionDate = null, userDeclaration = true),
       null,
       ResettlementAssessmentEntity(id = 12, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_REQUIRED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE", answer = StringAnswer(answer = "NO_PERMANENT_OR_FIXED")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING", answer = StringAnswer(answer = "RETURN_TO_PREVIOUS_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE", answer = StringAnswer(answer = "MOVE_TO_NEW_ADDRESS")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS", answer = StringAnswer(answer = "Some more information here")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS", answer = ListAnswer(answer = listOf("HELP_TO_KEEP_HOME"))), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS", answer = StringAnswer(answer = "Long text field answer")), ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "SUPPORT_NEEDS", answer = StringAnswer(answer = "SUPPORT_REQUIRED")))), creationDate = LocalDateTime.parse("2023-08-16T12:00:00"), createdBy = "System user", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = null, createdByUserId = "USER_1", version = 3, submissionDate = null, userDeclaration = true),
       ProfileTagsEntity(id = null, prisonerId = 1, ProfileTagList(listOf(TagAndQuestionMapping.NO_FIXED_ABODE.name, TagAndQuestionMapping.HOME_ADAPTATIONS_POST_RELEASE.name, TagAndQuestionMapping.KEEP_THEIR_HOME.name, TagAndQuestionMapping.CANCEL_TENANCY.name)), LocalDateTime.parse("2023-08-16T12:00")),
@@ -780,6 +824,17 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
       ),
       ResettlementAssessmentQuestionAndAnswer(
         question = ResettlementAssessmentQuestion(
+          id = "WHERE_DID_THEY_LIVE_ADDITIONAL_DETAILS",
+          title = "Additional details",
+          subTitle = "Include the name and date of birth of anyone else who lived at the address, and how the accommodation was paid for.\nIf no fixed address, specify the council area where they have a local connection.",
+          type = TypeOfQuestion.LONG_TEXT,
+          validationType = ValidationType.OPTIONAL,
+        ),
+        originalPageId = "ACCOMMODATION_REPORT",
+        answer = answers?.get("WHERE_DID_THEY_LIVE_ADDITIONAL_DETAILS"),
+      ),
+      ResettlementAssessmentQuestionAndAnswer(
+        question = ResettlementAssessmentQuestion(
           id = "WHERE_WILL_THEY_LIVE",
           title = "Where will the person in prison live when they are released?",
           type = TypeOfQuestion.RADIO,
@@ -815,6 +870,17 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
         ),
         originalPageId = "ACCOMMODATION_REPORT",
         answer = answers?.get("WHERE_WILL_THEY_LIVE"),
+      ),
+      ResettlementAssessmentQuestionAndAnswer(
+        question = ResettlementAssessmentQuestion(
+          id = "WHERE_WILL_THEY_LIVE_ADDITIONAL_DETAILS",
+          title = "Additional details",
+          subTitle = "If returning to previous address, specify if any details will have changed.\nIf moving to a new address, include names and dates of birth of anyone else living at the address, and how the accommodation will be paid for.",
+          type = TypeOfQuestion.LONG_TEXT,
+          validationType = ValidationType.OPTIONAL,
+        ),
+        originalPageId = "ACCOMMODATION_REPORT",
+        answer = answers?.get("WHERE_WILL_THEY_LIVE_ADDITIONAL_DETAILS"),
       ),
     ),
   )

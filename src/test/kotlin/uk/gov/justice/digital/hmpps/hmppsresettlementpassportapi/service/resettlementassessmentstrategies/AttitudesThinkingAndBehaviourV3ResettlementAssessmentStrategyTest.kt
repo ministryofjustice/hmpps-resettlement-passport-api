@@ -105,11 +105,29 @@ class AttitudesThinkingAndBehaviourV3ResettlementAssessmentStrategyTest : BaseRe
           ),
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
+              id = "HELP_TO_MANAGE_ANGER_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
+            ),
+            originalPageId = "ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
               id = "ISSUES_WITH_GAMBLING",
               title = "Does the person in prison have any issues with gambling?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
               options = yesNoOptions,
+            ),
+            originalPageId = "ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
+              id = "ISSUES_WITH_GAMBLING_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
             ),
             originalPageId = "ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT",
           ),

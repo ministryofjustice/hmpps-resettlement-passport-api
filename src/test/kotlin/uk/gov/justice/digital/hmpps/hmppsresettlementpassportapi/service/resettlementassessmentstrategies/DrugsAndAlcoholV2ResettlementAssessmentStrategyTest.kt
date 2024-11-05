@@ -105,11 +105,31 @@ class DrugsAndAlcoholV2ResettlementAssessmentStrategyTest : BaseResettlementAsse
           ),
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
+              id = "DRUG_MISUSE_ISSUES_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              subTitle = "Specify if they have spoken to the healthcare team about their issues. Do not include any details about medical treatments, conditions or ongoing monitoring.",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
+            ),
+            originalPageId = "DRUGS_AND_ALCOHOL_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
               id = "ALCOHOL_MISUSE_ISSUES",
               title = "Does the person in prison have any previous or current alcohol misuse issues?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
               options = yesNoOptions,
+            ),
+            originalPageId = "DRUGS_AND_ALCOHOL_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
+              id = "ALCOHOL_MISUSE_ISSUES_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              subTitle = "Specify if they have spoken to the healthcare team about their issues. Do not include any details about medical treatments, conditions or ongoing monitoring.",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
             ),
             originalPageId = "DRUGS_AND_ALCOHOL_REPORT",
           ),

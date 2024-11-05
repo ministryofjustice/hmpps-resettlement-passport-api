@@ -106,7 +106,6 @@ class FinanceAndIdV2ResettlementAssessmentAssessmentStrategyTest : BaseResettlem
             question = ResettlementAssessmentQuestion(
               id = "HAS_BANK_ACCOUNT_ADDITIONAL_DETAILS",
               title = "Additional details",
-              subTitle = "",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
             ),
@@ -169,7 +168,6 @@ class FinanceAndIdV2ResettlementAssessmentAssessmentStrategyTest : BaseResettlem
             question = ResettlementAssessmentQuestion(
               id = "WHAT_ID_DOCUMENTS_ADDITIONAL_DETAILS",
               title = "Additional details",
-              subTitle = "",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
             ),
@@ -224,7 +222,6 @@ class FinanceAndIdV2ResettlementAssessmentAssessmentStrategyTest : BaseResettlem
             question = ResettlementAssessmentQuestion(
               id = "SELECT_BENEFITS_ADDITIONAL_DETAILS",
               title = "Additional details",
-              subTitle = "",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
             ),

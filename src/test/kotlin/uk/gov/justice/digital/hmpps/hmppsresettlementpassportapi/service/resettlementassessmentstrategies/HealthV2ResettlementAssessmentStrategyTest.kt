@@ -107,6 +107,7 @@ class HealthV2ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStr
             question = ResettlementAssessmentQuestion(
               id = "REGISTERED_WITH_GP_ADDITIONAL_DETAILS",
               title = "Additional details",
+              subTitle = "You do not need to include the name and address of the GP surgery.",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
             ),

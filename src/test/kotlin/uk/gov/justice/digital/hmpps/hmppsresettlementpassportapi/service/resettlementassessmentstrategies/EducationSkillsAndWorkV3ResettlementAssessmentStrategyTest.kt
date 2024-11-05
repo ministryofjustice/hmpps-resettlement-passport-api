@@ -136,6 +136,15 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
           ),
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
+              id = "DID_THEY_HAVE_JOB_BEFORE_CUSTODY_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
+            ),
+            originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
               id = "DO_THEY_HAVE_JOB_ARRANGED",
               title = "Does the person in prison have a job arranged for when they are released?",
               subTitle = null,
@@ -181,11 +190,30 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
           ),
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
+              id = "DO_THEY_HAVE_JOB_ARRANGED_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              subTitle = "Specify if they were employed full or part time or whether they were self-employed. Specify if they had a permanent, temporary, fixed-term or zero hours contract.",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
+            ),
+            originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
               id = "WERE_THEY_IN_EDUCATION_BEFORE_CUSTODY",
               title = "Was the person in prison in education or training before custody?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
               options = yesNoOptions,
+            ),
+            originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
+              id = "WERE_THEY_IN_EDUCATION_BEFORE_CUSTODY_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
             ),
             originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
           ),
@@ -213,6 +241,15 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
                   displayText = "No answer provided",
                 ),
               ),
+            ),
+            originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
+              id = "EDUCATION_WHEN_RELEASED_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
             ),
             originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
           ),

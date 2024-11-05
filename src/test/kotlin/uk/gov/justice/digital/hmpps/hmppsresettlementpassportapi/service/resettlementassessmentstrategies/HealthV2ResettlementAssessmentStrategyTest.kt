@@ -105,11 +105,30 @@ class HealthV2ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStr
           ),
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
+              id = "REGISTERED_WITH_GP_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
+            ),
+            originalPageId = "HEALTH_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
               id = "NEEDS_HELP_WITH_DAY_TO_DAY_LIVING",
               title = "Does the person in prison need help with day-to-day living when they are released because of an illness or disability?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
               options = yesNoOptions,
+            ),
+            originalPageId = "HEALTH_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
+              id = "NEEDS_HELP_WITH_DAY_TO_DAY_LIVING_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              subTitle = "Include details of any support, adaptations or equipment required. Do not include any details about medical treatments or conditions.",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
             ),
             originalPageId = "HEALTH_REPORT",
           ),

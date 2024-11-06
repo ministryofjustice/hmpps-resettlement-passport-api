@@ -104,6 +104,15 @@ class FinanceAndIdV2ResettlementAssessmentAssessmentStrategyTest : BaseResettlem
           ),
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
+              id = "HAS_BANK_ACCOUNT_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
+            ),
+            originalPageId = "FINANCE_AND_ID_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
               id = "WHAT_ID_DOCUMENTS",
               title = "What ID documents does the person in prison have?",
               subTitle = "Select all that apply",
@@ -157,6 +166,15 @@ class FinanceAndIdV2ResettlementAssessmentAssessmentStrategyTest : BaseResettlem
           ),
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
+              id = "WHAT_ID_DOCUMENTS_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
+            ),
+            originalPageId = "FINANCE_AND_ID_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
               id = "SELECT_BENEFITS",
               title = "What benefits was the person in prison receiving before custody?",
               subTitle = "Select all that apply",
@@ -202,10 +220,29 @@ class FinanceAndIdV2ResettlementAssessmentAssessmentStrategyTest : BaseResettlem
           ),
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
+              id = "SELECT_BENEFITS_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
+            ),
+            originalPageId = "FINANCE_AND_ID_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
               id = "DEBTS_OR_ARREARS",
               title = "Does the person in prison have any debts or arrears?",
               type = TypeOfQuestion.RADIO,
               options = yesNoOptions,
+            ),
+            originalPageId = "FINANCE_AND_ID_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
+              id = "DEBTS_OR_ARREARS_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              subTitle = "Include details of what type of debt it is, and the amount. Do not include the names of anyone the person owes money to.",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
             ),
             originalPageId = "FINANCE_AND_ID_REPORT",
           ),

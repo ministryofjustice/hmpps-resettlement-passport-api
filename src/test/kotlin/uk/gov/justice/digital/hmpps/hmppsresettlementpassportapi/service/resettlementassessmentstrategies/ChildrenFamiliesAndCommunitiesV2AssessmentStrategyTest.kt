@@ -124,11 +124,31 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
           ),
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
+              id = "PARTNER_OR_SPOUSE_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              subTitle = "Include their full name and date of birth.",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
+            ),
+            originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
               id = "PARENTAL_RESPONSIBILITY",
               title = "Does the person in prison have parental responsibility for any children under 16?",
               subTitle = "Parental responsibility means they have legal rights and duties relating to the children's upbringing. It does not mean they are allowed contact.",
               type = TypeOfQuestion.RADIO,
               options = yesNoOptions,
+            ),
+            originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
+              id = "PARENTAL_RESPONSIBILITY_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              subTitle = "Include their names, whether they are with current or ex partner and their dates of birth. Specify how many children they are the primary carer for, and where they are while they are in custody. Specify if social services are involved, including name of social worker.",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
             ),
             originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
           ),
@@ -188,6 +208,16 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
           ),
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
+              id = "CARING_RESPONSIBILITIES_FOR_ADULTS_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              subTitle = "Details of any adults they have caring responsibilities for. Specify if social services are involved, including name of social worker.",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
+            ),
+            originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
               id = "SOCIAL_SERVICE_INVOLVED",
               title = "Are social services involved with the person in prison and any adults they provide care for?",
               subTitle = null,
@@ -208,11 +238,29 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
           ),
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
+              id = "RECEIVED_SUPPORT_FROM_SOCIAL_SERVICES_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
+            ),
+            originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
               id = "DO_THEY_HAVE_SUPPORT_FROM_FAMILY_FRIENDS_COMMUNITY",
               title = "Does the person in prison have support from family, friends or their community outside of prison?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
               options = yesNoOptions,
+            ),
+            originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
+              id = "DO_THEY_HAVE_SUPPORT_FROM_FAMILY_FRIENDS_COMMUNITY_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
             ),
             originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
           ),
@@ -228,11 +276,29 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
           ),
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
+              id = "INVOLVEMENT_IN_GANG_ACTIVITY_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
+            ),
+            originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
               id = "UNDER_THREAT_OUTSIDE_PRISON",
               title = "Is the person in prison under threat outside of prison?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
               options = yesNoOptions,
+            ),
+            originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
+              id = "UNDER_THREAT_OUTSIDE_PRISON_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
             ),
             originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
           ),
@@ -450,8 +516,16 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
               answer = StringAnswer(answer = "YES"),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
+              questionId = "PARTNER_OR_SPOUSE_ADDITIONAL_DETAILS",
+              answer = StringAnswer(answer = "Additional details long text"),
+            ),
+            ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "PARENTAL_RESPONSIBILITY",
               answer = StringAnswer(answer = "YES"),
+            ),
+            ResettlementAssessmentSimpleQuestionAndAnswer(
+              questionId = "PARENTAL_RESPONSIBILITY_ADDITIONAL_DETAILS",
+              answer = StringAnswer(answer = "Additional details long text"),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "PRIMARY_CARER_FOR_CHILDREN",
@@ -470,6 +544,10 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
               answer = StringAnswer(answer = "NO"),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
+              questionId = "CARING_RESPONSIBILITIES_FOR_ADULTS_ADDITIONAL_DETAILS",
+              answer = StringAnswer(answer = "Additional details long text"),
+            ),
+            ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "SOCIAL_SERVICE_INVOLVED",
               answer = StringAnswer(answer = "NO"),
             ),
@@ -478,16 +556,32 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
               answer = StringAnswer(answer = "NO"),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
+              questionId = "RECEIVED_SUPPORT_FROM_SOCIAL_SERVICES_ADDITIONAL_DETAILS",
+              answer = StringAnswer(answer = null),
+            ),
+            ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "DO_THEY_HAVE_SUPPORT_FROM_FAMILY_FRIENDS_COMMUNITY",
               answer = StringAnswer(answer = "NO"),
+            ),
+            ResettlementAssessmentSimpleQuestionAndAnswer(
+              questionId = "DO_THEY_HAVE_SUPPORT_FROM_FAMILY_FRIENDS_COMMUNITY_ADDITIONAL_DETAILS",
+              answer = StringAnswer(answer = null),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "INVOLVEMENT_IN_GANG_ACTIVITY",
               answer = StringAnswer(answer = "NO"),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
+              questionId = "INVOLVEMENT_IN_GANG_ACTIVITY_ADDITIONAL_DETAILS",
+              answer = StringAnswer(answer = null),
+            ),
+            ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "UNDER_THREAT_OUTSIDE_PRISON",
               answer = StringAnswer(answer = "NO"),
+            ),
+            ResettlementAssessmentSimpleQuestionAndAnswer(
+              questionId = "UNDER_THREAT_OUTSIDE_PRISON_ADDITIONAL_DETAILS",
+              answer = StringAnswer(answer = null),
             ),
             ResettlementAssessmentSimpleQuestionAndAnswer(
               questionId = "VICTIM_OF_DOMESTIC_ABUSE",
@@ -593,8 +687,16 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
         answer = StringAnswer("YES"),
       ),
       ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "PARTNER_OR_SPOUSE_ADDITIONAL_DETAILS",
+        answer = StringAnswer(answer = "Additional details long text"),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
         question = "PARENTAL_RESPONSIBILITY",
         answer = StringAnswer("YES"),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "PARENTAL_RESPONSIBILITY_ADDITIONAL_DETAILS",
+        answer = StringAnswer(answer = "Additional details long text"),
       ),
       ResettlementAssessmentRequestQuestionAndAnswer(
         question = "PRIMARY_CARER_FOR_CHILDREN",
@@ -613,6 +715,10 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
         answer = StringAnswer("NO"),
       ),
       ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "CARING_RESPONSIBILITIES_FOR_ADULTS_ADDITIONAL_DETAILS",
+        answer = StringAnswer(answer = "Additional details long text"),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
         question = "SOCIAL_SERVICE_INVOLVED",
         answer = StringAnswer("NO"),
       ),
@@ -621,16 +727,32 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
         answer = StringAnswer("NO"),
       ),
       ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "RECEIVED_SUPPORT_FROM_SOCIAL_SERVICES_ADDITIONAL_DETAILS",
+        answer = StringAnswer(answer = null),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
         question = "DO_THEY_HAVE_SUPPORT_FROM_FAMILY_FRIENDS_COMMUNITY",
         answer = StringAnswer("NO"),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "DO_THEY_HAVE_SUPPORT_FROM_FAMILY_FRIENDS_COMMUNITY_ADDITIONAL_DETAILS",
+        answer = StringAnswer(answer = null),
       ),
       ResettlementAssessmentRequestQuestionAndAnswer(
         question = "INVOLVEMENT_IN_GANG_ACTIVITY",
         answer = StringAnswer("NO"),
       ),
       ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "INVOLVEMENT_IN_GANG_ACTIVITY_ADDITIONAL_DETAILS",
+        answer = StringAnswer(answer = null),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
         question = "UNDER_THREAT_OUTSIDE_PRISON",
         answer = StringAnswer("NO"),
+      ),
+      ResettlementAssessmentRequestQuestionAndAnswer(
+        question = "UNDER_THREAT_OUTSIDE_PRISON_ADDITIONAL_DETAILS",
+        answer = StringAnswer(answer = null),
       ),
       ResettlementAssessmentRequestQuestionAndAnswer(
         question = "VICTIM_OF_DOMESTIC_ABUSE",

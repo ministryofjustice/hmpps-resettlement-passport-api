@@ -38,7 +38,7 @@ class ChildrenFamiliesAndCommunitiesV3AssessmentStrategyTest : BaseResettlementA
       pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
       assessmentType = ResettlementAssessmentType.BCST2,
       currentPage = currentPage,
-      version = 2,
+      version = 3,
     )
     Assertions.assertEquals(expectedPage, nextPage)
   }
@@ -81,7 +81,7 @@ class ChildrenFamiliesAndCommunitiesV3AssessmentStrategyTest : BaseResettlementA
       pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
       assessmentType = ResettlementAssessmentType.BCST2,
       pageId = pageIdInput,
-      version = 2,
+      version = 3,
     )
     Assertions.assertEquals(expectedPage, page)
   }

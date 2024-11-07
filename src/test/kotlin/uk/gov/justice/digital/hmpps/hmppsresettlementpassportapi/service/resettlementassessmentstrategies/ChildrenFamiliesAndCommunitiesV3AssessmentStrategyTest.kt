@@ -10,10 +10,8 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.Mockito
 import org.mockito.kotlin.whenever
-import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.CustomValidation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentCompleteRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
@@ -36,7 +34,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClai
 import java.time.LocalDateTime
 import java.util.stream.Stream
 
-class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, 2) {
+class ChildrenFamiliesAndCommunitiesV3AssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, 2) {
 
   @ParameterizedTest(name = "{1} -> {2}")
   @MethodSource("test next page function flow - no existing assessment data")
@@ -124,6 +122,16 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
           ),
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
+              id = "PARTNER_OR_SPOUSE_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              subTitle = "Include their full name and date of birth.",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
+            ),
+            originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
               id = "PARENTAL_RESPONSIBILITY",
               title = "Does the person in prison have parental responsibility for any children under 16?",
               subTitle = "Parental responsibility means they have legal rights and duties relating to the children's upbringing. It does not mean they are allowed contact.",
@@ -134,45 +142,11 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
           ),
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
-              id = "PRIMARY_CARER_FOR_CHILDREN",
-              title = "Is the person in prison the primary carer for any children under 16?",
-              subTitle = null,
-              type = TypeOfQuestion.RADIO,
-              options = listOf(
-                ResettlementAssessmentOption(
-                  id = "YES",
-                  displayText = "Yes",
-                  nestedQuestions = listOf(
-                    ResettlementAssessmentQuestionAndAnswer(
-                      question = ResettlementAssessmentQuestion(
-                        id = "NUMBER_OF_CHILDREN",
-                        title = "Number of children",
-                        type = TypeOfQuestion.SHORT_TEXT,
-                        customValidation = CustomValidation(regex = "^(?:[1-9])(\\d+)?$", message = "Number of children must be a whole number"),
-                      ),
-                      originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
-                    ),
-                  ),
-                ),
-                ResettlementAssessmentOption(
-                  id = "NO",
-                  displayText = "No",
-                ),
-                ResettlementAssessmentOption(
-                  id = "NO_ANSWER",
-                  displayText = "No answer provided",
-                ),
-              ),
-            ),
-            originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
-          ),
-          ResettlementAssessmentQuestionAndAnswer(
-            question = ResettlementAssessmentQuestion(
-              id = "CHILDREN_SERVICE_INVOLVED",
-              title = "Are children's services involved with the person in prison and the children they look after?",
-              subTitle = null,
-              type = TypeOfQuestion.RADIO,
-              options = yesNoOptions,
+              id = "PARENTAL_RESPONSIBILITY_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              subTitle = "Include their names, whether they are with current or ex partner and their dates of birth. Specify how many children they are the primary carer for, and where they are while they are in custody. Specify if social services are involved, including name of social worker.",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
             ),
             originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
           ),
@@ -188,11 +162,11 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
           ),
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
-              id = "SOCIAL_SERVICE_INVOLVED",
-              title = "Are social services involved with the person in prison and any adults they provide care for?",
-              subTitle = null,
-              type = TypeOfQuestion.RADIO,
-              options = yesNoOptions,
+              id = "CARING_RESPONSIBILITIES_FOR_ADULTS_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              subTitle = "Details of any adults they have caring responsibilities for. Specify if social services are involved, including name of social worker.",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
             ),
             originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
           ),
@@ -208,11 +182,29 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
           ),
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
+              id = "RECEIVED_SUPPORT_FROM_SOCIAL_SERVICES_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
+            ),
+            originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
               id = "DO_THEY_HAVE_SUPPORT_FROM_FAMILY_FRIENDS_COMMUNITY",
               title = "Does the person in prison have support from family, friends or their community outside of prison?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
               options = yesNoOptions,
+            ),
+            originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
+              id = "DO_THEY_HAVE_SUPPORT_FROM_FAMILY_FRIENDS_COMMUNITY_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
             ),
             originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
           ),
@@ -228,11 +220,29 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
           ),
           ResettlementAssessmentQuestionAndAnswer(
             question = ResettlementAssessmentQuestion(
+              id = "INVOLVEMENT_IN_GANG_ACTIVITY_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
+            ),
+            originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
               id = "UNDER_THREAT_OUTSIDE_PRISON",
               title = "Is the person in prison under threat outside of prison?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
               options = yesNoOptions,
+            ),
+            originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
+          ),
+          ResettlementAssessmentQuestionAndAnswer(
+            question = ResettlementAssessmentQuestion(
+              id = "UNDER_THREAT_OUTSIDE_PRISON_ADDITIONAL_DETAILS",
+              title = "Additional details",
+              type = TypeOfQuestion.LONG_TEXT,
+              validationType = ValidationType.OPTIONAL,
             ),
             originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
           ),
@@ -383,286 +393,6 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
       ResettlementAssessmentResponsePage(
         id = "CHECK_ANSWERS",
         questionsAndAnswers = listOf(),
-      ),
-    ),
-  )
-
-  @ParameterizedTest
-  @MethodSource("test complete assessment data")
-  fun `test complete assessment`(assessmentType: ResettlementAssessmentType, assessment: ResettlementAssessmentCompleteRequest, expectedEntity: ResettlementAssessmentEntity?, expectedException: Throwable?, existingAssessment: ResettlementAssessmentEntity?) {
-    mockkStatic(::getClaimFromJWTToken)
-    every { getClaimFromJWTToken("string", "name") } returns "System user"
-    every { getClaimFromJWTToken("string", "auth_source") } returns "nomis"
-    every { getClaimFromJWTToken("string", "sub") } returns "USER_1"
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns testDate
-
-    val nomsId = "abc"
-
-    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC")
-
-    Mockito.lenient().`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
-
-    if (existingAssessment != null) {
-      whenever(
-        resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInAndDeletedIsFalseOrderByCreationDateDesc(
-          1,
-          pathway,
-          assessmentType,
-          listOf(
-            ResettlementAssessmentStatus.COMPLETE,
-            ResettlementAssessmentStatus.SUBMITTED,
-          ),
-        ),
-      ).thenReturn(existingAssessment)
-    }
-
-    if (expectedException == null) {
-      stubSave()
-      resettlementAssessmentStrategy.completeAssessment(nomsId, pathway, assessmentType, assessment, "string", true)
-      Mockito.verify(resettlementAssessmentRepository).save(expectedEntity!!)
-    } else {
-      val actualException = assertThrows<Throwable> {
-        resettlementAssessmentStrategy.completeAssessment(nomsId, pathway, assessmentType, assessment, "string", true)
-      }
-      Assertions.assertEquals(expectedException::class, actualException::class)
-      Assertions.assertEquals(expectedException.message, actualException.message)
-    }
-
-    unmockkAll()
-  }
-
-  private fun `test complete assessment data`() = Stream.of(
-    // Happy path - including a nested question answer with matching regex
-    Arguments.of(
-      ResettlementAssessmentType.BCST2,
-      getCompleteRequestWithNumberOfChildren("3"),
-      ResettlementAssessmentEntity(
-        id = null,
-        prisonerId = 1,
-        pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
-        statusChangedTo = Status.SUPPORT_REQUIRED,
-        assessmentType = ResettlementAssessmentType.BCST2,
-        assessment = ResettlementAssessmentQuestionAndAnswerList(
-          assessment = listOf(
-            ResettlementAssessmentSimpleQuestionAndAnswer(
-              questionId = "PARTNER_OR_SPOUSE",
-              answer = StringAnswer(answer = "YES"),
-            ),
-            ResettlementAssessmentSimpleQuestionAndAnswer(
-              questionId = "PARENTAL_RESPONSIBILITY",
-              answer = StringAnswer(answer = "YES"),
-            ),
-            ResettlementAssessmentSimpleQuestionAndAnswer(
-              questionId = "PRIMARY_CARER_FOR_CHILDREN",
-              answer = StringAnswer(answer = "YES"),
-            ),
-            ResettlementAssessmentSimpleQuestionAndAnswer(
-              questionId = "NUMBER_OF_CHILDREN",
-              answer = StringAnswer(answer = "3"),
-            ),
-            ResettlementAssessmentSimpleQuestionAndAnswer(
-              questionId = "CHILDREN_SERVICE_INVOLVED",
-              answer = StringAnswer(answer = "NO"),
-            ),
-            ResettlementAssessmentSimpleQuestionAndAnswer(
-              questionId = "CARING_RESPONSIBILITIES_FOR_ADULTS",
-              answer = StringAnswer(answer = "NO"),
-            ),
-            ResettlementAssessmentSimpleQuestionAndAnswer(
-              questionId = "SOCIAL_SERVICE_INVOLVED",
-              answer = StringAnswer(answer = "NO"),
-            ),
-            ResettlementAssessmentSimpleQuestionAndAnswer(
-              questionId = "RECEIVED_SUPPORT_FROM_SOCIAL_SERVICES",
-              answer = StringAnswer(answer = "NO"),
-            ),
-            ResettlementAssessmentSimpleQuestionAndAnswer(
-              questionId = "DO_THEY_HAVE_SUPPORT_FROM_FAMILY_FRIENDS_COMMUNITY",
-              answer = StringAnswer(answer = "NO"),
-            ),
-            ResettlementAssessmentSimpleQuestionAndAnswer(
-              questionId = "INVOLVEMENT_IN_GANG_ACTIVITY",
-              answer = StringAnswer(answer = "NO"),
-            ),
-            ResettlementAssessmentSimpleQuestionAndAnswer(
-              questionId = "UNDER_THREAT_OUTSIDE_PRISON",
-              answer = StringAnswer(answer = "NO"),
-            ),
-            ResettlementAssessmentSimpleQuestionAndAnswer(
-              questionId = "VICTIM_OF_DOMESTIC_ABUSE",
-              answer = StringAnswer(answer = "NO"),
-            ),
-            ResettlementAssessmentSimpleQuestionAndAnswer(
-              questionId = "PERPETRATOR_OF_DOMESTIC_ABUSE",
-              answer = StringAnswer(answer = "NO"),
-            ),
-            ResettlementAssessmentSimpleQuestionAndAnswer(
-              questionId = "VICTIM_OF_SEXUAL_ABUSE",
-              answer = StringAnswer(answer = "NO"),
-            ),
-            ResettlementAssessmentSimpleQuestionAndAnswer(
-              questionId = "PERPETRATOR_OF_SEXUAL_ABUSE",
-              answer = StringAnswer(answer = "NO"),
-            ),
-            ResettlementAssessmentSimpleQuestionAndAnswer(
-              questionId = "WORKED_IN_SEX_INDUSTRY",
-              answer = StringAnswer(answer = "NO"),
-            ),
-            ResettlementAssessmentSimpleQuestionAndAnswer(
-              questionId = "SUPPORT_REQUIREMENTS",
-              answer = ListAnswer(answer = listOf("SUPPORT_WHEN_MEETING_CHILDREN_SERVICES", "INTERNAL_SUPPORT_SERVICES")),
-            ),
-            ResettlementAssessmentSimpleQuestionAndAnswer(
-              questionId = "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS",
-              answer = StringAnswer(answer = "Long text field answer"),
-            ),
-            ResettlementAssessmentSimpleQuestionAndAnswer(
-              questionId = "SUPPORT_NEEDS",
-              answer = StringAnswer(answer = "SUPPORT_REQUIRED"),
-            ),
-          ),
-        ),
-        creationDate = LocalDateTime.parse("2023-08-16T12:00:00.000"),
-        createdBy = "System user",
-        assessmentStatus = ResettlementAssessmentStatus.COMPLETE,
-        caseNoteText = null,
-        createdByUserId = "USER_1",
-        version = 2,
-        submissionDate = null,
-        userDeclaration = true,
-      ),
-      null,
-      null,
-    ),
-    // Throw exception if NUMBER_OF_CHILDREN answer does not match regex (i.e. not numerical)
-    Arguments.of(
-      ResettlementAssessmentType.BCST2,
-      getCompleteRequestWithNumberOfChildren("not a number"),
-      null,
-      ServerWebInputException("Invalid answer to question [NUMBER_OF_CHILDREN] as failed to match regex [^(?:[1-9])(\\d+)?$]"),
-      null,
-    ),
-    // Throw exception if NUMBER_OF_CHILDREN answer is 0
-    Arguments.of(
-      ResettlementAssessmentType.BCST2,
-      getCompleteRequestWithNumberOfChildren("0"),
-      null,
-      ServerWebInputException("Invalid answer to question [NUMBER_OF_CHILDREN] as failed to match regex [^(?:[1-9])(\\d+)?$]"),
-      null,
-    ),
-    // Throw exception if NUMBER_OF_CHILDREN answer is negative
-    Arguments.of(
-      ResettlementAssessmentType.BCST2,
-      getCompleteRequestWithNumberOfChildren("-2"),
-      null,
-      ServerWebInputException("Invalid answer to question [NUMBER_OF_CHILDREN] as failed to match regex [^(?:[1-9])(\\d+)?$]"),
-      null,
-    ),
-    // Throw exception if NUMBER_OF_CHILDREN answer is not whole
-    Arguments.of(
-      ResettlementAssessmentType.BCST2,
-      getCompleteRequestWithNumberOfChildren("4.5"),
-      null,
-      ServerWebInputException("Invalid answer to question [NUMBER_OF_CHILDREN] as failed to match regex [^(?:[1-9])(\\d+)?$]"),
-      null,
-    ),
-    // Throw exception if NUMBER_OF_CHILDREN answer is not empty
-    Arguments.of(
-      ResettlementAssessmentType.BCST2,
-      getCompleteRequestWithNumberOfChildren(""),
-      null,
-      ServerWebInputException("Invalid answer to question [NUMBER_OF_CHILDREN] as failed to match regex [^(?:[1-9])(\\d+)?$]"),
-      null,
-    ),
-    // Throw exception if NUMBER_OF_CHILDREN answer is not blank
-    Arguments.of(
-      ResettlementAssessmentType.BCST2,
-      getCompleteRequestWithNumberOfChildren(" "),
-      null,
-      ServerWebInputException("Invalid answer to question [NUMBER_OF_CHILDREN] as failed to match regex [^(?:[1-9])(\\d+)?$]"),
-      null,
-    ),
-  )
-
-  private fun getCompleteRequestWithNumberOfChildren(numberOfChildren: String) = ResettlementAssessmentCompleteRequest(
-    version = 2,
-    questionsAndAnswers = listOf(
-      ResettlementAssessmentRequestQuestionAndAnswer(
-        question = "PARTNER_OR_SPOUSE",
-        answer = StringAnswer("YES"),
-      ),
-      ResettlementAssessmentRequestQuestionAndAnswer(
-        question = "PARENTAL_RESPONSIBILITY",
-        answer = StringAnswer("YES"),
-      ),
-      ResettlementAssessmentRequestQuestionAndAnswer(
-        question = "PRIMARY_CARER_FOR_CHILDREN",
-        answer = StringAnswer("YES"),
-      ),
-      ResettlementAssessmentRequestQuestionAndAnswer(
-        question = "NUMBER_OF_CHILDREN",
-        answer = StringAnswer(numberOfChildren),
-      ),
-      ResettlementAssessmentRequestQuestionAndAnswer(
-        question = "CHILDREN_SERVICE_INVOLVED",
-        answer = StringAnswer("NO"),
-      ),
-      ResettlementAssessmentRequestQuestionAndAnswer(
-        question = "CARING_RESPONSIBILITIES_FOR_ADULTS",
-        answer = StringAnswer("NO"),
-      ),
-      ResettlementAssessmentRequestQuestionAndAnswer(
-        question = "SOCIAL_SERVICE_INVOLVED",
-        answer = StringAnswer("NO"),
-      ),
-      ResettlementAssessmentRequestQuestionAndAnswer(
-        question = "RECEIVED_SUPPORT_FROM_SOCIAL_SERVICES",
-        answer = StringAnswer("NO"),
-      ),
-      ResettlementAssessmentRequestQuestionAndAnswer(
-        question = "DO_THEY_HAVE_SUPPORT_FROM_FAMILY_FRIENDS_COMMUNITY",
-        answer = StringAnswer("NO"),
-      ),
-      ResettlementAssessmentRequestQuestionAndAnswer(
-        question = "INVOLVEMENT_IN_GANG_ACTIVITY",
-        answer = StringAnswer("NO"),
-      ),
-      ResettlementAssessmentRequestQuestionAndAnswer(
-        question = "UNDER_THREAT_OUTSIDE_PRISON",
-        answer = StringAnswer("NO"),
-      ),
-      ResettlementAssessmentRequestQuestionAndAnswer(
-        question = "VICTIM_OF_DOMESTIC_ABUSE",
-        answer = StringAnswer("NO"),
-      ),
-      ResettlementAssessmentRequestQuestionAndAnswer(
-        question = "PERPETRATOR_OF_DOMESTIC_ABUSE",
-        answer = StringAnswer("NO"),
-      ),
-      ResettlementAssessmentRequestQuestionAndAnswer(
-        question = "VICTIM_OF_SEXUAL_ABUSE",
-        answer = StringAnswer("NO"),
-      ),
-      ResettlementAssessmentRequestQuestionAndAnswer(
-        question = "PERPETRATOR_OF_SEXUAL_ABUSE",
-        answer = StringAnswer("NO"),
-      ),
-      ResettlementAssessmentRequestQuestionAndAnswer(
-        question = "WORKED_IN_SEX_INDUSTRY",
-        answer = StringAnswer("NO"),
-      ),
-      ResettlementAssessmentRequestQuestionAndAnswer(
-        question = "SUPPORT_REQUIREMENTS",
-        answer = ListAnswer(listOf("SUPPORT_WHEN_MEETING_CHILDREN_SERVICES", "INTERNAL_SUPPORT_SERVICES")),
-      ),
-      ResettlementAssessmentRequestQuestionAndAnswer(
-        question = "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS",
-        answer = StringAnswer(answer = "Long text field answer"),
-      ),
-      ResettlementAssessmentRequestQuestionAndAnswer(
-        question = "SUPPORT_NEEDS",
-        answer = StringAnswer("SUPPORT_REQUIRED"),
       ),
     ),
   )

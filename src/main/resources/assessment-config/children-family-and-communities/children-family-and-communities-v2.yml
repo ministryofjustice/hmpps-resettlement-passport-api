@@ -190,7 +190,7 @@ pages:
             exclusive: true
       - id: "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS"
         title: "Additional details"
-        subTitle: "This information will be only displayed in PSfR."
+        subTitle: "This information will only be displayed in PSfR."
         type: "LONG_TEXT"
         validationType: "OPTIONAL"
     nextPageLogic:

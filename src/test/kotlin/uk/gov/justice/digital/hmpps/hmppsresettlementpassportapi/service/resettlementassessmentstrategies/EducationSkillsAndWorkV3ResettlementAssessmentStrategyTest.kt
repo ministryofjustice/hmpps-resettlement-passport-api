@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Validation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
@@ -140,6 +141,7 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
               title = "Additional details",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
           ),
@@ -195,6 +197,7 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
               subTitle = "Specify if they were employed full or part time or whether they were self-employed. Specify if they had a permanent, temporary, fixed-term or zero hours contract.",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
           ),
@@ -214,6 +217,7 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
               title = "Additional details",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
           ),
@@ -250,6 +254,7 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
               title = "Additional details",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
           ),
@@ -318,6 +323,7 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
               subTitle = "This information will only be displayed in PSfR.",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "SUPPORT_REQUIREMENTS",
           ),

@@ -26,6 +26,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Validation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
@@ -437,6 +438,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
                 ),
               ),
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "ASSESSMENT_SUMMARY",
           ),
@@ -913,6 +915,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
               ),
             ),
             validationType = ValidationType.OPTIONAL,
+            validation = Validation(ValidationType.OPTIONAL),
           ),
           answer = ListAnswer(listOf("HELP_TO_FIND_ACCOMMODATION", "HELP_TO_KEEP_HOME", "SET_UP_RENT_ARREARS")),
           originalPageId = "ASSESSMENT_SUMMARY",

@@ -80,6 +80,21 @@
                 "validationType" : {
                   "type" : "string",
                   "enum" : [ "MANDATORY", "OPTIONAL" ]
+                },
+                "validation" : {
+                  "type" : "object",
+                  "properties" : {
+                    "type": {
+                      "type" : "string",
+                      "enum" : [ "MANDATORY", "OPTIONAL" ]
+                    },
+                    "regex": {
+                      "type" : "string"
+                    },
+                    "message": {
+                      "type" : "string"
+                    }
+                  }
                 }
               }
             }

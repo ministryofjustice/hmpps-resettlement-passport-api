@@ -282,7 +282,7 @@ class ValidationAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(
               title = "Has the person in prison ever worked in the sex industry?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
-              validation = Validation(message="This validation message here"),
+              validation = Validation(message = "This validation message here"),
               options = yesNoOptions,
             ),
             originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",

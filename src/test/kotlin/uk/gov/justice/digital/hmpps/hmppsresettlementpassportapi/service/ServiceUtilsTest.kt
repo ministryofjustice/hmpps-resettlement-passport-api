@@ -565,7 +565,7 @@ class ServiceUtilsTest {
           type = TypeOfQuestion.LONG_TEXT,
           validationType = ValidationType.OPTIONAL,
           customValidation = Validation(regex = "^\\d+$", message = "Failed validation"),
-          validation = Validation(ValidationType.OPTIONAL,  "^\\d+$", "Failed validation"),
+          validation = Validation(ValidationType.OPTIONAL, "^\\d+$", "Failed validation"),
         ),
         originalPageId = "MY_PAGE",
         answer = StringAnswer(null),

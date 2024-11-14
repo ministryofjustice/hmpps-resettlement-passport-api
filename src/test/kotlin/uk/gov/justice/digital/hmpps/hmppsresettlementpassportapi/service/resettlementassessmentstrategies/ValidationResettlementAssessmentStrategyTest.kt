@@ -36,7 +36,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClai
 import java.time.LocalDateTime
 import java.util.stream.Stream
 
-class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, 2) {
+class ValidationResettlementAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, 99) {
 
   @ParameterizedTest(name = "{1} -> {2}")
   @MethodSource("test next page function flow - no existing assessment data")
@@ -57,7 +57,7 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
       pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
       assessmentType = ResettlementAssessmentType.BCST2,
       currentPage = currentPage,
-      version = 2,
+      version = 99,
     )
     Assertions.assertEquals(expectedPage, nextPage)
   }
@@ -100,7 +100,7 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
       pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
       assessmentType = ResettlementAssessmentType.BCST2,
       pageId = pageIdInput,
-      version = 2,
+      version = 99,
     )
     Assertions.assertEquals(expectedPage, page)
   }
@@ -149,7 +149,6 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
                         title = "Number of children",
                         type = TypeOfQuestion.SHORT_TEXT,
                         validation = Validation(regex = "^(?:[1-9])(\\d+)?$", message = "Number of children must be a whole number"),
-                        customValidation = Validation(regex = "^(?:[1-9])(\\d+)?$", message = "Number of children must be a whole number"),
                       ),
                       originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
                     ),
@@ -283,6 +282,7 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
               title = "Has the person in prison ever worked in the sex industry?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
+              validation = Validation(message = "This validation message here"),
               options = yesNoOptions,
             ),
             originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
@@ -530,7 +530,7 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
         assessmentStatus = ResettlementAssessmentStatus.COMPLETE,
         caseNoteText = null,
         createdByUserId = "USER_1",
-        version = 2,
+        version = 99,
         submissionDate = null,
         userDeclaration = true,
       ),
@@ -588,7 +588,7 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
   )
 
   private fun getCompleteRequestWithNumberOfChildren(numberOfChildren: String) = ResettlementAssessmentCompleteRequest(
-    version = 2,
+    version = 99,
     questionsAndAnswers = listOf(
       ResettlementAssessmentRequestQuestionAndAnswer(
         question = "PARTNER_OR_SPOUSE",

@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Validation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
@@ -109,6 +110,7 @@ class AttitudesThinkingAndBehaviourV3ResettlementAssessmentStrategyTest : BaseRe
               title = "Additional details",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT",
           ),
@@ -128,6 +130,7 @@ class AttitudesThinkingAndBehaviourV3ResettlementAssessmentStrategyTest : BaseRe
               title = "Additional details",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT",
           ),
@@ -177,6 +180,7 @@ class AttitudesThinkingAndBehaviourV3ResettlementAssessmentStrategyTest : BaseRe
               subTitle = "This information will only be displayed in PSfR.",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "SUPPORT_REQUIREMENTS",
           ),

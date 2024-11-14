@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Validation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
@@ -110,6 +111,7 @@ class HealthV2ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStr
               subTitle = "You do not need to include the name and address of the GP surgery.",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "HEALTH_REPORT",
           ),
@@ -130,6 +132,7 @@ class HealthV2ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStr
               subTitle = "Include details of any support, adaptations or equipment required. Do not include any details about medical treatments or conditions.",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "HEALTH_REPORT",
           ),
@@ -187,6 +190,7 @@ class HealthV2ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStr
               subTitle = "This information will only be displayed in PSfR.",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "SUPPORT_REQUIREMENTS",
           ),

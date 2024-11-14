@@ -41,9 +41,10 @@ data class ResettlementAssessmentQuestion(
   val type: TypeOfQuestion,
   val options: List<ResettlementAssessmentOption>? = null,
   val validationType: ValidationType = ValidationType.MANDATORY,
-  val customValidation: CustomValidation? = null,
+  val customValidation: Validation? = null,
   val detailsTitle: String? = null,
   val detailsContent: String? = null,
+  val validation: Validation = Validation(validationType),
 )
 
 data class ResettlementAssessmentOption(
@@ -95,7 +96,8 @@ data class ResettlementAssessmentVersion(
   val version: Int?,
 )
 
-data class CustomValidation(
-  val regex: String,
-  val message: String,
+data class Validation(
+  val type: ValidationType = ValidationType.MANDATORY,
+  val regex: String = "",
+  val message: String = "",
 )

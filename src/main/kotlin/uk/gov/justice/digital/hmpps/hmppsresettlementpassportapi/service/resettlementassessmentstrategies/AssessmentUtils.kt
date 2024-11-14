@@ -61,8 +61,9 @@ internal fun AssessmentConfigQuestion.mapToResettlementAssessmentQuestion(origin
     subTitle = this.subTitle,
     type = this.type,
     options = this.options.mapToResettlementAssessmentOptions(originalPageId),
-    validationType = this.validationType,
+    validationType = this.getCorrectValidation().type,
     customValidation = this.customValidation,
+    validation = this.getCorrectValidation(),
     detailsTitle = this.detailsTitle,
     detailsContent = this.detailsContent,
   )
@@ -91,6 +92,7 @@ internal fun ResettlementAssessmentQuestion.removeNestedQuestions() = Resettleme
   },
   validationType = this.validationType,
   customValidation = this.customValidation,
+  validation = this.validation,
   detailsTitle = this.detailsTitle,
   detailsContent = this.detailsContent,
 )

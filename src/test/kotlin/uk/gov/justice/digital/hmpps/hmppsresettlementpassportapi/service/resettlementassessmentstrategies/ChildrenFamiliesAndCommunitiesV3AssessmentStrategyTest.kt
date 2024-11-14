@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Validation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
@@ -110,6 +111,7 @@ class ChildrenFamiliesAndCommunitiesV3AssessmentStrategyTest : BaseResettlementA
               subTitle = "Include their full name and date of birth.",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
           ),
@@ -130,6 +132,7 @@ class ChildrenFamiliesAndCommunitiesV3AssessmentStrategyTest : BaseResettlementA
               subTitle = "Include their names, whether they are with current or ex partner and their dates of birth. Specify how many children they are the primary carer for, and where they are while they are in custody. Specify if social services are involved, including name of social worker.",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
           ),
@@ -150,6 +153,7 @@ class ChildrenFamiliesAndCommunitiesV3AssessmentStrategyTest : BaseResettlementA
               subTitle = "Details of any adults they have caring responsibilities for. Specify if social services are involved, including name of social worker.",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
           ),
@@ -169,6 +173,7 @@ class ChildrenFamiliesAndCommunitiesV3AssessmentStrategyTest : BaseResettlementA
               title = "Additional details",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
           ),
@@ -188,6 +193,7 @@ class ChildrenFamiliesAndCommunitiesV3AssessmentStrategyTest : BaseResettlementA
               title = "Additional details",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
           ),
@@ -207,6 +213,7 @@ class ChildrenFamiliesAndCommunitiesV3AssessmentStrategyTest : BaseResettlementA
               title = "Additional details",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
           ),
@@ -226,6 +233,7 @@ class ChildrenFamiliesAndCommunitiesV3AssessmentStrategyTest : BaseResettlementA
               title = "Additional details",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
           ),
@@ -334,6 +342,7 @@ class ChildrenFamiliesAndCommunitiesV3AssessmentStrategyTest : BaseResettlementA
               subTitle = "This information will only be displayed in PSfR.",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "SUPPORT_REQUIREMENTS",
           ),

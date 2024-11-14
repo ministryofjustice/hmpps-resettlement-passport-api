@@ -1,5 +1,8 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external
 
+import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.runBlocking
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -19,25 +22,35 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ScoreLevel
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.arnapi.AllRoshRiskDataDto
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.arnapi.RiskScoresDto
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.convertStringToEnum
+import java.time.Duration
 
 @Service
-class ArnApiService(private val arnWebClientClientCredentials: WebClient) {
+class ArnApiService(
+  private val arnWebClientClientCredentials: WebClient,
+  @Value("\${api.timeout.arn:PT2S}") private val timeout: Duration,
+) {
 
   @Cacheable("arn-api-get-risk-scores-by-crn")
   fun getRiskScoresByCrn(crn: String): RiskScore {
     // Use CRN to get risk scores from ARN
-    val riskScoresDtoList = arnWebClientClientCredentials.get()
-      .uri("/risks/crn/$crn/predictors/all")
-      .retrieve()
-      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("ARN service could not find CRN $crn") })
-      .bodyToMono<List<RiskScoresDto>>()
-      .block()
+    val riskScoresDtoList = runBlocking {
+      arnWebClientClientCredentials.get()
+        .uri("/risks/crn/$crn/predictors/all")
+        .retrieve()
+        .onStatus(
+          { it == HttpStatus.NOT_FOUND },
+          { throw ResourceNotFoundException("ARN service could not find CRN $crn") },
+        )
+        .bodyToMono<List<RiskScoresDto>>()
+        .timeout(timeout)
+        .awaitSingle()
+    }
 
-    if (riskScoresDtoList?.isEmpty() == true) {
+    if (riskScoresDtoList.isEmpty()) {
       throw ResourceNotFoundException("ARN returned no data for CRN $crn")
     }
 
-    val mostRecentRiskScoreDto = riskScoresDtoList?.getMostRecentRiskScore()
+    val mostRecentRiskScoreDto = riskScoresDtoList.getMostRecentRiskScore()
 
     return RiskScore(
       mostRecentRiskScoreDto?.completedDate,
@@ -77,17 +90,23 @@ class ArnApiService(private val arnWebClientClientCredentials: WebClient) {
     )
   }
 
-  fun List<RiskScoresDto>.getMostRecentRiskScore() = this.sortedBy { it.completedDate }.last()
+  fun List<RiskScoresDto>.getMostRecentRiskScore() = this.sortedBy { it.completedDate }.lastOrNull()
 
   @Cacheable("arn-api-get-rosh-data-by-crn")
   fun getRoshDataByCrn(crn: String): RoshData {
     // Use CRN to get risk scores from ARN
-    val allRoshRiskData = arnWebClientClientCredentials.get()
-      .uri("/risks/crn/$crn")
-      .retrieve()
-      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("ARN service could not find CRN $crn") })
-      .bodyToMono<AllRoshRiskDataDto>()
-      .block()
+    val allRoshRiskData = runBlocking {
+      arnWebClientClientCredentials.get()
+        .uri("/risks/crn/$crn")
+        .retrieve()
+        .onStatus(
+          { it == HttpStatus.NOT_FOUND },
+          { throw ResourceNotFoundException("ARN service could not find CRN $crn") },
+        )
+        .bodyToMono<AllRoshRiskDataDto>()
+        .timeout(timeout)
+        .awaitSingle()
+    }
 
     val overallRiskLevel = convertStringToEnum(RiskLevel::class, allRoshRiskData?.summary?.overallRiskLevel)
 

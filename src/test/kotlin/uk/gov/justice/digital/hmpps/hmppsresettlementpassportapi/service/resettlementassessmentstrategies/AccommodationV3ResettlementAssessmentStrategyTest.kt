@@ -29,6 +29,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Validation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ProfileTagList
@@ -183,6 +184,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
               subTitle = "This information will only be displayed in PSfR.",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "SUPPORT_REQUIREMENTS",
           ),
@@ -829,6 +831,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
           subTitle = "Include the name and date of birth of anyone else who lived at the address, and how the accommodation was paid for.\nIf no fixed address, specify the council area where they have a local connection.",
           type = TypeOfQuestion.LONG_TEXT,
           validationType = ValidationType.OPTIONAL,
+          validation = Validation(ValidationType.OPTIONAL),
         ),
         originalPageId = "ACCOMMODATION_REPORT",
         answer = answers?.get("WHERE_DID_THEY_LIVE_ADDITIONAL_DETAILS"),
@@ -878,6 +881,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
           subTitle = "If returning to previous address, specify if any details will have changed.\nIf moving to a new address, include names and dates of birth of anyone else living at the address, and how the accommodation will be paid for.",
           type = TypeOfQuestion.LONG_TEXT,
           validationType = ValidationType.OPTIONAL,
+          validation = Validation(ValidationType.OPTIONAL),
         ),
         originalPageId = "ACCOMMODATION_REPORT",
         answer = answers?.get("WHERE_WILL_THEY_LIVE_ADDITIONAL_DETAILS"),

@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Validation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.yesNoOptions
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
@@ -110,6 +111,7 @@ class DrugsAndAlcoholV2ResettlementAssessmentStrategyTest : BaseResettlementAsse
               subTitle = "Specify if they have spoken to the healthcare team about their issues. Do not include any details about medical treatments, conditions or ongoing monitoring.",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "DRUGS_AND_ALCOHOL_REPORT",
           ),
@@ -130,6 +132,7 @@ class DrugsAndAlcoholV2ResettlementAssessmentStrategyTest : BaseResettlementAsse
               subTitle = "Specify if they have spoken to the healthcare team about their issues. Do not include any details about medical treatments, conditions or ongoing monitoring.",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "DRUGS_AND_ALCOHOL_REPORT",
           ),
@@ -183,6 +186,7 @@ class DrugsAndAlcoholV2ResettlementAssessmentStrategyTest : BaseResettlementAsse
               subTitle = "This information will only be displayed in PSfR.",
               type = TypeOfQuestion.LONG_TEXT,
               validationType = ValidationType.OPTIONAL,
+              validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "SUPPORT_REQUIREMENTS",
           ),

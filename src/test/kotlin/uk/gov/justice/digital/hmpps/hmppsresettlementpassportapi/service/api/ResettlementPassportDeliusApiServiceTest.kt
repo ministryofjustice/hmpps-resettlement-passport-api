@@ -1,8 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.api
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.assertj.core.api.AssertProvider
@@ -15,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.springframework.boot.test.json.JsonContentAssert
-import org.springframework.http.codec.json.Jackson2JsonEncoder
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusCreateAppointment
@@ -23,6 +19,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.jacksonCodecsConfigurer
 import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneId
@@ -37,17 +34,7 @@ class ResettlementPassportDeliusApiServiceTest {
   fun beforeEach() {
     mockWebServer.start()
     val webClient = WebClient.builder().baseUrl(mockWebServer.url("/").toUrl().toString())
-      .codecs {
-        it.defaultCodecs()
-          .jackson2JsonEncoder(
-            Jackson2JsonEncoder(
-              jacksonObjectMapper()
-                .registerModule(JavaTimeModule())
-                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .disable(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS),
-            ),
-          )
-      }
+      .codecs(jacksonCodecsConfigurer)
       .build()
     val prisonerRepository: PrisonerRepository = mock()
     rpDeliusApiService = ResettlementPassportDeliusApiService(webClient, prisonerRepository)

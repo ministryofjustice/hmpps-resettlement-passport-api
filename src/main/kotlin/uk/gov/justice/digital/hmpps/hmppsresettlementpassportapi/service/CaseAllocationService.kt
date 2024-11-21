@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.DuplicateDataFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
@@ -75,7 +74,7 @@ class CaseAllocationService(
           false,
         )
         if (caseAllocationExists != null) {
-          throw DuplicateDataFoundException("Case for prisoner with id $nomsId is already assigned with staff ${caseAllocationExists.staffId} ")
+          delete(caseAllocationExists)
         }
 
         val case = create(

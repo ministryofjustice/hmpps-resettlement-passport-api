@@ -19,12 +19,10 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
 
     val expectedOutput1 = readFile("testdata/expectation/case-allocation-post-result.json")
     val expectedOutput2 = readFile("testdata/expectation/case-allocation-patch-result.json")
-    val expectedOutput3 = readFile("testdata/expectation/case-allocation-get-result.json")
-    
     val staffId = 4321
 
     webTestClient.get()
-      .uri("/resettlement-passport/case/assign/$staffId")
+      .uri("/resettlement-passport/workers/cases/$staffId")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -32,7 +30,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
       .json("[]")
 
     webTestClient.post()
-      .uri("/resettlement-passport/case/assign")
+      .uri("/resettlement-passport/workers/cases")
       .bodyValue(
         CaseAllocation(
           nomsIds = arrayOf("G4161UF"),
@@ -49,7 +47,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
       .json(expectedOutput1)
 
     webTestClient.patch()
-      .uri("/resettlement-passport/case/unassign")
+      .uri("/resettlement-passport/workers/cases")
       .bodyValue(
         CaseAllocation(
           nomsIds = arrayOf("G4161UF"),
@@ -63,7 +61,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
       .json(expectedOutput2)
 
     webTestClient.get()
-      .uri("/resettlement-passport/case/assign/$staffId")
+      .uri("/resettlement-passport/workers/cases/$staffId")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -78,10 +76,11 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
     every { LocalDateTime.now() } returns fakeNow
 
     val expectedOutput1 = readFile("testdata/expectation/case-allocation-post-result.json")
+    val expectedOutput2 = readFile("testdata/expectation/case-allocation-get-result.json")
     val staffId = 4321
 
     webTestClient.get()
-      .uri("/resettlement-passport/case/assign/$staffId")
+      .uri("/resettlement-passport/workers/cases/$staffId")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -89,7 +88,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
       .json("[]")
 
     webTestClient.post()
-      .uri("/resettlement-passport/case/assign")
+      .uri("/resettlement-passport/workers/cases")
       .bodyValue(
         CaseAllocation(
           nomsIds = arrayOf("G4161UF"),
@@ -106,7 +105,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
       .json(expectedOutput1)
 
     webTestClient.post()
-      .uri("/resettlement-passport/case/assign")
+      .uri("/resettlement-passport/workers/cases")
       .bodyValue(
         CaseAllocation(
           nomsIds = arrayOf("G4161UF"),
@@ -117,10 +116,18 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
-      .expectStatus().is4xxClientError
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
       .expectBody()
-      .jsonPath("status").isEqualTo(409)
-      .jsonPath("developerMessage").toString().contains("Duplicate data found.")
+      .json(expectedOutput2)
+
+    webTestClient.get()
+      .uri("/resettlement-passport/workers/cases/$staffId")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+      .json(expectedOutput2)
   }
 
   @Test
@@ -130,7 +137,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
     every { LocalDateTime.now() } returns fakeNow
 
     webTestClient.patch()
-      .uri("/resettlement-passport/case/unassign")
+      .uri("/resettlement-passport/workers/cases")
       .bodyValue(
         CaseAllocation(
           nomsIds = arrayOf("G4161UF"),
@@ -150,7 +157,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
     val nomsId = "G4161UF"
 
     webTestClient.post()
-      .uri("/resettlement-passport/case/assign")
+      .uri("/resettlement-passport/workers/cases")
       .bodyValue(
         CaseAllocation(
           nomsIds = arrayOf("G4161UF"),
@@ -170,7 +177,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
     val nomsId = "G4161UF"
 
     webTestClient.patch()
-      .uri("/resettlement-passport/case/unassign")
+      .uri("/resettlement-passport/workers/cases")
       .bodyValue(
         CaseAllocation(
           nomsIds = arrayOf("G4161UF"),

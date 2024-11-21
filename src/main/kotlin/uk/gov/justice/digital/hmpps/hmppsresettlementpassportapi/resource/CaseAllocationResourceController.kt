@@ -22,10 +22,10 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseAll
 
 @RestController
 @Validated
-@RequestMapping("/resettlement-passport/case", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/resettlement-passport/workers", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class CaseAllocationResourceController(private val caseAllocationService: CaseAllocationService) {
-  @PostMapping("/assign", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @PostMapping("/cases", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Assign one or more cases to a staff", description = "Assign one or more cases to a probation service officer")
   @ApiResponses(
     value = [
@@ -61,7 +61,7 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
     caseAllocation: CaseAllocation,
   ) = caseAllocationService.assignCase(caseAllocation)
 
-  @PatchMapping("/unassign", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @PatchMapping("/cases", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
     summary = "Unassign one or more cases to a staff",
     description = "Unassign one or more cases to a probation service officer",
@@ -100,7 +100,7 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
     caseAllocation: CaseAllocation,
   ) = caseAllocationService.unAssignCase(caseAllocation)
 
-  @GetMapping("/assign/{staffId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @GetMapping("/cases/{staffId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get all cases by staff Id", description = "All Cases assign to the given staff")
   @ApiResponses(
     value = [

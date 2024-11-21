@@ -9,3 +9,6 @@ CREATE TABLE case_allocation
     when_created                    timestamp with time zone not null default now(),
     deleted_at                      timestamp with time zone
 );
+
+create index case_allocation_prisoner_id on case_allocation(prisoner_id);
+create index case_allocation_staff_id on case_allocation(staff_id);

@@ -1,3 +1,5 @@
+DELETE from case_allocation;
+ALTER SEQUENCE case_allocation_id_seq RESTART WITH 1;
 DELETE from profile_tag;
 ALTER SEQUENCE profile_tag_id_seq RESTART WITH 1;
 DELETE from document_location;

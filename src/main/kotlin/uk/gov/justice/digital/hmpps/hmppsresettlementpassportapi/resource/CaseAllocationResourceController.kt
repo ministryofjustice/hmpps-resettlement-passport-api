@@ -23,7 +23,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseAll
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/workers", produces = [MediaType.APPLICATION_JSON_VALUE])
-@PreAuthorize("hasRole('PSFR_RESETTLEMENT_WORKER')")
+@PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class CaseAllocationResourceController(private val caseAllocationService: CaseAllocationService) {
   @PostMapping("/cases", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Assign one or more cases to a staff", description = "Assign one or more cases to a probation service officer")

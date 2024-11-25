@@ -23,7 +23,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/workers/cases/$staffId")
-      .headers(setAuthorisation(roles = listOf("ROLE_PSFR_RESETTLEMENT_WORKER")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectBody()
@@ -39,7 +39,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
           staffLastName = "PSO Lastname",
         ),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_PSFR_RESETTLEMENT_WORKER")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
@@ -53,7 +53,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
           nomsIds = arrayOf("G4161UF"),
         ),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_PSFR_RESETTLEMENT_WORKER")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
@@ -62,7 +62,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/workers/cases/$staffId")
-      .headers(setAuthorisation(roles = listOf("ROLE_PSFR_RESETTLEMENT_WORKER")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectBody()
@@ -81,7 +81,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/workers/cases/$staffId")
-      .headers(setAuthorisation(roles = listOf("ROLE_PSFR_RESETTLEMENT_WORKER")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectBody()
@@ -97,7 +97,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
           staffLastName = "PSO Lastname",
         ),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_PSFR_RESETTLEMENT_WORKER")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
@@ -114,7 +114,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
           staffLastName = "PSO Lastname",
         ),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_PSFR_RESETTLEMENT_WORKER")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
@@ -123,7 +123,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/workers/cases/$staffId")
-      .headers(setAuthorisation(roles = listOf("ROLE_PSFR_RESETTLEMENT_WORKER")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectBody()
@@ -143,7 +143,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
           nomsIds = arrayOf("G4161UF"),
         ),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_PSFR_RESETTLEMENT_WORKER")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
       .expectHeader().contentType("application/json")
@@ -200,7 +200,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/workers/$prisonId")
-      .headers(setAuthorisation(roles = listOf("ROLE_PSFR_RESETTLEMENT_WORKER")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectBody()
@@ -217,7 +217,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
     manageUsersApiMockServer.stubGetManageUsersDataEmptyList(200)
     webTestClient.get()
       .uri("/resettlement-passport/workers/$prisonId")
-      .headers(setAuthorisation(roles = listOf("ROLE_PSFR_RESETTLEMENT_WORKER")))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
       .expectBody()
@@ -240,7 +240,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/workers/$prisonId")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .headers(setAuthorisation())
       .exchange()
       .expectStatus().isForbidden
   }

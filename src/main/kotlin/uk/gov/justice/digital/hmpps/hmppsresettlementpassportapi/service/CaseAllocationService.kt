@@ -114,6 +114,6 @@ class CaseAllocationService(
   fun getAllResettlementWorkers(
     prisonId: String,
   ): List<ManageUser> {
-    return manageUserApiService.getManageUsersData(prisonId, "ADD_SENSITIVE_CASE_NOTES")
+    return manageUserApiService.getManageUsersData(prisonId, "PSFR_RESETTLEMENT_WORKER")
   }
 }

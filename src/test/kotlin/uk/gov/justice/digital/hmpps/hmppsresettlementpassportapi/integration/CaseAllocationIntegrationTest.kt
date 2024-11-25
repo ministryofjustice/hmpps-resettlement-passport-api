@@ -199,7 +199,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
     manageUsersApiMockServer.stubGetManageUsersData(prisonId, 200)
 
     webTestClient.get()
-      .uri("/resettlement-passport/workers/$prisonId")
+      .uri("/resettlement-passport/workers?prisonId=$prisonId")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -216,7 +216,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
     val prisonId = "MDI1"
     manageUsersApiMockServer.stubGetManageUsersDataEmptyList(200)
     webTestClient.get()
-      .uri("/resettlement-passport/workers/$prisonId")
+      .uri("/resettlement-passport/workers?prisonId=$prisonId")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
@@ -229,7 +229,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
     val prisonId = "MDI"
 
     webTestClient.get()
-      .uri("/resettlement-passport/workers/$prisonId")
+      .uri("/resettlement-passport/workers?prisonId=$prisonId")
       .exchange()
       .expectStatus().isUnauthorized
   }
@@ -239,7 +239,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
     val prisonId = "MDI"
 
     webTestClient.get()
-      .uri("/resettlement-passport/workers/$prisonId")
+      .uri("/resettlement-passport/workers?prisonId=$prisonId")
       .headers(setAuthorisation())
       .exchange()
       .expectStatus().isForbidden

@@ -142,7 +142,7 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
     staffId: Int,
   ) = caseAllocationService.getAllCaseAllocationByStaffId(staffId)
 
-  @GetMapping("/{prisonId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @GetMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get Workers list", description = "Get Workers for case assign in the given prison")
   @ApiResponses(
     value = [
@@ -179,7 +179,6 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
   )
   fun getAllWorkers(
     @Schema(example = "MDI", required = true)
-    @PathVariable("prisonId")
     @Parameter(required = true)
     prisonId: String,
   ) = caseAllocationService.getAllResettlementWorkers(prisonId)

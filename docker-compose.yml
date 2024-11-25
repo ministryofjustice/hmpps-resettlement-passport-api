@@ -28,6 +28,7 @@ services:
       - API_BASE_URL_CASE-NOTES=https://dev.offender-case-notes.service.justice.gov.uk
       - API_BASE_URL_KEY-WORKER=http://wiremock:8080/key-worker-api
       - API_BASE_URL_ALLOCATION-MANAGER=http://wiremock:8080/allocation-manager-api
+      - API_BASE_URL_MANAGE-USERS=http://wiremock:8080/manage-users-api
       - SCHEDULE_EXPRESSION_DELETE-EXPIRED-OTP=0 0 3 * * *
       - HMPPS_SQS_LOCALSTACK-URL=http://localstack:4566
       - HMPPS_S3_LOCALSTACK-URL=http://localstack:4566

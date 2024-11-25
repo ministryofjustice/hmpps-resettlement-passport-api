@@ -36,6 +36,7 @@ class WebClientConfiguration(
   @Value("\${api.base.url.pop-user-service}") private val popUserRootUri: String,
   @Value("\${api.base.url.gotenberg-api}") private val gotenbergRootUri: String,
   @Value("\${api.base.url.curious-service}") private val curiousRootUri: String,
+  @Value("\${api.base.url.manage-users-service}") private val manageUsersRootUri: String,
   private val objectMapper: ObjectMapper,
   val clientRegistrationRepo: ClientRegistrationRepository,
   private val observationRegistry: ObservationRegistry,
@@ -170,5 +171,10 @@ class WebClientConfiguration(
   @Bean
   fun curiousWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
     return getWebClientCredentials(authorizedClientManager, curiousRootUri)
+  }
+
+  @Bean
+  fun manageUsersWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
+    return getWebClientCredentials(authorizedClientManager, manageUsersRootUri)
   }
 }

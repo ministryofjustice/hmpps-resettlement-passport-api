@@ -23,7 +23,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseAll
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/workers", produces = [MediaType.APPLICATION_JSON_VALUE])
-@PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
+@PreAuthorize("hasRole('PSFR_RESETTLEMENT_WORKER')")
 class CaseAllocationResourceController(private val caseAllocationService: CaseAllocationService) {
   @PostMapping("/cases", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Assign one or more cases to a staff", description = "Assign one or more cases to a probation service officer")
@@ -141,4 +141,46 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
     @Parameter(required = true)
     staffId: Int,
   ) = caseAllocationService.getAllCaseAllocationByStaffId(staffId)
+
+  @GetMapping("/{prisonId}", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(summary = "Get Workers list", description = "Get Workers for case assign in the given prison")
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+      ),
+      ApiResponse(
+        description = "Not found",
+        responseCode = "404",
+        content = [Content(mediaType = MediaType.APPLICATION_JSON_VALUE)],
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [
+          Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "400",
+        description = "Incorrect information provided to perform assessment match",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  fun getAllWorkers(
+    @Schema(example = "MDI", required = true)
+    @PathVariable("prisonId")
+    @Parameter(required = true)
+    prisonId: String,
+  ) = caseAllocationService.getAllResettlementWorkers(prisonId)
 }

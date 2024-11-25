@@ -1,0 +1,63 @@
+{
+  "content": [
+    {
+      "username": "YMUSTAFA_GEN",
+      "staffId": 485931,
+      "firstName": "PSO Firstname",
+      "lastName": "PSO Lastname",
+      "active": true,
+      "status": "OPEN",
+      "locked": false,
+      "expired": false,
+      "activeCaseload": {
+        "id": "MDI",
+        "name": "Moorland (HMP & YOI)"
+      },
+      "dpsRoleCount": 32,
+      "email": null,
+      "staffStatus": "ACTIVE"
+    },
+    {
+      "username": "ZHUSSAIN_GEN",
+      "staffId": 487343,
+      "firstName": "PSO2 Firstname",
+      "lastName": "PSO2 Lastname",
+      "active": true,
+      "status": "OPEN",
+      "locked": false,
+      "expired": false,
+      "activeCaseload": {
+        "id": "MDI",
+        "name": "Moorland (HMP & YOI)"
+      },
+      "dpsRoleCount": 6,
+      "email": "zahoor.hussain@digital.justice.gov.uk",
+      "staffStatus": "ACTIVE"
+    }
+  ],
+  "pageable": {
+    "sort": {
+      "sorted": true,
+      "unsorted": false,
+      "empty": false
+    },
+    "offset": 20,
+    "pageNumber": 1,
+    "pageSize": 20,
+    "paged": true,
+    "unpaged": false
+  },
+  "last": true,
+  "totalPages": 2,
+  "totalElements": 22,
+  "size": 20,
+  "number": 1,
+  "sort": {
+    "sorted": true,
+    "unsorted": false,
+    "empty": false
+  },
+  "numberOfElements": 2,
+  "first": false,
+  "empty": false
+}

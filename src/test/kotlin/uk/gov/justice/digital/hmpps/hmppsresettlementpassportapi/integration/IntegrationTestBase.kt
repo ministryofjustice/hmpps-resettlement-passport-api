@@ -26,6 +26,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wir
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.InterventionsServiceApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.KeyWorkerApiMockServer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ManageUsersApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PoPUserApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonerSearchApiMockServer
@@ -101,6 +102,9 @@ abstract class IntegrationTestBase : TestBase() {
     @JvmField
     val curiousApiMockServer = CuriousApiMockServer()
 
+    @JvmField
+    val manageUsersApiMockServer = ManageUsersApiMockServer()
+
     @BeforeAll
     @JvmStatic
     fun startMocks() {
@@ -118,6 +122,7 @@ abstract class IntegrationTestBase : TestBase() {
       interventionsServiceApiMockServer.start()
       popUserApiMockServer.start()
       curiousApiMockServer.start()
+      manageUsersApiMockServer.start()
     }
 
     @AfterAll
@@ -135,6 +140,7 @@ abstract class IntegrationTestBase : TestBase() {
       educationEmploymentApiMockServer.stop()
       interventionsServiceApiMockServer.stop()
       curiousApiMockServer.stop()
+      manageUsersApiMockServer.stop()
     }
 
     @JvmStatic
@@ -153,6 +159,7 @@ abstract class IntegrationTestBase : TestBase() {
       registry.add("api.base.url.interventions-service") { "http://localhost:${interventionsServiceApiMockServer.port()}" }
       registry.add("api.base.url.pop-user-service") { "http://localhost:${popUserApiMockServer.port()}" }
       registry.add("api.base.url.curious-service") { "http://localhost:${curiousApiMockServer.port()}" }
+      registry.add("api.base.url.manage-users-service") { "http://localhost:${manageUsersApiMockServer.port()}" }
     }
   }
 

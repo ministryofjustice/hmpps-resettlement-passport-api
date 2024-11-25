@@ -4,15 +4,18 @@ import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocation
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.manageusersapi.ManageUser
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseAllocationRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ManageUsersApiService
 import java.time.LocalDateTime
 
 @Service
 class CaseAllocationService(
   private val prisonerRepository: PrisonerRepository,
   private val caseAllocationRepository: CaseAllocationRepository,
+  private val manageUserApiService: ManageUsersApiService,
 ) {
 
   @Transactional
@@ -105,5 +108,12 @@ class CaseAllocationService(
       )
     }
     return caseAllocationEntity?.let { caseAllocationRepository.save(it) }
+  }
+
+  @Transactional
+  fun getAllResettlementWorkers(
+    prisonId: String,
+  ): List<ManageUser> {
+    return manageUserApiService.getManageUsersData(prisonId, "ADD_SENSITIVE_CASE_NOTES")
   }
 }

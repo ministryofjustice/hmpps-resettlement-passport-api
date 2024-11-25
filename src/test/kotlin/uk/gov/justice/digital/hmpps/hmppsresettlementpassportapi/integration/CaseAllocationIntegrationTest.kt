@@ -23,7 +23,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/workers/cases/$staffId")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .headers(setAuthorisation(roles = listOf("ROLE_PSFR_RESETTLEMENT_WORKER")))
       .exchange()
       .expectStatus().isOk
       .expectBody()
@@ -39,7 +39,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
           staffLastName = "PSO Lastname",
         ),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .headers(setAuthorisation(roles = listOf("ROLE_PSFR_RESETTLEMENT_WORKER")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
@@ -53,7 +53,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
           nomsIds = arrayOf("G4161UF"),
         ),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .headers(setAuthorisation(roles = listOf("ROLE_PSFR_RESETTLEMENT_WORKER")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
@@ -62,7 +62,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/workers/cases/$staffId")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .headers(setAuthorisation(roles = listOf("ROLE_PSFR_RESETTLEMENT_WORKER")))
       .exchange()
       .expectStatus().isOk
       .expectBody()
@@ -81,7 +81,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/workers/cases/$staffId")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .headers(setAuthorisation(roles = listOf("ROLE_PSFR_RESETTLEMENT_WORKER")))
       .exchange()
       .expectStatus().isOk
       .expectBody()
@@ -97,7 +97,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
           staffLastName = "PSO Lastname",
         ),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .headers(setAuthorisation(roles = listOf("ROLE_PSFR_RESETTLEMENT_WORKER")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
@@ -114,7 +114,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
           staffLastName = "PSO Lastname",
         ),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .headers(setAuthorisation(roles = listOf("ROLE_PSFR_RESETTLEMENT_WORKER")))
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
@@ -123,7 +123,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
 
     webTestClient.get()
       .uri("/resettlement-passport/workers/cases/$staffId")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .headers(setAuthorisation(roles = listOf("ROLE_PSFR_RESETTLEMENT_WORKER")))
       .exchange()
       .expectStatus().isOk
       .expectBody()
@@ -143,7 +143,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
           nomsIds = arrayOf("G4161UF"),
         ),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .headers(setAuthorisation(roles = listOf("ROLE_PSFR_RESETTLEMENT_WORKER")))
       .exchange()
       .expectStatus().isNotFound
       .expectHeader().contentType("application/json")
@@ -184,6 +184,63 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
         ),
       )
       .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-1-prisoner.sql")
+  fun `Get workers list for prison Id`() {
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+
+    val expectedOutput = readFile("testdata/expectation/case-allocation-get-workers-result.json")
+    val prisonId = "MDI"
+    manageUsersApiMockServer.stubGetManageUsersData(prisonId, 200)
+
+    webTestClient.get()
+      .uri("/resettlement-passport/workers/$prisonId")
+      .headers(setAuthorisation(roles = listOf("ROLE_PSFR_RESETTLEMENT_WORKER")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+      .json(expectedOutput)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-1-prisoner.sql")
+  fun `Get workers list for prison Id not exists`() {
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+
+    val prisonId = "MDI1"
+    manageUsersApiMockServer.stubGetManageUsersDataEmptyList(200)
+    webTestClient.get()
+      .uri("/resettlement-passport/workers/$prisonId")
+      .headers(setAuthorisation(roles = listOf("ROLE_PSFR_RESETTLEMENT_WORKER")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+      .json("[]")
+  }
+
+  @Test
+  fun `Get workers list  - unauthorized`() {
+    val prisonId = "MDI"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/workers/$prisonId")
+      .exchange()
+      .expectStatus().isUnauthorized
+  }
+
+  @Test
+  fun `Get workers list  - forbidden`() {
+    val prisonId = "MDI"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/workers/$prisonId")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isForbidden
   }

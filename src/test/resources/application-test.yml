@@ -22,6 +22,7 @@ api:
       pop-user-service: http://localhost:9106
       gotenberg-api: http://localhost:8091
       curious-service: http://localhost:9107
+      manage-users-service: http://localhost:9108
 
 schedule:
   expression:

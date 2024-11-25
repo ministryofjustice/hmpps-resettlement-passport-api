@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/manage-users-api/prisonusers/find-by-caseload-and-role"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "manage-users-api-getWorkersList-200-response.json",
+    "headers": {
+      "Content-Type": "application/json;charset=UTF-8",
+      "Server": "wiremock"
+    }
+  }
+}

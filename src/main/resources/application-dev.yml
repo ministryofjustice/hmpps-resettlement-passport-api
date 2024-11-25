@@ -32,6 +32,7 @@ api:
       gotenberg-api: http://localhost:8091
       curious-service: http://localhost:9193/curious-api
       #curious-service: https://testservices.sequation.net
+      manage-users-service: https://manage-users-api-dev.hmpps.service.justice.gov.uk
 schedule:
   expression:
     delete-expired-otp: 0 0 3 * * *

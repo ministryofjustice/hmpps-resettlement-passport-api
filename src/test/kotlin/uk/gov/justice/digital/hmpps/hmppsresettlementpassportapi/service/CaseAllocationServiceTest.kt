@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Case
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseAllocationRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ManageUsersApiService
 import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
@@ -28,12 +29,15 @@ class CaseAllocationServiceTest {
   @Mock
   private lateinit var caseAllocationRepository: CaseAllocationRepository
 
+  @Mock
+  private lateinit var manageUserApiService: ManageUsersApiService
+
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
   @BeforeEach
   fun beforeEach() {
-    caseAllocationService = CaseAllocationService(prisonerRepository, caseAllocationRepository)
+    caseAllocationService = CaseAllocationService(prisonerRepository, caseAllocationRepository, manageUserApiService)
   }
 
   @Test

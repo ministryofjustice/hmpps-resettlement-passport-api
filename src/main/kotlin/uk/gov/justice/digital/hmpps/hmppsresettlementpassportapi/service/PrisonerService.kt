@@ -158,6 +158,8 @@ class PrisonerService(
       "prisonerNumber,ASC" -> prisoners.sortBy { it.prisonerNumber }
       "pathwayStatus,ASC" -> prisoners.sortBy { it.pathwayStatus }
       "releaseOnTemporaryLicenceDate,ASC" -> prisoners.sortWith(compareBy(nullsLast()) { it.releaseOnTemporaryLicenceDate })
+      "assignedWorkerFirstname,ASC" -> prisoners.sortBy { it.assignedWorkerFirstname }
+      "assignedWorkerLastname,ASC" -> prisoners.sortBy { it.assignedWorkerLastname }
       "releaseDate,DESC" -> prisoners.sortWith(compareByDescending(nullsLast()) { it.releaseDate })
       "releaseEligibilityDate,DESC" -> prisoners.sortWith(compareByDescending(nullsLast()) { it.releaseEligibilityDate })
       "name,DESC" -> prisoners.sortWith(compareByDescending(nullsLast()) { "${it.lastName}, ${it.firstName}" })
@@ -165,7 +167,8 @@ class PrisonerService(
       "prisonerNumber,DESC" -> prisoners.sortWith(compareByDescending(nullsLast()) { it.prisonerNumber })
       "pathwayStatus,DESC" -> prisoners.sortByDescending { it.pathwayStatus }
       "releaseOnTemporaryLicenceDate,DESC" -> prisoners.sortWith(compareByDescending(nullsLast()) { it.releaseOnTemporaryLicenceDate })
-
+      "assignedWorkerFirstname,DESC" -> prisoners.sortByDescending { it.assignedWorkerFirstname }
+      "assignedWorkerLastname,DESC" -> prisoners.sortByDescending { it.assignedWorkerLastname }
       else -> throw NoDataWithCodeFoundException(
         "Data",
         "Sort value Invalid",

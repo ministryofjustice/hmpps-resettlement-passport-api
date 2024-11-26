@@ -51,7 +51,9 @@
       "releaseEligibilityDate": null,
       "releaseEligibilityType": null,
       "releaseOnTemporaryLicenceDate": null,
-      "assessmentRequired": false
+      "assessmentRequired": false,
+      "assignedWorkerFirstname": null,
+      "assignedWorkerLastname": null
     }
   ],
   "pageSize": 1,

@@ -80,6 +80,9 @@ class PrisonerServiceTest {
   @Mock
   private lateinit var profileTagsRepository: ProfileTagsRepository
 
+  @Mock
+  private lateinit var caseAllocationService: CaseAllocationService
+
   @BeforeEach
   fun beforeEach() {
     prisonerService = PrisonerService(
@@ -92,6 +95,7 @@ class PrisonerServiceTest {
       watchlistService,
       pathwayAndStatusService,
       deliusApiService,
+      caseAllocationService,
     )
     mockkStatic(::getClaimFromJWTToken)
     every { getClaimFromJWTToken("123", "sub") } returns "ABC11D"
@@ -139,6 +143,7 @@ class PrisonerServiceTest {
     val prisonId = "MDI"
 
     val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-1.json")
+
     whenever(prisonerSearchApiService.findPrisonersByPrisonId(prisonId)).thenReturn(mockedJsonResponse.content)
 
     val prisonersList =

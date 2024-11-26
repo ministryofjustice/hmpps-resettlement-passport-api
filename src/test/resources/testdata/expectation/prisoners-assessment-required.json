@@ -51,7 +51,9 @@
       "releaseEligibilityDate": "2018-10-16",
       "releaseEligibilityType": "HDCED",
       "releaseOnTemporaryLicenceDate": null,
-      "assessmentRequired": true
+      "assessmentRequired": true,
+      "assignedWorkerFirstname": null,
+      "assignedWorkerLastname": null
     },
     {
       "prisonerNumber": "A8229DY",
@@ -104,7 +106,9 @@
       "releaseEligibilityDate": "2021-02-03",
       "releaseEligibilityType": "HDCED",
       "releaseOnTemporaryLicenceDate": null,
-      "assessmentRequired": true
+      "assessmentRequired": true,
+      "assignedWorkerFirstname": null,
+      "assignedWorkerLastname": null
     }
   ],
   "pageSize": 2,

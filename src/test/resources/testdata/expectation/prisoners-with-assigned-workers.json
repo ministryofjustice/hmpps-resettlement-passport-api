@@ -54,6 +54,7 @@
       "assessmentRequired": false,
       "assignedWorkerFirstname": null,
       "assignedWorkerLastname": null
+
     },
     {
       "prisonerNumber": "G1458GV",
@@ -162,8 +163,8 @@
       "releaseEligibilityType": "HDCED",
       "releaseOnTemporaryLicenceDate": null,
       "assessmentRequired": true,
-      "assignedWorkerFirstname": null,
-      "assignedWorkerLastname": null
+      "assignedWorkerFirstname": "PSO1 Firstname",
+      "assignedWorkerLastname": "PSO1 Lastname"
     },
     {
       "prisonerNumber": "A8258DY",
@@ -217,8 +218,8 @@
       "releaseEligibilityType": null,
       "releaseOnTemporaryLicenceDate": null,
       "assessmentRequired": true,
-      "assignedWorkerFirstname": null,
-      "assignedWorkerLastname": null
+      "assignedWorkerFirstname": "PSO4 Firstname",
+      "assignedWorkerLastname": "PSO4 Lastname"
     },
     {
       "prisonerNumber": "A8257DY",
@@ -272,8 +273,8 @@
       "releaseEligibilityType": "HDCED",
       "releaseOnTemporaryLicenceDate": null,
       "assessmentRequired": true,
-      "assignedWorkerFirstname": null,
-      "assignedWorkerLastname": null
+      "assignedWorkerFirstname": "PSO3 Firstname",
+      "assignedWorkerLastname": "PSO3 Lastname"
     },
     {
       "prisonerNumber": "A8314DY",
@@ -327,8 +328,8 @@
       "releaseEligibilityType": "HDCED",
       "releaseOnTemporaryLicenceDate": null,
       "assessmentRequired": true,
-      "assignedWorkerFirstname": null,
-      "assignedWorkerLastname": null
+      "assignedWorkerFirstname": "PSO2 Firstname",
+      "assignedWorkerLastname": "PSO2 Lastname"
     },
     {
       "prisonerNumber": "G6933GF",

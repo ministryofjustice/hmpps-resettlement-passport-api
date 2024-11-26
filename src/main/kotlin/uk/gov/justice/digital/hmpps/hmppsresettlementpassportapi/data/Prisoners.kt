@@ -19,6 +19,9 @@ data class Prisoners(
   val releaseEligibilityType: String? = null,
   val releaseOnTemporaryLicenceDate: LocalDate? = null,
   val assessmentRequired: Boolean,
+  var assignedWorkerFirstname: String? = null,
+  var assignedWorkerLastname: String? = null,
+
 )
 
 data class PrisonerPersonal(

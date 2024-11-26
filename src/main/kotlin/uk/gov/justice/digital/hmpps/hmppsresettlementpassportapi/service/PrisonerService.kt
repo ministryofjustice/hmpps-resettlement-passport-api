@@ -40,6 +40,7 @@ class PrisonerService(
   private val watchlistService: WatchlistService,
   private val pathwayAndStatusService: PathwayAndStatusService,
   private val deliusApiService: ResettlementPassportDeliusApiService,
+  private val caseAllocationService: CaseAllocationService,
 ) {
 
   companion object {
@@ -203,6 +204,8 @@ class PrisonerService(
 
     val defaultPathwayStatuses = getDefaultPathwayStatuses()
     val watchedOffenders = watchlistService.findAllWatchedPrisonerForStaff(staffUsername)
+    val assignedWorkers = caseAllocationService.getAllAssignedRessettlementWorkers(prisonId)
+    val assingedWorkersMap = assignedWorkers.groupBy { it?.prisonerId ?: 0 }
     searchList.forEach { prisonersSearch ->
 
       val pathwayStatusesEntities = nomsIdToPrisonerPathwayStatusesFromDatabaseMap[prisonersSearch.prisonerNumber]
@@ -262,6 +265,11 @@ class PrisonerService(
           prisonersSearch.releaseOnTemporaryLicenceDate,
           assessmentRequired,
         )
+        val assigned = assingedWorkersMap[prisonerId]
+        if (assigned?.get(0) != null) {
+          prisoner.assignedWorkerFirstname = assigned[0]?.staffFirstname?.trim()
+          prisoner.assignedWorkerLastname = assigned[0]?.staffLastname?.trim()
+        }
         prisonersList.add(prisoner)
       }
     }

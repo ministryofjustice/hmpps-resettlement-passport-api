@@ -9,4 +9,5 @@ interface CaseAllocationRepository : JpaRepository<CaseAllocationEntity, Long> {
   fun findByPrisonerIdAndIsDeleted(prisonerId: Long, isDeleted: Boolean = false): CaseAllocationEntity?
 
   fun findByStaffIdAndIsDeleted(staffId: Int, isDeleted: Boolean = false): List<CaseAllocationEntity?>
+  fun findAllByIsDeleted(isDeleted: Boolean = false): List<CaseAllocationEntity?>
 }

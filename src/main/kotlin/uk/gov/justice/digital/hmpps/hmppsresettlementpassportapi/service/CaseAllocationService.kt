@@ -116,4 +116,11 @@ class CaseAllocationService(
   ): List<ManageUser> {
     return manageUserApiService.getManageUsersData(prisonId, "PSFR_RESETTLEMENT_WORKER")
   }
+
+  @Transactional
+  fun getAllAssignedRessettlementWorkers(prisonId: String): List<CaseAllocationEntity?> {
+    val caseAllocation = caseAllocationRepository.findAllByPrisonId(prisonId)
+
+    return caseAllocation
+  }
 }

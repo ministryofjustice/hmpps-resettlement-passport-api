@@ -204,7 +204,7 @@ class PrisonerService(
 
     val defaultPathwayStatuses = getDefaultPathwayStatuses()
     val watchedOffenders = watchlistService.findAllWatchedPrisonerForStaff(staffUsername)
-    val assignedWorkers = caseAllocationService.getAllAssignedRessettlementWorkers()
+    val assignedWorkers = caseAllocationService.getAllAssignedRessettlementWorkers(prisonId)
     searchList.forEach { prisonersSearch ->
 
       val pathwayStatusesEntities = nomsIdToPrisonerPathwayStatusesFromDatabaseMap[prisonersSearch.prisonerNumber]

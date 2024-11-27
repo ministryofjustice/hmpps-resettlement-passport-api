@@ -1,8 +1,9 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 
-data class ManageUser(
+data class CaseAllocationCountResponse(
 
-  val id: Int? = null,
+  val staffId: Int? = null,
   val firstName: String? = null,
   val lastName: String? = null,
+  val count: Int? = 0,
 )

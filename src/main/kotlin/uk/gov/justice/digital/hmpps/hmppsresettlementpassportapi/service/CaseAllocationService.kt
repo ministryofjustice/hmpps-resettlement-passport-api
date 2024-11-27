@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocation
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocationCountResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.manageusersapi.ManageUser
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseAllocationRepository
@@ -122,5 +123,25 @@ class CaseAllocationService(
     val caseAllocation = caseAllocationRepository.findAllByPrisonId(prisonId)
 
     return caseAllocation
+  }
+
+  @Transactional
+  fun getAllCaseAllocationCount(prisonId: String): List<CaseAllocationCountResponse?> {
+    val caseAllocationEntityList = caseAllocationRepository.findAllByPrisonId(prisonId)
+    val caseAllocationCountMap = caseAllocationEntityList.groupingBy { it?.staffId }.eachCount()
+    val caseAllocationMap = caseAllocationEntityList.groupBy { it?.staffId }
+    val caseAllocationCountResponseList = mutableListOf<CaseAllocationCountResponse>()
+    caseAllocationMap.forEach { it ->
+      val caseAllocationCount = caseAllocationCountMap[it.key]
+      val caseAllocationEntity = caseAllocationMap[it.key]
+      val caseAllocationCountResponse = CaseAllocationCountResponse(
+        caseAllocationEntity?.get(0)?.staffId,
+        caseAllocationEntity?.get(0)?.staffFirstname,
+        caseAllocationEntity?.get(0)?.staffLastname,
+        caseAllocationCount,
+      )
+      caseAllocationCountResponseList.add(caseAllocationCountResponse)
+    }
+    return caseAllocationCountResponseList
   }
 }

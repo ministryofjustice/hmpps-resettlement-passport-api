@@ -15,7 +15,7 @@ interface CaseAllocationRepository : JpaRepository<CaseAllocationEntity, Long> {
   @Query(
     "SELECT A from CaseAllocationEntity A, PrisonerEntity B " +
       " WHERE A.prisonerId = B.id and B.prisonId=  :prisonId " +
-      " AND A.isDeleted=false",
+      " AND A.isDeleted=false order by A.staffFirstname, A.staffLastname",
   )
   fun findAllByPrisonId(prisonId: String): List<CaseAllocationEntity?>
 }

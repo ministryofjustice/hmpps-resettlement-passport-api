@@ -182,4 +182,45 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
     @Parameter(required = true)
     prisonId: String,
   ) = caseAllocationService.getAllResettlementWorkers(prisonId)
+
+  @GetMapping("/capacity", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(summary = "Get case count for each staff", description = "All Cases assign count for each staff in given prison id")
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+      ),
+      ApiResponse(
+        description = "Not found",
+        responseCode = "404",
+        content = [Content(mediaType = MediaType.APPLICATION_JSON_VALUE)],
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [
+          Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = Schema(implementation = ErrorResponse::class),
+          ),
+        ],
+      ),
+      ApiResponse(
+        responseCode = "400",
+        description = "Incorrect information provided to perform assessment match",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  fun getAllCaseCountByStaffId(
+    @Schema(example = "AXXXS", required = true)
+    @Parameter(required = true)
+    prisonId: String,
+  ) = caseAllocationService.getAllCaseAllocationCount(prisonId)
 }

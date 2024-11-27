@@ -12,6 +12,7 @@ import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocation
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocationCountResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseAllocationRepository
@@ -140,5 +141,46 @@ class CaseAllocationServiceTest {
     Mockito.`when`(caseAllocationRepository.findByStaffIdAndIsDeleted(4321, false)).thenReturn(caseAllocationList)
     val result = caseAllocationService.getAllCaseAllocationByStaffId(4321)
     Assertions.assertEquals(caseAllocationList, result)
+  }
+
+  @Test
+  fun `test getAllCaseAllocationCount - returns case allocations count`() {
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
+    val prisonerEntity1 = PrisonerEntity(2, "acb", testDate, "crn", "xyz")
+    val caseAllocationEntity = CaseAllocationEntity(
+      prisonerId = prisonerEntity.id(),
+      staffId = 4321,
+      staffFirstname = "PSO Firstname",
+      staffLastname = "PSO Lastname",
+      creationDate = fakeNow,
+      isDeleted = false,
+      deletionDate = null,
+    )
+    val caseAllocationEntity2 = CaseAllocationEntity(
+      prisonerId = prisonerEntity1.id(),
+      staffId = 4321,
+      staffFirstname = "PSO Firstname",
+      staffLastname = "PSO Lastname",
+      creationDate = fakeNow,
+      isDeleted = false,
+      deletionDate = null,
+    )
+    val caseAllocationList = emptyList<CaseAllocationEntity>().toMutableList()
+    caseAllocationList.add(caseAllocationEntity)
+    caseAllocationList.add(caseAllocationEntity2)
+    Mockito.`when`(caseAllocationRepository.findAllByPrisonId("MDI")).thenReturn(caseAllocationList)
+
+    // Mockito.`when`(caseAllocationRepository.findByStaffIdAndIsDeleted(4321, false)).thenReturn(caseAllocationList)
+    val caseAllocationCountResponse = CaseAllocationCountResponse(
+      4321,
+      "PSO Firstname",
+      "PSO Lastname",
+      2,
+    )
+    val caseAllocationCountResponseList = emptyList<CaseAllocationCountResponse>().toMutableList()
+    caseAllocationCountResponseList.add(caseAllocationCountResponse)
+
+    val result = caseAllocationService.getAllCaseAllocationCount("MDI")
+    Assertions.assertEquals(caseAllocationCountResponseList, result)
   }
 }

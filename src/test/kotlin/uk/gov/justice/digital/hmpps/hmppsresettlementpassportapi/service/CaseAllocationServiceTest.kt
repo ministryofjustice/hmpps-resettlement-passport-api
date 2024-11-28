@@ -1,5 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
@@ -11,13 +16,18 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocationCountResponseImp
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocationPostResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseAllocationRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ManageUsersApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
@@ -33,19 +43,22 @@ class CaseAllocationServiceTest {
   @Mock
   private lateinit var manageUserApiService: ManageUsersApiService
 
+  @Mock
+  private lateinit var prisonerSearchApiService: PrisonerSearchApiService
+
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
   @BeforeEach
   fun beforeEach() {
-    caseAllocationService = CaseAllocationService(prisonerRepository, caseAllocationRepository, manageUserApiService)
+    caseAllocationService = CaseAllocationService(prisonerRepository, caseAllocationRepository, manageUserApiService, prisonerSearchApiService)
   }
 
   @Test
   fun `test createCaseAllocation - creates and returns caseAllocation`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    val caseList = emptyList<CaseAllocationEntity?>().toMutableList()
+    val caseList = emptyList<CaseAllocationPostResponse?>().toMutableList()
     val prisonerEntity = PrisonerEntity(1, "123", testDate, "crn", "xyz")
     val caseAllocationPost = CaseAllocation(
       nomsIds = arrayOf("123"),
@@ -64,11 +77,17 @@ class CaseAllocationServiceTest {
       isDeleted = false,
       deletionDate = null,
     )
-    caseList.add(caseAllocationEntity)
+    val caseAllocationPostResponse = CaseAllocationPostResponse(
+      staffId = 4321,
+      staffFirstname = "PSO Firstname",
+      staffLastname = "PSO Lastname",
+      nomsId = "123",
+    )
     Mockito.`when`(caseAllocationRepository.findByPrisonerIdAndIsDeleted(prisonerEntity.id(), false)).thenReturn(null)
     Mockito.`when`(caseAllocationRepository.save(any())).thenReturn(caseAllocationEntity)
     val result = caseAllocationService.assignCase(caseAllocationPost)
     Mockito.verify(caseAllocationRepository).save(caseAllocationEntity)
+    caseList.add(caseAllocationPostResponse)
     Assertions.assertEquals(caseList, result)
     unmockkStatic(LocalDateTime::class)
   }
@@ -148,6 +167,7 @@ class CaseAllocationServiceTest {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
     val prisonerEntity1 = PrisonerEntity(2, "acb", testDate, "crn", "xyz")
     val prisonerEntity2 = PrisonerEntity(3, "acb", testDate, "crn", "xyz")
+    val prisonId = "MDI"
     val caseAllocationEntity = CaseAllocationEntity(
       prisonerId = prisonerEntity.id(),
       staffId = 4321,
@@ -197,9 +217,18 @@ class CaseAllocationServiceTest {
     val caseAllocationCountTestResponseList = emptyList<CaseAllocationCountResponseImp>().toMutableList()
     caseAllocationCountTestResponseList.add(caseAllocationCountTestResponse1)
     caseAllocationCountTestResponseList.add(caseAllocationCountTestResponse2)
-    Mockito.`when`(caseAllocationRepository.findCaseCountByPrisonId("MDI")).thenReturn(caseAllocationCountTestResponseList)
-
-    val result = caseAllocationService.getCasesAllocationCount("MDI")
-    Assertions.assertEquals(caseAllocationCountTestResponseList[0].staffId, result[0]?.staffId)
+    Mockito.`when`(caseAllocationRepository.findCaseCountByPrisonId(prisonId)).thenReturn(caseAllocationCountTestResponseList)
+    Mockito.`when`(caseAllocationRepository.findTotalCaseCountByPrisonId(prisonId)).thenReturn(3)
+    val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-1.json")
+    whenever(prisonerSearchApiService.findPrisonersByPrisonId(prisonId)).thenReturn(mockedJsonResponse.content)
+    val result = caseAllocationService.getCasesAllocationCount(prisonId)
+    Assertions.assertEquals(caseAllocationCountTestResponseList[0].staffId, result.assignedList[0]?.staffId)
+    Assertions.assertEquals(7, result.unassignedCount)
   }
+
+  private inline fun <reified T> readFileAsObject(filename: String): T = readStringAsObject(readFile(filename))
+  private inline fun <reified T> readStringAsObject(string: String): T = jacksonObjectMapper().configure(
+    DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+    false,
+  ).registerKotlinModule().registerModule(JavaTimeModule()).readValue(string)
 }

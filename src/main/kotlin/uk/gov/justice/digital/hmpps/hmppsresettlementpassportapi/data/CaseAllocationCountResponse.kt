@@ -6,3 +6,8 @@ interface CaseAllocationCountResponse {
   val lastName: String?
   val casesAssigned: Int?
 }
+
+data class CasesCountResponse(
+  val unassignedCount: Int,
+  val assignedList: List<CaseAllocationCountResponse?>,
+)

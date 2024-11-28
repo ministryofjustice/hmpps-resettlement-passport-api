@@ -89,6 +89,9 @@ class CaseAllocationService(
           caseAllocation.staffFirstName,
           caseAllocation.staffLastName,
         )
+        if (case != null) {
+          case.nomsId = nomsId
+        }
         caseList.add(case)
       }
     }

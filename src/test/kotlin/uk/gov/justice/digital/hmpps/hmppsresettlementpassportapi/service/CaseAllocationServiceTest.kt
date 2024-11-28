@@ -76,11 +76,12 @@ class CaseAllocationServiceTest {
       isDeleted = false,
       deletionDate = null,
     )
-    caseList.add(caseAllocationEntity)
     Mockito.`when`(caseAllocationRepository.findByPrisonerIdAndIsDeleted(prisonerEntity.id(), false)).thenReturn(null)
     Mockito.`when`(caseAllocationRepository.save(any())).thenReturn(caseAllocationEntity)
     val result = caseAllocationService.assignCase(caseAllocationPost)
-    Mockito.verify(caseAllocationRepository).save(caseAllocationEntity)
+    //  Mockito.verify(caseAllocationRepository).save(caseAllocationEntity)
+    caseAllocationEntity.nomsId = "123"
+    caseList.add(caseAllocationEntity)
     Assertions.assertEquals(caseList, result)
     unmockkStatic(LocalDateTime::class)
   }

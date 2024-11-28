@@ -548,8 +548,8 @@
       "releaseEligibilityType": "HDCED",
       "releaseOnTemporaryLicenceDate": null,
       "assessmentRequired": true,
-      "assignedWorkerFirstname": null,
-      "assignedWorkerLastname": null
+      "assignedWorkerFirstname": "PSO5 Firstname",
+      "assignedWorkerLastname": "PSO5 Lastname"
     }
   ],
   "pageSize": 10,

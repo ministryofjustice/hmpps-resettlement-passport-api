@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocation
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocationCountResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.manageusersapi.ManageUser
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseAllocationRepository
@@ -122,5 +123,10 @@ class CaseAllocationService(
     val caseAllocation = caseAllocationRepository.findAllByPrisonId(prisonId)
 
     return caseAllocation
+  }
+
+  @Transactional
+  fun getCasesAllocationCount(prisonId: String): List<CaseAllocationCountResponse?> {
+    return caseAllocationRepository.findCaseCountByPrisonId(prisonId)
   }
 }

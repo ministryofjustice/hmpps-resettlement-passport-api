@@ -119,7 +119,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
       .expectBody()
-      .json(expectedOutput2)
+      .json(expectedOutput1)
 
     webTestClient.get()
       .uri("/resettlement-passport/workers/cases/$staffId")

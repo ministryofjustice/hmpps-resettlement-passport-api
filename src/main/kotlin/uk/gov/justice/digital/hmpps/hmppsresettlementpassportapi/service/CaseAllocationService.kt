@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocation
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocationPostResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CasesCountResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.manageusersapi.ManageUser
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
@@ -69,8 +70,8 @@ class CaseAllocationService(
   }
 
   @Transactional
-  fun assignCase(caseAllocation: CaseAllocation): MutableList<CaseAllocationEntity?> {
-    val caseList = emptyList<CaseAllocationEntity?>().toMutableList()
+  fun assignCase(caseAllocation: CaseAllocation): MutableList<CaseAllocationPostResponse?> {
+    val caseList = emptyList<CaseAllocationPostResponse?>().toMutableList()
     if (caseAllocation.staffId != null && caseAllocation.staffFirstName != null && caseAllocation.staffLastName != null) {
       for (nomsId in caseAllocation.nomsIds) {
         val prisoner = prisonerRepository.findByNomsId(nomsId)
@@ -90,9 +91,14 @@ class CaseAllocationService(
           caseAllocation.staffLastName,
         )
         if (case != null) {
-          case.nomsId = nomsId
+          val caseAllocationPostResponse = CaseAllocationPostResponse(
+            case.staffId,
+            case.staffFirstname,
+            case.staffLastname,
+            nomsId,
+          )
+          caseList.add(caseAllocationPostResponse)
         }
-        caseList.add(case)
       }
     }
     return caseList

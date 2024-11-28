@@ -36,7 +36,4 @@ data class CaseAllocationEntity(
   @Column(name = "deleted_at")
   var deletionDate: LocalDateTime? = null,
 
-  @Transient
-  var nomsId: String? = null,
-
 )

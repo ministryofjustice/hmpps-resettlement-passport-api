@@ -19,6 +19,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocationCountResponseImp
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocationPostResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
@@ -57,7 +58,7 @@ class CaseAllocationServiceTest {
   fun `test createCaseAllocation - creates and returns caseAllocation`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    val caseList = emptyList<CaseAllocationEntity?>().toMutableList()
+    val caseList = emptyList<CaseAllocationPostResponse?>().toMutableList()
     val prisonerEntity = PrisonerEntity(1, "123", testDate, "crn", "xyz")
     val caseAllocationPost = CaseAllocation(
       nomsIds = arrayOf("123"),
@@ -76,12 +77,17 @@ class CaseAllocationServiceTest {
       isDeleted = false,
       deletionDate = null,
     )
+    val caseAllocationPostResponse = CaseAllocationPostResponse(
+      staffId = 4321,
+      staffFirstname = "PSO Firstname",
+      staffLastname = "PSO Lastname",
+      nomsId = "123",
+    )
     Mockito.`when`(caseAllocationRepository.findByPrisonerIdAndIsDeleted(prisonerEntity.id(), false)).thenReturn(null)
     Mockito.`when`(caseAllocationRepository.save(any())).thenReturn(caseAllocationEntity)
     val result = caseAllocationService.assignCase(caseAllocationPost)
-    //  Mockito.verify(caseAllocationRepository).save(caseAllocationEntity)
-    caseAllocationEntity.nomsId = "123"
-    caseList.add(caseAllocationEntity)
+    Mockito.verify(caseAllocationRepository).save(caseAllocationEntity)
+    caseList.add(caseAllocationPostResponse)
     Assertions.assertEquals(caseList, result)
     unmockkStatic(LocalDateTime::class)
   }

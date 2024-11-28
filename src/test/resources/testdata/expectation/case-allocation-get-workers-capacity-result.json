@@ -3,24 +3,24 @@
     "staffId": 456769,
     "firstName": "PSO1 Firstname",
     "lastName": "PSO1 Lastname",
-    "count" : 1
+    "casesAssigned" : 1
   },
   {
     "staffId": 456779,
     "firstName": "PSO2 Firstname",
     "lastName": "PSO2 Lastname",
-    "count" : 1
+    "casesAssigned" : 1
   },
   {
     "staffId": 456789,
     "firstName": "PSO3 Firstname",
     "lastName": "PSO3 Lastname",
-    "count" : 1
+    "casesAssigned" : 1
   },
   {
     "staffId": 456799,
-    "firstName": "PSO4 Firstname",
-    "lastName": "PSO4 Lastname",
-    "count" : 1
+    "firstName": "PSO5 Firstname",
+    "lastName": "PSO5 Lastname",
+    "casesAssigned" : 2
   }
 ]

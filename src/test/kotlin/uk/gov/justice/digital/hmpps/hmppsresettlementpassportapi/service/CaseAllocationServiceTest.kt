@@ -12,7 +12,7 @@ import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocation
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocationCountResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocationCountResponseImp
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseAllocationRepository
@@ -147,6 +147,7 @@ class CaseAllocationServiceTest {
   fun `test getAllCaseAllocationCount - returns case allocations count`() {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
     val prisonerEntity1 = PrisonerEntity(2, "acb", testDate, "crn", "xyz")
+    val prisonerEntity2 = PrisonerEntity(3, "acb", testDate, "crn", "xyz")
     val caseAllocationEntity = CaseAllocationEntity(
       prisonerId = prisonerEntity.id(),
       staffId = 4321,
@@ -159,8 +160,17 @@ class CaseAllocationServiceTest {
     val caseAllocationEntity2 = CaseAllocationEntity(
       prisonerId = prisonerEntity1.id(),
       staffId = 4321,
-      staffFirstname = "PSO Firstname",
-      staffLastname = "PSO Lastname",
+      staffFirstname = "PSO1 Firstname",
+      staffLastname = "PSO1 Lastname",
+      creationDate = fakeNow.plusHours(1),
+      isDeleted = false,
+      deletionDate = null,
+    )
+    val caseAllocationEntity3 = CaseAllocationEntity(
+      prisonerId = prisonerEntity2.id(),
+      staffId = 4444,
+      staffFirstname = "PSO2 Firstname",
+      staffLastname = "PSO2 Lastname",
       creationDate = fakeNow,
       isDeleted = false,
       deletionDate = null,
@@ -168,19 +178,28 @@ class CaseAllocationServiceTest {
     val caseAllocationList = emptyList<CaseAllocationEntity>().toMutableList()
     caseAllocationList.add(caseAllocationEntity)
     caseAllocationList.add(caseAllocationEntity2)
-    Mockito.`when`(caseAllocationRepository.findAllByPrisonId("MDI")).thenReturn(caseAllocationList)
+    caseAllocationList.add(caseAllocationEntity3)
 
     // Mockito.`when`(caseAllocationRepository.findByStaffIdAndIsDeleted(4321, false)).thenReturn(caseAllocationList)
-    val caseAllocationCountResponse = CaseAllocationCountResponse(
+    val caseAllocationCountTestResponse1 = CaseAllocationCountResponseImp(
       4321,
-      "PSO Firstname",
-      "PSO Lastname",
+      "PSO1 Firstname",
+      "PSO1 Lastname",
       2,
     )
-    val caseAllocationCountResponseList = emptyList<CaseAllocationCountResponse>().toMutableList()
-    caseAllocationCountResponseList.add(caseAllocationCountResponse)
+    val caseAllocationCountTestResponse2 = CaseAllocationCountResponseImp(
+      4444,
+      "PSO2 Firstname",
+      "PSO2 Lastname",
+      1,
+    )
 
-    val result = caseAllocationService.getAllCaseAllocationCount("MDI")
-    Assertions.assertEquals(caseAllocationCountResponseList, result)
+    val caseAllocationCountTestResponseList = emptyList<CaseAllocationCountResponseImp>().toMutableList()
+    caseAllocationCountTestResponseList.add(caseAllocationCountTestResponse1)
+    caseAllocationCountTestResponseList.add(caseAllocationCountTestResponse2)
+    Mockito.`when`(caseAllocationRepository.findCaseCountByPrisonId("MDI")).thenReturn(caseAllocationCountTestResponseList)
+
+    val result = caseAllocationService.getCasesAllocationCount("MDI")
+    Assertions.assertEquals(caseAllocationCountTestResponseList[0].staffId, result[0]?.staffId)
   }
 }

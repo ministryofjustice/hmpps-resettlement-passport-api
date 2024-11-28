@@ -222,5 +222,5 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
     @Schema(example = "AXXXS", required = true)
     @Parameter(required = true)
     prisonId: String,
-  ) = caseAllocationService.getAllCaseAllocationCount(prisonId)
+  ) = caseAllocationService.getCasesAllocationCount(prisonId)
 }

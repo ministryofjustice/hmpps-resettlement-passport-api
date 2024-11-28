@@ -1,0 +1,26 @@
+[
+  {
+    "staffId": 456769,
+    "firstName": "PSO1 Firstname",
+    "lastName": "PSO1 Lastname",
+    "casesAssigned" : 1
+  },
+  {
+    "staffId": 456779,
+    "firstName": "PSO2 Firstname",
+    "lastName": "PSO2 Lastname",
+    "casesAssigned" : 1
+  },
+  {
+    "staffId": 456789,
+    "firstName": "PSO3 Firstname",
+    "lastName": "PSO3 Lastname",
+    "casesAssigned" : 1
+  },
+  {
+    "staffId": 456799,
+    "firstName": "PSO5 Firstname",
+    "lastName": "PSO5 Lastname",
+    "casesAssigned" : 2
+  }
+]

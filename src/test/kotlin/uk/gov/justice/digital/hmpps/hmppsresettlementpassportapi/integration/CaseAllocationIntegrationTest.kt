@@ -244,4 +244,58 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isForbidden
   }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-case-allocation.sql")
+  fun `Get workers capacity for prison Id`() {
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+
+    val expectedOutput = readFile("testdata/expectation/case-allocation-get-workers-capacity-result.json")
+    val prisonId = "MDI"
+    webTestClient.get()
+      .uri("/resettlement-passport/workers/capacity?prisonId=$prisonId")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+      .json(expectedOutput)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-case-allocation.sql")
+  fun `Get workers capacity for prison Id not exists`() {
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+
+    val prisonId = "MDI1"
+    webTestClient.get()
+      .uri("/resettlement-passport/workers/capacity?prisonId=$prisonId")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+      .json("[]")
+  }
+
+  @Test
+  fun `Get workers capacity for prison Id  - unauthorized`() {
+    val prisonId = "MDI"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/workers?prisonId=$prisonId")
+      .exchange()
+      .expectStatus().isUnauthorized
+  }
+
+  @Test
+  fun `Get workers capacity for prison Id  - forbidden`() {
+    val prisonId = "MDI"
+
+    webTestClient.get()
+      .uri("/resettlement-passport/workers?prisonId=$prisonId")
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
+  }
 }

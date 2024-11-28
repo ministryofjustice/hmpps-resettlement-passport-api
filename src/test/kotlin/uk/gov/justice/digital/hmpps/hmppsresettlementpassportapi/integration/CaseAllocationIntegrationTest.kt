@@ -250,9 +250,9 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
   fun `Get workers capacity for prison Id`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-
     val expectedOutput = readFile("testdata/expectation/case-allocation-get-workers-capacity-result.json")
     val prisonId = "MDI"
+    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, 500, 0, 200)
     webTestClient.get()
       .uri("/resettlement-passport/workers/capacity?prisonId=$prisonId")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -273,9 +273,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
       .uri("/resettlement-passport/workers/capacity?prisonId=$prisonId")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
-      .expectStatus().isOk
-      .expectBody()
-      .json("[]")
+      .expectStatus().isNotFound
   }
 
   @Test
@@ -297,5 +295,22 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
       .headers(setAuthorisation())
       .exchange()
       .expectStatus().isForbidden
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoners-2.sql")
+  fun `Get workers capacity for prison Id with zero assigned`() {
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+    val prisonId = "MDI"
+    val expectedOutput = " {\"unassignedCount\":10,\"assignedList\":[]} "
+    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, 500, 0, 200)
+    webTestClient.get()
+      .uri("/resettlement-passport/workers/capacity?prisonId=$prisonId")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+      .json(expectedOutput)
   }
 }

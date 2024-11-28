@@ -4,12 +4,13 @@ import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocation
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocationCountResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CasesCountResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.manageusersapi.ManageUser
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseAllocationRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ManageUsersApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import java.time.LocalDateTime
 
 @Service
@@ -17,6 +18,7 @@ class CaseAllocationService(
   private val prisonerRepository: PrisonerRepository,
   private val caseAllocationRepository: CaseAllocationRepository,
   private val manageUserApiService: ManageUsersApiService,
+  private val prisonerSearchApiService: PrisonerSearchApiService,
 ) {
 
   @Transactional
@@ -126,7 +128,16 @@ class CaseAllocationService(
   }
 
   @Transactional
-  fun getCasesAllocationCount(prisonId: String): List<CaseAllocationCountResponse?> {
-    return caseAllocationRepository.findCaseCountByPrisonId(prisonId)
+  fun getCasesAllocationCount(prisonId: String): CasesCountResponse {
+    val prisonerSearchList = prisonerSearchApiService.findPrisonersByPrisonId(prisonId)
+    if (prisonerSearchList.isEmpty()) {
+      throw ResourceNotFoundException("PrisonId $prisonId not found")
+    }
+    val assignedList = caseAllocationRepository.findCaseCountByPrisonId(prisonId)
+    var unassignedCount = 0
+    val assignedCount = caseAllocationRepository.findTotalCaseCountByPrisonId(prisonId)
+    unassignedCount = prisonerSearchList.size - assignedCount
+    val caseCountResponse = CasesCountResponse(unassignedCount, assignedList)
+    return caseCountResponse
   }
 }

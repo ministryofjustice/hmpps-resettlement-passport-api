@@ -31,4 +31,11 @@ interface CaseAllocationRepository : JpaRepository<CaseAllocationEntity, Long> {
   """,
   )
   fun findCaseCountByPrisonId(prisonId: String): List<CaseAllocationCountResponse?>
+
+  @Query(
+    "SELECT count(A) from CaseAllocationEntity A, PrisonerEntity B " +
+      " WHERE A.prisonerId = B.id and B.prisonId=  :prisonId " +
+      " AND A.isDeleted=false",
+  )
+  fun findTotalCaseCountByPrisonId(prisonId: String): Int
 }

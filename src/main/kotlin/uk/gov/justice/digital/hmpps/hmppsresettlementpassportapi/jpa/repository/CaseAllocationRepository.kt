@@ -23,11 +23,19 @@ interface CaseAllocationRepository : JpaRepository<CaseAllocationEntity, Long> {
     nativeQuery = true,
     value =
     """
-    select staff_id as staffId, staff_firstname as firstName, staff_lastname as lastName, casesAssigned from (
-    select * , rank() over(partition by staff_id order by id desc) from (
-    select id, staff_id,  staff_firstname, staff_lastname, casesAssigned from (
-    select A.id, staff_id, staff_firstname, staff_lastname , count(staff_id) over(partition by staff_id ) as casesAssigned from case_allocation A , prisoner B where A.is_deleted=false
-     and A.prisoner_id=B.id and B.prison_id = :prisonId ) X )) where rank = 1
+      select staff_id as staffId, staff_firstname as firstName, staff_lastname as lastName, casesAssigned
+      from (select *, rank() over (partition by staff_id order by id desc)
+            from (select ca.id,
+                         staff_id,
+                         staff_firstname,
+                         staff_lastname,
+                         count(staff_id) over (partition by staff_id ) as casesAssigned
+                  from case_allocation ca,
+                       prisoner p
+                  where ca.is_deleted = false
+                    and ca.prisoner_id = p.id
+                    and p.prison_id = :prisonId) counted) ranked
+      where ranked.rank = 1
   """,
   )
   fun findCaseCountByPrisonId(prisonId: String): List<CaseAllocationCountResponse?>

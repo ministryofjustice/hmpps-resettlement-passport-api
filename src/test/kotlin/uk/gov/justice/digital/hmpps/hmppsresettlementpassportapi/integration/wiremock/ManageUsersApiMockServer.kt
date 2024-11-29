@@ -8,7 +8,7 @@ class ManageUsersApiMockServer : WireMockServerBase() {
   fun stubGetManageUsersData(prisonId: String, status: Int) {
     val getManageUsersList = readFile("testdata/manage-users-api/staff-list.json")
     stubFor(
-      get("/prisonusers/find-by-caseload-and-role?activeCaseload=MDI&roleCode=PSFR_RESETTLEMENT_WORKER&status=ACTIVE&page=0&size=500&sort=firstName").willReturn(
+      get("/prisonusers/find-by-caseload-and-role?activeCaseload=$prisonId&roleCode=PSFR_RESETTLEMENT_WORKER&status=ACTIVE&page=0&size=500&sort=firstName").willReturn(
         if (status == 200) {
           aResponse()
             .withHeader("Content-Type", "application/json")

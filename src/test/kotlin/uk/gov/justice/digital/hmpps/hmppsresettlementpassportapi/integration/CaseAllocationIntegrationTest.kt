@@ -16,10 +16,11 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
   fun `Assign, UnAssign Case Allocation- happy path`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
+    manageUsersApiMockServer.stubGetManageUsersData("MDI", 200)
 
     val expectedOutput1 = readFile("testdata/expectation/case-allocation-post-result.json")
     val expectedOutput2 = readFile("testdata/expectation/case-allocation-patch-result.json")
-    val staffId = 4321
+    val staffId = 485931
 
     webTestClient.get()
       .uri("/resettlement-passport/workers/cases/$staffId")
@@ -34,9 +35,8 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
       .bodyValue(
         CaseAllocation(
           nomsIds = arrayOf("G4161UF"),
-          staffId = 4321,
-          staffFirstName = "PSO Firstname",
-          staffLastName = "PSO Lastname",
+          staffId = staffId,
+          prisonId = "MDI",
         ),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -51,6 +51,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
       .bodyValue(
         CaseAllocation(
           nomsIds = arrayOf("G4161UF"),
+          prisonId = "MDI",
         ),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -74,10 +75,10 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
   fun `Assign Case Allocation for already exists`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-
+    manageUsersApiMockServer.stubGetManageUsersDataEmptyList(200)
     val expectedOutput1 = readFile("testdata/expectation/case-allocation-post-result.json")
     val expectedOutput2 = readFile("testdata/expectation/case-allocation-get-result.json")
-    val staffId = 4321
+    val staffId = 485931
 
     webTestClient.get()
       .uri("/resettlement-passport/workers/cases/$staffId")
@@ -92,9 +93,8 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
       .bodyValue(
         CaseAllocation(
           nomsIds = arrayOf("G4161UF"),
-          staffId = 4321,
-          staffFirstName = "PSO Firstname",
-          staffLastName = "PSO Lastname",
+          staffId = staffId,
+          prisonId = "MDI",
         ),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -109,9 +109,8 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
       .bodyValue(
         CaseAllocation(
           nomsIds = arrayOf("G4161UF"),
-          staffId = 4321,
-          staffFirstName = "PSO Firstname",
-          staffLastName = "PSO Lastname",
+          staffId = staffId,
+          prisonId = "MDI",
         ),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -141,6 +140,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
       .bodyValue(
         CaseAllocation(
           nomsIds = arrayOf("G4161UF"),
+          prisonId = "MDI",
         ),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -162,8 +162,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
         CaseAllocation(
           nomsIds = arrayOf("G4161UF"),
           staffId = 4321,
-          staffFirstName = "PSO Firstname",
-          staffLastName = "PSO Lastname",
+          prisonId = "MDI",
         ),
       )
       .headers(setAuthorisation())
@@ -181,6 +180,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
       .bodyValue(
         CaseAllocation(
           nomsIds = arrayOf("G4161UF"),
+          prisonId = "MDI",
         ),
       )
       .headers(setAuthorisation())
@@ -312,5 +312,62 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectBody()
       .json(expectedOutput)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-1-prisoner.sql")
+  fun `Assign Case Allocation StaffId not exists`() {
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+    manageUsersApiMockServer.stubGetManageUsersData("MDI", 200)
+
+    val expectedOutput1 = readFile("testdata/expectation/case-allocation-post-result.json")
+    val expectedOutput2 = readFile("testdata/expectation/case-allocation-patch-result.json")
+    val staffId = 4859311
+
+    webTestClient.post()
+      .uri("/resettlement-passport/workers/cases")
+      .bodyValue(
+        CaseAllocation(
+          nomsIds = arrayOf("G4161UF"),
+          staffId = staffId,
+          prisonId = "MDI",
+        ),
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isEqualTo(404)
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(404)
+      .jsonPath("developerMessage").toString().contains("Staff with id 4859311 not found in database")
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-1-prisoner.sql")
+  fun `Assign Case Allocation PrisonId not exists`() {
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+
+    manageUsersApiMockServer.stubGetManageUsersData("MDI", 200)
+
+    val staffId = 4859311
+
+    webTestClient.post()
+      .uri("/resettlement-passport/workers/cases")
+      .bodyValue(
+        CaseAllocation(
+          nomsIds = arrayOf("G4161UF"),
+          staffId = staffId,
+          prisonId = "MDI1",
+        ),
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isEqualTo(404)
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(404)
+      .jsonPath("developerMessage").toString().contains("PrisonId MDI1 with case load PSFR_RESETTLEMENT_WORKER not found")
   }
 }

@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import jakarta.transaction.Transactional
+import jakarta.validation.ValidationException
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocation
@@ -72,7 +73,15 @@ class CaseAllocationService(
   @Transactional
   fun assignCase(caseAllocation: CaseAllocation): MutableList<CaseAllocationPostResponse?> {
     val caseList = emptyList<CaseAllocationPostResponse?>().toMutableList()
-    if (caseAllocation.staffId != null && caseAllocation.staffFirstName != null && caseAllocation.staffLastName != null) {
+    if (caseAllocation.staffId != null && caseAllocation.prisonId != null && caseAllocation.nomsIds.isNotEmpty()) {
+      val workersList = getAllResettlementWorkers(caseAllocation.prisonId)
+      if (workersList.isEmpty()) {
+        throw ResourceNotFoundException("Prison with Id ${caseAllocation.prisonId} not found in database")
+      }
+      val staffDetails = workersList.find { it.staffId == caseAllocation.staffId.toLong() }
+      if (staffDetails == null) {
+        throw ResourceNotFoundException("Staff with id ${caseAllocation.staffId} not found in database")
+      }
       for (nomsId in caseAllocation.nomsIds) {
         val prisoner = prisonerRepository.findByNomsId(nomsId)
           ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
@@ -86,9 +95,10 @@ class CaseAllocationService(
 
         val case = create(
           nomsId,
-          caseAllocation.staffId,
-          caseAllocation.staffFirstName,
-          caseAllocation.staffLastName,
+          staffDetails?.staffId?.toInt()!!,
+          staffDetails.firstName!!,
+          staffDetails.lastName!!,
+          prisoner.id!!,
         )
         if (case != null) {
           val caseAllocationPostResponse = CaseAllocationPostResponse(
@@ -100,17 +110,18 @@ class CaseAllocationService(
           caseList.add(caseAllocationPostResponse)
         }
       }
+    } else {
+      throw ValidationException("In sufficient data, required staffId, prisonId and nomsIds")
     }
     return caseList
   }
 
   @Transactional
-  fun create(nomsId: String, staffId: Int, staffFirstName: String, staffLastName: String): CaseAllocationEntity? {
-    val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val caseAllocationEntity = prisoner?.id?.let {
+  fun create(nomsId: String, staffId: Int, staffFirstName: String, staffLastName: String, prisonerId: Long): CaseAllocationEntity? {
+    val caseAllocationEntity =
       CaseAllocationEntity(
         null,
-        prisonerId = it,
+        prisonerId = prisonerId,
         staffId = staffId,
         staffFirstname = staffFirstName,
         staffLastname = staffLastName,
@@ -118,7 +129,7 @@ class CaseAllocationService(
         creationDate = LocalDateTime.now(),
         deletionDate = null,
       )
-    }
+
     return caseAllocationEntity?.let { caseAllocationRepository.save(it) }
   }
 

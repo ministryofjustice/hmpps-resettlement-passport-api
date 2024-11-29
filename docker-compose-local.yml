@@ -1,7 +1,7 @@
 services:
 
   resettlement-passport-db:
-    image: postgres
+    image: postgres:16
     networks:
       - hmpps
     container_name: resettlement-passport-db

@@ -47,12 +47,15 @@ class CaseAllocationServiceTest {
   @Mock
   private lateinit var prisonerSearchApiService: PrisonerSearchApiService
 
+  @Mock
+  private lateinit var pathwayAndStatusService: PathwayAndStatusService
+
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
   @BeforeEach
   fun beforeEach() {
-    caseAllocationService = CaseAllocationService(prisonerRepository, caseAllocationRepository, manageUserApiService, prisonerSearchApiService)
+    caseAllocationService = CaseAllocationService(prisonerRepository, caseAllocationRepository, manageUserApiService, prisonerSearchApiService, pathwayAndStatusService)
   }
 
   @Test
@@ -62,9 +65,10 @@ class CaseAllocationServiceTest {
     val manageUserList = emptyList<ManageUser>().toMutableList()
     val manageUser = ManageUser(4321, "PSO Firstname", "PSO Lastname")
     manageUserList.add(manageUser)
+
     whenever(manageUserApiService.getManageUsersData("MDI", "PSFR_RESETTLEMENT_WORKER")).thenReturn(manageUserList)
     val prisonerEntity = PrisonerEntity(1, "123", testDate, "crn", "MDI")
-    Mockito.`when`(prisonerRepository.findByNomsId(prisonerEntity.nomsId)).thenReturn(prisonerEntity)
+    whenever(pathwayAndStatusService.getOrCreatePrisoner("123", "MDI")).thenReturn(prisonerEntity)
     Mockito.`when`(caseAllocationRepository.findByPrisonerIdAndIsDeleted(prisonerEntity.id(), false)).thenReturn(null)
 
     val caseList = emptyList<CaseAllocationPostResponse?>().toMutableList()

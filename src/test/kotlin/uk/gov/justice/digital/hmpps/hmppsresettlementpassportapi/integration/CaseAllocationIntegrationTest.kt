@@ -370,4 +370,30 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(404)
       .jsonPath("developerMessage").toString().contains("PrisonId MDI1 with case load PSFR_RESETTLEMENT_WORKER not found")
   }
+
+  @Test
+  fun `Assign Case Allocation Prisoner not exists`() {
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+    val expectedOutput1 = readFile("testdata/expectation/case-allocation-post-result-1.json")
+    manageUsersApiMockServer.stubGetManageUsersData("MDI", 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-volume-test-1.json", "MDI", 500, 0, 200)
+    val staffId = 485931
+
+    webTestClient.post()
+      .uri("/resettlement-passport/workers/cases")
+      .bodyValue(
+        CaseAllocation(
+          nomsIds = arrayOf("G6335WY"),
+          staffId = staffId,
+          prisonId = "MDI",
+        ),
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput1)
+  }
 }

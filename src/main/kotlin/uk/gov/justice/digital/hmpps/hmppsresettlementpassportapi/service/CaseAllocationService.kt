@@ -21,6 +21,7 @@ class CaseAllocationService(
   private val caseAllocationRepository: CaseAllocationRepository,
   private val manageUserApiService: ManageUsersApiService,
   private val prisonerSearchApiService: PrisonerSearchApiService,
+  private val pathwayAndStatusService: PathwayAndStatusService,
 ) {
 
   @Transactional
@@ -83,8 +84,10 @@ class CaseAllocationService(
         throw ResourceNotFoundException("Staff with id ${caseAllocation.staffId} not found in database")
       }
       for (nomsId in caseAllocation.nomsIds) {
-        val prisoner = prisonerRepository.findByNomsId(nomsId)
-          ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
+        val prisoner = pathwayAndStatusService.getOrCreatePrisoner(
+          nomsId,
+          caseAllocation.prisonId,
+        )
         val caseAllocationExists = caseAllocationRepository.findByPrisonerIdAndIsDeleted(
           prisoner.id(),
           false,

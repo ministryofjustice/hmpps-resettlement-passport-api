@@ -23,7 +23,7 @@ class CaseNoteRetryRepositoryTest : RepositoryTestBase() {
     val savedPrisoner = prisonerRepository.saveAndFlush(prisoner)
 
     val caseNotesEntity1 = CaseNoteRetryEntity(
-      id = 1,
+      id = null,
       prisoner = savedPrisoner,
       type = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       notes = "some notes to be sent",
@@ -34,7 +34,7 @@ class CaseNoteRetryRepositoryTest : RepositoryTestBase() {
       nextRuntime = LocalDateTime.parse("2024-07-01T08:12:23"),
     )
     val caseNotesEntity2 = CaseNoteRetryEntity(
-      id = 2,
+      id = null,
       prisoner = savedPrisoner,
       type = DeliusCaseNoteType.PRE_RELEASE_REPORT,
       notes = "case notes text",
@@ -45,7 +45,7 @@ class CaseNoteRetryRepositoryTest : RepositoryTestBase() {
       nextRuntime = LocalDateTime.parse("2024-07-02T10:10:56"),
     )
     val caseNotesEntity3 = CaseNoteRetryEntity(
-      id = 3,
+      id = null,
       prisoner = savedPrisoner,
       type = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       notes = "case notes text here",
@@ -58,7 +58,7 @@ class CaseNoteRetryRepositoryTest : RepositoryTestBase() {
 
     // Entries not to be returned (i.e. nextRuntime is after "now" and/or retryCount >= 10)
     val caseNotesEntity4 = CaseNoteRetryEntity(
-      id = 4,
+      id = null,
       prisoner = savedPrisoner,
       type = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       notes = "some case note details",
@@ -70,7 +70,7 @@ class CaseNoteRetryRepositoryTest : RepositoryTestBase() {
     )
 
     val caseNotesEntity5 = CaseNoteRetryEntity(
-      id = 5,
+      id = null,
       prisoner = savedPrisoner,
       type = DeliusCaseNoteType.PRE_RELEASE_REPORT,
       notes = "case notes",
@@ -89,5 +89,5 @@ class CaseNoteRetryRepositoryTest : RepositoryTestBase() {
     Assertions.assertEquals(expectedResults, actualResults)
   }
 
-  private fun getTestPrisonerEntity(nomsId: String) = PrisonerEntity(1, nomsId, LocalDateTime.parse("2023-09-01T15:09:21"), "D567890", "MDI")
+  private fun getTestPrisonerEntity(nomsId: String) = PrisonerEntity(null, nomsId, LocalDateTime.parse("2023-09-01T15:09:21"), "D567890", "MDI")
 }

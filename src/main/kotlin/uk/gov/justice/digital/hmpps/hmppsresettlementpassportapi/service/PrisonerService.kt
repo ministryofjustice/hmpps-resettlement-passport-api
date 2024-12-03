@@ -60,6 +60,7 @@ class PrisonerService(
     watchList: Boolean?,
     includePastReleaseDates: Boolean,
     auth: String,
+    workerId: String?,
   ): PrisonersList {
     if (pathwayStatus != null && pathwayView == null) {
       throw ServerWebInputException("pathwayStatus cannot be used without pathwayView")
@@ -106,7 +107,7 @@ class PrisonerService(
       )
     }
 
-    val fullList = objectMapper(prisoners, pathwayView, pathwayStatus, prisonId, assessmentRequired, watchList, staffUsername)
+    val fullList = objectMapper(prisoners, pathwayView, pathwayStatus, prisonId, assessmentRequired, watchList, staffUsername, workerId)
 
     sortPrisoners(sort, fullList)
 
@@ -195,6 +196,7 @@ class PrisonerService(
     assessmentRequiredFilter: Boolean?,
     watchListFilter: Boolean?,
     staffUsername: String,
+    workerId: String?,
   ): MutableList<Prisoners> {
     val prisonersList = mutableListOf<Prisoners>()
 
@@ -207,8 +209,8 @@ class PrisonerService(
 
     val defaultPathwayStatuses = getDefaultPathwayStatuses()
     val watchedOffenders = watchlistService.findAllWatchedPrisonerForStaff(staffUsername)
-    val assignedWorkers = caseAllocationService.getAllAssignedRessettlementWorkers(prisonId)
-    val assingedWorkersMap = assignedWorkers.groupBy { it?.prisonerId ?: 0 }
+    val assignedWorkers = caseAllocationService.getAllAssignedResettlementWorkers(prisonId)
+    val assignedWorkersMap = assignedWorkers.groupBy { it?.prisonerId ?: 0 }
     searchList.forEach { prisonersSearch ->
 
       val pathwayStatusesEntities = nomsIdToPrisonerPathwayStatusesFromDatabaseMap[prisonersSearch.prisonerNumber]
@@ -222,6 +224,19 @@ class PrisonerService(
 
       if (watchListFilter == true && !isInWatchList) {
         return@forEach
+      }
+
+      val assigned = assignedWorkersMap[prisonerId]
+
+      if (workerId != null) {
+        val assignedWorker = assigned?.getOrNull(0)
+
+        if (workerId === "none") {
+          if (assignedWorker != null) return@forEach
+        } else {
+          val filterWorkerId = workerId.toIntOrNull()
+          if (assignedWorker?.staffId != filterWorkerId) return@forEach
+        }
       }
 
       if (prisonerId != null) {
@@ -268,7 +283,7 @@ class PrisonerService(
           prisonersSearch.releaseOnTemporaryLicenceDate,
           assessmentRequired,
         )
-        val assigned = assingedWorkersMap[prisonerId]
+
         if (assigned?.get(0) != null) {
           prisoner.assignedWorkerFirstname = assigned[0]?.staffFirstname?.trim()
           prisoner.assignedWorkerLastname = assigned[0]?.staffLastname?.trim()

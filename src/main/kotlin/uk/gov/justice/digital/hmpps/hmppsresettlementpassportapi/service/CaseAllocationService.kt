@@ -144,7 +144,7 @@ class CaseAllocationService(
   }
 
   @Transactional
-  fun getAllAssignedRessettlementWorkers(prisonId: String): List<CaseAllocationEntity?> {
+  fun getAllAssignedResettlementWorkers(prisonId: String): List<CaseAllocationEntity?> {
     val caseAllocation = caseAllocationRepository.findAllByPrisonId(prisonId)
 
     return caseAllocation

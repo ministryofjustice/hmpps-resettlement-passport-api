@@ -31,6 +31,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
@@ -160,6 +161,7 @@ class PrisonerServiceTest {
         false,
         false,
         "123",
+        null,
       )
 
     val expectedPrisonerList = PrisonersList(
@@ -257,6 +259,7 @@ class PrisonerServiceTest {
         watchList = false,
         includePastReleaseDates = true,
         auth = "123",
+        null,
       )
 
     val expectedPrisonerList = PrisonersList(
@@ -529,6 +532,7 @@ class PrisonerServiceTest {
         false,
         false,
         "123",
+        null,
       )
 
     Assertions.assertEquals(getExpectedPrisonersListReleaseDateDesc(), prisoners)
@@ -558,6 +562,7 @@ class PrisonerServiceTest {
         false,
         false,
         "123",
+        null,
       )
     Assertions.assertEquals(
       expectedPrisonerId,
@@ -590,6 +595,7 @@ class PrisonerServiceTest {
         false,
         false,
         "123",
+        null,
       )
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
@@ -605,7 +611,7 @@ class PrisonerServiceTest {
     whenever(prisonerSearchApiService.findPrisonersByPrisonId(prisonId)).thenReturn(mockedJsonResponse.content)
 
     val prisonersList =
-      prisonerService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 5, "name,ASC", false, false, "123")
+      prisonerService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 5, "name,ASC", false, false, "123", null)
     Assertions.assertEquals(expectedPageSize, prisonersList.pageSize)
     prisonersList.content?.toList()?.let { Assertions.assertEquals(expectedPageSize, it.size) }
   }
@@ -642,6 +648,7 @@ class PrisonerServiceTest {
         false,
         false,
         "123",
+        null,
       )
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
@@ -668,6 +675,7 @@ class PrisonerServiceTest {
       false,
       false,
       "123",
+      null,
     )
 
     Assertions.assertEquals(getExpectedPrisonersPathwayView(), prisoners)
@@ -695,6 +703,7 @@ class PrisonerServiceTest {
       false,
       false,
       "123",
+      null,
     )
 
     Assertions.assertEquals(getExpectedPrisonersPathwayViewAndPathwayStatus(), prisoners)
@@ -1105,9 +1114,77 @@ class PrisonerServiceTest {
         "HDCED",
       ),
     )
-    val actualPrisoners = prisonerService.objectMapper(prisoners, null, null, "MDI", null, false, "123")
+    val actualPrisoners = prisonerService.objectMapper(prisoners, null, null, "MDI", null, false, "123", null)
     Assertions.assertEquals(prisonersMapped, actualPrisoners)
   }
+
+  @ParameterizedTest
+  @MethodSource("test filtering by workerId")
+  fun `Prisoner List- filter by workerId`(workerId: String?, expectedPrisoners: List<Prisoners>) {
+    val prisoners = createPrisonerSearchList()
+    mockPathwayStatusEntities()
+    whenever(caseAllocationService.getAllAssignedResettlementWorkers("MDI")).thenReturn(createCaseAllocationList())
+
+    val actualPrisoners = prisonerService.objectMapper(prisoners, null, null, "MDI", null, false, "123", workerId)
+    Assertions.assertEquals(expectedPrisoners.size, actualPrisoners.size)
+    Assertions.assertEquals(expectedPrisoners, actualPrisoners)
+  }
+
+  private fun `test filtering by workerId`() = Stream.of(
+    Arguments.of(
+      "1",
+      List(2) { i ->
+        Prisoners(
+          prisonerNumber = prisonerNumbers.getOrElse(i) { "A1$i" },
+          firstName = "John$i",
+          lastName = "Smith$i",
+          assignedWorkerFirstname = "firstName1",
+          assignedWorkerLastname = "lastName1",
+          assessmentRequired = true,
+          lastUpdatedDate = LocalDate.now(),
+          pathwayStatus = null,
+          status = listOf(PathwayStatus(pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, lastDateChange = LocalDate.now())),
+        )
+      },
+    ),
+    Arguments.of(
+      "none",
+      List(3) { i ->
+        val number = i + 3
+        Prisoners(
+          prisonerNumber = "A1$number",
+          firstName = "John$number",
+          lastName = "Smith$number",
+          assignedWorkerFirstname = null,
+          assignedWorkerLastname = null,
+          assessmentRequired = true,
+          lastUpdatedDate = null,
+          pathwayStatus = null,
+          status = enumValues<Pathway>().map { pathway -> PathwayStatus(pathway = pathway, status = Status.NOT_STARTED) },
+        )
+      },
+    ),
+    Arguments.of(
+      null,
+      List(6) { i ->
+        Prisoners(
+          prisonerNumber = prisonerNumbers.getOrElse(i) { "A1$i" },
+          firstName = "John$i",
+          lastName = "Smith$i",
+          assignedWorkerFirstname = if (i < 2) "firstName1" else if (i == 2) "firstName5" else null,
+          assignedWorkerLastname = if (i < 2) "lastName1" else if (i == 2) "lastName5" else null,
+          assessmentRequired = true,
+          lastUpdatedDate = if (i < 3) LocalDate.now() else null,
+          pathwayStatus = null,
+          status = if (i < 3) {
+            listOf(PathwayStatus(pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, lastDateChange = LocalDate.now()))
+          } else {
+            enumValues<Pathway>().map { pathway -> PathwayStatus(pathway = pathway, status = Status.NOT_STARTED) }
+          },
+        )
+      },
+    ),
+  )
 
   @Test
   fun `sort prisoners by release eligibility date- ascending`() {
@@ -1946,5 +2023,51 @@ class PrisonerServiceTest {
       ),
     )
     Assertions.assertEquals(LocalDate.parse("2024-01-09"), prisonerService.getPrisonerReleaseDateByNomsId(nomsId))
+  }
+
+  val prisonerNumbers = listOf("G1458GV", "G1458GV", "A8339DY")
+
+  private fun createPrisonerSearchList() = List(6) { i ->
+    PrisonersSearch(
+      prisonerNumber = prisonerNumbers.getOrElse(i) { "A1$i" },
+      firstName = "John$i",
+      lastName = "Smith$i",
+      prisonId = "MDI",
+      prisonName = "Midlands",
+      cellLocation = "2A",
+    )
+  }
+
+  private fun mockPathwayStatusEntities() {
+    val mockPathwayStatusEntities = listOf(
+      aPrisonerWithStatusResult(
+        prisonerId = 1,
+        nomsId = "G1458GV",
+        pathway = Pathway.ACCOMMODATION,
+        pathwayStatus = Status.NOT_STARTED,
+      ),
+      aPrisonerWithStatusResult(
+        prisonerId = 2,
+        nomsId = "A8339DY",
+        pathway = Pathway.ACCOMMODATION,
+        pathwayStatus = Status.NOT_STARTED,
+      ),
+      aPrisonerWithStatusResult(
+        prisonerId = 3,
+        nomsId = "A8229DY",
+        pathway = Pathway.ACCOMMODATION,
+        pathwayStatus = Status.NOT_STARTED,
+      ),
+    )
+    whenever(pathwayStatusRepository.findByPrison(any())).thenReturn(mockPathwayStatusEntities)
+  }
+
+  private fun createCaseAllocationList() = List(4) { i ->
+    CaseAllocationEntity(
+      prisonerId = i.toLong(),
+      staffId = if (i < 2) 1 else 5,
+      staffFirstname = "firstName${if (i < 2) 1 else 5}",
+      staffLastname = "lastName${if (i < 2) 1 else 5}",
+    )
   }
 }

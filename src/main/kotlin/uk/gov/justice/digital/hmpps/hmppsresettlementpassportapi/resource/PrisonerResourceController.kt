@@ -104,9 +104,12 @@ class PrisonerResourceController(
     @Parameter(description = "Include prisoners with release date in past in results")
     @RequestParam(value = "includePastReleaseDates")
     includePastReleaseDates: Boolean = false,
+    @Parameter(description = "filter on resettlement worker")
+    @RequestParam(value = "workerId")
+    workerId: String?,
     @RequestHeader("Authorization")
     auth: String,
-  ): PrisonersList = prisonerService.getPrisonersByPrisonId(term, prisonId, days, pathwayView, pathwayStatus, assessmentRequired, page, size, sort, watchList, includePastReleaseDates, auth)
+  ): PrisonersList = prisonerService.getPrisonersByPrisonId(term, prisonId, days, pathwayView, pathwayStatus, assessmentRequired, page, size, sort, watchList, includePastReleaseDates, auth, workerId)
 
   @GetMapping("/prisoner/{nomsId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get prisoner by noms Id", description = "Prisoner Details based on noms Id")

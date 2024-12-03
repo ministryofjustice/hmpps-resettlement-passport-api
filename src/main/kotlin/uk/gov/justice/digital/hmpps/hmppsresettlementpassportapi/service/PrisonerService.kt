@@ -228,7 +228,7 @@ class PrisonerService(
 
       val assigned = assignedWorkersMap[prisonerId]
 
-      if (workerId != null) {
+      if (!workerId.isNullOrEmpty()) {
         val assignedWorker = assigned?.getOrNull(0)
 
         if (workerId === "none") {

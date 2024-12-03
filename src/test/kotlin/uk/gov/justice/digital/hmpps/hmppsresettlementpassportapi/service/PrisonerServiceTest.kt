@@ -1184,6 +1184,26 @@ class PrisonerServiceTest {
         )
       },
     ),
+    Arguments.of(
+      "",
+      List(6) { i ->
+        Prisoners(
+          prisonerNumber = prisonerNumbers.getOrElse(i) { "A1$i" },
+          firstName = "John$i",
+          lastName = "Smith$i",
+          assignedWorkerFirstname = if (i < 2) "firstName1" else if (i == 2) "firstName5" else null,
+          assignedWorkerLastname = if (i < 2) "lastName1" else if (i == 2) "lastName5" else null,
+          assessmentRequired = true,
+          lastUpdatedDate = if (i < 3) LocalDate.now() else null,
+          pathwayStatus = null,
+          status = if (i < 3) {
+            listOf(PathwayStatus(pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, lastDateChange = LocalDate.now()))
+          } else {
+            enumValues<Pathway>().map { pathway -> PathwayStatus(pathway = pathway, status = Status.NOT_STARTED) }
+          },
+        )
+      },
+    ),
   )
 
   @Test

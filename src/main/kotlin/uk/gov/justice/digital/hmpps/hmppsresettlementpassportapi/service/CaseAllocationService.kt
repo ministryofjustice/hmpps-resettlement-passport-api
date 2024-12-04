@@ -165,8 +165,8 @@ class CaseAllocationService(
   }
 
   @Transactional
-  fun getAssignedResettlementWorkerByNomsId(nomsId: String): CaseAllocationEntity? {
-    val caseAllocation = caseAllocationRepository.findByNomsIdAndIsDeleted(nomsId)
-    return caseAllocation
+  fun getAssignedResettlementWorkerByNomsId(nomsId: String): List<CaseAllocationEntity> {
+    val caseAllocationList = caseAllocationRepository.findByNomsIdAndIsDeleted(nomsId)
+    return caseAllocationList
   }
 }

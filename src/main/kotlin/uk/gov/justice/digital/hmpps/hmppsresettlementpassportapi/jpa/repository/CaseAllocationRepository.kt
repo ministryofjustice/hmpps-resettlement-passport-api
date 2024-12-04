@@ -50,7 +50,7 @@ interface CaseAllocationRepository : JpaRepository<CaseAllocationEntity, Long> {
   @Query(
     "SELECT ca from CaseAllocationEntity ca, PrisonerEntity p " +
       " WHERE ca.prisonerId = p.id  and p.nomsId=:nomsId" +
-      " AND ca.isDeleted=false ",
+      " AND ca.isDeleted=false order by ca.creationDate desc",
   )
-  fun findByNomsIdAndIsDeleted(nomsId: String, isDeleted: Boolean = false): CaseAllocationEntity?
+  fun findByNomsIdAndIsDeleted(nomsId: String, isDeleted: Boolean = false): List<CaseAllocationEntity>
 }

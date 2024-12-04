@@ -218,4 +218,39 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .json(expectedOutput)
   }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-10.sql")
+  fun `get staff contacts happy path has multiple ResettlementWorker assigned`() {
+    val nomsId = "123"
+    val crn = "abc"
+    val expectedOutput = readFile("testdata/expectation/staff-contacts-1.json")
+
+    deliusApiMockServer.stubGet("/probation-cases/$crn/community-manager", 200, "testdata/resettlement-passport-delius-api/prisoner-managers-1.json")
+    keyWorkerApiMockServer.stubGet("/key-worker/offender/$nomsId", 200, "testdata/key-worker-api/key-worker-1.json")
+    allocationManagerApiMockServer.stubGet("/api/allocation/$nomsId", 200, "testdata/allocation-manager-api/poms-1.json")
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/staff-contacts")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
+
+    // Reset mocks to ensure it uses the cache
+    deliusApiMockServer.resetAll()
+    keyWorkerApiMockServer.resetAll()
+    allocationManagerApiMockServer.resetAll()
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/staff-contacts")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
+  }
 }

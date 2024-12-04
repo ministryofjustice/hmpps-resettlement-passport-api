@@ -36,9 +36,12 @@ class StaffContactsService(val resettlementPassportDeliusApiService: Resettlemen
     }
 
     var resettlementWorker: Contact? = null
-    val caseAllocation = caseAllocationService.getAssignedResettlementWorkerByNomsId(nomsId)
-    if (caseAllocation != null) {
-      resettlementWorker = Contact((caseAllocation.staffFirstname + " " + caseAllocation.staffLastname).convertNameToTitleCase())
+    val caseAllocationList = caseAllocationService.getAssignedResettlementWorkerByNomsId(nomsId)
+    if (caseAllocationList.isNotEmpty()) {
+      val caseAllocation = caseAllocationList[0]
+      if (caseAllocation.staffFirstname.isNotEmpty() && caseAllocation.staffLastname.isNotEmpty()) {
+        resettlementWorker = Contact((caseAllocation.staffFirstname + " " + caseAllocation.staffLastname).convertNameToTitleCase())
+      }
     }
     return StaffContacts(primaryPom = primaryPom, secondaryPom = secondaryPom, com = com, keyWorker = keyWorker, resettlementWorker = resettlementWorker)
   }

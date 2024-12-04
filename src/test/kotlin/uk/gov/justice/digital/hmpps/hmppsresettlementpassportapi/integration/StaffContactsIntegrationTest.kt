@@ -14,7 +14,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-8.sql")
   fun `get staff contacts happy path - full data - with caching`() {
     val nomsId = "123"
     val crn = "abc"
@@ -198,5 +198,24 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
       .headers(setAuthorisation())
       .exchange()
       .expectStatus().isForbidden
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-pathway-statuses-1.sql")
+  fun `get staff contacts happy path no ResettlementWorker assigned`() {
+    val nomsId = "123"
+    val crn = "abc"
+    val expectedOutput = readFile("testdata/expectation/staff-contacts-2.json")
+
+    deliusApiMockServer.stubGet("/probation-cases/$crn/community-manager", 200, "testdata/resettlement-passport-delius-api/prisoner-managers-2.json")
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/staff-contacts")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput)
   }
 }

@@ -8,7 +8,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 
 @Service
-class StaffContactsService(val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService, val keyWorkerApiService: KeyWorkerApiService, val allocationManagerApiService: AllocationManagerApiService) {
+class StaffContactsService(val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService, val keyWorkerApiService: KeyWorkerApiService, val allocationManagerApiService: AllocationManagerApiService, val caseAllocationService: CaseAllocationService) {
   fun getStaffContacts(nomsId: String): StaffContacts {
     // Get COM details from Delius API
     val comName = resettlementPassportDeliusApiService.getComByNomsId(nomsId)
@@ -35,6 +35,11 @@ class StaffContactsService(val resettlementPassportDeliusApiService: Resettlemen
       secondaryPom = Contact(poms.secondaryPom)
     }
 
-    return StaffContacts(primaryPom = primaryPom, secondaryPom = secondaryPom, com = com, keyWorker = keyWorker)
+    var resettlementWorker: Contact? = null
+    val caseAllocation = caseAllocationService.getAssignedResettlementWorkerByNomsId(nomsId)
+    if (caseAllocation != null) {
+      resettlementWorker = Contact((caseAllocation.staffFirstname + " " + caseAllocation.staffLastname).convertNameToTitleCase())
+    }
+    return StaffContacts(primaryPom = primaryPom, secondaryPom = secondaryPom, com = com, keyWorker = keyWorker, resettlementWorker = resettlementWorker)
   }
 }

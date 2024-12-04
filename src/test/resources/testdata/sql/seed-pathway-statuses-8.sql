@@ -72,3 +72,7 @@ VALUES(6, 1, 'FINANCE_AND_ID', 'SUBMITTED', 'BCST2', '{"assessment": []}'::jsonb
 INSERT INTO resettlement_assessment
 (id, prisoner_id, pathway, assessment_status, assessment_type, assessment, status_changed_to, created_date, created_by)
 VALUES(7, 1, 'HEALTH', 'SUBMITTED', 'BCST2', '{"assessment": []}'::jsonb, 'NOT_STARTED', '2023-10-16 12:21:38.709','Prison Officer');
+
+
+INSERT INTO case_allocation (id, prisoner_id, staff_id, staff_firstname, staff_lastname, is_deleted, when_created, deleted_at) VALUES (1, 1, 456769, 'PSO1', 'Lastname', false,  '2023-05-17 12:21:44.0',  null);
+INSERT INTO case_allocation (id, prisoner_id, staff_id, staff_firstname, staff_lastname, is_deleted, when_created, deleted_at) VALUES (2, 2, 456779, 'PSO2 Firstname', 'PSO2 Lastname', false,  '2023-05-17 12:21:44.0',  null);

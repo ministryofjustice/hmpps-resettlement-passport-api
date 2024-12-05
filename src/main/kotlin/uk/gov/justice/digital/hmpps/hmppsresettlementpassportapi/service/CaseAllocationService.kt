@@ -1,8 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import com.microsoft.applicationinsights.TelemetryClient
 import jakarta.transaction.Transactional
 import jakarta.validation.ValidationException
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocationPostResponse
@@ -22,20 +24,8 @@ class CaseAllocationService(
   private val manageUserApiService: ManageUsersApiService,
   private val prisonerSearchApiService: PrisonerSearchApiService,
   private val pathwayAndStatusService: PathwayAndStatusService,
+  private val telemetryClient: TelemetryClient,
 ) {
-
-  @Transactional
-  fun getCaseAllocationByNomsId(
-    nomsId: String,
-  ): CaseAllocationEntity? {
-    val prisoner = prisonerRepository.findByNomsId(nomsId)
-      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val caseAllocationEntity = caseAllocationRepository.findByPrisonerIdAndIsDeleted(
-      prisoner.id(),
-      false,
-    )
-    return caseAllocationEntity ?: throw ResourceNotFoundException("No officer assigned for prisoner with id $nomsId")
-  }
 
   @Transactional
   fun getAllCaseAllocationByStaffId(
@@ -57,7 +47,7 @@ class CaseAllocationService(
       val caseAllocationExists = caseAllocationRepository.findByPrisonerIdAndIsDeleted(
         prisoner.id(), false,
       ) ?: throw ResourceNotFoundException("Unable to unassign, no officer assigned for prisoner with id $nomsId")
-      val case = caseAllocationExists?.let { delete(it) }
+      val case = delete(caseAllocationExists)
       caseList.add(case)
     }
     return caseList
@@ -72,7 +62,9 @@ class CaseAllocationService(
   }
 
   @Transactional
-  fun assignCase(caseAllocation: CaseAllocation): MutableList<CaseAllocationPostResponse?> {
+  fun assignCase(caseAllocation: CaseAllocation, auth: String): MutableList<CaseAllocationPostResponse?> {
+    val assignedByUsername = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get username from auth token")
+
     val caseList = emptyList<CaseAllocationPostResponse?>().toMutableList()
     if (caseAllocation.staffId != null && caseAllocation.prisonId != null && caseAllocation.nomsIds.isNotEmpty()) {
       val workersList = getAllResettlementWorkers(caseAllocation.prisonId)
@@ -98,10 +90,20 @@ class CaseAllocationService(
 
         val case = create(
           nomsId,
-          staffDetails?.staffId?.toInt()!!,
+          staffDetails.staffId.toInt(),
           staffDetails.firstName!!,
           staffDetails.lastName!!,
           prisoner.id!!,
+        )
+        telemetryClient.trackEvent(
+          "PSFR_CaseAllocation",
+          mapOf(
+            "prisonId" to caseAllocation.prisonId,
+            "prisonerId" to prisoner.nomsId,
+            "allocatedToStaffId" to staffDetails.staffId.toString(),
+            "allocatedByUsername" to assignedByUsername,
+          ),
+          null,
         )
         if (case != null) {
           val caseAllocationPostResponse = CaseAllocationPostResponse(
@@ -133,7 +135,7 @@ class CaseAllocationService(
         deletionDate = null,
       )
 
-    return caseAllocationEntity?.let { caseAllocationRepository.save(it) }
+    return caseAllocationEntity.let { caseAllocationRepository.save(it) }
   }
 
   @Transactional

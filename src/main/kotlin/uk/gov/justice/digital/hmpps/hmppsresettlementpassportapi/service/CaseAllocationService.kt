@@ -163,4 +163,10 @@ class CaseAllocationService(
     val caseCountResponse = CasesCountResponse(unassignedCount, assignedList)
     return caseCountResponse
   }
+
+  @Transactional
+  fun getAssignedResettlementWorkerByNomsId(nomsId: String): List<CaseAllocationEntity> {
+    val caseAllocationList = caseAllocationRepository.findByNomsIdAndIsDeleted(nomsId)
+    return caseAllocationList
+  }
 }

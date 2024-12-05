@@ -5,8 +5,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import com.microsoft.applicationinsights.TelemetryClient
 import io.mockk.every
 import io.mockk.mockkStatic
+import io.mockk.unmockkAll
 import io.mockk.unmockkStatic
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -50,18 +52,24 @@ class CaseAllocationServiceTest {
   @Mock
   private lateinit var pathwayAndStatusService: PathwayAndStatusService
 
+  @Mock
+  private lateinit var telemetryClient: TelemetryClient
+
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
   @BeforeEach
   fun beforeEach() {
-    caseAllocationService = CaseAllocationService(prisonerRepository, caseAllocationRepository, manageUserApiService, prisonerSearchApiService, pathwayAndStatusService)
+    caseAllocationService = CaseAllocationService(prisonerRepository, caseAllocationRepository, manageUserApiService, prisonerSearchApiService, pathwayAndStatusService, telemetryClient)
   }
 
   @Test
   fun `test createCaseAllocation - creates and returns caseAllocation`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
+    mockkStatic(::getClaimFromJWTToken)
+    every { getClaimFromJWTToken("auth", "sub") } returns "USERNAME"
+
     val manageUserList = emptyList<ManageUser>().toMutableList()
     val manageUser = ManageUser(4321, "PSO Firstname", "PSO Lastname")
     manageUserList.add(manageUser)
@@ -109,11 +117,12 @@ class CaseAllocationServiceTest {
     Mockito.`when`(caseAllocationRepository.save(any())).thenReturn(caseAllocationEntity)
     // Mockito.`when`(caseAllocationRepository.findByStaffIdAndIsDeleted(4321, false)).thenReturn(caseAllocationList)
     // Mockito.`when`(caseAllocationService.getAllCaseAllocationByStaffId(4321)).thenReturn(caseAllocationList)
-    val result = caseAllocationService.assignCase(caseAllocationPost)
+    val result = caseAllocationService.assignCase(caseAllocationPost, "auth")
     Mockito.verify(caseAllocationRepository).save(caseAllocationEntity)
     caseList.add(caseAllocationPostResponse)
     Assertions.assertEquals(caseList, result)
-    unmockkStatic(LocalDateTime::class)
+    Mockito.verify(telemetryClient).trackEvent("PSFR_CaseAllocation", mapOf("prisonId" to "MDI", "prisonerId" to "123", "allocatedToStaffId" to "4321", "allocatedByUsername" to "USERNAME"), null)
+    unmockkAll()
   }
 
   @Test

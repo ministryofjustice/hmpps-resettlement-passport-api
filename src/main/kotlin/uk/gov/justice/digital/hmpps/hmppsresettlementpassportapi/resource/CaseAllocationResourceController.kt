@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
@@ -59,7 +60,9 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
     @Schema(required = true)
     @RequestBody
     caseAllocation: CaseAllocation,
-  ) = caseAllocationService.assignCase(caseAllocation)
+    @RequestHeader("Authorization")
+    auth: String,
+  ) = caseAllocationService.assignCase(caseAllocation, auth)
 
   @PatchMapping("/cases", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(

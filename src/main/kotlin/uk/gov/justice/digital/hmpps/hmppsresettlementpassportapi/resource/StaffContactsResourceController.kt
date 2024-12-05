@@ -23,7 +23,7 @@ class StaffContactsResourceController(private val staffContactsService: StaffCon
   @GetMapping("/{nomsId}/staff-contacts")
   @Operation(
     summary = "Staff contacts for prisoner",
-    description = "Get details of the POM, COM and Key Worker for a prisoner",
+    description = "Get details of the POM, COM, Key Worker and Resettlement Worker for a prisoner",
   )
   @ApiResponses(
     value = [

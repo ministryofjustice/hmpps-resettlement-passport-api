@@ -5,6 +5,7 @@ data class StaffContacts(
   val secondaryPom: Contact?,
   val com: Contact?,
   val keyWorker: Contact?,
+  val resettlementWorker: Contact?,
 )
 
 data class Contact(

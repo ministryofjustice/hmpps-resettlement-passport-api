@@ -20,3 +20,13 @@ spec:
               runbook_url: https://dsdmoj.atlassian.net/wiki/spaces/RR/pages/5119475840/External+API+Failures
               dashboard_url: {{ $.Values.grafanaUrl }}/d/application-alerts/application-alerts?orgId=1&var-namespace={{ $targetNamespace }}
               summary: External API's Failures
+          - alert: DatabaseConnectionFailure
+            expr: rate(spring_data_repository_invocations_seconds_count{exception="JDBCConnectionException", namespace="{{ $targetNamespace }}"}[1h]) > 0
+            for: 5m
+            labels:
+              severity: {{ index .Values "generic-prometheus-alerts" "alertSeverity" }}
+            annotations:
+              message: Database connection failure detection - check database logs in RDS!
+              runbook_url: https://dsdmoj.atlassian.net/wiki/spaces/RR/pages/4469850163/Development+Guides
+              dashboard_url: {{ $.Values.grafanaUrl }}/d/application-alerts/application-alerts?orgId=1&var-namespace={{ $targetNamespace }}
+              summary: Database connection failures

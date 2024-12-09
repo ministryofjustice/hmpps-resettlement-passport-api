@@ -171,4 +171,8 @@ class CaseAllocationService(
     val caseAllocationList = caseAllocationRepository.findByNomsIdAndIsDeleted(nomsId)
     return caseAllocationList
   }
+
+  fun getPrisonsWithCaseAllocations() = caseAllocationRepository.findPrisonsWithCaseAllocations()
+
+  fun getNumberOfAssignedPrisoners(prisonId: String) = caseAllocationRepository.findTotalCaseCountByPrisonId(prisonId)
 }

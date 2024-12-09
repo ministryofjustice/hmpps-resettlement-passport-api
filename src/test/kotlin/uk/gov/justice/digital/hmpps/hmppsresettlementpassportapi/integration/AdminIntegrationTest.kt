@@ -11,4 +11,13 @@ class AdminIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
   }
+
+  @Test
+  fun `POST send metrics - happy path`() {
+    // Note - no auth as this endpoint is protected by ingress
+    webTestClient.post()
+      .uri("/send-metrics")
+      .exchange()
+      .expectStatus().isOk
+  }
 }

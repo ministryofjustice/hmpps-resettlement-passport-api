@@ -100,6 +100,7 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
               title = "Did the person in prison have a job before custody?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
+              validation = Validation(ValidationType.MANDATORY, message = "Select whether the person in prison had a job before custody"),
               options = listOf(
                 ResettlementAssessmentOption(
                   id = "YES",
@@ -110,6 +111,7 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
                         id = "DID_THEY_HAVE_JOB_BEFORE_CUSTODY_JOB_TITLE",
                         title = "Job title",
                         type = TypeOfQuestion.SHORT_TEXT,
+                        validation = Validation(ValidationType.MANDATORY, message = "Enter job title"),
                       ),
                       originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
                     ),
@@ -118,6 +120,7 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
                         id = "DID_THEY_HAVE_JOB_BEFORE_CUSTODY_EMPLOYER_NAME",
                         title = "Employer name",
                         type = TypeOfQuestion.SHORT_TEXT,
+                        validation = Validation(ValidationType.MANDATORY, message = "Enter employer name"),
                       ),
                       originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
                     ),
@@ -151,6 +154,7 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
               title = "Does the person in prison have a job arranged for when they are released?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
+              validation = Validation(ValidationType.MANDATORY, message = "Select whether the person in prison has a job arranged for when they are released"),
               options = listOf(
                 ResettlementAssessmentOption(
                   id = "YES_RETURNING_TO_SAME_JOB",
@@ -165,6 +169,7 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
                         id = "STARTING_NEW_JOB_JOB_TITLE",
                         title = "Job title",
                         type = TypeOfQuestion.SHORT_TEXT,
+                        validation = Validation(ValidationType.MANDATORY, message = "Enter job title"),
                       ),
                       originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
                     ),
@@ -173,6 +178,7 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
                         id = "STARTING_NEW_JOB_EMPLOYER_NAME",
                         title = "Employer name",
                         type = TypeOfQuestion.SHORT_TEXT,
+                        validation = Validation(ValidationType.MANDATORY, message = "Enter employer name"),
                       ),
                       originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
                     ),
@@ -207,6 +213,7 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
               title = "Was the person in prison in education or training before custody?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
+              validation = Validation(ValidationType.MANDATORY, message = "Select whether the person in prison was in education or training before custody"),
               options = yesNoOptions,
             ),
             originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
@@ -227,6 +234,7 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
               title = "Does the person in prison have education or training in place for when they are released?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
+              validation = Validation(ValidationType.MANDATORY, message = "Select whether the person in prison has education or training in place for when they are released"),
               options = listOf(
                 ResettlementAssessmentOption(
                   id = "YES_SAME_EDUCATION",
@@ -272,6 +280,7 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
               title = "Support needs",
               subTitle = "Select any needs you have identified that could be met by prison or probation staff.",
               type = TypeOfQuestion.CHECKBOX,
+              validation = Validation(ValidationType.MANDATORY, message = "Select support needs or select 'No support needs identified'"),
               options = listOf(
                 ResettlementAssessmentOption(
                   id = "HELP_TO_FIND_JOB",
@@ -342,6 +351,7 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
               title = "Education, skills and work resettlement status",
               subTitle = "Select one option.",
               type = TypeOfQuestion.RADIO,
+              validation = Validation(ValidationType.MANDATORY, message = "Select an education, skills and work resettlement status"),
               options = listOf(
                 ResettlementAssessmentOption(
                   id = "SUPPORT_REQUIRED",

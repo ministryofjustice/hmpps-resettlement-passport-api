@@ -100,6 +100,7 @@ class AttitudesThinkingAndBehaviourV3ResettlementAssessmentStrategyTest : BaseRe
               title = "Does the person in prison have any issues managing their emotions?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
+              validation = Validation(ValidationType.MANDATORY, message = "Select whether the person in prison has any issues managing their emotions"),
               options = yesNoOptions,
             ),
             originalPageId = "ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT",
@@ -120,6 +121,7 @@ class AttitudesThinkingAndBehaviourV3ResettlementAssessmentStrategyTest : BaseRe
               title = "Does the person in prison have any issues with gambling?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
+              validation = Validation(ValidationType.MANDATORY, message = "Select whether the person in prison has any issues with gambling"),
               options = yesNoOptions,
             ),
             originalPageId = "ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT",
@@ -148,6 +150,7 @@ class AttitudesThinkingAndBehaviourV3ResettlementAssessmentStrategyTest : BaseRe
               title = "Support needs",
               subTitle = "Select any needs you have identified that could be met by prison or probation staff.",
               type = TypeOfQuestion.CHECKBOX,
+              validation = Validation(ValidationType.MANDATORY, message = "Select support needs or select 'No support needs identified'"),
               options = listOf(
                 ResettlementAssessmentOption(
                   id = "SUPPORT_MANAGING_EMOTIONS",
@@ -199,6 +202,7 @@ class AttitudesThinkingAndBehaviourV3ResettlementAssessmentStrategyTest : BaseRe
               title = "Attitudes, thinking and behaviour resettlement status",
               subTitle = "Select one option.",
               type = TypeOfQuestion.RADIO,
+              validation = Validation(ValidationType.MANDATORY, message = "Select an attitudes, thinking and behaviour resettlement status"),
               options = listOf(
                 ResettlementAssessmentOption(
                   id = "SUPPORT_REQUIRED",

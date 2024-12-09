@@ -7,6 +7,8 @@ pages:
       - id: "DRUG_MISUSE_ISSUES"
         title: "Does the person in prison have any previous or current drug misuse issues?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has any previous or current drug misuse issues"
         options:
           - id: "YES"
             displayText: "Yes"
@@ -18,10 +20,13 @@ pages:
         title: "Additional details"
         subTitle: "Specify if they have spoken to the healthcare team about their issues. Do not include any details about medical treatments, conditions or ongoing monitoring."
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
       - id: "ALCOHOL_MISUSE_ISSUES"
         title: "Does the person in prison have any previous or current alcohol misuse issues?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has any previous or current alcohol misuse issues"
         options:
           - id: "YES"
             displayText: "Yes"
@@ -33,7 +38,8 @@ pages:
         title: "Additional details"
         subTitle: "Specify if they have spoken to the healthcare team about their issues. Do not include any details about medical treatments, conditions or ongoing monitoring."
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
     nextPageLogic:
       - nextPageId: "SUPPORT_REQUIREMENTS"
   - id: "SUPPORT_REQUIREMENTS"
@@ -42,6 +48,8 @@ pages:
         title: "Support needs"
         subTitle: "Select any needs you have identified that could be met by prison or probation staff."
         type: "CHECKBOX"
+        validation:
+          message: "Select support needs or select 'No support needs identified'"
         options:
           - id: "SUPPORT_FOR_DRUG_ISSUES"
             displayText: "Support from drug and alcohol team for drug issues"
@@ -61,7 +69,8 @@ pages:
         title: "Additional details"
         subTitle: "This information will only be displayed in PSfR."
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
     nextPageLogic:
       - nextPageId: "FINAL_QUESTION_NEXT_PAGE"
   # In subsequent versions do not change page and question ids below this point due to custom logic elsewhere in the code
@@ -72,6 +81,8 @@ pages:
         title: "Drugs and alcohol resettlement status"
         subTitle: "Select one option."
         type: "RADIO"
+        validation:
+          message: "Select a drugs and alcohol resettlement status"
         options:
           - id: "SUPPORT_REQUIRED"
             displayText: "Support required"
@@ -91,6 +102,8 @@ pages:
         title: "Drugs and alcohol resettlement status"
         subTitle: "Select one option."
         type: "RADIO"
+        validation:
+          message: "Select a drugs and alcohol resettlement status"
         options:
           - id: "SUPPORT_REQUIRED"
             displayText: "Support required"

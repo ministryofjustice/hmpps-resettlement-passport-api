@@ -100,6 +100,7 @@ class DrugsAndAlcoholV2ResettlementAssessmentStrategyTest : BaseResettlementAsse
               title = "Does the person in prison have any previous or current drug misuse issues?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
+              validation = Validation(ValidationType.MANDATORY, message = "Select whether the person in prison has any previous or current drug misuse issues"),
               options = yesNoOptions,
             ),
             originalPageId = "DRUGS_AND_ALCOHOL_REPORT",
@@ -121,6 +122,7 @@ class DrugsAndAlcoholV2ResettlementAssessmentStrategyTest : BaseResettlementAsse
               title = "Does the person in prison have any previous or current alcohol misuse issues?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
+              validation = Validation(ValidationType.MANDATORY, message = "Select whether the person in prison has any previous or current alcohol misuse issues"),
               options = yesNoOptions,
             ),
             originalPageId = "DRUGS_AND_ALCOHOL_REPORT",
@@ -150,6 +152,7 @@ class DrugsAndAlcoholV2ResettlementAssessmentStrategyTest : BaseResettlementAsse
               title = "Support needs",
               subTitle = "Select any needs you have identified that could be met by prison or probation staff.",
               type = TypeOfQuestion.CHECKBOX,
+              validation = Validation(ValidationType.MANDATORY, message = "Select support needs or select 'No support needs identified'"),
               options = listOf(
                 ResettlementAssessmentOption(
                   id = "SUPPORT_FOR_DRUG_ISSUES",
@@ -205,6 +208,7 @@ class DrugsAndAlcoholV2ResettlementAssessmentStrategyTest : BaseResettlementAsse
               title = "Drugs and alcohol resettlement status",
               subTitle = "Select one option.",
               type = TypeOfQuestion.RADIO,
+              validation = Validation(ValidationType.MANDATORY, message = "Select a drugs and alcohol resettlement status"),
               options = listOf(
                 ResettlementAssessmentOption(
                   id = "SUPPORT_REQUIRED",

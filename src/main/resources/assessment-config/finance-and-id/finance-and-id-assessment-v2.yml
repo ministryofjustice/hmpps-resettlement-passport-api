@@ -7,6 +7,8 @@ pages:
       - id: "HAS_BANK_ACCOUNT"
         title: "Does the person in prison have a bank account?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has a bank account"
         options:
           - id: "YES"
             displayText: "Yes"
@@ -17,11 +19,14 @@ pages:
       - id: "HAS_BANK_ACCOUNT_ADDITIONAL_DETAILS"
         title: "Additional details"
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
       - id: "WHAT_ID_DOCUMENTS"
         title: "What ID documents does the person in prison have?"
         subTitle: "Select all that apply"
         type: "CHECKBOX"
+        validation:
+          message: "Select ID documents, or select 'No ID documents' or 'No answer provided'"
         options:
           - id: "BIRTH_CERTIFICATE"
             displayText: "Birth or adoption certificate"
@@ -48,11 +53,14 @@ pages:
       - id: "WHAT_ID_DOCUMENTS_ADDITIONAL_DETAILS"
         title: "Additional details"
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
       - id: "SELECT_BENEFITS"
         title: "What benefits was the person in prison receiving before custody?"
         subTitle: "Select all that apply"
         type: "CHECKBOX"
+        validation:
+          message: "Select benefits, or select 'No benefits' or 'No answer provided'"
         options:
           - id: "ESA"
             displayText: "Employment and support allowance (ESA)"
@@ -75,10 +83,13 @@ pages:
       - id: "SELECT_BENEFITS_ADDITIONAL_DETAILS"
         title: "Additional details"
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
       - id: "DEBTS_OR_ARREARS"
         title: "Does the person in prison have any debts or arrears?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has any debts or arrears"
         options:
           - id: "YES"
             displayText: "Yes"
@@ -90,7 +101,8 @@ pages:
         title: "Additional details"
         subTitle: "Include details of what type of debt it is, and the amount. Do not include the names of anyone the person owes money to."
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
     nextPageLogic:
       - nextPageId: "SUPPORT_REQUIREMENTS"
   - id: "SUPPORT_REQUIREMENTS"
@@ -99,6 +111,8 @@ pages:
         title: "Support needs"
         subTitle: "Select any needs you have identified that could be met by prison or probation staff."
         type: "CHECKBOX"
+        validation:
+          message: "Select support needs or select 'No support needs identified'"
         options:
           - id: "APPLY_FOR_BANK_ACCOUNT"
             displayText: "Apply for a bank account"
@@ -122,7 +136,8 @@ pages:
         title: "Additional details"
         subTitle: "This information will only be displayed in PSfR."
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
     nextPageLogic:
       - nextPageId: "FINAL_QUESTION_NEXT_PAGE"
   # In subsequent versions do not change page and question ids below this point due to custom logic elsewhere in the code
@@ -133,6 +148,8 @@ pages:
         title: "Finance and ID resettlement status"
         subTitle: "Select one option."
         type: "RADIO"
+        validation:
+          message: "Select a finance and ID resettlement status"
         options:
           - id: "SUPPORT_REQUIRED"
             displayText: "Support required"
@@ -152,6 +169,8 @@ pages:
         title: "Finance and ID resettlement status"
         subTitle: "Select one option."
         type: "RADIO"
+        validation:
+          message: "Select a finance and ID resettlement status"
         options:
           - id: "SUPPORT_REQUIRED"
             displayText: "Support required"

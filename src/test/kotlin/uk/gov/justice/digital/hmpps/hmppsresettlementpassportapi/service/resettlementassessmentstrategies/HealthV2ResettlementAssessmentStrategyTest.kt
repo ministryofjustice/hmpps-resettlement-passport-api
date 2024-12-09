@@ -100,6 +100,7 @@ class HealthV2ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStr
               title = "Is the person in prison registered with a GP surgery outside of prison?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
+              validation = Validation(ValidationType.MANDATORY, message = "Select whether the person in prison is registered with a GP surgery outside of prison"),
               options = yesNoOptions,
             ),
             originalPageId = "HEALTH_REPORT",
@@ -121,6 +122,7 @@ class HealthV2ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStr
               title = "Does the person in prison need help with day-to-day living when they are released because of an illness or disability?",
               subTitle = null,
               type = TypeOfQuestion.RADIO,
+              validation = Validation(ValidationType.MANDATORY, message = "Select whether the person in prison needs help with day-to-day living when they are released because of an illness or disability"),
               options = yesNoOptions,
             ),
             originalPageId = "HEALTH_REPORT",
@@ -150,6 +152,7 @@ class HealthV2ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStr
               title = "Support needs",
               subTitle = "Select any needs you have identified that could be met by prison or probation staff.",
               type = TypeOfQuestion.CHECKBOX,
+              validation = Validation(ValidationType.MANDATORY, message = "Select support needs or 'No support needs identified'"),
               options = listOf(
                 ResettlementAssessmentOption(
                   id = "HELP_TO_REGISTER_WITH_GP",
@@ -209,6 +212,7 @@ class HealthV2ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStr
               title = "Health resettlement status",
               subTitle = "Select one option.",
               type = TypeOfQuestion.RADIO,
+              validation = Validation(ValidationType.MANDATORY, message = "Select a health resettlement status"),
               options = listOf(
                 ResettlementAssessmentOption(
                   id = "SUPPORT_REQUIRED",

@@ -7,6 +7,8 @@ pages:
       - id: "DID_THEY_HAVE_JOB_BEFORE_CUSTODY"
         title: "Did the person in prison have a job before custody?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison had a job before custody"
         options:
           - id: "YES"
             displayText: "Yes"
@@ -14,9 +16,13 @@ pages:
               - id: "DID_THEY_HAVE_JOB_BEFORE_CUSTODY_JOB_TITLE"
                 title: "Job title"
                 type: "SHORT_TEXT"
+                validation:
+                  message: "Enter job title"
               - id: "DID_THEY_HAVE_JOB_BEFORE_CUSTODY_EMPLOYER_NAME"
                 title: "Employer name"
                 type: "SHORT_TEXT"
+                validation:
+                  message: "Enter employer name"
           - id: "NO"
             displayText: "No"
           - id: "NO_ANSWER"
@@ -24,10 +30,13 @@ pages:
       - id: "DID_THEY_HAVE_JOB_BEFORE_CUSTODY_ADDITIONAL_DETAILS"
         title: "Additional details"
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
       - id: "DO_THEY_HAVE_JOB_ARRANGED"
         title: "Does the person in prison have a job arranged for when they are released?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has a job arranged for when they are released"
         options:
           - id: "YES_RETURNING_TO_SAME_JOB"
             displayText: "Yes, returning to same job"
@@ -37,9 +46,13 @@ pages:
               - id: "STARTING_NEW_JOB_JOB_TITLE"
                 title: "Job title"
                 type: "SHORT_TEXT"
+                validation:
+                  message: "Enter job title"
               - id: "STARTING_NEW_JOB_EMPLOYER_NAME"
                 title: "Employer name"
                 type: "SHORT_TEXT"
+                validation:
+                  message: "Enter employer name"
           - id: "NO"
             displayText: "No"
           - id: "NO_ANSWER"
@@ -48,10 +61,13 @@ pages:
         title: "Additional details"
         subTitle: "Specify if they were employed full or part time or whether they were self-employed. Specify if they had a permanent, temporary, fixed-term or zero hours contract."
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
       - id: "WERE_THEY_IN_EDUCATION_BEFORE_CUSTODY"
         title: "Was the person in prison in education or training before custody?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison was in education or training before custody"
         options:
           - id: "YES"
             displayText: "Yes"
@@ -62,10 +78,13 @@ pages:
       - id: "WERE_THEY_IN_EDUCATION_BEFORE_CUSTODY_ADDITIONAL_DETAILS"
         title: "Additional details"
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
       - id: "EDUCATION_WHEN_RELEASED"
         title: "Does the person in prison have education or training in place for when they are released?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has education or training in place for when they are released"
         options:
           - id: "YES_SAME_EDUCATION"
             displayText: "Yes, returning to same education or training"
@@ -78,7 +97,8 @@ pages:
       - id: "EDUCATION_WHEN_RELEASED_ADDITIONAL_DETAILS"
         title: "Additional details"
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
     nextPageLogic:
       - nextPageId: "SUPPORT_REQUIREMENTS"
   - id: "SUPPORT_REQUIREMENTS"
@@ -87,6 +107,8 @@ pages:
         title: "Support needs"
         subTitle: "Select any needs you have identified that could be met by prison or probation staff."
         type: "CHECKBOX"
+        validation:
+          message: "Select support needs or select 'No support needs identified'"
         options:
           - id: "HELP_TO_FIND_JOB"
             displayText: "Help to find a job for release"
@@ -126,6 +148,8 @@ pages:
         title: "Education, skills and work resettlement status"
         subTitle: "Select one option."
         type: "RADIO"
+        validation:
+          message: "Select an education, skills and work resettlement status"
         options:
           - id: "SUPPORT_REQUIRED"
             displayText: "Support required"
@@ -145,6 +169,8 @@ pages:
         title: "Education, skills and work resettlement status"
         subTitle: "Select one option."
         type: "RADIO"
+        validation:
+          message: "Select an education, skills and work resettlement status"
         options:
           - id: "SUPPORT_REQUIRED"
             displayText: "Support required"

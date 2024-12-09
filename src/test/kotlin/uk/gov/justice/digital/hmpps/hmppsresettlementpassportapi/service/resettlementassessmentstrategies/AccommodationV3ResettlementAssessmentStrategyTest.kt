@@ -128,6 +128,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
               title = "Support needs",
               subTitle = "Select any needs you have identified that could be met by prison or probation staff.",
               type = TypeOfQuestion.CHECKBOX,
+              validation = Validation(type = ValidationType.MANDATORY, message = "Select support needs or select 'No support needs identified'"),
               options = listOf(
                 ResettlementAssessmentOption(
                   id = "HELP_TO_FIND_ACCOMMODATION",
@@ -203,6 +204,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
               title = "Accommodation resettlement status",
               subTitle = "Select one option.",
               type = TypeOfQuestion.RADIO,
+              validation = Validation(ValidationType.MANDATORY, message = "Select an accommodation resettlement status"),
               options = listOf(
                 ResettlementAssessmentOption(
                   id = "SUPPORT_REQUIRED",
@@ -675,6 +677,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
           id = "WHERE_DID_THEY_LIVE",
           title = "Where did the person in prison live before custody?",
           type = TypeOfQuestion.RADIO,
+          validation = Validation(type = ValidationType.MANDATORY, message = "Select where the person in prison lived before custody"),
           options = listOf(
             ResettlementAssessmentOption(
               id = "PRIVATE_RENTED_HOUSING",
@@ -841,6 +844,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
           id = "WHERE_WILL_THEY_LIVE",
           title = "Where will the person in prison live when they are released?",
           type = TypeOfQuestion.RADIO,
+          validation = Validation(type = ValidationType.MANDATORY, message = "Select where the person in prison will live when they are released"),
           options = listOf(
             ResettlementAssessmentOption(
               id = "RETURN_TO_PREVIOUS_ADDRESS",

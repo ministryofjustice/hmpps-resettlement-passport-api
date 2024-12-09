@@ -7,6 +7,8 @@ pages:
       - id: "WHERE_DID_THEY_LIVE"
         title: "Where did the person in prison live before custody?"
         type: "RADIO"
+        validation:
+          message: "Select where the person in prison lived before custody"
         options:
           - id: "PRIVATE_RENTED_HOUSING"
             displayText: "Private housing rented by them"
@@ -70,10 +72,13 @@ pages:
         title: "Additional details"
         subTitle: "Include the name and date of birth of anyone else who lived at the address, and how the accommodation was paid for.\nIf no fixed address, specify the council area where they have a local connection."
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
       - id: "WHERE_WILL_THEY_LIVE"
         title: "Where will the person in prison live when they are released?"
         type: "RADIO"
+        validation:
+          message: "Select where the person in prison will live when they are released"
         options:
           - id: "RETURN_TO_PREVIOUS_ADDRESS"
             displayText: "Return to their previous address"
@@ -91,7 +96,8 @@ pages:
         title: "Additional details"
         subTitle: "If returning to previous address, specify if any details will have changed.\nIf moving to a new address, include names and dates of birth of anyone else living at the address, and how the accommodation will be paid for."
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
     nextPageLogic:
       - nextPageId: "SUPPORT_REQUIREMENTS"
   - id: "SUPPORT_REQUIREMENTS"
@@ -100,6 +106,8 @@ pages:
         title: "Support needs"
         subTitle: "Select any needs you have identified that could be met by prison or probation staff."
         type: "CHECKBOX"
+        validation:
+          message: "Select support needs or select 'No support needs identified'"
         options:
           - id: "HELP_TO_FIND_ACCOMMODATION"
             displayText: "Help to find accommodation"
@@ -131,7 +139,8 @@ pages:
         title: "Additional details"
         subTitle: "This information will only be displayed in PSfR."
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
     nextPageLogic:
       - nextPageId: "FINAL_QUESTION_NEXT_PAGE"
   # In subsequent versions do not change page and question ids below this point due to custom logic elsewhere in the code
@@ -142,6 +151,8 @@ pages:
         title: "Accommodation resettlement status"
         subTitle: "Select one option."
         type: "RADIO"
+        validation:
+          message: "Select an accommodation resettlement status"
         options:
           - id: "SUPPORT_REQUIRED"
             displayText: "Support required"
@@ -161,6 +172,8 @@ pages:
         title: "Accommodation resettlement status"
         subTitle: "Select one option."
         type: "RADIO"
+        validation:
+          message: "Select an accommodation resettlement status"
         options:
           - id: "SUPPORT_REQUIRED"
             displayText: "Support required"

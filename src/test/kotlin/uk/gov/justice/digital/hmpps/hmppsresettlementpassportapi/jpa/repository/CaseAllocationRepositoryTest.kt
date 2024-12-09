@@ -173,6 +173,6 @@ class CaseAllocationRepositoryTest : RepositoryTestBase() {
         ),
       ),
     )
-    Assertions.assertThat(caseAllocationRepository.findPrisonsWithCaseAllocations()).isEqualTo(listOf("CCI", "BBI", "AAI"))
+    Assertions.assertThat(caseAllocationRepository.findPrisonsWithCaseAllocations().sorted()).isEqualTo(listOf("AAI", "BBI", "CCI"))
   }
 }

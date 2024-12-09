@@ -7,6 +7,8 @@ pages:
       - id: "HELP_TO_MANAGE_ANGER"
         title: "Does the person in prison have any issues managing their emotions?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has any issues managing their emotions"
         options:
           - id: "YES"
             displayText: "Yes"
@@ -17,10 +19,13 @@ pages:
       - id: "HELP_TO_MANAGE_ANGER_ADDITIONAL_DETAILS"
         title: "Additional details"
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
       - id: "ISSUES_WITH_GAMBLING"
         title: "Does the person in prison have any issues with gambling?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has any issues with gambling"
         options:
           - id: "YES"
             displayText: "Yes"
@@ -31,7 +36,8 @@ pages:
       - id: "ISSUES_WITH_GAMBLING_ADDITIONAL_DETAILS"
         title: "Additional details"
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
     nextPageLogic:
       - nextPageId: "SUPPORT_REQUIREMENTS"
   - id: "SUPPORT_REQUIREMENTS"
@@ -40,6 +46,8 @@ pages:
         title: "Support needs"
         subTitle: "Select any needs you have identified that could be met by prison or probation staff."
         type: "CHECKBOX"
+        validation:
+          message: "Select support needs or select 'No support needs identified'"
         options:
           - id: "SUPPORT_MANAGING_EMOTIONS"
             displayText: "Support to manage their emotions"
@@ -57,7 +65,8 @@ pages:
         title: "Additional details"
         subTitle: "This information will only be displayed in PSfR."
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
     nextPageLogic:
       - nextPageId: "FINAL_QUESTION_NEXT_PAGE"
   # In subsequent versions do not change page and question ids below this point due to custom logic elsewhere in the code
@@ -68,6 +77,8 @@ pages:
         title: "Attitudes, thinking and behaviour resettlement status"
         subTitle: "Select one option."
         type: "RADIO"
+        validation:
+          message: "Select an attitudes, thinking and behaviour resettlement status"
         options:
           - id: "SUPPORT_REQUIRED"
             displayText: "Support required"

@@ -99,6 +99,7 @@ class FinanceAndIdV2ResettlementAssessmentAssessmentStrategyTest : BaseResettlem
               id = "HAS_BANK_ACCOUNT",
               title = "Does the person in prison have a bank account?",
               type = TypeOfQuestion.RADIO,
+              validation = Validation(ValidationType.MANDATORY, message = "Select whether the person in prison has a bank account"),
               options = yesNoOptions,
             ),
             originalPageId = "FINANCE_AND_ID_REPORT",
@@ -119,6 +120,7 @@ class FinanceAndIdV2ResettlementAssessmentAssessmentStrategyTest : BaseResettlem
               title = "What ID documents does the person in prison have?",
               subTitle = "Select all that apply",
               type = TypeOfQuestion.CHECKBOX,
+              validation = Validation(ValidationType.MANDATORY, message = "Select ID documents, or select 'No ID documents' or 'No answer provided'"),
               options = listOf(
                 ResettlementAssessmentOption(
                   id = "BIRTH_CERTIFICATE",
@@ -182,6 +184,7 @@ class FinanceAndIdV2ResettlementAssessmentAssessmentStrategyTest : BaseResettlem
               title = "What benefits was the person in prison receiving before custody?",
               subTitle = "Select all that apply",
               type = TypeOfQuestion.CHECKBOX,
+              validation = Validation(ValidationType.MANDATORY, message = "Select benefits, or select 'No benefits' or 'No answer provided'"),
               options = listOf(
                 ResettlementAssessmentOption(
                   id = "ESA",
@@ -236,6 +239,7 @@ class FinanceAndIdV2ResettlementAssessmentAssessmentStrategyTest : BaseResettlem
               id = "DEBTS_OR_ARREARS",
               title = "Does the person in prison have any debts or arrears?",
               type = TypeOfQuestion.RADIO,
+              validation = Validation(ValidationType.MANDATORY, message = "Select whether the person in prison has any debts or arrears"),
               options = yesNoOptions,
             ),
             originalPageId = "FINANCE_AND_ID_REPORT",
@@ -265,6 +269,7 @@ class FinanceAndIdV2ResettlementAssessmentAssessmentStrategyTest : BaseResettlem
               title = "Support needs",
               subTitle = "Select any needs you have identified that could be met by prison or probation staff.",
               type = TypeOfQuestion.CHECKBOX,
+              validation = Validation(ValidationType.MANDATORY, message = "Select support needs or select 'No support needs identified'"),
               options = listOf(
                 ResettlementAssessmentOption(
                   id = "APPLY_FOR_BANK_ACCOUNT",
@@ -326,6 +331,7 @@ class FinanceAndIdV2ResettlementAssessmentAssessmentStrategyTest : BaseResettlem
               title = "Finance and ID resettlement status",
               subTitle = "Select one option.",
               type = TypeOfQuestion.RADIO,
+              validation = Validation(ValidationType.MANDATORY, message = "Select a finance and ID resettlement status"),
               options = listOf(
                 ResettlementAssessmentOption(
                   id = "SUPPORT_REQUIRED",

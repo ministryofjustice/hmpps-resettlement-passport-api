@@ -7,6 +7,8 @@ pages:
       - id: "PARTNER_OR_SPOUSE"
         title: "Does the person in prison have a partner or spouse?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has a partner or spouse"
         options:
           - id: "YES"
             displayText: "Yes"
@@ -18,11 +20,14 @@ pages:
         title: "Additional details"
         subTitle: "Include their full name and date of birth."
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
       - id: "PARENTAL_RESPONSIBILITY"
         title: "Does the person in prison have parental responsibility for any children under 16?"
         subTitle: "Parental responsibility means they have legal rights and duties relating to the children's upbringing. It does not mean they are allowed contact."
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has parental responsibility for any children under 16"
         options:
           - id: "YES"
             displayText: "Yes"
@@ -34,10 +39,13 @@ pages:
         title: "Additional details"
         subTitle: "Include their names, whether they are with current or ex partner and their dates of birth. Specify how many children they are the primary carer for, and where they are while they are in custody. Specify if social services are involved, including name of social worker."
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
       - id: "CARING_RESPONSIBILITIES_FOR_ADULTS"
         title: "Does the person in prison have caring responsibilities for any adults?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has caring responsibilities for any adults"
         options:
           - id: "YES"
             displayText: "Yes"
@@ -49,10 +57,13 @@ pages:
         title: "Additional details"
         subTitle: "Details of any adults they have caring responsibilities for. Specify if social services are involved, including name of social worker."
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
       - id: "RECEIVED_SUPPORT_FROM_SOCIAL_SERVICES"
         title: "Has the person in prison ever received support from social services or been in care?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has ever received support from social services or been in care"
         options:
           - id: "YES"
             displayText: "Yes"
@@ -63,10 +74,13 @@ pages:
       - id: "RECEIVED_SUPPORT_FROM_SOCIAL_SERVICES_ADDITIONAL_DETAILS"
         title: "Additional details"
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
       - id: "DO_THEY_HAVE_SUPPORT_FROM_FAMILY_FRIENDS_COMMUNITY"
         title: "Does the person in prison have support from family, friends or their community outside of prison?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has support from family, friends or their community outside of prison"
         options:
           - id: "YES"
             displayText: "Yes"
@@ -77,10 +91,13 @@ pages:
       - id: "DO_THEY_HAVE_SUPPORT_FROM_FAMILY_FRIENDS_COMMUNITY_ADDITIONAL_DETAILS"
         title: "Additional details"
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
       - id: "INVOLVEMENT_IN_GANG_ACTIVITY"
         title: "Has the person in prison had any involvement in gang activity?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has had any involvement in gang activity"
         options:
           - id: "YES"
             displayText: "Yes"
@@ -91,10 +108,13 @@ pages:
       - id: "INVOLVEMENT_IN_GANG_ACTIVITY_ADDITIONAL_DETAILS"
         title: "Additional details"
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
       - id: "UNDER_THREAT_OUTSIDE_PRISON"
         title: "Is the person in prison under threat outside of prison?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison is under threat outside of prison"
         options:
           - id: "YES"
             displayText: "Yes"
@@ -105,10 +125,13 @@ pages:
       - id: "UNDER_THREAT_OUTSIDE_PRISON_ADDITIONAL_DETAILS"
         title: "Additional details"
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
       - id: "VICTIM_OF_DOMESTIC_ABUSE"
         title: "Has the person in prison ever been the victim of domestic abuse?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has ever been the victim of domestic abuse"
         options:
           - id: "YES"
             displayText: "Yes"
@@ -119,6 +142,8 @@ pages:
       - id: "PERPETRATOR_OF_DOMESTIC_ABUSE"
         title: "Has the person in prison ever been the perpetrator of domestic abuse?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has ever been the perpetrator of domestic abuse"
         options:
           - id: "YES"
             displayText: "Yes"
@@ -129,6 +154,8 @@ pages:
       - id: "VICTIM_OF_SEXUAL_ABUSE"
         title: "Has the person in prison ever been the victim of sexual abuse?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has ever been the victim of sexual abuse"
         options:
           - id: "YES"
             displayText: "Yes"
@@ -139,6 +166,8 @@ pages:
       - id: "PERPETRATOR_OF_SEXUAL_ABUSE"
         title: "Has the person in prison ever been the perpetrator of sexual abuse?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has ever been the perpetrator of sexual abuse"
         options:
           - id: "YES"
             displayText: "Yes"
@@ -149,6 +178,8 @@ pages:
       - id: "WORKED_IN_SEX_INDUSTRY"
         title: "Has the person in prison ever worked in the sex industry?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has ever worked in the sex industry"
         options:
           - id: "YES"
             displayText: "Yes"
@@ -164,6 +195,8 @@ pages:
         title: "Support needs"
         subTitle: "Select any needs you have identified that could be met by prison or probation staff."
         type: "CHECKBOX"
+        validation:
+          message: "Select support needs or select 'No support needs identified'"
         options:
           - id: "SUPPORT_WHEN_MEETING_CHILDREN_SERVICES"
             displayText: "Support when they meet with children's services"
@@ -186,7 +219,8 @@ pages:
         title: "Additional details"
         subTitle: "This information will only be displayed in PSfR."
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
     nextPageLogic:
       - nextPageId: "FINAL_QUESTION_NEXT_PAGE"
   # In subsequent versions do not change page and question ids below this point due to custom logic elsewhere in the code
@@ -197,6 +231,8 @@ pages:
         title: "Children, families and communities resettlement status"
         subTitle: "Select one option."
         type: "RADIO"
+        validation:
+          message: "Select a children, families and communities resettlement status"
         options:
           - id: "SUPPORT_REQUIRED"
             displayText: "Support required"

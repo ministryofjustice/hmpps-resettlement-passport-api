@@ -7,6 +7,8 @@ pages:
       - id: "REGISTERED_WITH_GP"
         title: "Is the person in prison registered with a GP surgery outside of prison?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison is registered with a GP surgery outside of prison"
         options:
           - id: "YES"
             displayText: "Yes"
@@ -18,10 +20,13 @@ pages:
         title: "Additional details"
         subTitle: "You do not need to include the name and address of the GP surgery."
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
       - id: "NEEDS_HELP_WITH_DAY_TO_DAY_LIVING"
         title: "Does the person in prison need help with day-to-day living when they are released because of an illness or disability?"
         type: "RADIO"
+        validation:
+          message: "Select whether the person in prison needs help with day-to-day living when they are released because of an illness or disability"
         options:
           - id: "YES"
             displayText: "Yes"
@@ -33,7 +38,8 @@ pages:
         title: "Additional details"
         subTitle: "Include details of any support, adaptations or equipment required. Do not include any details about medical treatments or conditions."
         type: "LONG_TEXT"
-        validationType: "OPTIONAL"
+        validation:
+          type: "OPTIONAL"
     nextPageLogic:
       - nextPageId: "SUPPORT_REQUIREMENTS"
   - id: "SUPPORT_REQUIREMENTS"
@@ -42,6 +48,8 @@ pages:
         title: "Support needs"
         subTitle: "Select any needs you have identified that could be met by prison or probation staff."
         type: "CHECKBOX"
+        validation:
+          message: "Select support needs or 'No support needs identified'"
         options:
           - id: "HELP_TO_REGISTER_WITH_GP"
             displayText: "Help to register with a GP surgery"
@@ -74,6 +82,8 @@ pages:
         title: "Health resettlement status"
         subTitle: "Select one option."
         type: "RADIO"
+        validation:
+          message: "Select a health resettlement status"
         options:
           - id: "SUPPORT_REQUIRED"
             displayText: "Support required"
@@ -93,6 +103,8 @@ pages:
         title: "Health resettlement status"
         subTitle: "Select one option."
         type: "RADIO"
+        validation:
+          message: "Select a health resettlement status"
         options:
           - id: "SUPPORT_REQUIRED"
             displayText: "Support required"

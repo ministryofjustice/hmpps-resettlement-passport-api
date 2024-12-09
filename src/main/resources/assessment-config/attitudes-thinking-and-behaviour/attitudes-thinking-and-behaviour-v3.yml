@@ -98,6 +98,8 @@ pages:
         title: "Attitudes, thinking and behaviour resettlement status"
         subTitle: "Select one option."
         type: "RADIO"
+        validation:
+          message: "Select an attitudes, thinking and behaviour resettlement status"
         options:
           - id: "SUPPORT_REQUIRED"
             displayText: "Support required"

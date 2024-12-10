@@ -16,6 +16,7 @@ class AdminService(
   private val telemetryClient: TelemetryClient,
   private val caseAllocationService: CaseAllocationService,
   private val prisonerSearchApiService: PrisonerSearchApiService,
+  private val prisonerService: PrisonerService,
 ) {
 
   companion object {
@@ -33,8 +34,8 @@ class AdminService(
 
   fun sendMetricsToAppInsights() {
     log.info("Starting send metrics to app insights")
-    val prisonsWithCaseAllocation = caseAllocationService.getPrisonsWithCaseAllocations()
-    prisonsWithCaseAllocation.forEach { prisonId ->
+    val prisonList = prisonerService.getPrisonList()
+    prisonList.forEach { prisonId ->
       try {
         val numberOfPrisonersAssigned = caseAllocationService.getNumberOfAssignedPrisoners(prisonId)
         val numberOfPrisonersInPrison = prisonerSearchApiService.findPrisonersByPrisonId(prisonId).size

@@ -30,13 +30,12 @@ class OffenderEventsListener(
   fun processMessage(envelope: MessageEnvelope) {
     val eventType = envelope.messageAttributes.eventType.value
     logger.debug { "Received message ${envelope.messageId} $eventType" }
+    val event = objectMapper.readValue<DomainEvent>(envelope.message)
     when (eventType) {
       "prison-offender-events.prisoner.received" -> {
-        val event = objectMapper.readValue<DomainEvent>(envelope.message)
         offenderEventsService.handleReceiveEvent(envelope.messageId, event)
       }
       "prison-offender-events.prisoner.released" -> {
-        val event = objectMapper.readValue<DomainEvent>(envelope.message)
         offenderEventsService.handleReleaseEvent(envelope.messageId, event)
       }
 

@@ -41,6 +41,9 @@ class AdminServiceTest {
   @Mock
   private lateinit var prisonerSearchApiService: PrisonerSearchApiService
 
+  @Mock
+  private lateinit var prisonerService: PrisonerService
+
   companion object {
 
     private val fakeNow = LocalDateTime.parse("2024-07-02T12:12:12")
@@ -61,7 +64,7 @@ class AdminServiceTest {
 
   @BeforeEach
   fun beforeEach() {
-    adminService = AdminService(caseNoteRetryService, caseNoteRetryRepository, telemetryClient, caseAllocationService, prisonerSearchApiService)
+    adminService = AdminService(caseNoteRetryService, caseNoteRetryRepository, telemetryClient, caseAllocationService, prisonerSearchApiService, prisonerService)
   }
 
   @Test
@@ -78,7 +81,7 @@ class AdminServiceTest {
 
   @Test
   fun `test sendMetricsToAppInsights`() {
-    whenever(caseAllocationService.getPrisonsWithCaseAllocations()).thenReturn(listOf("AAI", "BBI", "CCI", "DDI"))
+    whenever(prisonerService.getPrisonList()).thenReturn(listOf("AAI", "BBI", "CCI", "DDI"))
 
     whenever(caseAllocationService.getNumberOfAssignedPrisoners("AAI")).thenReturn(5)
     whenever(caseAllocationService.getNumberOfAssignedPrisoners("BBI")).thenReturn(10)

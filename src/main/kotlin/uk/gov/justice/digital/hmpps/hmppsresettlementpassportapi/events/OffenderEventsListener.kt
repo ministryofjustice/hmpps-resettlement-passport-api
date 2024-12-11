@@ -35,6 +35,10 @@ class OffenderEventsListener(
         val event = objectMapper.readValue<DomainEvent>(envelope.message)
         offenderEventsService.handleReceiveEvent(envelope.messageId, event)
       }
+      "prison-offender-events.prisoner.released" -> {
+        val event = objectMapper.readValue<DomainEvent>(envelope.message)
+        offenderEventsService.handleReleaseEvent(envelope.messageId, event)
+      }
 
       else -> logger.debug { "Ignoring message ${envelope.messageId} with type $eventType" }
     }
@@ -69,6 +73,7 @@ data class DomainEvent(
 ) {
   fun movementReasonCode(): String? = additionalInformation["nomisMovementReasonCode"] as String?
   fun prisonId(): String? = additionalInformation["prisonId"] as String?
+  fun reason(): String? = additionalInformation["reason"] as String?
 }
 
 data class PersonReference(val identifiers: List<PersonIdentifier> = listOf()) {

@@ -172,7 +172,5 @@ class CaseAllocationService(
     return caseAllocationList
   }
 
-  fun getPrisonsWithCaseAllocations() = caseAllocationRepository.findPrisonsWithCaseAllocations()
-
   fun getNumberOfAssignedPrisoners(prisonId: String) = caseAllocationRepository.findTotalCaseCountByPrisonId(prisonId)
 }

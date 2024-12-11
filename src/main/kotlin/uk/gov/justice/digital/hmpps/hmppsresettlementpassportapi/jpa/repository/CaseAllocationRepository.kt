@@ -53,9 +53,4 @@ interface CaseAllocationRepository : JpaRepository<CaseAllocationEntity, Long> {
       " AND ca.isDeleted=false order by ca.creationDate desc",
   )
   fun findByNomsIdAndIsDeleted(nomsId: String): List<CaseAllocationEntity>
-
-  @Query(
-    "SELECT DISTINCT p.prisonId FROM CaseAllocationEntity ca JOIN PrisonerEntity p ON ca.prisonerId = p.id",
-  )
-  fun findPrisonsWithCaseAllocations(): List<String>
 }

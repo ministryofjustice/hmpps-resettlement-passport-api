@@ -482,6 +482,8 @@ class PrisonerService(
       profileTagList
     }
   }
+
+  fun getPrisonList() = prisonerRepository.findDistinctPrisonIds()
 }
 
 private data class AssessmentRequiredResult(

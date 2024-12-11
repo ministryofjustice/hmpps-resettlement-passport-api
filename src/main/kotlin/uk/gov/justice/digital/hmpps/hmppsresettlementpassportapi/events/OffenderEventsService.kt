@@ -67,18 +67,18 @@ class OffenderEventsService(
   fun handleReleaseEvent(messageId: String, event: DomainEvent) {
     logger.info { "Handling release event from ${event.occurredAt}" }
     val nomsId = event.personReference.findNomsId() ?: run {
-      logger.info { "###### Ignoring release event $messageId as no nomsId" } // TODO put this back to debug
+      logger.debug { "Ignoring release event $messageId as no nomsId" }
       return
     }
 
     if (event.reason() != "RELEASED") {
-      logger.info { "###### Ignoring release event $messageId as reason is not RELEASED" }
+      logger.debug { "Ignoring release event $messageId as reason is not RELEASED" }
       return
     }
 
     val prisoner = prisonerRepository.findByNomsId(nomsId)
     if (prisoner == null) {
-      logger.info { "###### Ignoring release event $messageId as prisoner not found in database" }
+      logger.debug { "Ignoring release event $messageId as prisoner not found in database" }
       return
     }
 

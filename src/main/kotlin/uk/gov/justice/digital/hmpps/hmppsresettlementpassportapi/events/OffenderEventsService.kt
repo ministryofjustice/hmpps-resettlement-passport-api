@@ -62,6 +62,39 @@ class OffenderEventsService(
       ),
     )
   }
+
+  @Transactional
+  fun handleReleaseEvent(messageId: String, event: DomainEvent) {
+    logger.info { "Handling release event from ${event.occurredAt}" }
+    val nomsId = event.personReference.findNomsId() ?: run {
+      logger.debug { "Ignoring release event $messageId as no nomsId" }
+      return
+    }
+
+    if (event.reason() != "RELEASED") {
+      logger.debug { "Ignoring release event $messageId as reason is not RELEASED" }
+      return
+    }
+
+    val prisoner = prisonerRepository.findByNomsId(nomsId)
+    if (prisoner == null) {
+      logger.debug { "Ignoring release event $messageId as prisoner not found in database" }
+      return
+    }
+
+    prisonerRepository.save(prisoner.copy(prisonId = "OUT"))
+
+    offenderEventRepository.save(
+      OffenderEventEntity(
+        prisonerId = prisoner.id!!,
+        type = OffenderEventType.PRISON_RELEASE,
+        nomsId = nomsId,
+        occurredAt = event.occurredAt,
+        reason = null,
+        reasonCode = event.movementReasonCode(),
+      ),
+    )
+  }
 }
 
 internal fun toReasonType(movementReasonCode: String?): MovementReasonType? = when (movementReasonCode) {

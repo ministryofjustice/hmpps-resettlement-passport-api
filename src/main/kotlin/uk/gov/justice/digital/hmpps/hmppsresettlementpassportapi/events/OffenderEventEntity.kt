@@ -33,6 +33,7 @@ data class OffenderEventEntity(
 
 enum class OffenderEventType {
   PRISON_ADMISSION,
+  PRISON_RELEASE,
 }
 
 enum class MovementReasonType {

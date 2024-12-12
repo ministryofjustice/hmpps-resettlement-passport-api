@@ -86,7 +86,8 @@ class OffenderEventsService(
       return
     }
 
-    if (event.reason() === ("RELEASED")) {
+    if (event.reason() == "RELEASED") {
+      print("THIS THIS THIS - Release reason")
       prisonerRepository.save(prisoner.copy(prisonId = "OUT"))
 
       offenderEventRepository.save(

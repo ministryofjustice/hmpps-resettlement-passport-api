@@ -75,8 +75,8 @@ class OffenderEventsService(
       return
     }
 
-    if (event.reason() != "RELEASED") {
-      logger.debug { "Ignoring release event $messageId as reason is not RELEASED" }
+    if (event.reason() !in  listOf("RELEASED", "TRANSFERRED")) {
+      logger.debug { "Ignoring release event $messageId as reason is not RELEASED or TRANSFERRED" }
       return
     }
 
@@ -86,18 +86,21 @@ class OffenderEventsService(
       return
     }
 
-    prisonerRepository.save(prisoner.copy(prisonId = "OUT"))
+    if (event.reason() === ("RELEASED")) {
+      prisonerRepository.save(prisoner.copy(prisonId = "OUT"))
 
-    offenderEventRepository.save(
-      OffenderEventEntity(
-        prisonerId = prisoner.id!!,
-        type = OffenderEventType.PRISON_RELEASE,
-        nomsId = nomsId,
-        occurredAt = event.occurredAt,
-        reason = null,
-        reasonCode = event.movementReasonCode(),
-      ),
-    )
+      offenderEventRepository.save(
+        OffenderEventEntity(
+          prisonerId = prisoner.id!!,
+          type = OffenderEventType.PRISON_RELEASE,
+          nomsId = nomsId,
+          occurredAt = event.occurredAt,
+          reason = null,
+          reasonCode = event.movementReasonCode(),
+        ),
+      )
+    }
+    unassignResettlementWorker(nomsId)
   }
 
   fun unassignResettlementWorker(nomsId: String) {

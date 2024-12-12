@@ -12,6 +12,8 @@ import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.whenever
+import org.mockito.kotlin.any
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
@@ -124,6 +126,29 @@ class OffenderEventsServiceTest {
     )
     whenever(prisonerRepository.findByNomsId("abc2")).thenReturn(PrisonerEntity(id = 1, nomsId = "abc2", crn = null, prisonId = "ABC", creationDate = LocalDateTime.parse("2023-10-30T22:09:08")))
 
+    offenderEventsService.handleReleaseEvent(messageId, event)
+
+    Mockito.verifyNoMoreInteractions(prisonerRepository)
+    Mockito.verifyNoMoreInteractions(offenderEventsRepository)
+    verifyCaseAllocationService()
+    unmockkAll()
+  }
+
+  @Test
+  fun `test handleReleaseEvent - Transfer Event CaseAllocation Error`() {
+    val randomUUID = UUID.randomUUID()
+    mockkStatic(UUID::class)
+    every { UUID.randomUUID() }.returns(randomUUID)
+
+    val messageId = "123"
+    val event = DomainEvent(
+      eventType = "prison-offender-events.prisoner.released",
+      occurredAt = ZonedDateTime.parse("2024-12-11T12:00:01+00:00"),
+      additionalInformation = mapOf("reason" to "TRANSFERRED", "nomisMovementReasonCode" to "12"),
+      personReference = PersonReference(listOf(PersonIdentifier(type = "NOMS", value = "abc2"))),
+    )
+    whenever(prisonerRepository.findByNomsId("abc2")).thenReturn(PrisonerEntity(id = 1, nomsId = "abc2", crn = null, prisonId = "ABC", creationDate = LocalDateTime.parse("2023-10-30T22:09:08")))
+    whenever(caseAllocationService.unAssignCase(any())).thenThrow(ResourceNotFoundException("Unable to unassign, no officer assigned for prisoner with id abc2"))
     offenderEventsService.handleReleaseEvent(messageId, event)
 
     Mockito.verifyNoMoreInteractions(prisonerRepository)

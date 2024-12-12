@@ -3,7 +3,10 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.events
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseAllocationService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PathwayAndStatusService
 
 private val logger = KotlinLogging.logger {}
@@ -30,6 +33,7 @@ class OffenderEventsService(
   private val offenderEventRepository: OffenderEventRepository,
   private val pathwayAndStatusService: PathwayAndStatusService,
   private val prisonerRepository: PrisonerRepository,
+  private val caseAllocationService: CaseAllocationService,
 ) {
 
   @Transactional
@@ -94,6 +98,16 @@ class OffenderEventsService(
         reasonCode = event.movementReasonCode(),
       ),
     )
+  }
+
+  fun unassignResettlementWorker(nomsId: String) {
+    try {
+      caseAllocationService.unAssignCase(CaseAllocation(arrayOf(nomsId)))
+    }
+    catch (ex: ResourceNotFoundException) {
+      logger.info(ex) { "Error during unassigning resettlement worker for $nomsId" }
+    }
+
   }
 }
 

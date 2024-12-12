@@ -75,7 +75,7 @@ class OffenderEventsService(
       return
     }
 
-    if (event.reason() !in  listOf("RELEASED", "TRANSFERRED")) {
+    if (event.reason() !in listOf("RELEASED", "TRANSFERRED")) {
       logger.debug { "Ignoring release event $messageId as reason is not RELEASED or TRANSFERRED" }
       return
     }
@@ -106,11 +106,9 @@ class OffenderEventsService(
   fun unassignResettlementWorker(nomsId: String) {
     try {
       caseAllocationService.unAssignCase(CaseAllocation(arrayOf(nomsId)))
-    }
-    catch (ex: ResourceNotFoundException) {
+    } catch (ex: ResourceNotFoundException) {
       logger.info(ex) { "Error during unassigning resettlement worker for $nomsId" }
     }
-
   }
 }
 

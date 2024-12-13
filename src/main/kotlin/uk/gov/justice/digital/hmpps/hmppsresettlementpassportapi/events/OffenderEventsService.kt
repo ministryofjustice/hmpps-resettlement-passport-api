@@ -98,11 +98,7 @@ class OffenderEventsService(
         ),
       )
     }
-    unassignResettlementWorker(prisoner.id())
-  }
-
-  fun unassignResettlementWorker(prisonerId: Long) {
-    val caseAllocationEntity = caseAllocationService.getCaseAllocationByPrisonerId(prisonerId) ?: return
+    val caseAllocationEntity = caseAllocationService.getCaseAllocationByPrisonerId(prisoner.id!!) ?: return
     caseAllocationService.delete(caseAllocationEntity)
   }
 }

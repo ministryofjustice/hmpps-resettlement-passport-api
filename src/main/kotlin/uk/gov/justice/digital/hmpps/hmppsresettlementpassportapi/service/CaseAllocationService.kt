@@ -44,13 +44,17 @@ class CaseAllocationService(
     for (nomsId in caseAllocation.nomsIds) {
       val prisoner = prisonerRepository.findByNomsId(nomsId)
         ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-      val caseAllocationExists = caseAllocationRepository.findByPrisonerIdAndIsDeleted(
-        prisoner.id(), false,
-      ) ?: throw ResourceNotFoundException("Unable to unassign, no officer assigned for prisoner with id $nomsId")
+      val caseAllocationExists = getCaseAllocationByPrisonerId(prisoner.id())
+        ?: throw ResourceNotFoundException("Unable to unassign, no officer assigned for prisoner with id $nomsId")
       val case = delete(caseAllocationExists)
       caseList.add(case)
     }
     return caseList
+  }
+
+  @Transactional
+  fun getCaseAllocationByPrisonerId(prisonerId: Long): CaseAllocationEntity? {
+    return caseAllocationRepository.findByPrisonerIdAndIsDeleted(prisonerId, false)
   }
 
   @Transactional

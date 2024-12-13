@@ -247,7 +247,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-case-allocation.sql")
-  fun `Get workers capacity for prison Id`() {
+  fun `Get workers capacity for prison Id with sort`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val expectedOutput = readFile("testdata/expectation/case-allocation-get-workers-capacity-result.json")

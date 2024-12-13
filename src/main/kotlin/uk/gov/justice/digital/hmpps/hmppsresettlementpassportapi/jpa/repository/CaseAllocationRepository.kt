@@ -34,8 +34,8 @@ interface CaseAllocationRepository : JpaRepository<CaseAllocationEntity, Long> {
                        prisoner p
                   where ca.is_deleted = false
                     and ca.prisoner_id = p.id
-                    and p.prison_id = :prisonId) counted) ranked
-      where ranked.rank = 1
+                    and p.prison_id = :prisonId ) counted ) ranked 
+      where ranked.rank = 1 order by staff_lastname, staff_firstname, staff_id
   """,
   )
   fun findCaseCountByPrisonId(prisonId: String): List<CaseAllocationCountResponse?>

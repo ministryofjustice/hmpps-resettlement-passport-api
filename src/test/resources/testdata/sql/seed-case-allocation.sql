@@ -100,8 +100,8 @@ VALUES(8, 5, 'FINANCE_AND_ID', 'SUBMITTED', 'BCST2', '{"assessment": []}'::jsonb
 INSERT INTO resettlement_assessment (id, prisoner_id, pathway, assessment_status, assessment_type, assessment, status_changed_to, created_date, created_by)
 VALUES(9, 5, 'HEALTH', 'SUBMITTED', 'BCST2', '{"assessment": []}'::jsonb, 'NOT_STARTED', '2023-10-16 12:21:38.709','Prison Officer');
 
-INSERT INTO case_allocation (id, prisoner_id, staff_id, staff_firstname, staff_lastname, is_deleted, when_created, deleted_at) VALUES (1, 10, 456769, 'PSO1 Firstname', 'PSO1 Lastname', false,  '2023-05-17 12:21:44.0',  null);
-INSERT INTO case_allocation (id, prisoner_id, staff_id, staff_firstname, staff_lastname, is_deleted, when_created, deleted_at) VALUES (2, 9, 456779, 'PSO2 Firstname', 'PSO2 Lastname', false,  '2023-05-17 12:21:44.0',  null);
-INSERT INTO case_allocation (id, prisoner_id, staff_id, staff_firstname, staff_lastname, is_deleted, when_created, deleted_at) VALUES (3, 8, 456789, 'PSO3 Firstname', 'PSO3 Lastname', false,  '2023-05-17 12:21:44.0',  null);
+INSERT INTO case_allocation (id, prisoner_id, staff_id, staff_firstname, staff_lastname, is_deleted, when_created, deleted_at) VALUES (1, 10, 456769, 'PSO1 Firstname', 'PSO1 Lastname', false,  '2023-05-17 16:21:44.0',  null);
+INSERT INTO case_allocation (id, prisoner_id, staff_id, staff_firstname, staff_lastname, is_deleted, when_created, deleted_at) VALUES (2, 9, 456779, 'PSO2 Firstname', 'PSO2 Lastname', false,  '2023-05-17 15:21:44.0',  null);
+INSERT INTO case_allocation (id, prisoner_id, staff_id, staff_firstname, staff_lastname, is_deleted, when_created, deleted_at) VALUES (3, 8, 456789, 'PSO3 Firstname', 'PSO3 Lastname', false,  '2023-05-17 14:21:44.0',  null);
 INSERT INTO case_allocation (id, prisoner_id, staff_id, staff_firstname, staff_lastname, is_deleted, when_created, deleted_at) VALUES (4, 7, 456799, 'PSO4 Firstname', 'PSO4 Lastname', false,  '2023-05-17 12:21:44.0',  null);
 INSERT INTO case_allocation (id, prisoner_id, staff_id, staff_firstname, staff_lastname, is_deleted, when_created, deleted_at) VALUES (5, 6, 456799, 'PSO5 Firstname', 'PSO5 Lastname', false,  '2023-05-17 13:21:44.0',  null);

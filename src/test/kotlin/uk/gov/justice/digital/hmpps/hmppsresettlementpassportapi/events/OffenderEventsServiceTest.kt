@@ -3,18 +3,14 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.events
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
-import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.kotlin.any
-import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.whenever
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocation
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseAllocationService
@@ -107,7 +103,8 @@ class OffenderEventsServiceTest {
 
     Mockito.verify(prisonerRepository).save(PrisonerEntity(id = 1, nomsId = "abc2", crn = null, prisonId = "OUT", creationDate = LocalDateTime.parse("2023-10-30T22:09:08")))
     Mockito.verify(offenderEventsRepository).save(OffenderEventEntity(id = randomUUID, prisonerId = 1, type = OffenderEventType.PRISON_RELEASE, nomsId = "abc2", occurredAt = ZonedDateTime.parse("2024-12-11T12:00:01+00:00"), reasonCode = "12"))
-    verifyCaseAllocationService()
+    Mockito.verify(caseAllocationService).getCaseAllocationByPrisonerId(1)
+    Mockito.verifyNoMoreInteractions(caseAllocationService)
     unmockkAll()
   }
 
@@ -130,12 +127,13 @@ class OffenderEventsServiceTest {
 
     Mockito.verifyNoMoreInteractions(prisonerRepository)
     Mockito.verifyNoMoreInteractions(offenderEventsRepository)
-    verifyCaseAllocationService()
+    Mockito.verify(caseAllocationService).getCaseAllocationByPrisonerId(1)
+    Mockito.verifyNoMoreInteractions(caseAllocationService)
     unmockkAll()
   }
 
   @Test
-  fun `test handleReleaseEvent - Transfer Event CaseAllocation Error`() {
+  fun `test handleReleaseEvent - Transfer Event CaseAllocation available`() {
     val randomUUID = UUID.randomUUID()
     mockkStatic(UUID::class)
     every { UUID.randomUUID() }.returns(randomUUID)
@@ -147,20 +145,17 @@ class OffenderEventsServiceTest {
       additionalInformation = mapOf("reason" to "TRANSFERRED", "nomisMovementReasonCode" to "12"),
       personReference = PersonReference(listOf(PersonIdentifier(type = "NOMS", value = "abc2"))),
     )
+
+    val caseAllocationEntity = CaseAllocationEntity(1, 1, 123, "Joe", "Bloggs")
+
     whenever(prisonerRepository.findByNomsId("abc2")).thenReturn(PrisonerEntity(id = 1, nomsId = "abc2", crn = null, prisonId = "ABC", creationDate = LocalDateTime.parse("2023-10-30T22:09:08")))
-    whenever(caseAllocationService.unAssignCase(any())).thenThrow(ResourceNotFoundException("Unable to unassign, no officer assigned for prisoner with id abc2"))
+    whenever(caseAllocationService.getCaseAllocationByPrisonerId(1)).thenReturn(caseAllocationEntity)
     offenderEventsService.handleReleaseEvent(messageId, event)
 
     Mockito.verifyNoMoreInteractions(prisonerRepository)
     Mockito.verifyNoMoreInteractions(offenderEventsRepository)
-    verifyCaseAllocationService()
+    Mockito.verify(caseAllocationService).getCaseAllocationByPrisonerId(1)
+    Mockito.verify(caseAllocationService).delete(caseAllocationEntity)
     unmockkAll()
-  }
-
-  private fun verifyCaseAllocationService() {
-    val captor = argumentCaptor<CaseAllocation>()
-    Mockito.verify(caseAllocationService).unAssignCase(captor.capture())
-    val capturedCaseAllocation = captor.firstValue
-    assertArrayEquals(arrayOf("abc2"), capturedCaseAllocation.nomsIds)
   }
 }

@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource
 
+import io.swagger.v3.oas.annotations.Hidden
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
@@ -182,6 +183,7 @@ class ResettlementAssessmentController(
     nomsId: String,
     @RequestParam("assessmentType", required = false, defaultValue = "BCST2")
     assessmentType: ResettlementAssessmentType,
+    @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
   ): List<PrisonerResettlementAssessment> {
@@ -231,6 +233,7 @@ class ResettlementAssessmentController(
     assessmentType: ResettlementAssessmentType,
     @RequestParam("declaration")
     declaration: Boolean = false,
+    @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
   ): ResponseEntity<Void> {
@@ -324,6 +327,7 @@ class ResettlementAssessmentController(
     useNewDeliusCaseNoteFormat: Boolean = false,
     @RequestParam("useNewDpsCaseNoteFormat")
     useNewDpsCaseNoteFormat: Boolean = false,
+    @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
   ): ResettlementAssessmentSubmitResponse {
@@ -377,6 +381,7 @@ class ResettlementAssessmentController(
     @PathVariable("pathway")
     @Parameter(required = true)
     pathway: Pathway,
+    @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
   ): LatestResettlementAssessmentResponse {

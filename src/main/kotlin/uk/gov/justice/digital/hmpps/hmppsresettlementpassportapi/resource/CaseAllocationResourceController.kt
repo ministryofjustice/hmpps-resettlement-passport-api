@@ -60,6 +60,7 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
     @Schema(required = true)
     @RequestBody
     caseAllocation: CaseAllocation,
+    @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
   ) = caseAllocationService.assignCase(caseAllocation, auth)

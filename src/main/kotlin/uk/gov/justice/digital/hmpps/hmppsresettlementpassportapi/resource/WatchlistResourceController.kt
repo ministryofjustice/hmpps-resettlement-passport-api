@@ -45,6 +45,7 @@ class WatchlistResourceController(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     nomsId: String,
+    @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
   ) = watchlistService.createWatchlist(nomsId, auth)
@@ -68,6 +69,7 @@ class WatchlistResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
+    @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
   ) = watchlistService.deleteWatchlist(nomsId, auth)

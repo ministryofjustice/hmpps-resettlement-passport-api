@@ -109,6 +109,7 @@ class AppointmentsResourceController(
     nomsId: String,
     @RequestBody
     appointment: CreateAppointment,
+    @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
   ) = appointmentsService.createAppointment(appointment, nomsId, auth)

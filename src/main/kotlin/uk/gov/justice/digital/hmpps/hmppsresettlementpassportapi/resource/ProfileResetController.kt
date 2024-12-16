@@ -62,6 +62,7 @@ class ProfileResetController(private val resettlementAssessmentResetService: Res
     prisonerId: String,
     @RequestBody
     profileReset: ProfileReset,
+    @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
   ): ResponseEntity<Void> {

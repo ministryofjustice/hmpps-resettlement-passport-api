@@ -73,6 +73,7 @@ class PathwayResourceController(
     nomsId: String,
     @RequestBody
     pathwayStatusAndCaseNote: PathwayStatusAndCaseNote,
+    @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
   ) = pathwayPatchService.updatePathwayStatusWithCaseNote(nomsId, pathwayStatusAndCaseNote, auth)

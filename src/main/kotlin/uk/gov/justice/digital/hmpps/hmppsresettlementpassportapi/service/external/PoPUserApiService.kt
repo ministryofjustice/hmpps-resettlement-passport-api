@@ -6,7 +6,6 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToFlux
 import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 
 @Service
 class PoPUserApiService(
@@ -14,16 +13,16 @@ class PoPUserApiService(
   private val popUserWebClientCredentials: WebClient,
 ) {
 
-  fun postPoPUserVerification(oneLoginUrn: String, prisoner: PrisonerEntity): PoPUserResponse = popUserWebClientCredentials.post()
+  fun postPoPUserVerification(oneLoginUrn: String, nomsId: String, crn: String?): PoPUserResponse = popUserWebClientCredentials.post()
     .uri(
       "/person-on-probation-user/user",
     ).contentType(MediaType.APPLICATION_JSON)
     .bodyValue(
       mapOf(
-        "crn" to prisoner.crn,
+        "crn" to crn,
         "cprId" to "NA",
         "verified" to true,
-        "nomsId" to prisoner.nomsId,
+        "nomsId" to nomsId,
         "oneLoginUrn" to oneLoginUrn,
       ),
     )

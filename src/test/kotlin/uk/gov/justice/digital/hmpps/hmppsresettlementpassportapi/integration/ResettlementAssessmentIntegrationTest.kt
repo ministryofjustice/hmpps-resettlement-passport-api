@@ -824,7 +824,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val expectedCaseNoteRetries = listOf(
       CaseNoteRetryEntity(
         id = 1,
-        prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI"),
+        prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), prisonId = "MDI"),
         type = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
         notes = "Accommodation\n\nCase note related to accommodation\n\n\nAttitudes, thinking and behaviour\n\nCase note related to Attitudes, thinking and behaviour\n\n\nChildren, families and communities\n\nCase note related to Children, family and communities\n\n\nDrugs and alcohol\n\nCase note related to Drugs and alcohol\n\n\nEducation, skills and work\n\nCase note related to education, skills and work\n\n\nFinance and ID\n\nCase note related to Finance and ID\n\n\nHealth\n\nCase note related to Health",
         author = "A User",
@@ -895,7 +895,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val expectedCaseNoteRetries = listOf(
       CaseNoteRetryEntity(
         id = 1,
-        prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), crn = "123", prisonId = "MDI"),
+        prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), prisonId = "MDI"),
         type = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
         notes = "Accommodation\n\nCase note related to accommodation\n\n\nAttitudes, thinking and behaviour\n\nCase note related to Attitudes, thinking and behaviour\n\n\nChildren, families and communities\n\nCase note related to Children, family and communities\n\n\nDrugs and alcohol\n\nCase note related to Drugs and alcohol\n\n\nEducation, skills and work\n\nCase note related to education, skills and work\n\n\nFinance and ID\n\nCase note related to Finance and ID\n\n\nHealth\n\nCase note related to Health",
         author = "A User",

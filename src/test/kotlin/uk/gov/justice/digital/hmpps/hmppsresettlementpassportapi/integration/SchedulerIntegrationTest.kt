@@ -49,14 +49,12 @@ class SchedulerIntegrationTest : IntegrationTestBase() {
       id = 2,
       nomsId = "A8314DY",
       creationDate = LocalDateTime.parse("2023-05-17T12:21:44"),
-      crn = "CRN2",
       prisonId = "MDI",
     )
     val prisoner3 = PrisonerEntity(
       id = 3,
       nomsId = "G4161UF",
       creationDate = LocalDateTime.parse("2023-05-17T12:21:44"),
-      crn = "CRN3",
       prisonId = "MDI",
     )
 

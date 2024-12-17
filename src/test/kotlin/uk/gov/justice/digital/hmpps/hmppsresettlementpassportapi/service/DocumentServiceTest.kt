@@ -24,7 +24,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.DocumentsRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 @ExtendWith(MockitoExtension::class)
 class DocumentServiceTest {
@@ -54,7 +54,7 @@ class DocumentServiceTest {
 
   @Test
   fun `test scanAndStoreDocument - returns document`() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     val pdfDocumentKey = UUID.randomUUID()
     val originalDocumentKey = UUID.randomUUID()
     val documentsEntity = DocumentsEntity(1, 1, originalDocumentKey, pdfDocumentKey, fakeNow, DocumentCategory.LICENCE_CONDITIONS, "Filename.doc")
@@ -105,7 +105,7 @@ class DocumentServiceTest {
   fun `test getDocumentByNomisIdAndDocumentId - returns document`() {
     val pdfDocumentKey = UUID.randomUUID()
     val originalDocumentKey = UUID.randomUUID()
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     val documentsEntity = DocumentsEntity(1, 1, originalDocumentKey, pdfDocumentKey, fakeNow, DocumentCategory.LICENCE_CONDITIONS, "Filename.doc")
     val file = MockMultipartFile(
       "file",
@@ -134,7 +134,7 @@ class DocumentServiceTest {
   fun `test deleteDocumentByNomisId - returns document`() {
     val pdfDocumentKey = UUID.randomUUID()
     val originalDocumentKey = UUID.randomUUID()
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     val documentsEntity = DocumentsEntity(1, 1, originalDocumentKey, pdfDocumentKey, fakeNow, DocumentCategory.LICENCE_CONDITIONS, "Filename.doc")
     val list = mutableListOf<DocumentsEntity>()
     list.add(documentsEntity)

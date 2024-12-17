@@ -25,14 +25,14 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorRes
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.TodoEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.TodoService
 import java.time.LocalDate
-import java.util.UUID
+import java.util.*
 
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/person", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class TodoResourceController(private val todoService: TodoService) {
-  @PostMapping("/{crn}/todo", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @PostMapping("/{nomsId}/todo", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create todo entry")
   @ApiResponses(
     value = [
@@ -50,13 +50,13 @@ class TodoResourceController(private val todoService: TodoService) {
   @ResponseStatus(HttpStatus.CREATED)
   fun createTodo(
     @Schema(example = "AXXXS", required = true)
-    @PathVariable("crn")
-    crn: String,
+    @PathVariable("nomsId")
+    nomsId: String,
     @RequestBody
     createRequest: TodoRequest,
-  ) = todoService.createEntry(crn, createRequest)
+  ) = todoService.createEntry(nomsId, createRequest)
 
-  @GetMapping("/{crn}/todo", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @GetMapping("/{nomsId}/todo", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get todo list for a person")
   @ApiResponses(
     value = [
@@ -73,15 +73,15 @@ class TodoResourceController(private val todoService: TodoService) {
   )
   fun getTodoList(
     @Schema(example = "AXXXS", required = true)
-    @PathVariable("crn")
-    crn: String,
+    @PathVariable("nomsId")
+    nomsId: String,
     @RequestParam(required = false)
     sortField: String? = null,
     @RequestParam(required = false)
     sortDirection: Sort.Direction? = null,
-  ) = todoService.getList(crn, sortField, sortDirection)
+  ) = todoService.getList(nomsId, sortField, sortDirection)
 
-  @DeleteMapping("/{crn}/todo/{id}")
+  @DeleteMapping("/{nomsId}/todo/{id}")
   @Operation(summary = "Delete a todo list item for a person")
   @ApiResponses(
     value = [
@@ -99,12 +99,12 @@ class TodoResourceController(private val todoService: TodoService) {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   fun deleteItem(
     @Schema(example = "AXXXS", required = true)
-    @PathVariable("crn")
-    crn: String,
+    @PathVariable("nomsId")
+    nomsId: String,
     @PathVariable("id") id: UUID,
-  ) = todoService.deleteItem(crn, id)
+  ) = todoService.deleteItem(nomsId, id)
 
-  @PutMapping("/{crn}/todo/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @PutMapping("/{nomsId}/todo/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Update a todo list item for a person")
   @ApiResponses(
     value = [
@@ -121,14 +121,14 @@ class TodoResourceController(private val todoService: TodoService) {
   )
   fun updateItem(
     @Schema(example = "AXXXS", required = true)
-    @PathVariable("crn")
-    crn: String,
+    @PathVariable("nomsId")
+    nomsId: String,
     @PathVariable("id") id: UUID,
     @RequestBody
     request: TodoRequest,
-  ) = todoService.updateItem(crn, id, request)
+  ) = todoService.updateItem(nomsId, id, request)
 
-  @PatchMapping("/{crn}/todo/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @PatchMapping("/{nomsId}/todo/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Patch a todo list item for a person")
   @ApiResponses(
     value = [
@@ -145,14 +145,14 @@ class TodoResourceController(private val todoService: TodoService) {
   )
   fun patchItem(
     @Schema(example = "AXXXS", required = true)
-    @PathVariable("crn")
-    crn: String,
+    @PathVariable("nomsId")
+    nomsId: String,
     @PathVariable("id") id: UUID,
     @RequestBody
     request: TodoPatchRequest,
-  ) = todoService.patchItem(crn, id, request)
+  ) = todoService.patchItem(nomsId, id, request)
 
-  @GetMapping("/{crn}/todo/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @GetMapping("/{nomsId}/todo/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get a single todo list item for a person")
   @ApiResponses(
     value = [
@@ -169,10 +169,10 @@ class TodoResourceController(private val todoService: TodoService) {
   )
   fun getItem(
     @Schema(example = "AXXXS", required = true)
-    @PathVariable("crn")
-    crn: String,
+    @PathVariable("nomsId")
+    nomsId: String,
     @PathVariable("id") id: UUID,
-  ): TodoEntity = todoService.getOne(crn, id)
+  ): TodoEntity = todoService.getOne(nomsId, id)
 }
 
 data class TodoRequest(

@@ -1,5 +1,5 @@
-INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id) VALUES
-    (1, 'G4161UF', '2023-08-16 12:21:38.709', '123', 'MDI');
+INSERT INTO prisoner (id, noms_id, creation_date, prison_id) VALUES
+    (1, 'G4161UF', '2023-08-16 12:21:38.709', 'MDI');
 
 INSERT INTO resettlement_assessment (id, prisoner_id, pathway, assessment_status, assessment_type, assessment, status_changed_to, created_date, created_by, case_note_text, created_by_user_id, version) VALUES
     (1, 1, 'ACCOMMODATION', 'COMPLETE', 'BCST2', '{"assessment": []}'::jsonb, 'SUPPORT_NOT_REQUIRED', '2023-01-09 19:02:45.000', 'John Smith', 'Case note related to accommodation', 'USER_1', 3);

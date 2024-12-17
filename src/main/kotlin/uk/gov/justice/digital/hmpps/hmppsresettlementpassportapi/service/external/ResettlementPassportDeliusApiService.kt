@@ -23,7 +23,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.Manager
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.MappaDetail
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.PersonalDetail
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.convertNameToTitleCase
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -31,15 +30,10 @@ import java.time.OffsetDateTime
 @Service
 class ResettlementPassportDeliusApiService(
   private val rpDeliusWebClientCredentials: WebClient,
-  private val prisonerRepository: PrisonerRepository,
 ) {
 
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
-  }
-
-  fun findCrn(nomsId: String): String? {
-    return prisonerRepository.findByNomsId(nomsId)?.crn
   }
 
   @Cacheable("resettlement-passport-delius-api-get-crn", unless = "#result == null")
@@ -62,7 +56,8 @@ class ResettlementPassportDeliusApiService(
 
   @Cacheable("resettlement-passport-delius-api-get-mappa-data-by-noms-id")
   fun getMappaDataByNomsId(nomsId: String): MappaData {
-    val crn = findCrn(nomsId) ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $nomsId in database")
+    val crn = getCrn(nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in delius")
     val mappaDetail = rpDeliusWebClientCredentials.get()
       .uri("/probation-cases/$crn/mappa")
       .retrieve()
@@ -84,7 +79,7 @@ class ResettlementPassportDeliusApiService(
 
   @Cacheable("resettlement-passport-delius-api-get-com-by-noms-id", unless = "#result == null")
   fun getComByNomsId(nomsId: String): String? {
-    val crn = findCrn(nomsId) ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $nomsId in database")
+    val crn = getCrn(nomsId) ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $nomsId in delius")
 
     val communityManager = rpDeliusWebClientCredentials.get()
       .uri("/probation-cases/$crn/community-manager")

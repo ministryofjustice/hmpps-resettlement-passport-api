@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.TodoEntity
-import java.util.UUID
+import java.util.*
 
 @Repository
 interface TodoRepository : JpaRepository<TodoEntity, Long> {
@@ -19,11 +19,11 @@ interface TodoRepository : JpaRepository<TodoEntity, Long> {
       where t.id = :id
       and t.prisonerId = (
         select p.id from PrisonerEntity p 
-        where p.crn = :crn
+        where p.nomsId = :nomsId
     )
     """,
   )
-  fun deleteByIdAndCrn(id: UUID, crn: String): Int
+  fun deleteByIdAndNomsId(id: UUID, nomsId: String): Int
 
   fun findByIdAndPrisonerId(id: UUID, prisonerId: Long): TodoEntity?
 }

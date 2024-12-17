@@ -10,8 +10,6 @@ interface PrisonerRepository : JpaRepository<PrisonerEntity, Long> {
 
   fun findByNomsId(nomsId: String): PrisonerEntity?
 
-  fun findByCrn(crn: String): PrisonerEntity?
-
   @Query("select distinct prisonId from PrisonerEntity order by prisonId asc")
   fun findDistinctPrisonIds(): List<String>
 }

@@ -30,14 +30,14 @@ class RiskServiceTest {
   @Test
   fun `get risk scores - test missing crn from database`() {
     val nomsId = "ABC1234"
-    Mockito.`when`(resettlementPassportDeliusApiService.findCrn(nomsId)).thenReturn(null)
+    Mockito.`when`(resettlementPassportDeliusApiService.getCrn(nomsId)).thenReturn(null)
     assertThrows<ResourceNotFoundException> { riskService.getRiskScoresByNomsId(nomsId) }
   }
 
   @Test
   fun `get RoSH data - test missing crn from database`() {
     val nomsId = "ABC1234"
-    Mockito.`when`(resettlementPassportDeliusApiService.findCrn(nomsId)).thenReturn(null)
+    Mockito.`when`(resettlementPassportDeliusApiService.getCrn(nomsId)).thenReturn(null)
     assertThrows<ResourceNotFoundException> { riskService.getRoshDataByNomsId(nomsId) }
   }
 }

@@ -13,7 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource.TodoPatchRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource.TodoRequest
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 import kotlin.reflect.full.declaredMemberProperties
 
 private val logger = KotlinLogging.logger {}
@@ -24,19 +24,19 @@ class TodoService(
   private val todoRepository: TodoRepository,
   private val prisonerRepository: PrisonerRepository,
 ) {
-  fun createEntry(crn: String, createRequest: TodoRequest): TodoEntity {
-    val prisonerRecord = getPrisoner(crn)
+  fun createEntry(nomsId: String, createRequest: TodoRequest): TodoEntity {
+    val prisonerRecord = getPrisoner(nomsId)
 
     return todoRepository.save(createRequest.toEntity(prisonerRecord.id()))
   }
 
-  fun getOne(crn: String, id: UUID): TodoEntity {
-    val prisonerRecord = getPrisoner(crn)
+  fun getOne(nomsId: String, id: UUID): TodoEntity {
+    val prisonerRecord = getPrisoner(nomsId)
     return todoRepository.findByIdAndPrisonerId(id, prisonerRecord.id())
       ?: throw ResourceNotFoundException("No item found for $id")
   }
 
-  fun getList(crn: String, sortField: String? = null, sortDirection: Sort.Direction? = null): List<TodoEntity> {
+  fun getList(nomsId: String, sortField: String? = null, sortDirection: Sort.Direction? = null): List<TodoEntity> {
     val sort = if (sortField != null) {
       if (sortField !in validSortFields) {
         throw ValidationException("Invalid sort field $sortField")
@@ -46,28 +46,28 @@ class TodoService(
       Sort.unsorted()
     }
 
-    val prisonerRecord = getPrisoner(crn)
+    val prisonerRecord = getPrisoner(nomsId)
     return todoRepository.findAllByPrisonerId(prisonerRecord.id(), sort)
   }
 
-  private fun getPrisoner(crn: String): PrisonerEntity = prisonerRepository.findByCrn(crn)
-    ?: throw ResourceNotFoundException("No person found with crn $crn")
+  private fun getPrisoner(nomsId: String): PrisonerEntity = prisonerRepository.findByNomsId(nomsId)
+    ?: throw ResourceNotFoundException("No person found with nomsId $nomsId")
 
   @Transactional
-  fun deleteItem(crn: String, id: UUID) {
-    val deleteCount = todoRepository.deleteByIdAndCrn(id, crn)
+  fun deleteItem(nomsId: String, id: UUID) {
+    val deleteCount = todoRepository.deleteByIdAndNomsId(id, nomsId)
     if (deleteCount == 0) {
-      throw ResourceNotFoundException("Todo item not found by $crn/$id")
+      throw ResourceNotFoundException("Todo item not found by $nomsId/$id")
     }
     if (deleteCount > 1) {
-      logger.error { "Multiple rows in delete todo item $crn/$id" }
-      throw IllegalStateException("Unexpected multiple items deletion of $crn/$id")
+      logger.error { "Multiple rows in delete todo item $nomsId/$id" }
+      throw IllegalStateException("Unexpected multiple items deletion of $nomsId/$id")
     }
   }
 
   @Transactional
-  fun updateItem(crn: String, id: UUID, request: TodoRequest): TodoEntity {
-    val prisonerRecord = getPrisoner(crn)
+  fun updateItem(nomsId: String, id: UUID, request: TodoRequest): TodoEntity {
+    val prisonerRecord = getPrisoner(nomsId)
     val todoItem = todoRepository.findByIdAndPrisonerId(id, prisonerRecord.id())
       ?: throw ResourceNotFoundException("No item found for $id")
 
@@ -83,8 +83,8 @@ class TodoService(
   }
 
   @Transactional
-  fun patchItem(crn: String, id: UUID, request: TodoPatchRequest): TodoEntity {
-    val prisonerRecord = getPrisoner(crn)
+  fun patchItem(nomsId: String, id: UUID, request: TodoPatchRequest): TodoEntity {
+    val prisonerRecord = getPrisoner(nomsId)
     val todoItem = todoRepository.findByIdAndPrisonerId(id, prisonerRecord.id())
       ?: throw ResourceNotFoundException("No item found for $id")
 

@@ -41,6 +41,7 @@ class PrisonerService(
   private val pathwayAndStatusService: PathwayAndStatusService,
   private val deliusApiService: ResettlementPassportDeliusApiService,
   private val caseAllocationService: CaseAllocationService,
+  private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
 ) {
 
   companion object {
@@ -309,6 +310,7 @@ class PrisonerService(
       nomsId,
       prisonerSearch.prisonId,
     )
+    val crn = resettlementPassportDeliusApiService.getCrn(prisonerEntity.nomsId)
 
     val prisonerImageDetailsList = prisonApiService.findPrisonerImageDetails(nomsId)
     var prisonerImage: PrisonerImage? = null
@@ -322,8 +324,8 @@ class PrisonerService(
       age = Period.between(prisonerSearch.dateOfBirth, LocalDate.now()).years
     }
     var personalDetails = PersonalDetail(null.toString(), null, null, null)
-    if (prisonerEntity.crn != null) {
-      personalDetails = deliusApiService.getPersonalDetails(nomsId, prisonerEntity.crn!!)!!
+    if (crn != null) {
+      personalDetails = deliusApiService.getPersonalDetails(nomsId, crn)!!
     } else {
       personalDetails.contactDetails = PersonalDetail.ContactDetails(null, null, null)
     }

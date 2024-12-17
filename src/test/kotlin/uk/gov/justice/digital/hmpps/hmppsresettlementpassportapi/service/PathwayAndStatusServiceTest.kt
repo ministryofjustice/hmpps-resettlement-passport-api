@@ -46,7 +46,6 @@ class PathwayAndStatusServiceTest {
     pathwayAndStatusService = PathwayAndStatusService(
       pathwayStatusRepository = pathwayStatusRepository,
       prisonerRepository = prisonerRepository,
-      resettlementPassportDeliusApiService = resettlementPassportDeliusApiService,
       transactionOperations = TransactionOperations.withoutTransaction(),
     )
   }
@@ -58,11 +57,10 @@ class PathwayAndStatusServiceTest {
     every { LocalDateTime.now() } returns fakeNow
 
     val nomsId = "abc"
-    val crn = "crn1"
     val prisonId = "xyz"
     val pathway = Pathway.ACCOMMODATION
     val newStatus = Status.IN_PROGRESS
-    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, crn, prisonId)
+    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, prisonId)
     val oldStatus = Status.NOT_STARTED
     val pathwayStatusEntity = PathwayStatusEntity(1, prisonerEntity.id(), pathway, oldStatus, testDate)
 
@@ -90,11 +88,10 @@ class PathwayAndStatusServiceTest {
   @Test
   fun `test update pathway status - pathway status not found`() {
     val nomsId = "abc"
-    val crn = "crn1"
     val prisonId = "xyz1"
     val pathway = Pathway.ACCOMMODATION
     val newStatus = Status.IN_PROGRESS
-    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, crn, prisonId)
+    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, prisonId)
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
     Mockito.`when`(pathwayStatusRepository.findByPathwayAndPrisonerId(pathway, prisonerEntity.id())).thenReturn(null)

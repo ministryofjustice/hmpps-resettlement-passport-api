@@ -26,7 +26,7 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
 
   @Test
   fun `test persist new resettlement assessment`() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.parse("2022-12-20T10:13:03"), "crn1", "xyz1")
+    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.parse("2022-12-20T10:13:03"), "xyz1")
     prisonerRepository.save(prisoner)
 
     val resettlementAssessmentQuestionAndAnswerList = ResettlementAssessmentEntity(
@@ -53,7 +53,7 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
 
   @Test
   fun `test findFirstByPrisonerAndPathwayAndAssessmentTypeOrderByCreationDateDesc returns a ResettlementAssessmentEntity`() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.parse("2022-12-20T10:13:03"), "crn1", "xyz1")
+    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.parse("2022-12-20T10:13:03"), "xyz1")
     prisonerRepository.save(prisoner)
 
     val resettlementAssessment = ResettlementAssessmentEntity(
@@ -108,11 +108,11 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
   @Test
   fun `test assessment required custom queries`() {
     // Seed database with prisoners and resettlement statuses
-    prisonerRepository.save(PrisonerEntity(null, "NOMS1", LocalDateTime.parse("2023-12-13T12:00:00"), "CRN1", "MDI"))
-    val prisoner2 = prisonerRepository.save(PrisonerEntity(null, "NOMS2", LocalDateTime.parse("2023-12-13T12:00:00"), "CRN2", "MDI"))
-    val prisoner3 = prisonerRepository.save(PrisonerEntity(null, "NOMS3", LocalDateTime.parse("2023-12-13T12:00:00"), "CRN3", "MDI"))
-    val prisoner4 = prisonerRepository.save(PrisonerEntity(null, "NOMS4", LocalDateTime.parse("2023-12-13T12:00:00"), "CRN4", "MDI"))
-    val prisoner5 = prisonerRepository.save(PrisonerEntity(null, "NOMS5", LocalDateTime.parse("2023-12-13T12:00:00"), "CRN5", "MDI"))
+    prisonerRepository.save(PrisonerEntity(null, "NOMS1", LocalDateTime.parse("2023-12-13T12:00:00"), "MDI"))
+    val prisoner2 = prisonerRepository.save(PrisonerEntity(null, "NOMS2", LocalDateTime.parse("2023-12-13T12:00:00"), "MDI"))
+    val prisoner3 = prisonerRepository.save(PrisonerEntity(null, "NOMS3", LocalDateTime.parse("2023-12-13T12:00:00"), "MDI"))
+    val prisoner4 = prisonerRepository.save(PrisonerEntity(null, "NOMS4", LocalDateTime.parse("2023-12-13T12:00:00"), "MDI"))
+    val prisoner5 = prisonerRepository.save(PrisonerEntity(null, "NOMS5", LocalDateTime.parse("2023-12-13T12:00:00"), "MDI"))
 
     val resettlementAssessmentList = listOf(
       // Prisoner 1 has no assessments
@@ -163,7 +163,7 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
 
   @Test
   fun `test persist deleted resettlement assessment`() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.parse("2022-12-20T10:13:03"), "crn1", "xyz1")
+    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.parse("2022-12-20T10:13:03"), "xyz1")
     prisonerRepository.save(prisoner)
 
     val entityToSave = ResettlementAssessmentEntity(

@@ -12,7 +12,7 @@ class PrisonerRepositoryTest : RepositoryTestBase() {
 
   @Test
   fun `test persist new prisoner`() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1")
+    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "xyz1")
     prisonerRepository.save(prisoner)
 
     val prisonerFromDatabase = prisonerRepository.findAll()[0]
@@ -24,13 +24,13 @@ class PrisonerRepositoryTest : RepositoryTestBase() {
   fun `test findDistinctPrisonIds`() {
     prisonerRepository.saveAll(
       listOf(
-        PrisonerEntity(null, "NOM0001", LocalDateTime.now(), "crn1", "AA1"),
-        PrisonerEntity(null, "NOM0002", LocalDateTime.now(), "crn2", "AA3"),
-        PrisonerEntity(null, "NOM0003", LocalDateTime.now(), "crn3", "AA2"),
-        PrisonerEntity(null, "NOM0004", LocalDateTime.now(), "crn4", "AA2"),
-        PrisonerEntity(null, "NOM0005", LocalDateTime.now(), "crn5", "AA2"),
-        PrisonerEntity(null, "NOM0006", LocalDateTime.now(), "crn6", "AA1"),
-        PrisonerEntity(null, "NOM0007", LocalDateTime.now(), "crn7", "AA4"),
+        PrisonerEntity(null, "NOM0001", LocalDateTime.now(), "AA1"),
+        PrisonerEntity(null, "NOM0002", LocalDateTime.now(), "AA3"),
+        PrisonerEntity(null, "NOM0003", LocalDateTime.now(), "AA2"),
+        PrisonerEntity(null, "NOM0004", LocalDateTime.now(), "AA2"),
+        PrisonerEntity(null, "NOM0005", LocalDateTime.now(), "AA2"),
+        PrisonerEntity(null, "NOM0006", LocalDateTime.now(), "AA1"),
+        PrisonerEntity(null, "NOM0007", LocalDateTime.now(), "AA4"),
       ),
     )
 

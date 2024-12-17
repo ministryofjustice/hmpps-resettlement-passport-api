@@ -25,9 +25,10 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PoPUserApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.Optional
+import java.util.*
 
 @ExtendWith(MockitoExtension::class)
 class PoPUserOTPServiceTest {
@@ -45,18 +46,21 @@ class PoPUserOTPServiceTest {
   @Mock
   private lateinit var prisonerSearchApiService: PrisonerSearchApiService
 
+  @Mock
+  private lateinit var resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService
+
   private val testDate = LocalDateTime.parse("2023-08-25T12:00:00")
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
   @BeforeEach
   fun beforeEach() {
     popUserOTPService =
-      PoPUserOTPService(popUserOTPRepository, prisonerRepository, popUserApiService, prisonerSearchApiService)
+      PoPUserOTPService(popUserOTPRepository, prisonerRepository, popUserApiService, prisonerSearchApiService, resettlementPassportDeliusApiService)
   }
 
   @Test
   fun `test get PoP User OTP - returns PoP User OTP `() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     val popUserOTPEntity = PoPUserOTPEntity(
       null,
       prisonerEntity.id(),
@@ -73,7 +77,7 @@ class PoPUserOTPServiceTest {
 
   @Test
   fun `test get PoP User OTP - returns PoP User not found `() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
 
     whenever(popUserOTPRepository.findByPrisonerId(any())).thenReturn(null)
     val thrown = assertThrows<ResourceNotFoundException> { popUserOTPService.getOTPByPrisoner(prisonerEntity) }
@@ -84,7 +88,7 @@ class PoPUserOTPServiceTest {
   fun `test delete PoPUserOTP - hard delete`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     val popUserOTPEntity = PoPUserOTPEntity(
       null,
       prisonerEntity.id(),
@@ -102,7 +106,7 @@ class PoPUserOTPServiceTest {
 
   @Test
   fun `test getAll PoP User OTP - returns PoP User OTP List`() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     val popUserOTPEntity = PoPUserOTPEntity(
       null,
       prisonerEntity.id(),
@@ -128,7 +132,7 @@ class PoPUserOTPServiceTest {
     every {
       randomAlphaNumericString()
     } returns "1X3456"
-    val prisonerEntity = PrisonerEntity(1, "acb", fakeNow, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "acb", fakeNow, "xyz")
     val popUserOTPEntity = PoPUserOTPEntity(
       null,
       prisonerEntity.id(),
@@ -180,7 +184,7 @@ class PoPUserOTPServiceTest {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val oneLoginUserData = OneLoginData("urn1", "123457", "email@test.com", LocalDate.parse("1982-10-24"))
-    val prisoner = PrisonerEntity(1, "acb", fakeNow, "crn", "xyz")
+    val prisoner = PrisonerEntity(1, "acb", fakeNow, "xyz")
     val popUserResponse = PoPUserResponse(1, "crn1", "NA", true, fakeNow, fakeNow, "GU1234", "urn1")
     val prisonerResponse = PrisonersSearch(
       prisonerNumber = "A123456",
@@ -211,7 +215,8 @@ class PoPUserOTPServiceTest {
       ),
     ).thenReturn(popUserOTPEntity)
     whenever(prisonerSearchApiService.findPrisonerPersonalDetails(prisoner.nomsId)).thenReturn(prisonerResponse)
-    whenever(popUserApiService.postPoPUserVerification(oneLoginUserData.urn, prisoner)).thenReturn(popUserResponse)
+    whenever(resettlementPassportDeliusApiService.getCrn(prisoner.nomsId)).thenReturn("crn")
+    whenever(popUserApiService.postPoPUserVerification(oneLoginUserData.urn, prisoner.nomsId, "crn")).thenReturn(popUserResponse)
     val result = popUserOTPService.getPoPUserVerified(oneLoginUserData)
     Mockito.verify(popUserOTPRepository).delete(popUserOTPEntity)
     Assertions.assertEquals(popUserResponse, result)
@@ -260,7 +265,7 @@ class PoPUserOTPServiceTest {
 
   @Test
   fun `test getAll PoP Verified User  - returns PoP Verified User  List`() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     val popUserOTPEntity = PoPUserOTPEntity(
       null,
       prisonerEntity.id(),

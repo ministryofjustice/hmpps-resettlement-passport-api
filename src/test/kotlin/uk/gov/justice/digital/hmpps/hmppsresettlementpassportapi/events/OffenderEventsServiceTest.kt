@@ -97,11 +97,11 @@ class OffenderEventsServiceTest {
       additionalInformation = mapOf("reason" to "RELEASED", "nomisMovementReasonCode" to "12"),
       personReference = PersonReference(listOf(PersonIdentifier(type = "NOMS", value = "abc2"))),
     )
-    whenever(prisonerRepository.findByNomsId("abc2")).thenReturn(PrisonerEntity(id = 1, nomsId = "abc2", crn = null, prisonId = "ABC", creationDate = LocalDateTime.parse("2023-10-30T22:09:08")))
+    whenever(prisonerRepository.findByNomsId("abc2")).thenReturn(PrisonerEntity(id = 1, nomsId = "abc2", prisonId = "ABC", creationDate = LocalDateTime.parse("2023-10-30T22:09:08")))
 
     offenderEventsService.handleReleaseEvent(messageId, event)
 
-    Mockito.verify(prisonerRepository).save(PrisonerEntity(id = 1, nomsId = "abc2", crn = null, prisonId = "OUT", creationDate = LocalDateTime.parse("2023-10-30T22:09:08")))
+    Mockito.verify(prisonerRepository).save(PrisonerEntity(id = 1, nomsId = "abc2", prisonId = "OUT", creationDate = LocalDateTime.parse("2023-10-30T22:09:08")))
     Mockito.verify(offenderEventsRepository).save(OffenderEventEntity(id = randomUUID, prisonerId = 1, type = OffenderEventType.PRISON_RELEASE, nomsId = "abc2", occurredAt = ZonedDateTime.parse("2024-12-11T12:00:01+00:00"), reasonCode = "12"))
     Mockito.verify(caseAllocationService).getCaseAllocationByPrisonerId(1)
     Mockito.verifyNoMoreInteractions(caseAllocationService)
@@ -121,7 +121,7 @@ class OffenderEventsServiceTest {
       additionalInformation = mapOf("reason" to "TRANSFERRED", "nomisMovementReasonCode" to "12"),
       personReference = PersonReference(listOf(PersonIdentifier(type = "NOMS", value = "abc2"))),
     )
-    whenever(prisonerRepository.findByNomsId("abc2")).thenReturn(PrisonerEntity(id = 1, nomsId = "abc2", crn = null, prisonId = "ABC", creationDate = LocalDateTime.parse("2023-10-30T22:09:08")))
+    whenever(prisonerRepository.findByNomsId("abc2")).thenReturn(PrisonerEntity(id = 1, nomsId = "abc2", prisonId = "ABC", creationDate = LocalDateTime.parse("2023-10-30T22:09:08")))
 
     offenderEventsService.handleReleaseEvent(messageId, event)
 
@@ -148,7 +148,7 @@ class OffenderEventsServiceTest {
 
     val caseAllocationEntity = CaseAllocationEntity(1, 1, 123, "Joe", "Bloggs")
 
-    whenever(prisonerRepository.findByNomsId("abc2")).thenReturn(PrisonerEntity(id = 1, nomsId = "abc2", crn = null, prisonId = "ABC", creationDate = LocalDateTime.parse("2023-10-30T22:09:08")))
+    whenever(prisonerRepository.findByNomsId("abc2")).thenReturn(PrisonerEntity(id = 1, nomsId = "abc2", prisonId = "ABC", creationDate = LocalDateTime.parse("2023-10-30T22:09:08")))
     whenever(caseAllocationService.getCaseAllocationByPrisonerId(1)).thenReturn(caseAllocationEntity)
     offenderEventsService.handleReleaseEvent(messageId, event)
 

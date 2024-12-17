@@ -164,7 +164,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
   @Test
   fun `get staff contacts - prisoner missing from database`() {
     val nomsId = "123"
-
+    deliusApiMockServer.stubGetCrnFromNomsIdNotFound(nomsId)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/staff-contacts")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))

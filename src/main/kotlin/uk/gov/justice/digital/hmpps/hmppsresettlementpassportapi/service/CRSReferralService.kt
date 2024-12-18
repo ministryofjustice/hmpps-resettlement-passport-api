@@ -123,7 +123,9 @@ class CRSReferralService(
     if (crsReferralList.isEmpty()) {
       val prisoner = prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)
       val prisonerName: String = "${prisoner.firstName} ${prisoner.lastName}".convertNameToTitleCase()
-      val comName = resettlementPassportDeliusApiService.getComByNomsId(nomsId) ?: "NO DATA"
+      val crn = resettlementPassportDeliusApiService.getCrn(nomsId)
+        ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $nomsId in delius")
+      val comName = resettlementPassportDeliusApiService.getComByCrn(crn) ?: "NO DATA"
       message =
         "No ${pathway.toString().convertEnumStringToLowercaseContent()} referral currently exists for $prisonerName. If you think this incorrect, please contact their COM, ${comName.convertNameToTitleCase()}."
     }

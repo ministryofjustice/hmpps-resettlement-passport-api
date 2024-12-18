@@ -36,7 +36,7 @@ class ResettlementPassportDeliusApiService(
     private val log = LoggerFactory.getLogger(this::class.java)
   }
 
-  @Cacheable("resettlement-passport-delius-api-get-crn", unless = "#result == null")
+  @Cacheable("resettlement-passport-delius-api-get-crn")
   fun getCrn(nomsId: String): String? {
     val prisonersDetails = rpDeliusWebClientCredentials.get()
       .uri("/probation-cases/$nomsId/crn")
@@ -55,15 +55,13 @@ class ResettlementPassportDeliusApiService(
   }
 
   @Cacheable("resettlement-passport-delius-api-get-mappa-data-by-noms-id")
-  fun getMappaDataByNomsId(nomsId: String): MappaData {
-    val crn = getCrn(nomsId)
-      ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in delius")
+  fun getMappaDataByCrn(crn: String): MappaData {
     val mappaDetail = rpDeliusWebClientCredentials.get()
       .uri("/probation-cases/$crn/mappa")
       .retrieve()
       .onStatus(
         { it == HttpStatus.NOT_FOUND },
-        { throw ResourceNotFoundException("Cannot find MAPPA Data for NomsId $nomsId / CRN $crn in Delius API") },
+        { throw ResourceNotFoundException("Cannot find MAPPA Data for CRN $crn in Delius API") },
       )
       .bodyToMono<MappaDetail>()
       .block()
@@ -78,9 +76,7 @@ class ResettlementPassportDeliusApiService(
   }
 
   @Cacheable("resettlement-passport-delius-api-get-com-by-noms-id", unless = "#result == null")
-  fun getComByNomsId(nomsId: String): String? {
-    val crn = getCrn(nomsId) ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $nomsId in delius")
-
+  fun getComByCrn(crn: String): String? {
     val communityManager = rpDeliusWebClientCredentials.get()
       .uri("/probation-cases/$crn/community-manager")
       .retrieve()
@@ -94,7 +90,7 @@ class ResettlementPassportDeliusApiService(
       ).block()
 
     if (communityManager?.unallocated == true || communityManager?.name == null) {
-      log.warn("No COM data found in Community API for NomsId $nomsId / CRN $crn")
+      log.warn("No COM data found in Community API for CRN $crn")
       return null
     }
 

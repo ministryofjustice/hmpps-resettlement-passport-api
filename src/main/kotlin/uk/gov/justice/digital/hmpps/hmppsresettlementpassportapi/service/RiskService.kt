@@ -26,5 +26,9 @@ class RiskService(
     return arnApiService.getRoshDataByCrn(crn)
   }
 
-  fun getMappaDataByNomsId(nomsId: String): MappaData = resettlementPassportDeliusApiService.getMappaDataByNomsId(nomsId)
+  fun getMappaDataByNomsId(nomsId: String): MappaData {
+    val crn = resettlementPassportDeliusApiService.getCrn(nomsId)
+    ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $nomsId in delius")
+    return resettlementPassportDeliusApiService.getMappaDataByCrn(crn)
+  }
 }

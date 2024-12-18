@@ -308,8 +308,8 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(404)
       .jsonPath("errorCode").isEmpty
       .jsonPath("userMessage")
-      .isEqualTo("Resource not found. Check request parameters - Prisoner with id abc has no CRN in delius")
-      .jsonPath("developerMessage").isEqualTo("Prisoner with id abc has no CRN in delius")
+      .isEqualTo("Resource not found. Check request parameters - Cannot find CRN for NomsId abc in delius")
+      .jsonPath("developerMessage").isEqualTo("Cannot find CRN for NomsId abc in delius")
       .jsonPath("moreInfo").isEmpty
   }
 
@@ -331,8 +331,8 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(404)
       .jsonPath("errorCode").isEmpty
       .jsonPath("userMessage")
-      .isEqualTo("Resource not found. Check request parameters - Cannot find MAPPA Data for NomsId 123 / CRN abc in Delius API")
-      .jsonPath("developerMessage").isEqualTo("Cannot find MAPPA Data for NomsId 123 / CRN abc in Delius API")
+      .isEqualTo("Resource not found. Check request parameters - Cannot find MAPPA Data for CRN abc in Delius API")
+      .jsonPath("developerMessage").isEqualTo("Cannot find MAPPA Data for CRN abc in Delius API")
       .jsonPath("moreInfo").isEmpty
   }
 

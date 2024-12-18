@@ -37,7 +37,7 @@ spec:
       containers:
         - name: hmpps-resettlement-passport-api-stubs
           image: wiremock/wiremock
-          command: ["/docker-entrypoint.sh", "--no-request-journal", "--global-response-templating", "--verbose"]
+          command: ["/docker-entrypoint.sh", "--no-request-journal", "--global-response-templating"]
           ports:
             - containerPort: 8080
           volumeMounts:

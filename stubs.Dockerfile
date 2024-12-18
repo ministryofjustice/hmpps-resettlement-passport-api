@@ -5,4 +5,4 @@ COPY helm_deploy/hmpps-resettlement-passport-api/files/stubs/mappings/* /home/wi
 
 EXPOSE 8080
 
-CMD ["/docker-entrypoint.sh", "--no-request-journal", "--global-response-templating", "--verbose"]
+CMD ["/docker-entrypoint.sh", "--no-request-journal", "--global-response-templating"]

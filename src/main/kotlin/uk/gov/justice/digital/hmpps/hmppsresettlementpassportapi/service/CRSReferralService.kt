@@ -13,7 +13,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.InterventionsApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
-import java.lang.IllegalArgumentException
 import java.time.LocalDateTime
 import java.time.ZoneId
 
@@ -41,7 +40,8 @@ class CRSReferralService(
 
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val crn = prisonerEntity.crn ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in database")
+    val crn = resettlementPassportDeliusApiService.getCrn(prisonerEntity.nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in delius")
 
     val referrals = interventionsApiService.fetchProbationCaseReferrals(crn)
     return objectMapper(referrals, pathways, nomsId)
@@ -123,7 +123,9 @@ class CRSReferralService(
     if (crsReferralList.isEmpty()) {
       val prisoner = prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)
       val prisonerName: String = "${prisoner.firstName} ${prisoner.lastName}".convertNameToTitleCase()
-      val comName = resettlementPassportDeliusApiService.getComByNomsId(nomsId) ?: "NO DATA"
+      val crn = resettlementPassportDeliusApiService.getCrn(nomsId)
+        ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $nomsId in delius")
+      val comName = resettlementPassportDeliusApiService.getComByCrn(crn) ?: "NO DATA"
       message =
         "No ${pathway.toString().convertEnumStringToLowercaseContent()} referral currently exists for $prisonerName. If you think this incorrect, please contact their COM, ${comName.convertNameToTitleCase()}."
     }

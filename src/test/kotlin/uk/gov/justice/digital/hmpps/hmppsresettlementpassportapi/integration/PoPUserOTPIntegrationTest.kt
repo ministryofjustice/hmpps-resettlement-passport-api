@@ -152,6 +152,8 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .returnBody<PoPUserOTP>()
 
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
+
     popUserApiMockServer.stubPostPoPUserVerification(200)
     verifyOtpResponse(createOtpResponse)
 

@@ -31,7 +31,6 @@ class IdApplicationRepositoryTest : RepositoryTestBase() {
       PrisonerEntity(
         nomsId = "NOM1234",
         creationDate = LocalDateTime.now(),
-        crn = "crn1",
         prisonId = "xyz1",
       ),
     )
@@ -63,7 +62,6 @@ class IdApplicationRepositoryTest : RepositoryTestBase() {
         null,
         "NOM1234",
         LocalDateTime.now(),
-        "crn1",
         "xyz1",
       ),
     )

@@ -401,7 +401,7 @@ class ValidationResettlementAssessmentStrategyTest : BaseResettlementAssessmentS
 
     val nomsId = "abc"
 
-    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC")
+    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "ABC")
 
     Mockito.lenient().`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
 

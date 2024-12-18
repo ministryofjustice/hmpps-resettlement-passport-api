@@ -75,7 +75,7 @@ class CaseAllocationServiceTest {
     manageUserList.add(manageUser)
 
     whenever(manageUserApiService.getManageUsersData("MDI", "PSFR_RESETTLEMENT_WORKER")).thenReturn(manageUserList)
-    val prisonerEntity = PrisonerEntity(1, "123", testDate, "crn", "MDI")
+    val prisonerEntity = PrisonerEntity(1, "123", testDate, "MDI")
     whenever(pathwayAndStatusService.getOrCreatePrisoner("123", "MDI")).thenReturn(prisonerEntity)
     Mockito.`when`(caseAllocationRepository.findByPrisonerIdAndIsDeleted(prisonerEntity.id(), false)).thenReturn(null)
 
@@ -130,7 +130,7 @@ class CaseAllocationServiceTest {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     val caseList = emptyList<CaseAllocationEntity?>().toMutableList()
-    val prisonerEntity = PrisonerEntity(1, "123", testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "123", testDate, "xyz")
     val caseAllocationEntity = CaseAllocationEntity(
       prisonerId = prisonerEntity.id(),
       staffId = 4321,
@@ -165,8 +165,8 @@ class CaseAllocationServiceTest {
 
   @Test
   fun `test getAllCaseAllocationByStaffId - returns case allocations`() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
-    val prisonerEntity1 = PrisonerEntity(2, "acb", testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
+    val prisonerEntity1 = PrisonerEntity(2, "acb", testDate, "xyz")
 //    Mockito.`when`(prisonerRepository.findByNomsId(prisonerEntity.nomsId)).thenReturn(prisonerEntity)
     val caseAllocationEntity = CaseAllocationEntity(
       prisonerId = prisonerEntity.id(),
@@ -198,9 +198,9 @@ class CaseAllocationServiceTest {
 
   @Test
   fun `test getAllCaseAllocationCount - returns case allocations count`() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
-    val prisonerEntity1 = PrisonerEntity(2, "acb", testDate, "crn", "xyz")
-    val prisonerEntity2 = PrisonerEntity(3, "acb", testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
+    val prisonerEntity1 = PrisonerEntity(2, "acb", testDate, "xyz")
+    val prisonerEntity2 = PrisonerEntity(3, "acb", testDate, "xyz")
     val prisonId = "MDI"
     val caseAllocationEntity = CaseAllocationEntity(
       prisonerId = prisonerEntity.id(),

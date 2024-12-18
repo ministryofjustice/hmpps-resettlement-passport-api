@@ -3,8 +3,7 @@
   "prisoner": {
     "id": 1,
     "nomsId": "123",
-    "creationDate": "2023-08-16T12:21:38.709",
-    "crn": "abc"
+    "creationDate": "2023-08-16T12:21:38.709"
   },
   "logs": [
     {

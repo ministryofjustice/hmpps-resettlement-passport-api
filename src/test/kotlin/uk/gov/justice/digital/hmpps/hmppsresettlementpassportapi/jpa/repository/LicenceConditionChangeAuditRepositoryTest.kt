@@ -27,7 +27,7 @@ class LicenceConditionChangeAuditRepositoryTest : RepositoryTestBase() {
   @Test
   fun `test persist new licence condition change audit`() {
     val confirmationDate = LocalDateTime.of(2024, 1, 1, 0, 0, 0)
-    val prisoner = prisonerRepository.save(PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1"))
+    val prisoner = prisonerRepository.save(PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "xyz1"))
 
     val licenceConditionChangeAuditEntity = LicenceConditionChangeAuditEntity(prisonerId = prisoner.id!!, licenceConditions = LicenceConditions(1), confirmationDate = confirmationDate)
 

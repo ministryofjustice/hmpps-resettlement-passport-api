@@ -20,7 +20,6 @@ class CaseAllocationRepositoryTest : RepositoryTestBase() {
       PrisonerEntity(
         nomsId = "NOM1234",
         creationDate = LocalDateTime.now(),
-        crn = "crn1",
         prisonId = "xyz1",
       ),
     )
@@ -46,7 +45,6 @@ class CaseAllocationRepositoryTest : RepositoryTestBase() {
         null,
         "NOM1234",
         LocalDateTime.now(),
-        "crn1",
         "xyz1",
       ),
     )
@@ -55,7 +53,6 @@ class CaseAllocationRepositoryTest : RepositoryTestBase() {
         null,
         "NOM5678",
         LocalDateTime.now(),
-        "crn1",
         "xyz1",
       ),
     )

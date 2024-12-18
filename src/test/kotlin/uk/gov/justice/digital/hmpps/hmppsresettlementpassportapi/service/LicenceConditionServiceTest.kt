@@ -40,7 +40,7 @@ class LicenceConditionServiceTest {
 
   @Test
   fun `test verifyCompareAndSave first time - returns compare status`() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     whenever(prisonerRepository.findByNomsId("acb")).thenReturn(prisonerEntity)
     whenever(licenceConditionsChangeAuditRepository.findFirstByPrisonerIdOrderByCreationDateDesc(1)).thenReturn(null)
 
@@ -51,7 +51,7 @@ class LicenceConditionServiceTest {
 
   @Test
   fun `test verifyCompareAndSave not first time but no data change - returns compare status`() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     val licenceConditionChangeAuditEntity = LicenceConditionChangeAuditEntity(
       id = 1,
       prisonerId = prisonerEntity.id!!,
@@ -71,7 +71,7 @@ class LicenceConditionServiceTest {
 
   @Test
   fun `test verifyCompareAndSave not first time but data changed- returns compare status`() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     val licenceConditionChangeAuditEntity =
       LicenceConditionChangeAuditEntity(
         id = 1,

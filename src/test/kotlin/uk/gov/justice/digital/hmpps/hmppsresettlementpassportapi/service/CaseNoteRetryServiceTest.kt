@@ -199,5 +199,5 @@ class CaseNoteRetryServiceTest {
     Mockito.verifyNoMoreInteractions(caseNotesService, caseNoteRetryRepository, metricsService, resettlementPassportDeliusApiService)
   }
 
-  private fun getTestPrisonerEntity(nomsId: String) = PrisonerEntity(1, nomsId, LocalDateTime.parse("2023-09-01T15:09:21"), "D567890", "MDI")
+  private fun getTestPrisonerEntity(nomsId: String) = PrisonerEntity(1, nomsId, LocalDateTime.parse("2023-09-01T15:09:21"), "MDI")
 }

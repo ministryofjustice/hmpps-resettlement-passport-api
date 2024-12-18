@@ -64,7 +64,7 @@ open class BaseResettlementAssessmentStrategyTest(val pathway: Pathway, val vers
   }
 
   fun setUpMocks(nomsId: String, returnResettlementAssessmentEntity: Boolean, assessment: ResettlementAssessmentQuestionAndAnswerList = ResettlementAssessmentQuestionAndAnswerList(listOf()), assessmentStatus: ResettlementAssessmentStatus = ResettlementAssessmentStatus.COMPLETE, version: Int = this.version) {
-    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "abc", "ABC")
+    val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "ABC")
     val resettlementAssessmentEntity = if (returnResettlementAssessmentEntity) ResettlementAssessmentEntity(1, 1, pathway, Status.NOT_STARTED, ResettlementAssessmentType.BCST2, assessment, testDate, "", assessmentStatus, "some text", "USER_1", submissionDate = null, version = version, userDeclaration = false) else null
     whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
     whenever(

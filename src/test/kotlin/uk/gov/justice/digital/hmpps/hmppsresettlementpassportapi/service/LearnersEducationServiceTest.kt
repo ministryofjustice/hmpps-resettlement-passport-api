@@ -40,7 +40,7 @@ class LearnersEducationServiceTest {
 
   @Test
   fun `test get Course happy path full json`() {
-    val prisonerEntity = PrisonerEntity(1, "A8339DY", testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "A8339DY", testDate, "xyz")
     val prisonerId = "A8339DY"
     val expectedCoursename = "Dummy_Automated_320"
 

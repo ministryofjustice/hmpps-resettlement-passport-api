@@ -19,7 +19,7 @@ class PathwayStatusRepositoryTest : RepositoryTestBase() {
 
   @Test
   fun `test create new pathway status`() {
-    var prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "crn1", "xyz1")
+    var prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "xyz1")
     prisoner = prisonerRepository.save(prisoner)
 
     val pathwayStatus = PathwayStatusEntity(
@@ -39,10 +39,10 @@ class PathwayStatusRepositoryTest : RepositoryTestBase() {
   @Test
   fun `test findByPrison query`() {
     // Seed database with prisoners and pathway statuses
-    prisonerRepository.save(PrisonerEntity(null, "NOMS1", LocalDateTime.parse("2023-12-13T12:00:00"), "CRN1", "MDI"))
-    val prisoner2 = prisonerRepository.save(PrisonerEntity(null, "NOMS2", LocalDateTime.parse("2023-12-13T12:00:00"), "CRN2", "MDI"))
-    val prisoner3 = prisonerRepository.save(PrisonerEntity(null, "NOMS3", LocalDateTime.parse("2023-12-13T12:00:00"), "CRN3", "MDI"))
-    val prisoner4 = prisonerRepository.save(PrisonerEntity(null, "NOMS4", LocalDateTime.parse("2023-12-13T12:00:00"), "CRN4", "BWI"))
+    prisonerRepository.save(PrisonerEntity(null, "NOMS1", LocalDateTime.parse("2023-12-13T12:00:00"), "MDI"))
+    val prisoner2 = prisonerRepository.save(PrisonerEntity(null, "NOMS2", LocalDateTime.parse("2023-12-13T12:00:00"), "MDI"))
+    val prisoner3 = prisonerRepository.save(PrisonerEntity(null, "NOMS3", LocalDateTime.parse("2023-12-13T12:00:00"), "MDI"))
+    val prisoner4 = prisonerRepository.save(PrisonerEntity(null, "NOMS4", LocalDateTime.parse("2023-12-13T12:00:00"), "BWI"))
 
     // Prisoner 1 has no pathway statuses
     // Prisoners 2 and 3 has all pathways set

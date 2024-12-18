@@ -31,7 +31,7 @@ class CachingConfiguration(private val buildProperties: BuildProperties) {
     .withCacheConfiguration("key-worker-api-get-key-worker-name", getCacheConfiguration(Duration.ofHours(2)))
     .withCacheConfiguration("prison-api-get-prisoner-image-data", getCacheConfiguration(Duration.ofMinutes(30)))
     .withCacheConfiguration("prison-api-find-prisoner-image-details", getCacheConfiguration(Duration.ofMinutes(30)))
-    .withCacheConfiguration("resettlement-passport-delius-api-get-crn", getCacheConfiguration(Duration.ofMinutes(2)))
+    .withCacheConfiguration("resettlement-passport-delius-api-get-crn", getCacheConfiguration(Duration.ofHours(1)))
     .withCacheConfiguration("resettlement-passport-delius-api-get-mappa-data-by-noms-id", getCacheConfiguration(Duration.ofHours(4)))
     .withCacheConfiguration("resettlement-passport-delius-api-get-com-by-noms-id", getCacheConfiguration(Duration.ofHours(2)))
     .withCacheConfiguration("resettlement-passport-delius-api-fetch-accommodation", getCacheConfiguration(Duration.ofHours(1)))

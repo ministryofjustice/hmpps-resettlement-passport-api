@@ -19,7 +19,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/staff-contacts-1.json")
-
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGet("/probation-cases/$crn/community-manager", 200, "testdata/resettlement-passport-delius-api/prisoner-managers-1.json")
     keyWorkerApiMockServer.stubGet("/key-worker/offender/$nomsId", 200, "testdata/key-worker-api/key-worker-1.json")
     allocationManagerApiMockServer.stubGet("/api/allocation/$nomsId", 200, "testdata/allocation-manager-api/poms-1.json")
@@ -54,7 +54,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/staff-contacts-2.json")
-
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGet("/probation-cases/$crn/community-manager", 200, "testdata/resettlement-passport-delius-api/prisoner-managers-2.json")
 
     webTestClient.get()
@@ -72,7 +72,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
   fun `get staff contacts happy path - no key worker data`() {
     val nomsId = "123"
     val expectedOutput = readFile("testdata/expectation/staff-contacts-2.json")
-
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
     keyWorkerApiMockServer.stubGet("/key-worker/offender/$nomsId", 200, "testdata/key-worker-api/key-worker-2.json")
 
     webTestClient.get()
@@ -90,7 +90,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
   fun `get staff contacts happy path - no POM data`() {
     val nomsId = "123"
     val expectedOutput = readFile("testdata/expectation/staff-contacts-2.json")
-
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
     allocationManagerApiMockServer.stubGet("/api/allocation/$nomsId", 200, "testdata/allocation-manager-api/poms-2.json")
 
     webTestClient.get()
@@ -109,7 +109,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/staff-contacts-2.json")
-
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     // Note that even if an individual call to get a staff contact fails, we should just log this and return no data
     deliusApiMockServer.stubGet("/probation-cases/$crn/community-manager", 404, null)
 
@@ -128,7 +128,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
   fun `get staff contacts happy path error from key worker API`() {
     val nomsId = "123"
     val expectedOutput = readFile("testdata/expectation/staff-contacts-2.json")
-
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
     // Note that even if an individual call to get a staff contact fails, we should just log this and return no data
     keyWorkerApiMockServer.stubGet("/key-worker/offender/$nomsId", 404, null)
 
@@ -147,7 +147,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
   fun `get staff contacts happy path error from allocation manager API`() {
     val nomsId = "123"
     val expectedOutput = readFile("testdata/expectation/staff-contacts-2.json")
-
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
     // Note that even if an individual call to get a staff contact fails, we should just log this and return no data
     allocationManagerApiMockServer.stubGet("/api/allocation/$nomsId", 404, null)
 
@@ -164,7 +164,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
   @Test
   fun `get staff contacts - prisoner missing from database`() {
     val nomsId = "123"
-
+    deliusApiMockServer.stubGetCrnFromNomsIdNotFound(nomsId)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/staff-contacts")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -174,8 +174,8 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .jsonPath("status").isEqualTo(404)
       .jsonPath("errorCode").isEmpty
-      .jsonPath("userMessage").isEqualTo("Resource not found. Check request parameters - Cannot find CRN for NomsId 123 in database")
-      .jsonPath("developerMessage").isEqualTo("Cannot find CRN for NomsId 123 in database")
+      .jsonPath("userMessage").isEqualTo("Resource not found. Check request parameters - Cannot find CRN for NomsId 123 in delius")
+      .jsonPath("developerMessage").isEqualTo("Cannot find CRN for NomsId 123 in delius")
       .jsonPath("moreInfo").isEmpty
   }
 
@@ -206,7 +206,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/staff-contacts-2.json")
-
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGet("/probation-cases/$crn/community-manager", 200, "testdata/resettlement-passport-delius-api/prisoner-managers-2.json")
 
     webTestClient.get()
@@ -225,7 +225,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/staff-contacts-1.json")
-
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGet("/probation-cases/$crn/community-manager", 200, "testdata/resettlement-passport-delius-api/prisoner-managers-1.json")
     keyWorkerApiMockServer.stubGet("/key-worker/offender/$nomsId", 200, "testdata/key-worker-api/key-worker-1.json")
     allocationManagerApiMockServer.stubGet("/api/allocation/$nomsId", 200, "testdata/allocation-manager-api/poms-1.json")

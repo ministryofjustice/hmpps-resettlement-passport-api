@@ -21,9 +21,6 @@ data class PrisonerEntity(
   @Column(name = "creation_date")
   val creationDate: LocalDateTime = LocalDateTime.now(),
 
-  @Column(name = "crn")
-  var crn: String?,
-
   @Column(name = "prison_id")
   var prisonId: String?,
 ) {

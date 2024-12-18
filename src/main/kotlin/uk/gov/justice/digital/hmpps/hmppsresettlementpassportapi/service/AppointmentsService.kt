@@ -38,6 +38,7 @@ class AppointmentsService(
   private val interventionsApiService: InterventionsApiService,
   @Value("\${interventions-api-integration.crsAppointmentsEnabled}") private val crsAppointmentIntegrationEnabled: Boolean,
   private val prisonerService: PrisonerService,
+  private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
 ) {
 
   companion object {
@@ -70,7 +71,10 @@ class AppointmentsService(
 
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val crn = prisonerEntity.crn ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in database")
+
+    val crn = resettlementPassportDeliusApiService.getCrn(prisonerEntity.nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in delius")
+
     val crsAppointments: CRSAppointmentsDTO
     var deliusAppointments = rpDeliusApiService.fetchAppointments(nomsId, crn, startDate, endDate)
 
@@ -193,8 +197,11 @@ class AppointmentsService(
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
 
+    val crn = resettlementPassportDeliusApiService.getCrn(prisoner.nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in delius")
+
     rpDeliusApiService.createAppointment(
-      prisoner.crn!!,
+      crn,
       DeliusCreateAppointment(
         type = DeliusCreateAppointmentType.fromCategory(appointment.appointmentType),
         start = appointment.dateAndTime.atZone(ZoneId.of("Europe/London")),

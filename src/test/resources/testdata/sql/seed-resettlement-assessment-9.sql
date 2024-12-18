@@ -1,6 +1,6 @@
 INSERT INTO prisoner
-(id, noms_id, creation_date, crn)
-VALUES (1, 'G1458GV', '2023-10-16 12:21:38.709','NGRBG54');
+(id, noms_id, creation_date)
+VALUES (1, 'G1458GV', '2023-10-16 12:21:38.709');
 
 INSERT INTO resettlement_assessment
 (id, prisoner_id, pathway, assessment_status, assessment_type, assessment, status_changed_to, created_date, created_by)

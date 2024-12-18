@@ -1,7 +1,7 @@
 INSERT INTO prisoner
-(id, noms_id, creation_date, crn)
+(id, noms_id, creation_date)
 VALUES
-(1, 'G1458GV', '2024-01-01 12:21:38.709','ABC123');
+(1, 'G1458GV', '2024-01-01 12:21:38.709');
 
 INSERT INTO assessment (id, prisoner_id, assessment_date, is_bank_account_required, is_id_required, when_created, is_deleted)
 VALUES(1, 1, '2023-08-16 12:21:38.709',true, true, '2023-08-16 12:21:38.709', false);

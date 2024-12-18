@@ -107,7 +107,7 @@ class OffenderEventsIntegrationTest : IntegrationTestBase() {
 
       val savedPrisoner = prisonerRepository.findAll()
       assertThat(savedPrisoner).hasSize(1)
-      assertThat(savedPrisoner[0]).isEqualTo(PrisonerEntity(1, "A4092EA", LocalDateTime.parse("2023-08-16T12:21:38.709"), "123", "OUT"))
+      assertThat(savedPrisoner[0]).isEqualTo(PrisonerEntity(1, "A4092EA", LocalDateTime.parse("2023-08-16T12:21:38.709"), "OUT"))
     }
   }
 
@@ -126,7 +126,7 @@ class OffenderEventsIntegrationTest : IntegrationTestBase() {
 
       val savedPrisoner = prisonerRepository.findAll()
       assertThat(savedPrisoner).hasSize(1)
-      assertThat(savedPrisoner[0]).isEqualTo(PrisonerEntity(1, "A4092EA", LocalDateTime.parse("2023-08-16T12:21:38.709"), "123", "OUT"))
+      assertThat(savedPrisoner[0]).isEqualTo(PrisonerEntity(1, "A4092EA", LocalDateTime.parse("2023-08-16T12:21:38.709"), "OUT"))
 
       val savedCaseAllocation = caseAllocationRepository.findByPrisonerIdAndIsDeleted(1, true)
       assertThat(savedCaseAllocation).isNotNull

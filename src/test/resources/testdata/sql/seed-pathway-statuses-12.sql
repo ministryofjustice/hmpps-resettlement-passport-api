@@ -1,12 +1,12 @@
 INSERT INTO prisoner
-(id, noms_id, creation_date, crn, prison_id)
-VALUES(1, '123', '2023-08-16 12:21:38.709','abc', 'xyz');
+(id, noms_id, creation_date, prison_id)
+VALUES(1, '123', '2023-08-16 12:21:38.709', 'xyz');
 INSERT INTO prisoner
-(id, noms_id, creation_date, crn, prison_id)
-VALUES(2, '456', '2023-08-17 12:25:45.306', 'def', 'xyz');
+(id, noms_id, creation_date, prison_id)
+VALUES(2, '456', '2023-08-17 12:25:45.306', 'xyz');
 INSERT INTO prisoner
-(id, noms_id, creation_date, crn, prison_id)
-VALUES(3, '789', '2023-08-17 12:26:03.441', 'ghi', 'xyz');
+(id, noms_id, creation_date, prison_id)
+VALUES(3, '789', '2023-08-17 12:26:03.441', 'xyz');
 
 INSERT INTO watchlist
 (id, prisoner_id, staff_username, creation_date)

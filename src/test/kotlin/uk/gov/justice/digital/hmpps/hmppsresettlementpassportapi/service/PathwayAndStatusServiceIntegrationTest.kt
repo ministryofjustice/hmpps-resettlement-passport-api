@@ -20,12 +20,11 @@ class PathwayAndStatusServiceIntegrationTest : IntegrationTestBase() {
     val existingPrisoner = prisonerRepository.save(
       PrisonerEntity(
         nomsId = "A123",
-        crn = "CRN123",
         prisonId = "P123",
       ),
     )
 
-    val result = pathwayAndStatusService.createPrisoner(nomsId = "A123", resolvedCrn = "CRN123", prisonId = "P123")
+    val result = pathwayAndStatusService.createPrisoner(nomsId = "A123", prisonId = "P123")
 
     assertThat(result.id).isEqualTo(existingPrisoner.id)
   }

@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Contact
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.StaffContacts
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.AllocationManagerApiService
@@ -11,7 +12,9 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 class StaffContactsService(val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService, val keyWorkerApiService: KeyWorkerApiService, val allocationManagerApiService: AllocationManagerApiService, val caseAllocationService: CaseAllocationService) {
   fun getStaffContacts(nomsId: String): StaffContacts {
     // Get COM details from Delius API
-    val comName = resettlementPassportDeliusApiService.getComByNomsId(nomsId)
+    val crn = resettlementPassportDeliusApiService.getCrn(nomsId)
+      ?: throw ResourceNotFoundException("Cannot find CRN for NomsId $nomsId in delius")
+    val comName = resettlementPassportDeliusApiService.getComByCrn(crn)
     var com: Contact? = null
     if (comName != null) {
       com = Contact(comName)

@@ -16,6 +16,7 @@ class AccommodationService(
   private val prisonerRepository: PrisonerRepository,
   private val rpDeliusApiService: ResettlementPassportDeliusApiService,
   private val prisonerSearchApiService: PrisonerSearchApiService,
+  private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
 ) {
 
   fun getAccommodationMainAddressByNomsId(
@@ -28,7 +29,8 @@ class AccommodationService(
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
 
-    val crn = prisonerEntity.crn ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in database")
+    val crn = resettlementPassportDeliusApiService.getCrn(prisonerEntity.nomsId)
+      ?: throw ResourceNotFoundException("Prisoner with id $nomsId has no CRN in delius")
 
     val accommodation = rpDeliusApiService.fetchAccommodation(nomsId, crn)
 

@@ -27,7 +27,7 @@ class DeliusContactRepositoryTest : RepositoryTestBase() {
 
   @Test
   fun `test persist new delius contact - case note`() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.parse("2022-12-20T10:13:03"), "crn1", "xyz1")
+    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.parse("2022-12-20T10:13:03"), "xyz1")
     prisonerRepository.save(prisoner)
 
     val deliusContact = DeliusContactEntity(
@@ -48,7 +48,7 @@ class DeliusContactRepositoryTest : RepositoryTestBase() {
 
   @Test
   fun `test persist new delius contact - appointments`() {
-    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.parse("2022-12-20T10:13:03"), "crn1", "xyz1")
+    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.parse("2022-12-20T10:13:03"), "xyz1")
     prisonerRepository.save(prisoner)
 
     val deliusContact = DeliusContactEntity(

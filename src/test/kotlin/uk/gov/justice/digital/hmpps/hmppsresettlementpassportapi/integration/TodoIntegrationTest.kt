@@ -8,7 +8,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.web.reactive.server.JsonPathAssertions
 import org.springframework.test.web.reactive.server.WebTestClient
-import java.util.UUID
+import java.util.*
 
 class TodoIntegrationTest : IntegrationTestBase() {
   private val minimalTask = mapOf(
@@ -23,7 +23,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
     @Sql("/testdata/sql/seed-1-prisoner.sql")
     fun `create initial todo item minimal`() {
       authedWebTestClient.post()
-        .uri("/resettlement-passport/person/CRN123/todo")
+        .uri("/resettlement-passport/person/G4161UF/todo")
         .contentType(MediaType.APPLICATION_JSON)
         .bodyValue(minimalTask)
         .exchange()
@@ -37,7 +37,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
     @Sql("/testdata/sql/seed-1-prisoner.sql")
     fun `create initial todo item all fields`() {
       authedWebTestClient.post()
-        .uri("/resettlement-passport/person/CRN123/todo")
+        .uri("/resettlement-passport/person/G4161UF/todo")
         .contentType(MediaType.APPLICATION_JSON)
         .bodyValue(
           mapOf(
@@ -55,7 +55,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
     @Test
     fun `should 401 with no authentication header on create`() {
       webTestClient.post()
-        .uri("/resettlement-passport/person/CRN123/todo")
+        .uri("/resettlement-passport/person/G4161UF/todo")
         .contentType(MediaType.APPLICATION_JSON)
         .bodyValue(minimalTask)
         .exchange()
@@ -66,7 +66,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
     @Test
     fun `should 403 with incorrect role header on create`() {
       webTestClient.post()
-        .uri("/resettlement-passport/person/CRN123/todo")
+        .uri("/resettlement-passport/person/G4161UF/todo")
         .contentType(MediaType.APPLICATION_JSON)
         .headers(setAuthorisation(roles = listOf("SOME_ROLE_IDK")))
         .bodyValue(minimalTask)
@@ -131,7 +131,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
     @Test
     fun `should 401 with no authentication header on get`() {
       webTestClient.get()
-        .uri("/resettlement-passport/person/CRN123/todo")
+        .uri("/resettlement-passport/person/G4161UF/todo")
         .exchange()
         .expectStatus()
         .isUnauthorized()
@@ -140,7 +140,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
     @Test
     fun `should 403 with incorrect role header on get`() {
       webTestClient.get()
-        .uri("/resettlement-passport/person/CRN123/todo")
+        .uri("/resettlement-passport/person/G4161UF/todo")
         .headers(setAuthorisation(roles = listOf("SOME_ROLE_IDK")))
         .exchange()
         .expectStatus()
@@ -159,7 +159,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
     @Test
     fun `should 400 when an invalid sort field is given`() {
       authedWebTestClient.get()
-        .uri("/resettlement-passport/person/123/todo?sortField=potato")
+        .uri("/resettlement-passport/person/G4161UF/todo?sortField=potato")
         .exchange()
         .expectStatus()
         .isBadRequest()
@@ -168,7 +168,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
     @Test
     fun `should 400 when an invalid sort direction is given`() {
       authedWebTestClient.get()
-        .uri("/resettlement-passport/person/123/todo?sortDirection=SIDEWAYS")
+        .uri("/resettlement-passport/person/G4161UF/todo?sortDirection=SIDEWAYS")
         .exchange()
         .expectStatus()
         .isBadRequest()
@@ -178,7 +178,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
   private fun getTodoItems(params: String = ""): WebTestClient.ResponseSpec {
     val query = if (params.isNotEmpty()) "?$params" else ""
     return authedWebTestClient.get()
-      .uri("/resettlement-passport/person/CRN123/todo$query")
+      .uri("/resettlement-passport/person/G4161UF/todo$query")
       .exchange()
       .expectStatus()
       .isOk()
@@ -194,7 +194,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
       val id = createTodoItem("title" to "make some toast", "urn" to "urn5")["id"]
 
       authedWebTestClient.delete()
-        .uri("/resettlement-passport/person/CRN123/todo/$id")
+        .uri("/resettlement-passport/person/G4161UF/todo/$id")
         .exchange()
         .expectStatus()
         .isNoContent()
@@ -206,7 +206,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
     @Sql("/testdata/sql/seed-1-prisoner.sql")
     fun `should 404 when todo item not found for delete`() {
       authedWebTestClient.delete()
-        .uri("/resettlement-passport/person/CRN123/todo/${UUID.randomUUID()}")
+        .uri("/resettlement-passport/person/G4161UF/todo/${UUID.randomUUID()}")
         .exchange()
         .expectStatus()
         .isNotFound()
@@ -233,7 +233,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
     @Test
     fun `should 403 with incorrect role header on delete`() {
       webTestClient.delete()
-        .uri("/resettlement-passport/person/CRN123/todo/${UUID.randomUUID()}")
+        .uri("/resettlement-passport/person/G4161UF/todo/${UUID.randomUUID()}")
         .headers(setAuthorisation(roles = listOf("SOME_ROLE_IDK")))
         .exchange()
         .expectStatus()
@@ -250,7 +250,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
     fun `should be able complete an item`() {
       val id = createTodoItem("title" to "make some toast", "urn" to "urn5")["id"]
       authedWebTestClient.patch()
-        .uri("/resettlement-passport/person/CRN123/todo/$id")
+        .uri("/resettlement-passport/person/G4161UF/todo/$id")
         .bodyValue(
           mapOf(
             "urn" to "urn6",
@@ -268,7 +268,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
     @Sql("/testdata/sql/seed-1-prisoner.sql")
     fun `should 404 when todo item not found for patch`() {
       authedWebTestClient.patch()
-        .uri("/resettlement-passport/person/CRN123/todo/${UUID.randomUUID()}")
+        .uri("/resettlement-passport/person/G4161UF/todo/${UUID.randomUUID()}")
         .bodyValue(minimalTask)
         .exchange()
         .expectStatus()
@@ -298,7 +298,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
     @Test
     fun `should 403 with incorrect role header on patch`() {
       webTestClient.put()
-        .uri("/resettlement-passport/person/CRN123/todo/${UUID.randomUUID()}")
+        .uri("/resettlement-passport/person/G4161UF/todo/${UUID.randomUUID()}")
         .bodyValue(minimalTask)
         .headers(setAuthorisation(roles = listOf("SOME_ROLE_IDK")))
         .exchange()
@@ -316,7 +316,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
     fun `should update todo item`() {
       val id = createTodoItem("title" to "make some toast", "urn" to "urn5")["id"]
       authedWebTestClient.put()
-        .uri("/resettlement-passport/person/CRN123/todo/$id")
+        .uri("/resettlement-passport/person/G4161UF/todo/$id")
         .bodyValue(
           mapOf(
             "urn" to "urn6",
@@ -336,7 +336,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
     @Sql("/testdata/sql/seed-1-prisoner.sql")
     fun `should 404 when todo item not found for update`() {
       authedWebTestClient.put()
-        .uri("/resettlement-passport/person/CRN123/todo/${UUID.randomUUID()}")
+        .uri("/resettlement-passport/person/G4161UF/todo/${UUID.randomUUID()}")
         .bodyValue(minimalTask)
         .exchange()
         .expectStatus()
@@ -366,7 +366,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
     @Test
     fun `should 403 with incorrect role header on update`() {
       webTestClient.put()
-        .uri("/resettlement-passport/person/CRN123/todo/${UUID.randomUUID()}")
+        .uri("/resettlement-passport/person/G4161UF/todo/${UUID.randomUUID()}")
         .bodyValue(minimalTask)
         .headers(setAuthorisation(roles = listOf("SOME_ROLE_IDK")))
         .exchange()
@@ -390,7 +390,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
       )["id"]
 
       authedWebTestClient.get()
-        .uri("/resettlement-passport/person/CRN123/todo/$id")
+        .uri("/resettlement-passport/person/G4161UF/todo/$id")
         .exchange()
         .expectStatus()
         .isOk()
@@ -402,7 +402,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
     @Sql("/testdata/sql/seed-1-prisoner.sql")
     fun `should 404 when todo item not found for get`() {
       authedWebTestClient.get()
-        .uri("/resettlement-passport/person/CRN123/todo/${UUID.randomUUID()}")
+        .uri("/resettlement-passport/person/G4161UF/todo/${UUID.randomUUID()}")
         .exchange()
         .expectStatus()
         .isNotFound()
@@ -429,7 +429,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
     @Test
     fun `should 403 with incorrect role header on get`() {
       webTestClient.get()
-        .uri("/resettlement-passport/person/CRN123/todo/${UUID.randomUUID()}")
+        .uri("/resettlement-passport/person/G4161UF/todo/${UUID.randomUUID()}")
         .headers(setAuthorisation(roles = listOf("SOME_ROLE_IDK")))
         .exchange()
         .expectStatus()
@@ -438,7 +438,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
   }
 
   fun createTodoItem(vararg data: Pair<String, String>): Map<*, *> = authedWebTestClient.post()
-    .uri("/resettlement-passport/person/CRN123/todo")
+    .uri("/resettlement-passport/person/G4161UF/todo")
     .contentType(MediaType.APPLICATION_JSON)
     .bodyValue(data.toMap())
     .exchange()

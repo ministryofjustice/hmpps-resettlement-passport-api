@@ -24,7 +24,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.BankApplicationStatusLogRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import java.time.LocalDateTime
-import java.util.Optional
+import java.util.*
 
 @ExtendWith(MockitoExtension::class)
 class BankApplicationServiceTest {
@@ -58,7 +58,7 @@ class BankApplicationServiceTest {
 
   @Test
   fun `test getBankApplicationByPrisoner - returns bank application`() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity.id(), emptySet(), fakeNow, fakeNow, status = "Pending", isDeleted = false, bankName = "Lloyds")
     val expectedResult = BankApplicationResponse(
       id = 1,
@@ -81,7 +81,7 @@ class BankApplicationServiceTest {
 
   @Test
   fun `test getBankApplicationByPrisoner - throws if not found`() {
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     whenever(prisonerRepository.findByNomsId(prisonerEntity.nomsId)).thenReturn(prisonerEntity)
     whenever(bankApplicationRepository.findByPrisonerIdAndIsDeleted(any(), any())).thenReturn(null)
 
@@ -92,7 +92,7 @@ class BankApplicationServiceTest {
   fun `test deleteBankApplication - updates isDeleted and deletionDate`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity.id(), emptySet(), fakeNow, fakeNow, status = "Pending", bankName = "Lloyds")
     val expectedBankApplicationEntity = BankApplicationEntity(
       1,
@@ -116,7 +116,7 @@ class BankApplicationServiceTest {
   fun `test createBankApplication - creates bank application`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     val bankApplication = BankApplication(applicationSubmittedDate = fakeNow, bankName = "Lloyds")
     val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity.id(), setOf(BankApplicationStatusLogEntity(null, null, "Pending", fakeNow)), fakeNow, fakeNow, status = "Pending", isDeleted = false, bankName = "Lloyds")
     val logEntities = listOf(BankApplicationStatusLogEntity(1, bankApplicationEntity, "Pending", fakeNow))
@@ -136,7 +136,7 @@ class BankApplicationServiceTest {
   fun `test createBankApplication - creates bank application duplicate check`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     val bankApplication = BankApplication(applicationSubmittedDate = fakeNow, bankName = "Lloyds")
     val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity.id(), setOf(BankApplicationStatusLogEntity(null, null, "Pending", fakeNow)), fakeNow, fakeNow, status = "Pending", isDeleted = false, bankName = "Lloyds")
     val logEntities = listOf(BankApplicationStatusLogEntity(1, bankApplicationEntity, "Pending", fakeNow))

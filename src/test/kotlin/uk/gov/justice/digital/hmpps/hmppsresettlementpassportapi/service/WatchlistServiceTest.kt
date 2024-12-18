@@ -33,7 +33,7 @@ class WatchlistServiceTest {
   fun `isPrisonerInWatchlist returns true`() {
     val nomisId = "A8731DY"
     val staffUsername = "Test User"
-    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.now(), "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.now(), "xyz")
     Mockito.`when`(watchlistRepository.findByPrisonerIdAndStaffUsername(prisonerEntity.id(), staffUsername)).thenReturn(
       WatchlistEntity(
         id = 55,
@@ -49,7 +49,7 @@ class WatchlistServiceTest {
   fun `isPrisonerInWatchlist returns false`() {
     val nomisId = "A8731DY"
     val staffUsername = "Test User"
-    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.now(), "crn", "xyz")
+    val prisonerEntity = PrisonerEntity(1, nomisId, LocalDateTime.now(), "xyz")
     Mockito.`when`(watchlistRepository.findByPrisonerIdAndStaffUsername(prisonerEntity.id(), staffUsername)).thenReturn(null)
     Assertions.assertFalse(watchlistService.isPrisonerInWatchList(staffUsername, prisonerEntity))
   }

@@ -13,7 +13,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Path
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDateTime
 
 private val logger = KotlinLogging.logger {}
@@ -22,7 +21,6 @@ private val logger = KotlinLogging.logger {}
 class PathwayAndStatusService(
   private val pathwayStatusRepository: PathwayStatusRepository,
   private val prisonerRepository: PrisonerRepository,
-  private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
   private val transactionOperations: TransactionOperations,
 ) {
 
@@ -53,29 +51,19 @@ class PathwayAndStatusService(
     // Seed the Prisoner data into the DB
     val existingPrisonerEntity = prisonerRepository.findByNomsId(nomsId)
     if (existingPrisonerEntity == null) {
-      val resolvedCrn = crn ?: resettlementPassportDeliusApiService.getCrn(nomsId)
-      return createPrisoner(nomsId, resolvedCrn, prisonId)
-    } else if (existingPrisonerEntity.crn == null) {
-      // If the CRN failed to be added last time, try again
-      val resolvedCrn = crn ?: resettlementPassportDeliusApiService.getCrn(nomsId)
-      if (resolvedCrn != null) {
-        existingPrisonerEntity.crn = resolvedCrn
-        return prisonerRepository.save(existingPrisonerEntity)
-      }
+      return createPrisoner(nomsId, prisonId)
     }
     return existingPrisonerEntity
   }
 
   internal fun createPrisoner(
     nomsId: String,
-    resolvedCrn: String?,
     prisonId: String?,
   ): PrisonerEntity = try {
     transactionOperations.execute {
       val newPrisonerEntity = prisonerRepository.save(
         PrisonerEntity(
           nomsId = nomsId,
-          crn = resolvedCrn,
           prisonId = prisonId,
         ),
       )

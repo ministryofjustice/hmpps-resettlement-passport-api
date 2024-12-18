@@ -77,6 +77,7 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
   fun `Get All Appointments  negative Page number`() {
     val nomsId = "G1458GV"
     val crn = "CRN1"
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetAppointmentsFromCRN(crn, 404)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/appointments?page=-1&size=50")
@@ -93,6 +94,7 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
   fun `Get All Prisoners  negative Page size`() {
     val nomsId = "G1458GV"
     val crn = "CRN1"
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetAppointmentsFromCRN(crn, 404)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/appointments?page=0&size=-50")
@@ -110,6 +112,7 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
   fun `Get All Prisoners with no page and no size as Internal Error`() {
     val nomsId = "G1458GV"
     val crn = "CRN1"
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetAppointmentsFromCRN(crn, 500)
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/appointments?page=0&size=50")
@@ -159,6 +162,7 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-prisoners-2.sql")
   fun `Create Appointment happy path`() {
+    deliusApiMockServer.stubGetCrnFromNomsId("G1458GV", "123")
     deliusApiMockServer.stubCreateAppointmentOK("123")
     val nomsId = "G1458GV"
     val expectedNotes = """

@@ -11,7 +11,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/risk-scores.json")
-
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     arnApiMockServer.stubGet("/risks/crn/$crn/predictors/all", 200, "testdata/arn-api/crn-risk-predictors-1.json")
 
     webTestClient.get()
@@ -42,7 +42,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/risk-scores.json")
-
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     arnApiMockServer.stubGet("/risks/crn/$crn/predictors/all", 200, "testdata/arn-api/crn-risk-predictors-2.json")
 
     webTestClient.get()
@@ -69,8 +69,8 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(404)
       .jsonPath("errorCode").isEmpty
       .jsonPath("userMessage")
-      .isEqualTo("Resource not found. Check request parameters - Cannot find CRN for NomsId abc in database")
-      .jsonPath("developerMessage").isEqualTo("Cannot find CRN for NomsId abc in database")
+      .isEqualTo("Resource not found. Check request parameters - Cannot find CRN for NomsId abc in delius")
+      .jsonPath("developerMessage").isEqualTo("Cannot find CRN for NomsId abc in delius")
       .jsonPath("moreInfo").isEmpty
   }
 
@@ -79,7 +79,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
   fun `Get risk scores - no data found in ARN API`() {
     val nomsId = "123"
     val crn = "abc"
-
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     arnApiMockServer.stubGet("/risks/crn/$crn/predictors/all", 404, null)
 
     webTestClient.get()
@@ -102,7 +102,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
   fun `Get risk scores - internal server error`() {
     val nomsId = "123"
     val crn = "abc"
-
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     arnApiMockServer.stubGet("/risks/crn/$crn/predictors/all", 500, null)
 
     webTestClient.get()
@@ -148,7 +148,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val crn = "abc"
     val expectedOutput = readFile("testdata/expectation/risk-rosh.json")
-
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     arnApiMockServer.stubGet("/risks/crn/$crn", 200, "testdata/arn-api/crn-risks.json")
 
     webTestClient.get()
@@ -187,8 +187,8 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(404)
       .jsonPath("errorCode").isEmpty
       .jsonPath("userMessage")
-      .isEqualTo("Resource not found. Check request parameters - Cannot find CRN for NomsId abc in database")
-      .jsonPath("developerMessage").isEqualTo("Cannot find CRN for NomsId abc in database")
+      .isEqualTo("Resource not found. Check request parameters - Cannot find CRN for NomsId abc in delius")
+      .jsonPath("developerMessage").isEqualTo("Cannot find CRN for NomsId abc in delius")
       .jsonPath("moreInfo").isEmpty
   }
 
@@ -197,7 +197,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
   fun `Get RoSH - no data found in ARN API`() {
     val nomsId = "123"
     val crn = "abc"
-
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     arnApiMockServer.stubGet("/risks/crn/$crn", 404, null)
 
     webTestClient.get()
@@ -220,7 +220,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
   fun `Get RoSH scores - internal server error`() {
     val nomsId = "123"
     val crn = "abc"
-
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     arnApiMockServer.stubGet("/risks/crn/$crn", 500, null)
 
     webTestClient.get()
@@ -308,8 +308,8 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(404)
       .jsonPath("errorCode").isEmpty
       .jsonPath("userMessage")
-      .isEqualTo("Resource not found. Check request parameters - Cannot find CRN for NomsId abc in database")
-      .jsonPath("developerMessage").isEqualTo("Cannot find CRN for NomsId abc in database")
+      .isEqualTo("Resource not found. Check request parameters - Cannot find CRN for NomsId abc in delius")
+      .jsonPath("developerMessage").isEqualTo("Cannot find CRN for NomsId abc in delius")
       .jsonPath("moreInfo").isEmpty
   }
 
@@ -318,7 +318,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
   fun `Get MAPPA - no data found in Delius API`() {
     val nomsId = "123"
     val crn = "abc"
-
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGet("/probation-cases/$crn/mappa", 404, null)
 
     webTestClient.get()
@@ -331,8 +331,8 @@ class RisksIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(404)
       .jsonPath("errorCode").isEmpty
       .jsonPath("userMessage")
-      .isEqualTo("Resource not found. Check request parameters - Cannot find MAPPA Data for NomsId 123 / CRN abc in Delius API")
-      .jsonPath("developerMessage").isEqualTo("Cannot find MAPPA Data for NomsId 123 / CRN abc in Delius API")
+      .isEqualTo("Resource not found. Check request parameters - Cannot find MAPPA Data for CRN abc in Delius API")
+      .jsonPath("developerMessage").isEqualTo("Cannot find MAPPA Data for CRN abc in Delius API")
       .jsonPath("moreInfo").isEmpty
   }
 
@@ -341,7 +341,7 @@ class RisksIntegrationTest : IntegrationTestBase() {
   fun `Get MAPPA scores - internal server error`() {
     val nomsId = "123"
     val crn = "abc"
-
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGet("/probation-cases/$crn/mappa", 500, null)
 
     webTestClient.get()

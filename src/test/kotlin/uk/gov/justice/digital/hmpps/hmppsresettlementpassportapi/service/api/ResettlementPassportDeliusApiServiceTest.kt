@@ -10,14 +10,12 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.mock
 import org.springframework.boot.test.json.JsonContentAssert
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusCreateAppointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusCreateAppointmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.jacksonCodecsConfigurer
 import java.time.Duration
@@ -36,8 +34,7 @@ class ResettlementPassportDeliusApiServiceTest {
     val webClient = WebClient.builder().baseUrl(mockWebServer.url("/").toUrl().toString())
       .codecs(jacksonCodecsConfigurer)
       .build()
-    val prisonerRepository: PrisonerRepository = mock()
-    rpDeliusApiService = ResettlementPassportDeliusApiService(webClient, prisonerRepository)
+    rpDeliusApiService = ResettlementPassportDeliusApiService(webClient)
   }
 
   @AfterEach

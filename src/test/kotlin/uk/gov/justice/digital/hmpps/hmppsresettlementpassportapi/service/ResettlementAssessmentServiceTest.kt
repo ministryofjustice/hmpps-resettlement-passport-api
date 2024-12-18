@@ -216,7 +216,7 @@ class ResettlementAssessmentServiceTest {
   fun `test getResettlementAssessmentSummaryByNomsId - returns assessment- combination of not started and complete`() {
     val nomsId = "GY3245"
     val assessmentType = ResettlementAssessmentType.BCST2
-    val prisonerEntity = PrisonerEntity(1, "GY3245", testDate, "crn", "xyz1")
+    val prisonerEntity = PrisonerEntity(1, "GY3245", testDate, "xyz1")
     val accommodationResettlementAssessmentEntity =
       createNotStartedResettlementAssessmentEntity(1, Pathway.ACCOMMODATION)
     val attitudesResettlementAssessmentEntity =
@@ -265,7 +265,7 @@ class ResettlementAssessmentServiceTest {
   fun `test getResettlementAssessmentSummaryByNomsId with BCST2 type - returns assessment with not started statuses for pathways with null value in resettlement_assessment table`() {
     val nomsId = "GY3245"
     val assessmentType = ResettlementAssessmentType.BCST2
-    val prisonerEntity = PrisonerEntity(1, "GY3245", testDate, "crn", "xyz1")
+    val prisonerEntity = PrisonerEntity(1, "GY3245", testDate, "xyz1")
     val accommodationResettlementAssessmentEntity =
       createNotStartedResettlementAssessmentEntity(1, Pathway.ACCOMMODATION)
     val attitudesResettlementAssessmentEntity =
@@ -310,7 +310,7 @@ class ResettlementAssessmentServiceTest {
   fun `test getResettlementAssessmentSummaryByNomsId with RESETTLEMENT_PLAN type - returns assessment with not started statuses for pathways with null value in resettlement_assessment`() {
     val nomsId = "GY3245"
     val assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN
-    val prisonerEntity = PrisonerEntity(1, "GY3245", testDate, "crn", "xyz1")
+    val prisonerEntity = PrisonerEntity(1, "GY3245", testDate, "xyz1")
     val accommodationResettlementAssessmentEntity =
       createNotStartedResettlementAssessmentEntity(1, Pathway.ACCOMMODATION)
     val attitudesResettlementAssessmentEntity =
@@ -705,7 +705,6 @@ class ResettlementAssessmentServiceTest {
       nomsId,
       LocalDateTime.now(),
       null,
-      null,
     )
 
     Mockito.`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisoner)
@@ -731,7 +730,6 @@ class ResettlementAssessmentServiceTest {
       prisonerId,
       nomsId,
       LocalDateTime.now(),
-      null,
       null,
     )
 
@@ -766,7 +764,6 @@ class ResettlementAssessmentServiceTest {
       prisonerId,
       nomsId,
       LocalDateTime.now(),
-      null,
       null,
     )
 

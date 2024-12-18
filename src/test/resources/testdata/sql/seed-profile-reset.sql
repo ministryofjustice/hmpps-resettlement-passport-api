@@ -1,5 +1,5 @@
-INSERT INTO prisoner (id, noms_id, creation_date, crn, prison_id) VALUES
-    (1, 'ABC1234', '2023-08-16 12:21:38.709', '123', 'MDI');
+INSERT INTO prisoner (id, noms_id, creation_date, prison_id) VALUES
+    (1, 'ABC1234', '2023-08-16 12:21:38.709', 'MDI');
 
 INSERT INTO pathway_status (id, prisoner_id, pathway, status, updated_date) VALUES
     (1, 1, 'ACCOMMODATION', 'IN_PROGRESS', '2023-08-16 12:21:44.234');

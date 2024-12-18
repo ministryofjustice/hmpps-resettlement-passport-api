@@ -81,7 +81,6 @@ class PathwayIntegrationTest : IntegrationTestBase() {
       1,
       "G4274GN",
       LocalDateTime.parse("2023-08-16T12:21:38.709"),
-      "123",
       "MDI",
     )
 

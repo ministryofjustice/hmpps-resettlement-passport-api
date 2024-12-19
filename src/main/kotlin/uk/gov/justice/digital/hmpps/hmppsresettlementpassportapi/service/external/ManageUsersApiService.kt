@@ -23,7 +23,7 @@ class ManageUsersApiService(val manageUsersWebClientCredentials: WebClient) {
     do {
       val data = manageUsersWebClientCredentials.get()
         .uri(
-          "/prisonusers/find-by-caseload-and-role?activeCaseload={activeCaseload}&roleCode={roleCode}&status={status}&page={page}&size={size}&sort={sort}",
+          "/prisonusers/find-by-caseload-and-role?activeCaseload={activeCaseload}&roleCode={roleCode}&status={status}&page={page}&size={size}&sort={sort}&activeCaseloadOnly=false",
           mapOf(
             "activeCaseload" to prisonId,
             // NB: API allows up 3,000 results per page

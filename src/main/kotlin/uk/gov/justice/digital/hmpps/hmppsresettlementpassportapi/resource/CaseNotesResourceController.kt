@@ -11,7 +11,6 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -20,7 +19,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteTy
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesMeta
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseNotesService
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
@@ -78,13 +76,8 @@ class CaseNotesResourceController(
     @Parameter(description = "Get Case notes created by given author UserId for a specific pathway ")
     @RequestParam(value = "createdByUserId", defaultValue = "0")
     createdByUserId: Int,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ): CaseNotesList {
-    auditService.audit(AuditAction.CREATE_CASE_NOTES, nomsId, auth, null)
-    return caseNotesService.getCaseNotesByNomsId(nomsId, page, size, sort, days, pathwayType, createdByUserId)
-  }
+  ): CaseNotesList =
+    caseNotesService.getCaseNotesByNomsId(nomsId, page, size, sort, days, pathwayType, createdByUserId)
 
   @GetMapping("/{nomsId}/creators/{pathway}")
   @Operation(
@@ -124,11 +117,5 @@ class CaseNotesResourceController(
       description = "Get case notes creators for a specific pathway or all case notes, supported values are All, ACCOMMODATION, ATTITUDES_THINKING_AND_BEHAVIOUR, CHILDREN_FAMILIES_AND_COMMUNITY, DRUGS_AND_ALCOHOL, EDUCATION_SKILLS_AND_WORK, FINANCE_AND_ID, HEALTH",
     )
     pathway: CaseNoteType,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ): List<CaseNotesMeta> {
-    auditService.audit(AuditAction.GET_CASE_NOTES, nomsId, auth, null)
-    return caseNotesService.getCaseNotesCreatorsByPathway(nomsId, pathway)
-  }
+  ): List<CaseNotesMeta> = caseNotesService.getCaseNotesCreatorsByPathway(nomsId, pathway)
 }

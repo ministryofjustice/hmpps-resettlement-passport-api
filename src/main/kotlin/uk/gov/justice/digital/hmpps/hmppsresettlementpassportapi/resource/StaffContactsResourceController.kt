@@ -10,19 +10,15 @@ import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.StaffContacts
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.StaffContactsService
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 
 @RestController
 @RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
-class StaffContactsResourceController(private val staffContactsService: StaffContactsService, private val auditService: AuditService) {
+class StaffContactsResourceController(private val staffContactsService: StaffContactsService) {
 
   @GetMapping("/{nomsId}/staff-contacts")
   @Operation(
@@ -66,11 +62,5 @@ class StaffContactsResourceController(private val staffContactsService: StaffCon
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ): StaffContacts {
-    auditService.audit(AuditAction.GET_STAFF_CONTACTS, nomsId, auth, null)
-    return staffContactsService.getStaffContacts(nomsId)
-  }
+  ) = staffContactsService.getStaffContacts(nomsId)
 }

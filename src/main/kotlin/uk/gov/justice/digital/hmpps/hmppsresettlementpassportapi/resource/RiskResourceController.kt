@@ -11,7 +11,6 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
@@ -19,8 +18,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.MappaData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.RiskScore
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.RoshData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.RiskService
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 
 @RestController
 @Validated
@@ -28,7 +25,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.A
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class RiskResourceController(
   private val riskService: RiskService,
-  private val auditService: AuditService,
 ) {
 
   @GetMapping("{nomsId}/risk/scores", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -68,13 +64,7 @@ class RiskResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ): RiskScore {
-    auditService.audit(AuditAction.GET_RISK_SCORES, nomsId, auth, null)
-    return riskService.getRiskScoresByNomsId(nomsId)
-  }
+  ): RiskScore = riskService.getRiskScoresByNomsId(nomsId)
 
   @GetMapping("{nomsId}/risk/rosh", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
@@ -113,13 +103,7 @@ class RiskResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ): RoshData {
-    auditService.audit(AuditAction.GET_ROSH_DATA, nomsId, auth, null)
-    return riskService.getRoshDataByNomsId(nomsId)
-  }
+  ): RoshData = riskService.getRoshDataByNomsId(nomsId)
 
   @GetMapping("{nomsId}/risk/mappa", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
@@ -158,11 +142,5 @@ class RiskResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ): MappaData {
-    auditService.audit(AuditAction.GET_MAPPA_DATA, nomsId, auth, null)
-    return riskService.getMappaDataByNomsId(nomsId)
-  }
+  ): MappaData = riskService.getMappaDataByNomsId(nomsId)
 }

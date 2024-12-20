@@ -73,16 +73,10 @@ class LicenceConditionResourceController(
     nomsId: String,
     @RequestParam(defaultValue = "false", required = false)
     includeChangeNotify: Boolean,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ): LicenceConditionsWithMetaData? {
-    auditService.audit(AuditAction.GET_LICENCE_CONDITION, nomsId, auth, null)
-    return if (includeChangeNotify) {
-      licenceConditionService.getLicenceConditionsAndUpdateAudit(nomsId)
-    } else {
-      LicenceConditionsWithMetaData(licenceConditionService.getLicenceConditionsByNomsId(nomsId))
-    }
+  ): LicenceConditionsWithMetaData? = if (includeChangeNotify) {
+    licenceConditionService.getLicenceConditionsAndUpdateAudit(nomsId)
+  } else {
+    LicenceConditionsWithMetaData(licenceConditionService.getLicenceConditionsByNomsId(nomsId))
   }
 
   @GetMapping(
@@ -144,13 +138,7 @@ class LicenceConditionResourceController(
     @PathVariable("conditionId")
     @Parameter(required = true)
     conditionId: String,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ): ByteArray {
-    auditService.audit(AuditAction.GET_LICENCE_CONDITION_IMAGE, nomsId, auth, null)
-    return licenceConditionService.getImageFromLicenceIdAndConditionId(licenceId, conditionId)
-  }
+  ): ByteArray = licenceConditionService.getImageFromLicenceIdAndConditionId(licenceId, conditionId)
 
   @Operation(
     summary = "Mark licence conditions as seen for one person",

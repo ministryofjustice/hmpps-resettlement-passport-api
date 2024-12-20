@@ -1,5 +1,4 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource
-
 import dev.forkhandles.result4k.Result
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -116,11 +115,7 @@ class DocumentStorageResourceController(
     @PathVariable("documentId")
     @Parameter(required = true)
     documentId: Long,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
   ): ResponseEntity<InputStreamResource> {
-    auditService.audit(AuditAction.GET_DOCUMENT, nomsId, auth, null)
     val stream = uploadService.getDocumentByNomisIdAndDocumentId(nomsId, documentId)
     return ResponseEntity.ok()
       .contentType(MediaType.APPLICATION_PDF)
@@ -166,11 +161,7 @@ class DocumentStorageResourceController(
     nomsId: String,
     @RequestParam(defaultValue = "LICENCE_CONDITIONS", required = false)
     category: DocumentCategory,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
   ): ResponseEntity<InputStreamResource> {
-    auditService.audit(AuditAction.GET_DOCUMENT_LATEST, nomsId, auth, null)
     val stream = uploadService.getLatestDocumentByCategory(nomsId, category)
     return ResponseEntity.ok()
       .contentType(MediaType.APPLICATION_PDF)
@@ -211,14 +202,8 @@ class DocumentStorageResourceController(
     nomsId: String,
     @RequestParam(required = false)
     category: DocumentCategory?,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ): Collection<DocumentResponse> {
-    auditService.audit(AuditAction.GET_DOCUMENTS_LIST, nomsId, auth, null)
-    return uploadService.listDocuments(nomsId, category)
-      .map { DocumentResponse(it.id!!, it.originalDocumentFileName, it.creationDate, it.category) }
-  }
+  ): Collection<DocumentResponse> = uploadService.listDocuments(nomsId, category)
+    .map { DocumentResponse(it.id!!, it.originalDocumentFileName, it.creationDate, it.category) }
 
   @DeleteMapping("/documents/latest")
   @Operation(

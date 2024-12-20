@@ -11,15 +11,12 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CRSReferralResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CRSReferralService
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 
 @RestController
 @Validated
@@ -27,7 +24,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.A
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class CRSReferralsResourceController(
   private val crsReferralService: CRSReferralService,
-  private val auditService: AuditService,
 ) {
 
   @GetMapping("/{nomsId}/crs-referrals/{pathway}")
@@ -64,13 +60,7 @@ class CRSReferralsResourceController(
     @PathVariable("pathway")
     @Parameter(required = true)
     pathway: Pathway,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ): CRSReferralResponse {
-    auditService.audit(AuditAction.GET_CRS_REFERRALS, nomsId, auth, null)
-    return crsReferralService.getCRSReferralsByPathway(nomsId, setOf(pathway))
-  }
+  ): CRSReferralResponse = crsReferralService.getCRSReferralsByPathway(nomsId, setOf(pathway))
 
   @GetMapping("/{nomsId}/crs-referrals")
   @Operation(summary = "Get all crs referrals", description = "Get crs referrals for all pathways from Interventions service")
@@ -102,11 +92,5 @@ class CRSReferralsResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ): CRSReferralResponse {
-    auditService.audit(AuditAction.GET_CRS_REFERRALS_ALL, nomsId, auth, null)
-    return crsReferralService.getAllPathwayCRSReferralsByNomsId(nomsId)
-  }
+  ): CRSReferralResponse = crsReferralService.getAllPathwayCRSReferralsByNomsId(nomsId)
 }

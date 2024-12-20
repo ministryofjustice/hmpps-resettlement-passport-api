@@ -88,13 +88,7 @@ class TodoResourceController(private val todoService: TodoService, private val a
     sortField: String? = null,
     @RequestParam(required = false)
     sortDirection: Sort.Direction? = null,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ): List<TodoEntity> {
-    auditService.audit(AuditAction.GET_TODO_LIST, nomsId, auth, null)
-    return todoService.getList(nomsId, sortField, sortDirection)
-  }
+  ) = todoService.getList(nomsId, sortField, sortDirection)
 
   @DeleteMapping("/{nomsId}/todo/{id}")
   @Operation(summary = "Delete a todo list item for a person")
@@ -205,13 +199,7 @@ class TodoResourceController(private val todoService: TodoService, private val a
     @PathVariable("nomsId")
     nomsId: String,
     @PathVariable("id") id: UUID,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ): TodoEntity {
-    auditService.audit(AuditAction.GET_TODO, nomsId, auth, null)
-    return todoService.getOne(nomsId, id)
-  }
+  ): TodoEntity = todoService.getOne(nomsId, id)
 }
 
 data class TodoRequest(

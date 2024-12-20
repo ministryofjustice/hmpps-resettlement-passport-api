@@ -11,14 +11,11 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.WorkReadinessStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.EducationWorkSkillsService
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 
 @RestController
 @Validated
@@ -26,7 +23,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.A
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class EducationWorkSkillsResourceController(
   private val educationWorkSkillsService: EducationWorkSkillsService,
-  private val auditService: AuditService,
 ) {
   @GetMapping("/{nomsId}/work-readiness")
   @Operation(summary = "Get work readiness data", description = "Get work readiness data status and data Education Employment API")
@@ -58,11 +54,5 @@ class EducationWorkSkillsResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ): WorkReadinessStatus {
-    auditService.audit(AuditAction.GET_WORK_SKILLS, nomsId, auth, null)
-    return educationWorkSkillsService.getWorkReadinessData(nomsId)
-  }
+  ): WorkReadinessStatus = educationWorkSkillsService.getWorkReadinessData(nomsId)
 }

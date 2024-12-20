@@ -70,13 +70,7 @@ class AssessmentResourceController(private val assessmentService: AssessmentServ
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ): AssessmentEntity? {
-    auditService.audit(AuditAction.GET_ASSESSMENT, nomsId, auth, null)
-    return assessmentService.getAssessmentByNomsId(nomsId)
-  }
+  ) = assessmentService.getAssessmentByNomsId(nomsId)
 
   @PostMapping("/{nomsId}/assessment", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create assessment", description = "Create assessment")

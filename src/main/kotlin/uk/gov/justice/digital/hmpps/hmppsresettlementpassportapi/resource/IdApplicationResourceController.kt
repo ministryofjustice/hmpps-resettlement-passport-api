@@ -225,11 +225,5 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ): List<IdApplicationEntity?> {
-    auditService.audit(AuditAction.GET_ID_APPLICATION_ALL, nomsId, auth, null)
-    return idApplicationService.getAllIdApplicationsByNomsId(nomsId)
-  }
+  ) = idApplicationService.getAllIdApplicationsByNomsId(nomsId)
 }

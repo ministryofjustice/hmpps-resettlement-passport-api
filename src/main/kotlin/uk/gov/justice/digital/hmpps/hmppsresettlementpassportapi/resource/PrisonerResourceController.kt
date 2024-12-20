@@ -21,8 +21,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoner
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PrisonerService
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 
 @RestController
 @Validated
@@ -30,7 +28,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.A
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class PrisonerResourceController(
   private val prisonerService: PrisonerService,
-  private val auditService: AuditService,
 ) {
 
   @GetMapping("/prison/{prisonId}/prisoners", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -110,26 +107,9 @@ class PrisonerResourceController(
     @Parameter(description = "filter on resettlement worker")
     @RequestParam(value = "workerId")
     workerId: String?,
-    @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
-  ): PrisonersList {
-    return prisonerService.getPrisonersByPrisonId(
-      term,
-      prisonId,
-      days,
-      pathwayView,
-      pathwayStatus,
-      assessmentRequired,
-      page,
-      size,
-      sort,
-      watchList,
-      includePastReleaseDates,
-      auth,
-      workerId,
-    )
-  }
+  ): PrisonersList = prisonerService.getPrisonersByPrisonId(term, prisonId, days, pathwayView, pathwayStatus, assessmentRequired, page, size, sort, watchList, includePastReleaseDates, auth, workerId)
 
   @GetMapping("/prisoner/{nomsId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get prisoner by noms Id", description = "Prisoner Details based on noms Id")
@@ -169,13 +149,9 @@ class PrisonerResourceController(
     @Parameter(description = "Include prisoners with profile tags in results")
     @RequestParam(value = "includeProfileTags")
     includeProfileTags: Boolean = false,
-    @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
-  ): Prisoner {
-    auditService.audit(AuditAction.GET_PRISONER_DETAILS, nomsId, auth, null)
-    return prisonerService.getPrisonerDetailsByNomsId(nomsId, includeProfileTags, auth)
-  }
+  ): Prisoner = prisonerService.getPrisonerDetailsByNomsId(nomsId, includeProfileTags, auth)
 
   @GetMapping(
     "/prisoner/{nomsId}/image/{id}",
@@ -224,11 +200,5 @@ class PrisonerResourceController(
     @PathVariable("id")
     @Parameter(required = true)
     id: Int,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ): ByteArray? {
-    auditService.audit(AuditAction.GET_PRISONER_IMAGE, nomsId, auth, null)
-    return prisonerService.getPrisonerImageData(nomsId, id)
-  }
+  ): ByteArray? = prisonerService.getPrisonerImageData(nomsId, id)
 }

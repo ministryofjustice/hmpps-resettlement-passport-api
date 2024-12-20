@@ -71,16 +71,10 @@ class AppointmentsResourceController(
     futureOnly: Boolean,
     @RequestParam(defaultValue = "true", required = false)
     includePreRelease: Boolean,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ): AppointmentsList {
-    auditService.audit(AuditAction.GET_APPOINTMENTS, nomsId, auth, null)
-    return if (futureOnly) {
-      appointmentsService.getAppointmentsByNomsId(nomsId, LocalDate.now(), LocalDate.now().plusDays(365), includePreRelease)
-    } else {
-      appointmentsService.getAppointmentsByNomsId(nomsId, LocalDate.now().minusDays(365), LocalDate.now().plusDays(365), includePreRelease)
-    }
+  ): AppointmentsList = if (futureOnly) {
+    appointmentsService.getAppointmentsByNomsId(nomsId, LocalDate.now(), LocalDate.now().plusDays(365), includePreRelease)
+  } else {
+    appointmentsService.getAppointmentsByNomsId(nomsId, LocalDate.now().minusDays(365), LocalDate.now().plusDays(365), includePreRelease)
   }
 
   @PostMapping("/{nomsId}/appointments", produces = [MediaType.APPLICATION_JSON_VALUE])

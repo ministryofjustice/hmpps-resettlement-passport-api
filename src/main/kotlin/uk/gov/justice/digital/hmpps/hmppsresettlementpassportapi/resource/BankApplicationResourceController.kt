@@ -70,13 +70,7 @@ class BankApplicationResourceController(private val bankApplicationService: Bank
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ): BankApplicationResponse? {
-    auditService.audit(AuditAction.GET_ASSESSMENT, nomsId, auth, null)
-    return bankApplicationService.getBankApplicationByNomsId(nomsId)
-  }
+  ) = bankApplicationService.getBankApplicationByNomsId(nomsId)
 
   @PostMapping("/{nomsId}/bankapplication", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create assessment", description = "Create assessment")

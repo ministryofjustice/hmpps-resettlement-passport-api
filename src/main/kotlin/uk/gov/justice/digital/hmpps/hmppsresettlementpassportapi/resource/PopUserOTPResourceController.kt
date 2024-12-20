@@ -79,11 +79,7 @@ class PopUserOTPResourceController(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     nomsId: String,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
   ): PoPUserOTP? {
-    auditService.audit(AuditAction.GET_PYF_USER_OTP, nomsId, auth, null)
     val prisonerEntity = prisonerService.getPrisonerEntity(nomsId)
     return popUserOTPService.getOTPByPrisoner(prisonerEntity)
   }

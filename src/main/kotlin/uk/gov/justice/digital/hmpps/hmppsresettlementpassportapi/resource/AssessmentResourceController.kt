@@ -14,17 +14,21 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Assessment
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.AssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AssessmentService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
-class AssessmentResourceController(private val assessmentService: AssessmentService) {
+class AssessmentResourceController(private val assessmentService: AssessmentService, private val auditService: AuditService) {
 
   @GetMapping("/{nomsId}/assessment", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get assessment by noms Id", description = "Assessment based on noms Id")
@@ -66,7 +70,13 @@ class AssessmentResourceController(private val assessmentService: AssessmentServ
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-  ) = assessmentService.getAssessmentByNomsId(nomsId)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): AssessmentEntity? {
+    auditService.audit(AuditAction.GET_ASSESSMENT, nomsId, auth, null)
+    return assessmentService.getAssessmentByNomsId(nomsId)
+  }
 
   @PostMapping("/{nomsId}/assessment", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create assessment", description = "Create assessment")
@@ -104,7 +114,13 @@ class AssessmentResourceController(private val assessmentService: AssessmentServ
     nomsId: String,
     @RequestBody
     assessment: Assessment,
-  ) = assessmentService.createAssessment(assessment)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): AssessmentEntity {
+    auditService.audit(AuditAction.CREATE_ASSESSMENT, nomsId, auth, null)
+    return assessmentService.createAssessment(assessment)
+  }
 
   @DeleteMapping("/{nomsId}/assessment/{assessmentId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create assessment", description = "Create assessment")
@@ -143,7 +159,11 @@ class AssessmentResourceController(private val assessmentService: AssessmentServ
     @PathVariable("assessmentId")
     @Parameter(required = true)
     assessmentId: String,
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
   ) {
-    assessmentService.deleteAssessmentByNomsId(nomsId, assessmentId)
+    auditService.audit(AuditAction.DELETE_ASSESSMENT, nomsId, auth, null)
+    return assessmentService.deleteAssessmentByNomsId(nomsId, assessmentId)
   }
 }

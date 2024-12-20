@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -24,14 +25,16 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.TodoEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.TodoService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/person", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
-class TodoResourceController(private val todoService: TodoService) {
+class TodoResourceController(private val todoService: TodoService, private val auditService: AuditService) {
   @PostMapping("/{nomsId}/todo", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create todo entry")
   @ApiResponses(
@@ -54,7 +57,13 @@ class TodoResourceController(private val todoService: TodoService) {
     nomsId: String,
     @RequestBody
     createRequest: TodoRequest,
-  ) = todoService.createEntry(nomsId, createRequest)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): TodoEntity {
+    auditService.audit(AuditAction.CREATE_TODO, nomsId, auth, null)
+    return todoService.createEntry(nomsId, createRequest)
+  }
 
   @GetMapping("/{nomsId}/todo", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get todo list for a person")
@@ -79,7 +88,13 @@ class TodoResourceController(private val todoService: TodoService) {
     sortField: String? = null,
     @RequestParam(required = false)
     sortDirection: Sort.Direction? = null,
-  ) = todoService.getList(nomsId, sortField, sortDirection)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): List<TodoEntity> {
+    auditService.audit(AuditAction.GET_TODO_LIST, nomsId, auth, null)
+    return todoService.getList(nomsId, sortField, sortDirection)
+  }
 
   @DeleteMapping("/{nomsId}/todo/{id}")
   @Operation(summary = "Delete a todo list item for a person")
@@ -102,7 +117,13 @@ class TodoResourceController(private val todoService: TodoService) {
     @PathVariable("nomsId")
     nomsId: String,
     @PathVariable("id") id: UUID,
-  ) = todoService.deleteItem(nomsId, id)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ) {
+    auditService.audit(AuditAction.DELETE_TODO, nomsId, auth, null)
+    return todoService.deleteItem(nomsId, id)
+  }
 
   @PutMapping("/{nomsId}/todo/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Update a todo list item for a person")
@@ -126,7 +147,13 @@ class TodoResourceController(private val todoService: TodoService) {
     @PathVariable("id") id: UUID,
     @RequestBody
     request: TodoRequest,
-  ) = todoService.updateItem(nomsId, id, request)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): TodoEntity {
+    auditService.audit(AuditAction.UPDATE_TODO, nomsId, auth, null)
+    return todoService.updateItem(nomsId, id, request)
+  }
 
   @PatchMapping("/{nomsId}/todo/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Patch a todo list item for a person")
@@ -150,7 +177,13 @@ class TodoResourceController(private val todoService: TodoService) {
     @PathVariable("id") id: UUID,
     @RequestBody
     request: TodoPatchRequest,
-  ) = todoService.patchItem(nomsId, id, request)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): TodoEntity {
+    auditService.audit(AuditAction.COMPLETE_TODO, nomsId, auth, null)
+    return todoService.patchItem(nomsId, id, request)
+  }
 
   @GetMapping("/{nomsId}/todo/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get a single todo list item for a person")
@@ -172,7 +205,13 @@ class TodoResourceController(private val todoService: TodoService) {
     @PathVariable("nomsId")
     nomsId: String,
     @PathVariable("id") id: UUID,
-  ): TodoEntity = todoService.getOne(nomsId, id)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): TodoEntity {
+    auditService.audit(AuditAction.GET_TODO, nomsId, auth, null)
+    return todoService.getOne(nomsId, id)
+  }
 }
 
 data class TodoRequest(

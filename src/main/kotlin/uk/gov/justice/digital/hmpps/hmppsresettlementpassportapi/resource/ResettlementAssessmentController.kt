@@ -384,7 +384,7 @@ class ResettlementAssessmentController(
     @RequestHeader("Authorization")
     auth: String,
   ): LatestResettlementAssessmentResponse {
-    auditService.audit(AuditAction.GET_ASSESSMENT, nomsId, auth, buildDetails(null, pathway))
+    auditService.audit(AuditAction.GET_LATEST_ASSESSMENT, nomsId, auth, buildDetails(null, pathway))
     return resettlementAssessmentService.getLatestResettlementAssessmentByNomsIdAndPathway(nomsId, pathway, resettlementAssessmentStrategy)
   }
 

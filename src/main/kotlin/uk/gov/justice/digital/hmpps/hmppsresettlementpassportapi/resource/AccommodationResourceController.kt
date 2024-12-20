@@ -11,11 +11,14 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Accommodation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AccommodationService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 
 @RestController
 @Validated
@@ -23,6 +26,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.Accommo
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class AccommodationResourceController(
   private val accommodationService: AccommodationService,
+  private val auditService: AuditService,
 ) {
 
   @GetMapping("/{nomsId}/accommodation")
@@ -55,5 +59,11 @@ class AccommodationResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-  ): Accommodation = accommodationService.getAccommodationMainAddressByNomsId(nomsId)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): Accommodation {
+    auditService.audit(AuditAction.GET_ACCOMMODATION_MAIN_ADDRESS, nomsId, auth, null)
+    return accommodationService.getAccommodationMainAddressByNomsId(nomsId)
+  }
 }

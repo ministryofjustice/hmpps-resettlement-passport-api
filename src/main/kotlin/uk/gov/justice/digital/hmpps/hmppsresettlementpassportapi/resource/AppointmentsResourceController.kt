@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
@@ -21,6 +22,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorRes
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.AppointmentsList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CreateAppointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AppointmentsService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 import java.time.LocalDate
 
 @RestController
@@ -29,6 +32,7 @@ import java.time.LocalDate
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class AppointmentsResourceController(
   private val appointmentsService: AppointmentsService,
+  private val auditService: AuditService,
 ) {
 
   @GetMapping("/{nomsId}/appointments")
@@ -67,10 +71,16 @@ class AppointmentsResourceController(
     futureOnly: Boolean,
     @RequestParam(defaultValue = "true", required = false)
     includePreRelease: Boolean,
-  ): AppointmentsList = if (futureOnly) {
-    appointmentsService.getAppointmentsByNomsId(nomsId, LocalDate.now(), LocalDate.now().plusDays(365), includePreRelease)
-  } else {
-    appointmentsService.getAppointmentsByNomsId(nomsId, LocalDate.now().minusDays(365), LocalDate.now().plusDays(365), includePreRelease)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): AppointmentsList {
+    auditService.audit(AuditAction.GET_APPOINTMENTS, nomsId, auth, null)
+    return if (futureOnly) {
+      appointmentsService.getAppointmentsByNomsId(nomsId, LocalDate.now(), LocalDate.now().plusDays(365), includePreRelease)
+    } else {
+      appointmentsService.getAppointmentsByNomsId(nomsId, LocalDate.now().minusDays(365), LocalDate.now().plusDays(365), includePreRelease)
+    }
   }
 
   @PostMapping("/{nomsId}/appointments", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -112,5 +122,8 @@ class AppointmentsResourceController(
     @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
-  ) = appointmentsService.createAppointment(appointment, nomsId, auth)
+  ): ResponseEntity<Void> {
+    auditService.audit(AuditAction.CREATE_APPOINTMENTS, nomsId, auth, null)
+    return appointmentsService.createAppointment(appointment, nomsId, auth)
+  }
 }

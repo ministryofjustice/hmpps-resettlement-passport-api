@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
@@ -24,6 +25,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.OneLoginData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PoPUserOTPService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PrisonerService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 
 private val logger = KotlinLogging.logger {}
 
@@ -34,6 +37,7 @@ private val logger = KotlinLogging.logger {}
 class PopUserOTPResourceController(
   private val popUserOTPService: PoPUserOTPService,
   private val prisonerService: PrisonerService,
+  private val auditService: AuditService,
 ) {
 
   @GetMapping("/{nomsId}/otp", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -75,7 +79,11 @@ class PopUserOTPResourceController(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     nomsId: String,
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
   ): PoPUserOTP? {
+    auditService.audit(AuditAction.GET_PYF_USER_OTP, nomsId, auth, null)
     val prisonerEntity = prisonerService.getPrisonerEntity(nomsId)
     return popUserOTPService.getOTPByPrisoner(prisonerEntity)
   }
@@ -114,7 +122,11 @@ class PopUserOTPResourceController(
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     nomsId: String,
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
   ): PoPUserOTP {
+    auditService.audit(AuditAction.CREATE_PYF_USER_OTP, nomsId, auth, null)
     val prisonerEntity = prisonerService.getPrisonerEntity(nomsId)
     return popUserOTPService.createPoPUserOTP(prisonerEntity)
   }
@@ -153,9 +165,13 @@ class PopUserOTPResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
   ) {
     val prisonerEntity = prisonerService.getPrisonerEntity(nomsId)
     val popUserOTPEntity = popUserOTPService.getPoPUserOTPByPrisoner(prisonerEntity)
+    auditService.audit(AuditAction.DELETE_PYF_USER_OTP, nomsId, auth, null)
     popUserOTPService.deletePoPUserOTP(popUserOTPEntity)
   }
 
@@ -192,6 +208,9 @@ class PopUserOTPResourceController(
   fun verifyOTPByOneLoginURN(
     @RequestBody
     oneLoginUserData: OneLoginData,
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
   ): PoPUserResponse {
     logger.debug { "In verifyOTPByOneLoginURN" }
     return popUserOTPService.getPoPUserVerified(oneLoginUserData)
@@ -227,6 +246,14 @@ class PopUserOTPResourceController(
       ),
     ],
   )
-  fun verifyByKnowledgeAnswers(@RequestBody formData: KnowledgeBasedVerification): PoPUserResponse =
-    popUserOTPService.verifyFromKnowledgeQuestions(formData)
+  fun verifyByKnowledgeAnswers(
+    @RequestBody
+    formData: KnowledgeBasedVerification,
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): PoPUserResponse {
+    auditService.audit(AuditAction.VERIFY_PYF_USER_BY_KNOWLEDGE_ANSWER, formData.nomsId, auth, null)
+    return popUserOTPService.verifyFromKnowledgeQuestions(formData)
+  }
 }

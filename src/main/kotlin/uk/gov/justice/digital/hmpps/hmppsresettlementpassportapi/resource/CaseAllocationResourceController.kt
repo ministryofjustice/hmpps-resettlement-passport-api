@@ -19,13 +19,19 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocation
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocationPostResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CasesCountResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.manageusersapi.ManageUser
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseAllocationService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/workers", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
-class CaseAllocationResourceController(private val caseAllocationService: CaseAllocationService) {
+class CaseAllocationResourceController(private val caseAllocationService: CaseAllocationService, private val auditService: AuditService) {
   @PostMapping("/cases", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Assign one or more cases to a staff", description = "Assign one or more cases to a probation service officer")
   @ApiResponses(
@@ -63,7 +69,12 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
     @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
-  ) = caseAllocationService.assignCase(caseAllocation, auth)
+  ): MutableList<CaseAllocationPostResponse?> {
+    caseAllocation.nomsIds.forEach { nomsId ->
+      auditService.audit(AuditAction.CASE_ALLOCATION, nomsId, auth, null)
+    }
+    return caseAllocationService.assignCase(caseAllocation, auth)
+  }
 
   @PatchMapping("/cases", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
@@ -102,7 +113,15 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
     @Schema(required = true)
     @RequestBody
     caseAllocation: CaseAllocation,
-  ) = caseAllocationService.unAssignCase(caseAllocation)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): List<CaseAllocationEntity?> {
+    caseAllocation.nomsIds.forEach { nomsId ->
+      auditService.audit(AuditAction.CASE_UNALLOCATION, nomsId, auth, null)
+    }
+    return caseAllocationService.unAssignCase(caseAllocation)
+  }
 
   @GetMapping("/cases/{staffId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get all cases by staff Id", description = "All Cases assign to the given staff")
@@ -144,7 +163,9 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
     @PathVariable("staffId")
     @Parameter(required = true)
     staffId: Int,
-  ) = caseAllocationService.getAllCaseAllocationByStaffId(staffId)
+  ): List<CaseAllocationEntity?> {
+    return caseAllocationService.getAllCaseAllocationByStaffId(staffId)
+  }
 
   @GetMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get Workers list", description = "Get Workers for case assign in the given prison")
@@ -185,7 +206,12 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
     @Schema(example = "MDI", required = true)
     @Parameter(required = true)
     prisonId: String,
-  ) = caseAllocationService.getAllResettlementWorkers(prisonId)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): List<ManageUser> {
+    return caseAllocationService.getAllResettlementWorkers(prisonId)
+  }
 
   @GetMapping("/capacity", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get case count for each staff", description = "All Cases assign count for each staff in given prison id")
@@ -226,5 +252,10 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
     @Schema(example = "AXXXS", required = true)
     @Parameter(required = true)
     prisonId: String,
-  ) = caseAllocationService.getCasesAllocationCount(prisonId)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): CasesCountResponse {
+    return caseAllocationService.getCasesAllocationCount(prisonId)
+  }
 }

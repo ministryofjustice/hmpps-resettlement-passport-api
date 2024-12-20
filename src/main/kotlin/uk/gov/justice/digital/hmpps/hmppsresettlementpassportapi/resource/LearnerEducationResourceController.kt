@@ -11,12 +11,15 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LearnersCourseList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.LearnersEducationService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 
 @RestController
 @Validated
@@ -24,6 +27,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.Learner
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class LearnerEducationResourceController(
   private val learnersEducationService: LearnersEducationService,
+  private val auditService: AuditService,
 ) {
 
   @GetMapping("/{nomsId}/learner-education", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -68,5 +72,11 @@ class LearnerEducationResourceController(
     @Parameter(required = true, description = "The size of the page to be returned")
     @RequestParam(value = "size", defaultValue = "10")
     size: Int,
-  ): LearnersCourseList = learnersEducationService.getLearnersEducationCourseData(nomsId, page, size)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): LearnersCourseList {
+    auditService.audit(AuditAction.GET_LEARNERS_EDUCATION_COURSE, nomsId, auth, null)
+    return learnersEducationService.getLearnersEducationCourseData(nomsId, page, size)
+  }
 }

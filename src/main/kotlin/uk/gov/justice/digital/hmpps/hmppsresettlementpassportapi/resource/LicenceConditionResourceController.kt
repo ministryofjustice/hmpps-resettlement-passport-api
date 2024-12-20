@@ -12,12 +12,15 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LicenceConditionsWithMetaData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.LicenceConditionService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 
 @RestController
 @Validated
@@ -28,6 +31,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.Licence
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class LicenceConditionResourceController(
   private val licenceConditionService: LicenceConditionService,
+  private val auditService: AuditService,
 ) {
 
   @GetMapping("/{nomsId}/licence-condition", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -69,10 +73,16 @@ class LicenceConditionResourceController(
     nomsId: String,
     @RequestParam(defaultValue = "false", required = false)
     includeChangeNotify: Boolean,
-  ): LicenceConditionsWithMetaData? = if (includeChangeNotify) {
-    licenceConditionService.getLicenceConditionsAndUpdateAudit(nomsId)
-  } else {
-    LicenceConditionsWithMetaData(licenceConditionService.getLicenceConditionsByNomsId(nomsId))
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): LicenceConditionsWithMetaData? {
+    auditService.audit(AuditAction.GET_LICENCE_CONDITION, nomsId, auth, null)
+    return if (includeChangeNotify) {
+      licenceConditionService.getLicenceConditionsAndUpdateAudit(nomsId)
+    } else {
+      LicenceConditionsWithMetaData(licenceConditionService.getLicenceConditionsByNomsId(nomsId))
+    }
   }
 
   @GetMapping(
@@ -134,7 +144,13 @@ class LicenceConditionResourceController(
     @PathVariable("conditionId")
     @Parameter(required = true)
     conditionId: String,
-  ): ByteArray = licenceConditionService.getImageFromLicenceIdAndConditionId(licenceId, conditionId)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): ByteArray {
+    auditService.audit(AuditAction.GET_LICENCE_CONDITION_IMAGE, nomsId, auth, null)
+    return licenceConditionService.getImageFromLicenceIdAndConditionId(licenceId, conditionId)
+  }
 
   @Operation(
     summary = "Mark licence conditions as seen for one person",
@@ -177,5 +193,11 @@ class LicenceConditionResourceController(
     nomsId: String,
     @RequestParam(required = true)
     version: Int,
-  ) = licenceConditionService.markConditionsSeen(nomsId, version)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ) {
+    auditService.audit(AuditAction.UPDATE_LICENCE_CONDITION_SEEN, nomsId, auth, null)
+    licenceConditionService.markConditionsSeen(nomsId, version)
+  }
 }

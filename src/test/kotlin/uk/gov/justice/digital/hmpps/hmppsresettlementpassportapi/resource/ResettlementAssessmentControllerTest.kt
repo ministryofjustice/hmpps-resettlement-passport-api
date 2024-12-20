@@ -98,6 +98,6 @@ class ResettlementAssessmentControllerTest {
 
     resettlementAssessmentController.getResettlementAssessmentByNomsId(nomsId, pathway, auth)
 
-    verify(auditService).audit(AuditAction.GET_ASSESSMENT, nomsId, auth, details)
+    verify(auditService).audit(AuditAction.GET_LATEST_ASSESSMENT, nomsId, auth, details)
   }
 }

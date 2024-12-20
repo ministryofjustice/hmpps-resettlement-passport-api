@@ -15,18 +15,21 @@ import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplication
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplicationResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.BankApplicationService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
-class BankApplicationResourceController(private val bankApplicationService: BankApplicationService) {
+class BankApplicationResourceController(private val bankApplicationService: BankApplicationService, private val auditService: AuditService) {
   @GetMapping("/{nomsId}/bankapplication", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get bank application by noms Id", description = "Bank application based on noms Id")
   @ApiResponses(
@@ -67,7 +70,13 @@ class BankApplicationResourceController(private val bankApplicationService: Bank
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-  ) = bankApplicationService.getBankApplicationByNomsId(nomsId)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): BankApplicationResponse? {
+    auditService.audit(AuditAction.GET_ASSESSMENT, nomsId, auth, null)
+    return bankApplicationService.getBankApplicationByNomsId(nomsId)
+  }
 
   @PostMapping("/{nomsId}/bankapplication", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create assessment", description = "Create assessment")
@@ -105,7 +114,13 @@ class BankApplicationResourceController(private val bankApplicationService: Bank
     nomsId: String,
     @RequestBody
     bankApplication: BankApplication,
-  ) = bankApplicationService.createBankApplication(bankApplication, nomsId)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): BankApplicationResponse {
+    auditService.audit(AuditAction.CREATE_BANK_APPLICATION, nomsId, auth, null)
+    return bankApplicationService.createBankApplication(bankApplication, nomsId)
+  }
 
   @DeleteMapping("/{nomsId}/bankapplication/{bankApplicationId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create assessment", description = "Create assessment")
@@ -144,8 +159,12 @@ class BankApplicationResourceController(private val bankApplicationService: Bank
     @PathVariable("bankApplicationId")
     @Parameter(required = true)
     bankApplicationId: Long,
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
   ) {
     val bankApplication = bankApplicationService.getBankApplicationByIdAndNomsId(bankApplicationId, nomsId)
+    auditService.audit(AuditAction.DELETE_BANK_APPLICATION, nomsId, auth, null)
     bankApplicationService.deleteBankApplication(bankApplication)
   }
 
@@ -188,5 +207,11 @@ class BankApplicationResourceController(private val bankApplicationService: Bank
     bankApplicationId: String,
     @RequestBody
     bankApplication: BankApplication,
-  ): BankApplicationResponse = bankApplicationService.patchBankApplication(nomsId, bankApplicationId, bankApplication)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): BankApplicationResponse {
+    auditService.audit(AuditAction.UPDATE_BANK_APPLICATION, nomsId, auth, null)
+    return bankApplicationService.patchBankApplication(nomsId, bankApplicationId, bankApplication)
+  }
 }

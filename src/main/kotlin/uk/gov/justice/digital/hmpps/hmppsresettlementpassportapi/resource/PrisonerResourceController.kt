@@ -107,6 +107,7 @@ class PrisonerResourceController(
     @Parameter(description = "filter on resettlement worker")
     @RequestParam(value = "workerId")
     workerId: String?,
+    @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
   ): PrisonersList = prisonerService.getPrisonersByPrisonId(term, prisonId, days, pathwayView, pathwayStatus, assessmentRequired, page, size, sort, watchList, includePastReleaseDates, auth, workerId)
@@ -149,6 +150,7 @@ class PrisonerResourceController(
     @Parameter(description = "Include prisoners with profile tags in results")
     @RequestParam(value = "includeProfileTags")
     includeProfileTags: Boolean = false,
+    @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
   ): Prisoner = prisonerService.getPrisonerDetailsByNomsId(nomsId, includeProfileTags, auth)

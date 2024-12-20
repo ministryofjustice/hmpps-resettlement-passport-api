@@ -7,25 +7,20 @@ import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 import io.mockk.every
 import io.mockk.mockkStatic
 import org.junit.jupiter.api.Test
-import org.mockito.Mock
-import org.mockito.Mockito
 import org.springframework.http.MediaType
 import org.springframework.test.context.jdbc.Sql
-import software.amazon.awssdk.core.SdkField
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest
+import software.amazon.awssdk.services.sqs.model.PurgeQueueRequest
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CreateAppointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CreateAppointmentAddress
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Category
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 class AppointmentsIntegrationTest : IntegrationTestBase() {
   private val fakeNow = LocalDate.parse("2024-08-19")
-
 
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
@@ -173,6 +168,9 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
   fun `Create Appointment happy path`() {
     deliusApiMockServer.stubGetCrnFromNomsId("G1458GV", "123")
     deliusApiMockServer.stubCreateAppointmentOK("123")
+    val queueURLObj = sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName("audit-queue").build())
+    sqsClient.purgeQueue(PurgeQueueRequest.builder().queueUrl(queueURLObj.get().queueUrl()).build())
+
     val nomsId = "G1458GV"
     val expectedNotes = """
       ###
@@ -201,7 +199,6 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isEqualTo(200)
 
-
     deliusApiMockServer.verify(
       postRequestedFor(urlEqualTo("/appointments/123"))
         .withHeader("Content-Type", equalTo("application/json"))
@@ -212,10 +209,8 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
             .and(matchingJsonPath("$.notes", equalTo(expectedNotes))),
         ),
     )
-    val queueURLObj = sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName("audit-queue").build())
     val queueResponse = sqsClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(queueURLObj.get().queueUrl()).build()).get()
-    assert(queueResponse.messages()[0].body().contains("CREATE_APPOINTMENT"))
-
+    assert(queueResponse.messages()[0].body().contains(AuditAction.CREATE_APPOINTMENT.name))
   }
 
   @Test
@@ -252,8 +247,6 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
       .expectBody()
       .jsonPath("status").isEqualTo(400)
       .jsonPath("developerMessage").toString().contains("Incorrect information provided")
-
-
   }
 
   @Test

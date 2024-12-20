@@ -33,8 +33,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wir
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonerSearchApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ResettlementPassportDeliusApiMockServer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
-import uk.gov.justice.hmpps.sqs.audit.HmppsAuditService
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")

@@ -117,7 +117,7 @@ class AppointmentsResourceController(
     @RequestHeader("Authorization")
     auth: String,
   ): ResponseEntity<Void> {
-    auditService.audit(AuditAction.CREATE_APPOINTMENTS, nomsId, auth, null)
+    auditService.audit(AuditAction.CREATE_APPOINTMENT, nomsId, auth, null)
     return appointmentsService.createAppointment(appointment, nomsId, auth)
   }
 }

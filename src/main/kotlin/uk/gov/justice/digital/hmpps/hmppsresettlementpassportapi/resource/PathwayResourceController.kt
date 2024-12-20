@@ -19,6 +19,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorRes
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatusAndCaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PathwayAndStatusService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PathwayPatchService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 
 @RestController
 @RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -27,6 +29,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.Pathway
 class PathwayResourceController(
   private val pathwayAndStatusService: PathwayAndStatusService,
   private val pathwayPatchService: PathwayPatchService,
+  private val auditService: AuditService,
 ) {
 
   @PatchMapping("/{nomsId}/pathway-with-case-note")
@@ -76,5 +79,8 @@ class PathwayResourceController(
     @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
-  ) = pathwayPatchService.updatePathwayStatusWithCaseNote(nomsId, pathwayStatusAndCaseNote, auth)
+  ) {
+    auditService.audit(AuditAction.UPDATE_PATHWAY_STATUS_WITH_CASE_NOTE, nomsId, auth, null)
+    pathwayPatchService.updatePathwayStatusWithCaseNote(nomsId, pathwayStatusAndCaseNote, auth)
+  }
 }

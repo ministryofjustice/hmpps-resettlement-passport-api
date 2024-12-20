@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.WatchlistEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.WatchlistService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 
 @RestController
 @Validated
@@ -24,6 +27,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.Watchli
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class WatchlistResourceController(
   private val watchlistService: WatchlistService,
+  private val auditService: AuditService,
 ) {
 
   @PostMapping("/{nomsId}/watch", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -48,7 +52,10 @@ class WatchlistResourceController(
     @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
-  ) = watchlistService.createWatchlist(nomsId, auth)
+  ): WatchlistEntity {
+    auditService.audit(AuditAction.CREATE_WATCH_LIST, nomsId, auth, null)
+    return watchlistService.createWatchlist(nomsId, auth)
+  }
 
   @DeleteMapping("/{nomsId}/watch", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Delete watchlist", description = "Delete watchlist")
@@ -72,5 +79,8 @@ class WatchlistResourceController(
     @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
-  ) = watchlistService.deleteWatchlist(nomsId, auth)
+  ) {
+    auditService.audit(AuditAction.DELETE_WATCH_LIST, nomsId, auth, null)
+    return watchlistService.deleteWatchlist(nomsId, auth)
+  }
 }

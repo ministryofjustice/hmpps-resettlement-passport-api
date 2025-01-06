@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
@@ -27,8 +26,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PoPUser
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PrisonerService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
-
-private val logger = KotlinLogging.logger {}
 
 @RestController
 @Validated
@@ -204,11 +201,7 @@ class PopUserOTPResourceController(
   fun verifyOTPByOneLoginURN(
     @RequestBody
     oneLoginUserData: OneLoginData,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
   ): PoPUserResponse {
-    logger.debug { "In verifyOTPByOneLoginURN" }
     return popUserOTPService.getPoPUserVerified(oneLoginUserData)
   }
 

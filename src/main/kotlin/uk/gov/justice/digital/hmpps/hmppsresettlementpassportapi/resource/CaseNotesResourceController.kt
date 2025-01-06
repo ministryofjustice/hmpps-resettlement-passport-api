@@ -19,7 +19,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteTy
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesMeta
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseNotesService
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 @RestController
@@ -27,7 +26,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.A
 @RequestMapping("/resettlement-passport/case-notes", produces = [MediaType.APPLICATION_JSON_VALUE])
 class CaseNotesResourceController(
   private val caseNotesService: CaseNotesService,
-  private val auditService: AuditService,
 ) {
 
   @GetMapping("/{nomsId}", produces = [MediaType.APPLICATION_JSON_VALUE])

@@ -1,9 +1,12 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
 import io.mockk.mockkStatic
+import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocation
 import java.time.LocalDateTime
 
@@ -68,6 +71,16 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectBody()
       .json("[]")
+
+    val auditQueueMessages = sqsClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(auditQueueUrl).maxNumberOfMessages(2).build()).get().messages()
+    assertThat(ObjectMapper().readValue(auditQueueMessages[0].body(), Map::class.java))
+      .usingRecursiveComparison()
+      .ignoringFields("when")
+      .isEqualTo(mapOf("correlationId" to null, "details" to null, "service" to "hmpps-resettlement-passport-api", "subjectId" to "G4161UF", "subjectType" to "PRISONER_ID", "what" to "CASE_ALLOCATION", "when" to "2025-01-06T13:48:20.391273Z", "who" to "RESETTLEMENTPASSPORT_ADM"))
+    assertThat(ObjectMapper().readValue(auditQueueMessages[1].body(), Map::class.java))
+      .usingRecursiveComparison()
+      .ignoringFields("when")
+      .isEqualTo(mapOf("correlationId" to null, "details" to null, "service" to "hmpps-resettlement-passport-api", "subjectId" to "G4161UF", "subjectType" to "PRISONER_ID", "what" to "CASE_UNALLOCATION", "when" to "2025-01-06T13:48:20.391273Z", "who" to "RESETTLEMENTPASSPORT_ADM"))
   }
 
   @Test
@@ -154,8 +167,6 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-1-prisoner.sql")
   fun `Assign Case Allocation - Forbidden`() {
-    val nomsId = "G4161UF"
-
     webTestClient.post()
       .uri("/resettlement-passport/workers/cases")
       .bodyValue(
@@ -173,8 +184,6 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-1-prisoner.sql")
   fun `Unassign Case Allocation - Forbidden`() {
-    val nomsId = "G4161UF"
-
     webTestClient.patch()
       .uri("/resettlement-passport/workers/cases")
       .bodyValue(
@@ -321,8 +330,6 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
     every { LocalDateTime.now() } returns fakeNow
     manageUsersApiMockServer.stubGetManageUsersData("MDI", 200)
 
-    val expectedOutput1 = readFile("testdata/expectation/case-allocation-post-result.json")
-    val expectedOutput2 = readFile("testdata/expectation/case-allocation-patch-result.json")
     val staffId = 4859311
 
     webTestClient.post()

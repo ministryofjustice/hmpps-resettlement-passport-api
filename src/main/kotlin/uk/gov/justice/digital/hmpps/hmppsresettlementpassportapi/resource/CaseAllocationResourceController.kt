@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocationPostResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CasesCountResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.manageusersapi.ManageUser
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseAllocationService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
@@ -163,9 +161,7 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
     @PathVariable("staffId")
     @Parameter(required = true)
     staffId: Int,
-  ): List<CaseAllocationEntity?> {
-    return caseAllocationService.getAllCaseAllocationByStaffId(staffId)
-  }
+  ) = caseAllocationService.getAllCaseAllocationByStaffId(staffId)
 
   @GetMapping("", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get Workers list", description = "Get Workers for case assign in the given prison")
@@ -206,12 +202,7 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
     @Schema(example = "MDI", required = true)
     @Parameter(required = true)
     prisonId: String,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ): List<ManageUser> {
-    return caseAllocationService.getAllResettlementWorkers(prisonId)
-  }
+  ) = caseAllocationService.getAllResettlementWorkers(prisonId)
 
   @GetMapping("/capacity", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get case count for each staff", description = "All Cases assign count for each staff in given prison id")
@@ -252,10 +243,5 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
     @Schema(example = "AXXXS", required = true)
     @Parameter(required = true)
     prisonId: String,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ): CasesCountResponse {
-    return caseAllocationService.getCasesAllocationCount(prisonId)
-  }
+  ) = caseAllocationService.getCasesAllocationCount(prisonId)
 }

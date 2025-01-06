@@ -17,6 +17,8 @@ import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.SqlMergeMode
 import org.springframework.test.web.reactive.server.WebTestClient
 import software.amazon.awssdk.services.sqs.SqsAsyncClient
+import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest
+import software.amazon.awssdk.services.sqs.model.PurgeQueueRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBase
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.AllocationManagerApiMockServer
@@ -61,10 +63,13 @@ abstract class IntegrationTestBase : TestBase() {
   @Autowired
   @Qualifier("audit-sqs-client")
   lateinit var sqsClient: SqsAsyncClient
+  lateinit var auditQueueUrl: String
 
   @BeforeEach
   fun beforeEach() {
     cacheManager.cacheNames.forEach { cacheManager.getCache(it)?.clear() }
+    auditQueueUrl = sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName("audit-queue").build()).get().queueUrl()
+    sqsClient.purgeQueue(PurgeQueueRequest.builder().queueUrl(auditQueueUrl).build())
   }
 
   companion object {

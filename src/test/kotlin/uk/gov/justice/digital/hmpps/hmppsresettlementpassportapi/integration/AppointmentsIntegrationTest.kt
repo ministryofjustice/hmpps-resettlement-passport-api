@@ -1,21 +1,20 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.tomakehurst.wiremock.client.WireMock.equalTo
 import com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath
 import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 import io.mockk.every
 import io.mockk.mockkStatic
+import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 import org.springframework.test.context.jdbc.Sql
-import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest
-import software.amazon.awssdk.services.sqs.model.PurgeQueueRequest
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CreateAppointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CreateAppointmentAddress
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Category
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -168,9 +167,6 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
   fun `Create Appointment happy path`() {
     deliusApiMockServer.stubGetCrnFromNomsId("G1458GV", "123")
     deliusApiMockServer.stubCreateAppointmentOK("123")
-    val queueURLObj = sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName("audit-queue").build())
-    sqsClient.purgeQueue(PurgeQueueRequest.builder().queueUrl(queueURLObj.get().queueUrl()).build())
-
     val nomsId = "G1458GV"
     val expectedNotes = """
       ###
@@ -209,8 +205,12 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
             .and(matchingJsonPath("$.notes", equalTo(expectedNotes))),
         ),
     )
-    val queueResponse = sqsClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(queueURLObj.get().queueUrl()).build()).get()
-    assert(queueResponse.messages()[0].body().contains(AuditAction.CREATE_APPOINTMENT.name))
+
+    val auditQueueMessage = sqsClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(auditQueueUrl).build()).get().messages()[0]
+    assertThat(ObjectMapper().readValue(auditQueueMessage.body(), Map::class.java))
+      .usingRecursiveComparison()
+      .ignoringFields("when")
+      .isEqualTo(mapOf("correlationId" to null, "details" to null, "service" to "hmpps-resettlement-passport-api", "subjectId" to "G1458GV", "subjectType" to "PRISONER_ID", "what" to "CREATE_APPOINTMENT", "when" to "2025-01-06T13:48:20.391273Z", "who" to "RESETTLEMENTPASSPORT_ADM"))
   }
 
   @Test

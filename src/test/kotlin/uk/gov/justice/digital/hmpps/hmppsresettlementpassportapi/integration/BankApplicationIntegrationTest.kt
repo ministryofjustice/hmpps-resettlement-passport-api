@@ -1,14 +1,13 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
 import io.mockk.mockkStatic
+import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
-import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest
-import software.amazon.awssdk.services.sqs.model.PurgeQueueRequest
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplication
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
 import java.time.LocalDateTime
 
 class BankApplicationIntegrationTest : IntegrationTestBase() {
@@ -20,8 +19,6 @@ class BankApplicationIntegrationTest : IntegrationTestBase() {
   fun `Create, update and delete bank application- happy path`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-    val queueURLObj = sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName("audit-queue").build())
-    sqsClient.purgeQueue(PurgeQueueRequest.builder().queueUrl(queueURLObj.get().queueUrl()).build())
     val expectedOutput = readFile("testdata/expectation/bank-application.json")
     val expectedOutput2 = readFile("testdata/expectation/bank-application2.json")
 
@@ -44,9 +41,6 @@ class BankApplicationIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody()
       .json(expectedOutput)
-    var queueResponse = sqsClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(queueURLObj.get().queueUrl()).build()).get()
-    println(queueResponse.messages().size)
-    assert(queueResponse.messages()[queueResponse.messages().size - 1].body().contains(AuditAction.CREATE_BANK_APPLICATION.name))
 
     webTestClient.patch()
       .uri("/resettlement-passport/prisoner/$nomsId/bankapplication/1")
@@ -59,9 +53,6 @@ class BankApplicationIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody()
       .json(expectedOutput2)
-    queueResponse = sqsClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(queueURLObj.get().queueUrl()).build()).get()
-    println(queueResponse.messages().size)
-    assert(queueResponse.messages()[queueResponse.messages().size - 1].body().contains(AuditAction.UPDATE_BANK_APPLICATION.name))
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/bankapplication")
@@ -76,14 +67,25 @@ class BankApplicationIntegrationTest : IntegrationTestBase() {
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isOk
-    queueResponse = sqsClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(queueURLObj.get().queueUrl()).build()).get()
-    println(queueResponse.messages().size)
-    assert(queueResponse.messages()[queueResponse.messages().size - 1].body().contains(AuditAction.DELETE_BANK_APPLICATION.name))
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/bankapplication")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
       .expectStatus().isNotFound
+
+    val auditQueueMessages = sqsClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(auditQueueUrl).maxNumberOfMessages(3).build()).get().messages()
+    assertThat(ObjectMapper().readValue(auditQueueMessages[0].body(), Map::class.java))
+      .usingRecursiveComparison()
+      .ignoringFields("when")
+      .isEqualTo(mapOf("correlationId" to null, "details" to null, "service" to "hmpps-resettlement-passport-api", "subjectId" to "123", "subjectType" to "PRISONER_ID", "what" to "CREATE_BANK_APPLICATION", "when" to "2025-01-06T13:48:20.391273Z", "who" to "RESETTLEMENTPASSPORT_ADM"))
+    assertThat(ObjectMapper().readValue(auditQueueMessages[1].body(), Map::class.java))
+      .usingRecursiveComparison()
+      .ignoringFields("when")
+      .isEqualTo(mapOf("correlationId" to null, "details" to null, "service" to "hmpps-resettlement-passport-api", "subjectId" to "123", "subjectType" to "PRISONER_ID", "what" to "UPDATE_BANK_APPLICATION", "when" to "2025-01-06T13:48:20.391273Z", "who" to "RESETTLEMENTPASSPORT_ADM"))
+    assertThat(ObjectMapper().readValue(auditQueueMessages[2].body(), Map::class.java))
+      .usingRecursiveComparison()
+      .ignoringFields("when")
+      .isEqualTo(mapOf("correlationId" to null, "details" to null, "service" to "hmpps-resettlement-passport-api", "subjectId" to "123", "subjectType" to "PRISONER_ID", "what" to "DELETE_BANK_APPLICATION", "when" to "2025-01-06T13:48:20.391273Z", "who" to "RESETTLEMENTPASSPORT_ADM"))
   }
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
@@ -23,12 +24,14 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.IdApplicat
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.IdApplicationPost
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.IdApplicationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.IdApplicationService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
-class IdApplicationResourceController(private val idApplicationService: IdApplicationService) {
+class IdApplicationResourceController(private val idApplicationService: IdApplicationService, private val auditService: AuditService) {
 
   @PostMapping("/{nomsId}/idapplication", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create id application", description = "Create id application")
@@ -66,7 +69,13 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
     nomsId: String,
     @RequestBody
     idApplicationPost: IdApplicationPost,
-  ) = idApplicationService.createIdApplication(idApplicationPost, nomsId)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): IdApplicationEntity {
+    auditService.audit(AuditAction.CREATE_ID_APPLICATION, nomsId, auth, null)
+    return idApplicationService.createIdApplication(idApplicationPost, nomsId)
+  }
 
   @DeleteMapping("/{nomsId}/idapplication/{idApplicationId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create Id Application", description = "Create Id Application for a prisoner")
@@ -105,7 +114,11 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
     @PathVariable("idApplicationId")
     @Parameter(required = true)
     idApplicationId: String,
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
   ) {
+    auditService.audit(AuditAction.DELETE_ID_APPLICATION, nomsId, auth, null)
     val idApplication = idApplicationService.getIdApplicationByNomsIdAndIdApplicationID(nomsId, idApplicationId.toLong())
     if (idApplication != null) {
       if (idApplication.id != idApplicationId.toLong()) {
@@ -159,7 +172,11 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
     idApplicationId: String,
     @RequestBody
     idApplicationPatchDTO: IdApplicationPatch,
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
   ): IdApplicationEntity? {
+    auditService.audit(AuditAction.UPDATE_ID_APPLICATION, nomsId, auth, null)
     val idApplication = idApplicationService.getIdApplicationByNomsIdAndIdApplicationID(nomsId, idApplicationId.toLong())
       ?: throw NoDataWithCodeFoundException(
         "IdApplication",

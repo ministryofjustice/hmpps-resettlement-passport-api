@@ -1,5 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource
-
+import dev.forkhandles.result4k.Result
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestPart
@@ -22,7 +23,11 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DocumentCategory
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DocumentsEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.DocumentService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.VirusScanResult
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 import java.time.LocalDateTime
 
 @RestController
@@ -31,6 +36,7 @@ import java.time.LocalDateTime
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class DocumentStorageResourceController(
   private val uploadService: DocumentService,
+  private val auditService: AuditService,
 ) {
   @PostMapping(
     "/documents/upload",
@@ -61,7 +67,13 @@ class DocumentStorageResourceController(
     category: DocumentCategory,
     @RequestPart(required = false)
     originalFilename: String?,
-  ) = uploadService.processDocument(nomsId, file, originalFilename, category)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): Result<DocumentsEntity, VirusScanResult.VirusFound> {
+    auditService.audit(AuditAction.UPLOAD_DOCUMENT, nomsId, auth, null)
+    return uploadService.processDocument(nomsId, file, originalFilename, category)
+  }
 
   @GetMapping("/documents/{documentId}/download", produces = [MediaType.APPLICATION_PDF_VALUE])
   @Operation(
@@ -232,7 +244,13 @@ class DocumentStorageResourceController(
     nomsId: String,
     @RequestParam(defaultValue = "LICENCE_CONDITIONS", required = false)
     category: DocumentCategory,
-  ) = uploadService.deleteUploadDocumentByNomisId(nomsId, category)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ) {
+    auditService.audit(AuditAction.DELETE_DOCUMENT, nomsId, auth, null)
+    return uploadService.deleteUploadDocumentByNomisId(nomsId, category)
+  }
   data class DocumentResponse(
     val id: Long,
     val fileName: String,

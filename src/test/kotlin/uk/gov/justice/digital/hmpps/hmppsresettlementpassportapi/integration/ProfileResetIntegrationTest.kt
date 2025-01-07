@@ -1,12 +1,15 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
+import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ProfileReset
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResetReason
@@ -91,6 +94,12 @@ class ProfileResetIntegrationTest : IntegrationTestBase() {
 
     Assertions.assertEquals(expectedPathwayStatuses, pathwayStatusRepository.findAll())
     Assertions.assertEquals(expectedResettlementAssessments, resettlementAssessmentRepository.findAll())
+
+    val auditQueueMessage = sqsClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(auditQueueUrl).build()).get().messages()[0]
+    assertThat(ObjectMapper().readValue(auditQueueMessage.body(), Map::class.java))
+      .usingRecursiveComparison()
+      .ignoringFields("when")
+      .isEqualTo(mapOf("correlationId" to null, "details" to null, "service" to "hmpps-resettlement-passport-api", "subjectId" to "ABC1234", "subjectType" to "PRISONER_ID", "what" to "RESET_PROFILE", "when" to "2025-01-06T13:48:20.391273Z", "who" to "RESETTLEMENTPASSPORT_ADM"))
 
     unmockkAll()
   }

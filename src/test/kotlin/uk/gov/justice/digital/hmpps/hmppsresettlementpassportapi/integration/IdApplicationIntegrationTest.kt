@@ -1,9 +1,12 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
 import io.mockk.mockkStatic
+import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.IdApplicationPatch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.IdApplicationPost
 import java.math.BigDecimal
@@ -90,5 +93,19 @@ class IdApplicationIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectBody()
       .json("[]")
+
+    val auditQueueMessages = sqsClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(auditQueueUrl).maxNumberOfMessages(3).build()).get().messages()
+    assertThat(ObjectMapper().readValue(auditQueueMessages[0].body(), Map::class.java))
+      .usingRecursiveComparison()
+      .ignoringFields("when")
+      .isEqualTo(mapOf("correlationId" to null, "details" to null, "service" to "hmpps-resettlement-passport-api", "subjectId" to "123", "subjectType" to "PRISONER_ID", "what" to "CREATE_ID_APPLICATION", "when" to "2025-01-06T13:48:20.391273Z", "who" to "RESETTLEMENTPASSPORT_ADM"))
+    assertThat(ObjectMapper().readValue(auditQueueMessages[1].body(), Map::class.java))
+      .usingRecursiveComparison()
+      .ignoringFields("when")
+      .isEqualTo(mapOf("correlationId" to null, "details" to null, "service" to "hmpps-resettlement-passport-api", "subjectId" to "123", "subjectType" to "PRISONER_ID", "what" to "UPDATE_ID_APPLICATION", "when" to "2025-01-06T13:48:20.391273Z", "who" to "RESETTLEMENTPASSPORT_ADM"))
+    assertThat(ObjectMapper().readValue(auditQueueMessages[2].body(), Map::class.java))
+      .usingRecursiveComparison()
+      .ignoringFields("when")
+      .isEqualTo(mapOf("correlationId" to null, "details" to null, "service" to "hmpps-resettlement-passport-api", "subjectId" to "123", "subjectType" to "PRISONER_ID", "what" to "DELETE_ID_APPLICATION", "when" to "2025-01-06T13:48:20.391273Z", "who" to "RESETTLEMENTPASSPORT_ADM"))
   }
 }

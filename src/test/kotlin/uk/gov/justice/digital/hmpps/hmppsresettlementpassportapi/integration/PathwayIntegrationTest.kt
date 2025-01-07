@@ -1,9 +1,11 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatusAndCaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
@@ -56,6 +58,12 @@ class PathwayIntegrationTest : IntegrationTestBase() {
 
     assertThat(expectedPathwayStatus).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java)
       .isEqualTo(actualPathwayStatus.get())
+
+    val auditQueueMessage = sqsClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(auditQueueUrl).build()).get().messages()[0]
+    assertThat(ObjectMapper().readValue(auditQueueMessage.body(), Map::class.java))
+      .usingRecursiveComparison()
+      .ignoringFields("when")
+      .isEqualTo(mapOf("correlationId" to null, "details" to null, "service" to "hmpps-resettlement-passport-api", "subjectId" to "G4274GN", "subjectType" to "PRISONER_ID", "what" to "UPDATE_PATHWAY_STATUS_WITH_CASE_NOTE", "when" to "2025-01-06T13:48:20.391273Z", "who" to "RESETTLEMENTPASSPORT_ADM"))
   }
 
   @Test

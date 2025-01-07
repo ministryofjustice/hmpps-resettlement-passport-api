@@ -19,13 +19,17 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocation
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocationPostResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseAllocationService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/workers", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
-class CaseAllocationResourceController(private val caseAllocationService: CaseAllocationService) {
+class CaseAllocationResourceController(private val caseAllocationService: CaseAllocationService, private val auditService: AuditService) {
   @PostMapping("/cases", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Assign one or more cases to a staff", description = "Assign one or more cases to a probation service officer")
   @ApiResponses(
@@ -63,7 +67,12 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
     @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
-  ) = caseAllocationService.assignCase(caseAllocation, auth)
+  ): MutableList<CaseAllocationPostResponse?> {
+    caseAllocation.nomsIds.forEach { nomsId ->
+      auditService.audit(AuditAction.CASE_ALLOCATION, nomsId, auth, null)
+    }
+    return caseAllocationService.assignCase(caseAllocation, auth)
+  }
 
   @PatchMapping("/cases", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
@@ -102,7 +111,15 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
     @Schema(required = true)
     @RequestBody
     caseAllocation: CaseAllocation,
-  ) = caseAllocationService.unAssignCase(caseAllocation)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): List<CaseAllocationEntity?> {
+    caseAllocation.nomsIds.forEach { nomsId ->
+      auditService.audit(AuditAction.CASE_UNALLOCATION, nomsId, auth, null)
+    }
+    return caseAllocationService.unAssignCase(caseAllocation)
+  }
 
   @GetMapping("/cases/{staffId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get all cases by staff Id", description = "All Cases assign to the given staff")

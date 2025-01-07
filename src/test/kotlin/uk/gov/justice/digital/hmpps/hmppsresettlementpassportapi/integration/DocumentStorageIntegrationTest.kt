@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.io.Resources
 import io.mockk.every
 import io.mockk.mockkStatic
@@ -10,6 +11,7 @@ import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.web.reactive.function.BodyInserters
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DocumentResponse
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -65,6 +67,12 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/pdf")
+
+    val auditQueueMessage = sqsClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(auditQueueUrl).build()).get().messages()[0]
+    assertThat(ObjectMapper().readValue(auditQueueMessage.body(), Map::class.java))
+      .usingRecursiveComparison()
+      .ignoringFields("when")
+      .isEqualTo(mapOf("correlationId" to null, "details" to null, "service" to "hmpps-resettlement-passport-api", "subjectId" to "ABC1234", "subjectType" to "PRISONER_ID", "what" to "UPLOAD_DOCUMENT", "when" to "2025-01-06T13:48:20.391273Z", "who" to "RESETTLEMENTPASSPORT_ADM"))
   }
 
   @Test

@@ -19,12 +19,14 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ProfileReset
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettlementAssessmentResetService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 
 @RestController
 @Validated
 @RequestMapping("/resettlement-passport/prisoner", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
-class ProfileResetController(private val resettlementAssessmentResetService: ResettlementAssessmentResetService) {
+class ProfileResetController(private val resettlementAssessmentResetService: ResettlementAssessmentResetService, private val auditService: AuditService) {
   @PostMapping("/{prisonerId}/reset-profile")
   @Operation(summary = "Reset a profile", description = "Resets a prisoner's profile by removing any resettlement assessments and resetting statuses to NOT_STARTED. Also sends a case note with reason to DPS.")
   @ApiResponses(
@@ -66,6 +68,7 @@ class ProfileResetController(private val resettlementAssessmentResetService: Res
     @RequestHeader("Authorization")
     auth: String,
   ): ResponseEntity<Void> {
+    auditService.audit(AuditAction.RESET_PROFILE, prisonerId, auth, null)
     resettlementAssessmentResetService.resetProfile(prisonerId, profileReset, auth)
     return ResponseEntity.ok().build()
   }

@@ -1,9 +1,11 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.WatchlistEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.WatchlistRepository
 import java.time.LocalDateTime
@@ -33,6 +35,12 @@ class WatchlistIntegrationTest : IntegrationTestBase() {
     )
     val actualWatchlistEntry = watchlistRepository.findAll()
     assertThat(actualWatchlistEntry).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedWatchlistEntry)
+
+    val auditQueueMessage = sqsClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(auditQueueUrl).build()).get().messages()[0]
+    assertThat(ObjectMapper().readValue(auditQueueMessage.body(), Map::class.java))
+      .usingRecursiveComparison()
+      .ignoringFields("when")
+      .isEqualTo(mapOf("correlationId" to null, "details" to null, "service" to "hmpps-resettlement-passport-api", "subjectId" to "ABC1234", "subjectType" to "PRISONER_ID", "what" to "CREATE_WATCH_LIST", "when" to "2025-01-06T13:48:20.391273Z", "who" to "RESETTLEMENTPASSPORT_ADM"))
   }
 
   @Test
@@ -67,6 +75,12 @@ class WatchlistIntegrationTest : IntegrationTestBase() {
 
     val actualWatchlistEntry = watchlistRepository.findAll()
     assertThat(actualWatchlistEntry).isEmpty()
+
+    val auditQueueMessage = sqsClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(auditQueueUrl).build()).get().messages()[0]
+    assertThat(ObjectMapper().readValue(auditQueueMessage.body(), Map::class.java))
+      .usingRecursiveComparison()
+      .ignoringFields("when")
+      .isEqualTo(mapOf("correlationId" to null, "details" to null, "service" to "hmpps-resettlement-passport-api", "subjectId" to "ABC1234", "subjectType" to "PRISONER_ID", "what" to "DELETE_WATCH_LIST", "when" to "2025-01-06T13:48:20.391273Z", "who" to "RESETTLEMENTPASSPORT_ADM"))
   }
 
   @Test

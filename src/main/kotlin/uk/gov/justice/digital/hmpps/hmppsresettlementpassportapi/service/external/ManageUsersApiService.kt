@@ -12,11 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.manageuser
 
 @Service
 class ManageUsersApiService(val manageUsersWebClientCredentials: WebClient) {
-  companion object {
-    private val log = LoggerFactory.getLogger(this::class.java)
-  }
 
-  @Cacheable("manage-users-api-get-users-by-caseload-and-role", unless = "#result == null")
   fun getManageUsersData(prisonId: String, roleCode: String): List<ManageUser> {
     val listToReturn = mutableListOf<ManageUser>()
     var page = 0

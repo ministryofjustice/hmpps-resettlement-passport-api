@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external
 
-import org.slf4j.LoggerFactory
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -12,11 +10,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.manageuser
 
 @Service
 class ManageUsersApiService(val manageUsersWebClientCredentials: WebClient) {
-  companion object {
-    private val log = LoggerFactory.getLogger(this::class.java)
-  }
 
-  @Cacheable("manage-users-api-get-users-by-caseload-and-role", unless = "#result == null")
   fun getManageUsersData(prisonId: String, roleCode: String): List<ManageUser> {
     val listToReturn = mutableListOf<ManageUser>()
     var page = 0

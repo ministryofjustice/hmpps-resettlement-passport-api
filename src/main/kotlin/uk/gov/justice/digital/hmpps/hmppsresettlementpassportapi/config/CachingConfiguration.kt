@@ -38,7 +38,6 @@ class CachingConfiguration(private val buildProperties: BuildProperties) {
     .withCacheConfiguration("resettlement-passport-delius-api-get-personal-details", getCacheConfiguration(Duration.ofHours(1)))
     .withCacheConfiguration("curious-api-get-learner-education-by-noms-id", getCacheConfiguration(Duration.ofHours(1)))
     .withCacheConfiguration("prisoner-search-api-match-prisoners", getCacheConfiguration(Duration.ofMinutes(10)))
-    .withCacheConfiguration("manage-users-api-get-users-by-caseload-and-role", getCacheConfiguration(Duration.ofHours(2)))
     .build()
 
   private fun getCacheConfiguration(ttl: Duration): RedisCacheConfiguration {

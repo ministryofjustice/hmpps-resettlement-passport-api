@@ -27,7 +27,7 @@ data class PrisonerSupportNeedEntity(
   @Column(name = "created_by")
   val createdBy: String,
 
-  @Column(name =  "created_date")
+  @Column(name = "created_date")
   val createdDate: LocalDateTime,
 
   @Column(name = "is_deleted")

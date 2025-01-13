@@ -33,7 +33,7 @@ data class SupportNeedEntity(
   @Column(name = "allow_other_detail")
   val allowOtherDetail: Boolean,
 
-  @Column(name =  "created_date")
+  @Column(name = "created_date")
   val createdDate: LocalDateTime,
 
   @Column(name = "is_deleted")

@@ -17,13 +17,16 @@ class PrisonerSupportNeedUpdateRepositoryTest : RepositoryTestBase() {
   @Autowired
   lateinit var prisonerSupportNeedRepository: PrisonerSupportNeedRepository
 
+  @Autowired
+  lateinit var supportNeedRepository: SupportNeedRepository
+
   @Test
   @Sql(scripts = ["classpath:testdata/sql/seed-support-needs.sql", "classpath:testdata/sql/seed-1-prisoner.sql"]) // TODO - remove seed-support-needs.sql once RSP-1718 is done
   fun `test can save and find prisoner support need updates`() {
     val prisonerSupportNeed = prisonerSupportNeedRepository.save(
       PrisonerSupportNeedEntity(
         prisonerId = 1,
-        supportNeedId = 1,
+        supportNeed = supportNeedRepository.findById(1).get(),
         otherDetail = null,
         createdBy = "John Smith",
         createdDate = LocalDateTime.parse("2024-04-04T13:00:01"),
@@ -58,7 +61,7 @@ class PrisonerSupportNeedUpdateRepositoryTest : RepositoryTestBase() {
       status = SupportNeedStatus.MET,
       isPrison = false,
       isProbation = true,
-      isDeleted = true,
+      deleted = true,
       deletedDate = LocalDateTime.parse("2024-04-04T16:00:01"),
     )
 

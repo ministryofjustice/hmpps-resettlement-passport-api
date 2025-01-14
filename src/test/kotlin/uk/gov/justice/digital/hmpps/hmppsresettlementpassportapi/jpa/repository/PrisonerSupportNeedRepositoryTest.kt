@@ -13,6 +13,9 @@ class PrisonerSupportNeedRepositoryTest : RepositoryTestBase() {
   lateinit var prisonerSupportNeedRepository: PrisonerSupportNeedRepository
 
   @Autowired
+  lateinit var supportNeedRepository: SupportNeedRepository
+
+  @Autowired
   lateinit var prisonerRepository: PrisonerRepository
 
   @Test
@@ -20,7 +23,7 @@ class PrisonerSupportNeedRepositoryTest : RepositoryTestBase() {
   fun `test can save and find prisoner support needs`() {
     val prisonerSupportNeed1 = PrisonerSupportNeedEntity(
       prisonerId = 1,
-      supportNeedId = 1,
+      supportNeed = supportNeedRepository.findById(1).get(),
       otherDetail = null,
       createdBy = "John Smith",
       createdDate = LocalDateTime.parse("2024-04-04T13:00:01"),
@@ -28,11 +31,11 @@ class PrisonerSupportNeedRepositoryTest : RepositoryTestBase() {
 
     val prisonerSupportNeed2 = PrisonerSupportNeedEntity(
       prisonerId = 1,
-      supportNeedId = 5,
+      supportNeed = supportNeedRepository.findById(5).get(),
       otherDetail = "Other",
       createdBy = "John Smith",
       createdDate = LocalDateTime.parse("2024-04-04T14:00:01"),
-      isDeleted = true,
+      deleted = true,
       deletedDate = LocalDateTime.parse("2023-04-04T15:00:02"),
     )
 

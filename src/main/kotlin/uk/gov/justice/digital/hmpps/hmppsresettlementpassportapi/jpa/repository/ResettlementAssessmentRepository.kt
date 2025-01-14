@@ -97,5 +97,10 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
     assessmentStatus: List<ResettlementAssessmentStatus>,
   ): ResettlementAssessmentEntity?
 
+  fun findFirstByPrisonerIdAndAssessmentStatusAndDeletedIsFalseOrderByCreationDateDesc(
+    prisonerId: Long,
+    assessmentStatus: ResettlementAssessmentStatus,
+  ): ResettlementAssessmentEntity?
+
   fun findAllByPrisonerIdAndDeletedIsFalse(prisonerId: Long): List<ResettlementAssessmentEntity>
 }

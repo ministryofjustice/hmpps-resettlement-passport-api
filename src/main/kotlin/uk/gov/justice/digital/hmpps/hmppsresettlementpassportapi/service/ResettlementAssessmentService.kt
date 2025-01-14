@@ -8,6 +8,7 @@ import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DpsCaseNoteSubType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LastReport
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayAndStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
@@ -513,5 +514,22 @@ class ResettlementAssessmentService(
       deliusCaseNoteType = convertToDeliusCaseNoteType(assessmentType),
       caseNoteText = generateContentOnlyDpsCaseNoteText(assessmentType),
     )
+  }
+
+  fun getLastReport(prisonerId: Long?): LastReport? {
+    if (prisonerId != null) {
+      val lastReportFromDB =
+        resettlementAssessmentRepository.findFirstByPrisonerIdAndAssessmentStatusAndDeletedIsFalseOrderByCreationDateDesc(
+          prisonerId,
+          ResettlementAssessmentStatus.SUBMITTED
+        )
+      if (lastReportFromDB != null) {
+        return LastReport(
+          type = lastReportFromDB.assessmentType,
+          dateCompleted = lastReportFromDB.submissionDate ?: lastReportFromDB.creationDate,
+        )
+      }
+    }
+    return null
   }
 }

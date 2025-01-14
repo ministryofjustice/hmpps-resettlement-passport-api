@@ -42,6 +42,8 @@ class PrisonerService(
   private val deliusApiService: ResettlementPassportDeliusApiService,
   private val caseAllocationService: CaseAllocationService,
   private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
+  private val supportNeedsService: SupportNeedsService,
+  private val resettlementAssessmentService: ResettlementAssessmentService
 ) {
 
   companion object {
@@ -266,6 +268,9 @@ class PrisonerService(
         }
       }
 
+      val needs = supportNeedsService.getNeedsSummary(prisonerId)
+      val lastReport = resettlementAssessmentService.getLastReport(prisonerId)
+
       if (pathwayStatusToFilter == null || pathwayStatusToFilter == pathwayStatus) {
         val prisoner = Prisoners(
           prisonersSearch.prisonerNumber.trim(),
@@ -283,6 +288,10 @@ class PrisonerService(
           getDisplayedReleaseEligibilityType(prisonersSearch),
           prisonersSearch.releaseOnTemporaryLicenceDate,
           assessmentRequired,
+          null,
+          null,
+          needs,
+          lastReport,
         )
 
         if (assigned?.get(0) != null) {

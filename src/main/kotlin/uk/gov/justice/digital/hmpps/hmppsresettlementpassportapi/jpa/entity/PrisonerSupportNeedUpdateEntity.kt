@@ -40,7 +40,7 @@ data class PrisonerSupportNeedUpdateEntity(
   val isProbation: Boolean,
 
   @Column(name = "is_deleted")
-  val isDeleted: Boolean = false,
+  val deleted: Boolean = false,
 
   @Column(name = "deleted_date")
   val deletedDate: LocalDateTime? = null,

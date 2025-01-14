@@ -1,0 +1,13 @@
+package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
+
+import java.time.LocalDateTime
+
+data class SupportNeedSummary(
+  val pathway: Pathway,
+  val reviewed: Boolean,
+  val notStarted: Int,
+  val inProgress: Int,
+  val met: Int,
+  val declined: Int,
+  val lastUpdated: LocalDateTime?,
+)

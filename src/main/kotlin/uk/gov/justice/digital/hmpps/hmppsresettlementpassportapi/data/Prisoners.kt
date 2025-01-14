@@ -1,7 +1,9 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ProfileTagList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class Prisoners(
   val prisonerNumber: String,
@@ -21,7 +23,8 @@ data class Prisoners(
   val assessmentRequired: Boolean,
   var assignedWorkerFirstname: String? = null,
   var assignedWorkerLastname: String? = null,
-
+  val needs: List<SupportNeedSummary>,
+  val lastReport: LastReport?,
 )
 
 data class PrisonerPersonal(
@@ -68,4 +71,9 @@ data class Prisoner(
   val preReleaseSubmitted: Boolean,
   val isInWatchlist: Boolean,
   val profile: ProfileTagList,
+)
+
+data class LastReport(
+  val type: ResettlementAssessmentType,
+  val dateCompleted: LocalDateTime,
 )

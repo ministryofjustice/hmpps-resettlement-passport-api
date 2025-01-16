@@ -75,5 +75,5 @@ data class Prisoner(
 
 data class LastReport(
   val type: ResettlementAssessmentType,
-  val dateCompleted: LocalDateTime,
+  val dateCompleted: LocalDate,
 )

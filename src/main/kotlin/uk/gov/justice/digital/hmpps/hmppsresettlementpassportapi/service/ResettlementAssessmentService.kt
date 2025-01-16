@@ -526,7 +526,7 @@ class ResettlementAssessmentService(
       if (lastReportFromDB != null) {
         return LastReport(
           type = lastReportFromDB.assessmentType,
-          dateCompleted = lastReportFromDB.submissionDate ?: lastReportFromDB.creationDate,
+          dateCompleted = lastReportFromDB.submissionDate?.toLocalDate() ?: lastReportFromDB.creationDate.toLocalDate(),
         )
       }
     }

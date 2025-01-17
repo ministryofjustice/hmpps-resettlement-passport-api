@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.context.jdbc.Sql
+import org.springframework.test.json.JsonCompareMode
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
@@ -317,7 +318,7 @@ class ATBResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
       .expectBody()
-      .json(expectedOutput, true)
+      .json(expectedOutput, JsonCompareMode.STRICT)
     unmockkAll()
   }
 
@@ -336,7 +337,7 @@ class ATBResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
       .expectBody()
-      .json(expectedOutput, true)
+      .json(expectedOutput, JsonCompareMode.STRICT)
     unmockkAll()
   }
 

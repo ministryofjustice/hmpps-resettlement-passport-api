@@ -5,4 +5,6 @@ import org.springframework.stereotype.Repository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
 
 @Repository
-interface PrisonerSupportNeedRepository : JpaRepository<PrisonerSupportNeedEntity, Long>
+interface PrisonerSupportNeedRepository : JpaRepository<PrisonerSupportNeedEntity, Long> {
+  fun findAllByPrisonerIdAndDeletedIsFalse(prisonerId: Long): List<PrisonerSupportNeedEntity>
+}

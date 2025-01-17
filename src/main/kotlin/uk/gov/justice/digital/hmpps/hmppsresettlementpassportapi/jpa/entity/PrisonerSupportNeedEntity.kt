@@ -5,6 +5,8 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import java.time.LocalDateTime
 
@@ -18,8 +20,9 @@ data class PrisonerSupportNeedEntity(
   @Column(name = "prisoner_id")
   val prisonerId: Long,
 
-  @Column(name = "support_need_id")
-  val supportNeedId: Long,
+  @ManyToOne
+  @JoinColumn(name = "support_need_id", referencedColumnName = "id", updatable = false)
+  val supportNeed: SupportNeedEntity,
 
   @Column(name = "other_detail")
   val otherDetail: String?,
@@ -31,7 +34,7 @@ data class PrisonerSupportNeedEntity(
   val createdDate: LocalDateTime,
 
   @Column(name = "is_deleted")
-  val isDeleted: Boolean = false,
+  val deleted: Boolean = false,
 
   @Column(name = "deleted_date")
   val deletedDate: LocalDateTime? = null,

@@ -20,10 +20,12 @@ import org.mockito.Mockito.verify
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.verifyNoMoreInteractions
+import org.mockito.kotlin.whenever
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResettlementAssessmentConfig
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LastReport
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.TagAndQuestionMapping
@@ -53,6 +55,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.AssessmentConfigOption
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.ResettlementAssessmentStrategy
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.processProfileTags
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.stream.Stream
 
@@ -871,4 +874,47 @@ class ResettlementAssessmentServiceTest {
       deleted = deleted,
       deletedDate = if (deleted) LocalDateTime.now() else null,
     )
+
+  @Test
+  fun `test getLastReport - prisonerId is null`() {
+    Assertions.assertNull(resettlementAssessmentService.getLastReport(null))
+  }
+
+  @Test
+  fun `test getLastReport - report from DB is null`() {
+    val prisonerId = 1L
+    whenever(resettlementAssessmentRepository.findFirstByPrisonerIdAndAssessmentStatusAndDeletedIsFalseAndSubmissionDateIsNotNullOrderBySubmissionDateDesc(prisonerId, ResettlementAssessmentStatus.SUBMITTED)).thenReturn(null)
+    Assertions.assertNull(resettlementAssessmentService.getLastReport(prisonerId))
+  }
+
+  @Test
+  fun `test getLastReport - report from DB is not null`() {
+    val prisonerId = 1L
+    val resettlementAssessment = ResettlementAssessmentEntity(
+      id = 12,
+      prisonerId = prisonerId,
+      pathway = Pathway.HEALTH,
+      statusChangedTo = Status.NOT_STARTED,
+      assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN,
+      assessment = ResettlementAssessmentQuestionAndAnswerList(emptyList()),
+      creationDate = LocalDateTime.parse("2023-09-09T12:00:03"),
+      createdBy = "User A",
+      assessmentStatus = ResettlementAssessmentStatus.SUBMITTED,
+      caseNoteText = null,
+      createdByUserId = "123",
+      version = 1,
+      submissionDate = LocalDateTime.parse("2023-09-09T12:00:04"),
+      userDeclaration = null,
+      deleted = false,
+      deletedDate = null,
+    )
+    whenever(resettlementAssessmentRepository.findFirstByPrisonerIdAndAssessmentStatusAndDeletedIsFalseAndSubmissionDateIsNotNullOrderBySubmissionDateDesc(prisonerId, ResettlementAssessmentStatus.SUBMITTED)).thenReturn(resettlementAssessment)
+
+    val expectedLastReport = LastReport(
+      type = ResettlementAssessmentType.RESETTLEMENT_PLAN,
+      dateCompleted = LocalDate.parse("2023-09-09"),
+    )
+
+    Assertions.assertEquals(expectedLastReport, resettlementAssessmentService.getLastReport(prisonerId))
+  }
 }

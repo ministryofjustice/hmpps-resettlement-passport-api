@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
+import org.springframework.test.json.JsonCompareMode
 import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CvlApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
@@ -38,7 +39,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput, true)
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
 
     val prisonerEntity1 = prisonerRepository.findByNomsId("123")
     val expectedPrisonerEntity1 = PrisonerEntity(null, nomsId, LocalDateTime.now(), "MDI")
@@ -56,7 +57,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput, true)
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
 
     val prisonerEntity2 = prisonerRepository.findByNomsId("123")
     val expectedPrisonerEntity2 = PrisonerEntity(null, nomsId, LocalDateTime.now(), "MDI")
@@ -80,7 +81,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput, true)
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
 
     val prisonerEntity = prisonerRepository.findByNomsId("123")
     val expectedPrisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), "xyz")
@@ -107,7 +108,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput, true)
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
 
     val prisonerEntity = prisonerRepository.findByNomsId("123")
     val expectedPrisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), "xyz")
@@ -134,7 +135,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput, true)
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
 
     val prisonerEntity = prisonerRepository.findByNomsId("123")
     val expectedPrisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), "MDI")
@@ -161,7 +162,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput, true)
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
 
     val prisonerEntity = prisonerRepository.findByNomsId("123")
     val expectedPrisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), "xyz")
@@ -293,7 +294,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput, true)
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
 
     val prisonerEntity = prisonerRepository.findByNomsId("123")
     val expectedPrisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), "xyz")
@@ -317,7 +318,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput, true)
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
 
     val prisonerEntity = prisonerRepository.findByNomsId("123")
     val expectedPrisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), "xyz")
@@ -363,7 +364,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput, true)
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
   }
 
   private fun readFileAndReplaceAge(resourceName: String): String {

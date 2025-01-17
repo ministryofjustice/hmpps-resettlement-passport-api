@@ -51,7 +51,7 @@
       "releaseEligibilityDate": null,
       "releaseEligibilityType": null,
       "releaseOnTemporaryLicenceDate": null,
-      "assessmentRequired": false,
+      "assessmentRequired": true,
       "assignedWorkerFirstname": null,
       "assignedWorkerLastname": null,
       "needs": [
@@ -128,7 +128,7 @@
       "lastName": "CRAWFIS",
       "releaseDate": "2099-09-12",
       "releaseType": "CRD",
-      "lastUpdatedDate": "2023-05-23",
+      "lastUpdatedDate": "2024-12-25",
       "status": [
         {
           "pathway": "ACCOMMODATION",
@@ -172,18 +172,18 @@
       "releaseEligibilityDate": "2018-10-16",
       "releaseEligibilityType": "HDCED",
       "releaseOnTemporaryLicenceDate": null,
-      "assessmentRequired": true,
+      "assessmentRequired": false,
       "assignedWorkerFirstname": null,
       "assignedWorkerLastname": null,
       "needs": [
         {
           "pathway": "ACCOMMODATION",
-          "reviewed": false,
+          "reviewed": true,
           "notStarted": 0,
           "inProgress": 0,
-          "met": 0,
+          "met": 1,
           "declined": 0,
-          "lastUpdated": null
+          "lastUpdated": "2024-12-25"
         },
         {
           "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
@@ -240,7 +240,10 @@
           "lastUpdated": null
         }
       ],
-      "lastReport": null
+      "lastReport": {
+        "type": "BCST2",
+        "dateCompleted": "2023-01-09"
+      }
     },
     {
       "prisonerNumber": "A8229DY",

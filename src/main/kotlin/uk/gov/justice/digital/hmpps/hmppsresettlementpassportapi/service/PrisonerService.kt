@@ -42,6 +42,8 @@ class PrisonerService(
   private val deliusApiService: ResettlementPassportDeliusApiService,
   private val caseAllocationService: CaseAllocationService,
   private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
+  private val supportNeedsService: SupportNeedsService,
+  private val resettlementAssessmentService: ResettlementAssessmentService,
 ) {
 
   companion object {
@@ -220,7 +222,7 @@ class PrisonerService(
       val pathwayStatuses: List<PathwayStatus>?
       val sortedPathwayStatuses: List<PathwayStatus>?
       val pathwayStatus: Status?
-      val lastUpdatedDate: LocalDate?
+      val lastUpdatedDateFromPathwayStatus: LocalDate?
       val isInWatchList = watchedOffenders.contains(prisonerId)
 
       if (watchListFilter == true && !isInWatchList) {
@@ -243,9 +245,9 @@ class PrisonerService(
       if (prisonerId != null) {
         pathwayStatuses = if (pathwayView == null) pathwayStatusesEntities.map { PathwayStatus(pathway = it.pathway, status = it.pathwayStatus, lastDateChange = it.updatedDate?.toLocalDate()) }.sortedBy { it.pathway } else null
         sortedPathwayStatuses = pathwayStatuses?.sortedWith(compareBy(nullsLast()) { it.lastDateChange })
-        lastUpdatedDate =
+        lastUpdatedDateFromPathwayStatus =
           if (pathwayView == null) {
-            sortedPathwayStatuses?.first()?.lastDateChange
+            sortedPathwayStatuses?.last()?.lastDateChange
           } else {
             pathwayStatusesEntities.find { it.pathway == pathwayView }?.updatedDate?.toLocalDate()
           }
@@ -254,7 +256,7 @@ class PrisonerService(
         // We don't know about this prisoner yet so just set all the statuses to NOT_STARTED.
         pathwayStatuses = if (pathwayView == null) defaultPathwayStatuses else null
         pathwayStatus = if (pathwayView != null) Status.NOT_STARTED else null
-        lastUpdatedDate = null
+        lastUpdatedDateFromPathwayStatus = null
       }
 
       val assessmentRequired = !prisonersWithSubmittedAssessment.contains(prisonerId)
@@ -265,6 +267,10 @@ class PrisonerService(
           return@forEach
         }
       }
+
+      val needs = supportNeedsService.getNeedsSummary(prisonerId)
+      val lastReport = resettlementAssessmentService.getLastReport(prisonerId)
+      val lastUpdatedDate = getLatestDate(arrayOf(lastUpdatedDateFromPathwayStatus) + needs.map { it.lastUpdated }.toTypedArray())
 
       if (pathwayStatusToFilter == null || pathwayStatusToFilter == pathwayStatus) {
         val prisoner = Prisoners(
@@ -283,6 +289,10 @@ class PrisonerService(
           getDisplayedReleaseEligibilityType(prisonersSearch),
           prisonersSearch.releaseOnTemporaryLicenceDate,
           assessmentRequired,
+          null,
+          null,
+          needs,
+          lastReport,
         )
 
         if (assigned?.get(0) != null) {

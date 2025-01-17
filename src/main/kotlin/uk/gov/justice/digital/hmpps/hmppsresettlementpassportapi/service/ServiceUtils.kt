@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AppointmentsService.Companion.SECTION_DELIMITER
 import java.security.SecureRandom
+import java.time.LocalDate
 import kotlin.reflect.KClass
 import kotlin.streams.asSequence
 
@@ -190,3 +191,5 @@ fun generateContentOnlyDpsCaseNoteText(assessmentType: ResettlementAssessmentTyp
 """.trimIndent()
 
 fun removeOtherPrefix(answer: String) = answer.removePrefix("OTHER_SUPPORT_NEEDS:").trim()
+
+fun getLatestDate(dates: Array<LocalDate?>) = dates.filterNotNull().maxByOrNull { it }

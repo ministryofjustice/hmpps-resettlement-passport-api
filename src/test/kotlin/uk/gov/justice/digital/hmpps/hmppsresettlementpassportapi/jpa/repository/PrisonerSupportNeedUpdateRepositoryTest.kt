@@ -17,13 +17,16 @@ class PrisonerSupportNeedUpdateRepositoryTest : RepositoryTestBase() {
   @Autowired
   lateinit var prisonerSupportNeedRepository: PrisonerSupportNeedRepository
 
+  @Autowired
+  lateinit var supportNeedRepository: SupportNeedRepository
+
   @Test
   @Sql("classpath:testdata/sql/seed-1-prisoner.sql")
   fun `test can save and find prisoner support need updates`() {
     val prisonerSupportNeed = prisonerSupportNeedRepository.save(
       PrisonerSupportNeedEntity(
         prisonerId = 1,
-        supportNeedId = 1,
+        supportNeed = supportNeedRepository.findById(1).get(),
         otherDetail = null,
         createdBy = "John Smith",
         createdDate = LocalDateTime.parse("2024-04-04T13:00:01"),
@@ -58,7 +61,7 @@ class PrisonerSupportNeedUpdateRepositoryTest : RepositoryTestBase() {
       status = SupportNeedStatus.MET,
       isPrison = false,
       isProbation = true,
-      isDeleted = true,
+      deleted = true,
       deletedDate = LocalDateTime.parse("2024-04-04T16:00:01"),
     )
 
@@ -66,5 +69,18 @@ class PrisonerSupportNeedUpdateRepositoryTest : RepositoryTestBase() {
 
     val updatesFromDatabase = prisonerSupportNeedUpdateRepository.findAll()
     Assertions.assertEquals(listOf(update1, update2, update3), updatesFromDatabase)
+  }
+
+  @Test
+  fun `test findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc - no results`() {
+    Assertions.assertNull(prisonerSupportNeedUpdateRepository.findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(1))
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoner-support-needs-1.sql")
+  fun `test findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc`() {
+    val expectedPrisonerSupportNeedUpdate = PrisonerSupportNeedUpdateEntity(id = 3, prisonerSupportNeedId = 2, createdBy = "A user", createdDate = LocalDateTime.parse("2024-02-22T09:36:31.713421"), updateText = "This is an update 3", status = SupportNeedStatus.MET, isPrison = true, isProbation = false, deleted = false, deletedDate = null)
+
+    Assertions.assertEquals(expectedPrisonerSupportNeedUpdate, prisonerSupportNeedUpdateRepository.findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(2))
   }
 }

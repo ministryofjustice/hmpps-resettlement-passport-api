@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Validation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
+import java.time.LocalDate
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -670,6 +671,19 @@ class ServiceUtilsTest {
     Arguments.of("  Random text   ", "Random text"),
     Arguments.of("OTHER_SUPPORT_NEEDS: Another support need", "Another support need"),
     Arguments.of("OTHER_SUPPORT_NEEDS:Another support need", "Another support need"),
+  )
+
+  @ParameterizedTest
+  @MethodSource("test getLatestDate data")
+  fun `test getLatestDate`(input: Array<LocalDate?>, expected: LocalDate?) {
+    Assertions.assertEquals(expected, getLatestDate(input))
+  }
+
+  private fun `test getLatestDate data`() = Stream.of(
+    Arguments.of(arrayOf<LocalDate?>(), null),
+    Arguments.of(arrayOf<LocalDate?>(null, null), null),
+    Arguments.of(arrayOf(LocalDate.parse("2024-09-07")), LocalDate.parse("2024-09-07")),
+    Arguments.of(arrayOf(LocalDate.parse("2024-09-06"), null, LocalDate.parse("2025-01-01"), LocalDate.parse("2024-09-07"), null), LocalDate.parse("2025-01-01")),
   )
 }
 

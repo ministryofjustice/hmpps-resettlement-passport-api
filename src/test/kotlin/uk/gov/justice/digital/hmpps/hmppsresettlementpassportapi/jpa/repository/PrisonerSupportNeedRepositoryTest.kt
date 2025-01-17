@@ -13,6 +13,9 @@ class PrisonerSupportNeedRepositoryTest : RepositoryTestBase() {
   lateinit var prisonerSupportNeedRepository: PrisonerSupportNeedRepository
 
   @Autowired
+  lateinit var supportNeedRepository: SupportNeedRepository
+
+  @Autowired
   lateinit var prisonerRepository: PrisonerRepository
 
   @Test
@@ -20,7 +23,7 @@ class PrisonerSupportNeedRepositoryTest : RepositoryTestBase() {
   fun `test can save and find prisoner support needs`() {
     val prisonerSupportNeed1 = PrisonerSupportNeedEntity(
       prisonerId = 1,
-      supportNeedId = 1,
+      supportNeed = supportNeedRepository.findById(1).get(),
       otherDetail = null,
       createdBy = "John Smith",
       createdDate = LocalDateTime.parse("2024-04-04T13:00:01"),
@@ -28,11 +31,11 @@ class PrisonerSupportNeedRepositoryTest : RepositoryTestBase() {
 
     val prisonerSupportNeed2 = PrisonerSupportNeedEntity(
       prisonerId = 1,
-      supportNeedId = 5,
+      supportNeed = supportNeedRepository.findById(5).get(),
       otherDetail = "Other",
       createdBy = "John Smith",
       createdDate = LocalDateTime.parse("2024-04-04T14:00:01"),
-      isDeleted = true,
+      deleted = true,
       deletedDate = LocalDateTime.parse("2023-04-04T15:00:02"),
     )
 
@@ -40,5 +43,22 @@ class PrisonerSupportNeedRepositoryTest : RepositoryTestBase() {
 
     val prisonerSupportNeedsFromDatabase = prisonerSupportNeedRepository.findAll()
     Assertions.assertEquals(listOf(prisonerSupportNeed1, prisonerSupportNeed2), prisonerSupportNeedsFromDatabase)
+  }
+
+  @Test
+  fun `test findAllByPrisonerIdAndDeletedIsFalse - no results`() {
+    Assertions.assertEquals(listOf<PrisonerSupportNeedEntity>(), prisonerSupportNeedRepository.findAllByPrisonerIdAndDeletedIsFalse(1))
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoner-support-needs-1.sql")
+  fun `test findAllByPrisonerIdAndDeletedIsFalse`() {
+    val expectedPrisonerSupportNeeds = listOf(
+      PrisonerSupportNeedEntity(id = 2, prisonerId = 1, supportNeed = supportNeedRepository.findById(1).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null),
+      PrisonerSupportNeedEntity(id = 3, prisonerId = 1, supportNeed = supportNeedRepository.findById(2).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null),
+      PrisonerSupportNeedEntity(id = 6, prisonerId = 1, supportNeed = supportNeedRepository.findById(5).get(), otherDetail = "This is an other 1", createdBy = "Someone else", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null),
+      PrisonerSupportNeedEntity(id = 7, prisonerId = 1, supportNeed = supportNeedRepository.findById(5).get(), otherDetail = "This is an other 2", createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null),
+    )
+    Assertions.assertEquals(expectedPrisonerSupportNeeds, prisonerSupportNeedRepository.findAllByPrisonerIdAndDeletedIsFalse(1))
   }
 }

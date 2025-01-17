@@ -7,7 +7,7 @@
       "lastName": "CRD-LR-TEST",
       "releaseDate": null,
       "releaseType": "PRRD",
-      "lastUpdatedDate": "2023-06-14",
+      "lastUpdatedDate": "2023-06-20",
       "status": [
         {
           "pathway": "ACCOMMODATION",
@@ -53,7 +53,73 @@
       "releaseOnTemporaryLicenceDate": null,
       "assessmentRequired": false,
       "assignedWorkerFirstname": null,
-      "assignedWorkerLastname": null
+      "assignedWorkerLastname": null,
+      "needs": [
+        {
+          "pathway": "ACCOMMODATION",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "HEALTH",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        }
+      ],
+      "lastReport": null
     },
     {
       "prisonerNumber": "G1458GV",
@@ -62,7 +128,7 @@
       "lastName": "CRAWFIS",
       "releaseDate": "2099-09-12",
       "releaseType": "CRD",
-      "lastUpdatedDate": "2023-05-17",
+      "lastUpdatedDate": "2023-05-23",
       "status": [
         {
           "pathway": "ACCOMMODATION",
@@ -108,7 +174,73 @@
       "releaseOnTemporaryLicenceDate": null,
       "assessmentRequired": true,
       "assignedWorkerFirstname": null,
-      "assignedWorkerLastname": null
+      "assignedWorkerLastname": null,
+      "needs": [
+        {
+          "pathway": "ACCOMMODATION",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "HEALTH",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        }
+      ],
+      "lastReport": null
     },
     {
       "prisonerNumber": "A8229DY",
@@ -117,7 +249,7 @@
       "lastName": "MCVEIGH",
       "releaseDate": "2099-08-01",
       "releaseType": "CRD",
-      "lastUpdatedDate": "2023-07-19",
+      "lastUpdatedDate": "2023-07-25",
       "status": [
         {
           "pathway": "ACCOMMODATION",
@@ -163,7 +295,73 @@
       "releaseOnTemporaryLicenceDate": null,
       "assessmentRequired": true,
       "assignedWorkerFirstname": null,
-      "assignedWorkerLastname": null
+      "assignedWorkerLastname": null,
+      "needs": [
+        {
+          "pathway": "ACCOMMODATION",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "HEALTH",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        }
+      ],
+      "lastReport": null
     },
     {
       "prisonerNumber": "A8258DY",
@@ -172,7 +370,7 @@
       "lastName": "FEDDER",
       "releaseDate": "2023-07-15",
       "releaseType": "CRD",
-      "lastUpdatedDate": "2023-06-28",
+      "lastUpdatedDate": "2023-07-04",
       "status": [
         {
           "pathway": "ACCOMMODATION",
@@ -218,7 +416,73 @@
       "releaseOnTemporaryLicenceDate": null,
       "assessmentRequired": true,
       "assignedWorkerFirstname": null,
-      "assignedWorkerLastname": null
+      "assignedWorkerLastname": null,
+      "needs": [
+        {
+          "pathway": "ACCOMMODATION",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "HEALTH",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        }
+      ],
+      "lastReport": null
     },
     {
       "prisonerNumber": "A8257DY",
@@ -227,7 +491,7 @@
       "lastName": "MCGRATH",
       "releaseDate": "2022-08-28",
       "releaseType": "CRD",
-      "lastUpdatedDate": "2023-07-05",
+      "lastUpdatedDate": "2023-07-11",
       "status": [
         {
           "pathway": "ACCOMMODATION",
@@ -273,7 +537,73 @@
       "releaseOnTemporaryLicenceDate": null,
       "assessmentRequired": true,
       "assignedWorkerFirstname": null,
-      "assignedWorkerLastname": null
+      "assignedWorkerLastname": null,
+      "needs": [
+        {
+          "pathway": "ACCOMMODATION",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "HEALTH",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        }
+      ],
+      "lastReport": null
     },
     {
       "prisonerNumber": "A8314DY",
@@ -282,7 +612,7 @@
       "lastName": "WITTKOPP",
       "releaseDate": "2022-04-13",
       "releaseType": "CRD",
-      "lastUpdatedDate": "2023-07-12",
+      "lastUpdatedDate": "2023-07-18",
       "status": [
         {
           "pathway": "ACCOMMODATION",
@@ -328,7 +658,73 @@
       "releaseOnTemporaryLicenceDate": null,
       "assessmentRequired": true,
       "assignedWorkerFirstname": null,
-      "assignedWorkerLastname": null
+      "assignedWorkerLastname": null,
+      "needs": [
+        {
+          "pathway": "ACCOMMODATION",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "HEALTH",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        }
+      ],
+      "lastReport": null
     },
     {
       "prisonerNumber": "G6933GF",
@@ -337,7 +733,7 @@
       "lastName": "CORALLO",
       "releaseDate": "2021-10-14",
       "releaseType": "CRD",
-      "lastUpdatedDate": "2023-06-07",
+      "lastUpdatedDate": "2023-06-13",
       "status": [
         {
           "pathway": "ACCOMMODATION",
@@ -383,7 +779,73 @@
       "releaseOnTemporaryLicenceDate": null,
       "assessmentRequired": true,
       "assignedWorkerFirstname": null,
-      "assignedWorkerLastname": null
+      "assignedWorkerLastname": null,
+      "needs": [
+        {
+          "pathway": "ACCOMMODATION",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "HEALTH",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        }
+      ],
+      "lastReport": null
     },
     {
       "prisonerNumber": "G6335VX",
@@ -392,7 +854,7 @@
       "lastName": "COUTCHER",
       "releaseDate": "2017-05-11",
       "releaseType": "PRRD",
-      "lastUpdatedDate": "2023-05-31",
+      "lastUpdatedDate": "2023-06-06",
       "status": [
         {
           "pathway": "ACCOMMODATION",
@@ -438,7 +900,73 @@
       "releaseOnTemporaryLicenceDate": null,
       "assessmentRequired": true,
       "assignedWorkerFirstname": null,
-      "assignedWorkerLastname": null
+      "assignedWorkerLastname": null,
+      "needs": [
+        {
+          "pathway": "ACCOMMODATION",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "HEALTH",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        }
+      ],
+      "lastReport": null
     },
     {
       "prisonerNumber": "G6628UE",
@@ -447,7 +975,7 @@
       "lastName": "COSNER",
       "releaseDate": "2017-03-31",
       "releaseType": "CRD",
-      "lastUpdatedDate": "2023-05-24",
+      "lastUpdatedDate": "2023-05-30",
       "status": [
         {
           "pathway": "ACCOMMODATION",
@@ -493,7 +1021,73 @@
       "releaseOnTemporaryLicenceDate": null,
       "assessmentRequired": true,
       "assignedWorkerFirstname": null,
-      "assignedWorkerLastname": null
+      "assignedWorkerLastname": null,
+      "needs": [
+        {
+          "pathway": "ACCOMMODATION",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "HEALTH",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        }
+      ],
+      "lastReport": null
     },
     {
       "prisonerNumber": "A8132DY",
@@ -502,7 +1096,7 @@
       "lastName": "HAMILTON",
       "releaseDate": "2015-07-23",
       "releaseType": "CRD",
-      "lastUpdatedDate": "2023-06-21",
+      "lastUpdatedDate": "2023-06-27",
       "status": [
         {
           "pathway": "ACCOMMODATION",
@@ -548,7 +1142,73 @@
       "releaseOnTemporaryLicenceDate": null,
       "assessmentRequired": true,
       "assignedWorkerFirstname": null,
-      "assignedWorkerLastname": null
+      "assignedWorkerLastname": null,
+      "needs": [
+        {
+          "pathway": "ACCOMMODATION",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "HEALTH",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        }
+      ],
+      "lastReport": null
     }
   ],
   "pageSize": 10,

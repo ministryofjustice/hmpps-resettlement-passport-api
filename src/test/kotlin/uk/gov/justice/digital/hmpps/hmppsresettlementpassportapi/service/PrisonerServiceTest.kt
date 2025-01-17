@@ -87,6 +87,12 @@ class PrisonerServiceTest {
   @Mock
   private lateinit var resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService
 
+  @Mock
+  private lateinit var supportNeedsService: SupportNeedsService
+
+  @Mock
+  private lateinit var resettlementAssessmentService: ResettlementAssessmentService
+
   @BeforeEach
   fun beforeEach() {
     prisonerService = PrisonerService(
@@ -101,6 +107,8 @@ class PrisonerServiceTest {
       deliusApiService,
       caseAllocationService,
       resettlementPassportDeliusApiService,
+      supportNeedsService,
+      resettlementAssessmentService,
     )
     mockkStatic(::getClaimFromJWTToken)
     every { getClaimFromJWTToken("123", "sub") } returns "ABC11D"
@@ -188,6 +196,8 @@ class PrisonerServiceTest {
           releaseEligibilityType = null,
           releaseOnTemporaryLicenceDate = null,
           assessmentRequired = true,
+          needs = listOf(),
+          lastReport = null,
         ),
         Prisoners(
           prisonerNumber = "G1458GV",
@@ -208,6 +218,8 @@ class PrisonerServiceTest {
           releaseEligibilityType = "HDCED",
           releaseOnTemporaryLicenceDate = null,
           assessmentRequired = true,
+          needs = listOf(),
+          lastReport = null,
         ),
         Prisoners(
           prisonerNumber = "A8229DY",
@@ -228,6 +240,8 @@ class PrisonerServiceTest {
           releaseEligibilityType = "HDCED",
           releaseOnTemporaryLicenceDate = null,
           assessmentRequired = true,
+          needs = listOf(),
+          lastReport = null,
         ),
       ),
       pageSize = 3,
@@ -286,6 +300,8 @@ class PrisonerServiceTest {
           releaseEligibilityType = null,
           releaseOnTemporaryLicenceDate = null,
           assessmentRequired = true,
+          needs = listOf(),
+          lastReport = null,
         ),
         Prisoners(
           prisonerNumber = "G1458GV",
@@ -306,6 +322,8 @@ class PrisonerServiceTest {
           releaseEligibilityType = "HDCED",
           releaseOnTemporaryLicenceDate = null,
           assessmentRequired = true,
+          needs = listOf(),
+          lastReport = null,
         ),
         Prisoners(
           prisonerNumber = "A8229DY",
@@ -326,6 +344,8 @@ class PrisonerServiceTest {
           releaseEligibilityType = "HDCED",
           releaseOnTemporaryLicenceDate = null,
           assessmentRequired = true,
+          needs = listOf(),
+          lastReport = null,
         ),
         Prisoners(
           prisonerNumber = "A8258DY",
@@ -351,6 +371,8 @@ class PrisonerServiceTest {
           releaseEligibilityType = null,
           releaseOnTemporaryLicenceDate = null,
           assessmentRequired = true,
+          needs = listOf(),
+          lastReport = null,
         ),
         Prisoners(
           prisonerNumber = "A8257DY",
@@ -376,6 +398,8 @@ class PrisonerServiceTest {
           releaseEligibilityType = "HDCED",
           releaseOnTemporaryLicenceDate = null,
           assessmentRequired = true,
+          needs = listOf(),
+          lastReport = null,
         ),
         Prisoners(
           prisonerNumber = "A8314DY",
@@ -401,6 +425,8 @@ class PrisonerServiceTest {
           releaseEligibilityType = "HDCED",
           releaseOnTemporaryLicenceDate = null,
           assessmentRequired = true,
+          needs = listOf(),
+          lastReport = null,
         ),
         Prisoners(
           prisonerNumber = "G6933GF",
@@ -426,6 +452,8 @@ class PrisonerServiceTest {
           releaseEligibilityType = "PED",
           releaseOnTemporaryLicenceDate = null,
           assessmentRequired = true,
+          needs = listOf(),
+          lastReport = null,
         ),
         Prisoners(
           prisonerNumber = "G6335VX",
@@ -451,6 +479,8 @@ class PrisonerServiceTest {
           releaseEligibilityType = null,
           releaseOnTemporaryLicenceDate = null,
           assessmentRequired = true,
+          needs = listOf(),
+          lastReport = null,
         ),
         Prisoners(
           prisonerNumber = "G6628UE",
@@ -476,6 +506,8 @@ class PrisonerServiceTest {
           releaseEligibilityType = "PED",
           releaseOnTemporaryLicenceDate = null,
           assessmentRequired = true,
+          needs = listOf(),
+          lastReport = null,
         ),
         Prisoners(
           prisonerNumber = "A8132DY",
@@ -501,6 +533,8 @@ class PrisonerServiceTest {
           releaseEligibilityType = "HDCED",
           releaseOnTemporaryLicenceDate = null,
           assessmentRequired = true,
+          needs = listOf(),
+          lastReport = null,
         ),
       ),
       pageSize = 10,
@@ -818,6 +852,8 @@ class PrisonerServiceTest {
         releaseEligibilityDate = null,
         releaseEligibilityType = null,
         assessmentRequired = true,
+        needs = listOf(),
+        lastReport = null,
       ),
       Prisoners(
         prisonerNumber = "A8229DY",
@@ -845,6 +881,8 @@ class PrisonerServiceTest {
         releaseEligibilityDate = LocalDate.parse("2021-02-03"),
         releaseEligibilityType = "HDCED",
         assessmentRequired = true,
+        needs = listOf(),
+        lastReport = null,
       ),
       Prisoners(
         prisonerNumber = "G1458GV",
@@ -872,6 +910,8 @@ class PrisonerServiceTest {
         releaseEligibilityDate = LocalDate.parse("2018-10-16"),
         releaseEligibilityType = "HDCED",
         assessmentRequired = true,
+        needs = listOf(),
+        lastReport = null,
       ),
     ),
     pageSize = 3,
@@ -899,6 +939,8 @@ class PrisonerServiceTest {
         releaseEligibilityDate = null,
         releaseEligibilityType = null,
         assessmentRequired = false,
+        needs = listOf(),
+        lastReport = null,
       ),
       Prisoners(
         prisonerNumber = "A8229DY",
@@ -915,6 +957,8 @@ class PrisonerServiceTest {
         releaseEligibilityDate = LocalDate.parse("2021-02-03"),
         releaseEligibilityType = "HDCED",
         assessmentRequired = false,
+        needs = listOf(),
+        lastReport = null,
       ),
       Prisoners(
         prisonerNumber = "G1458GV",
@@ -931,6 +975,8 @@ class PrisonerServiceTest {
         releaseEligibilityDate = LocalDate.parse("2018-10-16"),
         releaseEligibilityType = "HDCED",
         assessmentRequired = false,
+        needs = listOf(),
+        lastReport = null,
       ),
     ),
     pageSize = 3,
@@ -958,6 +1004,8 @@ class PrisonerServiceTest {
         releaseEligibilityDate = LocalDate.parse("2018-10-16"),
         releaseEligibilityType = "HDCED",
         assessmentRequired = false,
+        needs = listOf(),
+        lastReport = null,
       ),
     ),
     pageSize = 1,
@@ -1147,6 +1195,8 @@ class PrisonerServiceTest {
           lastUpdatedDate = LocalDate.now(),
           pathwayStatus = null,
           status = listOf(PathwayStatus(pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, lastDateChange = LocalDate.now())),
+          needs = listOf(),
+          lastReport = null,
         )
       },
     ),
@@ -1164,6 +1214,8 @@ class PrisonerServiceTest {
           lastUpdatedDate = null,
           pathwayStatus = null,
           status = enumValues<Pathway>().map { pathway -> PathwayStatus(pathway = pathway, status = Status.NOT_STARTED) },
+          needs = listOf(),
+          lastReport = null,
         )
       },
     ),
@@ -1184,6 +1236,8 @@ class PrisonerServiceTest {
           } else {
             enumValues<Pathway>().map { pathway -> PathwayStatus(pathway = pathway, status = Status.NOT_STARTED) }
           },
+          needs = listOf(),
+          lastReport = null,
         )
       },
     ),
@@ -1204,6 +1258,8 @@ class PrisonerServiceTest {
           } else {
             enumValues<Pathway>().map { pathway -> PathwayStatus(pathway = pathway, status = Status.NOT_STARTED) }
           },
+          needs = listOf(),
+          lastReport = null,
         )
       },
     ),
@@ -1848,6 +1904,8 @@ class PrisonerServiceTest {
       lastName = "lastName",
       pathwayStatus = null,
       assessmentRequired = true,
+      needs = listOf(),
+      lastReport = null,
     )
 
   private fun createPrisonerName(firstName: String, lastName: String) =
@@ -1857,6 +1915,8 @@ class PrisonerServiceTest {
       lastName = lastName,
       pathwayStatus = null,
       assessmentRequired = true,
+      needs = listOf(),
+      lastReport = null,
     )
 
   private fun createPrisonerNameAndNumber(prisonerNumber: String, firstName: String, lastName: String) =
@@ -1866,6 +1926,8 @@ class PrisonerServiceTest {
       lastName = lastName,
       pathwayStatus = null,
       assessmentRequired = true,
+      needs = listOf(),
+      lastReport = null,
     )
 
   private fun createPrisonerPEDandHDCED(
@@ -1899,6 +1961,8 @@ class PrisonerServiceTest {
     releaseEligibilityType = releaseEligibilityType,
     assessmentRequired = true,
     status = Pathway.entries.map { PathwayStatus(it, Status.NOT_STARTED) },
+    needs = listOf(),
+    lastReport = null,
   )
 
   private fun createPrisonerReleaseDate(releaseDate: LocalDate?) = Prisoners(
@@ -1908,6 +1972,8 @@ class PrisonerServiceTest {
     pathwayStatus = null,
     releaseDate = releaseDate,
     assessmentRequired = true,
+    needs = listOf(),
+    lastReport = null,
   )
 
   private fun createPrisonerReleaseOnTempLicenceDate(releaseOnTempLicenceDate: LocalDate?) = Prisoners(
@@ -1917,6 +1983,8 @@ class PrisonerServiceTest {
     pathwayStatus = null,
     releaseOnTemporaryLicenceDate = releaseOnTempLicenceDate,
     assessmentRequired = true,
+    needs = listOf(),
+    lastReport = null,
   )
 
   private fun createPrisonerPathwayStatus(pathwayStatus: Status) =
@@ -1926,6 +1994,8 @@ class PrisonerServiceTest {
       lastName = "FRANKLIN",
       pathwayStatus = pathwayStatus,
       assessmentRequired = true,
+      needs = listOf(),
+      lastReport = null,
     )
 
   private fun createPrisonerLastUpdatedDate(pathwayStatus: Status, lastUpdatedDate: LocalDate?) = Prisoners(
@@ -1935,6 +2005,8 @@ class PrisonerServiceTest {
     pathwayStatus = pathwayStatus,
     lastUpdatedDate = lastUpdatedDate,
     assessmentRequired = true,
+    needs = listOf(),
+    lastReport = null,
   )
 
   private inline fun <reified T> readFileAsObject(filename: String): T = readStringAsObject(readFile(filename))

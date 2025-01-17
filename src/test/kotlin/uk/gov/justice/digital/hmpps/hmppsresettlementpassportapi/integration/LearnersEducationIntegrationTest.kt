@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
+import org.springframework.test.json.JsonCompareMode
 
 class LearnersEducationIntegrationTest : IntegrationTestBase() {
 
@@ -111,6 +112,6 @@ class LearnersEducationIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectHeader().contentType("application/json")
       .expectStatus().isOk
-      .expectBody().json(expectedOutput, true)
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
   }
 }

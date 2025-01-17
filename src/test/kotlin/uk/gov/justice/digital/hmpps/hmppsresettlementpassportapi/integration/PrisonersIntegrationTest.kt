@@ -6,7 +6,7 @@ import org.springframework.test.json.JsonCompareMode
 
 class PrisonersIntegrationTest : IntegrationTestBase() {
   @Test
-  @Sql(scripts = ["classpath:testdata/sql/seed-support-needs.sql", "classpath:testdata/sql/seed-prisoners-happy-path.sql"])
+  @Sql("classpath:testdata/sql/seed-prisoners-happy-path.sql")
   fun `Get All Prisoners happy path - with caching`() {
     val expectedOutput = readFile("testdata/expectation/prisoners-happy-path.json")
     val prisonId = "MDI"

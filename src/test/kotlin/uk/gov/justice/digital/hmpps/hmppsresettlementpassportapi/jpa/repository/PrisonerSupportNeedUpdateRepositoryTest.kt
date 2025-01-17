@@ -77,7 +77,7 @@ class PrisonerSupportNeedUpdateRepositoryTest : RepositoryTestBase() {
   }
 
   @Test
-  @Sql(scripts = ["classpath:testdata/sql/seed-support-needs.sql", "classpath:testdata/sql/seed-prisoner-support-needs-1.sql"]) // TODO - remove seed-support-needs.sql once RSP-1718 is done
+  @Sql("classpath:testdata/sql/seed-prisoner-support-needs-1.sql")
   fun `test findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc`() {
     val expectedPrisonerSupportNeedUpdate = PrisonerSupportNeedUpdateEntity(id = 3, prisonerSupportNeedId = 2, createdBy = "A user", createdDate = LocalDateTime.parse("2024-02-22T09:36:31.713421"), updateText = "This is an update 3", status = SupportNeedStatus.MET, isPrison = true, isProbation = false, deleted = false, deletedDate = null)
 

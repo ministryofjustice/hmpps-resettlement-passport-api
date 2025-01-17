@@ -58,12 +58,12 @@ class SupportNeedsServiceTest {
     whenever(prisonerSupportNeedUpdateRepository.findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(1)).thenReturn(null)
 
     val expectedNeedsSummary = listOf(
-      SupportNeedSummary(Pathway.ACCOMMODATION, true, 0, 0, 0, 0, null),
-      SupportNeedSummary(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, true, 0, 0, 0, 0, null),
-      SupportNeedSummary(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, true, 0, 0, 0, 0, null),
-      SupportNeedSummary(Pathway.DRUGS_AND_ALCOHOL, true, 0, 0, 0, 0, null),
-      SupportNeedSummary(Pathway.EDUCATION_SKILLS_AND_WORK, true, 0, 0, 0, 0, null),
-      SupportNeedSummary(Pathway.FINANCE_AND_ID, true, 0, 0, 0, 0, null),
+      SupportNeedSummary(Pathway.ACCOMMODATION, true, 0, 0, 0, 0, LocalDate.parse("2023-09-12")),
+      SupportNeedSummary(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, true, 0, 0, 0, 0, LocalDate.parse("2023-09-12")),
+      SupportNeedSummary(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, true, 0, 0, 0, 0, LocalDate.parse("2023-09-12")),
+      SupportNeedSummary(Pathway.DRUGS_AND_ALCOHOL, true, 0, 0, 0, 0, LocalDate.parse("2023-09-12")),
+      SupportNeedSummary(Pathway.EDUCATION_SKILLS_AND_WORK, true, 0, 0, 0, 0, LocalDate.parse("2023-09-12")),
+      SupportNeedSummary(Pathway.FINANCE_AND_ID, true, 0, 0, 0, 0, LocalDate.parse("2023-09-12")),
       SupportNeedSummary(Pathway.HEALTH, false, 0, 0, 0, 0, null),
     )
 

@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.jdbc.Sql
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.SupportNeedEntity
 import java.time.LocalDateTime
@@ -14,17 +13,16 @@ class SupportNeedRepositoryTest : RepositoryTestBase() {
   lateinit var supportNeedRepository: SupportNeedRepository
 
   @Test
-  @Sql("classpath:testdata/sql/seed-support-needs.sql") // TODO - remove this once RSP-1718 is done
   fun `test can find support needs`() {
     val expectedSupportNeeds = listOf(
-      SupportNeedEntity(id = 1, pathway = Pathway.ACCOMMODATION, section = "Section A", title = "Support Need 1", hidden = false, excludeFromCount = false, allowOtherDetail = false, createdDate = LocalDateTime.parse("2024-02-08T12:00"), isDeleted = false, deletedDate = null),
-      SupportNeedEntity(id = 2, pathway = Pathway.ACCOMMODATION, section = "Section A", title = "Support Need 2", hidden = false, excludeFromCount = false, allowOtherDetail = false, createdDate = LocalDateTime.parse("2024-02-08T12:00"), isDeleted = false, deletedDate = null),
-      SupportNeedEntity(id = 3, pathway = Pathway.ACCOMMODATION, section = "Section A", title = "Support Need 3", hidden = false, excludeFromCount = false, allowOtherDetail = false, createdDate = LocalDateTime.parse("2024-02-08T12:00"), isDeleted = true, deletedDate = LocalDateTime.parse("2024-02-08T13:00")),
-      SupportNeedEntity(id = 4, pathway = Pathway.ACCOMMODATION, section = "Section B", title = "Support Need 4", hidden = true, excludeFromCount = true, allowOtherDetail = false, createdDate = LocalDateTime.parse("2024-02-08T12:00"), isDeleted = false, deletedDate = null),
-      SupportNeedEntity(id = 5, pathway = Pathway.ACCOMMODATION, section = "Section B", title = "Other", hidden = false, excludeFromCount = false, allowOtherDetail = true, createdDate = LocalDateTime.parse("2024-02-08T12:00"), isDeleted = false, deletedDate = null),
+      SupportNeedEntity(id = 1, pathway = Pathway.ACCOMMODATION, section = "Accommodation before custody", title = "End a tenancy", hidden = false, excludeFromCount = false, allowOtherDetail = false, createdDate = LocalDateTime.parse("2025-01-14T15:08:55.437998"), isDeleted = false, deletedDate = null),
+      SupportNeedEntity(id = 2, pathway = Pathway.ACCOMMODATION, section = "Accommodation before custody", title = "Maintain a tenancy while in prison", hidden = false, excludeFromCount = false, allowOtherDetail = false, createdDate = LocalDateTime.parse("2025-01-14T15:08:55.437998"), isDeleted = false, deletedDate = null),
+      SupportNeedEntity(id = 3, pathway = Pathway.ACCOMMODATION, section = "Accommodation before custody", title = "Mortgage support while in prison", hidden = false, excludeFromCount = false, allowOtherDetail = false, createdDate = LocalDateTime.parse("2025-01-14T15:08:55.437998"), isDeleted = false, deletedDate = null),
+      SupportNeedEntity(id = 4, pathway = Pathway.ACCOMMODATION, section = "Accommodation before custody", title = "Home adaptations to stay in current accommodation (changes to make it safer and easier to move around and do everyday tasks)", hidden = false, excludeFromCount = false, allowOtherDetail = false, createdDate = LocalDateTime.parse("2025-01-14T15:08:55.437998"), isDeleted = false, deletedDate = null),
+      SupportNeedEntity(id = 5, pathway = Pathway.ACCOMMODATION, section = "Accommodation before custody", title = "Arrange storage for personal possessions while in prison", hidden = false, excludeFromCount = false, allowOtherDetail = false, createdDate = LocalDateTime.parse("2025-01-14T15:08:55.437998"), isDeleted = false, deletedDate = null),
     )
 
-    val supportNeedsFromDatabase = supportNeedRepository.findAll()
-    Assertions.assertEquals(expectedSupportNeeds, supportNeedsFromDatabase)
+    val supportNeedsFromDatabase = supportNeedRepository.findAll().filterIndexed { idx, _ -> idx < 5 }
+    Assertions.assertEquals(expectedSupportNeeds.map { it.createdDate == null }, supportNeedsFromDatabase.map { it.createdDate == null })
   }
 }

@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNee
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedUpdateEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.SupportNeedEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedUpdateRepository
 import java.time.LocalDate
@@ -30,9 +31,12 @@ class SupportNeedsServiceTest {
   @Mock
   private lateinit var prisonerSupportNeedUpdateRepository: PrisonerSupportNeedUpdateRepository
 
+  @Mock
+  private lateinit var prisonerRepository: PrisonerRepository
+
   @BeforeEach
   fun beforeEach() {
-    supportNeedsService = SupportNeedsService(prisonerSupportNeedRepository, prisonerSupportNeedUpdateRepository)
+    supportNeedsService = SupportNeedsService(prisonerSupportNeedRepository, prisonerSupportNeedUpdateRepository, prisonerRepository)
   }
 
   @Test

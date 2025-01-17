@@ -1,0 +1,67 @@
+{
+  "needs": [
+    {
+      "pathway": "ACCOMMODATION",
+      "reviewed": false,
+      "notStarted": 0,
+      "inProgress": 0,
+      "met": 0,
+      "declined": 0,
+      "lastUpdated": null
+    },
+    {
+      "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+      "reviewed": false,
+      "notStarted": 0,
+      "inProgress": 0,
+      "met": 0,
+      "declined": 0,
+      "lastUpdated": null
+    },
+    {
+      "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+      "reviewed": false,
+      "notStarted": 0,
+      "inProgress": 0,
+      "met": 0,
+      "declined": 0,
+      "lastUpdated": null
+    },
+    {
+      "pathway": "DRUGS_AND_ALCOHOL",
+      "reviewed": false,
+      "notStarted": 0,
+      "inProgress": 0,
+      "met": 0,
+      "declined": 0,
+      "lastUpdated": null
+    },
+    {
+      "pathway": "EDUCATION_SKILLS_AND_WORK",
+      "reviewed": false,
+      "notStarted": 0,
+      "inProgress": 0,
+      "met": 0,
+      "declined": 0,
+      "lastUpdated": null
+    },
+    {
+      "pathway": "FINANCE_AND_ID",
+      "reviewed": false,
+      "notStarted": 0,
+      "inProgress": 0,
+      "met": 0,
+      "declined": 0,
+      "lastUpdated": null
+    },
+    {
+      "pathway": "HEALTH",
+      "reviewed": false,
+      "notStarted": 0,
+      "inProgress": 0,
+      "met": 0,
+      "declined": 0,
+      "lastUpdated": null
+    }
+  ]
+}

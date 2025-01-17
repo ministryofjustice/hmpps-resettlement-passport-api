@@ -19,7 +19,7 @@ class PrisonerSupportNeedRepositoryTest : RepositoryTestBase() {
   lateinit var prisonerRepository: PrisonerRepository
 
   @Test
-  @Sql(scripts = ["classpath:testdata/sql/seed-support-needs.sql", "classpath:testdata/sql/seed-1-prisoner.sql"]) // TODO - remove seed-support-needs.sql once RSP-1718 is done
+  @Sql("classpath:testdata/sql/seed-1-prisoner.sql")
   fun `test can save and find prisoner support needs`() {
     val prisonerSupportNeed1 = PrisonerSupportNeedEntity(
       prisonerId = 1,

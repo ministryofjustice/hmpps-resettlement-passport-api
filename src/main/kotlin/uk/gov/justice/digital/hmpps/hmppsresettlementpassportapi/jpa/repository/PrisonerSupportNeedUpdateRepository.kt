@@ -8,5 +8,4 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 interface PrisonerSupportNeedUpdateRepository : JpaRepository<PrisonerSupportNeedUpdateEntity, Long> {
 
   fun findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(prisonerSupportNeedId: Long): PrisonerSupportNeedUpdateEntity?
-
 }

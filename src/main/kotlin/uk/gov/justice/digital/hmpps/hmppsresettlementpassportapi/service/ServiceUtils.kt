@@ -16,7 +16,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AppointmentsService.Companion.SECTION_DELIMITER
 import java.security.SecureRandom
 import java.time.LocalDate
-import java.time.LocalDateTime
 import kotlin.reflect.KClass
 import kotlin.streams.asSequence
 

@@ -43,7 +43,7 @@ class PrisonerService(
   private val caseAllocationService: CaseAllocationService,
   private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
   private val supportNeedsService: SupportNeedsService,
-  private val resettlementAssessmentService: ResettlementAssessmentService
+  private val resettlementAssessmentService: ResettlementAssessmentService,
 ) {
 
   companion object {

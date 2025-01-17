@@ -44,4 +44,21 @@ class PrisonerSupportNeedRepositoryTest : RepositoryTestBase() {
     val prisonerSupportNeedsFromDatabase = prisonerSupportNeedRepository.findAll()
     Assertions.assertEquals(listOf(prisonerSupportNeed1, prisonerSupportNeed2), prisonerSupportNeedsFromDatabase)
   }
+
+  @Test
+  fun `test findAllByPrisonerIdAndDeletedIsFalse - no results`() {
+    Assertions.assertEquals(listOf<PrisonerSupportNeedEntity>(), prisonerSupportNeedRepository.findAllByPrisonerIdAndDeletedIsFalse(1))
+  }
+
+  @Test
+  @Sql(scripts = ["classpath:testdata/sql/seed-support-needs.sql", "classpath:testdata/sql/seed-prisoner-support-needs-1.sql"]) // TODO - remove seed-support-needs.sql once RSP-1718 is done
+  fun `test findAllByPrisonerIdAndDeletedIsFalse`() {
+    val expectedPrisonerSupportNeeds = listOf(
+      PrisonerSupportNeedEntity(id = 2, prisonerId = 1, supportNeed = supportNeedRepository.findById(1).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null),
+      PrisonerSupportNeedEntity(id = 3, prisonerId = 1, supportNeed = supportNeedRepository.findById(2).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null),
+      PrisonerSupportNeedEntity(id = 6, prisonerId = 1, supportNeed = supportNeedRepository.findById(5).get(), otherDetail = "This is an other 1", createdBy = "Someone else", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null),
+      PrisonerSupportNeedEntity(id = 7, prisonerId = 1, supportNeed = supportNeedRepository.findById(5).get(), otherDetail = "This is an other 2", createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null),
+    )
+    Assertions.assertEquals(expectedPrisonerSupportNeeds, prisonerSupportNeedRepository.findAllByPrisonerIdAndDeletedIsFalse(1))
+  }
 }

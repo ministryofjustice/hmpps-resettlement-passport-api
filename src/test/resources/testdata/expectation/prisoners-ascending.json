@@ -361,10 +361,7 @@
           "lastUpdated": null
         }
       ],
-      "lastReport": {
-        "type": "BCST2",
-        "dateCompleted": "2023-10-16"
-      }
+      "lastReport": null
     }
   ],
   "pageSize": 3,

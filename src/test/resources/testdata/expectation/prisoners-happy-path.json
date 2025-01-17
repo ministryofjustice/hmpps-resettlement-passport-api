@@ -128,7 +128,7 @@
       "lastName": "CRAWFIS",
       "releaseDate": "2099-09-12",
       "releaseType": "CRD",
-      "lastUpdatedDate": "2023-05-23",
+      "lastUpdatedDate": "2024-12-25",
       "status": [
         {
           "pathway": "ACCOMMODATION",
@@ -178,12 +178,12 @@
       "needs": [
         {
           "pathway": "ACCOMMODATION",
-          "reviewed": false,
+          "reviewed": true,
           "notStarted": 0,
           "inProgress": 0,
-          "met": 0,
+          "met": 1,
           "declined": 0,
-          "lastUpdated": null
+          "lastUpdated": "2024-12-25"
         },
         {
           "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",

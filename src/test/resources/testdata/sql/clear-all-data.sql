@@ -36,5 +36,7 @@ DELETE from prisoner_support_need_update;
 ALTER SEQUENCE prisoner_support_need_update_id_seq RESTART WITH 1;
 DELETE from prisoner_support_need;
 ALTER SEQUENCE prisoner_support_need_id_seq RESTART WITH 1;
+DELETE from support_need;
+ALTER SEQUENCE support_need_id_seq RESTART WITH 1;
 DELETE from prisoner;
 ALTER SEQUENCE prisoner_id_seq RESTART WITH 1;

@@ -12,7 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 @Service
 class SupportNeedsService(
   private val prisonerSupportNeedRepository: PrisonerSupportNeedRepository,
-  private val prisonerSupportNeedUpdateRepository: PrisonerSupportNeedUpdateRepository
+  private val prisonerSupportNeedUpdateRepository: PrisonerSupportNeedUpdateRepository,
 ) {
 
   fun getNeedsSummary(prisonerId: Long?): List<SupportNeedSummary> {
@@ -28,7 +28,7 @@ class SupportNeedsService(
             inProgress = getCountForStatus(it, SupportNeedStatus.IN_PROGRESS, prisonerSupportNeedToLatestUpdateMap),
             met = getCountForStatus(it, SupportNeedStatus.MET, prisonerSupportNeedToLatestUpdateMap),
             declined = getCountForStatus(it, SupportNeedStatus.DECLINED, prisonerSupportNeedToLatestUpdateMap),
-            lastUpdated = getLastUpdatedForPathway(it, prisonerSupportNeedToLatestUpdateMap)
+            lastUpdated = getLastUpdatedForPathway(it, prisonerSupportNeedToLatestUpdateMap),
           )
         }
       }

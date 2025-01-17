@@ -519,14 +519,14 @@ class ResettlementAssessmentService(
   fun getLastReport(prisonerId: Long?): LastReport? {
     if (prisonerId != null) {
       val lastReportFromDB =
-        resettlementAssessmentRepository.findFirstByPrisonerIdAndAssessmentStatusAndDeletedIsFalseOrderByCreationDateDesc(
+        resettlementAssessmentRepository.findFirstByPrisonerIdAndAssessmentStatusAndDeletedIsFalseAndSubmissionDateIsNotNullOrderBySubmissionDateDesc(
           prisonerId,
-          ResettlementAssessmentStatus.SUBMITTED
+          ResettlementAssessmentStatus.SUBMITTED,
         )
       if (lastReportFromDB != null) {
         return LastReport(
           type = lastReportFromDB.assessmentType,
-          dateCompleted = lastReportFromDB.submissionDate?.toLocalDate() ?: lastReportFromDB.creationDate.toLocalDate(),
+          dateCompleted = lastReportFromDB.submissionDate?.toLocalDate() ?: throw RuntimeException("Submission date is unexpectedly null"),
         )
       }
     }

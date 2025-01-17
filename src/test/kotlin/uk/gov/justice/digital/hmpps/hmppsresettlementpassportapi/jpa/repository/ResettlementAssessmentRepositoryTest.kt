@@ -4,6 +4,7 @@ import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.context.jdbc.Sql
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ListAnswer
@@ -209,4 +210,16 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       version = 1,
       userDeclaration = false,
     )
+
+  @Test
+  fun `test findFirstByPrisonerIdAndAssessmentStatusAndDeletedIsFalseAndSubmissionDateIsNotNullOrderBySubmissionDateDesc - no results`() {
+    Assertions.assertNull(resettlementAssessmentRepository.findFirstByPrisonerIdAndAssessmentStatusAndDeletedIsFalseAndSubmissionDateIsNotNullOrderBySubmissionDateDesc(1, ResettlementAssessmentStatus.SUBMITTED))
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-18.sql")
+  fun `test findFirstByPrisonerIdAndAssessmentStatusAndDeletedIsFalseAndSubmissionDateIsNotNullOrderBySubmissionDateDesc`() {
+    val expectedResettlementAssessment = ResettlementAssessmentEntity(id = 9, prisonerId = 1, pathway = Pathway.HEALTH, statusChangedTo = Status.NOT_STARTED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf()), creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatus.SUBMITTED, caseNoteText = null, createdByUserId = "USER_1", version = 1, submissionDate = LocalDateTime.parse("2023-01-09T21:02:45"), userDeclaration = false, deleted = false, deletedDate = null)
+    Assertions.assertEquals(expectedResettlementAssessment, resettlementAssessmentRepository.findFirstByPrisonerIdAndAssessmentStatusAndDeletedIsFalseAndSubmissionDateIsNotNullOrderBySubmissionDateDesc(1, ResettlementAssessmentStatus.SUBMITTED))
+  }
 }

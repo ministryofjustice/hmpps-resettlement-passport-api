@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.context.jdbc.Sql
+import org.springframework.test.json.JsonCompareMode
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
@@ -989,7 +990,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
       .expectBody()
-      .json(expectedOutput, true)
+      .json(expectedOutput, JsonCompareMode.STRICT)
     unmockkAll()
   }
 
@@ -1008,7 +1009,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
       .expectBody()
-      .json(expectedOutput, true)
+      .json(expectedOutput, JsonCompareMode.STRICT)
     unmockkAll()
   }
 
@@ -1027,7 +1028,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
       .expectBody()
-      .json(expectedOutput, true)
+      .json(expectedOutput, JsonCompareMode.STRICT)
     unmockkAll()
   }
 
@@ -1046,7 +1047,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
       .expectBody()
-      .json(expectedOutput, true)
+      .json(expectedOutput, JsonCompareMode.STRICT)
     unmockkAll()
   }
 
@@ -1307,7 +1308,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
           "version": null
         }
         """.trimIndent(),
-        true,
+        JsonCompareMode.STRICT,
       )
   }
 
@@ -1331,7 +1332,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
           "version": 3
         }
         """.trimIndent(),
-        true,
+        JsonCompareMode.STRICT,
       )
   }
 
@@ -1355,7 +1356,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
           "version": 3
         }
         """.trimIndent(),
-        true,
+        JsonCompareMode.STRICT,
       )
   }
 

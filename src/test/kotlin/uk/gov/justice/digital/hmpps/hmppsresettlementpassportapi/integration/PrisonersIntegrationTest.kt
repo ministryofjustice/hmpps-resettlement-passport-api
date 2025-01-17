@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
+import org.springframework.test.json.JsonCompareMode
 
 class PrisonersIntegrationTest : IntegrationTestBase() {
   @Test
@@ -16,7 +17,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput, true)
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
 
     // Reset mocks to ensure it uses the cache
     prisonerSearchApiMockServer.resetAll()
@@ -27,7 +28,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput, true)
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
   }
 
   @Test
@@ -42,7 +43,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput, true)
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
   }
 
   @Test
@@ -60,7 +61,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(readFile("testdata/expectation/prisoners.json"), true)
+      .expectBody().json(readFile("testdata/expectation/prisoners.json"), JsonCompareMode.STRICT)
 
     // Update test stub to remove Finn Chandlevieve
     prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-4.json", prisonId, 500, 0, 200)
@@ -72,7 +73,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(readFile("testdata/expectation/prisoners-with-term.json"), true)
+      .expectBody().json(readFile("testdata/expectation/prisoners-with-term.json"), JsonCompareMode.STRICT)
   }
 
   @Test
@@ -87,7 +88,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput, true)
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
   }
 
   @Test
@@ -322,7 +323,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput, true)
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
   }
 
   @Test
@@ -337,7 +338,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput, true)
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
   }
 
   @Test
@@ -352,6 +353,6 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput, true)
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
   }
 }

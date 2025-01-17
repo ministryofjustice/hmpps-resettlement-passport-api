@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
+import org.springframework.test.json.JsonCompareMode
 import java.time.LocalDate
 import java.time.Period
 
@@ -26,7 +27,7 @@ class CrsReferralsIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput, true)
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
 
     // Reset mocks to ensure it uses the cache
     prisonerSearchApiMockServer.resetAll()
@@ -39,7 +40,7 @@ class CrsReferralsIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput, true)
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
   }
 
   @Test
@@ -100,7 +101,7 @@ class CrsReferralsIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput, true)
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
   }
 
   @Test
@@ -123,7 +124,7 @@ class CrsReferralsIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput, true)
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
   }
 
   @Test
@@ -146,6 +147,6 @@ class CrsReferralsIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput, true)
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
   }
 }

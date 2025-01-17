@@ -51,7 +51,7 @@
       "releaseEligibilityDate": null,
       "releaseEligibilityType": null,
       "releaseOnTemporaryLicenceDate": null,
-      "assessmentRequired": false,
+      "assessmentRequired": true,
       "assignedWorkerFirstname": null,
       "assignedWorkerLastname": null,
       "needs": [
@@ -172,7 +172,7 @@
       "releaseEligibilityDate": "2018-10-16",
       "releaseEligibilityType": "HDCED",
       "releaseOnTemporaryLicenceDate": null,
-      "assessmentRequired": true,
+      "assessmentRequired": false,
       "assignedWorkerFirstname": null,
       "assignedWorkerLastname": null,
       "needs": [
@@ -240,7 +240,10 @@
           "lastUpdated": null
         }
       ],
-      "lastReport": null
+      "lastReport": {
+        "type": "BCST2",
+        "dateCompleted": "2023-01-09"
+      }
     },
     {
       "prisonerNumber": "A8229DY",

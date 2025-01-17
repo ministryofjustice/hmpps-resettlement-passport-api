@@ -5,7 +5,7 @@ import org.springframework.test.context.jdbc.Sql
 
 class PrisonersIntegrationTest : IntegrationTestBase() {
   @Test
-  @Sql(scripts = ["classpath:testdata/sql/seed-pathway-statuses-9.sql", "classpath:testdata/sql/seed-support-needs.sql", "classpath:testdata/sql/seed-prisoner-support-needs-2.sql"])
+  @Sql(scripts = ["classpath:testdata/sql/seed-support-needs.sql", "classpath:testdata/sql/seed-prisoners-happy-path.sql"])
   fun `Get All Prisoners happy path - with caching`() {
     val expectedOutput = readFile("testdata/expectation/prisoners-happy-path.json")
     val prisonId = "MDI"

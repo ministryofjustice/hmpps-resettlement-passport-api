@@ -1,0 +1,75 @@
+package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
+
+import org.junit.jupiter.api.Test
+import org.springframework.test.context.jdbc.Sql
+import org.springframework.test.json.JsonCompareMode
+
+class SupportNeedsIntegrationTest : IntegrationTestBase() {
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoner-support-needs-2.sql")
+  fun `get support needs summary - happy path`() {
+    val expectedOutput = readFile("testdata/expectation/support-needs-summary-1.json")
+    val nomsId = "G4161UF"
+    authedWebTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/needs/summary")
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-1-prisoner.sql")
+  fun `get support needs summary - no support needs`() {
+    val expectedOutput = readFile("testdata/expectation/support-needs-summary-2.json")
+    val nomsId = "G4161UF"
+    authedWebTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/needs/summary")
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoner-support-needs-3.sql")
+  fun `get support needs summary - no updates available (only no support needs identified)`() {
+    val expectedOutput = readFile("testdata/expectation/support-needs-summary-3.json")
+    val nomsId = "G4161UF"
+    authedWebTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/needs/summary")
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
+  }
+
+  @Test
+  fun `get support needs summary - no prisoner found`() {
+    val nomsId = "G4161UF"
+    authedWebTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/needs/summary")
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  fun `get support needs summary - unauthorised`() {
+    val nomsId = "G4161UF"
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/needs/summary")
+      .exchange()
+      .expectStatus().isUnauthorized
+  }
+
+  @Test
+  fun `get support needs summary - forbidden`() {
+    val nomsId = "G4161UF"
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/needs/summary")
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
+  }
+}

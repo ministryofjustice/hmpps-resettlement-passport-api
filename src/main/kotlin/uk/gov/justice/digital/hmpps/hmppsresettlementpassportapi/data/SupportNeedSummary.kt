@@ -11,7 +11,3 @@ data class SupportNeedSummary(
   val declined: Int,
   val lastUpdated: LocalDate?,
 )
-
-data class SupportNeedSummaryResponse(
-  val needs: List<SupportNeedSummary>,
-)

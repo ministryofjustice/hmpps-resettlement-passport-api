@@ -1,14 +1,11 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedSummary
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedSummaryResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedUpdateEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedUpdateRepository
 
@@ -16,7 +13,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 class SupportNeedsService(
   private val prisonerSupportNeedRepository: PrisonerSupportNeedRepository,
   private val prisonerSupportNeedUpdateRepository: PrisonerSupportNeedUpdateRepository,
-  private val prisonerRepository: PrisonerRepository,
 ) {
 
   fun getNeedsSummary(prisonerId: Long?): List<SupportNeedSummary> {
@@ -62,12 +58,7 @@ class SupportNeedsService(
 
   fun getLastUpdatedForPathway(pathway: Pathway, prisonerSupportNeedToLatestUpdateMap: Map<PrisonerSupportNeedEntity, PrisonerSupportNeedUpdateEntity?>) =
     prisonerSupportNeedToLatestUpdateMap.filter { it.key.supportNeed.pathway == pathway }
-      .map { if (it.value != null) it.value?.createdDate?.toLocalDate() else it.key.createdDate.toLocalDate() }
+      .map { it.value?.createdDate?.toLocalDate() }
       .sortedByDescending { it }
       .firstOrNull()
-
-  fun getNeedsSummaryByNomsId(nomsId: String): SupportNeedSummaryResponse {
-    val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Cannot find prisoner $nomsId")
-    return SupportNeedSummaryResponse(getNeedsSummary(prisoner.id))
-  }
 }

@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedUpdateRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedWithNomsIdAndLatestUpdateProjection
 
 @Service
 class SupportNeedsService(
@@ -66,8 +67,40 @@ class SupportNeedsService(
       .sortedByDescending { it }
       .firstOrNull()
 
+  fun isPathwayReviewed(pathway: Pathway, prisonerSupportNeeds: List<PrisonerSupportNeedWithNomsIdAndLatestUpdateProjection>) =
+    prisonerSupportNeeds.any { it.pathway == pathway }
+
+  fun getCountForStatus(pathway: Pathway, status: SupportNeedStatus, prisonerSupportNeeds: List<PrisonerSupportNeedWithNomsIdAndLatestUpdateProjection>) =
+    prisonerSupportNeeds.count { it.pathway == pathway && it.latestUpdateStatus == status }
+
+  fun getLastUpdatedForPathway(pathway: Pathway, prisonerSupportNeeds: List<PrisonerSupportNeedWithNomsIdAndLatestUpdateProjection>) =
+    prisonerSupportNeeds.filter { it.pathway == pathway }
+      .map { if (it.latestUpdateId != null) it.latestUpdateCreatedDate?.toLocalDate() else it.prisonerSupportNeedCreatedDate.toLocalDate() }
+      .sortedByDescending { it }
+      .firstOrNull()
+
   fun getNeedsSummaryByNomsId(nomsId: String): SupportNeedSummaryResponse {
     val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Cannot find prisoner $nomsId")
     return SupportNeedSummaryResponse(getNeedsSummary(prisoner.id))
   }
+
+  fun getNeedsSummaryToNomsIdMapByPrisonId(prisonId: String): Map<String, List<SupportNeedSummary>> {
+    // Get all prisoner support needs and updates from database related prisoners in the prison
+    val prisonerSupportNeedsFromDatabase = prisonerSupportNeedRepository.getPrisonerSupportNeedsByPrisonId(prisonId)
+
+    // Need to group by the prisoner then convert into a support needs summary
+    val nomsIdToPrisonerSupportNeedsMap = prisonerSupportNeedsFromDatabase.groupBy { it.nomsId }
+    return nomsIdToPrisonerSupportNeedsMap.entries.associate { it.key to Pathway.entries.map { pathway ->
+      SupportNeedSummary(
+        pathway = pathway,
+        reviewed = isPathwayReviewed(pathway, it.value),
+        notStarted = getCountForStatus(pathway, SupportNeedStatus.NOT_STARTED, it.value),
+        inProgress = getCountForStatus(pathway, SupportNeedStatus.IN_PROGRESS, it.value),
+        met = getCountForStatus(pathway, SupportNeedStatus.MET, it.value),
+        declined = getCountForStatus(pathway, SupportNeedStatus.DECLINED, it.value),
+        lastUpdated = getLastUpdatedForPathway(pathway, it.value),
+      )
+    }}
+  }
+
 }

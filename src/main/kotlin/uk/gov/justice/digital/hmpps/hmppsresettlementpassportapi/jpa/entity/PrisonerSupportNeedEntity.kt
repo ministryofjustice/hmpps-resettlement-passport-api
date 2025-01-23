@@ -38,4 +38,8 @@ data class PrisonerSupportNeedEntity(
 
   @Column(name = "deleted_date")
   val deletedDate: LocalDateTime? = null,
+
+  @ManyToOne
+  @JoinColumn(name = "latest_update_id", referencedColumnName = "id", updatable = false)
+  val latestUpdate: PrisonerSupportNeedUpdateEntity,
 )

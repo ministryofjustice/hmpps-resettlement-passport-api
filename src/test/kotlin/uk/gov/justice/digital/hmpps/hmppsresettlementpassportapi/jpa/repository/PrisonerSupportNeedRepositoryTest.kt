@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
 import java.time.LocalDateTime
 
@@ -61,4 +63,23 @@ class PrisonerSupportNeedRepositoryTest : RepositoryTestBase() {
     )
     Assertions.assertEquals(expectedPrisonerSupportNeeds, prisonerSupportNeedRepository.findAllByPrisonerIdAndDeletedIsFalse(1))
   }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoner-support-needs-1.sql")
+  fun `test getPrisonerSupportNeedsByPrisonId`() {
+    val expectedPrisonerSupportNeeds = listOf<PrisonerSupportNeedWithNomsIdAndLatestUpdateProjectionData>()
+    val prisonerSupportNeedsFromDatabase = prisonerSupportNeedRepository.getPrisonerSupportNeedsByPrisonId("MDI")
+    Assertions.assertEquals(expectedPrisonerSupportNeeds, prisonerSupportNeedsFromDatabase)
+  }
 }
+
+data class PrisonerSupportNeedWithNomsIdAndLatestUpdateProjectionData(
+  override val prisonerSupportNeedId: Long,
+  override val nomsId: String,
+  override val pathway: Pathway,
+  override val excludeFromCount: Boolean,
+  override val prisonerSupportNeedCreatedDate: LocalDateTime,
+  override val latestUpdateId: Long?,
+  override val latestUpdateStatus: SupportNeedStatus?,
+  override val latestUpdateCreatedDate: LocalDateTime?,
+) : PrisonerSupportNeedWithNomsIdAndLatestUpdateProjection

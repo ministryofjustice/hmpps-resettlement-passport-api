@@ -210,6 +210,9 @@ class PrisonerService(
     val prisonerPathwayStatusesFromDatabase = pathwayStatusRepository.findByPrison(prisonId)
     val nomsIdToPrisonerPathwayStatusesFromDatabaseMap = prisonerPathwayStatusesFromDatabase.groupBy { it.nomsId }
 
+    val needsToNomsIdMap = supportNeedsService.getNeedsSummaryToNomsIdMapByPrisonId(prisonId)
+    //val lastReportToNomsIdMap = resettlementAssessmentService.getLastReportToNomsIdByPrisonId(prisonId)
+
     val defaultPathwayStatuses = getDefaultPathwayStatuses()
     val watchedOffenders = watchlistService.findAllWatchedPrisonerForStaff(staffUsername)
     val assignedWorkers = caseAllocationService.getAllAssignedResettlementWorkers(prisonId)

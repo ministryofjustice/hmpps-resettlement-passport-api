@@ -211,7 +211,7 @@ class PrisonerService(
     val nomsIdToPrisonerPathwayStatusesFromDatabaseMap = prisonerPathwayStatusesFromDatabase.groupBy { it.nomsId }
 
     val needsToNomsIdMap = supportNeedsService.getNeedsSummaryToNomsIdMapByPrisonId(prisonId)
-    //val lastReportToNomsIdMap = resettlementAssessmentService.getLastReportToNomsIdByPrisonId(prisonId)
+    val lastReportToNomsIdMap = resettlementAssessmentService.getLastReportToNomsIdByPrisonId(prisonId)
 
     val defaultPathwayStatuses = getDefaultPathwayStatuses()
     val watchedOffenders = watchlistService.findAllWatchedPrisonerForStaff(staffUsername)
@@ -271,8 +271,8 @@ class PrisonerService(
         }
       }
 
-      val needs = supportNeedsService.getNeedsSummary(prisonerId)
-      val lastReport = resettlementAssessmentService.getLastReport(prisonerId)
+      val needs = needsToNomsIdMap[prisonersSearch.prisonerNumber] ?: supportNeedsService.getDefaultNeedsSummary()
+      val lastReport = lastReportToNomsIdMap[prisonersSearch.prisonerNumber]
       val lastUpdatedDate = getLatestDate(arrayOf(lastUpdatedDateFromPathwayStatus) + needs.map { it.lastUpdated }.toTypedArray())
 
       if (pathwayStatusToFilter == null || pathwayStatusToFilter == pathwayStatus) {

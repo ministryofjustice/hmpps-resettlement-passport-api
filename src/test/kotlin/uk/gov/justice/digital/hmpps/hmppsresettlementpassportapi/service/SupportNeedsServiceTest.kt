@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedUpdateRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension::class)
@@ -55,7 +56,6 @@ class SupportNeedsServiceTest {
   fun `test getNeedsSummary - no associated update records in database`() {
     val prisonerId = 1L
     whenever(prisonerSupportNeedRepository.findAllByPrisonerIdAndDeletedIsFalse(prisonerId)).thenReturn(getPrisonerSupportNeeds())
-    whenever(prisonerSupportNeedUpdateRepository.findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(1)).thenReturn(null)
 
     val expectedNeedsSummary = listOf(
       SupportNeedSummary(Pathway.ACCOMMODATION, true, 0, 0, 0, 0, LocalDate.parse("2023-09-12")),
@@ -73,24 +73,24 @@ class SupportNeedsServiceTest {
   @Test
   fun `test getNeedsSummary - with update records in database`() {
     val prisonerId = 1L
-    whenever(prisonerSupportNeedRepository.findAllByPrisonerIdAndDeletedIsFalse(prisonerId)).thenReturn(getPrisonerSupportNeeds())
-    whenever(prisonerSupportNeedUpdateRepository.findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(1)).thenReturn(getPrisonerSupportNeedUpdate(1, SupportNeedStatus.MET, "12"))
-    whenever(prisonerSupportNeedUpdateRepository.findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(2)).thenReturn(getPrisonerSupportNeedUpdate(2, SupportNeedStatus.NOT_STARTED, "11"))
-    whenever(prisonerSupportNeedUpdateRepository.findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(3)).thenReturn(getPrisonerSupportNeedUpdate(3, SupportNeedStatus.DECLINED, "13"))
-    whenever(prisonerSupportNeedUpdateRepository.findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(4)).thenReturn(getPrisonerSupportNeedUpdate(4, SupportNeedStatus.DECLINED, "10"))
-    whenever(prisonerSupportNeedUpdateRepository.findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(5)).thenReturn(getPrisonerSupportNeedUpdate(5, SupportNeedStatus.NOT_STARTED, "14"))
-    whenever(prisonerSupportNeedUpdateRepository.findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(6)).thenReturn(getPrisonerSupportNeedUpdate(6, SupportNeedStatus.MET, "08"))
-    whenever(prisonerSupportNeedUpdateRepository.findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(7)).thenReturn(getPrisonerSupportNeedUpdate(7, SupportNeedStatus.DECLINED, "10"))
-    whenever(prisonerSupportNeedUpdateRepository.findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(8)).thenReturn(getPrisonerSupportNeedUpdate(8, SupportNeedStatus.IN_PROGRESS, "23"))
-    whenever(prisonerSupportNeedUpdateRepository.findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(9)).thenReturn(getPrisonerSupportNeedUpdate(9, SupportNeedStatus.MET, "01"))
-    whenever(prisonerSupportNeedUpdateRepository.findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(10)).thenReturn(getPrisonerSupportNeedUpdate(10, SupportNeedStatus.DECLINED, "09"))
-    whenever(prisonerSupportNeedUpdateRepository.findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(11)).thenReturn(getPrisonerSupportNeedUpdate(11, SupportNeedStatus.MET, "15"))
-    whenever(prisonerSupportNeedUpdateRepository.findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(12)).thenReturn(getPrisonerSupportNeedUpdate(12, SupportNeedStatus.IN_PROGRESS, "03"))
-    whenever(prisonerSupportNeedUpdateRepository.findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(13)).thenReturn(getPrisonerSupportNeedUpdate(13, SupportNeedStatus.NOT_STARTED, "19"))
-    whenever(prisonerSupportNeedUpdateRepository.findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(14)).thenReturn(getPrisonerSupportNeedUpdate(14, SupportNeedStatus.MET, "17"))
-    whenever(prisonerSupportNeedUpdateRepository.findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(15)).thenReturn(getPrisonerSupportNeedUpdate(15, SupportNeedStatus.MET, "22"))
-    whenever(prisonerSupportNeedUpdateRepository.findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(16)).thenReturn(getPrisonerSupportNeedUpdate(16, SupportNeedStatus.IN_PROGRESS, "20"))
-    whenever(prisonerSupportNeedUpdateRepository.findFirstByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(17)).thenReturn(getPrisonerSupportNeedUpdate(17, SupportNeedStatus.DECLINED, "07"))
+    whenever(prisonerSupportNeedRepository.findAllByPrisonerIdAndDeletedIsFalse(prisonerId)).thenReturn(getPrisonerSupportNeedsWithLatestUpdates())
+    whenever(prisonerSupportNeedUpdateRepository.findById(1)).thenReturn(Optional.of(getPrisonerSupportNeedUpdate(1, SupportNeedStatus.MET, "12")))
+    whenever(prisonerSupportNeedUpdateRepository.findById(2)).thenReturn(Optional.of(getPrisonerSupportNeedUpdate(2, SupportNeedStatus.NOT_STARTED, "11")))
+    whenever(prisonerSupportNeedUpdateRepository.findById(3)).thenReturn(Optional.of(getPrisonerSupportNeedUpdate(3, SupportNeedStatus.DECLINED, "13")))
+    whenever(prisonerSupportNeedUpdateRepository.findById(4)).thenReturn(Optional.of(getPrisonerSupportNeedUpdate(4, SupportNeedStatus.DECLINED, "10")))
+    whenever(prisonerSupportNeedUpdateRepository.findById(5)).thenReturn(Optional.of(getPrisonerSupportNeedUpdate(5, SupportNeedStatus.NOT_STARTED, "14")))
+    whenever(prisonerSupportNeedUpdateRepository.findById(6)).thenReturn(Optional.of(getPrisonerSupportNeedUpdate(6, SupportNeedStatus.MET, "08")))
+    whenever(prisonerSupportNeedUpdateRepository.findById(7)).thenReturn(Optional.of(getPrisonerSupportNeedUpdate(7, SupportNeedStatus.DECLINED, "10")))
+    whenever(prisonerSupportNeedUpdateRepository.findById(8)).thenReturn(Optional.of(getPrisonerSupportNeedUpdate(8, SupportNeedStatus.IN_PROGRESS, "23")))
+    whenever(prisonerSupportNeedUpdateRepository.findById(9)).thenReturn(Optional.of(getPrisonerSupportNeedUpdate(9, SupportNeedStatus.MET, "01")))
+    whenever(prisonerSupportNeedUpdateRepository.findById(10)).thenReturn(Optional.of(getPrisonerSupportNeedUpdate(10, SupportNeedStatus.DECLINED, "09")))
+    whenever(prisonerSupportNeedUpdateRepository.findById(11)).thenReturn(Optional.of(getPrisonerSupportNeedUpdate(11, SupportNeedStatus.MET, "15")))
+    whenever(prisonerSupportNeedUpdateRepository.findById(12)).thenReturn(Optional.of(getPrisonerSupportNeedUpdate(12, SupportNeedStatus.IN_PROGRESS, "03")))
+    whenever(prisonerSupportNeedUpdateRepository.findById(13)).thenReturn(Optional.of(getPrisonerSupportNeedUpdate(13, SupportNeedStatus.NOT_STARTED, "19")))
+    whenever(prisonerSupportNeedUpdateRepository.findById(14)).thenReturn(Optional.of(getPrisonerSupportNeedUpdate(14, SupportNeedStatus.MET, "17")))
+    whenever(prisonerSupportNeedUpdateRepository.findById(15)).thenReturn(Optional.of(getPrisonerSupportNeedUpdate(15, SupportNeedStatus.MET, "22")))
+    whenever(prisonerSupportNeedUpdateRepository.findById(16)).thenReturn(Optional.of(getPrisonerSupportNeedUpdate(16, SupportNeedStatus.IN_PROGRESS, "20")))
+    whenever(prisonerSupportNeedUpdateRepository.findById(17)).thenReturn(Optional.of(getPrisonerSupportNeedUpdate(17, SupportNeedStatus.DECLINED, "07")))
 
     val expectedNeedsSummary = listOf(
       SupportNeedSummary(pathway = Pathway.ACCOMMODATION, reviewed = true, notStarted = 1, inProgress = 0, met = 1, declined = 1, lastUpdated = LocalDate.parse("2023-09-13")),
@@ -116,26 +116,46 @@ class SupportNeedsServiceTest {
   )
 
   private fun getPrisonerSupportNeeds() = listOf(
-    getPrisonerSupportNeed(1, Pathway.ACCOMMODATION),
-    getPrisonerSupportNeed(2, Pathway.ACCOMMODATION),
-    getPrisonerSupportNeed(3, Pathway.ACCOMMODATION),
-    getPrisonerSupportNeed(4, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR),
-    getPrisonerSupportNeed(5, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR),
-    getPrisonerSupportNeed(6, Pathway.CHILDREN_FAMILIES_AND_COMMUNITY),
-    getPrisonerSupportNeed(7, Pathway.DRUGS_AND_ALCOHOL, true),
-    getPrisonerSupportNeed(8, Pathway.EDUCATION_SKILLS_AND_WORK),
-    getPrisonerSupportNeed(9, Pathway.EDUCATION_SKILLS_AND_WORK),
-    getPrisonerSupportNeed(10, Pathway.EDUCATION_SKILLS_AND_WORK),
-    getPrisonerSupportNeed(11, Pathway.EDUCATION_SKILLS_AND_WORK),
-    getPrisonerSupportNeed(12, Pathway.FINANCE_AND_ID),
-    getPrisonerSupportNeed(13, Pathway.FINANCE_AND_ID),
-    getPrisonerSupportNeed(14, Pathway.FINANCE_AND_ID),
-    getPrisonerSupportNeed(15, Pathway.FINANCE_AND_ID, true),
-    getPrisonerSupportNeed(16, Pathway.FINANCE_AND_ID),
-    getPrisonerSupportNeed(17, Pathway.FINANCE_AND_ID),
+    getPrisonerSupportNeed(n = 1, pathway = Pathway.ACCOMMODATION),
+    getPrisonerSupportNeed(n = 2, pathway = Pathway.ACCOMMODATION),
+    getPrisonerSupportNeed(n = 3, pathway = Pathway.ACCOMMODATION),
+    getPrisonerSupportNeed(n = 4, pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR),
+    getPrisonerSupportNeed(n = 5, pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR),
+    getPrisonerSupportNeed(n = 6, pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY),
+    getPrisonerSupportNeed(n = 7, pathway = Pathway.DRUGS_AND_ALCOHOL, excludeFromCount = true),
+    getPrisonerSupportNeed(n = 8, pathway = Pathway.EDUCATION_SKILLS_AND_WORK),
+    getPrisonerSupportNeed(n = 9, pathway = Pathway.EDUCATION_SKILLS_AND_WORK),
+    getPrisonerSupportNeed(n = 10, pathway = Pathway.EDUCATION_SKILLS_AND_WORK),
+    getPrisonerSupportNeed(n = 11, pathway = Pathway.EDUCATION_SKILLS_AND_WORK),
+    getPrisonerSupportNeed(n = 12, pathway = Pathway.FINANCE_AND_ID),
+    getPrisonerSupportNeed(n = 13, pathway = Pathway.FINANCE_AND_ID),
+    getPrisonerSupportNeed(n = 14, pathway = Pathway.FINANCE_AND_ID),
+    getPrisonerSupportNeed(n = 15, pathway = Pathway.FINANCE_AND_ID, excludeFromCount = true),
+    getPrisonerSupportNeed(n = 16, pathway = Pathway.FINANCE_AND_ID),
+    getPrisonerSupportNeed(n = 17, pathway = Pathway.FINANCE_AND_ID),
   )
 
-  private fun getPrisonerSupportNeed(n: Int, pathway: Pathway, excludeFromCount: Boolean = false) =
+  private fun getPrisonerSupportNeedsWithLatestUpdates() = listOf(
+    getPrisonerSupportNeed(n = 1, pathway = Pathway.ACCOMMODATION, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 2, pathway = Pathway.ACCOMMODATION, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 3, pathway = Pathway.ACCOMMODATION, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 4, pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 5, pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 6, pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 7, pathway = Pathway.DRUGS_AND_ALCOHOL, excludeFromCount = true, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 8, pathway = Pathway.EDUCATION_SKILLS_AND_WORK, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 9, pathway = Pathway.EDUCATION_SKILLS_AND_WORK, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 10,pathway = Pathway.EDUCATION_SKILLS_AND_WORK, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 11,pathway = Pathway.EDUCATION_SKILLS_AND_WORK, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 12,pathway = Pathway.FINANCE_AND_ID, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 13,pathway = Pathway.FINANCE_AND_ID, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 14,pathway = Pathway.FINANCE_AND_ID, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 15,pathway = Pathway.FINANCE_AND_ID, excludeFromCount = true, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 16,pathway = Pathway.FINANCE_AND_ID, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 17,pathway = Pathway.FINANCE_AND_ID, includeLatestUpdate = true),
+  )
+
+  private fun getPrisonerSupportNeed(n: Int, pathway: Pathway, excludeFromCount: Boolean = false, includeLatestUpdate: Boolean = false) =
     PrisonerSupportNeedEntity(
       id = n.toLong(),
       prisonerId = 1,
@@ -143,6 +163,7 @@ class SupportNeedsServiceTest {
       otherDetail = null,
       createdBy = "Someone",
       createdDate = LocalDateTime.parse("2023-09-12T12:10:00"),
+      latestUpdateId = if (includeLatestUpdate) n.toLong() else null
     )
 
   private fun getSupportNeed(n: Int, pathway: Pathway, excludeFromCount: Boolean = false) = SupportNeedEntity(

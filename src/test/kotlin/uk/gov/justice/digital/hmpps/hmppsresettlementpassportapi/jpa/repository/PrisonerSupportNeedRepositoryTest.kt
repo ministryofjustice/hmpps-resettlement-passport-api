@@ -67,8 +67,12 @@ class PrisonerSupportNeedRepositoryTest : RepositoryTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-prisoner-support-needs-1.sql")
   fun `test getPrisonerSupportNeedsByPrisonId`() {
-    val expectedPrisonerSupportNeeds = listOf<PrisonerSupportNeedWithNomsIdAndLatestUpdateProjectionData>()
-    val prisonerSupportNeedsFromDatabase = prisonerSupportNeedRepository.getPrisonerSupportNeedsByPrisonId("MDI")
+    val expectedPrisonerSupportNeeds = listOf(
+      PrisonerSupportNeedWithNomsIdAndLatestUpdateProjectionData(prisonerSupportNeedId = 5, nomsId = "G4161UG", pathway = Pathway.ACCOMMODATION, prisonerSupportNeedCreatedDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), latestUpdateId = null, latestUpdateStatus = null, latestUpdateCreatedDate = null),
+      PrisonerSupportNeedWithNomsIdAndLatestUpdateProjectionData(prisonerSupportNeedId = 6, nomsId = "G4161UF", pathway = Pathway.ACCOMMODATION, prisonerSupportNeedCreatedDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), latestUpdateId = null, latestUpdateStatus = null, latestUpdateCreatedDate = null),
+      PrisonerSupportNeedWithNomsIdAndLatestUpdateProjectionData(prisonerSupportNeedId = 2, nomsId = "G4161UF", pathway = Pathway.ACCOMMODATION, prisonerSupportNeedCreatedDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), latestUpdateId = 3, latestUpdateStatus = SupportNeedStatus.MET, latestUpdateCreatedDate = null),
+    )
+    val prisonerSupportNeedsFromDatabase = prisonerSupportNeedRepository.getPrisonerSupportNeedsByPrisonId("MDI").mapToDataClass()
     Assertions.assertEquals(expectedPrisonerSupportNeeds, prisonerSupportNeedsFromDatabase)
   }
 }
@@ -77,9 +81,10 @@ data class PrisonerSupportNeedWithNomsIdAndLatestUpdateProjectionData(
   override val prisonerSupportNeedId: Long,
   override val nomsId: String,
   override val pathway: Pathway,
-  override val excludeFromCount: Boolean,
   override val prisonerSupportNeedCreatedDate: LocalDateTime,
   override val latestUpdateId: Long?,
   override val latestUpdateStatus: SupportNeedStatus?,
   override val latestUpdateCreatedDate: LocalDateTime?,
 ) : PrisonerSupportNeedWithNomsIdAndLatestUpdateProjection
+
+fun List<PrisonerSupportNeedWithNomsIdAndLatestUpdateProjection>.mapToDataClass() = this.map { PrisonerSupportNeedWithNomsIdAndLatestUpdateProjectionData(it.prisonerSupportNeedId, it.nomsId, it.pathway, it.prisonerSupportNeedCreatedDate, it.latestUpdateId, it.latestUpdateStatus, it.latestUpdateCreatedDate) }

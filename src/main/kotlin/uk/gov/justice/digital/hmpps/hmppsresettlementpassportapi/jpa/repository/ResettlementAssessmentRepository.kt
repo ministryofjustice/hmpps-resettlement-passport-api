@@ -103,4 +103,13 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
   ): ResettlementAssessmentEntity?
 
   fun findAllByPrisonerIdAndDeletedIsFalse(prisonerId: Long): List<ResettlementAssessmentEntity>
+
+  @Query("""
+    select a.noms_id, a.assessment_type, a.submission_date from (
+        select p.noms_id, ra.assessment_type, ra.submission_date, rank() over (partition by p.noms_id order by ra.submission_date desc, ra.id) as rank from resettlement_assessment ra
+        inner join prisoner p on ra.prisoner_id = p.id
+        where p.prison_id = :prisonId and ra.is_deleted = false and ra.assessment_status = 'SUBMITTED'
+      ) a where rank = 1;
+  """, nativeQuery = true)
+  fun findLatestSubmittedAssessmentByPrison(prisonId: String): List<Array<Any>>
 }

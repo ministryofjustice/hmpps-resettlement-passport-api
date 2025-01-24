@@ -18,22 +18,13 @@ interface PrisonerSupportNeedRepository : JpaRepository<PrisonerSupportNeedEntit
 			p.nomsId as nomsId,
 			psn.supportNeed.pathway as pathway,
 			psn.createdDate as prisonerSupportNeedCreatedDate,
-      psn.latestUpdate.id as latestUpdateId,
-      psn.latestUpdate.status as latestUpdateStatus,
-      psn.latestUpdate.createdDate as latestSupportNeedCreatedDate
+      psnu.id as latestUpdateId,
+      psnu.status as latestUpdateStatus,
+      psnu.createdDate as latestSupportNeedCreatedDate
         from PrisonerSupportNeedEntity psn
           inner join PrisonerEntity p on psn.prisonerId = p.id
-            where p.prisonId = 'MDI' and psn.deleted = false and (psn.latestUpdate.deleted = false or psn.latestUpdate.deleted is null) and psn.supportNeed.excludeFromCount = false
+          left join PrisonerSupportNeedUpdateEntity psnu on psnu.id = psn.latestUpdateId
+            where p.prisonId = :prisonId and psn.deleted = false and (psnu.deleted = false or psnu.deleted is null) and psn.supportNeed.excludeFromCount = false
     """)
-  fun getPrisonerSupportNeedsByPrisonId(prisonId: String): List<PrisonerSupportNeedWithNomsIdAndLatestUpdateProjection>
-}
-
-interface PrisonerSupportNeedWithNomsIdAndLatestUpdateProjection {
-  val prisonerSupportNeedId: Long
-  val nomsId: String
-  val pathway: Pathway
-  val prisonerSupportNeedCreatedDate: LocalDateTime
-  val latestUpdateId: Long?
-  val latestUpdateStatus: SupportNeedStatus?
-  val latestUpdateCreatedDate: LocalDateTime?
+  fun getPrisonerSupportNeedsByPrisonId(prisonId: String): List<Array<Any>>
 }

@@ -372,5 +372,6 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
+      .expectBody().json(readFile("testdata/expectation/prisoners-report-volume-test.json"), JsonCompareMode.STRICT)
   }
 }

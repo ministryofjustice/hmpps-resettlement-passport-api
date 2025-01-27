@@ -114,7 +114,7 @@ class SupportNeedsService(
           declined = getCountForStatus(pathway, SupportNeedStatus.DECLINED, it.value),
           lastUpdated = getLastUpdatedForPathway(pathway, it.value),
         )
-      } 
+      }
     }
 
     return nomsIdToSupportNeedSummaryMap

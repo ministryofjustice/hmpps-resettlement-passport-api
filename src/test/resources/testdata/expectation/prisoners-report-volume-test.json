@@ -1,0 +1,1249 @@
+{
+  "content": [
+    {
+      "prisonerNumber": "A999",
+      "firstName": "firstName",
+      "middleNames": null,
+      "lastName": "lastName",
+      "releaseDate": null,
+      "releaseType": null,
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": null,
+      "paroleEligibilityDate": null,
+      "releaseEligibilityDate": null,
+      "releaseEligibilityType": null,
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": true,
+      "assignedWorkerFirstname": null,
+      "assignedWorkerLastname": null,
+      "needs": [
+        {
+          "pathway": "ACCOMMODATION",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "HEALTH",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        }
+      ],
+      "lastReport": {
+        "type": "BCST2",
+        "dateCompleted": "2023-05-17"
+      }
+    },
+    {
+      "prisonerNumber": "A998",
+      "firstName": "firstName",
+      "middleNames": null,
+      "lastName": "lastName",
+      "releaseDate": null,
+      "releaseType": null,
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": null,
+      "paroleEligibilityDate": null,
+      "releaseEligibilityDate": null,
+      "releaseEligibilityType": null,
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": true,
+      "assignedWorkerFirstname": null,
+      "assignedWorkerLastname": null,
+      "needs": [
+        {
+          "pathway": "ACCOMMODATION",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "HEALTH",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        }
+      ],
+      "lastReport": {
+        "type": "BCST2",
+        "dateCompleted": "2023-05-17"
+      }
+    },
+    {
+      "prisonerNumber": "A997",
+      "firstName": "firstName",
+      "middleNames": null,
+      "lastName": "lastName",
+      "releaseDate": null,
+      "releaseType": null,
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": null,
+      "paroleEligibilityDate": null,
+      "releaseEligibilityDate": null,
+      "releaseEligibilityType": null,
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": true,
+      "assignedWorkerFirstname": null,
+      "assignedWorkerLastname": null,
+      "needs": [
+        {
+          "pathway": "ACCOMMODATION",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "HEALTH",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        }
+      ],
+      "lastReport": {
+        "type": "BCST2",
+        "dateCompleted": "2023-05-17"
+      }
+    },
+    {
+      "prisonerNumber": "A996",
+      "firstName": "firstName",
+      "middleNames": null,
+      "lastName": "lastName",
+      "releaseDate": null,
+      "releaseType": null,
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": null,
+      "paroleEligibilityDate": null,
+      "releaseEligibilityDate": null,
+      "releaseEligibilityType": null,
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": true,
+      "assignedWorkerFirstname": null,
+      "assignedWorkerLastname": null,
+      "needs": [
+        {
+          "pathway": "ACCOMMODATION",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "HEALTH",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        }
+      ],
+      "lastReport": {
+        "type": "BCST2",
+        "dateCompleted": "2023-05-17"
+      }
+    },
+    {
+      "prisonerNumber": "A995",
+      "firstName": "firstName",
+      "middleNames": null,
+      "lastName": "lastName",
+      "releaseDate": null,
+      "releaseType": null,
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": null,
+      "paroleEligibilityDate": null,
+      "releaseEligibilityDate": null,
+      "releaseEligibilityType": null,
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": true,
+      "assignedWorkerFirstname": null,
+      "assignedWorkerLastname": null,
+      "needs": [
+        {
+          "pathway": "ACCOMMODATION",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "HEALTH",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        }
+      ],
+      "lastReport": {
+        "type": "BCST2",
+        "dateCompleted": "2023-05-17"
+      }
+    },
+    {
+      "prisonerNumber": "A994",
+      "firstName": "firstName",
+      "middleNames": null,
+      "lastName": "lastName",
+      "releaseDate": null,
+      "releaseType": null,
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": null,
+      "paroleEligibilityDate": null,
+      "releaseEligibilityDate": null,
+      "releaseEligibilityType": null,
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": true,
+      "assignedWorkerFirstname": null,
+      "assignedWorkerLastname": null,
+      "needs": [
+        {
+          "pathway": "ACCOMMODATION",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "HEALTH",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        }
+      ],
+      "lastReport": {
+        "type": "BCST2",
+        "dateCompleted": "2023-05-17"
+      }
+    },
+    {
+      "prisonerNumber": "A993",
+      "firstName": "firstName",
+      "middleNames": null,
+      "lastName": "lastName",
+      "releaseDate": null,
+      "releaseType": null,
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": null,
+      "paroleEligibilityDate": null,
+      "releaseEligibilityDate": null,
+      "releaseEligibilityType": null,
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": true,
+      "assignedWorkerFirstname": null,
+      "assignedWorkerLastname": null,
+      "needs": [
+        {
+          "pathway": "ACCOMMODATION",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "HEALTH",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        }
+      ],
+      "lastReport": {
+        "type": "BCST2",
+        "dateCompleted": "2023-05-17"
+      }
+    },
+    {
+      "prisonerNumber": "A992",
+      "firstName": "firstName",
+      "middleNames": null,
+      "lastName": "lastName",
+      "releaseDate": null,
+      "releaseType": null,
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": null,
+      "paroleEligibilityDate": null,
+      "releaseEligibilityDate": null,
+      "releaseEligibilityType": null,
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": true,
+      "assignedWorkerFirstname": null,
+      "assignedWorkerLastname": null,
+      "needs": [
+        {
+          "pathway": "ACCOMMODATION",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "HEALTH",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        }
+      ],
+      "lastReport": {
+        "type": "BCST2",
+        "dateCompleted": "2023-05-17"
+      }
+    },
+    {
+      "prisonerNumber": "A991",
+      "firstName": "firstName",
+      "middleNames": null,
+      "lastName": "lastName",
+      "releaseDate": null,
+      "releaseType": null,
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": null,
+      "paroleEligibilityDate": null,
+      "releaseEligibilityDate": null,
+      "releaseEligibilityType": null,
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": true,
+      "assignedWorkerFirstname": null,
+      "assignedWorkerLastname": null,
+      "needs": [
+        {
+          "pathway": "ACCOMMODATION",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "HEALTH",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        }
+      ],
+      "lastReport": {
+        "type": "BCST2",
+        "dateCompleted": "2023-05-17"
+      }
+    },
+    {
+      "prisonerNumber": "A990",
+      "firstName": "firstName",
+      "middleNames": null,
+      "lastName": "lastName",
+      "releaseDate": null,
+      "releaseType": null,
+      "lastUpdatedDate": null,
+      "status": [
+        {
+          "pathway": "ACCOMMODATION",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        },
+        {
+          "pathway": "HEALTH",
+          "status": "NOT_STARTED",
+          "lastDateChange": null
+        }
+      ],
+      "pathwayStatus": null,
+      "homeDetentionCurfewEligibilityDate": null,
+      "paroleEligibilityDate": null,
+      "releaseEligibilityDate": null,
+      "releaseEligibilityType": null,
+      "releaseOnTemporaryLicenceDate": null,
+      "assessmentRequired": true,
+      "assignedWorkerFirstname": null,
+      "assignedWorkerLastname": null,
+      "needs": [
+        {
+          "pathway": "ACCOMMODATION",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "DRUGS_AND_ALCOHOL",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "EDUCATION_SKILLS_AND_WORK",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "FINANCE_AND_ID",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        },
+        {
+          "pathway": "HEALTH",
+          "reviewed": false,
+          "notStarted": 0,
+          "inProgress": 0,
+          "met": 0,
+          "declined": 0,
+          "lastUpdated": null
+        }
+      ],
+      "lastReport": {
+        "type": "BCST2",
+        "dateCompleted": "2023-05-17"
+      }
+    }
+  ],
+  "pageSize": 10,
+  "page": 0,
+  "sortName": "releaseDate,DESC",
+  "totalElements": 3000,
+  "last": false
+}

@@ -6,11 +6,11 @@ import java.time.LocalDateTime
 data class SupportNeedSummary(
   val pathway: Pathway,
   val reviewed: Boolean,
-  var notStarted: Int,
-  var inProgress: Int,
-  var met: Int,
-  var declined: Int,
-  var lastUpdated: LocalDate?,
+  val notStarted: Int,
+  val inProgress: Int,
+  val met: Int,
+  val declined: Int,
+  val lastUpdated: LocalDate?,
 )
 
 data class SupportNeedSummaryResponse(

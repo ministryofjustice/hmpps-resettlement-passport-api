@@ -145,14 +145,14 @@ class SupportNeedsServiceTest {
     getPrisonerSupportNeed(n = 7, pathway = Pathway.DRUGS_AND_ALCOHOL, excludeFromCount = true, includeLatestUpdate = true),
     getPrisonerSupportNeed(n = 8, pathway = Pathway.EDUCATION_SKILLS_AND_WORK, includeLatestUpdate = true),
     getPrisonerSupportNeed(n = 9, pathway = Pathway.EDUCATION_SKILLS_AND_WORK, includeLatestUpdate = true),
-    getPrisonerSupportNeed(n = 10,pathway = Pathway.EDUCATION_SKILLS_AND_WORK, includeLatestUpdate = true),
-    getPrisonerSupportNeed(n = 11,pathway = Pathway.EDUCATION_SKILLS_AND_WORK, includeLatestUpdate = true),
-    getPrisonerSupportNeed(n = 12,pathway = Pathway.FINANCE_AND_ID, includeLatestUpdate = true),
-    getPrisonerSupportNeed(n = 13,pathway = Pathway.FINANCE_AND_ID, includeLatestUpdate = true),
-    getPrisonerSupportNeed(n = 14,pathway = Pathway.FINANCE_AND_ID, includeLatestUpdate = true),
-    getPrisonerSupportNeed(n = 15,pathway = Pathway.FINANCE_AND_ID, excludeFromCount = true, includeLatestUpdate = true),
-    getPrisonerSupportNeed(n = 16,pathway = Pathway.FINANCE_AND_ID, includeLatestUpdate = true),
-    getPrisonerSupportNeed(n = 17,pathway = Pathway.FINANCE_AND_ID, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 10, pathway = Pathway.EDUCATION_SKILLS_AND_WORK, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 11, pathway = Pathway.EDUCATION_SKILLS_AND_WORK, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 12, pathway = Pathway.FINANCE_AND_ID, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 13, pathway = Pathway.FINANCE_AND_ID, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 14, pathway = Pathway.FINANCE_AND_ID, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 15, pathway = Pathway.FINANCE_AND_ID, excludeFromCount = true, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 16, pathway = Pathway.FINANCE_AND_ID, includeLatestUpdate = true),
+    getPrisonerSupportNeed(n = 17, pathway = Pathway.FINANCE_AND_ID, includeLatestUpdate = true),
   )
 
   private fun getPrisonerSupportNeed(n: Int, pathway: Pathway, excludeFromCount: Boolean = false, includeLatestUpdate: Boolean = false) =
@@ -163,7 +163,7 @@ class SupportNeedsServiceTest {
       otherDetail = null,
       createdBy = "Someone",
       createdDate = LocalDateTime.parse("2023-09-12T12:10:00"),
-      latestUpdateId = if (includeLatestUpdate) n.toLong() else null
+      latestUpdateId = if (includeLatestUpdate) n.toLong() else null,
     )
 
   private fun getSupportNeed(n: Int, pathway: Pathway, excludeFromCount: Boolean = false) = SupportNeedEntity(

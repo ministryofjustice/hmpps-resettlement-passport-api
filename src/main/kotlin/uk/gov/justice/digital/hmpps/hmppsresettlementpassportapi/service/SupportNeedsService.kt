@@ -91,29 +91,32 @@ class SupportNeedsService(
 
     // Group by the prisoner then convert into a support needs summary
     // Note - return objects from the query and cast here to avoid JPA performance issues
-    val nomsIdToPrisonerSupportNeedsMap = prisonerSupportNeedsFromDatabase.map { PrisonerSupportNeedWithNomsIdAndLatestUpdate(
-      prisonerSupportNeedId = it[0] as Long,
-      nomsId = it[1] as String,
-      pathway = it[2] as Pathway,
-      prisonerSupportNeedCreatedDate = it[3] as LocalDateTime,
-      latestUpdateId = it[4] as Long?,
-      latestUpdateStatus = it[5] as SupportNeedStatus?,
-      latestUpdateCreatedDate = it[6] as LocalDateTime?,
-    ) }.groupBy { it.nomsId }
-
-    val nomsIdToSupportNeedSummaryMap = nomsIdToPrisonerSupportNeedsMap.entries.associate { it.key to Pathway.entries.map { pathway ->
-      SupportNeedSummary(
-        pathway = pathway,
-        reviewed = isPathwayReviewed(pathway, it.value),
-        notStarted = getCountForStatus(pathway, SupportNeedStatus.NOT_STARTED, it.value),
-        inProgress = getCountForStatus(pathway, SupportNeedStatus.IN_PROGRESS, it.value),
-        met = getCountForStatus(pathway, SupportNeedStatus.MET, it.value),
-        declined = getCountForStatus(pathway, SupportNeedStatus.DECLINED, it.value),
-        lastUpdated = getLastUpdatedForPathway(pathway, it.value),
+    val nomsIdToPrisonerSupportNeedsMap = prisonerSupportNeedsFromDatabase.map {
+      PrisonerSupportNeedWithNomsIdAndLatestUpdate(
+        prisonerSupportNeedId = it[0] as Long,
+        nomsId = it[1] as String,
+        pathway = it[2] as Pathway,
+        prisonerSupportNeedCreatedDate = it[3] as LocalDateTime,
+        latestUpdateId = it[4] as Long?,
+        latestUpdateStatus = it[5] as SupportNeedStatus?,
+        latestUpdateCreatedDate = it[6] as LocalDateTime?,
       )
-    }}
+    }.groupBy { it.nomsId }
+
+    val nomsIdToSupportNeedSummaryMap = nomsIdToPrisonerSupportNeedsMap.entries.associate {
+      it.key to Pathway.entries.map { pathway ->
+        SupportNeedSummary(
+          pathway = pathway,
+          reviewed = isPathwayReviewed(pathway, it.value),
+          notStarted = getCountForStatus(pathway, SupportNeedStatus.NOT_STARTED, it.value),
+          inProgress = getCountForStatus(pathway, SupportNeedStatus.IN_PROGRESS, it.value),
+          met = getCountForStatus(pathway, SupportNeedStatus.MET, it.value),
+          declined = getCountForStatus(pathway, SupportNeedStatus.DECLINED, it.value),
+          lastUpdated = getLastUpdatedForPathway(pathway, it.value),
+        )
+      } 
+    }
 
     return nomsIdToSupportNeedSummaryMap
   }
-
 }

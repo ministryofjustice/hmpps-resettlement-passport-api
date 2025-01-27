@@ -38,10 +38,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.ResettlementAssessmentStrategy
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.processProfileTags
-import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.ZoneId
 
 @Service
 class ResettlementAssessmentService(
@@ -535,6 +533,6 @@ class ResettlementAssessmentService(
     return null
   }
 
-  fun getLastReportToNomsIdByPrisonId(prisonId: String): Map<String, LastReport> = resettlementAssessmentRepository.findLatestSubmittedAssessmentByPrison(prisonId)
-      .associate { it[0] as String to LastReport(type = convertStringToEnum(ResettlementAssessmentType::class, it[1] as String)!!, dateCompleted = LocalDateTime.ofInstant(it[2] as Instant, ZoneId.systemDefault()).toLocalDate()) }
+  fun getLastReportToNomsIdByPrisonId(prisonId: String) = resettlementAssessmentRepository.findLatestSubmittedAssessmentByPrison(prisonId)
+    .associate { it.nomsId to LastReport(type = it.assessmentType, dateCompleted = if (it.submissionDate != null) it.submissionDate!!.toLocalDate() else it.createdDate.toLocalDate()) }
 }

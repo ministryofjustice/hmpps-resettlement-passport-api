@@ -119,7 +119,10 @@
           "lastUpdated": null
         }
       ],
-      "lastReport": null
+      "lastReport": {
+        "type": "BCST2",
+        "dateCompleted": "2023-10-16"
+      }
     },
     {
       "prisonerNumber": "G1458GV",

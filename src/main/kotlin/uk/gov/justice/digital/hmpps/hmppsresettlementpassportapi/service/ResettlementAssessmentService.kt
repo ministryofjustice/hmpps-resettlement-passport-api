@@ -533,6 +533,6 @@ class ResettlementAssessmentService(
     return null
   }
 
-  fun getLastReportToNomsIdByPrisonId(prisonId: String) = resettlementAssessmentRepository.findLatestSubmittedAssessmentByPrison(prisonId)
+  fun getLastReportToNomsIdByPrisonId(prisonId: String) = resettlementAssessmentRepository.findLastReportByPrison(prisonId)
     .associate { it.nomsId to LastReport(type = it.assessmentType, dateCompleted = if (it.submissionDate != null) it.submissionDate!!.toLocalDate() else it.createdDate.toLocalDate()) }
 }

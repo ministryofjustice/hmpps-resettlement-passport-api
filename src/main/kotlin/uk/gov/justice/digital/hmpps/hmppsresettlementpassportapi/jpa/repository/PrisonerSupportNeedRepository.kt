@@ -25,5 +25,5 @@ interface PrisonerSupportNeedRepository : JpaRepository<PrisonerSupportNeedEntit
             where p.prisonId = :prisonId and psn.deleted = false and (psnu.deleted = false or psnu.deleted is null) and psn.supportNeed.excludeFromCount = false
     """,
   )
-  fun getPrisonerSupportNeedsByPrisonId(prisonId: String): List<Array<Any>>
+  fun getPrisonerSupportNeedsByPrisonId(prisonId: String): List<Array<Any?>>
 }

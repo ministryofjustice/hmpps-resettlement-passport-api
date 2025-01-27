@@ -187,4 +187,33 @@ class SupportNeedsServiceTest {
     isPrison = true,
     isProbation = false,
   )
+
+  @Test
+  fun `test getNeedsSummaryToNomsIdMapByPrisonId`() {
+    val prisonId = "MDI"
+    whenever(prisonerSupportNeedRepository.getPrisonerSupportNeedsByPrisonId(prisonId)).thenReturn(
+      listOf(
+        arrayOf(1L, "A1", Pathway.ACCOMMODATION, LocalDateTime.parse("2025-09-10T12:00:01"), 12L, SupportNeedStatus.NOT_STARTED, LocalDateTime.parse("2025-09-11T12:00:01")),
+        arrayOf(1L, "A1", Pathway.ACCOMMODATION, LocalDateTime.parse("2025-09-12T12:00:01"), null, null, null),
+        arrayOf(1L, "A1", Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, LocalDateTime.parse("2025-09-13T12:00:01"), 13L, SupportNeedStatus.MET, LocalDateTime.parse("2025-09-16T12:00:01")),
+        arrayOf(1L, "A1", Pathway.HEALTH, LocalDateTime.parse("2025-09-13T12:00:01"), 14L, SupportNeedStatus.NOT_STARTED, LocalDateTime.parse("2025-09-09T12:00:01")),
+        arrayOf(1L, "A1", Pathway.HEALTH, LocalDateTime.parse("2025-09-14T12:00:01"), 15L, SupportNeedStatus.IN_PROGRESS, LocalDateTime.parse("2025-09-16T12:00:01")),
+        arrayOf(2L, "A2", Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, LocalDateTime.parse("2025-09-15T12:00:01"), 16L, SupportNeedStatus.MET, LocalDateTime.parse("2025-09-17T12:00:01")),
+        arrayOf(2L, "A2", Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, LocalDateTime.parse("2025-09-15T12:00:01"), 17L, SupportNeedStatus.IN_PROGRESS, LocalDateTime.parse("2025-09-19T12:00:01")),
+        arrayOf(2L, "A2", Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, LocalDateTime.parse("2025-09-16T12:00:01"), 18L, SupportNeedStatus.NOT_STARTED, LocalDateTime.parse("2025-09-20T12:00:01")),
+        arrayOf(2L, "A2", Pathway.DRUGS_AND_ALCOHOL, LocalDateTime.parse("2025-09-16T12:00:01"), 19L, SupportNeedStatus.DECLINED, LocalDateTime.parse("2025-09-21T12:00:01")),
+        arrayOf(2L, "A2", Pathway.DRUGS_AND_ALCOHOL, LocalDateTime.parse("2025-09-18T12:00:01"), 21L, SupportNeedStatus.IN_PROGRESS, LocalDateTime.parse("2025-09-10T12:00:01")),
+        arrayOf(3L, "A3", Pathway.EDUCATION_SKILLS_AND_WORK, LocalDateTime.parse("2025-09-11T12:00:01"), 22L, SupportNeedStatus.MET, LocalDateTime.parse("2025-09-12T12:00:01")),
+        arrayOf(3L, "A3", Pathway.FINANCE_AND_ID, LocalDateTime.parse("2025-09-21T12:00:01"), 25L, SupportNeedStatus.DECLINED, LocalDateTime.parse("2025-09-30T12:00:01")),
+      ),
+    )
+
+    val expectedSupportNeedsSummaryMap = mapOf(
+      "A1" to listOf(SupportNeedSummary(pathway = Pathway.ACCOMMODATION, reviewed = true, notStarted = 1, inProgress = 0, met = 0, declined = 0, lastUpdated = LocalDate.parse("2025-09-12")), SupportNeedSummary(pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, reviewed = true, notStarted = 0, inProgress = 0, met = 1, declined = 0, lastUpdated = LocalDate.parse("2025-09-16")), SupportNeedSummary(pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, reviewed = false, notStarted = 0, inProgress = 0, met = 0, declined = 0, lastUpdated = null), SupportNeedSummary(pathway = Pathway.DRUGS_AND_ALCOHOL, reviewed = false, notStarted = 0, inProgress = 0, met = 0, declined = 0, lastUpdated = null), SupportNeedSummary(pathway = Pathway.EDUCATION_SKILLS_AND_WORK, reviewed = false, notStarted = 0, inProgress = 0, met = 0, declined = 0, lastUpdated = null), SupportNeedSummary(pathway = Pathway.FINANCE_AND_ID, reviewed = false, notStarted = 0, inProgress = 0, met = 0, declined = 0, lastUpdated = null), SupportNeedSummary(pathway = Pathway.HEALTH, reviewed = true, notStarted = 1, inProgress = 1, met = 0, declined = 0, lastUpdated = LocalDate.parse("2025-09-16"))),
+      "A2" to listOf(SupportNeedSummary(pathway = Pathway.ACCOMMODATION, reviewed = false, notStarted = 0, inProgress = 0, met = 0, declined = 0, lastUpdated = null), SupportNeedSummary(pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, reviewed = false, notStarted = 0, inProgress = 0, met = 0, declined = 0, lastUpdated = null), SupportNeedSummary(pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, reviewed = true, notStarted = 1, inProgress = 1, met = 1, declined = 0, lastUpdated = LocalDate.parse("2025-09-20")), SupportNeedSummary(pathway = Pathway.DRUGS_AND_ALCOHOL, reviewed = true, notStarted = 0, inProgress = 1, met = 0, declined = 1, lastUpdated = LocalDate.parse("2025-09-21")), SupportNeedSummary(pathway = Pathway.EDUCATION_SKILLS_AND_WORK, reviewed = false, notStarted = 0, inProgress = 0, met = 0, declined = 0, lastUpdated = null), SupportNeedSummary(pathway = Pathway.FINANCE_AND_ID, reviewed = false, notStarted = 0, inProgress = 0, met = 0, declined = 0, lastUpdated = null), SupportNeedSummary(pathway = Pathway.HEALTH, reviewed = false, notStarted = 0, inProgress = 0, met = 0, declined = 0, lastUpdated = null)),
+      "A3" to listOf(SupportNeedSummary(pathway = Pathway.ACCOMMODATION, reviewed = false, notStarted = 0, inProgress = 0, met = 0, declined = 0, lastUpdated = null), SupportNeedSummary(pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, reviewed = false, notStarted = 0, inProgress = 0, met = 0, declined = 0, lastUpdated = null), SupportNeedSummary(pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, reviewed = false, notStarted = 0, inProgress = 0, met = 0, declined = 0, lastUpdated = null), SupportNeedSummary(pathway = Pathway.DRUGS_AND_ALCOHOL, reviewed = false, notStarted = 0, inProgress = 0, met = 0, declined = 0, lastUpdated = null), SupportNeedSummary(pathway = Pathway.EDUCATION_SKILLS_AND_WORK, reviewed = true, notStarted = 0, inProgress = 0, met = 1, declined = 0, lastUpdated = LocalDate.parse("2025-09-12")), SupportNeedSummary(pathway = Pathway.FINANCE_AND_ID, reviewed = true, notStarted = 0, inProgress = 0, met = 0, declined = 1, lastUpdated = LocalDate.parse("2025-09-30")), SupportNeedSummary(pathway = Pathway.HEALTH, reviewed = false, notStarted = 0, inProgress = 0, met = 0, declined = 0, lastUpdated = null)),
+    )
+
+    Assertions.assertEquals(expectedSupportNeedsSummaryMap, supportNeedsService.getNeedsSummaryToNomsIdMapByPrisonId(prisonId))
+  }
 }

@@ -114,12 +114,5 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
   """,
     nativeQuery = true,
   )
-  fun findLatestSubmittedAssessmentByPrison(prisonId: String): List<LastReportProjection>
-}
-
-interface LastReportProjection {
-  val nomsId: String
-  val assessmentType: ResettlementAssessmentType
-  val createdDate: LocalDateTime
-  val submissionDate: LocalDateTime?
+  fun findLastReportByPrison(prisonId: String): List<LastReportProjection>
 }

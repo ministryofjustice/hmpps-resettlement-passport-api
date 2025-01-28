@@ -93,6 +93,8 @@ INSERT INTO prisoner_support_need_update (id, prisoner_support_need_id, created_
     (3, 2, 'A user', '2024-12-25T09:36:31.713421', 'This is an update 3', 'MET', true, false, false, null),
     (4, 2, 'A user', '2024-12-24T09:36:29.713421', 'This is an update 4', 'DECLINED', true, false, false, null);
 
+UPDATE prisoner_support_need set latest_update_id = 3 where id = 2;
+
 INSERT INTO resettlement_assessment (id, prisoner_id, pathway, assessment_status, assessment_type, assessment, status_changed_to, created_date, created_by, case_note_text, created_by_user_id, submission_date) VALUES
     (1, 1, 'ACCOMMODATION', 'SUBMITTED', 'BCST2', '{"assessment": []}'::jsonb, 'SUPPORT_NOT_REQUIRED', '2023-01-09 19:02:45.000', 'A User', null, 'USER_1', '2023-01-09 20:02:45.000'),
     (2, 1, 'ATTITUDES_THINKING_AND_BEHAVIOUR', 'SUBMITTED', 'BCST2', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2023-01-09 19:02:45.000', 'A User', null, 'USER_1', '2023-01-09 20:02:45.000'),

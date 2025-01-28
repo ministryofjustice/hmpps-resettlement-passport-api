@@ -222,4 +222,32 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
     val expectedResettlementAssessment = ResettlementAssessmentEntity(id = 9, prisonerId = 1, pathway = Pathway.HEALTH, statusChangedTo = Status.NOT_STARTED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf()), creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatus.SUBMITTED, caseNoteText = null, createdByUserId = "USER_1", version = 1, submissionDate = LocalDateTime.parse("2023-01-09T21:02:45"), userDeclaration = false, deleted = false, deletedDate = null)
     Assertions.assertEquals(expectedResettlementAssessment, resettlementAssessmentRepository.findFirstByPrisonerIdAndAssessmentStatusAndDeletedIsFalseAndSubmissionDateIsNotNullOrderBySubmissionDateDesc(1, ResettlementAssessmentStatus.SUBMITTED))
   }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-19.sql")
+  fun `test findLastReportByPrison`() {
+    val expectedLastReports = listOf(
+      LastReportProjectionDataClass(nomsId = "A8132DY", assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, createdDate = LocalDateTime.parse("2023-05-18T12:21:44"), submissionDate = LocalDateTime.parse("2023-05-18T12:21:44")),
+      LastReportProjectionDataClass(nomsId = "A8229DY", assessmentType = ResettlementAssessmentType.BCST2, createdDate = LocalDateTime.parse("2023-05-19T12:21:44"), submissionDate = LocalDateTime.parse("2023-05-19T12:21:44")),
+      LastReportProjectionDataClass(nomsId = "A8257DY", assessmentType = ResettlementAssessmentType.BCST2, createdDate = LocalDateTime.parse("2023-05-19T12:21:44"), submissionDate = LocalDateTime.parse("2023-05-19T12:21:44")),
+      LastReportProjectionDataClass(nomsId = "A8258DY", assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, createdDate = LocalDateTime.parse("2023-05-19T12:21:44"), submissionDate = LocalDateTime.parse("2023-05-19T12:21:44")),
+      LastReportProjectionDataClass(nomsId = "A8314DY", assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, createdDate = LocalDateTime.parse("2023-05-17T12:21:44"), submissionDate = LocalDateTime.parse("2023-05-17T12:21:44")),
+      LastReportProjectionDataClass(nomsId = "A8339DY", assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, createdDate = LocalDateTime.parse("2023-05-19T12:21:44"), submissionDate = LocalDateTime.parse("2023-05-19T12:21:44")),
+      LastReportProjectionDataClass(nomsId = "G1458GV", assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, createdDate = LocalDateTime.parse("2023-05-16T12:21:44"), submissionDate = LocalDateTime.parse("2023-05-16T12:21:44")),
+      LastReportProjectionDataClass(nomsId = "G6335VX", assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, createdDate = LocalDateTime.parse("2023-05-14T12:21:44"), submissionDate = null),
+      LastReportProjectionDataClass(nomsId = "G6628UE", assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, createdDate = LocalDateTime.parse("2023-05-17T12:21:44"), submissionDate = LocalDateTime.parse("2023-05-17T12:21:44")),
+      LastReportProjectionDataClass(nomsId = "G6933GF", assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, createdDate = LocalDateTime.parse("2023-05-18T12:21:44"), submissionDate = LocalDateTime.parse("2023-05-18T12:21:44")),
+    )
+    val actualLastReports = resettlementAssessmentRepository.findLastReportByPrison("MDI").convertToDataClass()
+    Assertions.assertEquals(expectedLastReports, actualLastReports)
+  }
+
+  fun List<LastReportProjection>.convertToDataClass() = this.map { LastReportProjectionDataClass(it.nomsId, it.assessmentType, it.createdDate, it.submissionDate) }
+
+  data class LastReportProjectionDataClass(
+    val nomsId: String,
+    val assessmentType: ResettlementAssessmentType,
+    val createdDate: LocalDateTime,
+    val submissionDate: LocalDateTime?,
+  )
 }

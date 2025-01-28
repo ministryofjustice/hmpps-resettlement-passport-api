@@ -46,6 +46,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentSkipRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseNoteRetryRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.LastReportProjection
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ProfileTagsRepository
@@ -917,4 +918,36 @@ class ResettlementAssessmentServiceTest {
 
     Assertions.assertEquals(expectedLastReport, resettlementAssessmentService.getLastReport(prisonerId))
   }
+
+  @Test
+  fun `test getLastReportToNomsIdByPrisonId`() {
+    val prisonId = "MDI"
+    whenever(resettlementAssessmentRepository.findLastReportByPrison("MDI")).thenReturn(
+      listOf(
+        getLastReportProjection("A1", ResettlementAssessmentType.BCST2, LocalDateTime.parse("2024-09-06T12:00:01"), LocalDateTime.parse("2024-09-07T12:00:02")),
+        getLastReportProjection("A2", ResettlementAssessmentType.RESETTLEMENT_PLAN, LocalDateTime.parse("2024-09-07T12:00:01"), LocalDateTime.parse("2024-09-08T12:00:02")),
+        getLastReportProjection("A3", ResettlementAssessmentType.RESETTLEMENT_PLAN, LocalDateTime.parse("2024-09-09T12:00:02"), null),
+      ),
+    )
+
+    val expectedLastReports = mapOf(
+      "A1" to LastReport(type = ResettlementAssessmentType.BCST2, dateCompleted = LocalDate.parse("2024-09-07")),
+      "A2" to LastReport(type = ResettlementAssessmentType.RESETTLEMENT_PLAN, dateCompleted = LocalDate.parse("2024-09-08")),
+      "A3" to LastReport(type = ResettlementAssessmentType.RESETTLEMENT_PLAN, dateCompleted = LocalDate.parse("2024-09-09")),
+    )
+
+    Assertions.assertEquals(expectedLastReports, resettlementAssessmentService.getLastReportToNomsIdByPrisonId(prisonId))
+  }
+
+  private fun getLastReportProjection(nomsId: String, assessmentType: ResettlementAssessmentType, createdDate: LocalDateTime, submissionDate: LocalDateTime?) =
+    object : LastReportProjection {
+      override val nomsId: String
+        get() = nomsId
+      override val assessmentType: ResettlementAssessmentType
+        get() = assessmentType
+      override val createdDate: LocalDateTime
+        get() = createdDate
+      override val submissionDate: LocalDateTime?
+        get() = submissionDate
+    }
 }

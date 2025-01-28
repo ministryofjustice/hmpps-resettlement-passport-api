@@ -32,6 +32,7 @@ DELETE from case_note_retry;
 ALTER SEQUENCE case_note_retry_id_seq RESTART WITH 1;
 DELETE from offender_event;
 DELETE from todo_item;
+UPDATE prisoner_support_need set latest_update_id = null;
 DELETE from prisoner_support_need_update;
 ALTER SEQUENCE prisoner_support_need_update_id_seq RESTART WITH 1;
 DELETE from prisoner_support_need;

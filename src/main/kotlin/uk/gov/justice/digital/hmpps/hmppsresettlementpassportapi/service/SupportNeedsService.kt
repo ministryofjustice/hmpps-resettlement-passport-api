@@ -30,6 +30,8 @@ class SupportNeedsService(
           SupportNeedSummary(
             pathway = it,
             reviewed = isPathwayReviewed(it, prisonerSupportNeedToLatestUpdateMap),
+            isPrisonResponsible = isPrisonResponsible(it, prisonerSupportNeedToLatestUpdateMap),
+            isProbationResponsible = isProbationResponsible(it, prisonerSupportNeedToLatestUpdateMap),
             notStarted = getCountForStatus(it, SupportNeedStatus.NOT_STARTED, prisonerSupportNeedToLatestUpdateMap),
             inProgress = getCountForStatus(it, SupportNeedStatus.IN_PROGRESS, prisonerSupportNeedToLatestUpdateMap),
             met = getCountForStatus(it, SupportNeedStatus.MET, prisonerSupportNeedToLatestUpdateMap),
@@ -46,6 +48,8 @@ class SupportNeedsService(
     SupportNeedSummary(
       pathway = it,
       reviewed = false,
+      isPrisonResponsible = false,
+      isProbationResponsible = false,
       notStarted = 0,
       inProgress = 0,
       met = 0,
@@ -68,6 +72,14 @@ class SupportNeedsService(
       .sortedByDescending { it }
       .firstOrNull()
 
+  fun isPrisonResponsible(pathway: Pathway, prisonerSupportNeedToLatestUpdateMap: Map<PrisonerSupportNeedEntity, PrisonerSupportNeedUpdateEntity?>) =
+    prisonerSupportNeedToLatestUpdateMap.filter { it.key.supportNeed.pathway == pathway }
+      .any { it.value?.isPrison == true }
+
+  fun isProbationResponsible(pathway: Pathway, prisonerSupportNeedToLatestUpdateMap: Map<PrisonerSupportNeedEntity, PrisonerSupportNeedUpdateEntity?>) =
+    prisonerSupportNeedToLatestUpdateMap.filter { it.key.supportNeed.pathway == pathway }
+      .any { it.value?.isProbation == true }
+
   fun isPathwayReviewed(pathway: Pathway, prisonerSupportNeeds: List<PrisonerSupportNeedWithNomsIdAndLatestUpdate>) =
     prisonerSupportNeeds.any { it.pathway == pathway }
 
@@ -79,6 +91,14 @@ class SupportNeedsService(
       .map { if (it.latestUpdateId != null) it.latestUpdateCreatedDate?.toLocalDate() else it.prisonerSupportNeedCreatedDate.toLocalDate() }
       .sortedByDescending { it }
       .firstOrNull()
+
+  fun isPrisonResponsible(pathway: Pathway, prisonerSupportNeedToLatestUpdateMap: List<PrisonerSupportNeedWithNomsIdAndLatestUpdate>) =
+    prisonerSupportNeedToLatestUpdateMap.filter { it.pathway == pathway }
+      .any { it.isPrison == true }
+
+  fun isProbationResponsible(pathway: Pathway, prisonerSupportNeedToLatestUpdateMap: List<PrisonerSupportNeedWithNomsIdAndLatestUpdate>) =
+    prisonerSupportNeedToLatestUpdateMap.filter { it.pathway == pathway }
+      .any { it.isProbation == true }
 
   fun getNeedsSummaryByNomsId(nomsId: String): SupportNeedSummaryResponse {
     val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Cannot find prisoner $nomsId")
@@ -100,6 +120,8 @@ class SupportNeedsService(
         latestUpdateId = it[4] as Long?,
         latestUpdateStatus = it[5] as SupportNeedStatus?,
         latestUpdateCreatedDate = it[6] as LocalDateTime?,
+        isPrison = it[7] as Boolean?,
+        isProbation = it[8] as Boolean?,
       )
     }.groupBy { it.nomsId }
 
@@ -113,6 +135,8 @@ class SupportNeedsService(
           met = getCountForStatus(pathway, SupportNeedStatus.MET, it.value),
           declined = getCountForStatus(pathway, SupportNeedStatus.DECLINED, it.value),
           lastUpdated = getLastUpdatedForPathway(pathway, it.value),
+          isPrisonResponsible = isPrisonResponsible(pathway, it.value),
+          isProbationResponsible = isProbationResponsible(pathway, it.value),
         )
       }
     }

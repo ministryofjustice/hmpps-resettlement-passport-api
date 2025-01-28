@@ -18,7 +18,9 @@ interface PrisonerSupportNeedRepository : JpaRepository<PrisonerSupportNeedEntit
       psn.createdDate as prisonerSupportNeedCreatedDate,
       psnu.id as latestUpdateId,
       psnu.status as latestUpdateStatus,
-      psnu.createdDate as latestSupportNeedCreatedDate
+      psnu.createdDate as latestSupportNeedCreatedDate,
+      psnu.isPrison as isPrison,
+      psnu.isProbation as isProbation
         from PrisonerSupportNeedEntity psn
           inner join PrisonerEntity p on psn.prisonerId = p.id
           left join PrisonerSupportNeedUpdateEntity psnu on psnu.id = psn.latestUpdateId

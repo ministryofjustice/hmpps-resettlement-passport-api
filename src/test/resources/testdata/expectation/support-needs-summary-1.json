@@ -3,6 +3,8 @@
     {
       "pathway": "ACCOMMODATION",
       "reviewed": true,
+      "isPrisonResponsible": false,
+      "isProbationResponsible": false,
       "notStarted": 5,
       "inProgress": 3,
       "met": 3,
@@ -12,6 +14,8 @@
     {
       "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
       "reviewed": true,
+      "isPrisonResponsible": true,
+      "isProbationResponsible": true,
       "notStarted": 3,
       "inProgress": 4,
       "met": 2,
@@ -21,6 +25,8 @@
     {
       "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
       "reviewed": true,
+      "isPrisonResponsible": true,
+      "isProbationResponsible": false,
       "notStarted": 6,
       "inProgress": 5,
       "met": 6,
@@ -30,6 +36,8 @@
     {
       "pathway": "DRUGS_AND_ALCOHOL",
       "reviewed": true,
+      "isPrisonResponsible": false,
+      "isProbationResponsible": true,
       "notStarted": 2,
       "inProgress": 3,
       "met": 3,
@@ -39,6 +47,8 @@
     {
       "pathway": "EDUCATION_SKILLS_AND_WORK",
       "reviewed": true,
+      "isPrisonResponsible": true,
+      "isProbationResponsible": true,
       "notStarted": 5,
       "inProgress": 5,
       "met": 5,
@@ -48,6 +58,8 @@
     {
       "pathway": "FINANCE_AND_ID",
       "reviewed": true,
+      "isPrisonResponsible": true,
+      "isProbationResponsible": false,
       "notStarted": 5,
       "inProgress": 5,
       "met": 4,
@@ -57,6 +69,8 @@
     {
       "pathway": "HEALTH",
       "reviewed": true,
+      "isPrisonResponsible": true,
+      "isProbationResponsible": false,
       "notStarted": 3,
       "inProgress": 3,
       "met": 5,

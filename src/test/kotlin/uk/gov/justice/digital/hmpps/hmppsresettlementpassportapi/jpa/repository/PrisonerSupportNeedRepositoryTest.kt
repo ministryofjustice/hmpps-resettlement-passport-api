@@ -68,9 +68,9 @@ class PrisonerSupportNeedRepositoryTest : RepositoryTestBase() {
   @Sql("classpath:testdata/sql/seed-prisoner-support-needs-1.sql")
   fun `test getPrisonerSupportNeedsByPrisonId`() {
     val expectedPrisonerSupportNeeds = listOf(
-      arrayOf(2L, "G4161UF", Pathway.ACCOMMODATION, LocalDateTime.parse("2024-02-21T09:36:28.713421"), 3L, SupportNeedStatus.MET, LocalDateTime.parse("2024-02-22T09:36:31.713421")),
-      arrayOf(5L, "G4161UG", Pathway.ACCOMMODATION, LocalDateTime.parse("2024-02-21T09:36:28.713421"), null, null, null),
-      arrayOf(6L, "G4161UF", Pathway.ACCOMMODATION, LocalDateTime.parse("2024-02-21T09:36:28.713421"), null, null, null),
+      arrayOf(2L, "G4161UF", Pathway.ACCOMMODATION, LocalDateTime.parse("2024-02-21T09:36:28.713421"), 3L, SupportNeedStatus.MET, LocalDateTime.parse("2024-02-22T09:36:31.713421"), false, true),
+      arrayOf(5L, "G4161UG", Pathway.ACCOMMODATION, LocalDateTime.parse("2024-02-21T09:36:28.713421"), null, null, null, null, null),
+      arrayOf(6L, "G4161UF", Pathway.ACCOMMODATION, LocalDateTime.parse("2024-02-21T09:36:28.713421"), null, null, null, null, null),
     )
     val prisonerSupportNeedsFromDatabase = prisonerSupportNeedRepository.getPrisonerSupportNeedsByPrisonId("MDI").sortedBy { it[0] as Long }
     assertThat(prisonerSupportNeedsFromDatabase).usingRecursiveComparison().isEqualTo(expectedPrisonerSupportNeeds)

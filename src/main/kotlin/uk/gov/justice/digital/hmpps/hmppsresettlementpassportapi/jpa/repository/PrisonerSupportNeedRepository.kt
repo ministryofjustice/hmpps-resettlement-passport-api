@@ -12,10 +12,10 @@ interface PrisonerSupportNeedRepository : JpaRepository<PrisonerSupportNeedEntit
   @Query(
     """
     select
-			psn.id as prisonerSupportNeedId,
-			p.nomsId as nomsId,
-			psn.supportNeed.pathway as pathway,
-			psn.createdDate as prisonerSupportNeedCreatedDate,
+      psn.id as prisonerSupportNeedId,
+      p.nomsId as nomsId,
+      psn.supportNeed.pathway as pathway,
+      psn.createdDate as prisonerSupportNeedCreatedDate,
       psnu.id as latestUpdateId,
       psnu.status as latestUpdateStatus,
       psnu.createdDate as latestSupportNeedCreatedDate

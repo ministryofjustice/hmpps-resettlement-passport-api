@@ -10,9 +10,9 @@ INSERT INTO prisoner_support_need (id, prisoner_id, support_need_id, other_detai
     (6, 1, 6, 'This is an other 1', 'Someone else', '2024-02-21T09:36:28.713421', false, null, null);
 
 INSERT INTO prisoner_support_need_update (id, prisoner_support_need_id, created_by, created_date, update_text, status, is_prison, is_probation, is_deleted, deleted_date) values
-    (1, 2, 'A user', '2024-02-22T09:36:32.713421', 'This is an update 1', 'MET', true, false, true, null),
+    (1, 2, 'A user', '2024-02-22T09:36:32.713421', 'This is an update 1', 'MET', true, true, true, null),
     (2, 2, 'A user', '2024-02-22T09:36:30.713421', 'This is an update 2', 'IN_PROGRESS', true, false, false, null),
-    (3, 2, 'A user', '2024-02-22T09:36:31.713421', 'This is an update 3', 'MET', true, false, false, null),
-    (4, 2, 'A user', '2024-02-22T09:36:29.713421', 'This is an update 4', 'DECLINED', true, false, false, null);
+    (3, 2, 'A user', '2024-02-22T09:36:31.713421', 'This is an update 3', 'MET', false, true, false, null),
+    (4, 2, 'A user', '2024-02-22T09:36:29.713421', 'This is an update 4', 'DECLINED', false, false, false, null);
 
 UPDATE prisoner_support_need set latest_update_id = 3 where id = 2;

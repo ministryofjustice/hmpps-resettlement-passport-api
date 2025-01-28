@@ -6,6 +6,8 @@ import java.time.LocalDateTime
 data class SupportNeedSummary(
   val pathway: Pathway,
   val reviewed: Boolean,
+  val isPrisonResponsible: Boolean,
+  val isProbationResponsible: Boolean,
   val notStarted: Int,
   val inProgress: Int,
   val met: Int,
@@ -25,4 +27,6 @@ data class PrisonerSupportNeedWithNomsIdAndLatestUpdate(
   val latestUpdateId: Long?,
   val latestUpdateStatus: SupportNeedStatus?,
   val latestUpdateCreatedDate: LocalDateTime?,
+  val isPrison: Boolean?,
+  val isProbation: Boolean?,
 )

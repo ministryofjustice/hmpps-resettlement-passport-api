@@ -1,0 +1,40 @@
+{
+  "prisonerNeeds": [
+    {
+      "id": 1,
+      "title": "End a tenancy",
+      "isPrisonResponsible": true,
+      "isProbationResponsible": false,
+      "status": "IN_PROGRESS",
+      "numberOfUpdates": 3,
+      "lastUpdated": "2024-02-03"
+    },
+    {
+      "id": 3,
+      "title": "Mortgage support while in prison",
+      "isPrisonResponsible": true,
+      "isProbationResponsible": true,
+      "status": "NOT_STARTED",
+      "numberOfUpdates": 2,
+      "lastUpdated": "2024-02-05"
+    },
+    {
+      "id": 4,
+      "title": "Home adaptations to stay in current accommodation (changes to make it safer and easier to move around and do everyday tasks)",
+      "isPrisonResponsible": true,
+      "isProbationResponsible": false,
+      "status": "MET",
+      "numberOfUpdates": 2,
+      "lastUpdated": "2024-02-03"
+    },
+    {
+      "id": 5,
+      "title": "Arrange storage for personal possessions while in prison",
+      "isPrisonResponsible": false,
+      "isProbationResponsible": false,
+      "status": "DECLINED",
+      "numberOfUpdates": 1,
+      "lastUpdated": "2024-02-11"
+    }
+  ]
+}

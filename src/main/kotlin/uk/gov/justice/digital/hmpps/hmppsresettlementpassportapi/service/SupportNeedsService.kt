@@ -3,12 +3,12 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayNeedsSummary
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeed
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerSupportNeedWithNomsIdAndLatestUpdate
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedSummary
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedSummaryResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedUpdateEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedUpdateRepository
@@ -25,18 +25,32 @@ class SupportNeedsService(
     if (prisonerId != null) {
       val prisonerSupportNeeds = prisonerSupportNeedRepository.findAllByPrisonerIdAndDeletedIsFalse(prisonerId)
       if (prisonerSupportNeeds.isNotEmpty()) {
-        val prisonerSupportNeedToLatestUpdateMap = prisonerSupportNeeds.associateWith { if (it.latestUpdateId != null) prisonerSupportNeedUpdateRepository.findById(it.latestUpdateId!!).get() else null }
+        val prisonerSupportNeedWithLatestUpdate = prisonerSupportNeeds.associateWith { if (it.latestUpdateId != null) prisonerSupportNeedUpdateRepository.findById(it.latestUpdateId!!).get() else null }
+          .map { (psn, update) ->
+            PrisonerSupportNeedWithNomsIdAndLatestUpdate(
+              prisonerSupportNeedId = psn.id!!,
+              nomsId = "NOT_SET",
+              pathway = psn.supportNeed.pathway,
+              prisonerSupportNeedCreatedDate = psn.createdDate,
+              excludeFromCount = psn.supportNeed.excludeFromCount,
+              latestUpdateId = update?.id,
+              latestUpdateStatus = update?.status,
+              latestUpdateCreatedDate = update?.createdDate,
+              isPrison = update?.isPrison,
+              isProbation = update?.isProbation,
+            )
+          }
         return Pathway.entries.map {
           SupportNeedSummary(
             pathway = it,
-            reviewed = isPathwayReviewed(it, prisonerSupportNeedToLatestUpdateMap),
-            isPrisonResponsible = isPrisonResponsible(it, prisonerSupportNeedToLatestUpdateMap),
-            isProbationResponsible = isProbationResponsible(it, prisonerSupportNeedToLatestUpdateMap),
-            notStarted = getCountForStatus(it, SupportNeedStatus.NOT_STARTED, prisonerSupportNeedToLatestUpdateMap),
-            inProgress = getCountForStatus(it, SupportNeedStatus.IN_PROGRESS, prisonerSupportNeedToLatestUpdateMap),
-            met = getCountForStatus(it, SupportNeedStatus.MET, prisonerSupportNeedToLatestUpdateMap),
-            declined = getCountForStatus(it, SupportNeedStatus.DECLINED, prisonerSupportNeedToLatestUpdateMap),
-            lastUpdated = getLastUpdatedForPathway(it, prisonerSupportNeedToLatestUpdateMap),
+            reviewed = isPathwayReviewed(it, prisonerSupportNeedWithLatestUpdate),
+            isPrisonResponsible = isPrisonResponsible(it, prisonerSupportNeedWithLatestUpdate),
+            isProbationResponsible = isProbationResponsible(it, prisonerSupportNeedWithLatestUpdate),
+            notStarted = getCountForStatus(it, SupportNeedStatus.NOT_STARTED, prisonerSupportNeedWithLatestUpdate),
+            inProgress = getCountForStatus(it, SupportNeedStatus.IN_PROGRESS, prisonerSupportNeedWithLatestUpdate),
+            met = getCountForStatus(it, SupportNeedStatus.MET, prisonerSupportNeedWithLatestUpdate),
+            declined = getCountForStatus(it, SupportNeedStatus.DECLINED, prisonerSupportNeedWithLatestUpdate),
+            lastUpdated = getLastUpdatedForPathway(it, prisonerSupportNeedWithLatestUpdate),
           )
         }
       }
@@ -58,33 +72,11 @@ class SupportNeedsService(
     )
   }
 
-  fun isPathwayReviewed(pathway: Pathway, prisonerSupportNeedToLatestUpdateMap: Map<PrisonerSupportNeedEntity, PrisonerSupportNeedUpdateEntity?>) =
-    prisonerSupportNeedToLatestUpdateMap.filter { it.key.supportNeed.pathway == pathway }.isNotEmpty()
-
-  fun getCountForStatus(pathway: Pathway, status: SupportNeedStatus, prisonerSupportNeedToLatestUpdateMap: Map<PrisonerSupportNeedEntity, PrisonerSupportNeedUpdateEntity?>) =
-    prisonerSupportNeedToLatestUpdateMap.filter { it.key.supportNeed.pathway == pathway }
-      .filter { !it.key.supportNeed.excludeFromCount && it.value?.status == status }
-      .count()
-
-  fun getLastUpdatedForPathway(pathway: Pathway, prisonerSupportNeedToLatestUpdateMap: Map<PrisonerSupportNeedEntity, PrisonerSupportNeedUpdateEntity?>) =
-    prisonerSupportNeedToLatestUpdateMap.filter { it.key.supportNeed.pathway == pathway }
-      .map { if (it.value != null) it.value?.createdDate?.toLocalDate() else it.key.createdDate.toLocalDate() }
-      .sortedByDescending { it }
-      .firstOrNull()
-
-  fun isPrisonResponsible(pathway: Pathway, prisonerSupportNeedToLatestUpdateMap: Map<PrisonerSupportNeedEntity, PrisonerSupportNeedUpdateEntity?>) =
-    prisonerSupportNeedToLatestUpdateMap.filter { it.key.supportNeed.pathway == pathway }
-      .any { it.value?.isPrison == true }
-
-  fun isProbationResponsible(pathway: Pathway, prisonerSupportNeedToLatestUpdateMap: Map<PrisonerSupportNeedEntity, PrisonerSupportNeedUpdateEntity?>) =
-    prisonerSupportNeedToLatestUpdateMap.filter { it.key.supportNeed.pathway == pathway }
-      .any { it.value?.isProbation == true }
-
   fun isPathwayReviewed(pathway: Pathway, prisonerSupportNeeds: List<PrisonerSupportNeedWithNomsIdAndLatestUpdate>) =
     prisonerSupportNeeds.any { it.pathway == pathway }
 
   fun getCountForStatus(pathway: Pathway, status: SupportNeedStatus, prisonerSupportNeeds: List<PrisonerSupportNeedWithNomsIdAndLatestUpdate>) =
-    prisonerSupportNeeds.count { it.pathway == pathway && it.latestUpdateStatus == status }
+    prisonerSupportNeeds.count { it.pathway == pathway && it.latestUpdateStatus == status && !it.excludeFromCount }
 
   fun getLastUpdatedForPathway(pathway: Pathway, prisonerSupportNeeds: List<PrisonerSupportNeedWithNomsIdAndLatestUpdate>) =
     prisonerSupportNeeds.filter { it.pathway == pathway }
@@ -117,11 +109,12 @@ class SupportNeedsService(
         nomsId = it[1] as String,
         pathway = it[2] as Pathway,
         prisonerSupportNeedCreatedDate = it[3] as LocalDateTime,
-        latestUpdateId = it[4] as Long?,
-        latestUpdateStatus = it[5] as SupportNeedStatus?,
-        latestUpdateCreatedDate = it[6] as LocalDateTime?,
-        isPrison = it[7] as Boolean?,
-        isProbation = it[8] as Boolean?,
+        excludeFromCount = it[4] as Boolean,
+        latestUpdateId = it[5] as Long?,
+        latestUpdateStatus = it[6] as SupportNeedStatus?,
+        latestUpdateCreatedDate = it[7] as LocalDateTime?,
+        isPrison = it[8] as Boolean?,
+        isProbation = it[9] as Boolean?,
       )
     }.groupBy { it.nomsId }
 
@@ -142,5 +135,23 @@ class SupportNeedsService(
     }
 
     return nomsIdToSupportNeedSummaryMap
+  }
+
+  fun getPathwayNeedsSummaryByNomsId(nomsId: String, pathway: Pathway): PathwayNeedsSummary {
+    val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Cannot find prisoner $nomsId")
+    val prisonerSupportNeeds = prisonerSupportNeedRepository.findAllByPrisonerIdAndSupportNeedPathwayAndDeletedIsFalse(prisoner.id!!, pathway)
+    val prisonerSupportNeedsToUpdateMap = prisonerSupportNeeds.associateWith { prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(it.id!!) }
+    val needs = prisonerSupportNeedsToUpdateMap.filter { !it.key.supportNeed.excludeFromCount && it.value.isNotEmpty() }.map { (psn, updates) ->
+      PrisonerNeed(
+        id = psn.id!!,
+        title = if (!psn.supportNeed.allowOtherDetail) psn.supportNeed.title else psn.otherDetail ?: psn.supportNeed.title,
+        isPrisonResponsible = updates.first().isPrison,
+        isProbationResponsible = updates.first().isProbation,
+        status = updates.first().status,
+        numberOfUpdates = updates.size,
+        lastUpdated = updates.first().createdDate.toLocalDate(),
+      )
+    }
+    return PathwayNeedsSummary(prisonerNeeds = needs)
   }
 }

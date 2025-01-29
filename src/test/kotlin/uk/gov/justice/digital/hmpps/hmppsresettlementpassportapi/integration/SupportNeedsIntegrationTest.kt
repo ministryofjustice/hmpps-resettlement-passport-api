@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.json.JsonCompareMode
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 
 class SupportNeedsIntegrationTest : IntegrationTestBase() {
 
@@ -68,6 +69,61 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
     val nomsId = "G4161UF"
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/needs/summary")
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoner-support-needs-4.sql")
+  fun `test get pathway support need summary - happy path`() {
+    val expectedOutput = readFile("testdata/expectation/pathway-support-needs-summary-1.json")
+    val nomsId = "G4161UF"
+    val pathway = Pathway.ACCOMMODATION
+    authedWebTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/needs/$pathway/summary")
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
+  }
+
+  @Test
+  fun `get pathway support needs summary - no prisoner found`() {
+    val nomsId = "G4161UF"
+    val pathway = Pathway.ACCOMMODATION
+    authedWebTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/needs/$pathway/summary")
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  fun `get pathway support needs summary - pathway invalid`() {
+    val nomsId = "G4161UF"
+    val pathway = "NOT_A_PATHWAY"
+    authedWebTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/needs/$pathway/summary")
+      .exchange()
+      .expectStatus().isBadRequest
+  }
+
+  @Test
+  fun `get pathway support needs summary - unauthorised`() {
+    val nomsId = "G4161UF"
+    val pathway = Pathway.ACCOMMODATION
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/needs/$pathway/summary")
+      .exchange()
+      .expectStatus().isUnauthorized
+  }
+
+  @Test
+  fun `get pathway support needs summary - forbidden`() {
+    val nomsId = "G4161UF"
+    val pathway = Pathway.ACCOMMODATION
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/needs/$pathway/summary")
       .headers(setAuthorisation())
       .exchange()
       .expectStatus().isForbidden

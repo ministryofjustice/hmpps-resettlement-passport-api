@@ -68,11 +68,25 @@ class PrisonerSupportNeedRepositoryTest : RepositoryTestBase() {
   @Sql("classpath:testdata/sql/seed-prisoner-support-needs-1.sql")
   fun `test getPrisonerSupportNeedsByPrisonId`() {
     val expectedPrisonerSupportNeeds = listOf(
-      arrayOf(2L, "G4161UF", Pathway.ACCOMMODATION, LocalDateTime.parse("2024-02-21T09:36:28.713421"), 3L, SupportNeedStatus.MET, LocalDateTime.parse("2024-02-22T09:36:31.713421"), false, true),
-      arrayOf(5L, "G4161UG", Pathway.ACCOMMODATION, LocalDateTime.parse("2024-02-21T09:36:28.713421"), null, null, null, null, null),
-      arrayOf(6L, "G4161UF", Pathway.ACCOMMODATION, LocalDateTime.parse("2024-02-21T09:36:28.713421"), null, null, null, null, null),
+      arrayOf(2L, "G4161UF", Pathway.ACCOMMODATION, LocalDateTime.parse("2024-02-21T09:36:28.713421"), false, 3L, SupportNeedStatus.MET, LocalDateTime.parse("2024-02-22T09:36:31.713421"), false, true),
+      arrayOf(3L, "G4161UF", Pathway.ACCOMMODATION, LocalDateTime.parse("2024-02-21T09:36:28.713421"), true, null, null, null, null, null),
+      arrayOf(5L, "G4161UG", Pathway.ACCOMMODATION, LocalDateTime.parse("2024-02-21T09:36:28.713421"), false, null, null, null, null, null),
+      arrayOf(6L, "G4161UF", Pathway.ACCOMMODATION, LocalDateTime.parse("2024-02-21T09:36:28.713421"), false, null, null, null, null, null),
     )
     val prisonerSupportNeedsFromDatabase = prisonerSupportNeedRepository.getPrisonerSupportNeedsByPrisonId("MDI").sortedBy { it[0] as Long }
     assertThat(prisonerSupportNeedsFromDatabase).usingRecursiveComparison().isEqualTo(expectedPrisonerSupportNeeds)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoner-support-needs-4.sql")
+  fun `test findAllByPrisonerIdAndSupportNeedPathwayAndDeletedIsFalse`() {
+    val expectedSupportNeeds = listOf(
+      PrisonerSupportNeedEntity(id = 1, prisonerId = 1, supportNeed = supportNeedRepository.findById(1).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = null),
+      PrisonerSupportNeedEntity(id = 3, prisonerId = 1, supportNeed = supportNeedRepository.findById(3).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = null),
+      PrisonerSupportNeedEntity(id = 4, prisonerId = 1, supportNeed = supportNeedRepository.findById(4).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = null),
+      PrisonerSupportNeedEntity(id = 5, prisonerId = 1, supportNeed = supportNeedRepository.findById(5).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = null),
+      PrisonerSupportNeedEntity(id = 6, prisonerId = 1, supportNeed = supportNeedRepository.findById(7).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = null),
+    )
+    Assertions.assertEquals(expectedSupportNeeds, prisonerSupportNeedRepository.findAllByPrisonerIdAndSupportNeedPathwayAndDeletedIsFalse(1, Pathway.ACCOMMODATION))
   }
 }

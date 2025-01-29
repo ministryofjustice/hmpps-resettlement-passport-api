@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.SupportNeedsService
 
 @RestController
@@ -54,4 +55,39 @@ class SupportNeedsResourceController(
     @Parameter(required = true)
     nomsId: String,
   ) = supportNeedsService.getNeedsSummaryByNomsId(nomsId)
+
+  @GetMapping("/{nomsId}/needs/{pathway}/summary")
+  @Operation(summary = "Get summary of support needs for a specific pathway", description = "Get summary of support needs for a specific pathway")
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "404",
+        description = "Prisoner not found in database",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  fun getSupportNeedsSummaryByPathway(
+    @Schema(example = "AXXXS", required = true)
+    @PathVariable("nomsId")
+    @Parameter(required = true)
+    nomsId: String,
+    @PathVariable("pathway")
+    @Parameter(required = true)
+    pathway: Pathway,
+  ) = supportNeedsService.getPathwayNeedsSummaryByNomsId(nomsId, pathway)
 }

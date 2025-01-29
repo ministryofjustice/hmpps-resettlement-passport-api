@@ -70,4 +70,15 @@ class PrisonerSupportNeedUpdateRepositoryTest : RepositoryTestBase() {
     val updatesFromDatabase = prisonerSupportNeedUpdateRepository.findAll()
     Assertions.assertEquals(listOf(update1, update2, update3), updatesFromDatabase)
   }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoner-support-needs-4.sql")
+  fun `test findAllByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc`() {
+    val expectedUpdates = listOf(
+      PrisonerSupportNeedUpdateEntity(id = 3, prisonerSupportNeedId = 1, createdBy = "User B", createdDate = LocalDateTime.parse("2024-02-03T09:36:32.713421"), updateText = "This is an update 2", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = false, deleted = false, deletedDate = null),
+      PrisonerSupportNeedUpdateEntity(id = 4, prisonerSupportNeedId = 1, createdBy = "User C", createdDate = LocalDateTime.parse("2024-02-02T09:36:32.713421"), updateText = "This is an update 3", status = SupportNeedStatus.MET, isPrison = true, isProbation = true, deleted = false, deletedDate = null),
+      PrisonerSupportNeedUpdateEntity(id = 1, prisonerSupportNeedId = 1, createdBy = "User A", createdDate = LocalDateTime.parse("2024-02-01T09:36:32.713421"), updateText = "This is an update 1", status = SupportNeedStatus.NOT_STARTED, isPrison = false, isProbation = false, deleted = false, deletedDate = null),
+    )
+    Assertions.assertEquals(expectedUpdates, prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(1))
+  }
 }

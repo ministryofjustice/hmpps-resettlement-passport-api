@@ -9,8 +9,11 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayNeedsSummary
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeed
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedSummary
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedUpdateEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.SupportNeedEntity
@@ -166,14 +169,14 @@ class SupportNeedsServiceTest {
       latestUpdateId = if (includeLatestUpdate) n.toLong() else null,
     )
 
-  private fun getSupportNeed(n: Int, pathway: Pathway, excludeFromCount: Boolean = false) = SupportNeedEntity(
+  private fun getSupportNeed(n: Int, pathway: Pathway, excludeFromCount: Boolean = false, allowOtherDetail: Boolean = false) = SupportNeedEntity(
     id = n.toLong(),
     pathway = pathway,
     section = "Section $n",
     title = "Title $n",
     hidden = false,
     excludeFromCount = excludeFromCount,
-    allowOtherDetail = false,
+    allowOtherDetail = allowOtherDetail,
     createdDate = LocalDateTime.parse("2023-09-12T12:09:00"),
   )
 
@@ -193,18 +196,18 @@ class SupportNeedsServiceTest {
     val prisonId = "MDI"
     whenever(prisonerSupportNeedRepository.getPrisonerSupportNeedsByPrisonId(prisonId)).thenReturn(
       listOf(
-        arrayOf(1L, "A1", Pathway.ACCOMMODATION, LocalDateTime.parse("2025-09-10T12:00:01"), 12L, SupportNeedStatus.NOT_STARTED, LocalDateTime.parse("2025-09-11T12:00:01"), false, false),
-        arrayOf(1L, "A1", Pathway.ACCOMMODATION, LocalDateTime.parse("2025-09-12T12:00:01"), null, null, null, null, null),
-        arrayOf(1L, "A1", Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, LocalDateTime.parse("2025-09-13T12:00:01"), 13L, SupportNeedStatus.MET, LocalDateTime.parse("2025-09-16T12:00:01"), true, true),
-        arrayOf(1L, "A1", Pathway.HEALTH, LocalDateTime.parse("2025-09-13T12:00:01"), 14L, SupportNeedStatus.NOT_STARTED, LocalDateTime.parse("2025-09-09T12:00:01"), true, false),
-        arrayOf(1L, "A1", Pathway.HEALTH, LocalDateTime.parse("2025-09-14T12:00:01"), 15L, SupportNeedStatus.IN_PROGRESS, LocalDateTime.parse("2025-09-16T12:00:01"), false, false),
-        arrayOf(2L, "A2", Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, LocalDateTime.parse("2025-09-15T12:00:01"), 16L, SupportNeedStatus.MET, LocalDateTime.parse("2025-09-17T12:00:01"), false, false),
-        arrayOf(2L, "A2", Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, LocalDateTime.parse("2025-09-15T12:00:01"), 17L, SupportNeedStatus.IN_PROGRESS, LocalDateTime.parse("2025-09-19T12:00:01"), false, true),
-        arrayOf(2L, "A2", Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, LocalDateTime.parse("2025-09-16T12:00:01"), 18L, SupportNeedStatus.NOT_STARTED, LocalDateTime.parse("2025-09-20T12:00:01"), false, false),
-        arrayOf(2L, "A2", Pathway.DRUGS_AND_ALCOHOL, LocalDateTime.parse("2025-09-16T12:00:01"), 19L, SupportNeedStatus.DECLINED, LocalDateTime.parse("2025-09-21T12:00:01"), false, true),
-        arrayOf(2L, "A2", Pathway.DRUGS_AND_ALCOHOL, LocalDateTime.parse("2025-09-18T12:00:01"), 21L, SupportNeedStatus.IN_PROGRESS, LocalDateTime.parse("2025-09-10T12:00:01"), true, false),
-        arrayOf(3L, "A3", Pathway.EDUCATION_SKILLS_AND_WORK, LocalDateTime.parse("2025-09-11T12:00:01"), 22L, SupportNeedStatus.MET, LocalDateTime.parse("2025-09-12T12:00:01"), false, false),
-        arrayOf(3L, "A3", Pathway.FINANCE_AND_ID, LocalDateTime.parse("2025-09-21T12:00:01"), 25L, SupportNeedStatus.DECLINED, LocalDateTime.parse("2025-09-30T12:00:01"), true, false),
+        arrayOf(1L, "A1", Pathway.ACCOMMODATION, LocalDateTime.parse("2025-09-10T12:00:01"), false, 12L, SupportNeedStatus.NOT_STARTED, LocalDateTime.parse("2025-09-11T12:00:01"), false, false),
+        arrayOf(1L, "A1", Pathway.ACCOMMODATION, LocalDateTime.parse("2025-09-12T12:00:01"), false, null, null, null, null, null),
+        arrayOf(1L, "A1", Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, LocalDateTime.parse("2025-09-13T12:00:01"), false, 13L, SupportNeedStatus.MET, LocalDateTime.parse("2025-09-16T12:00:01"), true, true),
+        arrayOf(1L, "A1", Pathway.HEALTH, LocalDateTime.parse("2025-09-13T12:00:01"), false, 14L, SupportNeedStatus.NOT_STARTED, LocalDateTime.parse("2025-09-09T12:00:01"), true, false),
+        arrayOf(1L, "A1", Pathway.HEALTH, LocalDateTime.parse("2025-09-14T12:00:01"), false, 15L, SupportNeedStatus.IN_PROGRESS, LocalDateTime.parse("2025-09-16T12:00:01"), false, false),
+        arrayOf(2L, "A2", Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, LocalDateTime.parse("2025-09-15T12:00:01"), false, 16L, SupportNeedStatus.MET, LocalDateTime.parse("2025-09-17T12:00:01"), false, false),
+        arrayOf(2L, "A2", Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, LocalDateTime.parse("2025-09-15T12:00:01"), false, 17L, SupportNeedStatus.IN_PROGRESS, LocalDateTime.parse("2025-09-19T12:00:01"), false, true),
+        arrayOf(2L, "A2", Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, LocalDateTime.parse("2025-09-16T12:00:01"), false, 18L, SupportNeedStatus.NOT_STARTED, LocalDateTime.parse("2025-09-20T12:00:01"), false, false),
+        arrayOf(2L, "A2", Pathway.DRUGS_AND_ALCOHOL, LocalDateTime.parse("2025-09-16T12:00:01"), false, 19L, SupportNeedStatus.DECLINED, LocalDateTime.parse("2025-09-21T12:00:01"), false, true),
+        arrayOf(2L, "A2", Pathway.DRUGS_AND_ALCOHOL, LocalDateTime.parse("2025-09-18T12:00:01"), false, 21L, SupportNeedStatus.IN_PROGRESS, LocalDateTime.parse("2025-09-10T12:00:01"), true, false),
+        arrayOf(3L, "A3", Pathway.EDUCATION_SKILLS_AND_WORK, LocalDateTime.parse("2025-09-11T12:00:01"), false, 22L, SupportNeedStatus.MET, LocalDateTime.parse("2025-09-12T12:00:01"), false, false),
+        arrayOf(3L, "A3", Pathway.FINANCE_AND_ID, LocalDateTime.parse("2025-09-21T12:00:01"), false, 25L, SupportNeedStatus.DECLINED, LocalDateTime.parse("2025-09-30T12:00:01"), true, false),
       ),
     )
 
@@ -239,5 +242,62 @@ class SupportNeedsServiceTest {
     )
 
     Assertions.assertEquals(expectedSupportNeedsSummaryMap, supportNeedsService.getNeedsSummaryToNomsIdMapByPrisonId(prisonId))
+  }
+
+  @Test
+  fun `test getPathwayNeedsSummaryByNomsId - happy path`() {
+    val nomsId = "A123"
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.parse("2025-01-28T12:09:34"), prisonId = "MDI"))
+    whenever(prisonerSupportNeedRepository.findAllByPrisonerIdAndSupportNeedPathwayAndDeletedIsFalse(1, Pathway.ACCOMMODATION)).thenReturn(
+      listOf(
+        PrisonerSupportNeedEntity(id = 1, prisonerId = 1, supportNeed = getSupportNeed(n = 1, pathway = Pathway.ACCOMMODATION), otherDetail = null, createdBy = "A user", createdDate = LocalDateTime.parse("2025-01-29T12:09:34")),
+        PrisonerSupportNeedEntity(id = 2, prisonerId = 1, supportNeed = getSupportNeed(n = 2, pathway = Pathway.ACCOMMODATION), otherDetail = null, createdBy = "A user", createdDate = LocalDateTime.parse("2025-01-29T12:09:34")),
+        PrisonerSupportNeedEntity(id = 3, prisonerId = 1, supportNeed = getSupportNeed(n = 3, pathway = Pathway.ACCOMMODATION, excludeFromCount = true), otherDetail = null, createdBy = "A user", createdDate = LocalDateTime.parse("2025-01-29T12:09:34")),
+        PrisonerSupportNeedEntity(id = 4, prisonerId = 1, supportNeed = getSupportNeed(n = 4, pathway = Pathway.ACCOMMODATION, allowOtherDetail = true), otherDetail = "Other support need 1", createdBy = "A user", createdDate = LocalDateTime.parse("2025-01-29T12:09:34")),
+        PrisonerSupportNeedEntity(id = 5, prisonerId = 1, supportNeed = getSupportNeed(n = 5, pathway = Pathway.ACCOMMODATION, allowOtherDetail = true), otherDetail = "Other support need 2", createdBy = "A user", createdDate = LocalDateTime.parse("2025-01-29T12:09:34")),
+      ),
+    )
+    whenever(prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(1)).thenReturn(
+      listOf(
+        PrisonerSupportNeedUpdateEntity(id = 1, prisonerSupportNeedId = 1, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-12T12:09:34"), updateText = "This is some update text 1", status = SupportNeedStatus.DECLINED, isPrison = false, isProbation = true),
+        PrisonerSupportNeedUpdateEntity(id = 2, prisonerSupportNeedId = 1, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-11T12:09:34"), updateText = "This is some update text 2", status = SupportNeedStatus.MET, isPrison = false, isProbation = true),
+        PrisonerSupportNeedUpdateEntity(id = 3, prisonerSupportNeedId = 1, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-10T12:09:34"), updateText = "This is some update text 3", status = SupportNeedStatus.NOT_STARTED, isPrison = true, isProbation = true),
+        PrisonerSupportNeedUpdateEntity(id = 4, prisonerSupportNeedId = 1, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-09T12:09:34"), updateText = "This is some update text 4", status = SupportNeedStatus.IN_PROGRESS, isPrison = false, isProbation = false),
+      ),
+    )
+    whenever(prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(2)).thenReturn(emptyList())
+    whenever(prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(3)).thenReturn(emptyList())
+    whenever(prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(4)).thenReturn(
+      listOf(
+        PrisonerSupportNeedUpdateEntity(id = 5, prisonerSupportNeedId = 4, createdBy = "User B", createdDate = LocalDateTime.parse("2024-12-12T12:09:34"), updateText = "This is some update text 1", status = SupportNeedStatus.NOT_STARTED, isPrison = false, isProbation = false),
+        PrisonerSupportNeedUpdateEntity(id = 6, prisonerSupportNeedId = 4, createdBy = "User B", createdDate = LocalDateTime.parse("2024-12-11T12:09:34"), updateText = "This is some update text 2", status = SupportNeedStatus.MET, isPrison = false, isProbation = true),
+      ),
+    )
+    whenever(prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(5)).thenReturn(
+      listOf(
+        PrisonerSupportNeedUpdateEntity(id = 7, prisonerSupportNeedId = 5, createdBy = "User B", createdDate = LocalDateTime.parse("2024-12-15T12:09:34"), updateText = "This is some update text 1", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = true),
+        PrisonerSupportNeedUpdateEntity(id = 8, prisonerSupportNeedId = 5, createdBy = "User C", createdDate = LocalDateTime.parse("2024-12-14T12:09:34"), updateText = "This is some update text 2", status = SupportNeedStatus.MET, isPrison = false, isProbation = true),
+      ),
+    )
+
+    val expectedPathwayNeedsSummary = PathwayNeedsSummary(
+      prisonerNeeds = listOf(
+        PrisonerNeed(id = 1, title = "Title 1", isPrisonResponsible = false, isProbationResponsible = true, status = SupportNeedStatus.DECLINED, numberOfUpdates = 4, lastUpdated = LocalDate.parse("2024-12-12")),
+        PrisonerNeed(id = 4, title = "Other support need 1", isPrisonResponsible = false, isProbationResponsible = false, status = SupportNeedStatus.NOT_STARTED, numberOfUpdates = 2, lastUpdated = LocalDate.parse("2024-12-12")),
+        PrisonerNeed(id = 5, title = "Other support need 2", isPrisonResponsible = true, isProbationResponsible = true, status = SupportNeedStatus.IN_PROGRESS, numberOfUpdates = 2, lastUpdated = LocalDate.parse("2024-12-15")),
+      ),
+    )
+
+    Assertions.assertEquals(expectedPathwayNeedsSummary, supportNeedsService.getPathwayNeedsSummaryByNomsId(nomsId, Pathway.ACCOMMODATION))
+  }
+
+  @Test
+  fun `test getPathwayNeedsSummaryByNomsId - no results`() {
+    val nomsId = "A123"
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.parse("2025-01-28T12:09:34"), prisonId = "MDI"))
+    whenever(prisonerSupportNeedRepository.findAllByPrisonerIdAndSupportNeedPathwayAndDeletedIsFalse(1, Pathway.ACCOMMODATION)).thenReturn(emptyList())
+
+    val expectedPathwayNeedsSummary = PathwayNeedsSummary(prisonerNeeds = emptyList())
+    Assertions.assertEquals(expectedPathwayNeedsSummary, supportNeedsService.getPathwayNeedsSummaryByNomsId(nomsId, Pathway.ACCOMMODATION))
   }
 }

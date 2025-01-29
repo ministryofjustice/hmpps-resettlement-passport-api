@@ -24,9 +24,24 @@ data class PrisonerSupportNeedWithNomsIdAndLatestUpdate(
   val nomsId: String,
   val pathway: Pathway,
   val prisonerSupportNeedCreatedDate: LocalDateTime,
+  val excludeFromCount: Boolean,
   val latestUpdateId: Long?,
   val latestUpdateStatus: SupportNeedStatus?,
   val latestUpdateCreatedDate: LocalDateTime?,
   val isPrison: Boolean?,
   val isProbation: Boolean?,
+)
+
+data class PathwayNeedsSummary(
+  val prisonerNeeds: List<PrisonerNeed>,
+)
+
+data class PrisonerNeed(
+  val id: Long,
+  val title: String,
+  val isPrisonResponsible: Boolean,
+  val isProbationResponsible: Boolean,
+  val status: SupportNeedStatus,
+  val numberOfUpdates: Int,
+  val lastUpdated: LocalDate,
 )

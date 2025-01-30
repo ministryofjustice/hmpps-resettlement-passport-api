@@ -161,7 +161,7 @@ class SupportNeedsService(
         numberOfUpdates = updates.size,
         lastUpdated = updates.first().createdDate.toLocalDate(),
       )
-    }
+    }.sortedBy { it.id }
     return PathwayNeedsSummary(prisonerNeeds = needs)
   }
 

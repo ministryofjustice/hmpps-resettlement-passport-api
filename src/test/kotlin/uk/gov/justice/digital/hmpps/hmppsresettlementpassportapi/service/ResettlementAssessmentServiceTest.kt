@@ -133,7 +133,7 @@ class ResettlementAssessmentServiceTest {
   fun `processAndGroupAssessmentCaseNotes - should add description to Delius case notes when there are multiple case notes`() {
     val user1 = "User one"
     val user2 = "User two"
-    val caseNotePostfix = RandomStringUtils.randomAlphanumeric(100)
+    val caseNotePostfix = RandomStringUtils.secure().nextAlphanumeric(100)
 
     val assessmentList = listOf(
       createSubmittedResettlementAssessmentEntity(Pathway.ACCOMMODATION, user1, "${Pathway.ACCOMMODATION.displayName} case note - $caseNotePostfix"),
@@ -195,7 +195,7 @@ class ResettlementAssessmentServiceTest {
   @Test
   fun `processAndGroupAssessmentCaseNotes - should not add description for single case note`() {
     val user = "Single user"
-    val caseNotePostfix = RandomStringUtils.randomAlphanumeric(100)
+    val caseNotePostfix = RandomStringUtils.secure().nextAlphanumeric(100)
 
     val assessmentList = listOf(
       createSubmittedResettlementAssessmentEntity(Pathway.ACCOMMODATION, user, "${Pathway.ACCOMMODATION.displayName} case note - $caseNotePostfix"),
@@ -512,7 +512,7 @@ class ResettlementAssessmentServiceTest {
   @Test
   fun `test processAndGroupAssessmentCaseNotes - long text, no limit chars`() {
     val user = "A user"
-    val caseNotePostfix = RandomStringUtils.randomAlphanumeric(1000)
+    val caseNotePostfix = RandomStringUtils.secure().nextAlphanumeric(1000)
     val assessmentList = getSubmittedResettlementAssessmentEntities(user, caseNotePostfix)
 
     val expectedUserAndCaseNotes = listOf(
@@ -531,7 +531,7 @@ class ResettlementAssessmentServiceTest {
   @Test
   fun `test processAndGroupAssessmentCaseNotes - long text, limit chars`() {
     val user = "A user"
-    val caseNotePostfix = RandomStringUtils.randomAlphanumeric(1000)
+    val caseNotePostfix = RandomStringUtils.secure().nextAlphanumeric(1000)
     val assessmentList = getSubmittedResettlementAssessmentEntities(user, caseNotePostfix)
 
     val expectedUserAndCaseNotes = listOf(
@@ -563,7 +563,7 @@ class ResettlementAssessmentServiceTest {
     val user1 = "A user"
     val user2 = "B user"
     val user3 = "C user"
-    val caseNotePostfix = RandomStringUtils.randomAlphanumeric(1000)
+    val caseNotePostfix = RandomStringUtils.secure().nextAlphanumeric(1000)
 
     val assessmentList = listOf(
       createSubmittedResettlementAssessmentEntity(Pathway.ACCOMMODATION, user1, "${Pathway.ACCOMMODATION.displayName} case note - $caseNotePostfix"),
@@ -604,7 +604,7 @@ class ResettlementAssessmentServiceTest {
     val user1 = "A user"
     val user2 = "B user"
     val user3 = "C user"
-    val caseNotePostfix = RandomStringUtils.randomAlphanumeric(1000)
+    val caseNotePostfix = RandomStringUtils.secure().nextAlphanumeric(1000)
 
     val assessmentList = listOf(
       createSubmittedResettlementAssessmentEntity(Pathway.ACCOMMODATION, user1, "${Pathway.ACCOMMODATION.displayName} case note - $caseNotePostfix"),

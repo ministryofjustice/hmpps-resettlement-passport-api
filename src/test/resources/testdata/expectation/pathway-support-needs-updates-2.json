@@ -1,0 +1,61 @@
+{
+  "updates": [
+    {
+      "id": 1,
+      "title": "End a tenancy",
+      "status": "NOT_STARTED",
+      "isPrisonResponsible": false,
+      "isProbationResponsible": false,
+      "text": "This is an update 1",
+      "createdBy": "User A",
+      "createdAt": "2024-02-01T09:36:32.713421"
+    },
+    {
+      "id": 4,
+      "title": "End a tenancy",
+      "status": "MET",
+      "isPrisonResponsible": true,
+      "isProbationResponsible": true,
+      "text": "This is an update 3",
+      "createdBy": "User C",
+      "createdAt": "2024-02-02T09:36:32.713421"
+    },
+    {
+      "id": 3,
+      "title": "End a tenancy",
+      "status": "IN_PROGRESS",
+      "isPrisonResponsible": true,
+      "isProbationResponsible": false,
+      "text": "This is an update 2",
+      "createdBy": "User B",
+      "createdAt": "2024-02-03T09:36:32.713421"
+    }
+  ],
+  "allPrisonerNeeds": [
+    {
+      "id": 1,
+      "title": "End a tenancy"
+    },
+    {
+      "id": 3,
+      "title": "Mortgage support while in prison"
+    },
+    {
+      "id": 4,
+      "title": "Home adaptations to stay in current accommodation (changes to make it safer and easier to move around and do everyday tasks)"
+    },
+    {
+      "id": 5,
+      "title": "Arrange storage for personal possessions while in prison"
+    },
+    {
+      "id": 6,
+      "title": "No accommodation before custody support needs identified"
+    }
+  ],
+  "size": 5,
+  "page": 0,
+  "sortName": "createdDate,ASC",
+  "totalElements": 3,
+  "last": true
+}

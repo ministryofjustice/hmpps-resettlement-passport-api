@@ -128,4 +128,73 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isForbidden
   }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoner-support-needs-4.sql")
+  fun `test get pathway support need updates - happy path with defaults`() {
+    val expectedOutput = readFile("testdata/expectation/pathway-support-needs-updates-1.json")
+    val nomsId = "G4161UF"
+    val pathway = Pathway.ACCOMMODATION
+    authedWebTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/needs/$pathway/updates")
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoner-support-needs-4.sql")
+  fun `test get pathway support need updates - happy path with query params`() {
+    val expectedOutput = readFile("testdata/expectation/pathway-support-needs-updates-2.json")
+    val nomsId = "G4161UF"
+    val pathway = Pathway.ACCOMMODATION
+    authedWebTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/needs/$pathway/updates?page=0&size=5&sort=createdDate,ASC&filterByPrisonerSupportNeedId=1")
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
+  }
+
+  @Test
+  fun `get pathway support needs updates - no prisoner found`() {
+    val nomsId = "G4161UF"
+    val pathway = Pathway.ACCOMMODATION
+    authedWebTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/needs/$pathway/updates")
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  fun `get pathway support needs updates - pathway invalid`() {
+    val nomsId = "G4161UF"
+    val pathway = "NOT_A_PATHWAY"
+    authedWebTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/needs/$pathway/updates")
+      .exchange()
+      .expectStatus().isBadRequest
+  }
+
+  @Test
+  fun `get pathway support needs updates - unauthorised`() {
+    val nomsId = "G4161UF"
+    val pathway = Pathway.ACCOMMODATION
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/needs/$pathway/updates")
+      .exchange()
+      .expectStatus().isUnauthorized
+  }
+
+  @Test
+  fun `get pathway support needs updates - forbidden`() {
+    val nomsId = "G4161UF"
+    val pathway = Pathway.ACCOMMODATION
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/needs/$pathway/updates")
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
+  }
 }

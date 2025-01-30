@@ -7,4 +7,5 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 @Repository
 interface PrisonerSupportNeedUpdateRepository : JpaRepository<PrisonerSupportNeedUpdateEntity, Long> {
   fun findAllByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(id: Long): List<PrisonerSupportNeedUpdateEntity>
+  fun findAllByPrisonerSupportNeedIdInAndDeletedIsFalse(ids: List<Long>): List<PrisonerSupportNeedUpdateEntity>
 }

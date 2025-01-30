@@ -2,7 +2,7 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
   val kotlinVersion = "2.0.0"
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "6.1.2"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "7.0.0"
   id("org.springdoc.openapi-gradle-plugin") version "1.9.0"
   id("jacoco")
   id("org.sonarqube") version "4.0.0.2929"
@@ -26,7 +26,6 @@ repositories {
 
 dependencies {
   annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-  implementation("javax.servlet:javax.servlet-api:4.0.1")
 
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-security")
@@ -35,7 +34,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:4.3.2")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.2.2")
   implementation("software.amazon.awssdk:s3")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
@@ -48,46 +47,46 @@ dependencies {
   runtimeOnly("org.postgresql:postgresql:42.7.3")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
 
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4")
 
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("io.micrometer:micrometer-registry-prometheus")
   implementation("xyz.capybara:clamav-client:2.1.2")
-  implementation("dev.forkhandles:result4k:2.18.0.1")
+  implementation("dev.forkhandles:result4k:2.20.0.0")
 
   implementation("org.apache.commons:commons-lang3")
-  implementation("org.apache.commons:commons-text:1.11.0")
+  implementation("org.apache.commons:commons-text:1.13.0")
   implementation("commons-codec:commons-codec")
   implementation("com.google.code.gson:gson")
   implementation("org.json:json:20240303")
-  implementation("io.github.oshai:kotlin-logging-jvm:7.0.0")
+  implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
   implementation("com.pauldijou:jwt-core_2.11:5.0.0")
 
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.0.2")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.1.1")
 
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 
-  implementation(platform("org.testcontainers:testcontainers-bom:1.20.0"))
+  implementation(platform("org.testcontainers:testcontainers-bom:1.20.4"))
   testImplementation("org.awaitility:awaitility-kotlin")
   testImplementation("io.jsonwebtoken:jjwt-impl:0.12.6")
-  testImplementation("io.jsonwebtoken:jjwt-jackson:0.12.5")
+  testImplementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
   testImplementation("org.mockito:mockito-inline:5.2.0")
-  testImplementation("io.swagger.parser.v3:swagger-parser:2.1.21")
+  testImplementation("io.swagger.parser.v3:swagger-parser:2.1.25")
   testImplementation("org.springframework.security:spring-security-test")
-  testImplementation("org.wiremock:wiremock-standalone:3.9.1")
+  testImplementation("org.wiremock:wiremock-standalone:3.10.0")
   testImplementation("org.testcontainers:postgresql")
   testImplementation("org.testcontainers:localstack")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
-  testImplementation("javax.xml.bind:jaxb-api:2.3.1")
-  testImplementation("io.opentelemetry:opentelemetry-sdk-testing:1.40.0")
+  testImplementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
+  testImplementation("io.opentelemetry:opentelemetry-sdk-testing:1.46.0")
   testImplementation("com.squareup.okhttp3:okhttp:4.12.0")
   testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
-  testImplementation("io.mockk:mockk:1.13.12")
-  testImplementation("com.github.victools:jsonschema-generator:4.35.0")
+  testImplementation("io.mockk:mockk:1.13.16")
+  testImplementation("com.github.victools:jsonschema-generator:4.37.0")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
-  testImplementation("net.javacrumbs.json-unit:json-unit-assertj:3.4.1")
+  testImplementation("net.javacrumbs.json-unit:json-unit-assertj:4.1.0")
 
   if (project.hasProperty("docs")) {
     implementation("com.h2database:h2")

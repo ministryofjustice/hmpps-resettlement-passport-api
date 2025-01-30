@@ -1,0 +1,139 @@
+{
+  "supportNeeds": [
+    {
+      "id": 1,
+      "title": "End a tenancy",
+      "category": "Accommodation before custody",
+      "allowUserDesc": false,
+      "isOther": false,
+      "isUpdatable": true,
+      "existingPrisonerSupportNeedId": 1
+    },
+    {
+      "id": 2,
+      "title": "Maintain a tenancy while in prison",
+      "category": "Accommodation before custody",
+      "allowUserDesc": false,
+      "isOther": false,
+      "isUpdatable": true,
+      "existingPrisonerSupportNeedId": null
+    },
+    {
+      "id": 3,
+      "title": "Mortgage support while in prison",
+      "category": "Accommodation before custody",
+      "allowUserDesc": false,
+      "isOther": false,
+      "isUpdatable": true,
+      "existingPrisonerSupportNeedId": 3
+    },
+    {
+      "id": 4,
+      "title": "Home adaptations to stay in current accommodation (changes to make it safer and easier to move around and do everyday tasks)",
+      "category": "Accommodation before custody",
+      "allowUserDesc": false,
+      "isOther": false,
+      "isUpdatable": true,
+      "existingPrisonerSupportNeedId": 4
+    },
+    {
+      "id": 5,
+      "title": "Arrange storage for personal possessions while in prison",
+      "category": "Accommodation before custody",
+      "allowUserDesc": false,
+      "isOther": false,
+      "isUpdatable": true,
+      "existingPrisonerSupportNeedId": 5
+    },
+    {
+      "id": 6,
+      "title": "Other",
+      "category": "Accommodation before custody",
+      "allowUserDesc": true,
+      "isOther": false,
+      "isUpdatable": true,
+      "existingPrisonerSupportNeedId": null
+    },
+    {
+      "id": 7,
+      "title": "No accommodation before custody support needs identified",
+      "category": "Accommodation before custody",
+      "allowUserDesc": false,
+      "isOther": false,
+      "isUpdatable": false,
+      "existingPrisonerSupportNeedId": 6
+    },
+    {
+      "id": 8,
+      "title": "Help to find accommodation",
+      "category": "Moving to new accommodation",
+      "allowUserDesc": false,
+      "isOther": false,
+      "isUpdatable": true,
+      "existingPrisonerSupportNeedId": null
+    },
+    {
+      "id": 9,
+      "title": "Home adaptations needed for new accommodation (changes to make it safer and easier to move around and do everyday tasks)",
+      "category": "Moving to new accommodation",
+      "allowUserDesc": false,
+      "isOther": false,
+      "isUpdatable": true,
+      "existingPrisonerSupportNeedId": null
+    },
+    {
+      "id": 10,
+      "title": "Other",
+      "category": "Moving to new accommodation",
+      "allowUserDesc": true,
+      "isOther": false,
+      "isUpdatable": true,
+      "existingPrisonerSupportNeedId": null
+    },
+    {
+      "id": 11,
+      "title": "No new accommodation support needs identified",
+      "category": "Moving to new accommodation",
+      "allowUserDesc": false,
+      "isOther": false,
+      "isUpdatable": false,
+      "existingPrisonerSupportNeedId": null
+    },
+    {
+      "id": 12,
+      "title": "Set up payment for rent arrears",
+      "category": "Accommodation related debt and arrears",
+      "allowUserDesc": false,
+      "isOther": false,
+      "isUpdatable": true,
+      "existingPrisonerSupportNeedId": null
+    },
+    {
+      "id": 13,
+      "title": "Ensure accommodation related debt or arrears do not build up",
+      "category": "Accommodation related debt and arrears",
+      "allowUserDesc": false,
+      "isOther": false,
+      "isUpdatable": true,
+      "existingPrisonerSupportNeedId": null
+    },
+    {
+      "id": 14,
+      "title": "Other",
+      "category": "Accommodation related debt and arrears",
+      "allowUserDesc": true,
+      "isOther": false,
+      "isUpdatable": true,
+      "existingPrisonerSupportNeedId": null
+    },
+    {
+      "id": 15,
+      "title": "No accommodation related debt and arrears support needs identified",
+      "category": "Accommodation related debt and arrears",
+      "allowUserDesc": false,
+      "isOther": false,
+      "isUpdatable": false,
+      "existingPrisonerSupportNeedId": null
+    }
+  ]
+}

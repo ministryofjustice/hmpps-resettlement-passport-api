@@ -17,10 +17,12 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayNeedsSummary
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeed
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedIdAndTitle
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeed
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedSummary
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedUpdate
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedUpdates
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeeds
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedUpdateEntity
@@ -28,6 +30,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Supp
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedUpdateRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.SupportNeedRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -47,9 +50,12 @@ class SupportNeedsServiceTest {
   @Mock
   private lateinit var prisonerRepository: PrisonerRepository
 
+  @Mock
+  private lateinit var supportNeedRepository: SupportNeedRepository
+
   @BeforeEach
   fun beforeEach() {
-    supportNeedsService = SupportNeedsService(prisonerSupportNeedRepository, prisonerSupportNeedUpdateRepository, prisonerRepository)
+    supportNeedsService = SupportNeedsService(prisonerSupportNeedRepository, prisonerSupportNeedUpdateRepository, prisonerRepository, supportNeedRepository)
   }
 
   @Test
@@ -178,12 +184,12 @@ class SupportNeedsServiceTest {
       latestUpdateId = if (includeLatestUpdate) n.toLong() else null,
     )
 
-  private fun getSupportNeed(n: Int, pathway: Pathway, excludeFromCount: Boolean = false, allowOtherDetail: Boolean = false) = SupportNeedEntity(
+  private fun getSupportNeed(n: Int, pathway: Pathway, excludeFromCount: Boolean = false, allowOtherDetail: Boolean = false, hidden: Boolean = false) = SupportNeedEntity(
     id = n.toLong(),
     pathway = pathway,
     section = "Section $n",
     title = "Title $n",
-    hidden = false,
+    hidden = hidden,
     excludeFromCount = excludeFromCount,
     allowOtherDetail = allowOtherDetail,
     createdDate = LocalDateTime.parse("2023-09-12T12:09:00"),
@@ -514,5 +520,77 @@ class SupportNeedsServiceTest {
     val nomsId = "A123"
     val pathway = Pathway.ACCOMMODATION
     assertThrows<ServerWebInputException> { supportNeedsService.getPathwayUpdatesByNomsId(nomsId, pathway, 0, 5, "otherColumn,DESC", null) }
+  }
+
+  @Test
+  fun `test getPathwayNeedsByNomsId`() {
+    val nomsId = "A123"
+    val pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR
+
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.parse("2025-01-28T12:09:34"), prisonId = "MDI"))
+    whenever(supportNeedRepository.findByPathwayAndDeletedIsFalse(pathway)).thenReturn(
+      listOf(
+        getSupportNeed(n = 1, pathway = pathway),
+        getSupportNeed(n = 2, pathway = pathway),
+        getSupportNeed(n = 3, pathway = pathway),
+        getSupportNeed(n = 4, pathway = pathway, allowOtherDetail = true),
+        getSupportNeed(n = 5, pathway = pathway, excludeFromCount = true),
+        getSupportNeed(n = 6, pathway = pathway, hidden = true),
+      ),
+    )
+    whenever(prisonerSupportNeedRepository.findAllByPrisonerIdAndSupportNeedPathwayAndDeletedIsFalse(1, pathway)).thenReturn(
+      listOf(
+        PrisonerSupportNeedEntity(
+          id = 11,
+          prisonerId = 1,
+          supportNeed = getSupportNeed(n = 1, pathway = pathway),
+          otherDetail = null,
+          createdBy = "Someone",
+          createdDate = LocalDateTime.parse("2023-09-12T12:10:00"),
+          latestUpdateId = null,
+        ),
+        PrisonerSupportNeedEntity(
+          id = 12,
+          prisonerId = 1,
+          supportNeed = getSupportNeed(n = 2, pathway = pathway),
+          otherDetail = null,
+          createdBy = "Someone",
+          createdDate = LocalDateTime.parse("2023-09-12T12:10:00"),
+          latestUpdateId = null,
+        ),
+        PrisonerSupportNeedEntity(
+          id = 14,
+          prisonerId = 1,
+          supportNeed = getSupportNeed(n = 4, pathway = pathway, allowOtherDetail = true),
+          otherDetail = "This is other 1",
+          createdBy = "Someone",
+          createdDate = LocalDateTime.parse("2023-09-12T12:10:00"),
+          latestUpdateId = null,
+        ),
+        PrisonerSupportNeedEntity(
+          id = 15,
+          prisonerId = 1,
+          supportNeed = getSupportNeed(n = 4, pathway = pathway, allowOtherDetail = true),
+          otherDetail = "This is other 2",
+          createdBy = "Someone",
+          createdDate = LocalDateTime.parse("2023-09-12T12:10:00"),
+          latestUpdateId = null,
+        ),
+      ),
+    )
+
+    val expectedResult = SupportNeeds(
+      supportNeeds = listOf(
+        SupportNeed(id = 1, title = "Title 1", category = "Section 1", allowUserDesc = false, isOther = false, isUpdatable = true, existingPrisonerSupportNeedId = 11),
+        SupportNeed(id = 2, title = "Title 2", category = "Section 2", allowUserDesc = false, isOther = false, isUpdatable = true, existingPrisonerSupportNeedId = 12),
+        SupportNeed(id = 3, title = "Title 3", category = "Section 3", allowUserDesc = false, isOther = false, isUpdatable = true, existingPrisonerSupportNeedId = null),
+        SupportNeed(id = 4, title = "Title 4", category = "Section 4", allowUserDesc = true, isOther = false, isUpdatable = true, existingPrisonerSupportNeedId = null),
+        SupportNeed(id = 5, title = "Title 5", category = "Section 5", allowUserDesc = false, isOther = false, isUpdatable = false, existingPrisonerSupportNeedId = null),
+        SupportNeed(id = 4, title = "This is other 1", category = "Section 4", allowUserDesc = false, isOther = true, isUpdatable = true, existingPrisonerSupportNeedId = 14),
+        SupportNeed(id = 4, title = "This is other 2", category = "Section 4", allowUserDesc = false, isOther = true, isUpdatable = true, existingPrisonerSupportNeedId = 15),
+      ),
+    )
+
+    Assertions.assertEquals(expectedResult, supportNeedsService.getPathwayNeedsByNomsId(nomsId, pathway))
   }
 }

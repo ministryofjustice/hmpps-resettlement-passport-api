@@ -9,9 +9,7 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class CustomCachingConfigurer : CachingConfigurer {
-  override fun errorHandler(): CacheErrorHandler {
-    return CustomCacheErrorHandler()
-  }
+  override fun errorHandler(): CacheErrorHandler = CustomCacheErrorHandler()
 
   class CustomCacheErrorHandler : SimpleCacheErrorHandler() {
 

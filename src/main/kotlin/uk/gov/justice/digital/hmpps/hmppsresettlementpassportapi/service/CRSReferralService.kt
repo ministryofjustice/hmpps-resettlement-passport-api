@@ -26,9 +26,7 @@ class CRSReferralService(
 
   fun getAllPathwayCRSReferralsByNomsId(
     nomsId: String,
-  ): CRSReferralResponse {
-    return getCRSReferralsByPathway(nomsId, Pathway.entries.toSet())
-  }
+  ): CRSReferralResponse = getCRSReferralsByPathway(nomsId, Pathway.entries.toSet())
 
   fun getCRSReferralsByPathway(
     nomsId: String,
@@ -83,13 +81,15 @@ class CRSReferralService(
         pathwayToCrsReferralMap[Pathway.FINANCE_AND_ID]?.add(crsReferral)
       } else if (it.contractType.startsWith("Mentoring")) {
         pathwayToCrsReferralMap[Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR]?.add(crsReferral)
-      } else if (it.contractType.startsWith("Personal Wellbeing") && (
+      } else if (it.contractType.startsWith("Personal Wellbeing") &&
+        (
           it.serviceCategories.contains("Family and Significant Others") ||
             it.serviceCategories.contains("Family and Significant Others (GM)")
           )
       ) {
         pathwayToCrsReferralMap[Pathway.CHILDREN_FAMILIES_AND_COMMUNITY]?.add(crsReferral)
-      } else if (it.contractType.startsWith("Personal Wellbeing") && (
+      } else if (it.contractType.startsWith("Personal Wellbeing") &&
+        (
           !it.serviceCategories.contains("Family and Significant Others") ||
             !it.serviceCategories.contains("Family and Significant Others (GM)")
           )

@@ -134,14 +134,12 @@ class ResettlementAssessmentStrategy(
     }
   }
 
-  private fun finalQuestionNextPage(edit: Boolean, assessmentType: ResettlementAssessmentType): String {
-    return if (!edit && assessmentType == ResettlementAssessmentType.BCST2) {
-      "ASSESSMENT_SUMMARY"
-    } else if (!edit && assessmentType == ResettlementAssessmentType.RESETTLEMENT_PLAN) {
-      "PRERELEASE_ASSESSMENT_SUMMARY"
-    } else {
-      "CHECK_ANSWERS"
-    }
+  private fun finalQuestionNextPage(edit: Boolean, assessmentType: ResettlementAssessmentType): String = if (!edit && assessmentType == ResettlementAssessmentType.BCST2) {
+    "ASSESSMENT_SUMMARY"
+  } else if (!edit && assessmentType == ResettlementAssessmentType.RESETTLEMENT_PLAN) {
+    "PRERELEASE_ASSESSMENT_SUMMARY"
+  } else {
+    "CHECK_ANSWERS"
   }
 
   fun completeAssessment(
@@ -446,25 +444,22 @@ class ResettlementAssessmentStrategy(
     assessmentType: ResettlementAssessmentType,
     pathway: Pathway,
     version: Int,
-  ): String {
-    return getConfig(
-      pathway,
-      assessmentType,
-      version,
-    ).pages.firstOrNull { p ->
-      (p.questions?.getFlattenedListOfQuestions()?.any { q -> q.id == questionId } == true)
-    }?.id
-      ?: throw RuntimeException("Cannot find page for question [$questionId] - check that the question is used in a page!")
-  }
+  ): String = getConfig(
+    pathway,
+    assessmentType,
+    version,
+  ).pages.firstOrNull { p ->
+    (p.questions?.getFlattenedListOfQuestions()?.any { q -> q.id == questionId } == true)
+  }?.id
+    ?: throw RuntimeException("Cannot find page for question [$questionId] - check that the question is used in a page!")
 
   fun getFlattenedQuestionList(
     pathway: Pathway,
     assessmentType: ResettlementAssessmentType,
     version: Int,
-  ): List<ResettlementAssessmentQuestion> =
-    getConfig(pathway, assessmentType, version).pages.filter { it.questions != null }.flatMap { it.questions!! }
-      .getFlattenedListOfQuestions()
-      .map { it.mapToResettlementAssessmentQuestion(findPageIdFromQuestionId(it.id, assessmentType, pathway, version)) }
+  ): List<ResettlementAssessmentQuestion> = getConfig(pathway, assessmentType, version).pages.filter { it.questions != null }.flatMap { it.questions!! }
+    .getFlattenedListOfQuestions()
+    .map { it.mapToResettlementAssessmentQuestion(findPageIdFromQuestionId(it.id, assessmentType, pathway, version)) }
 
   fun getFlattenedQuestionListPreserveOrder(
     pathway: Pathway,
@@ -483,8 +478,7 @@ class ResettlementAssessmentStrategy(
     return result.map { it.mapToResettlementAssessmentQuestion(findPageIdFromQuestionId(it.id, assessmentType, pathway, version)) }
   }
 
-  private fun saveAssessment(assessment: ResettlementAssessmentEntity): ResettlementAssessmentEntity =
-    resettlementAssessmentRepository.save(assessment)
+  private fun saveAssessment(assessment: ResettlementAssessmentEntity): ResettlementAssessmentEntity = resettlementAssessmentRepository.save(assessment)
 
   private fun loadPrisoner(nomsId: String) = (
     prisonerRepository.findByNomsId(nomsId)
@@ -522,9 +516,7 @@ class ResettlementAssessmentStrategy(
     nomsId: String,
     assessmentType: ResettlementAssessmentType,
     pathway: Pathway,
-  ): ResettlementAssessmentVersion {
-    return ResettlementAssessmentVersion(getExistingAssessment(nomsId, pathway, assessmentType)?.version)
-  }
+  ): ResettlementAssessmentVersion = ResettlementAssessmentVersion(getExistingAssessment(nomsId, pathway, assessmentType)?.version)
 
   fun generateProfileTags(prisonerEntity: PrisonerEntity, assessmentType: ResettlementAssessmentType) {
     val profileTagList = ProfileTagList(listOf())
@@ -609,9 +601,7 @@ data class AssessmentConfigQuestion(
   val detailsTitle: String? = null,
   val detailsContent: String? = null,
 ) {
-  fun getCorrectValidation(): Validation {
-    return validation ?: Validation(validationType, customValidation?.regex ?: "", customValidation?.message ?: "")
-  }
+  fun getCorrectValidation(): Validation = validation ?: Validation(validationType, customValidation?.regex ?: "", customValidation?.message ?: "")
 }
 
 data class AssessmentConfigOption(

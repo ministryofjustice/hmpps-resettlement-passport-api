@@ -48,31 +48,27 @@ internal fun List<AssessmentConfigOption>?.mapToResettlementAssessmentOptions(or
   )
 }
 
-internal fun AssessmentConfigQuestion.mapToResettlementAssessmentQuestionAndAnswer(originalPageId: String): ResettlementAssessmentQuestionAndAnswer =
-  ResettlementAssessmentQuestionAndAnswer(
-    question = this.mapToResettlementAssessmentQuestion(originalPageId),
-    originalPageId = originalPageId,
-  )
+internal fun AssessmentConfigQuestion.mapToResettlementAssessmentQuestionAndAnswer(originalPageId: String): ResettlementAssessmentQuestionAndAnswer = ResettlementAssessmentQuestionAndAnswer(
+  question = this.mapToResettlementAssessmentQuestion(originalPageId),
+  originalPageId = originalPageId,
+)
 
-internal fun AssessmentConfigQuestion.mapToResettlementAssessmentQuestion(originalPageId: String): ResettlementAssessmentQuestion =
-  ResettlementAssessmentQuestion(
-    id = this.id,
-    title = this.title,
-    subTitle = this.subTitle,
-    type = this.type,
-    options = this.options.mapToResettlementAssessmentOptions(originalPageId),
-    validationType = this.getCorrectValidation().type,
-    customValidation = this.customValidation,
-    validation = this.getCorrectValidation(),
-    detailsTitle = this.detailsTitle,
-    detailsContent = this.detailsContent,
-  )
+internal fun AssessmentConfigQuestion.mapToResettlementAssessmentQuestion(originalPageId: String): ResettlementAssessmentQuestion = ResettlementAssessmentQuestion(
+  id = this.id,
+  title = this.title,
+  subTitle = this.subTitle,
+  type = this.type,
+  options = this.options.mapToResettlementAssessmentOptions(originalPageId),
+  validationType = this.getCorrectValidation().type,
+  customValidation = this.customValidation,
+  validation = this.getCorrectValidation(),
+  detailsTitle = this.detailsTitle,
+  detailsContent = this.detailsContent,
+)
 
-internal fun List<AssessmentConfigQuestion>?.getFlattenedListOfQuestions() =
-  this?.plus(this.filter { it.options != null }.flatMap { it.options!! }.filter { it.nestedQuestions != null }.flatMap { it.nestedQuestions!! }) ?: emptyList()
+internal fun List<AssessmentConfigQuestion>?.getFlattenedListOfQuestions() = this?.plus(this.filter { it.options != null }.flatMap { it.options!! }.filter { it.nestedQuestions != null }.flatMap { it.nestedQuestions!! }) ?: emptyList()
 
-internal fun List<AssessmentConfigQuestion>?.getNestedQuestions() =
-  this?.filter { it.options != null }?.flatMap { it.options!! }?.filter { it.nestedQuestions != null }?.flatMap { it.nestedQuestions!! } ?: emptyList()
+internal fun List<AssessmentConfigQuestion>?.getNestedQuestions() = this?.filter { it.options != null }?.flatMap { it.options!! }?.filter { it.nestedQuestions != null }?.flatMap { it.nestedQuestions!! } ?: emptyList()
 
 internal fun ResettlementAssessmentQuestion.removeNestedQuestions() = ResettlementAssessmentQuestion(
   id = this.id,

@@ -173,16 +173,15 @@ class SupportNeedsServiceTest {
     getPrisonerSupportNeed(n = 17, pathway = Pathway.FINANCE_AND_ID, includeLatestUpdate = true),
   )
 
-  private fun getPrisonerSupportNeed(n: Int, pathway: Pathway, excludeFromCount: Boolean = false, includeLatestUpdate: Boolean = false) =
-    PrisonerSupportNeedEntity(
-      id = n.toLong(),
-      prisonerId = 1,
-      supportNeed = getSupportNeed(n, pathway, excludeFromCount),
-      otherDetail = null,
-      createdBy = "Someone",
-      createdDate = LocalDateTime.parse("2023-09-12T12:10:00"),
-      latestUpdateId = if (includeLatestUpdate) n.toLong() else null,
-    )
+  private fun getPrisonerSupportNeed(n: Int, pathway: Pathway, excludeFromCount: Boolean = false, includeLatestUpdate: Boolean = false) = PrisonerSupportNeedEntity(
+    id = n.toLong(),
+    prisonerId = 1,
+    supportNeed = getSupportNeed(n, pathway, excludeFromCount),
+    otherDetail = null,
+    createdBy = "Someone",
+    createdDate = LocalDateTime.parse("2023-09-12T12:10:00"),
+    latestUpdateId = if (includeLatestUpdate) n.toLong() else null,
+  )
 
   private fun getSupportNeed(n: Int, pathway: Pathway, excludeFromCount: Boolean = false, allowOtherDetail: Boolean = false, hidden: Boolean = false) = SupportNeedEntity(
     id = n.toLong(),
@@ -465,16 +464,15 @@ class SupportNeedsServiceTest {
     ),
   )
 
-  private fun getExpectedSupportNeedUpdates(ids: List<Long>, page: Int, size: Int, sort: String, last: Boolean, totalElements: Int = 11) =
-    SupportNeedUpdates(
-      updates = getExpectedSupportNeedUpdateUpdates(ids),
-      allPrisonerNeeds = getExpectedAllPrisonerNeeds(),
-      size = size,
-      page = page,
-      sortName = sort,
-      totalElements = totalElements,
-      last = last,
-    )
+  private fun getExpectedSupportNeedUpdates(ids: List<Long>, page: Int, size: Int, sort: String, last: Boolean, totalElements: Int = 11) = SupportNeedUpdates(
+    updates = getExpectedSupportNeedUpdateUpdates(ids),
+    allPrisonerNeeds = getExpectedAllPrisonerNeeds(),
+    size = size,
+    page = page,
+    sortName = sort,
+    totalElements = totalElements,
+    last = last,
+  )
 
   private fun getExpectedAllPrisonerNeeds() = listOf(PrisonerNeedIdAndTitle(id = 1, title = "Title 1"), PrisonerNeedIdAndTitle(id = 2, title = "Title 2"), PrisonerNeedIdAndTitle(id = 3, title = "Title 3"), PrisonerNeedIdAndTitle(id = 4, title = "Title 4"), PrisonerNeedIdAndTitle(id = 5, title = "Title 5"))
 

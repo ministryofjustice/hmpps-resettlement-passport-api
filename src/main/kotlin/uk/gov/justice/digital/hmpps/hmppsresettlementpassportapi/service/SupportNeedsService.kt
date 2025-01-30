@@ -1,14 +1,20 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayNeedsSummary
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeed
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedIdAndTitle
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerSupportNeedWithNomsIdAndLatestUpdate
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedSummary
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedSummaryResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedUpdate
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedUpdates
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedUpdateEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedUpdateRepository
@@ -144,7 +150,7 @@ class SupportNeedsService(
     val needs = prisonerSupportNeedsToUpdateMap.filter { !it.key.supportNeed.excludeFromCount && it.value.isNotEmpty() }.map { (psn, updates) ->
       PrisonerNeed(
         id = psn.id!!,
-        title = if (!psn.supportNeed.allowOtherDetail) psn.supportNeed.title else psn.otherDetail ?: psn.supportNeed.title,
+        title = getTitleFromPrisonerSupportNeed(psn),
         isPrisonResponsible = updates.first().isPrison,
         isProbationResponsible = updates.first().isProbation,
         status = updates.first().status,
@@ -154,4 +160,62 @@ class SupportNeedsService(
     }
     return PathwayNeedsSummary(prisonerNeeds = needs)
   }
+
+  fun getPathwayUpdatesByNomsId(
+    nomsId: String,
+    pathway: Pathway,
+    page: Int,
+    size: Int,
+    sort: String,
+    prisonerSupportNeedId: Long?,
+  ): SupportNeedUpdates {
+    // Validate sort - must be either "createdDate,DESC" or "createdDate,ASC"
+    if (sort !in listOf("createdDate,DESC", "createdDate,ASC")) {
+      throw ServerWebInputException("Sort must be either \"createdDate,DESC\" or \"createdDate,ASC\"")
+    }
+
+    val sortDirection = sort.split(',')[1]
+
+    val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Cannot find prisoner $nomsId")
+    val prisonerSupportNeeds = prisonerSupportNeedRepository.findAllByPrisonerIdAndSupportNeedPathwayAndDeletedIsFalse(prisoner.id!!, pathway)
+    val filteredPrisonerSupportNeedUpdates = prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndDeletedIsFalse(prisonerSupportNeeds.mapNotNull { it.id })
+      .filter { if (prisonerSupportNeedId != null) it.prisonerSupportNeedId == prisonerSupportNeedId else true }
+    val sortedPrisonerSupportNeedUpdates = if (sortDirection == "ASC") filteredPrisonerSupportNeedUpdates.sortedBy { it.createdDate } else filteredPrisonerSupportNeedUpdates.sortedByDescending { it.createdDate }
+
+    val startIndex = page * size
+    val maxEndIndex = (page + 1) * size
+    val endIndex = if (sortedPrisonerSupportNeedUpdates.size < maxEndIndex) sortedPrisonerSupportNeedUpdates.size else maxEndIndex
+    val updatePage = sortedPrisonerSupportNeedUpdates.subList(startIndex, endIndex)
+    val last = sortedPrisonerSupportNeedUpdates.size == endIndex
+
+    val allPrisonerNeedsMapped = mapToPrisonerNeedIdAndTitle(prisonerSupportNeeds)
+    val updatePageMapped = mapToSupportNeedUpdate(updatePage, allPrisonerNeedsMapped)
+
+    return SupportNeedUpdates(
+      updates = updatePageMapped,
+      allPrisonerNeeds = allPrisonerNeedsMapped,
+      size = size,
+      page = page,
+      sortName = sort,
+      totalElements = sortedPrisonerSupportNeedUpdates.size,
+      last = last,
+    )
+  }
+
+  fun mapToPrisonerNeedIdAndTitle(prisonerSupportNeeds: List<PrisonerSupportNeedEntity>) = prisonerSupportNeeds.map { PrisonerNeedIdAndTitle(id = it.id!!, title = getTitleFromPrisonerSupportNeed(it)) }
+
+  fun mapToSupportNeedUpdate(prisonerSupportNeedUpdates: List<PrisonerSupportNeedUpdateEntity>, allPrisonerNeeds: List<PrisonerNeedIdAndTitle>) = prisonerSupportNeedUpdates.map { psnu ->
+    SupportNeedUpdate(
+      id = psnu.id!!,
+      title = allPrisonerNeeds.first { psnu.prisonerSupportNeedId == it.id }.title,
+      status = psnu.status,
+      isPrisonResponsible = psnu.isPrison,
+      isProbationResponsible = psnu.isProbation,
+      text = psnu.updateText,
+      createdBy = psnu.createdBy,
+      createdAt = psnu.createdDate,
+    )
+  }
+
+  fun getTitleFromPrisonerSupportNeed(prisonerSupportNeed: PrisonerSupportNeedEntity) = if (!prisonerSupportNeed.supportNeed.allowOtherDetail) prisonerSupportNeed.supportNeed.title else prisonerSupportNeed.otherDetail ?: prisonerSupportNeed.supportNeed.title
 }

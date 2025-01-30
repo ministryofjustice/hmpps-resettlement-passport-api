@@ -4,15 +4,23 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.whenever
+import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayNeedsSummary
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeed
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedIdAndTitle
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedSummary
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedUpdate
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedUpdates
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedUpdateEntity
@@ -23,6 +31,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
+import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension::class)
@@ -299,5 +308,211 @@ class SupportNeedsServiceTest {
 
     val expectedPathwayNeedsSummary = PathwayNeedsSummary(prisonerNeeds = emptyList())
     Assertions.assertEquals(expectedPathwayNeedsSummary, supportNeedsService.getPathwayNeedsSummaryByNomsId(nomsId, Pathway.ACCOMMODATION))
+  }
+
+  @ParameterizedTest
+  @MethodSource("test getTitleFromPrisonerSupportNeed data")
+  fun `test getTitleFromPrisonerSupportNeed`(prisonerSupportNeed: PrisonerSupportNeedEntity, expectedTitle: String) {
+    Assertions.assertEquals(expectedTitle, supportNeedsService.getTitleFromPrisonerSupportNeed(prisonerSupportNeed))
+  }
+
+  private fun `test getTitleFromPrisonerSupportNeed data`() = Stream.of(
+    Arguments.of(
+      PrisonerSupportNeedEntity(
+        id = 1,
+        prisonerId = 1,
+        supportNeed = SupportNeedEntity(id = 1, pathway = Pathway.ACCOMMODATION, section = "A section", title = "Title 1", hidden = false, excludeFromCount = false, allowOtherDetail = false, LocalDateTime.now()),
+        otherDetail = null,
+        createdBy = "User A",
+        createdDate = LocalDateTime.now(),
+      ),
+      "Title 1",
+    ),
+    Arguments.of(
+      PrisonerSupportNeedEntity(
+        id = 2,
+        prisonerId = 1,
+        supportNeed = SupportNeedEntity(id = 1, pathway = Pathway.ACCOMMODATION, section = "A section", title = "Other", hidden = false, excludeFromCount = false, allowOtherDetail = true, LocalDateTime.now()),
+        otherDetail = "Other need",
+        createdBy = "User A",
+        createdDate = LocalDateTime.now(),
+      ),
+      "Other need",
+    ),
+    Arguments.of(
+      PrisonerSupportNeedEntity(
+        id = 3,
+        prisonerId = 1,
+        supportNeed = SupportNeedEntity(id = 1, pathway = Pathway.ACCOMMODATION, section = "A section", title = "Other", hidden = false, excludeFromCount = false, allowOtherDetail = true, LocalDateTime.now()),
+        otherDetail = null,
+        createdBy = "User A",
+        createdDate = LocalDateTime.now(),
+      ),
+      "Other",
+    ),
+  )
+
+  @ParameterizedTest
+  @MethodSource("test getPathwayUpdatesByNomsId data")
+  fun `test getPathwayUpdatesByNomsId`(page: Int, size: Int, sort: String, prisonerSupportNeedsId: Long?, expectedResult: SupportNeedUpdates) {
+    val nomsId = "A123"
+    val pathway = Pathway.ACCOMMODATION
+
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.parse("2025-01-28T12:09:34"), prisonId = "MDI"))
+    whenever(prisonerSupportNeedRepository.findAllByPrisonerIdAndSupportNeedPathwayAndDeletedIsFalse(1, pathway)).thenReturn(
+      listOf(
+        getPrisonerSupportNeed(1, pathway),
+        getPrisonerSupportNeed(2, pathway),
+        getPrisonerSupportNeed(3, pathway),
+        getPrisonerSupportNeed(4, pathway),
+        getPrisonerSupportNeed(5, pathway),
+      ),
+    )
+    whenever(prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndDeletedIsFalse(listOf(1, 2, 3, 4, 5))).thenReturn(
+      listOf(
+        PrisonerSupportNeedUpdateEntity(id = 1, prisonerSupportNeedId = 1, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-10T12:09:34"), updateText = "This is some update text 1", status = SupportNeedStatus.DECLINED, isPrison = false, isProbation = true),
+        PrisonerSupportNeedUpdateEntity(id = 2, prisonerSupportNeedId = 1, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-15T12:09:34"), updateText = "This is some update text 2", status = SupportNeedStatus.MET, isPrison = false, isProbation = true),
+        PrisonerSupportNeedUpdateEntity(id = 3, prisonerSupportNeedId = 1, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-13T12:09:34"), updateText = "This is some update text 3", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = false),
+        PrisonerSupportNeedUpdateEntity(id = 4, prisonerSupportNeedId = 2, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-18T12:09:34"), updateText = "This is some update text 4", status = SupportNeedStatus.DECLINED, isPrison = false, isProbation = true),
+        PrisonerSupportNeedUpdateEntity(id = 5, prisonerSupportNeedId = 2, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-17T12:09:34"), updateText = "This is some update text 5", status = SupportNeedStatus.DECLINED, isPrison = false, isProbation = true),
+        PrisonerSupportNeedUpdateEntity(id = 6, prisonerSupportNeedId = 2, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-11T12:09:34"), updateText = "This is some update text 6", status = SupportNeedStatus.NOT_STARTED, isPrison = false, isProbation = true),
+        PrisonerSupportNeedUpdateEntity(id = 7, prisonerSupportNeedId = 2, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-19T12:09:34"), updateText = "This is some update text 7", status = SupportNeedStatus.NOT_STARTED, isPrison = false, isProbation = false),
+        PrisonerSupportNeedUpdateEntity(id = 8, prisonerSupportNeedId = 3, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-12T12:09:34"), updateText = "This is some update text 8", status = SupportNeedStatus.MET, isPrison = false, isProbation = true),
+        PrisonerSupportNeedUpdateEntity(id = 9, prisonerSupportNeedId = 3, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-20T12:09:34"), updateText = "This is some update text 9", status = SupportNeedStatus.DECLINED, isPrison = false, isProbation = true),
+        PrisonerSupportNeedUpdateEntity(id = 10, prisonerSupportNeedId = 4, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-21T12:09:34"), updateText = "This is some update text 10", status = SupportNeedStatus.MET, isPrison = true, isProbation = false),
+        PrisonerSupportNeedUpdateEntity(id = 11, prisonerSupportNeedId = 4, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-16T12:09:34"), updateText = "This is some update text 11", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = true),
+      ),
+    )
+    Assertions.assertEquals(expectedResult, supportNeedsService.getPathwayUpdatesByNomsId(nomsId, pathway, page, size, sort, prisonerSupportNeedsId))
+  }
+
+  private fun `test getPathwayUpdatesByNomsId data`() = Stream.of(
+    Arguments.of(
+      0,
+      11,
+      "createdDate,DESC",
+      null,
+      getExpectedSupportNeedUpdates(listOf(10, 9, 7, 4, 5, 11, 2, 3, 8, 6, 1), 0, 11, "createdDate,DESC", true),
+    ),
+    Arguments.of(
+      0,
+      11,
+      "createdDate,DESC",
+      1L,
+      getExpectedSupportNeedUpdates(listOf(2, 3, 1), 0, 11, "createdDate,DESC", true, 3),
+    ),
+    Arguments.of(
+      0,
+      11,
+      "createdDate,DESC",
+      17L,
+      getExpectedSupportNeedUpdates(emptyList(), 0, 11, "createdDate,DESC", true, 0),
+    ),
+    Arguments.of(
+      0,
+      20,
+      "createdDate,DESC",
+      null,
+      getExpectedSupportNeedUpdates(listOf(10, 9, 7, 4, 5, 11, 2, 3, 8, 6, 1), 0, 20, "createdDate,DESC", true),
+    ),
+    Arguments.of(
+      0,
+      5,
+      "createdDate,DESC",
+      null,
+      getExpectedSupportNeedUpdates(listOf(10, 9, 7, 4, 5), 0, 5, "createdDate,DESC", false),
+    ),
+    Arguments.of(
+      1,
+      5,
+      "createdDate,DESC",
+      null,
+      getExpectedSupportNeedUpdates(listOf(11, 2, 3, 8, 6), 1, 5, "createdDate,DESC", false),
+    ),
+    Arguments.of(
+      2,
+      5,
+      "createdDate,DESC",
+      null,
+      getExpectedSupportNeedUpdates(listOf(1), 2, 5, "createdDate,DESC", true),
+    ),
+    Arguments.of(
+      0,
+      5,
+      "createdDate,ASC",
+      null,
+      getExpectedSupportNeedUpdates(listOf(1, 6, 8, 3, 2), 0, 5, "createdDate,ASC", false),
+    ),
+    Arguments.of(
+      1,
+      5,
+      "createdDate,ASC",
+      null,
+      getExpectedSupportNeedUpdates(listOf(11, 5, 4, 7, 9), 1, 5, "createdDate,ASC", false),
+    ),
+    Arguments.of(
+      2,
+      5,
+      "createdDate,ASC",
+      null,
+      getExpectedSupportNeedUpdates(listOf(10), 2, 5, "createdDate,ASC", true),
+    ),
+  )
+
+  private fun getExpectedSupportNeedUpdates(ids: List<Long>, page: Int, size: Int, sort: String, last: Boolean, totalElements: Int = 11) =
+    SupportNeedUpdates(
+      updates = getExpectedSupportNeedUpdateUpdates(ids),
+      allPrisonerNeeds = getExpectedAllPrisonerNeeds(),
+      size = size,
+      page = page,
+      sortName = sort,
+      totalElements = totalElements,
+      last = last,
+    )
+
+  private fun getExpectedAllPrisonerNeeds() = listOf(PrisonerNeedIdAndTitle(id = 1, title = "Title 1"), PrisonerNeedIdAndTitle(id = 2, title = "Title 2"), PrisonerNeedIdAndTitle(id = 3, title = "Title 3"), PrisonerNeedIdAndTitle(id = 4, title = "Title 4"), PrisonerNeedIdAndTitle(id = 5, title = "Title 5"))
+
+  private fun getExpectedSupportNeedUpdateUpdates(ids: List<Long>): List<SupportNeedUpdate> {
+    val completeList = listOf(
+      SupportNeedUpdate(id = 1, title = "Title 1", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 1", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-10T12:09:34")),
+      SupportNeedUpdate(id = 2, title = "Title 1", status = SupportNeedStatus.MET, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 2", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-15T12:09:34")),
+      SupportNeedUpdate(id = 3, title = "Title 1", status = SupportNeedStatus.IN_PROGRESS, isPrisonResponsible = true, isProbationResponsible = false, text = "This is some update text 3", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-13T12:09:34")),
+      SupportNeedUpdate(id = 4, title = "Title 2", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 4", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-18T12:09:34")),
+      SupportNeedUpdate(id = 5, title = "Title 2", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 5", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-17T12:09:34")),
+      SupportNeedUpdate(id = 6, title = "Title 2", status = SupportNeedStatus.NOT_STARTED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 6", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-11T12:09:34")),
+      SupportNeedUpdate(id = 7, title = "Title 2", status = SupportNeedStatus.NOT_STARTED, isPrisonResponsible = false, isProbationResponsible = false, text = "This is some update text 7", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-19T12:09:34")),
+      SupportNeedUpdate(id = 8, title = "Title 3", status = SupportNeedStatus.MET, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 8", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-12T12:09:34")),
+      SupportNeedUpdate(id = 9, title = "Title 3", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 9", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-20T12:09:34")),
+      SupportNeedUpdate(id = 10, title = "Title 4", status = SupportNeedStatus.MET, isPrisonResponsible = true, isProbationResponsible = false, text = "This is some update text 10", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-21T12:09:34")),
+      SupportNeedUpdate(id = 11, title = "Title 4", status = SupportNeedStatus.IN_PROGRESS, isPrisonResponsible = true, isProbationResponsible = true, text = "This is some update text 11", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-16T12:09:34")),
+    )
+    return ids.map { id -> completeList.first { it.id == id } }
+  }
+
+  @Test
+  fun `test getPathwayUpdatesByNomsId - no results from database`() {
+    val nomsId = "A123"
+    val pathway = Pathway.ACCOMMODATION
+
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.parse("2025-01-28T12:09:34"), prisonId = "MDI"))
+    whenever(prisonerSupportNeedRepository.findAllByPrisonerIdAndSupportNeedPathwayAndDeletedIsFalse(1, pathway)).thenReturn(emptyList())
+
+    val expectedResult = SupportNeedUpdates(
+      updates = emptyList(),
+      allPrisonerNeeds = emptyList(),
+      size = 5,
+      page = 0,
+      sortName = "createdDate,DESC",
+      totalElements = 0,
+      last = true,
+    )
+    Assertions.assertEquals(expectedResult, supportNeedsService.getPathwayUpdatesByNomsId(nomsId, pathway, 0, 5, "createdDate,DESC", null))
+  }
+
+  @Test
+  fun `test getPathwayUpdatesByNomsId - invalid sort`() {
+    val nomsId = "A123"
+    val pathway = Pathway.ACCOMMODATION
+    assertThrows<ServerWebInputException> { supportNeedsService.getPathwayUpdatesByNomsId(nomsId, pathway, 0, 5, "otherColumn,DESC", null) }
   }
 }

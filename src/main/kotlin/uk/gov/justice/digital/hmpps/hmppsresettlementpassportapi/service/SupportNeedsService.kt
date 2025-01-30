@@ -8,16 +8,19 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayNee
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeed
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedIdAndTitle
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerSupportNeedWithNomsIdAndLatestUpdate
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeed
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedSummary
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedSummaryResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedUpdate
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedUpdates
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeeds
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedUpdateEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedUpdateRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.SupportNeedRepository
 import java.time.LocalDateTime
 
 @Service
@@ -25,6 +28,7 @@ class SupportNeedsService(
   private val prisonerSupportNeedRepository: PrisonerSupportNeedRepository,
   private val prisonerSupportNeedUpdateRepository: PrisonerSupportNeedUpdateRepository,
   private val prisonerRepository: PrisonerRepository,
+  private val supportNeedRepository: SupportNeedRepository,
 ) {
 
   fun getNeedsSummary(prisonerId: Long?): List<SupportNeedSummary> {
@@ -157,7 +161,7 @@ class SupportNeedsService(
         numberOfUpdates = updates.size,
         lastUpdated = updates.first().createdDate.toLocalDate(),
       )
-    }
+    }.sortedBy { it.id }
     return PathwayNeedsSummary(prisonerNeeds = needs)
   }
 
@@ -218,4 +222,36 @@ class SupportNeedsService(
   }
 
   fun getTitleFromPrisonerSupportNeed(prisonerSupportNeed: PrisonerSupportNeedEntity) = if (!prisonerSupportNeed.supportNeed.allowOtherDetail) prisonerSupportNeed.supportNeed.title else prisonerSupportNeed.otherDetail ?: prisonerSupportNeed.supportNeed.title
+
+  fun getPathwayNeedsByNomsId(nomsId: String, pathway: Pathway): SupportNeeds {
+    val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Cannot find prisoner $nomsId")
+
+    val supportNeedsFromDatabase = supportNeedRepository.findByPathwayAndDeletedIsFalse(pathway)
+    val prisonerSupportNeedsFromDatabase = prisonerSupportNeedRepository.findAllByPrisonerIdAndSupportNeedPathwayAndDeletedIsFalse(prisoner.id!!, pathway)
+
+    // Need to return each non-hidden support need and also any "others" from the prisonerSupportNeeds
+    val supportNeeds = supportNeedsFromDatabase.filter { !it.hidden }.map { sn ->
+      SupportNeed(
+        id = sn.id!!,
+        title = sn.title,
+        category = sn.section,
+        allowUserDesc = sn.allowOtherDetail,
+        isOther = false,
+        isUpdatable = !sn.excludeFromCount,
+        existingPrisonerSupportNeedId = if (!sn.allowOtherDetail) prisonerSupportNeedsFromDatabase.find { it.supportNeed.id == sn.id }?.id else null,
+      )
+    } + prisonerSupportNeedsFromDatabase.filter { it.supportNeed.allowOtherDetail }.map { psn ->
+      SupportNeed(
+        id = psn.supportNeed.id!!,
+        title = psn.otherDetail ?: psn.supportNeed.title,
+        category = psn.supportNeed.section,
+        allowUserDesc = false,
+        isOther = true,
+        isUpdatable = true,
+        existingPrisonerSupportNeedId = psn.id,
+      )
+    }
+
+    return SupportNeeds(supportNeeds = supportNeeds)
+  }
 }

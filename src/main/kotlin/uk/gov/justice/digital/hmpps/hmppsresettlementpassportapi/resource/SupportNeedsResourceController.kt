@@ -170,4 +170,39 @@ class SupportNeedsResourceController(
     @Parameter(required = true)
     pathway: Pathway,
   ) = supportNeedsService.getPathwayNeedsByNomsId(nomsId, pathway)
+
+  @GetMapping("/{nomsId}/prisoner-need/{prisonerNeedId}")
+  @Operation(summary = "Get details of a prisoner need including updates", description = "Get details of a prisoner need including updates")
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "Unauthorized to access this endpoint",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "403",
+        description = "Forbidden, requires an appropriate role",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+      ApiResponse(
+        responseCode = "404",
+        description = "Prisoner or Prisoner Need not found in database",
+        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
+      ),
+    ],
+  )
+  fun getPrisonerNeedById(
+    @Schema(example = "AXXXS", required = true)
+    @PathVariable("nomsId")
+    @Parameter(required = true)
+    nomsId: String,
+    @PathVariable("prisonerNeedId")
+    @Parameter(required = true)
+    prisonerNeedId: Long,
+  ) = supportNeedsService.getPrisonerNeedById(nomsId, prisonerNeedId)
 }

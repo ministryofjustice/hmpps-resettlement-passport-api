@@ -89,4 +89,17 @@ class PrisonerSupportNeedRepositoryTest : RepositoryTestBase() {
     )
     Assertions.assertEquals(expectedSupportNeeds, prisonerSupportNeedRepository.findAllByPrisonerIdAndSupportNeedPathwayAndDeletedIsFalse(1, Pathway.ACCOMMODATION))
   }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoner-support-needs-4.sql")
+  fun `test findByIdAndDeletedIsFalse - not deleted`() {
+    val expectedSupportNeed = PrisonerSupportNeedEntity(id = 1, prisonerId = 1, supportNeed = supportNeedRepository.findById(1).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = null)
+    Assertions.assertEquals(expectedSupportNeed, prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(1))
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoner-support-needs-4.sql")
+  fun `test findByIdAndDeletedIsFalse - deleted`() {
+    Assertions.assertNull(prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(2))
+  }
 }

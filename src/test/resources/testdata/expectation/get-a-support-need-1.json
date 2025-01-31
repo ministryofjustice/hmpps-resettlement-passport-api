@@ -1,0 +1,38 @@
+{
+  "title": "End a tenancy",
+  "isPrisonResponsible": true,
+  "isProbationResponsible": false,
+  "status": "IN_PROGRESS",
+  "previousUpdates": [
+    {
+      "id": 3,
+      "title": "End a tenancy",
+      "status": "IN_PROGRESS",
+      "isPrisonResponsible": true,
+      "isProbationResponsible": false,
+      "text": "This is an update 2",
+      "createdBy": "User B",
+      "createdAt": "2024-02-03T09:36:32.713421"
+    },
+    {
+      "id": 4,
+      "title": "End a tenancy",
+      "status": "MET",
+      "isPrisonResponsible": true,
+      "isProbationResponsible": true,
+      "text": "This is an update 3",
+      "createdBy": "User C",
+      "createdAt": "2024-02-02T09:36:32.713421"
+    },
+    {
+      "id": 1,
+      "title": "End a tenancy",
+      "status": "NOT_STARTED",
+      "isPrisonResponsible": false,
+      "isProbationResponsible": false,
+      "text": "This is an update 1",
+      "createdBy": "User A",
+      "createdAt": "2024-02-01T09:36:32.713421"
+    }
+  ]
+}

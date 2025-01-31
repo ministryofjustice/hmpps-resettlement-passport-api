@@ -13,10 +13,12 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.whenever
 import org.springframework.web.server.ServerWebInputException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayNeedsSummary
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeed
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedIdAndTitle
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedWithUpdates
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeed
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedSummary
@@ -590,5 +592,75 @@ class SupportNeedsServiceTest {
     )
 
     Assertions.assertEquals(expectedResult, supportNeedsService.getPathwayNeedsByNomsId(nomsId, pathway))
+  }
+
+  @Test
+  fun `test getPrisonerNeedById - no prisoner`() {
+    val nomsId = "A123"
+    val exception = assertThrows<ResourceNotFoundException> { supportNeedsService.getPrisonerNeedById(nomsId, 3) }
+    Assertions.assertEquals("Cannot find prisoner A123", exception.message)
+  }
+
+  @Test
+  fun `test getPrisonerNeedById - no prisoner support need`() {
+    val nomsId = "A123"
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.parse("2025-01-28T12:09:34"), prisonId = "MDI"))
+    val exception = assertThrows<ResourceNotFoundException> { supportNeedsService.getPrisonerNeedById(nomsId, 3) }
+    Assertions.assertEquals("Cannot find prisoner support need 3", exception.message)
+  }
+
+  @Test
+  fun `test getPrisonerNeedById - prisoner and support need mismatch`() {
+    val nomsId = "A123"
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.parse("2025-01-28T12:09:34"), prisonId = "MDI"))
+    whenever(prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(3)).thenReturn(PrisonerSupportNeedEntity(id = 2, prisonerId = 2, supportNeed = getSupportNeed(1, Pathway.HEALTH), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.now()))
+
+    val exception = assertThrows<ResourceNotFoundException> { supportNeedsService.getPrisonerNeedById(nomsId, 3) }
+    Assertions.assertEquals("Prisoner support need 3 is not associated with prisoner A123", exception.message)
+  }
+
+  @Test
+  fun `test getPrisonerNeedById - no updates available`() {
+    val nomsId = "A123"
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.parse("2025-01-28T12:09:34"), prisonId = "MDI"))
+    whenever(prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(3)).thenReturn(PrisonerSupportNeedEntity(id = 2, prisonerId = 1, supportNeed = getSupportNeed(1, Pathway.HEALTH), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.now()))
+    whenever(prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(3)).thenReturn(emptyList())
+
+    val exception = assertThrows<ServerWebInputException> { supportNeedsService.getPrisonerNeedById(nomsId, 3) }
+    Assertions.assertEquals("400 BAD_REQUEST \"Cannot get prisoner support need as there are no updates available\"", exception.message)
+  }
+
+  @Test
+  fun `test getPrisonerNeedById - happy path`() {
+    val nomsId = "A123"
+    val prisonerSupportNeedId = 3L
+
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.parse("2025-01-28T12:09:34"), prisonId = "MDI"))
+    whenever(prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(prisonerSupportNeedId)).thenReturn(PrisonerSupportNeedEntity(id = 2, prisonerId = 1, supportNeed = getSupportNeed(1, Pathway.HEALTH), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.now()))
+    whenever(prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(prisonerSupportNeedId)).thenReturn(
+      listOf(
+        PrisonerSupportNeedUpdateEntity(id = 4, prisonerSupportNeedId = 2, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-18T12:09:34"), updateText = "This is some update text 4", status = SupportNeedStatus.DECLINED, isPrison = false, isProbation = true),
+        PrisonerSupportNeedUpdateEntity(id = 5, prisonerSupportNeedId = 2, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-17T12:09:34"), updateText = "This is some update text 5", status = SupportNeedStatus.DECLINED, isPrison = false, isProbation = true),
+        PrisonerSupportNeedUpdateEntity(id = 2, prisonerSupportNeedId = 1, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-15T12:09:34"), updateText = "This is some update text 2", status = SupportNeedStatus.MET, isPrison = false, isProbation = true),
+        PrisonerSupportNeedUpdateEntity(id = 3, prisonerSupportNeedId = 1, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-13T12:09:34"), updateText = "This is some update text 3", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = false),
+        PrisonerSupportNeedUpdateEntity(id = 1, prisonerSupportNeedId = 1, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-10T12:09:34"), updateText = "This is some update text 1", status = SupportNeedStatus.DECLINED, isPrison = false, isProbation = true),
+      ),
+    )
+
+    val expectedPrisonerNeeds = PrisonerNeedWithUpdates(
+      title = "Title 1",
+      isPrisonResponsible = false,
+      isProbationResponsible = true,
+      status = SupportNeedStatus.DECLINED,
+      previousUpdates = listOf(
+        SupportNeedUpdate(id = 4, title = "Title 1", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 4", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-18T12:09:34")),
+        SupportNeedUpdate(id = 5, title = "Title 1", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 5", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-17T12:09:34")),
+        SupportNeedUpdate(id = 2, title = "Title 1", status = SupportNeedStatus.MET, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 2", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-15T12:09:34")),
+        SupportNeedUpdate(id = 3, title = "Title 1", status = SupportNeedStatus.IN_PROGRESS, isPrisonResponsible = true, isProbationResponsible = false, text = "This is some update text 3", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-13T12:09:34")),
+        SupportNeedUpdate(id = 1, title = "Title 1", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 1", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-10T12:09:34")),
+      ),
+    )
+
+    Assertions.assertEquals(expectedPrisonerNeeds, supportNeedsService.getPrisonerNeedById(nomsId, prisonerSupportNeedId))
   }
 }

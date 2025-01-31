@@ -252,4 +252,49 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isForbidden
   }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoner-support-needs-4.sql")
+  fun `test get a support need - happy path`() {
+    val expectedOutput = readFile("testdata/expectation/get-a-support-need-1.json")
+    val nomsId = "G4161UF"
+    val prisonerSupportNeedId = 1
+    authedWebTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/prisoner-need/$prisonerSupportNeedId")
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
+  }
+
+  @Test
+  fun `get a support need - no prisoner found`() {
+    val nomsId = "G4161UF"
+    val prisonerSupportNeedId = 1
+    authedWebTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/prisoner-need/$prisonerSupportNeedId")
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
+  fun `get a support need - unauthorised`() {
+    val nomsId = "G4161UF"
+    val prisonerSupportNeedId = 1
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/prisoner-need/$prisonerSupportNeedId")
+      .exchange()
+      .expectStatus().isUnauthorized
+  }
+
+  @Test
+  fun `get a support need - forbidden`() {
+    val nomsId = "G4161UF"
+    val prisonerSupportNeedId = 1
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/prisoner-need/$prisonerSupportNeedId")
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
+  }
 }

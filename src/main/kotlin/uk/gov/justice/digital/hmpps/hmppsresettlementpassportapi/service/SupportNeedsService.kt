@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayNeedsSummary
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeed
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedIdAndTitle
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedWithUpdates
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerSupportNeedWithNomsIdAndLatestUpdate
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeed
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedStatus
@@ -248,5 +249,41 @@ class SupportNeedsService(
     }
 
     return SupportNeeds(supportNeeds = supportNeeds)
+  }
+
+  fun getPrisonerNeedById(nomsId: String, prisonerSupportNeedId: Long): PrisonerNeedWithUpdates {
+    val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Cannot find prisoner $nomsId")
+    val prisonerSupportNeed = prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(prisonerSupportNeedId) ?: throw ResourceNotFoundException("Cannot find prisoner support need $prisonerSupportNeedId")
+
+    if (prisonerSupportNeed.prisonerId != prisoner.id) {
+      throw ResourceNotFoundException("Prisoner support need $prisonerSupportNeedId is not associated with prisoner $nomsId")
+    }
+
+    val updates = prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(prisonerSupportNeedId)
+
+    if (updates.isEmpty()) {
+      throw ServerWebInputException("Cannot get prisoner support need as there are no updates available")
+    }
+
+    val title = getTitleFromPrisonerSupportNeed(prisonerSupportNeed)
+
+    return PrisonerNeedWithUpdates(
+      title = title,
+      isPrisonResponsible = updates[0].isPrison,
+      isProbationResponsible = updates[0].isProbation,
+      status = updates[0].status,
+      previousUpdates = updates.map {
+        SupportNeedUpdate(
+          id = it.id!!,
+          title = title,
+          status = it.status,
+          isPrisonResponsible = it.isPrison,
+          isProbationResponsible = it.isProbation,
+          text = it.updateText,
+          createdBy = it.createdBy,
+          createdAt = it.createdDate,
+        )
+      },
+    )
   }
 }

@@ -101,8 +101,7 @@ class HmppsResettlementPassportApiExceptionHandler {
     }
   }
 
-  private fun variablePath(cause: MismatchedInputException) =
-    cause.path.joinToString(".") { it.fieldName ?: "[${it.index}]" }
+  private fun variablePath(cause: MismatchedInputException) = cause.path.joinToString(".") { it.fieldName ?: "[${it.index}]" }
 
   @ExceptionHandler(ResourceNotFoundException::class)
   fun handleResourceNotFoundException(e: ResourceNotFoundException): ResponseEntity<ErrorResponse> {

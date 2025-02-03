@@ -159,12 +159,10 @@ class ResettlementPassportDeliusApiServiceTest {
     notes = "notes",
   )
 
-  private fun forJson(json: String): AssertProvider<JsonContentAssert> {
-    return AssertProvider<JsonContentAssert> {
-      JsonContentAssert(
-        ResettlementPassportDeliusApiServiceTest::class.java,
-        json,
-      )
-    }
+  private fun forJson(json: String): AssertProvider<JsonContentAssert> = AssertProvider<JsonContentAssert> {
+    JsonContentAssert(
+      ResettlementPassportDeliusApiServiceTest::class.java,
+      json,
+    )
   }
 }

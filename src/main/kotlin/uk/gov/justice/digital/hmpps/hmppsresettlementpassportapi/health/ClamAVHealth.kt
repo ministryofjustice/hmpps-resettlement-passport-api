@@ -17,16 +17,14 @@ class ClamAVHealth(
 ) : HealthIndicator {
   private val componentName = "clamAV"
 
-  override fun health(): Health {
-    return try {
-      if (clamavEnabled) {
-        clamAVConfig.clamavClient().ping()
-      }
-      meterRegistry.gauge("upstream_healthcheck", Tags.of("service", componentName), 1)
-      Health.up().withDetail("active", clamavEnabled).build()
-    } catch (e: Exception) {
-      meterRegistry.gauge("upstream_healthcheck", Tags.of("service", componentName), 0)
-      Health.down(e).build()
+  override fun health(): Health = try {
+    if (clamavEnabled) {
+      clamAVConfig.clamavClient().ping()
     }
+    meterRegistry.gauge("upstream_healthcheck", Tags.of("service", componentName), 1)
+    Health.up().withDetail("active", clamavEnabled).build()
+  } catch (e: Exception) {
+    meterRegistry.gauge("upstream_healthcheck", Tags.of("service", componentName), 0)
+    Health.down(e).build()
   }
 }

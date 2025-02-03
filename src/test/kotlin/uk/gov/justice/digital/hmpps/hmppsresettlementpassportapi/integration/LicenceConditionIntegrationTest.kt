@@ -191,12 +191,11 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
       .jsonPath("status").isEqualTo(404)
   }
 
-  private fun getLicenceConditions(nomsId: String): WebTestClient.ResponseSpec =
-    webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$nomsId/licence-condition")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
-      .expectHeader().contentType("application/json")
+  private fun getLicenceConditions(nomsId: String): WebTestClient.ResponseSpec = webTestClient.get()
+    .uri("/resettlement-passport/prisoner/$nomsId/licence-condition")
+    .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+    .exchange()
+    .expectHeader().contentType("application/json")
 
   @Test
   @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
@@ -243,12 +242,11 @@ class LicenceConditionIntegrationTest : IntegrationTestBase() {
       }
   }
 
-  private fun getConditionsWithChangeNotify(@Suppress("SameParameterValue") nomsId: String): WebTestClient.ResponseSpec =
-    webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$nomsId/licence-condition?includeChangeNotify=true")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
-      .expectHeader().contentType("application/json")
+  private fun getConditionsWithChangeNotify(@Suppress("SameParameterValue") nomsId: String): WebTestClient.ResponseSpec = webTestClient.get()
+    .uri("/resettlement-passport/prisoner/$nomsId/licence-condition?includeChangeNotify=true")
+    .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+    .exchange()
+    .expectHeader().contentType("application/json")
 
   @Test
   @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")

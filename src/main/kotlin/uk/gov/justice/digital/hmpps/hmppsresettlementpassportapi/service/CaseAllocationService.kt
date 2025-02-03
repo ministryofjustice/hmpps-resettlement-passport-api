@@ -53,9 +53,7 @@ class CaseAllocationService(
   }
 
   @Transactional
-  fun getCaseAllocationByPrisonerId(prisonerId: Long): CaseAllocationEntity? {
-    return caseAllocationRepository.findByPrisonerIdAndIsDeleted(prisonerId, false)
-  }
+  fun getCaseAllocationByPrisonerId(prisonerId: Long): CaseAllocationEntity? = caseAllocationRepository.findByPrisonerIdAndIsDeleted(prisonerId, false)
 
   @Transactional
   fun delete(caseAllocation: CaseAllocationEntity): CaseAllocationEntity {
@@ -145,9 +143,7 @@ class CaseAllocationService(
   @Transactional
   fun getAllResettlementWorkers(
     prisonId: String,
-  ): List<ManageUser> {
-    return manageUserApiService.getManageUsersData(prisonId, "PSFR_RESETTLEMENT_WORKER")
-  }
+  ): List<ManageUser> = manageUserApiService.getManageUsersData(prisonId, "PSFR_RESETTLEMENT_WORKER")
 
   @Transactional
   fun getAllAssignedResettlementWorkers(prisonId: String): List<CaseAllocationEntity?> {

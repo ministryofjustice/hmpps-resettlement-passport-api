@@ -27,5 +27,4 @@ private val exponentialBackOffRetry = Retry.backoff(2, 50.milliseconds.toJavaDur
   }
   .onRetryExhaustedThrow { _, rs -> rs.failure() }
 
-fun <T> Mono<T>.exponentialBackOffRetry(): Mono<T> =
-  this.retryWhen(exponentialBackOffRetry)
+fun <T> Mono<T>.exponentialBackOffRetry(): Mono<T> = this.retryWhen(exponentialBackOffRetry)

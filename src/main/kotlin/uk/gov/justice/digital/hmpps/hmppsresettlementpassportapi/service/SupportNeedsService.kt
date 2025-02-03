@@ -298,7 +298,9 @@ class SupportNeedsService(
   @Transactional
   fun postSupportNeeds(nomsId: String, prisonerNeedsRequest: PrisonerNeedsRequest, auth: String) {
     val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Cannot find prisoner $nomsId")
-    val name = getClaimFromJWTToken(auth, "name") ?: throw ServerWebInputException("JWT token must include a claim for 'name'")
+    val name = getClaimFromJWTToken(auth, "name")
+      ?: getClaimFromJWTToken(auth, "sub")
+      ?: throw ServerWebInputException("JWT token must include a claim for 'name or 'sub'")
 
     prisonerNeedsRequest.needs.forEach { need ->
       // Get the prisoner support need or create new one if required

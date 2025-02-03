@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository
 
 import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
@@ -24,5 +25,13 @@ class SupportNeedRepositoryTest : RepositoryTestBase() {
 
     val supportNeedsFromDatabase = supportNeedRepository.findAll().filterIndexed { idx, _ -> idx < 5 }
     assertThat(supportNeedsFromDatabase).usingRecursiveComparison().ignoringFields("createdDate").isEqualTo(expectedSupportNeeds)
+  }
+
+  @Test
+  fun `test findByIdAndDeletedIsFalse`() {
+    supportNeedRepository.save(SupportNeedEntity(id = 100001, pathway = Pathway.ACCOMMODATION, section = "Section A", title = "A title", hidden = false, excludeFromCount = false, allowOtherDetail = false, createdDate = LocalDateTime.parse("2025-01-14T15:08:55.437998"), deleted = true, deletedDate = LocalDateTime.parse("2025-01-31T16:14:00")))
+
+    Assertions.assertNull(supportNeedRepository.findByIdAndDeletedIsFalse(100001))
+    Assertions.assertNotNull(supportNeedRepository.findByIdAndDeletedIsFalse(1))
   }
 }

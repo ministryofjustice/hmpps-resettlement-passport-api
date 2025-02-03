@@ -3,7 +3,7 @@ INSERT INTO prisoner (id, noms_id, creation_date, prison_id) VALUES
 
 INSERT INTO prisoner_support_need (id, prisoner_id, support_need_id, other_detail, created_by, created_date, is_deleted, deleted_date) values
     (101, 1, 1,  null, 'Someone', '2024-02-21T09:36:28.713421', false, null),
-    (102, 1, 2,  null, 'Someone', '2024-02-21T09:36:28.713421', true, '2024-02-22T09:36:28.713421'),
+    (102, 1, 3,  null, 'Someone', '2024-02-21T09:36:28.713421', true, '2024-02-22T09:36:28.713421'),
     (103, 1, 3,  null, 'Someone', '2024-02-21T09:36:28.713421', false, null),
     (104, 1, 5,  'Other 1', 'Someone', '2024-02-21T09:36:28.713421', false, null),
     (105, 1, 5,  'Other 2', 'Someone', '2024-02-21T09:36:28.713421', false, null),

@@ -8,4 +8,5 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Supp
 @Repository
 interface SupportNeedRepository : JpaRepository<SupportNeedEntity, Long> {
   fun findByPathwayAndDeletedIsFalse(pathway: Pathway): List<SupportNeedEntity>
+  fun findByIdAndDeletedIsFalse(id: Long): SupportNeedEntity?
 }

@@ -1,5 +1,8 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import io.mockk.every
+import io.mockk.mockkStatic
+import io.mockk.unmockkAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -11,6 +14,7 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
@@ -18,7 +22,9 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayNeedsSummary
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeed
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedIdAndTitle
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedWithUpdates
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedsRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeed
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedSummary
@@ -662,5 +668,45 @@ class SupportNeedsServiceTest {
     )
 
     Assertions.assertEquals(expectedPrisonerNeeds, supportNeedsService.getPrisonerNeedById(nomsId, prisonerSupportNeedId))
+  }
+
+  @Test
+  fun `test postSupportNeeds - happy path`() {
+    val nomsId = "A123"
+    val prisonerNeedsRequest = PrisonerNeedsRequest(
+      needs = listOf(
+        PrisonerNeedRequest(
+          needId = 8,
+          prisonerSupportNeedId = null,
+          otherDesc = null,
+          text = "This is an update 1",
+          status = SupportNeedStatus.NOT_STARTED,
+          isPrisonResponsible = true,
+          isProbationResponsible = false,
+        ),
+      ),
+    )
+    val auth = "auth"
+    val fakeNow = LocalDateTime.parse("2025-01-31T12:00:01")
+
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.parse("2025-01-28T12:09:34"), prisonId = "MDI"))
+
+    mockkStatic(::getClaimFromJWTToken)
+    every { getClaimFromJWTToken(auth, "name") } returns "A User"
+
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+
+    whenever(prisonerSupportNeedRepository.findFirstBySupportNeedIdAndOtherDetailAndDeletedIsFalseOrderByCreatedDateDesc(8, null)).thenReturn(null)
+    whenever(supportNeedRepository.findByIdAndDeletedIsFalse(8)).thenReturn(getSupportNeed(8, Pathway.HEALTH))
+    whenever(prisonerSupportNeedRepository.save(PrisonerSupportNeedEntity(prisonerId = 1, supportNeed = getSupportNeed(8, Pathway.HEALTH), otherDetail = null, createdBy = "A User", createdDate = fakeNow))).thenReturn(PrisonerSupportNeedEntity(id = 9, prisonerId = 1, supportNeed = getSupportNeed(8, Pathway.HEALTH), otherDetail = null, createdBy = "A User", createdDate = fakeNow))
+    whenever(prisonerSupportNeedUpdateRepository.save(PrisonerSupportNeedUpdateEntity(prisonerSupportNeedId = 9, createdBy = "A User", createdDate = fakeNow, updateText = "This is an update 1", status = SupportNeedStatus.NOT_STARTED, isPrison = true, isProbation = false)))
+      .thenReturn(PrisonerSupportNeedUpdateEntity(id = 12, prisonerSupportNeedId = 9, createdBy = "A User", createdDate = fakeNow, updateText = "This is an update 1", status = SupportNeedStatus.NOT_STARTED, isPrison = true, isProbation = false))
+
+    supportNeedsService.postSupportNeeds(nomsId, prisonerNeedsRequest, auth)
+
+    verify(prisonerSupportNeedRepository).save(PrisonerSupportNeedEntity(id = 9, prisonerId = 1, supportNeed = getSupportNeed(8, Pathway.HEALTH), otherDetail = null, createdBy = "A User", createdDate = fakeNow, latestUpdateId = 12))
+
+    unmockkAll()
   }
 }

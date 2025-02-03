@@ -36,15 +36,6 @@ fun <T : Enum<*>> convertStringToEnum(enumClass: KClass<T>, stringValue: String?
   return enum
 }
 
-@Suppress("BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER")
-fun <I, T, Q> convertEnumStringToEnum(enumClass: KClass<T>, secondaryEnumClass: KClass<Q>? = null, stringValue: String?): I where T : Enum<*>, T : I, Q : Enum<*>, Q : I {
-  var enum: I? = enumClass.java.enumConstants.firstOrNull { it.name == stringValue }
-  if (secondaryEnumClass != null && enum == null) {
-    enum = secondaryEnumClass.java.enumConstants.firstOrNull { it.name == stringValue }
-  }
-  return enum ?: throw IllegalArgumentException("$stringValue does not exist in enum ${enumClass.simpleName} (or ${secondaryEnumClass?.simpleName})")
-}
-
 fun String.fuzzyMatch(string2: String?): Boolean = this == string2?.trim()?.replace(Regex("[^A-Za-z0-9_ ]"), "")?.replace(Regex("\\s+"), "_")?.uppercase()
 
 fun String.convertNameToTitleCase(): String = WordUtils.capitalizeFully(this).trim()

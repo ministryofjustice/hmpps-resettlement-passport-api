@@ -30,12 +30,11 @@ class PoPUserApiService(
     .bodyToMono<PoPUserResponse>()
     .block() ?: throw RuntimeException("Unexpected null returned from request.")
 
-  fun getAllVerifiedPopUsers(): List<uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.PopUserData> =
-    popUserWebClientCredentials
-      .get()
-      .uri("/person-on-probation-user/users/all")
-      .retrieve()
-      .bodyToFlux<uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.PopUserData>()
-      .collectList()
-      .block() ?: throw RuntimeException("Unexpected null returned from request.")
+  fun getAllVerifiedPopUsers(): List<uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.PopUserData> = popUserWebClientCredentials
+    .get()
+    .uri("/person-on-probation-user/users/all")
+    .retrieve()
+    .bodyToFlux<uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.PopUserData>()
+    .collectList()
+    .block() ?: throw RuntimeException("Unexpected null returned from request.")
 }

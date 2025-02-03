@@ -459,12 +459,11 @@ class ResettlementAssessmentService(
     return if (answerComponents != null) convertFromListToStringWithLineBreaks(answerComponents, options) else null
   }
 
-  fun convertFromListToStringWithLineBreaks(stringElements: List<String>, options: List<ResettlementAssessmentOption>?) =
-    stringElements
-      .filter { it.isNotBlank() }
-      .map { it.trim() }
-      .map { element -> options?.find { it.id == element }?.displayText ?: element }
-      .reduceOrNull { acc, value -> "$acc\n$value" } ?: ""
+  fun convertFromListToStringWithLineBreaks(stringElements: List<String>, options: List<ResettlementAssessmentOption>?) = stringElements
+    .filter { it.isNotBlank() }
+    .map { it.trim() }
+    .map { element -> options?.find { it.id == element }?.displayText ?: element }
+    .reduceOrNull { acc, value -> "$acc\n$value" } ?: ""
 
   @Transactional
   fun skipAssessment(nomsId: String, assessmentType: ResettlementAssessmentType, request: AssessmentSkipRequest) {
@@ -489,32 +488,27 @@ class ResettlementAssessmentService(
     )
   }
 
-  fun generateLinkOnlyDeliusCaseNote(nomsId: String, name: String, userId: String, assessmentType: ResettlementAssessmentType): UserAndCaseNote {
-    return UserAndCaseNote(
-      user = User(userId, name),
-      deliusCaseNoteType = convertToDeliusCaseNoteType(assessmentType),
-      caseNoteText = generateLinkOnlyDeliusCaseNoteText(nomsId, assessmentType, psfrBaseUrl),
-    )
-  }
+  fun generateLinkOnlyDeliusCaseNote(nomsId: String, name: String, userId: String, assessmentType: ResettlementAssessmentType): UserAndCaseNote = UserAndCaseNote(
+    user = User(userId, name),
+    deliusCaseNoteType = convertToDeliusCaseNoteType(assessmentType),
+    caseNoteText = generateLinkOnlyDeliusCaseNoteText(nomsId, assessmentType, psfrBaseUrl),
+  )
 
   fun deleteAllResettlementAssessments(nomsId: String) {
     val prisoner = getPrisonerEntityOrThrow(nomsId)
 
-    resettlementAssessmentRepository.findAllByPrisonerIdAndDeletedIsFalse(prisoner.id!!).forEach {
-        assessment ->
+    resettlementAssessmentRepository.findAllByPrisonerIdAndDeletedIsFalse(prisoner.id!!).forEach { assessment ->
       assessment.deleted = true
       assessment.deletedDate = LocalDateTime.now()
       resettlementAssessmentRepository.save(assessment)
     }
   }
 
-  fun generateContentOnlyDpsCaseNote(name: String, userId: String, assessmentType: ResettlementAssessmentType): UserAndCaseNote {
-    return UserAndCaseNote(
-      user = User(userId, name),
-      deliusCaseNoteType = convertToDeliusCaseNoteType(assessmentType),
-      caseNoteText = generateContentOnlyDpsCaseNoteText(assessmentType),
-    )
-  }
+  fun generateContentOnlyDpsCaseNote(name: String, userId: String, assessmentType: ResettlementAssessmentType): UserAndCaseNote = UserAndCaseNote(
+    user = User(userId, name),
+    deliusCaseNoteType = convertToDeliusCaseNoteType(assessmentType),
+    caseNoteText = generateContentOnlyDpsCaseNoteText(assessmentType),
+  )
 
   fun getLastReport(prisonerId: Long?): LastReport? {
     if (prisonerId != null) {

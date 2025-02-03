@@ -201,9 +201,7 @@ class PopUserOTPResourceController(
   fun verifyOTPByOneLoginURN(
     @RequestBody
     oneLoginUserData: OneLoginData,
-  ): PoPUserResponse {
-    return popUserOTPService.getPoPUserVerified(oneLoginUserData)
-  }
+  ): PoPUserResponse = popUserOTPService.getPoPUserVerified(oneLoginUserData)
 
   @PostMapping("/onelogin/verify-answers", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Verify knowledge answers for PoP User")

@@ -37,8 +37,7 @@ class LicenceConditionService(
     return LicenceConditionsWithMetaData(licenceConditions, metadata)
   }
 
-  fun getImageFromLicenceIdAndConditionId(licenceId: String, conditionId: String): ByteArray =
-    cvlApiService.getImageFromLicenceIdAndConditionId(licenceId, conditionId)
+  fun getImageFromLicenceIdAndConditionId(licenceId: String, conditionId: String): ByteArray = cvlApiService.getImageFromLicenceIdAndConditionId(licenceId, conditionId)
 
   @Transactional
   internal fun compareAndSave(licenceConditions: LicenceConditions, nomsId: String): LicenceConditionsMetadata {

@@ -83,25 +83,20 @@ class SupportNeedsService(
     )
   }
 
-  fun isPathwayReviewed(pathway: Pathway, prisonerSupportNeeds: List<PrisonerSupportNeedWithNomsIdAndLatestUpdate>) =
-    prisonerSupportNeeds.any { it.pathway == pathway }
+  fun isPathwayReviewed(pathway: Pathway, prisonerSupportNeeds: List<PrisonerSupportNeedWithNomsIdAndLatestUpdate>) = prisonerSupportNeeds.any { it.pathway == pathway }
 
-  fun getCountForStatus(pathway: Pathway, status: SupportNeedStatus, prisonerSupportNeeds: List<PrisonerSupportNeedWithNomsIdAndLatestUpdate>) =
-    prisonerSupportNeeds.count { it.pathway == pathway && it.latestUpdateStatus == status && !it.excludeFromCount }
+  fun getCountForStatus(pathway: Pathway, status: SupportNeedStatus, prisonerSupportNeeds: List<PrisonerSupportNeedWithNomsIdAndLatestUpdate>) = prisonerSupportNeeds.count { it.pathway == pathway && it.latestUpdateStatus == status && !it.excludeFromCount }
 
-  fun getLastUpdatedForPathway(pathway: Pathway, prisonerSupportNeeds: List<PrisonerSupportNeedWithNomsIdAndLatestUpdate>) =
-    prisonerSupportNeeds.filter { it.pathway == pathway }
-      .map { if (it.latestUpdateId != null) it.latestUpdateCreatedDate?.toLocalDate() else it.prisonerSupportNeedCreatedDate.toLocalDate() }
-      .sortedByDescending { it }
-      .firstOrNull()
+  fun getLastUpdatedForPathway(pathway: Pathway, prisonerSupportNeeds: List<PrisonerSupportNeedWithNomsIdAndLatestUpdate>) = prisonerSupportNeeds.filter { it.pathway == pathway }
+    .map { if (it.latestUpdateId != null) it.latestUpdateCreatedDate?.toLocalDate() else it.prisonerSupportNeedCreatedDate.toLocalDate() }
+    .sortedByDescending { it }
+    .firstOrNull()
 
-  fun isPrisonResponsible(pathway: Pathway, prisonerSupportNeedToLatestUpdateMap: List<PrisonerSupportNeedWithNomsIdAndLatestUpdate>) =
-    prisonerSupportNeedToLatestUpdateMap.filter { it.pathway == pathway }
-      .any { it.isPrison == true }
+  fun isPrisonResponsible(pathway: Pathway, prisonerSupportNeedToLatestUpdateMap: List<PrisonerSupportNeedWithNomsIdAndLatestUpdate>) = prisonerSupportNeedToLatestUpdateMap.filter { it.pathway == pathway }
+    .any { it.isPrison == true }
 
-  fun isProbationResponsible(pathway: Pathway, prisonerSupportNeedToLatestUpdateMap: List<PrisonerSupportNeedWithNomsIdAndLatestUpdate>) =
-    prisonerSupportNeedToLatestUpdateMap.filter { it.pathway == pathway }
-      .any { it.isProbation == true }
+  fun isProbationResponsible(pathway: Pathway, prisonerSupportNeedToLatestUpdateMap: List<PrisonerSupportNeedWithNomsIdAndLatestUpdate>) = prisonerSupportNeedToLatestUpdateMap.filter { it.pathway == pathway }
+    .any { it.isProbation == true }
 
   fun getNeedsSummaryByNomsId(nomsId: String): SupportNeedSummaryResponse {
     val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Cannot find prisoner $nomsId")

@@ -74,8 +74,7 @@ class CaseNotesResourceController(
     @Parameter(description = "Get Case notes created by given author UserId for a specific pathway ")
     @RequestParam(value = "createdByUserId", defaultValue = "0")
     createdByUserId: Int,
-  ): CaseNotesList =
-    caseNotesService.getCaseNotesByNomsId(nomsId, page, size, sort, days, pathwayType, createdByUserId)
+  ): CaseNotesList = caseNotesService.getCaseNotesByNomsId(nomsId, page, size, sort, days, pathwayType, createdByUserId)
 
   @GetMapping("/{nomsId}/creators/{pathway}")
   @Operation(

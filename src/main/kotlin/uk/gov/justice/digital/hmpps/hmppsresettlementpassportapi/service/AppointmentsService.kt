@@ -212,8 +212,7 @@ class AppointmentsService(
     return ResponseEntity.ok().build()
   }
 
-  fun createNotes(appointment: CreateAppointment): String {
-    return """
+  fun createNotes(appointment: CreateAppointment): String = """
       $SECTION_DELIMITER
       $APPOINTMENT_TITLE: ${appointment.appointmentTitle}
       $CONTACT: ${appointment.contact}
@@ -229,6 +228,5 @@ class AppointmentsService(
       $SECTION_DELIMITER
       ${appointment.notes ?: ""}
       $SECTION_DELIMITER
-    """.trimIndent()
-  }
+  """.trimIndent()
 }

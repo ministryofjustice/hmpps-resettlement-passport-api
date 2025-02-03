@@ -118,19 +118,17 @@ class ResettlementPassportDeliusApiService(
   }
 
   @Cacheable("resettlement-passport-delius-api-fetch-accommodation")
-  fun fetchAccommodation(nomsId: String, crn: String): AccommodationsDelius {
-    return rpDeliusWebClientCredentials.get()
-      .uri(
-        "/duty-to-refer-nsi/$crn",
-      )
-      .retrieve()
-      .onStatus(
-        { it == HttpStatus.NOT_FOUND },
-        { throw ResourceNotFoundException("Cannot find duty to refer nsi Data for NomsId $nomsId / CRN $crn in Delius API") },
-      )
-      .bodyToMono<AccommodationsDelius>()
-      .block() ?: throw RuntimeException("Unexpected null returned from request.")
-  }
+  fun fetchAccommodation(nomsId: String, crn: String): AccommodationsDelius = rpDeliusWebClientCredentials.get()
+    .uri(
+      "/duty-to-refer-nsi/$crn",
+    )
+    .retrieve()
+    .onStatus(
+      { it == HttpStatus.NOT_FOUND },
+      { throw ResourceNotFoundException("Cannot find duty to refer nsi Data for NomsId $nomsId / CRN $crn in Delius API") },
+    )
+    .bodyToMono<AccommodationsDelius>()
+    .block() ?: throw RuntimeException("Unexpected null returned from request.")
 
   @Cacheable("resettlement-passport-delius-api-get-personal-details", unless = "#result == null")
   fun getPersonalDetails(nomsId: String, crn: String): PersonalDetail? {

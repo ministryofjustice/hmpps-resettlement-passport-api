@@ -17,18 +17,16 @@ class EducationEmploymentApiService(
   }
 
   @Cacheable("education-employment-api-get-readiness-profile-by-noms-id")
-  fun getReadinessProfileByNomsId(nomsId: String): ReadinessProfileDTO {
-    return educationEmploymentWebClientCredentials.get()
-      .uri("/readiness-profiles/$nomsId")
-      .retrieve()
-      .bodyToMono(ReadinessProfileDTO::class.java)
-      .onErrorReturn(
-        {
-          log.warn("Unexpected error from Education Employment API - ignoring but data will be missing from response!", it)
-          it is WebClientException
-        },
-        ReadinessProfileDTO(profileData = null),
-      )
-      .block() ?: throw RuntimeException("Unexpected null returned from request.")
-  }
+  fun getReadinessProfileByNomsId(nomsId: String): ReadinessProfileDTO = educationEmploymentWebClientCredentials.get()
+    .uri("/readiness-profiles/$nomsId")
+    .retrieve()
+    .bodyToMono(ReadinessProfileDTO::class.java)
+    .onErrorReturn(
+      {
+        log.warn("Unexpected error from Education Employment API - ignoring but data will be missing from response!", it)
+        it is WebClientException
+      },
+      ReadinessProfileDTO(profileData = null),
+    )
+    .block() ?: throw RuntimeException("Unexpected null returned from request.")
 }

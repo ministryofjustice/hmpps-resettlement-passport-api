@@ -483,6 +483,4 @@ class ResettlementAssessmentController(
   ) = resettlementAssessmentStrategy.getLatestResettlementAssessmentVersion(nomsId, assessmentType, pathway)
 }
 
-private fun buildDetails(assessmentType: ResettlementAssessmentType?, pathway: Pathway?): String {
-  return Json.encodeToString(AuditDetails(assessmentType, pathway))
-}
+private fun buildDetails(assessmentType: ResettlementAssessmentType?, pathway: Pathway?): String = Json.encodeToString(AuditDetails(assessmentType, pathway))

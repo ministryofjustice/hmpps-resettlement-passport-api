@@ -38,20 +38,18 @@ class PrisonApiService(val prisonWebClientCredentials: WebClient) {
   }
 
   @Cacheable("prison-api-find-prisoner-image-details")
-  fun findPrisonerImageDetails(nomsId: String): List<PrisonerImage> {
-    return prisonWebClientCredentials
-      .get()
-      .uri(
-        "/api/images/offenders/{nomsId}",
-        mapOf(
-          "nomsId" to nomsId,
-        ),
-      )
-      .retrieve()
-      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found") })
-      .bodyToFlux<PrisonerImage>()
-      .collectList()
-      .onErrorComplete(ResourceNotFoundException::class.java)
-      .block() ?: emptyList()
-  }
+  fun findPrisonerImageDetails(nomsId: String): List<PrisonerImage> = prisonWebClientCredentials
+    .get()
+    .uri(
+      "/api/images/offenders/{nomsId}",
+      mapOf(
+        "nomsId" to nomsId,
+      ),
+    )
+    .retrieve()
+    .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found") })
+    .bodyToFlux<PrisonerImage>()
+    .collectList()
+    .onErrorComplete(ResourceNotFoundException::class.java)
+    .block() ?: emptyList()
 }

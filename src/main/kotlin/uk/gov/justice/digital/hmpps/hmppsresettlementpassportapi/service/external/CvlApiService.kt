@@ -19,18 +19,17 @@ class CvlApiService(
   private val cvlWebClientClientCredentials: WebClient,
 ) {
 
-  private fun findLicencesByNomsId(nomsId: List<String>): List<LicenceSummary> =
-    cvlWebClientClientCredentials.post()
-      .uri("/licence/match")
-      .bodyValue(
-        LicenceRequest(
-          nomsId = nomsId,
-        ),
-      )
-      .retrieve()
-      .bodyToFlux<LicenceSummary>()
-      .collectList()
-      .block() ?: throw RuntimeException("Unexpected null returned from request.")
+  private fun findLicencesByNomsId(nomsId: List<String>): List<LicenceSummary> = cvlWebClientClientCredentials.post()
+    .uri("/licence/match")
+    .bodyValue(
+      LicenceRequest(
+        nomsId = nomsId,
+      ),
+    )
+    .retrieve()
+    .bodyToFlux<LicenceSummary>()
+    .collectList()
+    .block() ?: throw RuntimeException("Unexpected null returned from request.")
 
   fun getLicenceByNomsId(nomsId: String): LicenceSummary? {
     val nomsIdList = ArrayList<String>()
@@ -65,17 +64,16 @@ class CvlApiService(
     }
   }
 
-  private fun fetchLicenceConditionsByLicenceId(licenceId: Long): Licence =
-    cvlWebClientClientCredentials.get()
-      .uri(
-        "/licence/id/{licenceId}",
-        mapOf(
-          "licenceId" to licenceId,
-        ),
-      )
-      .retrieve()
-      .bodyToMono<Licence>()
-      .block() ?: throw RuntimeException("Unexpected null returned from request.")
+  private fun fetchLicenceConditionsByLicenceId(licenceId: Long): Licence = cvlWebClientClientCredentials.get()
+    .uri(
+      "/licence/id/{licenceId}",
+      mapOf(
+        "licenceId" to licenceId,
+      ),
+    )
+    .retrieve()
+    .bodyToMono<Licence>()
+    .block() ?: throw RuntimeException("Unexpected null returned from request.")
 
   fun getLicenceConditionsByLicenceId(licenceId: Long): LicenceConditions {
     val licence = fetchLicenceConditionsByLicenceId(licenceId)
@@ -110,15 +108,13 @@ class CvlApiService(
     )
   }
 
-  fun getImageFromLicenceIdAndConditionId(licenceId: String, conditionId: String): ByteArray {
-    return cvlWebClientClientCredentials
-      .get()
-      .uri(
-        "/exclusion-zone/id/$licenceId/condition/id/$conditionId/full-size-image",
-      )
-      .retrieve()
-      .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Image not found") })
-      .bodyToMono<ByteArray>()
-      .block() ?: throw RuntimeException("Unexpected null returned from request.")
-  }
+  fun getImageFromLicenceIdAndConditionId(licenceId: String, conditionId: String): ByteArray = cvlWebClientClientCredentials
+    .get()
+    .uri(
+      "/exclusion-zone/id/$licenceId/condition/id/$conditionId/full-size-image",
+    )
+    .retrieve()
+    .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Image not found") })
+    .bodyToMono<ByteArray>()
+    .block() ?: throw RuntimeException("Unexpected null returned from request.")
 }

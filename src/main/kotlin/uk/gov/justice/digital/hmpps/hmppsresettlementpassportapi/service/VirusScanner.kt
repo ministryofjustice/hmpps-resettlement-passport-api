@@ -11,11 +11,10 @@ fun interface VirusScanner {
 }
 
 class ClamavVirusScanner(@Autowired private val clamavClient: ClamavClient) : VirusScanner {
-  override fun scan(documentBytes: ByteArray): VirusScanResult =
-    when (val scanResult = clamavClient.scan(documentBytes.inputStream())) {
-      OK -> NoVirusFound
-      is VirusFound -> VirusScanResult.VirusFound(scanResult.foundViruses)
-    }
+  override fun scan(documentBytes: ByteArray): VirusScanResult = when (val scanResult = clamavClient.scan(documentBytes.inputStream())) {
+    OK -> NoVirusFound
+    is VirusFound -> VirusScanResult.VirusFound(scanResult.foundViruses)
+  }
 }
 
 sealed class VirusScanResult {

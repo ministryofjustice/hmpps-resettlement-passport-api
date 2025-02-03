@@ -199,27 +199,25 @@ class CaseNotesServiceTest {
     )
   }
 
-  private fun generateProfileResetCaseNote() =
-    mutableListOf(
-      PathwayCaseNote(
-        caseNoteId = "caseNoteId",
-        pathway = CaseNotePathway.OTHER,
-        creationDateTime = LocalDateTime.parse("2023-09-01T12:13:12"),
-        occurenceDateTime = LocalDateTime.parse("2023-09-01T12:13:12"),
-        createdBy = "user1",
-        text = PROFILE_RESET_TEXT_PREFIX + "some reason" + PROFILE_RESET_TEXT_SUFFIX + PROFILE_RESET_TEXT_SUPPORT,
-      ),
-    )
-
-  private fun generatePathwayCaseNote(seed: Long, createdBy: String, text: String, creationDateTime: LocalDateTime, occurrenceDateTime: LocalDateTime, pathway: CaseNotePathway) =
+  private fun generateProfileResetCaseNote() = mutableListOf(
     PathwayCaseNote(
-      caseNoteId = seed.toString(),
-      pathway = pathway,
-      creationDateTime = creationDateTime,
-      occurenceDateTime = occurrenceDateTime,
-      createdBy = createdBy,
-      text = text,
-    )
+      caseNoteId = "caseNoteId",
+      pathway = CaseNotePathway.OTHER,
+      creationDateTime = LocalDateTime.parse("2023-09-01T12:13:12"),
+      occurenceDateTime = LocalDateTime.parse("2023-09-01T12:13:12"),
+      createdBy = "user1",
+      text = PROFILE_RESET_TEXT_PREFIX + "some reason" + PROFILE_RESET_TEXT_SUFFIX + PROFILE_RESET_TEXT_SUPPORT,
+    ),
+  )
+
+  private fun generatePathwayCaseNote(seed: Long, createdBy: String, text: String, creationDateTime: LocalDateTime, occurrenceDateTime: LocalDateTime, pathway: CaseNotePathway) = PathwayCaseNote(
+    caseNoteId = seed.toString(),
+    pathway = pathway,
+    creationDateTime = creationDateTime,
+    occurenceDateTime = occurrenceDateTime,
+    createdBy = createdBy,
+    text = text,
+  )
 
   private fun generatePathwayCaseNotes(number: Long = 10000, times: Int): List<PathwayCaseNote> {
     val list = mutableListOf<PathwayCaseNote>()

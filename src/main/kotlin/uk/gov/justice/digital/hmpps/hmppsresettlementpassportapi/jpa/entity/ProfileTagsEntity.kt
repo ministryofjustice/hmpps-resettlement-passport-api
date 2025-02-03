@@ -48,19 +48,15 @@ data class ProfileTagList(
 class ProfileTagConverter(
   val objectMapper: ObjectMapper,
 ) : AttributeConverter<ProfileTagList, String> {
-  override fun convertToDatabaseColumn(meta: ProfileTagList): String {
-    return try {
-      objectMapper.writeValueAsString(meta)
-    } catch (ex: JsonProcessingException) {
-      throw RuntimeException("Error serialising data into profile tags")
-    }
+  override fun convertToDatabaseColumn(meta: ProfileTagList): String = try {
+    objectMapper.writeValueAsString(meta)
+  } catch (ex: JsonProcessingException) {
+    throw RuntimeException("Error serialising data into profile tags")
   }
 
-  override fun convertToEntityAttribute(dbData: String): ProfileTagList {
-    return try {
-      objectMapper.readValue(dbData, ProfileTagList::class.java)
-    } catch (ex: IOException) {
-      throw RuntimeException("Error deserialising data into profile tags")
-    }
+  override fun convertToEntityAttribute(dbData: String): ProfileTagList = try {
+    objectMapper.readValue(dbData, ProfileTagList::class.java)
+  } catch (ex: IOException) {
+    throw RuntimeException("Error deserialising data into profile tags")
   }
 }

@@ -4,8 +4,6 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
@@ -15,8 +13,7 @@ import java.time.LocalDateTime
 @Table(name = "support_need")
 data class SupportNeedEntity(
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  val id: Long? = null,
+  val id: Long,
 
   @Enumerated(EnumType.STRING)
   val pathway: Pathway,

@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
@@ -7,7 +8,9 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayNeedsSummary
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeed
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedIdAndTitle
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedWithUpdates
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedsRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerSupportNeedWithNomsIdAndLatestUpdate
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeed
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedStatus
@@ -285,5 +288,65 @@ class SupportNeedsService(
         )
       },
     )
+  }
+
+  @Transactional
+  fun postSupportNeeds(nomsId: String, prisonerNeedsRequest: PrisonerNeedsRequest, auth: String) {
+    val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Cannot find prisoner $nomsId")
+    val name = getClaimFromJWTToken(auth, "name")
+      ?: getClaimFromJWTToken(auth, "sub")
+      ?: throw ServerWebInputException("JWT token must include a claim for 'name or 'sub'")
+
+    prisonerNeedsRequest.needs.forEach { need ->
+      // Get the prisoner support need or create new one if required
+      val prisonerSupportNeed = getAndSavePrisonerSupportNeed(need, prisoner.id!!, name)
+
+      // Save the new update against the prisoner support need apart from when excludeFromCount is set as these do not have updates
+      if (!prisonerSupportNeed.supportNeed.excludeFromCount) {
+        if (need.status == null || need.isPrisonResponsible == null || need.isProbationResponsible == null) {
+          throw ServerWebInputException("Update (status, isPrisonResponsible, isProbationResponsible) cannot not be null for support need ${prisonerSupportNeed.supportNeed.id}")
+        }
+        val update = PrisonerSupportNeedUpdateEntity(
+          prisonerSupportNeedId = prisonerSupportNeed.id!!,
+          createdBy = name,
+          createdDate = LocalDateTime.now(),
+          updateText = need.text,
+          status = need.status,
+          isPrison = need.isPrisonResponsible,
+          isProbation = need.isProbationResponsible,
+        )
+        val savedPrisonerSupportNeedUpdate = prisonerSupportNeedUpdateRepository.save(update)
+
+        // Update prisoner support need with the latest update id
+        prisonerSupportNeed.latestUpdateId = savedPrisonerSupportNeedUpdate.id
+        prisonerSupportNeedRepository.save(prisonerSupportNeed)
+      }
+    }
+  }
+
+  private fun getAndSavePrisonerSupportNeed(need: PrisonerNeedRequest, prisonerId: Long, name: String): PrisonerSupportNeedEntity {
+    // If a prisonerSupportNeed is given i.e. it's an update, just find and return this
+    if (need.prisonerSupportNeedId != null) {
+      return prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(need.prisonerSupportNeedId)
+        ?: throw ResourceNotFoundException("Cannot find prisoner support need ${need.prisonerSupportNeedId}")
+    } else {
+      // Check if there's any existing in case of any parallel working, if there is return this
+      val existingPrisonerSupportNeed = prisonerSupportNeedRepository.findFirstBySupportNeedIdAndOtherDetailAndDeletedIsFalseOrderByCreatedDateDesc(need.needId, need.otherDesc)
+      if (existingPrisonerSupportNeed != null) {
+        return existingPrisonerSupportNeed
+      } else {
+        // If there's no existing prisoner support need, create and return it
+        val supportNeed = supportNeedRepository.findByIdAndDeletedIsFalse(need.needId)
+          ?: throw ResourceNotFoundException("Support need with id ${need.needId} not found or is deleted")
+        val prisonerSupportNeed = PrisonerSupportNeedEntity(
+          prisonerId = prisonerId,
+          supportNeed = supportNeed,
+          otherDetail = need.otherDesc,
+          createdBy = name,
+          createdDate = LocalDateTime.now(),
+        )
+        return prisonerSupportNeedRepository.save(prisonerSupportNeed)
+      }
+    }
   }
 }

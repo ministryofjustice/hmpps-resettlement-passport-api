@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedsRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedsUpdateRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.SupportNeedsService
 
 @RestController
@@ -213,8 +212,13 @@ class SupportNeedsResourceController(
     prisonerNeedId: Long,
   ) = supportNeedsService.getPrisonerNeedById(nomsId, prisonerNeedId)
 
+<<<<<<< Updated upstream
   @PostMapping("/{nomsId}/needs")
   @Operation(summary = "POST new support needs and updates for a prisoner", description = "POST new support needs and updates for a prisoner")
+=======
+  @PatchMapping("/{nomsId}/need/{prisonerNeedId}")
+  @Operation(summary = "Update an existing support need", description = "Update the status of an existing support need")
+>>>>>>> Stashed changes
   @ApiResponses(
     value = [
       ApiResponse(
@@ -238,11 +242,16 @@ class SupportNeedsResourceController(
       ),
     ],
   )
+<<<<<<< Updated upstream
   fun postPrisonerNeedsById(
+=======
+  fun patchSupportNeedById(
+>>>>>>> Stashed changes
     @Schema(example = "AXXXS", required = true)
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
+<<<<<<< Updated upstream
     @RequestBody
     prisonerNeedsRequest: PrisonerNeedsRequest,
     @Schema(hidden = true)
@@ -252,44 +261,10 @@ class SupportNeedsResourceController(
     supportNeedsService.postSupportNeeds(nomsId, prisonerNeedsRequest, auth)
     return ResponseEntity.ok().build()
   }
-
-  @PatchMapping("/{nomsId}/need/{prisonerNeedId}")
-  @Operation(summary = "Update an existing support need", description = "Update the status of an existing support need")
-  @ApiResponses(
-    value = [
-      ApiResponse(
-        responseCode = "200",
-        description = "Successful Operation",
-      ),
-      ApiResponse(
-        responseCode = "401",
-        description = "Unauthorized to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-      ApiResponse(
-        responseCode = "403",
-        description = "Forbidden, requires an appropriate role",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-      ApiResponse(
-        responseCode = "404",
-        description = "Prisoner or Prisoner Need not found in database",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-    ],
-  )
-  fun patchSupportNeedById(
-    @Schema(example = "AXXXS", required = true)
-    @PathVariable("nomsId")
-    @Parameter(required = true)
-    nomsId: String,
+=======
     @PathVariable("prisonerNeedId")
     @Parameter(required = true)
     prisonerNeedId: Long,
-    @RequestBody
-    supportNeedsUpdateRequest: SupportNeedsUpdateRequest,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ) = supportNeedsService.patchPrisonerNeedById(nomsId, prisonerNeedId, supportNeedsUpdateRequest, auth)
+  ) = supportNeedsService.getPrisonerNeedById(nomsId, prisonerNeedId)
+>>>>>>> Stashed changes
 }

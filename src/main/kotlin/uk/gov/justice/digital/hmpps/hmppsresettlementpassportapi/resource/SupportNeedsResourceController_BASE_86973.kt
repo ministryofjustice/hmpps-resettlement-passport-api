@@ -7,22 +7,15 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedsRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedsUpdateRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.SupportNeedsService
 
 @RestController
@@ -212,84 +205,4 @@ class SupportNeedsResourceController(
     @Parameter(required = true)
     prisonerNeedId: Long,
   ) = supportNeedsService.getPrisonerNeedById(nomsId, prisonerNeedId)
-
-  @PostMapping("/{nomsId}/needs")
-  @Operation(summary = "POST new support needs and updates for a prisoner", description = "POST new support needs and updates for a prisoner")
-  @ApiResponses(
-    value = [
-      ApiResponse(
-        responseCode = "200",
-        description = "Successful Operation",
-      ),
-      ApiResponse(
-        responseCode = "401",
-        description = "Unauthorized to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-      ApiResponse(
-        responseCode = "403",
-        description = "Forbidden, requires an appropriate role",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-      ApiResponse(
-        responseCode = "404",
-        description = "Prisoner or Prisoner Need not found in database",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-    ],
-  )
-  fun postPrisonerNeedsById(
-    @Schema(example = "AXXXS", required = true)
-    @PathVariable("nomsId")
-    @Parameter(required = true)
-    nomsId: String,
-    @RequestBody
-    prisonerNeedsRequest: PrisonerNeedsRequest,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ): ResponseEntity<Void> {
-    supportNeedsService.postSupportNeeds(nomsId, prisonerNeedsRequest, auth)
-    return ResponseEntity.ok().build()
-  }
-
-  @PatchMapping("/{nomsId}/need/{prisonerNeedId}")
-  @Operation(summary = "Update an existing support need", description = "Update the status of an existing support need")
-  @ApiResponses(
-    value = [
-      ApiResponse(
-        responseCode = "200",
-        description = "Successful Operation",
-      ),
-      ApiResponse(
-        responseCode = "401",
-        description = "Unauthorized to access this endpoint",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-      ApiResponse(
-        responseCode = "403",
-        description = "Forbidden, requires an appropriate role",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-      ApiResponse(
-        responseCode = "404",
-        description = "Prisoner or Prisoner Need not found in database",
-        content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))],
-      ),
-    ],
-  )
-  fun patchSupportNeedById(
-    @Schema(example = "AXXXS", required = true)
-    @PathVariable("nomsId")
-    @Parameter(required = true)
-    nomsId: String,
-    @PathVariable("prisonerNeedId")
-    @Parameter(required = true)
-    prisonerNeedId: Long,
-    @RequestBody
-    supportNeedsUpdateRequest: SupportNeedsUpdateRequest,
-    @Schema(hidden = true)
-    @RequestHeader("Authorization")
-    auth: String,
-  ) = supportNeedsService.patchPrisonerNeedById(nomsId, prisonerNeedId, supportNeedsUpdateRequest, auth)
 }

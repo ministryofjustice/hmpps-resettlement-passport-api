@@ -4,21 +4,6 @@ import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayNeedsSummary
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeed
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedIdAndTitle
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedWithUpdates
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedsRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerSupportNeedWithNomsIdAndLatestUpdate
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeed
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedStatus
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedSummary
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedSummaryResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedUpdate
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedUpdates
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeeds
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedUpdateEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
@@ -26,6 +11,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedUpdateRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.SupportNeedRepository
 import java.time.LocalDateTime
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.*
 
 @Service
 class SupportNeedsService(
@@ -348,5 +334,33 @@ class SupportNeedsService(
         return prisonerSupportNeedRepository.save(prisonerSupportNeed)
       }
     }
+  }
+
+  @Transactional
+  fun patchPrisonerNeedById(nomsId: String, prisonerNeedId: Long, supportNeedsUpdateRequest: SupportNeedsUpdateRequest, auth: String) {
+    val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Cannot find prisoner $nomsId")
+    val name = getClaimFromJWTToken(auth, "name")
+      ?: getClaimFromJWTToken(auth, "sub")
+      ?: throw ServerWebInputException("JWT token must include a claim for 'name or 'sub'")
+
+    // Update prisoner support need with the latest update id
+    val prisonerSupportNeed = prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(prisonerNeedId) ?: throw ResourceNotFoundException("Cannot find prisoner support need ${prisonerNeedId}")
+
+    //  prisoner.id === prisonerSupportNeed.prisonerId otherwise throw ResourceNotFoundException("Cannot find prisoner support need on prisoner ${name}")
+
+    val update = PrisonerSupportNeedUpdateEntity(
+      prisonerSupportNeedId = prisonerNeedId,
+      createdBy = name,
+      createdDate = LocalDateTime.now(),
+      updateText = supportNeedsUpdateRequest.text,
+      status = supportNeedsUpdateRequest.status,
+      isPrison = supportNeedsUpdateRequest.isPrisonResponsible,
+      isProbation = supportNeedsUpdateRequest.isProbationResponsible,
+    )
+    val savedPrisonerSupportNeedUpdate = prisonerSupportNeedUpdateRepository.save(update)
+
+    prisonerSupportNeed.latestUpdateId = savedPrisonerSupportNeedUpdate.id
+
+    prisonerSupportNeedRepository.save(prisonerSupportNeed)
   }
 }

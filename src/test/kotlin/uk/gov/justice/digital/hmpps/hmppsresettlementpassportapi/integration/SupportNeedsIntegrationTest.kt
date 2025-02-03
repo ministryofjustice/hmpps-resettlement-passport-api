@@ -349,6 +349,7 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
       .bodyValue(
         PrisonerNeedsRequest(
           needs = listOf(
+            // New need
             PrisonerNeedRequest(
               needId = 8,
               prisonerSupportNeedId = null,
@@ -358,6 +359,7 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
               isPrisonResponsible = true,
               isProbationResponsible = false,
             ),
+            // Update of existing need
             PrisonerNeedRequest(
               needId = 1,
               prisonerSupportNeedId = 101,
@@ -367,6 +369,7 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
               isPrisonResponsible = false,
               isProbationResponsible = true,
             ),
+            // New need - to be treated as update due to need already being assigned to prisoner
             PrisonerNeedRequest(
               needId = 3,
               prisonerSupportNeedId = null,
@@ -376,6 +379,7 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
               isPrisonResponsible = false,
               isProbationResponsible = true,
             ),
+            // New need - other with a new otherDec
             PrisonerNeedRequest(
               needId = 5,
               prisonerSupportNeedId = null,
@@ -385,6 +389,7 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
               isPrisonResponsible = false,
               isProbationResponsible = true,
             ),
+            // New need - "excludeFromCount" i.e. a need with no update
             PrisonerNeedRequest(
               needId = 11,
               prisonerSupportNeedId = null,
@@ -455,6 +460,63 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isBadRequest
 
+    assertNoChangesToSupportNeeds()
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoner-support-needs-5.sql")
+  fun `test post support needs - invalid request body (missing isPrisonResponsible) with rollback`() {
+    val nomsId = "G4161UF"
+    authedWebTestClient.post()
+      .uri("/resettlement-passport/prisoner/$nomsId/needs")
+      .bodyValue(
+        PrisonerNeedsRequest(
+          needs = listOf(
+            PrisonerNeedRequest(
+              needId = 8,
+              prisonerSupportNeedId = null,
+              otherDesc = null,
+              text = "This is an update 1",
+              status = SupportNeedStatus.MET,
+              isPrisonResponsible = null,
+              isProbationResponsible = false,
+            ),
+          ),
+        ),
+      )
+      .exchange()
+      .expectStatus().isBadRequest
+
+    assertNoChangesToSupportNeeds()
+  }
+
+  @Sql("classpath:testdata/sql/seed-prisoner-support-needs-5.sql")
+  fun `test post support needs - invalid request body (missing isProbationResponsible) with rollback`() {
+    val nomsId = "G4161UF"
+    authedWebTestClient.post()
+      .uri("/resettlement-passport/prisoner/$nomsId/needs")
+      .bodyValue(
+        PrisonerNeedsRequest(
+          needs = listOf(
+            PrisonerNeedRequest(
+              needId = 8,
+              prisonerSupportNeedId = null,
+              otherDesc = null,
+              text = "This is an update 1",
+              status = SupportNeedStatus.MET,
+              isPrisonResponsible = true,
+              isProbationResponsible = null,
+            ),
+          ),
+        ),
+      )
+      .exchange()
+      .expectStatus().isBadRequest
+
+    assertNoChangesToSupportNeeds()
+  }
+
+  private fun assertNoChangesToSupportNeeds() {
     val expectedPrisonerSupportNeeds = listOf(
       PrisonerSupportNeedEntity(id = 101, prisonerId = 1, supportNeed = supportNeedRepository.findById(1).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = 103),
       PrisonerSupportNeedEntity(id = 102, prisonerId = 1, supportNeed = supportNeedRepository.findById(3).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = true, deletedDate = LocalDateTime.parse("2024-02-22T09:36:28.713421"), latestUpdateId = null),

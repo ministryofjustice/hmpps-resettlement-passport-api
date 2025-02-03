@@ -107,74 +107,70 @@ class CaseNotesService(
     postBCSTCaseNoteToDps(nomsId, noteText, userId, DpsCaseNoteSubType.GEN)
   }
 
-  private fun getProfileResetCaseNotes(nomsId: String, days: Int, createdByUserId: Int): List<PathwayCaseNote> {
-    return caseNotesApiService.getCaseNotesByNomsId(nomsId, days, CaseNoteType.All, createdByUserId).filter { it.text.startsWith(PROFILE_RESET_TEXT_PREFIX) }
+  private fun getProfileResetCaseNotes(nomsId: String, days: Int, createdByUserId: Int): List<PathwayCaseNote> = caseNotesApiService.getCaseNotesByNomsId(nomsId, days, CaseNoteType.All, createdByUserId).filter { it.text.startsWith(PROFILE_RESET_TEXT_PREFIX) }
+
+  private fun getResettlementAssessmentCaseNotes(prisonerId: Long, caseNoteType: CaseNoteType): List<PathwayCaseNote> = when (caseNoteType) {
+    CaseNoteType.All -> emptyList()
+    CaseNoteType.ACCOMMODATION -> makePathwayCaseNotes(
+      resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(
+        prisonerId,
+        Pathway.ACCOMMODATION,
+      ),
+    )
+
+    CaseNoteType.HEALTH -> makePathwayCaseNotes(
+      resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(
+        prisonerId,
+        Pathway.HEALTH,
+      ),
+    )
+
+    CaseNoteType.FINANCE_AND_ID -> makePathwayCaseNotes(
+      resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(
+        prisonerId,
+        Pathway.FINANCE_AND_ID,
+      ),
+    )
+
+    CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY -> makePathwayCaseNotes(
+      resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(
+        prisonerId,
+        Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
+      ),
+    )
+
+    CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR -> makePathwayCaseNotes(
+      resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(
+        prisonerId,
+        Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+      ),
+    )
+
+    CaseNoteType.EDUCATION_SKILLS_AND_WORK -> makePathwayCaseNotes(
+      resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(
+        prisonerId,
+        Pathway.EDUCATION_SKILLS_AND_WORK,
+      ),
+    )
+
+    CaseNoteType.DRUGS_AND_ALCOHOL -> makePathwayCaseNotes(
+      resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(
+        prisonerId,
+        Pathway.DRUGS_AND_ALCOHOL,
+      ),
+    )
   }
 
-  private fun getResettlementAssessmentCaseNotes(prisonerId: Long, caseNoteType: CaseNoteType): List<PathwayCaseNote> =
-    when (caseNoteType) {
-      CaseNoteType.All -> emptyList()
-      CaseNoteType.ACCOMMODATION -> makePathwayCaseNotes(
-        resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(
-          prisonerId,
-          Pathway.ACCOMMODATION,
-        ),
-      )
-
-      CaseNoteType.HEALTH -> makePathwayCaseNotes(
-        resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(
-          prisonerId,
-          Pathway.HEALTH,
-        ),
-      )
-
-      CaseNoteType.FINANCE_AND_ID -> makePathwayCaseNotes(
-        resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(
-          prisonerId,
-          Pathway.FINANCE_AND_ID,
-        ),
-      )
-
-      CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY -> makePathwayCaseNotes(
-        resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(
-          prisonerId,
-          Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
-        ),
-      )
-
-      CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR -> makePathwayCaseNotes(
-        resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(
-          prisonerId,
-          Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
-        ),
-      )
-
-      CaseNoteType.EDUCATION_SKILLS_AND_WORK -> makePathwayCaseNotes(
-        resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(
-          prisonerId,
-          Pathway.EDUCATION_SKILLS_AND_WORK,
-        ),
-      )
-
-      CaseNoteType.DRUGS_AND_ALCOHOL -> makePathwayCaseNotes(
-        resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(
-          prisonerId,
-          Pathway.DRUGS_AND_ALCOHOL,
-        ),
-      )
+  private fun makePathwayCaseNotes(results: List<ResettlementAssessmentEntity>): List<PathwayCaseNote> = results.filter { it.statusChangedTo != null }
+    .map { ra ->
+      val id = "ResettlementAssessmentCaseNote${ra.id ?: throw RuntimeException("id missing from resettlement assessment entity!")}"
+      val caseNotePathway = convertPathwayToCaseNotePathway(ra.pathway)
+      val creationDate = ra.submissionDate ?: ra.creationDate
+      val submissionDate = ra.submissionDate ?: ra.creationDate
+      val createdBy = ra.createdBy
+      val caseNoteText = ra.caseNoteText ?: "Resettlement status set to: ${ra.statusChangedTo!!.displayText}"
+      PathwayCaseNote(id, caseNotePathway, creationDate, submissionDate, createdBy, caseNoteText)
     }
-
-  private fun makePathwayCaseNotes(results: List<ResettlementAssessmentEntity>): List<PathwayCaseNote> =
-    results.filter { it.statusChangedTo != null }
-      .map { ra ->
-        val id = "ResettlementAssessmentCaseNote${ra.id ?: throw RuntimeException("id missing from resettlement assessment entity!")}"
-        val caseNotePathway = convertPathwayToCaseNotePathway(ra.pathway)
-        val creationDate = ra.submissionDate ?: ra.creationDate
-        val submissionDate = ra.submissionDate ?: ra.creationDate
-        val createdBy = ra.createdBy
-        val caseNoteText = ra.caseNoteText ?: "Resettlement status set to: ${ra.statusChangedTo!!.displayText}"
-        PathwayCaseNote(id, caseNotePathway, creationDate, submissionDate, createdBy, caseNoteText)
-      }
 
   private fun convertPathwayToCaseNotePathway(pathway: Pathway): CaseNotePathway = when (pathway) {
     Pathway.ACCOMMODATION -> CaseNotePathway.ACCOMMODATION

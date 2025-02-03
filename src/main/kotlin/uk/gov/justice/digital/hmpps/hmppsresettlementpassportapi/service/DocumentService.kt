@@ -44,25 +44,24 @@ class DocumentService(
     document: MultipartFile,
     originalFilename: String?,
     category: DocumentCategory,
-  ): Result<DocumentsEntity, VirusFound> =
-    forExistingPrisoner(nomsId) {
-      val filename: String =
-        originalFilename ?: document.originalFilename ?: throw ValidationException("filename is required")
+  ): Result<DocumentsEntity, VirusFound> = forExistingPrisoner(nomsId) {
+    val filename: String =
+      originalFilename ?: document.originalFilename ?: throw ValidationException("filename is required")
 
-      val extension = filename.substringAfterLast(".", "")
-      if (extension !in allowableFileExtensions) {
-        logger.info { "Received unsupported filename $filename" }
-        throw ValidationException("Unsupported document format, only .doc or pdf allowed")
-      }
+    val extension = filename.substringAfterLast(".", "")
+    if (extension !in allowableFileExtensions) {
+      logger.info { "Received unsupported filename $filename" }
+      throw ValidationException("Unsupported document format, only .doc or pdf allowed")
+    }
 
-      when (val virusScanResult = virusScanner.scan(document.bytes)) {
-        NoVirusFound -> Success(convertAndStoreDocument(nomsId, document, category, filename))
-        is VirusFound -> {
-          logger.info { VirusFoundEvent(nomsId, virusScanResult.foundViruses) }
-          Failure(virusScanResult)
-        }
+    when (val virusScanResult = virusScanner.scan(document.bytes)) {
+      NoVirusFound -> Success(convertAndStoreDocument(nomsId, document, category, filename))
+      is VirusFound -> {
+        logger.info { VirusFoundEvent(nomsId, virusScanResult.foundViruses) }
+        Failure(virusScanResult)
       }
     }
+  }
 
   @Transactional
   fun convertAndStoreDocument(
@@ -149,12 +148,11 @@ class DocumentService(
 
   data class VirusFoundEvent(val nomsId: String, val foundViruses: Map<String, Collection<String>>)
 
-  fun listDocuments(nomsId: String, category: DocumentCategory?): Collection<DocumentsEntity> =
-    if (category == null) {
-      documentsRepository.findAllByNomsId(nomsId)
-    } else {
-      documentsRepository.findAllByNomsIdAndCategory(nomsId, category)
-    }
+  fun listDocuments(nomsId: String, category: DocumentCategory?): Collection<DocumentsEntity> = if (category == null) {
+    documentsRepository.findAllByNomsId(nomsId)
+  } else {
+    documentsRepository.findAllByNomsIdAndCategory(nomsId, category)
+  }
 
   fun deleteUploadDocumentByNomisId(nomsId: String, category: DocumentCategory) {
     if (!DocumentCategory.entries.contains(category)) {

@@ -39,7 +39,9 @@ class AssessmentService(
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
     val assessment = assessmentRepository.findByPrisonerIdAndIsDeletedAndCreationDateBetween(
-      prisoner.id(), fromDate = fromDate.atStartOfDay(), toDate = toDate.atStartOfDay(),
+      prisoner.id(),
+      fromDate = fromDate.atStartOfDay(),
+      toDate = toDate.atStartOfDay(),
     ) ?: throw ResourceNotFoundException("assessment not found")
     return if (assessment.isDeleted) null else assessment
   }

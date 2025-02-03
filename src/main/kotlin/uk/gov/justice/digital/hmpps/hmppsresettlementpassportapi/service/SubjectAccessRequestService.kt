@@ -61,66 +61,54 @@ class SubjectAccessRequestService(
     )
   }
 
-  private fun getAssessment(prn: String, fromDate: LocalDate, toDate: LocalDate): AssessmentEntity? {
-    return runCatching {
-      assessmentService.getAssessmentByNomsIdAndCreationDate(prn, fromDate, toDate)
-    }.getOrNull()
-  }
+  private fun getAssessment(prn: String, fromDate: LocalDate, toDate: LocalDate): AssessmentEntity? = runCatching {
+    assessmentService.getAssessmentByNomsIdAndCreationDate(prn, fromDate, toDate)
+  }.getOrNull()
 
-  private fun getBankAccount(prn: String, fromDate: LocalDate, toDate: LocalDate): BankApplicationResponse? {
-    return runCatching {
-      bankApplicationService.getBankApplicationByNomsIdAndCreationDate(prn, fromDate, toDate)
-    }.getOrNull()
-  }
+  private fun getBankAccount(prn: String, fromDate: LocalDate, toDate: LocalDate): BankApplicationResponse? = runCatching {
+    bankApplicationService.getBankApplicationByNomsIdAndCreationDate(prn, fromDate, toDate)
+  }.getOrNull()
 
-  private fun getDeliusContact(prn: String, fromDate: LocalDate, toDate: LocalDate): List<PathwayCaseNote>? {
-    return runCatching {
-      deliusContactService.getAllCaseNotesByNomsIdAndCreationDate(prn, fromDate, toDate)
-    }.getOrNull()
-  }
+  private fun getDeliusContact(prn: String, fromDate: LocalDate, toDate: LocalDate): List<PathwayCaseNote>? = runCatching {
+    deliusContactService.getAllCaseNotesByNomsIdAndCreationDate(prn, fromDate, toDate)
+  }.getOrNull()
 
-  private fun getId(prn: String, fromDate: LocalDate, toDate: LocalDate): IdApplicationEntity? {
-    return runCatching {
-      idApplicationService.getIdApplicationByNomsIdAndCreationDate(prn, fromDate, toDate)
-    }.getOrNull()
-  }
+  private fun getId(prn: String, fromDate: LocalDate, toDate: LocalDate): IdApplicationEntity? = runCatching {
+    idApplicationService.getIdApplicationByNomsIdAndCreationDate(prn, fromDate, toDate)
+  }.getOrNull()
 
   private fun getPathwayStatus(
     prn: String,
     fromDate: LocalDate,
     toDate: LocalDate,
-  ): List<ResettlementAssessmentPathwayStatus> {
-    return ResettlementAssessmentType.entries.mapNotNull { type ->
-      runCatching {
-        ResettlementAssessmentPathwayStatus(
+  ): List<ResettlementAssessmentPathwayStatus> = ResettlementAssessmentType.entries.mapNotNull { type ->
+    runCatching {
+      ResettlementAssessmentPathwayStatus(
+        type,
+        resettlementAssessmentService.getResettlementAssessmentSummaryByNomsIdAndCreationDate(
+          prn,
           type,
-          resettlementAssessmentService.getResettlementAssessmentSummaryByNomsIdAndCreationDate(
-            prn,
-            type,
-            fromDate,
-            toDate,
-          ),
-        )
-      }.getOrNull()
-    }
+          fromDate,
+          toDate,
+        ),
+      )
+    }.getOrNull()
   }
 
   private fun getResettlementAssessments(
     prn: String,
     fromDate: LocalDate,
     toDate: LocalDate,
-  ): List<LatestResettlementAssessmentResponse> {
-    return Pathway.entries.mapNotNull { pathway ->
-      runCatching {
-        resettlementAssessmentService.getLatestResettlementAssessmentByNomsIdAndPathwayAndCreationDate(
-          prn,
-          pathway,
-          resettlementAssessmentStrategies,
-          fromDate,
-          toDate,
-        )
-      }.getOrNull()
-    }
+  ): List<LatestResettlementAssessmentResponse> = Pathway.entries.mapNotNull { pathway ->
+    runCatching {
+      resettlementAssessmentService.getLatestResettlementAssessmentByNomsIdAndPathwayAndCreationDate(
+        prn,
+        pathway,
+        resettlementAssessmentStrategies,
+        fromDate,
+        toDate,
+      )
+    }.getOrNull()
   }
 }
 

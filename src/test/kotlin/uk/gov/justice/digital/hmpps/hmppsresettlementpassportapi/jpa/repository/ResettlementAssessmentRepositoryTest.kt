@@ -193,23 +193,22 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
     assertThat(afterDeleteFromDB).isEmpty()
   }
 
-  fun generateResettlementAssessmentEntity(prisoner: PrisonerEntity, pathway: Pathway, status: ResettlementAssessmentStatus, creationDate: LocalDateTime) =
-    ResettlementAssessmentEntity(
-      id = null,
-      prisonerId = prisoner.id(),
-      pathway = pathway,
-      statusChangedTo = Status.SUPPORT_NOT_REQUIRED,
-      assessmentType = ResettlementAssessmentType.BCST2,
-      assessment = ResettlementAssessmentQuestionAndAnswerList(listOf()),
-      creationDate = creationDate,
-      createdBy = "test user",
-      assessmentStatus = status,
-      caseNoteText = "test",
-      createdByUserId = "USER_1",
-      submissionDate = null,
-      version = 1,
-      userDeclaration = false,
-    )
+  fun generateResettlementAssessmentEntity(prisoner: PrisonerEntity, pathway: Pathway, status: ResettlementAssessmentStatus, creationDate: LocalDateTime) = ResettlementAssessmentEntity(
+    id = null,
+    prisonerId = prisoner.id(),
+    pathway = pathway,
+    statusChangedTo = Status.SUPPORT_NOT_REQUIRED,
+    assessmentType = ResettlementAssessmentType.BCST2,
+    assessment = ResettlementAssessmentQuestionAndAnswerList(listOf()),
+    creationDate = creationDate,
+    createdBy = "test user",
+    assessmentStatus = status,
+    caseNoteText = "test",
+    createdByUserId = "USER_1",
+    submissionDate = null,
+    version = 1,
+    userDeclaration = false,
+  )
 
   @Test
   fun `test findFirstByPrisonerIdAndAssessmentStatusAndDeletedIsFalseAndSubmissionDateIsNotNullOrderBySubmissionDateDesc - no results`() {

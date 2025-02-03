@@ -1226,8 +1226,20 @@ class PrisonerServiceTest {
           prisonerNumber = prisonerNumbers.getOrElse(i) { "A1$i" },
           firstName = "John$i",
           lastName = "Smith$i",
-          assignedWorkerFirstname = if (i < 2) "firstName1" else if (i == 2) "firstName5" else null,
-          assignedWorkerLastname = if (i < 2) "lastName1" else if (i == 2) "lastName5" else null,
+          assignedWorkerFirstname = if (i < 2) {
+            "firstName1"
+          } else if (i == 2) {
+            "firstName5"
+          } else {
+            null
+          },
+          assignedWorkerLastname = if (i < 2) {
+            "lastName1"
+          } else if (i == 2) {
+            "lastName5"
+          } else {
+            null
+          },
           assessmentRequired = true,
           lastUpdatedDate = if (i < 3) LocalDate.now() else null,
           pathwayStatus = null,
@@ -1248,8 +1260,20 @@ class PrisonerServiceTest {
           prisonerNumber = prisonerNumbers.getOrElse(i) { "A1$i" },
           firstName = "John$i",
           lastName = "Smith$i",
-          assignedWorkerFirstname = if (i < 2) "firstName1" else if (i == 2) "firstName5" else null,
-          assignedWorkerLastname = if (i < 2) "lastName1" else if (i == 2) "lastName5" else null,
+          assignedWorkerFirstname = if (i < 2) {
+            "firstName1"
+          } else if (i == 2) {
+            "firstName5"
+          } else {
+            null
+          },
+          assignedWorkerLastname = if (i < 2) {
+            "lastName1"
+          } else if (i == 2) {
+            "lastName5"
+          } else {
+            null
+          },
           assessmentRequired = true,
           lastUpdatedDate = if (i < 3) LocalDate.now() else null,
           pathwayStatus = null,
@@ -1897,38 +1921,35 @@ class PrisonerServiceTest {
     Assertions.assertEquals(sortedPrisoners, prisoners)
   }
 
-  private fun createPrisonerNumber(prisonerNumber: String) =
-    Prisoners(
-      prisonerNumber = prisonerNumber,
-      firstName = "firstName",
-      lastName = "lastName",
-      pathwayStatus = null,
-      assessmentRequired = true,
-      needs = listOf(),
-      lastReport = null,
-    )
+  private fun createPrisonerNumber(prisonerNumber: String) = Prisoners(
+    prisonerNumber = prisonerNumber,
+    firstName = "firstName",
+    lastName = "lastName",
+    pathwayStatus = null,
+    assessmentRequired = true,
+    needs = listOf(),
+    lastReport = null,
+  )
 
-  private fun createPrisonerName(firstName: String, lastName: String) =
-    Prisoners(
-      prisonerNumber = "A123456",
-      firstName = firstName,
-      lastName = lastName,
-      pathwayStatus = null,
-      assessmentRequired = true,
-      needs = listOf(),
-      lastReport = null,
-    )
+  private fun createPrisonerName(firstName: String, lastName: String) = Prisoners(
+    prisonerNumber = "A123456",
+    firstName = firstName,
+    lastName = lastName,
+    pathwayStatus = null,
+    assessmentRequired = true,
+    needs = listOf(),
+    lastReport = null,
+  )
 
-  private fun createPrisonerNameAndNumber(prisonerNumber: String, firstName: String, lastName: String) =
-    Prisoners(
-      prisonerNumber = prisonerNumber,
-      firstName = firstName,
-      lastName = lastName,
-      pathwayStatus = null,
-      assessmentRequired = true,
-      needs = listOf(),
-      lastReport = null,
-    )
+  private fun createPrisonerNameAndNumber(prisonerNumber: String, firstName: String, lastName: String) = Prisoners(
+    prisonerNumber = prisonerNumber,
+    firstName = firstName,
+    lastName = lastName,
+    pathwayStatus = null,
+    assessmentRequired = true,
+    needs = listOf(),
+    lastReport = null,
+  )
 
   private fun createPrisonerPEDandHDCED(
     homeDetentionCurfewEligibilityDate: LocalDate?,
@@ -1987,16 +2008,15 @@ class PrisonerServiceTest {
     lastReport = null,
   )
 
-  private fun createPrisonerPathwayStatus(pathwayStatus: Status) =
-    Prisoners(
-      prisonerNumber = "A123456",
-      firstName = "BORIS",
-      lastName = "FRANKLIN",
-      pathwayStatus = pathwayStatus,
-      assessmentRequired = true,
-      needs = listOf(),
-      lastReport = null,
-    )
+  private fun createPrisonerPathwayStatus(pathwayStatus: Status) = Prisoners(
+    prisonerNumber = "A123456",
+    firstName = "BORIS",
+    lastName = "FRANKLIN",
+    pathwayStatus = pathwayStatus,
+    assessmentRequired = true,
+    needs = listOf(),
+    lastReport = null,
+  )
 
   private fun createPrisonerLastUpdatedDate(pathwayStatus: Status, lastUpdatedDate: LocalDate?) = Prisoners(
     prisonerNumber = "A123456",

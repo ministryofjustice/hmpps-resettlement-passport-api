@@ -40,10 +40,8 @@ class WatchlistService(
     watchlistRepository.deleteByNomsIdAndStaffUsername(nomsId, staffUsername)
   }
 
-  private fun findStaffUsernameFromAuth(auth: String): String {
-    return getClaimFromJWTToken(auth, "sub")
-      ?: throw ServerWebInputException("Cannot get name from auth token")
-  }
+  private fun findStaffUsernameFromAuth(auth: String): String = getClaimFromJWTToken(auth, "sub")
+    ?: throw ServerWebInputException("Cannot get name from auth token")
 
   fun findPrisonerByNomsId(nomsId: String): PrisonerEntity {
     val prisoner = prisonerRepository.findByNomsId(nomsId)
@@ -57,7 +55,5 @@ class WatchlistService(
     return watchList.map { wl -> wl.prisonerId }.toSet()
   }
 
-  fun isPrisonerInWatchList(staffUsername: String, prisoner: PrisonerEntity): Boolean {
-    return watchlistRepository.findByPrisonerIdAndStaffUsername(prisoner.id(), staffUsername) != null
-  }
+  fun isPrisonerInWatchList(staffUsername: String, prisoner: PrisonerEntity): Boolean = watchlistRepository.findByPrisonerIdAndStaffUsername(prisoner.id(), staffUsername) != null
 }

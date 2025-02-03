@@ -102,19 +102,15 @@ data class ResettlementAssessmentSimpleQuestionAndAnswer(
 class ResettlementAssessmentConverter(
   val objectMapper: ObjectMapper,
 ) : AttributeConverter<ResettlementAssessmentQuestionAndAnswerList, String> {
-  override fun convertToDatabaseColumn(meta: ResettlementAssessmentQuestionAndAnswerList): String {
-    return try {
-      objectMapper.writeValueAsString(meta)
-    } catch (ex: JsonProcessingException) {
-      throw RuntimeException("Error serialising data into resettlement assessment")
-    }
+  override fun convertToDatabaseColumn(meta: ResettlementAssessmentQuestionAndAnswerList): String = try {
+    objectMapper.writeValueAsString(meta)
+  } catch (ex: JsonProcessingException) {
+    throw RuntimeException("Error serialising data into resettlement assessment")
   }
 
-  override fun convertToEntityAttribute(dbData: String): ResettlementAssessmentQuestionAndAnswerList {
-    return try {
-      objectMapper.readValue(dbData, ResettlementAssessmentQuestionAndAnswerList::class.java)
-    } catch (ex: IOException) {
-      throw RuntimeException("Error deserialising data into resettlement assessment")
-    }
+  override fun convertToEntityAttribute(dbData: String): ResettlementAssessmentQuestionAndAnswerList = try {
+    objectMapper.readValue(dbData, ResettlementAssessmentQuestionAndAnswerList::class.java)
+  } catch (ex: IOException) {
+    throw RuntimeException("Error deserialising data into resettlement assessment")
   }
 }

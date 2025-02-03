@@ -61,54 +61,34 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun cvlWebClientClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, cvlRootUri)
-  }
+  fun cvlWebClientClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient = getWebClientCredentials(authorizedClientManager, cvlRootUri)
 
   @Bean
-  fun prisonerSearchWebClientClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, prisonerSearchRootUri)
-  }
+  fun prisonerSearchWebClientClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient = getWebClientCredentials(authorizedClientManager, prisonerSearchRootUri)
 
   @Bean
-  fun arnWebClientClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, arnRootUri)
-  }
+  fun arnWebClientClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient = getWebClientCredentials(authorizedClientManager, arnRootUri)
 
   @Bean
-  fun prisonWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, prisonRootUri)
-  }
+  fun prisonWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient = getWebClientCredentials(authorizedClientManager, prisonRootUri)
 
   @Bean
-  fun keyWorkerWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, keyWorkerRootUri)
-  }
+  fun keyWorkerWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient = getWebClientCredentials(authorizedClientManager, keyWorkerRootUri)
 
   @Bean
-  fun caseNotesWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, caseNotesRootUri)
-  }
+  fun caseNotesWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient = getWebClientCredentials(authorizedClientManager, caseNotesRootUri)
 
   @Bean
-  fun allocationManagerWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, allocationManagerRootUri)
-  }
+  fun allocationManagerWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient = getWebClientCredentials(authorizedClientManager, allocationManagerRootUri)
 
   @Bean
-  fun rpDeliusWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, rpDeliusRootUri)
-  }
+  fun rpDeliusWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient = getWebClientCredentials(authorizedClientManager, rpDeliusRootUri)
 
   @Bean
-  fun educationEmploymentWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, educationEmploymentRootUri)
-  }
+  fun educationEmploymentWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient = getWebClientCredentials(authorizedClientManager, educationEmploymentRootUri)
 
   @Bean
-  fun interventionsWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, interventionsRootUri)
-  }
+  fun interventionsWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient = getWebClientCredentials(authorizedClientManager, interventionsRootUri)
 
   private fun getWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager, baseUrl: String): WebClient {
     val oauth2Client = ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
@@ -143,14 +123,10 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun popUserWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, popUserRootUri)
-  }
+  fun popUserWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient = getWebClientCredentials(authorizedClientManager, popUserRootUri)
 
   @Bean
-  fun gotenbergWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClient(gotenbergRootUri)
-  }
+  fun gotenbergWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient = getWebClient(gotenbergRootUri)
   private fun getWebClient(baseUrl: String): WebClient {
     val httpClient = HttpClient.create().responseTimeout(Duration.ofMinutes(2))
     return WebClient.builder()
@@ -169,12 +145,8 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun curiousWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, curiousRootUri)
-  }
+  fun curiousWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient = getWebClientCredentials(authorizedClientManager, curiousRootUri)
 
   @Bean
-  fun manageUsersWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient {
-    return getWebClientCredentials(authorizedClientManager, manageUsersRootUri)
-  }
+  fun manageUsersWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient = getWebClientCredentials(authorizedClientManager, manageUsersRootUri)
 }

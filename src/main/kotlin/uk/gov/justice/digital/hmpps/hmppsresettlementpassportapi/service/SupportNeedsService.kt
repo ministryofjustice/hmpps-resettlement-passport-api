@@ -346,7 +346,9 @@ class SupportNeedsService(
     // Update prisoner support need with the latest update id
     val prisonerSupportNeed = prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(prisonerNeedId) ?: throw ResourceNotFoundException("Cannot find prisoner support need ${prisonerNeedId}")
 
-    //  prisoner.id === prisonerSupportNeed.prisonerId otherwise throw ResourceNotFoundException("Cannot find prisoner support need on prisoner ${name}")
+    if (prisoner.id != prisonerSupportNeed.prisonerId) {
+      throw ResourceNotFoundException("Cannot find prisoner support need on prisoner $nomsId")
+    }
 
     val update = PrisonerSupportNeedUpdateEntity(
       prisonerSupportNeedId = prisonerNeedId,

@@ -18,19 +18,6 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayNeedsSummary
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeed
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedIdAndTitle
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedWithUpdates
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedsRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeed
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedStatus
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedSummary
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedUpdate
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedUpdates
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeeds
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedUpdateEntity
@@ -43,6 +30,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 import java.util.stream.Stream
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension::class)
@@ -706,6 +694,38 @@ class SupportNeedsServiceTest {
     supportNeedsService.postSupportNeeds(nomsId, prisonerNeedsRequest, auth)
 
     verify(prisonerSupportNeedRepository).save(PrisonerSupportNeedEntity(id = 9, prisonerId = 1, supportNeed = getSupportNeed(8, Pathway.HEALTH), otherDetail = null, createdBy = "A User", createdDate = fakeNow, latestUpdateId = 12))
+
+    unmockkAll()
+  }
+
+  @Test
+  fun `test patchSupportNeeds - happy path`() {
+    val nomsId = "A123"
+    val prisonerNeedId = 1234L
+    val supportNeedsUpdateRequest = SupportNeedsUpdateRequest(
+      text = "Some support need text",
+      isPrisonResponsible = true,
+      isProbationResponsible = false,
+      status = SupportNeedStatus.IN_PROGRESS
+    )
+
+    val auth = "auth"
+    val fakeNow = LocalDateTime.parse("2025-01-31T12:00:01")
+
+    mockkStatic(::getClaimFromJWTToken)
+    every { getClaimFromJWTToken(auth, "name") } returns "A User"
+
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.parse("2025-01-28T12:09:34"), prisonId = "MDI"))
+    whenever(prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(prisonerNeedId)).thenReturn(PrisonerSupportNeedEntity(prisonerId = 1, supportNeed = getSupportNeed(8, Pathway.HEALTH), otherDetail = null, createdBy = "A User", createdDate = fakeNow))
+    whenever(prisonerSupportNeedUpdateRepository.save(PrisonerSupportNeedUpdateEntity(prisonerSupportNeedId = 123L, createdBy = "A User", createdDate = fakeNow, updateText = "Some support need text", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = false))).thenReturn(PrisonerSupportNeedUpdateEntity(id = 1234, prisonerSupportNeedId = 123L, createdBy = "A User", createdDate = fakeNow, updateText = "Some support need text", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = false))
+
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+
+
+    supportNeedsService.patchPrisonerNeedById(nomsId, prisonerNeedId, supportNeedsUpdateRequest, auth)
+
+    verify(prisonerSupportNeedUpdateRepository).save(PrisonerSupportNeedUpdateEntity(id = 1234, prisonerSupportNeedId = 123L, createdBy = "A User", createdDate = fakeNow, updateText = "Some support need text", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = false))
 
     unmockkAll()
   }

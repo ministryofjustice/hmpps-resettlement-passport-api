@@ -717,7 +717,7 @@ class SupportNeedsServiceTest {
 
     whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.parse("2025-01-28T12:09:34"), prisonId = "MDI"))
     whenever(prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(prisonerNeedId)).thenReturn(PrisonerSupportNeedEntity(prisonerId = 1, supportNeed = getSupportNeed(8, Pathway.HEALTH), otherDetail = null, createdBy = "A User", createdDate = fakeNow))
-    whenever(prisonerSupportNeedUpdateRepository.save(PrisonerSupportNeedUpdateEntity(prisonerSupportNeedId = 123L, createdBy = "A User", createdDate = fakeNow, updateText = "Some support need text", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = false))).thenReturn(PrisonerSupportNeedUpdateEntity(id = 1234, prisonerSupportNeedId = 123L, createdBy = "A User", createdDate = fakeNow, updateText = "Some support need text", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = false))
+    whenever(prisonerSupportNeedUpdateRepository.save(PrisonerSupportNeedUpdateEntity(prisonerSupportNeedId = 1234L, createdBy = "A User", createdDate = fakeNow, updateText = "Some support need text", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = false))).thenReturn(PrisonerSupportNeedUpdateEntity(id = 567, prisonerSupportNeedId = 123L, createdBy = "A User", createdDate = fakeNow, updateText = "Some support need text", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = false))
 
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
@@ -725,7 +725,7 @@ class SupportNeedsServiceTest {
 
     supportNeedsService.patchPrisonerNeedById(nomsId, prisonerNeedId, supportNeedsUpdateRequest, auth)
 
-    verify(prisonerSupportNeedUpdateRepository).save(PrisonerSupportNeedUpdateEntity(id = 1234, prisonerSupportNeedId = 123L, createdBy = "A User", createdDate = fakeNow, updateText = "Some support need text", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = false))
+    verify(prisonerSupportNeedRepository).save(PrisonerSupportNeedEntity(prisonerId = 1, latestUpdateId = 567, supportNeed = getSupportNeed(8, Pathway.HEALTH), otherDetail = null, createdBy = "A User", createdDate = fakeNow))
 
     unmockkAll()
   }

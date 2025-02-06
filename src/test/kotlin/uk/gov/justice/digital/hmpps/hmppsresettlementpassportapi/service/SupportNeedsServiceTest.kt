@@ -729,4 +729,85 @@ class SupportNeedsServiceTest {
 
     unmockkAll()
   }
+
+  @Test
+  fun `test patchSupportNeeds - no prisoner`() {
+    val nomsId = "A123"
+    val prisonerNeedId = 1234L
+    val supportNeedsUpdateRequest = SupportNeedsUpdateRequest(
+      text = "Some support need text",
+      isPrisonResponsible = true,
+      isProbationResponsible = false,
+      status = SupportNeedStatus.IN_PROGRESS
+    )
+    val auth = "auth"
+
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(null)
+
+    val exception = assertThrows<ResourceNotFoundException> {
+      supportNeedsService.patchPrisonerNeedById(nomsId, prisonerNeedId, supportNeedsUpdateRequest, auth)
+    }
+
+    Assertions.assertEquals("Cannot find prisoner $nomsId", exception.message)
+  }
+
+  @Test
+  fun `test patchSupportNeeds - no prisoner support need`() {
+    val nomsId = "A123"
+    val prisonerNeedId = 1234L
+    val supportNeedsUpdateRequest = SupportNeedsUpdateRequest(
+      text = "Some support need text",
+      isPrisonResponsible = true,
+      isProbationResponsible = false,
+      status = SupportNeedStatus.IN_PROGRESS
+    )
+    val auth = "auth"
+    mockkStatic(::getClaimFromJWTToken)
+    every { getClaimFromJWTToken(auth, "name") } returns "A User"
+
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(
+      PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.now(), prisonId = "MDI")
+    )
+    whenever(prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(prisonerNeedId)).thenReturn(null)
+
+    val exception = assertThrows<ResourceNotFoundException> {
+      supportNeedsService.patchPrisonerNeedById(nomsId, prisonerNeedId, supportNeedsUpdateRequest, auth)
+    }
+
+    Assertions.assertEquals("Cannot find prisoner support need $prisonerNeedId", exception.message)
+  }
+
+  @Test
+  fun `test patchSupportNeeds - prisoner and support need mismatch`() {
+    val nomsId = "A123"
+    val prisonerNeedId = 1234L
+    val supportNeedsUpdateRequest = SupportNeedsUpdateRequest(
+      text = "Some support need text",
+      isPrisonResponsible = true,
+      isProbationResponsible = false,
+      status = SupportNeedStatus.IN_PROGRESS
+    )
+    val auth = "auth"
+    mockkStatic(::getClaimFromJWTToken)
+    every { getClaimFromJWTToken(auth, "name") } returns "A User"
+
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(
+      PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.now(), prisonId = "MDI")
+    )
+    whenever(prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(prisonerNeedId)).thenReturn(
+      PrisonerSupportNeedEntity(
+        prisonerId = 2, // Doesn't match prisoner ID
+        supportNeed = getSupportNeed(8, Pathway.HEALTH),
+        otherDetail = null,
+        createdBy = "A User",
+        createdDate = LocalDateTime.now()
+      )
+    )
+
+    val exception = assertThrows<ResourceNotFoundException> {
+      supportNeedsService.patchPrisonerNeedById(nomsId, prisonerNeedId, supportNeedsUpdateRequest, auth)
+    }
+
+    Assertions.assertEquals("Cannot find prisoner support need on prisoner $nomsId", exception.message)
+  }
 }

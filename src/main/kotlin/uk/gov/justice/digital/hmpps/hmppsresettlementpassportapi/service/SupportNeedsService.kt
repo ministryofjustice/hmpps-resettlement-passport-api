@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.*
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedUpdateEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
@@ -11,7 +12,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedUpdateRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.SupportNeedRepository
 import java.time.LocalDateTime
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.*
 
 @Service
 class SupportNeedsService(
@@ -344,7 +344,7 @@ class SupportNeedsService(
       ?: throw ServerWebInputException("JWT token must include a claim for 'name or 'sub'")
 
     // Update prisoner support need with the latest update id
-    val prisonerSupportNeed = prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(prisonerNeedId) ?: throw ResourceNotFoundException("Cannot find prisoner support need ${prisonerNeedId}")
+    val prisonerSupportNeed = prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(prisonerNeedId) ?: throw ResourceNotFoundException("Cannot find prisoner support need $prisonerNeedId")
 
     if (prisoner.id != prisonerSupportNeed.prisonerId) {
       throw ResourceNotFoundException("Cannot find prisoner support need on prisoner $nomsId")

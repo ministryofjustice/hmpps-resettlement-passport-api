@@ -18,6 +18,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.*
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedUpdateEntity
@@ -30,7 +31,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 import java.util.stream.Stream
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension::class)
@@ -706,7 +706,7 @@ class SupportNeedsServiceTest {
       text = "Some support need text",
       isPrisonResponsible = true,
       isProbationResponsible = false,
-      status = SupportNeedStatus.IN_PROGRESS
+      status = SupportNeedStatus.IN_PROGRESS,
     )
 
     val auth = "auth"
@@ -721,7 +721,6 @@ class SupportNeedsServiceTest {
 
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
-
 
     supportNeedsService.patchPrisonerNeedById(nomsId, prisonerNeedId, supportNeedsUpdateRequest, auth)
 
@@ -738,7 +737,7 @@ class SupportNeedsServiceTest {
       text = "Some support need text",
       isPrisonResponsible = true,
       isProbationResponsible = false,
-      status = SupportNeedStatus.IN_PROGRESS
+      status = SupportNeedStatus.IN_PROGRESS,
     )
     val auth = "auth"
 
@@ -759,14 +758,14 @@ class SupportNeedsServiceTest {
       text = "Some support need text",
       isPrisonResponsible = true,
       isProbationResponsible = false,
-      status = SupportNeedStatus.IN_PROGRESS
+      status = SupportNeedStatus.IN_PROGRESS,
     )
     val auth = "auth"
     mockkStatic(::getClaimFromJWTToken)
     every { getClaimFromJWTToken(auth, "name") } returns "A User"
 
     whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(
-      PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.now(), prisonId = "MDI")
+      PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.now(), prisonId = "MDI"),
     )
     whenever(prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(prisonerNeedId)).thenReturn(null)
 
@@ -785,14 +784,14 @@ class SupportNeedsServiceTest {
       text = "Some support need text",
       isPrisonResponsible = true,
       isProbationResponsible = false,
-      status = SupportNeedStatus.IN_PROGRESS
+      status = SupportNeedStatus.IN_PROGRESS,
     )
     val auth = "auth"
     mockkStatic(::getClaimFromJWTToken)
     every { getClaimFromJWTToken(auth, "name") } returns "A User"
 
     whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(
-      PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.now(), prisonId = "MDI")
+      PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.now(), prisonId = "MDI"),
     )
     whenever(prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(prisonerNeedId)).thenReturn(
       PrisonerSupportNeedEntity(
@@ -800,8 +799,8 @@ class SupportNeedsServiceTest {
         supportNeed = getSupportNeed(8, Pathway.HEALTH),
         otherDetail = null,
         createdBy = "A User",
-        createdDate = LocalDateTime.now()
-      )
+        createdDate = LocalDateTime.now(),
+      ),
     )
 
     val exception = assertThrows<ResourceNotFoundException> {

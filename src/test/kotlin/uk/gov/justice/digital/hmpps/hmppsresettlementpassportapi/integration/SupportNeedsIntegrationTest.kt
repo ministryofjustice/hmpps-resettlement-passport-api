@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedUpdateRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.SupportNeedRepository
 import java.time.LocalDateTime
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedsUpdateRequest
 
 class SupportNeedsIntegrationTest : IntegrationTestBase() {
 
@@ -572,10 +573,23 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `patch support needs - no prisoner found`() {
+    val nomsId = "G4161UF"
+    val prisonerNeedId = "101"
+    authedWebTestClient.patch()
+      .uri("/resettlement-passport/prisoner/$nomsId/need/$prisonerNeedId")
+      .bodyValue(SupportNeedsUpdateRequest(text = "", isPrisonResponsible = false, isProbationResponsible = false, status = SupportNeedStatus.IN_PROGRESS))
+      .exchange()
+      .expectStatus().isNotFound
+  }
+
+  @Test
   fun `patch support needs - unauthorised`() {
     val nomsId = "G4161UF"
+    val prisonerNeedId = "101"
+
     webTestClient.patch()
-      .uri("/resettlement-passport/prisoner/$nomsId/needs")
+      .uri("/resettlement-passport/prisoner/$nomsId/need/$prisonerNeedId")
       .exchange()
       .expectStatus().isUnauthorized
   }
@@ -583,9 +597,10 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
   @Test
   fun `patch support needs - forbidden`() {
     val nomsId = "G4161UF"
+    val prisonerNeedId = "101"
     webTestClient.patch()
-      .uri("/resettlement-passport/prisoner/$nomsId/needs")
-      .bodyValue(PrisonerNeedsRequest(emptyList()))
+      .uri("/resettlement-passport/prisoner/$nomsId/need/$prisonerNeedId")
+      .bodyValue(SupportNeedsUpdateRequest(text = "", isPrisonResponsible = false, isProbationResponsible = false, status = SupportNeedStatus.IN_PROGRESS))
       .headers(setAuthorisation())
       .exchange()
       .expectStatus().isForbidden

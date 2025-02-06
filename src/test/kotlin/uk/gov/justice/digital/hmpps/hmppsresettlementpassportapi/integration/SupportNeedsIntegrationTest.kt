@@ -570,4 +570,24 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isForbidden
   }
+
+  @Test
+  fun `patch support needs - unauthorised`() {
+    val nomsId = "G4161UF"
+    webTestClient.patch()
+      .uri("/resettlement-passport/prisoner/$nomsId/needs")
+      .exchange()
+      .expectStatus().isUnauthorized
+  }
+
+  @Test
+  fun `patch support needs - forbidden`() {
+    val nomsId = "G4161UF"
+    webTestClient.patch()
+      .uri("/resettlement-passport/prisoner/$nomsId/needs")
+      .bodyValue(PrisonerNeedsRequest(emptyList()))
+      .headers(setAuthorisation())
+      .exchange()
+      .expectStatus().isForbidden
+  }
 }

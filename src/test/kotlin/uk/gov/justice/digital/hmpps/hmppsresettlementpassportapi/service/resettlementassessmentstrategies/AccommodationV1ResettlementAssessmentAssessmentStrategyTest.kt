@@ -38,30 +38,7 @@ import java.util.stream.Stream
 
 class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.ACCOMMODATION, 1) {
 
-  @ParameterizedTest
-  @MethodSource("test next page function flow - no existing assessment data")
-  fun `test next page function flow - no existing assessment`(
-    questionsAndAnswers: List<ResettlementAssessmentRequestQuestionAndAnswer<*>>,
-    currentPage: String?,
-    expectedPage: String,
-  ) {
-    val nomsId = "123"
-    setUpMocks(nomsId, false)
-
-    val assessment = ResettlementAssessmentRequest(
-      questionsAndAnswers = questionsAndAnswers,
-    )
-    val nextPage = resettlementAssessmentStrategy.getNextPageId(
-      assessment = assessment,
-      nomsId = nomsId,
-      pathway = Pathway.ACCOMMODATION,
-      assessmentType = ResettlementAssessmentType.BCST2,
-      currentPage = currentPage,
-    )
-    Assertions.assertEquals(expectedPage, nextPage)
-  }
-
-  private fun `test next page function flow - no existing assessment data`() = Stream.of(
+  override fun `test next page function flow - no existing assessment data`(): Stream<Arguments> = Stream.of(
     // Start of flow - send null current page to get first page
     Arguments.of(
       listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(),
@@ -299,22 +276,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
     Assertions.assertEquals("400 BAD_REQUEST \"If current page is defined, questions must also be defined.\"", exception.message)
   }
 
-  @ParameterizedTest
-  @MethodSource("test get page from Id - no existing assessment data")
-  fun `test get page from Id - no existing assessment`(pageIdInput: String, expectedPage: ResettlementAssessmentResponsePage) {
-    val nomsId = "123"
-    setUpMocks("123", false)
-
-    val page = resettlementAssessmentStrategy.getPageFromId(
-      nomsId = nomsId,
-      pathway = Pathway.ACCOMMODATION,
-      assessmentType = ResettlementAssessmentType.BCST2,
-      pageId = pageIdInput,
-    )
-    Assertions.assertEquals(expectedPage, page)
-  }
-
-  private fun `test get page from Id - no existing assessment data`() = Stream.of(
+  override fun `test get page from Id - no existing assessment data`(): Stream<Arguments> = Stream.of(
     Arguments.of(
       "WHERE_DID_THEY_LIVE",
       ResettlementAssessmentResponsePage(

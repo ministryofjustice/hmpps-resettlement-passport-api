@@ -60,8 +60,9 @@ class ResettlementAssessmentStrategy(
 
     return AssessmentQuestionSet(
       version = pathwayConfig.version,
+      requireStatusQuestion = pathwayConfig.requireStatusQuestion,
       pathway = pathwayConfig.pathway,
-      // Need to remove either ASSESSMENT_SUMMARY or PRERELEASE_ASSESSMENT_SUMMARY page based on whether it's a BCST2 or RESETTLEMENT_PLAN
+      // May need to remove either ASSESSMENT_SUMMARY or PRERELEASE_ASSESSMENT_SUMMARY page based on whether it's a BCST2 or RESETTLEMENT_PLAN
       pages = pathwayConfig.pages.filter {
         if (assessmentType == ResettlementAssessmentType.BCST2) {
           it.id != "PRERELEASE_ASSESSMENT_SUMMARY"
@@ -179,11 +180,11 @@ class ResettlementAssessmentStrategy(
       ResettlementAssessmentStatus.SUBMITTED
     }
 
-    // If it's not an edit, get the status and the case note out of the questions and answers
+    // If it's not an edit and the report version supports statuses, get the status and the case note out of the questions and answers
     var status: Status? = null
     var caseNoteText: String? = null
 
-    if (!edit) {
+    if (!edit && getConfig(pathway, assessmentType, assessment.version).requireStatusQuestion) {
       // Get statusChangedTo out of SUPPORT_NEEDS question and convert to a Status
       val supportNeedsQuestionAndAnswer = if (assessmentType == ResettlementAssessmentType.RESETTLEMENT_PLAN) {
         assessment.questionsAndAnswers.first { it.question == "SUPPORT_NEEDS_PRERELEASE" }
@@ -578,6 +579,7 @@ data class AssessmentQuestionSets(
 
 data class AssessmentQuestionSet(
   val version: Int,
+  val requireStatusQuestion: Boolean = true,
   val pathway: Pathway?,
   val pages: List<AssessmentConfigPage>,
 )

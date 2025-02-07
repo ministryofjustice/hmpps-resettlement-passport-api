@@ -1,0 +1,46 @@
+version: 3
+pathway: "DRUGS_AND_ALCOHOL"
+requireStatusQuestion: false
+pages:
+  - id: "DRUGS_AND_ALCOHOL_REPORT"
+    title: "Drugs and alcohol report"
+    questions:
+      - id: "DRUG_MISUSE_ISSUES"
+        title: "Does the person in prison have any previous or current drug misuse issues?"
+        type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has any previous or current drug misuse issues"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+      - id: "DRUG_MISUSE_ISSUES_ADDITIONAL_DETAILS"
+        title: "Additional details"
+        subTitle: "Specify if they have spoken to the healthcare team about their issues. Do not include any details about medical treatments, conditions or ongoing monitoring."
+        type: "LONG_TEXT"
+        validation:
+          type: "OPTIONAL"
+      - id: "ALCOHOL_MISUSE_ISSUES"
+        title: "Does the person in prison have any previous or current alcohol misuse issues?"
+        type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has any previous or current alcohol misuse issues"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+      - id: "ALCOHOL_MISUSE_ISSUES_ADDITIONAL_DETAILS"
+        title: "Additional details"
+        subTitle: "Specify if they have spoken to the healthcare team about their issues. Do not include any details about medical treatments, conditions or ongoing monitoring."
+        type: "LONG_TEXT"
+        validation:
+          type: "OPTIONAL"
+    nextPageLogic:
+      - nextPageId: "CHECK_ANSWERS"
+  - id: "CHECK_ANSWERS"

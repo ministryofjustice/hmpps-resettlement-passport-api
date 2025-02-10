@@ -1,0 +1,105 @@
+version: 4
+pathway: "EDUCATION_SKILLS_AND_WORK"
+requireStatusQuestion: false
+pages:
+  - id: "EDUCATION_SKILLS_AND_WORK_REPORT"
+    title: "Education, skills and work report"
+    questions:
+      - id: "DID_THEY_HAVE_JOB_BEFORE_CUSTODY"
+        title: "Did the person in prison have a job before custody?"
+        type: "RADIO"
+        validation:
+          message: "Select whether the person in prison had a job before custody"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+            nestedQuestions:
+              - id: "DID_THEY_HAVE_JOB_BEFORE_CUSTODY_JOB_TITLE"
+                title: "Job title"
+                type: "SHORT_TEXT"
+                validation:
+                  message: "Enter job title"
+              - id: "DID_THEY_HAVE_JOB_BEFORE_CUSTODY_EMPLOYER_NAME"
+                title: "Employer name"
+                type: "SHORT_TEXT"
+                validation:
+                  message: "Enter employer name"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+      - id: "DID_THEY_HAVE_JOB_BEFORE_CUSTODY_ADDITIONAL_DETAILS"
+        title: "Additional details"
+        type: "LONG_TEXT"
+        validation:
+          type: "OPTIONAL"
+      - id: "DO_THEY_HAVE_JOB_ARRANGED"
+        title: "Does the person in prison have a job arranged for when they are released?"
+        type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has a job arranged for when they are released"
+        options:
+          - id: "YES_RETURNING_TO_SAME_JOB"
+            displayText: "Yes, returning to same job"
+          - id: "YES_STARTING_NEW_JOB"
+            displayText: "Yes, starting new job"
+            nestedQuestions:
+              - id: "STARTING_NEW_JOB_JOB_TITLE"
+                title: "Job title"
+                type: "SHORT_TEXT"
+                validation:
+                  message: "Enter job title"
+              - id: "STARTING_NEW_JOB_EMPLOYER_NAME"
+                title: "Employer name"
+                type: "SHORT_TEXT"
+                validation:
+                  message: "Enter employer name"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+      - id: "DO_THEY_HAVE_JOB_ARRANGED_ADDITIONAL_DETAILS"
+        title: "Additional details"
+        subTitle: "Specify if they were employed full or part time or whether they were self-employed. Specify if they had a permanent, temporary, fixed-term or zero hours contract."
+        type: "LONG_TEXT"
+        validation:
+          type: "OPTIONAL"
+      - id: "WERE_THEY_IN_EDUCATION_BEFORE_CUSTODY"
+        title: "Was the person in prison in education or training before custody?"
+        type: "RADIO"
+        validation:
+          message: "Select whether the person in prison was in education or training before custody"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+      - id: "WERE_THEY_IN_EDUCATION_BEFORE_CUSTODY_ADDITIONAL_DETAILS"
+        title: "Additional details"
+        type: "LONG_TEXT"
+        validation:
+          type: "OPTIONAL"
+      - id: "EDUCATION_WHEN_RELEASED"
+        title: "Does the person in prison have education or training in place for when they are released?"
+        type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has education or training in place for when they are released"
+        options:
+          - id: "YES_SAME_EDUCATION"
+            displayText: "Yes, returning to same education or training"
+          - id: "YES_STARTING_NEW_EDUCATION"
+            displayText: "Yes, starting new education or training"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+      - id: "EDUCATION_WHEN_RELEASED_ADDITIONAL_DETAILS"
+        title: "Additional details"
+        type: "LONG_TEXT"
+        validation:
+          type: "OPTIONAL"
+    nextPageLogic:
+      - nextPageId: "CHECK_ANSWERS"
+  - id: "CHECK_ANSWERS"

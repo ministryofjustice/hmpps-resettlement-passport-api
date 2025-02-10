@@ -1,8 +1,12 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies
 
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
@@ -12,6 +16,9 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResettlementAssessmentConfig
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
@@ -22,10 +29,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ProfileTagsRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import java.time.LocalDateTime
+import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension::class)
-open class BaseResettlementAssessmentStrategyTest(val pathway: Pathway, val version: Int) {
+abstract class BaseResettlementAssessmentStrategyTest(val pathway: Pathway, val version: Int) {
   lateinit var resettlementAssessmentStrategy: ResettlementAssessmentStrategy
 
   @Mock
@@ -76,4 +84,48 @@ open class BaseResettlementAssessmentStrategyTest(val pathway: Pathway, val vers
       ),
     ).thenReturn(resettlementAssessmentEntity)
   }
+
+  @ParameterizedTest(name = "{1} -> {2}")
+  @MethodSource("test next page function flow - no existing assessment data")
+  fun `test next page function flow - no existing assessment`(
+    questionsAndAnswers: List<ResettlementAssessmentRequestQuestionAndAnswer<*>>,
+    currentPage: String?,
+    expectedPage: String,
+  ) {
+    val nomsId = "123"
+    setUpMocks(nomsId, false)
+
+    val assessment = ResettlementAssessmentRequest(
+      questionsAndAnswers = questionsAndAnswers,
+    )
+    val nextPage = resettlementAssessmentStrategy.getNextPageId(
+      assessment = assessment,
+      nomsId = nomsId,
+      pathway = pathway,
+      assessmentType = ResettlementAssessmentType.BCST2,
+      currentPage = currentPage,
+      version = version,
+    )
+    Assertions.assertEquals(expectedPage, nextPage)
+  }
+
+  abstract fun `test next page function flow - no existing assessment data`(): Stream<Arguments>
+
+  @ParameterizedTest(name = "{0} page")
+  @MethodSource("test get page from Id - no existing assessment data")
+  fun `test get page from Id - no existing assessment`(pageIdInput: String, expectedPage: ResettlementAssessmentResponsePage) {
+    val nomsId = "123"
+    setUpMocks("123", false)
+
+    val page = resettlementAssessmentStrategy.getPageFromId(
+      nomsId = nomsId,
+      pathway = pathway,
+      assessmentType = ResettlementAssessmentType.BCST2,
+      pageId = pageIdInput,
+      version = version,
+    )
+    Assertions.assertEquals(expectedPage, page)
+  }
+
+  abstract fun `test get page from Id - no existing assessment data`(): Stream<Arguments>
 }

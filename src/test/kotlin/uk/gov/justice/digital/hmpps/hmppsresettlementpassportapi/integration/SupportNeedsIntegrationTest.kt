@@ -584,7 +584,7 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
           text = "This is an update 9",
           status = SupportNeedStatus.IN_PROGRESS,
           isProbationResponsible = true,
-          isPrisonResponsible = true
+          isPrisonResponsible = true,
         ),
       )
       .exchange()

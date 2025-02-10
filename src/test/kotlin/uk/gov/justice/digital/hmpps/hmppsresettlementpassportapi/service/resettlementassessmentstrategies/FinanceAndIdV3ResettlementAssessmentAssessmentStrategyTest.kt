@@ -13,7 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.yesNoOptions
 import java.util.stream.Stream
 
-class FinanceAndIdV2ResettlementAssessmentAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.FINANCE_AND_ID, 2) {
+class FinanceAndIdV3ResettlementAssessmentAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.FINANCE_AND_ID, 3) {
 
   override fun `test next page function flow - no existing assessment data`(): Stream<Arguments> = Stream.of(
     // Start of flow - send null current page to get first page
@@ -22,22 +22,10 @@ class FinanceAndIdV2ResettlementAssessmentAssessmentStrategyTest : BaseResettlem
       null,
       "FINANCE_AND_ID_REPORT",
     ),
-    // Any answer to FINANCE_AND_ID_REPORT, go to SUPPORT_REQUIREMENTS
+    // Any answer to FINANCE_AND_ID_REPORT, go to CHECK_ANSWERS
     Arguments.of(
       listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(),
       "FINANCE_AND_ID_REPORT",
-      "SUPPORT_REQUIREMENTS",
-    ),
-    // Any answer to SUPPORT_REQUIREMENTS, go to ASSESSMENT_SUMMARY
-    Arguments.of(
-      listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(),
-      "SUPPORT_REQUIREMENTS",
-      "ASSESSMENT_SUMMARY",
-    ),
-    // Any answer to ASSESSMENT_SUMMARY, go to CHECK_ANSWERS
-    Arguments.of(
-      listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(),
-      "ASSESSMENT_SUMMARY",
       "CHECK_ANSWERS",
     ),
   )
@@ -209,99 +197,6 @@ class FinanceAndIdV2ResettlementAssessmentAssessmentStrategyTest : BaseResettlem
               validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "FINANCE_AND_ID_REPORT",
-          ),
-        ),
-      ),
-    ),
-    Arguments.of(
-      "SUPPORT_REQUIREMENTS",
-      ResettlementAssessmentResponsePage(
-        id = "SUPPORT_REQUIREMENTS",
-        questionsAndAnswers = listOf(
-          ResettlementAssessmentQuestionAndAnswer(
-            question = ResettlementAssessmentQuestion(
-              id = "SUPPORT_REQUIREMENTS",
-              title = "Support needs",
-              subTitle = "Select any needs you have identified that could be met by prison or probation staff.",
-              type = TypeOfQuestion.CHECKBOX,
-              validation = Validation(ValidationType.MANDATORY, message = "Select support needs or select 'No support needs identified'"),
-              options = listOf(
-                ResettlementAssessmentOption(
-                  id = "APPLY_FOR_BANK_ACCOUNT",
-                  displayText = "Apply for a bank account",
-                  tag = "NO_BANK_ACCOUNT",
-                ),
-                ResettlementAssessmentOption(
-                  id = "APPLY_FOR_ID",
-                  displayText = "Apply for ID documents",
-                  tag = "MANAGE_ID_DOCUMENTS",
-                ),
-                ResettlementAssessmentOption(
-                  id = "SUPPORT_TO_MANAGE_DEBT",
-                  displayText = "Support to manage debts or arrears",
-                  tag = "MANAGE_DEBT_ARREARS",
-                ),
-                ResettlementAssessmentOption(
-                  id = "HELP_TO_CONTACT_BANK",
-                  displayText = "Help to contact their bank to manage their account",
-                  tag = "HELP_TO_CONTACT_BANK",
-                ),
-                ResettlementAssessmentOption(
-                  id = "OTHER_SUPPORT_NEEDS",
-                  displayText = "Other",
-                  freeText = true,
-                ),
-                ResettlementAssessmentOption(
-                  id = "NO_SUPPORT_NEEDS",
-                  displayText = "No support needs identified",
-                  exclusive = true,
-                ),
-              ),
-            ),
-            originalPageId = "SUPPORT_REQUIREMENTS",
-          ),
-          ResettlementAssessmentQuestionAndAnswer(
-            question = ResettlementAssessmentQuestion(
-              id = "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS",
-              title = "Additional details",
-              subTitle = "This information will only be displayed in PSfR.",
-              type = TypeOfQuestion.LONG_TEXT,
-              validationType = ValidationType.OPTIONAL,
-              validation = Validation(ValidationType.OPTIONAL),
-            ),
-            originalPageId = "SUPPORT_REQUIREMENTS",
-          ),
-        ),
-      ),
-    ),
-    Arguments.of(
-      "ASSESSMENT_SUMMARY",
-      ResettlementAssessmentResponsePage(
-        id = "ASSESSMENT_SUMMARY",
-        title = "Finance and ID report summary",
-        questionsAndAnswers = listOf(
-          ResettlementAssessmentQuestionAndAnswer(
-            question = ResettlementAssessmentQuestion(
-              id = "SUPPORT_NEEDS",
-              title = "Finance and ID resettlement status",
-              subTitle = "Select one option.",
-              type = TypeOfQuestion.RADIO,
-              validation = Validation(ValidationType.MANDATORY, message = "Select a finance and ID resettlement status"),
-              options = listOf(
-                ResettlementAssessmentOption(
-                  id = "SUPPORT_REQUIRED",
-                  displayText = "Support required",
-                  description = "a need for support has been identified and is accepted",
-                ),
-                ResettlementAssessmentOption(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
-                ResettlementAssessmentOption(
-                  id = "SUPPORT_DECLINED",
-                  displayText = "Support declined",
-                  description = "a need has been identified but support is declined",
-                ),
-              ),
-            ),
-            originalPageId = "ASSESSMENT_SUMMARY",
           ),
         ),
       ),

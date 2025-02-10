@@ -13,7 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.yesNoOptions
 import java.util.stream.Stream
 
-class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.EDUCATION_SKILLS_AND_WORK, 3) {
+class EducationSkillsAndWorkV4ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.EDUCATION_SKILLS_AND_WORK, 4) {
 
   override fun `test next page function flow - no existing assessment data`(): Stream<Arguments> = Stream.of(
     // Start of flow - send null current page to get first page
@@ -22,22 +22,10 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
       null,
       "EDUCATION_SKILLS_AND_WORK_REPORT",
     ),
-    // Any answer to EDUCATION_SKILLS_AND_WORK_REPORT, go to SUPPORT_REQUIREMENTS
+    // Any answer to EDUCATION_SKILLS_AND_WORK_REPORT, go to CHECK_ANSWERS
     Arguments.of(
       listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(),
       "EDUCATION_SKILLS_AND_WORK_REPORT",
-      "SUPPORT_REQUIREMENTS",
-    ),
-    // Any answer to SUPPORT_REQUIREMENTS, go to ASSESSMENT_SUMMARY
-    Arguments.of(
-      listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(),
-      "SUPPORT_REQUIREMENTS",
-      "ASSESSMENT_SUMMARY",
-    ),
-    // Any answer to ASSESSMENT_SUMMARY, go to CHECK_ANSWERS
-    Arguments.of(
-      listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(),
-      "ASSESSMENT_SUMMARY",
       "CHECK_ANSWERS",
     ),
   )
@@ -220,108 +208,6 @@ class EducationSkillsAndWorkV3ResettlementAssessmentStrategyTest : BaseResettlem
               validation = Validation(ValidationType.OPTIONAL),
             ),
             originalPageId = "EDUCATION_SKILLS_AND_WORK_REPORT",
-          ),
-        ),
-      ),
-    ),
-    Arguments.of(
-      "SUPPORT_REQUIREMENTS",
-      ResettlementAssessmentResponsePage(
-        id = "SUPPORT_REQUIREMENTS",
-        questionsAndAnswers = listOf(
-          ResettlementAssessmentQuestionAndAnswer(
-            question = ResettlementAssessmentQuestion(
-              id = "SUPPORT_REQUIREMENTS",
-              title = "Support needs",
-              subTitle = "Select any needs you have identified that could be met by prison or probation staff.",
-              type = TypeOfQuestion.CHECKBOX,
-              validation = Validation(ValidationType.MANDATORY, message = "Select support needs or select 'No support needs identified'"),
-              options = listOf(
-                ResettlementAssessmentOption(
-                  id = "HELP_TO_FIND_JOB",
-                  displayText = "Help to find a job for release",
-                  tag = "FIND_A_JOB",
-                ),
-                ResettlementAssessmentOption(
-                  id = "SUPPORT_TO_CONTACT_EMPLOYER_FROM_BEFORE_CUSTODY",
-                  displayText = "Support contacting employer from before custody",
-                ),
-                ResettlementAssessmentOption(
-                  id = "SUPPORT_TO_CONTACT_EMPLOYER_FOR_AFTER_RELEASE",
-                  displayText = "Support contacting employer for after release",
-                  tag = "CONTACT_EMPLOYER",
-                ),
-                ResettlementAssessmentOption(
-                  id = "HELP_FIND_EDUCATION_FOR_RELEASE",
-                  displayText = "Help to find education or training for release",
-                  tag = "FIND_EDUCATION_TRAINING",
-                ),
-                ResettlementAssessmentOption(
-                  id = "SUPPORT_CONTACTING_TRAINING_PROVIDER",
-                  displayText = "Support contacting an education or training provider",
-                  tag = "CONTACT_EDUCATION_TRAINING",
-                ),
-                ResettlementAssessmentOption(
-                  id = "INFORMATION_ABOUT_GRANTS_AND_TRAINING",
-                  displayText = "Information about bursaries and grants for courses or training",
-                  tag = "BURSARIES_AND_GRANTS_TRAINING",
-                ),
-                ResettlementAssessmentOption(
-                  id = "OTHER_SUPPORT_NEEDS",
-                  displayText = "Other",
-                  freeText = true,
-                ),
-                ResettlementAssessmentOption(
-                  id = "NO_SUPPORT_NEEDS",
-                  displayText = "No support needs identified",
-                  exclusive = true,
-                ),
-              ),
-            ),
-            originalPageId = "SUPPORT_REQUIREMENTS",
-          ),
-          ResettlementAssessmentQuestionAndAnswer(
-            question = ResettlementAssessmentQuestion(
-              id = "SUPPORT_REQUIREMENTS_ADDITIONAL_DETAILS",
-              title = "Additional details",
-              subTitle = "This information will only be displayed in PSfR.",
-              type = TypeOfQuestion.LONG_TEXT,
-              validationType = ValidationType.OPTIONAL,
-              validation = Validation(ValidationType.OPTIONAL),
-            ),
-            originalPageId = "SUPPORT_REQUIREMENTS",
-          ),
-        ),
-      ),
-    ),
-    Arguments.of(
-      "ASSESSMENT_SUMMARY",
-      ResettlementAssessmentResponsePage(
-        id = "ASSESSMENT_SUMMARY",
-        title = "Education, skills and work report summary",
-        questionsAndAnswers = listOf(
-          ResettlementAssessmentQuestionAndAnswer(
-            question = ResettlementAssessmentQuestion(
-              id = "SUPPORT_NEEDS",
-              title = "Education, skills and work resettlement status",
-              subTitle = "Select one option.",
-              type = TypeOfQuestion.RADIO,
-              validation = Validation(ValidationType.MANDATORY, message = "Select an education, skills and work resettlement status"),
-              options = listOf(
-                ResettlementAssessmentOption(
-                  id = "SUPPORT_REQUIRED",
-                  displayText = "Support required",
-                  description = "a need for support has been identified and is accepted",
-                ),
-                ResettlementAssessmentOption(id = "SUPPORT_NOT_REQUIRED", displayText = "Support not required", description = "no need was identified"),
-                ResettlementAssessmentOption(
-                  id = "SUPPORT_DECLINED",
-                  displayText = "Support declined",
-                  description = "a need has been identified but support is declined",
-                ),
-              ),
-            ),
-            originalPageId = "ASSESSMENT_SUMMARY",
           ),
         ),
       ),

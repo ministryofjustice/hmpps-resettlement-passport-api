@@ -358,7 +358,6 @@ class SupportNeedsService(
       ?: getClaimFromJWTToken(auth, "sub")
       ?: throw ServerWebInputException("JWT token must include a claim for 'name or 'sub'")
 
-    // Update prisoner support need with the latest update id
     val prisonerSupportNeed = prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(prisonerNeedId) ?: throw ResourceNotFoundException("Cannot find prisoner support need $prisonerNeedId")
 
     if (prisoner.id != prisonerSupportNeed.prisonerId) {
@@ -376,6 +375,7 @@ class SupportNeedsService(
     )
     val savedPrisonerSupportNeedUpdate = prisonerSupportNeedUpdateRepository.save(update)
 
+    // Update prisoner support need with the latest update id
     prisonerSupportNeed.latestUpdateId = savedPrisonerSupportNeedUpdate.id
 
     prisonerSupportNeedRepository.save(prisonerSupportNeed)

@@ -573,6 +573,49 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  @Sql("classpath:testdata/sql/seed-prisoner-support-needs-5.sql")
+  fun `test patch support needs - happy path`() {
+    val nomsId = "G4161UF"
+    val prisonerNeedId = 101
+    authedWebTestClient.patch()
+      .uri("/resettlement-passport/prisoner/$nomsId/need/$prisonerNeedId")
+      .bodyValue(
+        SupportNeedsUpdateRequest(
+          text = "This is an update 9",
+          status = SupportNeedStatus.IN_PROGRESS,
+          isProbationResponsible = true,
+          isPrisonResponsible = true
+        ),
+      )
+      .exchange()
+      .expectStatus().isOk
+
+    val expectedPrisonerSupportNeeds = listOf(
+      PrisonerSupportNeedEntity(id = 101, prisonerId = 1, supportNeed = supportNeedRepository.findById(1).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = 1),
+      PrisonerSupportNeedEntity(id = 102, prisonerId = 1, supportNeed = supportNeedRepository.findById(3).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = true, deletedDate = LocalDateTime.parse("2024-02-22T09:36:28.713421"), latestUpdateId = null),
+      PrisonerSupportNeedEntity(id = 103, prisonerId = 1, supportNeed = supportNeedRepository.findById(3).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = 106),
+      PrisonerSupportNeedEntity(id = 104, prisonerId = 1, supportNeed = supportNeedRepository.findById(5).get(), otherDetail = "Other 1", createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = 107),
+      PrisonerSupportNeedEntity(id = 105, prisonerId = 1, supportNeed = supportNeedRepository.findById(5).get(), otherDetail = "Other 2", createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = 109),
+      PrisonerSupportNeedEntity(id = 106, prisonerId = 1, supportNeed = supportNeedRepository.findById(15).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = null),
+    )
+    Assertions.assertEquals(expectedPrisonerSupportNeeds, prisonerSupportNeedRepository.findAll().sortedBy { it.id })
+
+    val expectedPrisonerSupportNeedUpdates = listOf(
+      PrisonerSupportNeedUpdateEntity(id = 1, prisonerSupportNeedId = 101, createdBy = "test", createdDate = LocalDateTime.parse("2025-01-09T12:00:00"), updateText = "This is an update 9", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = true, deleted = false, deletedDate = null),
+      PrisonerSupportNeedUpdateEntity(id = 101, prisonerSupportNeedId = 101, createdBy = "User A", createdDate = LocalDateTime.parse("2024-02-01T09:36:32.713421"), updateText = "This is an update 1", status = SupportNeedStatus.NOT_STARTED, isPrison = false, isProbation = false, deleted = false, deletedDate = null),
+      PrisonerSupportNeedUpdateEntity(id = 102, prisonerSupportNeedId = 101, createdBy = "User A", createdDate = LocalDateTime.parse("2024-02-01T09:36:32.713421"), updateText = "Deleted update", status = SupportNeedStatus.DECLINED, isPrison = false, isProbation = true, deleted = true, deletedDate = LocalDateTime.parse("2024-02-01T09:36:32.713421")),
+      PrisonerSupportNeedUpdateEntity(id = 103, prisonerSupportNeedId = 101, createdBy = "User B", createdDate = LocalDateTime.parse("2024-02-03T09:36:32.713421"), updateText = "This is an update 2", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = false, deleted = false, deletedDate = null),
+      PrisonerSupportNeedUpdateEntity(id = 104, prisonerSupportNeedId = 101, createdBy = "User C", createdDate = LocalDateTime.parse("2024-02-02T09:36:32.713421"), updateText = "This is an update 3", status = SupportNeedStatus.MET, isPrison = true, isProbation = true, deleted = false, deletedDate = null),
+      PrisonerSupportNeedUpdateEntity(id = 105, prisonerSupportNeedId = 103, createdBy = "User C", createdDate = LocalDateTime.parse("2024-02-02T09:36:32.713421"), updateText = "This is an update 4", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = false, deleted = false, deletedDate = null),
+      PrisonerSupportNeedUpdateEntity(id = 106, prisonerSupportNeedId = 103, createdBy = "User C", createdDate = LocalDateTime.parse("2024-02-05T09:36:32.713421"), updateText = "This is an update 5", status = SupportNeedStatus.NOT_STARTED, isPrison = true, isProbation = true, deleted = false, deletedDate = null),
+      PrisonerSupportNeedUpdateEntity(id = 107, prisonerSupportNeedId = 104, createdBy = "User A", createdDate = LocalDateTime.parse("2024-02-03T10:36:32.713421"), updateText = "This is an update 6", status = SupportNeedStatus.MET, isPrison = true, isProbation = false, deleted = false, deletedDate = null),
+      PrisonerSupportNeedUpdateEntity(id = 108, prisonerSupportNeedId = 104, createdBy = "User C", createdDate = LocalDateTime.parse("2024-02-03T09:36:32.713421"), updateText = "This is an update 7", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = true, deleted = false, deletedDate = null),
+      PrisonerSupportNeedUpdateEntity(id = 109, prisonerSupportNeedId = 105, createdBy = "User B", createdDate = LocalDateTime.parse("2024-02-11T09:36:32.713421"), updateText = "This is an update 8", status = SupportNeedStatus.DECLINED, isPrison = false, isProbation = false, deleted = false, deletedDate = null),
+    )
+    Assertions.assertEquals(expectedPrisonerSupportNeedUpdates, prisonerSupportNeedUpdateRepository.findAll().sortedBy { it.id })
+  }
+
+  @Test
   fun `patch support needs - no prisoner found`() {
     val nomsId = "G4161UF"
     val prisonerNeedId = "101"

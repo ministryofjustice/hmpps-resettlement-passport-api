@@ -31,6 +31,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNee
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedUpdate
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedUpdates
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeeds
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedsUpdateRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedUpdateEntity
@@ -708,5 +709,117 @@ class SupportNeedsServiceTest {
     verify(prisonerSupportNeedRepository).save(PrisonerSupportNeedEntity(id = 9, prisonerId = 1, supportNeed = getSupportNeed(8, Pathway.HEALTH), otherDetail = null, createdBy = "A User", createdDate = fakeNow, latestUpdateId = 12))
 
     unmockkAll()
+  }
+
+  @Test
+  fun `test patchSupportNeeds - happy path`() {
+    val nomsId = "A123"
+    val prisonerNeedId = 1234L
+    val supportNeedsUpdateRequest = SupportNeedsUpdateRequest(
+      text = "Some support need text",
+      isPrisonResponsible = true,
+      isProbationResponsible = false,
+      status = SupportNeedStatus.IN_PROGRESS,
+    )
+
+    val auth = "auth"
+    val fakeNow = LocalDateTime.parse("2025-01-31T12:00:01")
+
+    mockkStatic(::getClaimFromJWTToken)
+    every { getClaimFromJWTToken(auth, "name") } returns "A User"
+
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.parse("2025-01-28T12:09:34"), prisonId = "MDI"))
+    whenever(prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(prisonerNeedId)).thenReturn(PrisonerSupportNeedEntity(prisonerId = 1, supportNeed = getSupportNeed(8, Pathway.HEALTH), otherDetail = null, createdBy = "A User", createdDate = fakeNow))
+    whenever(prisonerSupportNeedUpdateRepository.save(PrisonerSupportNeedUpdateEntity(prisonerSupportNeedId = 1234L, createdBy = "A User", createdDate = fakeNow, updateText = "Some support need text", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = false))).thenReturn(PrisonerSupportNeedUpdateEntity(id = 567, prisonerSupportNeedId = 123L, createdBy = "A User", createdDate = fakeNow, updateText = "Some support need text", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = false))
+
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+
+    supportNeedsService.patchPrisonerNeedById(nomsId, prisonerNeedId, supportNeedsUpdateRequest, auth)
+
+    verify(prisonerSupportNeedRepository).save(PrisonerSupportNeedEntity(prisonerId = 1, latestUpdateId = 567, supportNeed = getSupportNeed(8, Pathway.HEALTH), otherDetail = null, createdBy = "A User", createdDate = fakeNow))
+
+    unmockkAll()
+  }
+
+  @Test
+  fun `test patchSupportNeeds - no prisoner`() {
+    val nomsId = "A123"
+    val prisonerNeedId = 1234L
+    val supportNeedsUpdateRequest = SupportNeedsUpdateRequest(
+      text = "Some support need text",
+      isPrisonResponsible = true,
+      isProbationResponsible = false,
+      status = SupportNeedStatus.IN_PROGRESS,
+    )
+    val auth = "auth"
+
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(null)
+
+    val exception = assertThrows<ResourceNotFoundException> {
+      supportNeedsService.patchPrisonerNeedById(nomsId, prisonerNeedId, supportNeedsUpdateRequest, auth)
+    }
+
+    Assertions.assertEquals("Cannot find prisoner $nomsId", exception.message)
+  }
+
+  @Test
+  fun `test patchSupportNeeds - no prisoner support need`() {
+    val nomsId = "A123"
+    val prisonerNeedId = 1234L
+    val supportNeedsUpdateRequest = SupportNeedsUpdateRequest(
+      text = "Some support need text",
+      isPrisonResponsible = true,
+      isProbationResponsible = false,
+      status = SupportNeedStatus.IN_PROGRESS,
+    )
+    val auth = "auth"
+    mockkStatic(::getClaimFromJWTToken)
+    every { getClaimFromJWTToken(auth, "name") } returns "A User"
+
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(
+      PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.now(), prisonId = "MDI"),
+    )
+    whenever(prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(prisonerNeedId)).thenReturn(null)
+
+    val exception = assertThrows<ResourceNotFoundException> {
+      supportNeedsService.patchPrisonerNeedById(nomsId, prisonerNeedId, supportNeedsUpdateRequest, auth)
+    }
+
+    Assertions.assertEquals("Cannot find prisoner support need $prisonerNeedId", exception.message)
+  }
+
+  @Test
+  fun `test patchSupportNeeds - prisoner and support need mismatch`() {
+    val nomsId = "A123"
+    val prisonerNeedId = 1234L
+    val supportNeedsUpdateRequest = SupportNeedsUpdateRequest(
+      text = "Some support need text",
+      isPrisonResponsible = true,
+      isProbationResponsible = false,
+      status = SupportNeedStatus.IN_PROGRESS,
+    )
+    val auth = "auth"
+    mockkStatic(::getClaimFromJWTToken)
+    every { getClaimFromJWTToken(auth, "name") } returns "A User"
+
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(
+      PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.now(), prisonId = "MDI"),
+    )
+    whenever(prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(prisonerNeedId)).thenReturn(
+      PrisonerSupportNeedEntity(
+        prisonerId = 2, // Doesn't match prisoner ID
+        supportNeed = getSupportNeed(8, Pathway.HEALTH),
+        otherDetail = null,
+        createdBy = "A User",
+        createdDate = LocalDateTime.now(),
+      ),
+    )
+
+    val exception = assertThrows<ResourceNotFoundException> {
+      supportNeedsService.patchPrisonerNeedById(nomsId, prisonerNeedId, supportNeedsUpdateRequest, auth)
+    }
+
+    Assertions.assertEquals("Cannot find prisoner support need on prisoner $nomsId", exception.message)
   }
 }

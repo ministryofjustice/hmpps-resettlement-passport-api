@@ -146,15 +146,14 @@ class ResettlementAssessmentService(
     }
 
     assessmentList.forEach { assessment ->
-      if (assessment.statusChangedTo == null) {
-        throw RuntimeException("Can't submit assessment with id ${assessment.id} as statusChangedTo is null")
-      }
 
-      // Update pathway status
-      pathwayAndStatusService.updatePathwayStatus(
-        nomsId = nomsId,
-        pathwayAndStatus = PathwayAndStatus(assessment.pathway, assessment.statusChangedTo!!),
-      )
+      // Update pathway status if required
+      if (assessment.statusChangedTo != null) {
+        pathwayAndStatusService.updatePathwayStatus(
+          nomsId = nomsId,
+          pathwayAndStatus = PathwayAndStatus(assessment.pathway, assessment.statusChangedTo!!),
+        )
+      }
 
       // Update assessment status to SUBMITTED
       assessment.assessmentStatus = ResettlementAssessmentStatus.SUBMITTED

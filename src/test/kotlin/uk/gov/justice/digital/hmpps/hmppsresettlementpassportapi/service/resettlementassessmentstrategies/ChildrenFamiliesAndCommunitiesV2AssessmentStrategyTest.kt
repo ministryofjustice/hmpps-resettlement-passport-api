@@ -18,7 +18,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
@@ -38,31 +37,7 @@ import java.util.stream.Stream
 
 class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, 2) {
 
-  @ParameterizedTest(name = "{1} -> {2}")
-  @MethodSource("test next page function flow - no existing assessment data")
-  fun `test next page function flow - no existing assessment`(
-    questionsAndAnswers: List<ResettlementAssessmentRequestQuestionAndAnswer<*>>,
-    currentPage: String?,
-    expectedPage: String,
-  ) {
-    val nomsId = "123"
-    setUpMocks(nomsId, false)
-
-    val assessment = ResettlementAssessmentRequest(
-      questionsAndAnswers = questionsAndAnswers,
-    )
-    val nextPage = resettlementAssessmentStrategy.getNextPageId(
-      assessment = assessment,
-      nomsId = nomsId,
-      pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
-      assessmentType = ResettlementAssessmentType.BCST2,
-      currentPage = currentPage,
-      version = 2,
-    )
-    Assertions.assertEquals(expectedPage, nextPage)
-  }
-
-  private fun `test next page function flow - no existing assessment data`() = Stream.of(
+  override fun `test next page function flow - no existing assessment data`(): Stream<Arguments> = Stream.of(
     // Start of flow - send null current page to get first page
     Arguments.of(
       listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(),
@@ -89,23 +64,7 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
     ),
   )
 
-  @ParameterizedTest(name = "{0} page")
-  @MethodSource("test get page from Id - no existing assessment data")
-  fun `test get page from Id - no existing assessment`(pageIdInput: String, expectedPage: ResettlementAssessmentResponsePage) {
-    val nomsId = "123"
-    setUpMocks("123", false)
-
-    val page = resettlementAssessmentStrategy.getPageFromId(
-      nomsId = nomsId,
-      pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
-      assessmentType = ResettlementAssessmentType.BCST2,
-      pageId = pageIdInput,
-      version = 2,
-    )
-    Assertions.assertEquals(expectedPage, page)
-  }
-
-  private fun `test get page from Id - no existing assessment data`() = Stream.of(
+  override fun `test get page from Id - no existing assessment data`(): Stream<Arguments> = Stream.of(
     Arguments.of(
       "CHILDREN_FAMILIES_AND_COMMUNITY_REPORT",
       ResettlementAssessmentResponsePage(

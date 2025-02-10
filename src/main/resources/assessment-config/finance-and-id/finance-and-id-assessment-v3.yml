@@ -1,0 +1,109 @@
+version: 3
+pathway: "FINANCE_AND_ID"
+requireStatusQuestion: false
+pages:
+  - id: "FINANCE_AND_ID_REPORT"
+    title: "Finance and ID report"
+    questions:
+      - id: "HAS_BANK_ACCOUNT"
+        title: "Does the person in prison have a bank account?"
+        type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has a bank account"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+      - id: "HAS_BANK_ACCOUNT_ADDITIONAL_DETAILS"
+        title: "Additional details"
+        type: "LONG_TEXT"
+        validation:
+          type: "OPTIONAL"
+      - id: "WHAT_ID_DOCUMENTS"
+        title: "What ID documents does the person in prison have?"
+        subTitle: "Select all that apply"
+        type: "CHECKBOX"
+        validation:
+          message: "Select ID documents, or select 'No ID documents' or 'No answer provided'"
+        options:
+          - id: "BIRTH_CERTIFICATE"
+            displayText: "Birth or adoption certificate"
+          - id: "PASSPORT"
+            displayText: "Passport"
+          - id: "DRIVING_LICENCE"
+            displayText: "Driving licence"
+          - id: "MARRIAGE_CERTIFICATE"
+            displayText: "Marriage or civil partnership certificate"
+          - id: "DIVORCE_CERTIFICATE"
+            displayText: "Divorce decree absolute certificate"
+          - id: "BIOMETRIC_RESIDENCE_PERMIT"
+            displayText: "Biometric residence permit"
+          - id: "DEED_POLL_CERTIFICATE"
+            displayText: "Deed poll certificate"
+          - id: "CITIZEN_CARD"
+            displayText: "CitizenCard"
+          - id: "NO_ID_DOCUMENTS"
+            displayText: "No ID documents"
+            exclusive: true
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+            exclusive: true
+      - id: "WHAT_ID_DOCUMENTS_ADDITIONAL_DETAILS"
+        title: "Additional details"
+        type: "LONG_TEXT"
+        validation:
+          type: "OPTIONAL"
+      - id: "SELECT_BENEFITS"
+        title: "What benefits was the person in prison receiving before custody?"
+        subTitle: "Select all that apply"
+        type: "CHECKBOX"
+        validation:
+          message: "Select benefits, or select 'No benefits' or 'No answer provided'"
+        options:
+          - id: "ESA"
+            displayText: "Employment and support allowance (ESA)"
+          - id: "HOUSING_BENEFIT"
+            displayText: "Housing benefit"
+          - id: "UNIVERSAL_CREDIT_HOUSING_ELEMENT"
+            displayText: "Universal credit housing element"
+          - id: "UNIVERSAL_CREDIT"
+            displayText: "Universal credit"
+          - id: "PIP"
+            displayText: "Personal independence payment (PIP)"
+          - id: "STATE_PENSION"
+            displayText: "State pension"
+          - id: "NO_BENEFITS"
+            displayText: "No benefits"
+            exclusive: true
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+            exclusive: true
+      - id: "SELECT_BENEFITS_ADDITIONAL_DETAILS"
+        title: "Additional details"
+        type: "LONG_TEXT"
+        validation:
+          type: "OPTIONAL"
+      - id: "DEBTS_OR_ARREARS"
+        title: "Does the person in prison have any debts or arrears?"
+        type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has any debts or arrears"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+      - id: "DEBTS_OR_ARREARS_ADDITIONAL_DETAILS"
+        title: "Additional details"
+        subTitle: "Include details of what type of debt it is, and the amount. Do not include the names of anyone the person owes money to."
+        type: "LONG_TEXT"
+        validation:
+          type: "OPTIONAL"
+    nextPageLogic:
+      - nextPageId: "CHECK_ANSWERS"
+  - id: "CHECK_ANSWERS"

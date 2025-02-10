@@ -1,0 +1,46 @@
+version: 3
+pathway: "HEALTH"
+requireStatusQuestion: false
+pages:
+  - id: "HEALTH_REPORT"
+    title: "Health report"
+    questions:
+      - id: "REGISTERED_WITH_GP"
+        title: "Is the person in prison registered with a GP surgery outside of prison?"
+        type: "RADIO"
+        validation:
+          message: "Select whether the person in prison is registered with a GP surgery outside of prison"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+      - id: "REGISTERED_WITH_GP_ADDITIONAL_DETAILS"
+        title: "Additional details"
+        subTitle: "You do not need to include the name and address of the GP surgery."
+        type: "LONG_TEXT"
+        validation:
+          type: "OPTIONAL"
+      - id: "NEEDS_HELP_WITH_DAY_TO_DAY_LIVING"
+        title: "Does the person in prison need help with day-to-day living when they are released because of an illness or disability?"
+        type: "RADIO"
+        validation:
+          message: "Select whether the person in prison needs help with day-to-day living when they are released because of an illness or disability"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+      - id: "NEEDS_HELP_WITH_DAY_TO_DAY_LIVING_ADDITIONAL_DETAILS"
+        title: "Additional details"
+        subTitle: "Include details of any support, adaptations or equipment required. Do not include any details about medical treatments or conditions."
+        type: "LONG_TEXT"
+        validation:
+          type: "OPTIONAL"
+    nextPageLogic:
+      - nextPageId: "CHECK_ANSWERS"
+  - id: "CHECK_ANSWERS"

@@ -585,6 +585,66 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  @Sql("classpath:testdata/sql/seed-resettlement-assessment-20.sql")
+  fun `Post resettlement assessment submit - happy path with no statuses`() {
+    val nomsId = "ABC1234"
+    val crn = "123"
+    val assessmentType = "BCST2"
+    val prisonId = "MDI"
+    val forename = "A"
+    val surname = "User"
+    val caseNoteText = "Accommodation\\n\\nCase note related to accommodation\\n\\n\\nAttitudes, thinking and behaviour\\n\\nCase note related to Attitudes, thinking and behaviour\\n\\n\\nChildren, families and communities\\n\\nCase note related to Children, family and communities\\n\\n\\nDrugs and alcohol\\n\\nCase note related to Drugs and alcohol\\n\\n\\nEducation, skills and work\\n\\nCase note related to education, skills and work\\n\\n\\nFinance and ID\\n\\nCase note related to Finance and ID\\n\\n\\nHealth\\n\\nCase note related to Health"
+    val fakeNowOffset = OffsetDateTime.parse("2024-06-04T09:16:04+01:00")
+
+    mockkStatic(OffsetDateTime::class)
+    every { OffsetDateTime.now() } returns fakeNowOffset
+
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "INR", caseNoteText, prisonId, 200)
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
+    deliusApiMockServer.stubPostCaseNote(crn, "IMMEDIATE_NEEDS_REPORT", prisonId, forename, surname, caseNoteText, fakeNowOffset.toString())
+
+    webTestClient.post()
+      .uri("resettlement-passport/prisoner/$nomsId/resettlement-assessment/submit?assessmentType=$assessmentType")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), authSource = "nomis"))
+      .exchange()
+      .expectStatus().isOk
+
+    // Check correct updates have been made to the database
+    val assessmentsInDatabase = resettlementAssessmentRepository.allOrderedById()
+    val expectedAssessments = listOf(
+      ResettlementAssessmentEntity(id = 1, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = null, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf()), creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatus.SUBMITTED, caseNoteText = "Case note related to accommodation", createdByUserId = "USER_1", submissionDate = fakeNow, version = 1, userDeclaration = false),
+      ResettlementAssessmentEntity(id = 2, prisonerId = 1, pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, statusChangedTo = null, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf()), creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatus.SUBMITTED, caseNoteText = "Case note related to Attitudes, thinking and behaviour", createdByUserId = "USER_1", submissionDate = fakeNow, version = 1, userDeclaration = false),
+      ResettlementAssessmentEntity(id = 3, prisonerId = 1, pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, statusChangedTo = null, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf()), creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatus.SUBMITTED, caseNoteText = "Case note related to Children, family and communities", createdByUserId = "USER_1", submissionDate = fakeNow, version = 1, userDeclaration = false),
+      ResettlementAssessmentEntity(id = 4, prisonerId = 1, pathway = Pathway.DRUGS_AND_ALCOHOL, statusChangedTo = null, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf()), creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatus.SUBMITTED, caseNoteText = "Case note related to Drugs and alcohol", createdByUserId = "USER_1", submissionDate = fakeNow, version = 1, userDeclaration = false),
+      ResettlementAssessmentEntity(id = 5, prisonerId = 1, pathway = Pathway.EDUCATION_SKILLS_AND_WORK, statusChangedTo = null, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf()), creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatus.SUBMITTED, caseNoteText = "Case note related to education, skills and work", createdByUserId = "USER_1", submissionDate = fakeNow, version = 1, userDeclaration = false),
+      ResettlementAssessmentEntity(id = 6, prisonerId = 1, pathway = Pathway.FINANCE_AND_ID, statusChangedTo = null, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf()), creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatus.SUBMITTED, caseNoteText = "Case note related to Finance and ID", createdByUserId = "USER_1", submissionDate = fakeNow, version = 1, userDeclaration = false),
+      ResettlementAssessmentEntity(id = 7, prisonerId = 1, pathway = Pathway.HEALTH, statusChangedTo = null, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf()), creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatus.SUBMITTED, caseNoteText = "Case note related to Health", createdByUserId = "USER_1", submissionDate = fakeNow, version = 1, userDeclaration = false),
+    )
+
+    assertThat(assessmentsInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedAssessments)
+
+    // Check pathway statuses have not been updated
+    val pathwayStatusesInDatabase = pathwayStatusRepository.allOrderedById()
+    val expectedPathwayStatuses = listOf(
+      PathwayStatusEntity(id = 1, prisonerId = 1, pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, updatedDate = LocalDateTime.parse("2024-01-31T14:48:42.924738")),
+      PathwayStatusEntity(id = 2, prisonerId = 1, pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, status = Status.NOT_STARTED, updatedDate = LocalDateTime.parse("2024-01-31T14:48:42.966093")),
+      PathwayStatusEntity(id = 3, prisonerId = 1, pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, status = Status.NOT_STARTED, updatedDate = LocalDateTime.parse("2024-01-31T14:48:42.984784")),
+      PathwayStatusEntity(id = 4, prisonerId = 1, pathway = Pathway.DRUGS_AND_ALCOHOL, status = Status.NOT_STARTED, updatedDate = LocalDateTime.parse("2024-01-31T14:48:43.003119")),
+      PathwayStatusEntity(id = 5, prisonerId = 1, pathway = Pathway.EDUCATION_SKILLS_AND_WORK, status = Status.NOT_STARTED, updatedDate = LocalDateTime.parse("2024-01-31T14:48:43.023966")),
+      PathwayStatusEntity(id = 6, prisonerId = 1, pathway = Pathway.FINANCE_AND_ID, status = Status.NOT_STARTED, updatedDate = LocalDateTime.parse("2024-01-31T14:48:43.042654")),
+      PathwayStatusEntity(id = 7, prisonerId = 1, pathway = Pathway.HEALTH, status = Status.NOT_STARTED, updatedDate = LocalDateTime.parse("2024-01-31T14:48:43.062076")),
+    )
+
+    assertThat(pathwayStatusesInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedPathwayStatuses)
+
+    // Check there is nothing in the case_note_retry table
+    Assertions.assertEquals(0, caseNoteRetryRepository.findAll().size)
+
+    unmockkAll()
+  }
+
+  @Test
   @Sql("classpath:testdata/sql/seed-resettlement-assessment-17.sql")
   fun `Post resettlement assessment submit - no caseNoteText (PSFR-1690)`() {
     val nomsId = "ABC1234"

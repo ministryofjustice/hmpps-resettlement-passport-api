@@ -1,0 +1,44 @@
+version: 4
+pathway: "ATTITUDES_THINKING_AND_BEHAVIOUR"
+requireStatusQuestion: false
+pages:
+  - id: "ATTITUDES_THINKING_AND_BEHAVIOUR_REPORT"
+    title: "Attitudes, thinking and behaviour report"
+    questions:
+      - id: "HELP_TO_MANAGE_ANGER"
+        title: "Does the person in prison have any issues managing their emotions?"
+        type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has any issues managing their emotions"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+      - id: "HELP_TO_MANAGE_ANGER_ADDITIONAL_DETAILS"
+        title: "Additional details"
+        type: "LONG_TEXT"
+        validation:
+          type: "OPTIONAL"
+      - id: "ISSUES_WITH_GAMBLING"
+        title: "Does the person in prison have any issues with gambling?"
+        type: "RADIO"
+        validation:
+          message: "Select whether the person in prison has any issues with gambling"
+        options:
+          - id: "YES"
+            displayText: "Yes"
+          - id: "NO"
+            displayText: "No"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+      - id: "ISSUES_WITH_GAMBLING_ADDITIONAL_DETAILS"
+        title: "Additional details"
+        type: "LONG_TEXT"
+        validation:
+          type: "OPTIONAL"
+    nextPageLogic:
+      - nextPageId: "CHECK_ANSWERS"
+  - id: "CHECK_ANSWERS"

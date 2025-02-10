@@ -1,0 +1,104 @@
+version: 4
+pathway: "ACCOMMODATION"
+requireStatusQuestion: false
+pages:
+  - id: "ACCOMMODATION_REPORT"
+    title: "Accommodation report"
+    questions:
+      - id: "WHERE_DID_THEY_LIVE"
+        title: "Where did the person in prison live before custody?"
+        type: "RADIO"
+        validation:
+          message: "Select where the person in prison lived before custody"
+        options:
+          - id: "PRIVATE_RENTED_HOUSING"
+            displayText: "Private housing rented by them"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING"
+                title: "Enter the address"
+                type: "ADDRESS"
+          - id: "PRIVATE_HOUSING_OWNED"
+            displayText: "Private housing owned by them"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_HOUSING_OWNED"
+                title: "Enter the address"
+                type: "ADDRESS"
+          - id: "FAMILY_OR_FRIENDS"
+            displayText: "With family or friends"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS_FAMILY_OR_FRIENDS"
+                title: "Enter the address"
+                type: "ADDRESS"
+          - id: "SOCIAL_HOUSING"
+            displayText: "Social housing"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS_SOCIAL_HOUSING"
+                title: "Enter the address"
+                type: "ADDRESS"
+          - id: "LOCAL_AUTHORITY_OR_SUPPORTED_HOUSING"
+            displayText: "Local authority care or supported housing"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS_LOCAL_AUTHORITY_OR_SUPPORTED_HOUSING"
+                title: "Enter the address"
+                type: "ADDRESS"
+          - id: "HOSTEL"
+            displayText: "Hostel"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS_HOSTEL"
+                title: "Enter the address"
+                type: "ADDRESS"
+          - id: "EMERGENCY_HOUSING"
+            displayText: "Emergency housing from the council"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS_EMERGENCY_HOUSING"
+                title: "Enter the address"
+                type: "ADDRESS"
+          - id: "APPROVED_PREMISES"
+            displayText: "Community accommodation, including approved premises, CAS2 and CAS3"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS_APPROVED_PREMISES"
+                title: "Enter the address"
+                type: "ADDRESS"
+          - id: "IMMIGRATION_ACCOMMODATION"
+            displayText: "Immigration accommodation provided by the Home Office"
+            nestedQuestions:
+              - id: "WHERE_DID_THEY_LIVE_ADDRESS_IMMIGRATION_ACCOMMODATION"
+                title: "Enter the address"
+                type: "ADDRESS"
+          - id: "NO_PERMANENT_OR_FIXED"
+            displayText: "No permanent or fixed address"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+      - id: "WHERE_DID_THEY_LIVE_ADDITIONAL_DETAILS"
+        title: "Additional details"
+        subTitle: "Include the name and date of birth of anyone else who lived at the address, and how the accommodation was paid for.\nIf no fixed address, specify the council area where they have a local connection."
+        type: "LONG_TEXT"
+        validation:
+          type: "OPTIONAL"
+      - id: "WHERE_WILL_THEY_LIVE"
+        title: "Where will the person in prison live when they are released?"
+        type: "RADIO"
+        validation:
+          message: "Select where the person in prison will live when they are released"
+        options:
+          - id: "RETURN_TO_PREVIOUS_ADDRESS"
+            displayText: "Return to their previous address"
+          - id: "MOVE_TO_NEW_ADDRESS"
+            displayText: "Move to a new address"
+            nestedQuestions:
+              - id: "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS"
+                title: "Enter the address"
+                type: "ADDRESS"
+          - id: "DOES_NOT_HAVE_ANYWHERE"
+            displayText: "Does not have anywhere to live"
+          - id: "NO_ANSWER"
+            displayText: "No answer provided"
+      - id: "WHERE_WILL_THEY_LIVE_ADDITIONAL_DETAILS"
+        title: "Additional details"
+        subTitle: "If returning to previous address, specify if any details will have changed.\nIf moving to a new address, include names and dates of birth of anyone else living at the address, and how the accommodation will be paid for."
+        type: "LONG_TEXT"
+        validation:
+          type: "OPTIONAL"
+    nextPageLogic:
+      - nextPageId: "CHECK_ANSWERS"
+  - id: "CHECK_ANSWERS"

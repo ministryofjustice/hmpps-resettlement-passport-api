@@ -1,50 +1,21 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies
 
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.MethodSource
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.TypeOfQuestion
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Validation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.yesNoOptions
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import java.util.stream.Stream
 
 class HealthV2ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStrategyTest(Pathway.HEALTH, 2) {
 
-  @ParameterizedTest(name = "{1} -> {2}")
-  @MethodSource("test next page function flow - no existing assessment data")
-  fun `test next page function flow - no existing assessment`(
-    questionsAndAnswers: List<ResettlementAssessmentRequestQuestionAndAnswer<*>>,
-    currentPage: String?,
-    expectedPage: String,
-  ) {
-    val nomsId = "123"
-    setUpMocks(nomsId, false)
-
-    val assessment = ResettlementAssessmentRequest(
-      questionsAndAnswers = questionsAndAnswers,
-    )
-    val nextPage = resettlementAssessmentStrategy.getNextPageId(
-      assessment = assessment,
-      nomsId = nomsId,
-      pathway = Pathway.HEALTH,
-      assessmentType = ResettlementAssessmentType.BCST2,
-      currentPage = currentPage,
-      version = 2,
-    )
-    Assertions.assertEquals(expectedPage, nextPage)
-  }
-
-  private fun `test next page function flow - no existing assessment data`() = Stream.of(
+  override fun `test next page function flow - no existing assessment data`(): Stream<Arguments> = Stream.of(
     // Start of flow - send null current page to get first page
     Arguments.of(
       listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(),
@@ -71,23 +42,7 @@ class HealthV2ResettlementAssessmentStrategyTest : BaseResettlementAssessmentStr
     ),
   )
 
-  @ParameterizedTest(name = "{0} page")
-  @MethodSource("test get page from Id - no existing assessment data")
-  fun `test get page from Id - no existing assessment`(pageIdInput: String, expectedPage: ResettlementAssessmentResponsePage) {
-    val nomsId = "123"
-    setUpMocks("123", false)
-
-    val page = resettlementAssessmentStrategy.getPageFromId(
-      nomsId = nomsId,
-      pathway = Pathway.HEALTH,
-      assessmentType = ResettlementAssessmentType.BCST2,
-      pageId = pageIdInput,
-      version = 2,
-    )
-    Assertions.assertEquals(expectedPage, page)
-  }
-
-  private fun `test get page from Id - no existing assessment data`() = Stream.of(
+  override fun `test get page from Id - no existing assessment data`(): Stream<Arguments> = Stream.of(
     Arguments.of(
       "HEALTH_REPORT",
       ResettlementAssessmentResponsePage(

@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNee
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedUpdate
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedUpdates
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeeds
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedsUpdateRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedUpdateEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
@@ -348,5 +349,35 @@ class SupportNeedsService(
         return prisonerSupportNeedRepository.save(prisonerSupportNeed)
       }
     }
+  }
+
+  @Transactional
+  fun patchPrisonerNeedById(nomsId: String, prisonerNeedId: Long, supportNeedsUpdateRequest: SupportNeedsUpdateRequest, auth: String) {
+    val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Cannot find prisoner $nomsId")
+    val name = getClaimFromJWTToken(auth, "name")
+      ?: getClaimFromJWTToken(auth, "sub")
+      ?: throw ServerWebInputException("JWT token must include a claim for 'name or 'sub'")
+
+    val prisonerSupportNeed = prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(prisonerNeedId) ?: throw ResourceNotFoundException("Cannot find prisoner support need $prisonerNeedId")
+
+    if (prisoner.id != prisonerSupportNeed.prisonerId) {
+      throw ResourceNotFoundException("Cannot find prisoner support need on prisoner $nomsId")
+    }
+
+    val update = PrisonerSupportNeedUpdateEntity(
+      prisonerSupportNeedId = prisonerNeedId,
+      createdBy = name,
+      createdDate = LocalDateTime.now(),
+      updateText = supportNeedsUpdateRequest.text,
+      status = supportNeedsUpdateRequest.status,
+      isPrison = supportNeedsUpdateRequest.isPrisonResponsible,
+      isProbation = supportNeedsUpdateRequest.isProbationResponsible,
+    )
+    val savedPrisonerSupportNeedUpdate = prisonerSupportNeedUpdateRepository.save(update)
+
+    // Update prisoner support need with the latest update id
+    prisonerSupportNeed.latestUpdateId = savedPrisonerSupportNeedUpdate.id
+
+    prisonerSupportNeedRepository.save(prisonerSupportNeed)
   }
 }

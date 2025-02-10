@@ -13,3 +13,10 @@ data class PrisonerNeedRequest(
   val isPrisonResponsible: Boolean?,
   val isProbationResponsible: Boolean?,
 )
+
+data class SupportNeedsUpdateRequest(
+  val text: String?,
+  val status: SupportNeedStatus,
+  val isPrisonResponsible: Boolean,
+  val isProbationResponsible: Boolean,
+)

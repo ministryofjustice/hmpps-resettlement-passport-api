@@ -12,10 +12,10 @@ frontends
 
 ## Running locally
 
-### Using the dev environment for auth
-* Start the database and stubs with `docker compose -f docker-compose-local.yml up -d`
+### Starting the API
+* Start the database, stubs and dependencies with `docker compose -f docker-compose-local.yml up -d`
 * Make sure to set environment variables for `RESETTLEMENT_PASSPORT_API_CLIENT_ID` and `RESETTLEMENT_PASSPORT_API_CLIENT_SECRET`
-* start with `gradle bootrun` (it will automatically use the `local` profile)
+* Start with `gradle bootrun --args='--spring.profiles.active=dev'` or use a run profile in Intellij (using the dev profile)
 
 ## Yaml autocomplete/validation
 ### Setting up the schema association

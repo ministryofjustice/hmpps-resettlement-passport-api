@@ -1,13 +1,92 @@
 {
   "$schema" : "http://json-schema.org/draft-07/schema#",
+  "definitions" : {
+    "AssessmentConfigQuestion" : {
+      "type" : "object",
+      "properties" : {
+        "customValidation" : {
+          "$ref" : "#/definitions/Validation"
+        },
+        "detailsContent" : {
+          "type" : "string"
+        },
+        "detailsTitle" : {
+          "type" : "string"
+        },
+        "id" : {
+          "type" : "string"
+        },
+        "options" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : {
+              "description" : {
+                "type" : "string"
+              },
+              "displayText" : {
+                "type" : "string"
+              },
+              "exclusive" : {
+                "type" : "boolean"
+              },
+              "freeText" : {
+                "type" : "boolean"
+              },
+              "id" : {
+                "type" : "string"
+              },
+              "nestedQuestions" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/AssessmentConfigQuestion"
+                }
+              },
+              "tag" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "subTitle" : {
+          "type" : "string"
+        },
+        "title" : {
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "string",
+          "enum" : [ "RADIO", "SHORT_TEXT", "LONG_TEXT", "ADDRESS", "CHECKBOX" ]
+        },
+        "validation" : {
+          "$ref" : "#/definitions/Validation"
+        },
+        "validationType" : {
+          "$ref" : "#/definitions/ValidationType"
+        }
+      }
+    },
+    "Validation" : {
+      "type" : "object",
+      "properties" : {
+        "message" : {
+          "type" : "string"
+        },
+        "regex" : {
+          "type" : "string"
+        },
+        "type" : {
+          "$ref" : "#/definitions/ValidationType"
+        }
+      }
+    },
+    "ValidationType" : {
+      "type" : "string",
+      "enum" : [ "MANDATORY", "OPTIONAL" ]
+    }
+  },
   "type" : "object",
   "properties" : {
-    "generic" : {
-      "type" : "boolean"
-    },
-    "genericAssessmentVersion" : {
-      "type" : "integer"
-    },
     "pages" : {
       "type" : "array",
       "items" : {
@@ -39,64 +118,7 @@
           "questions" : {
             "type" : "array",
             "items" : {
-              "type" : "object",
-              "properties" : {
-                "id" : {
-                  "type" : "string"
-                },
-                "options" : {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "object",
-                    "properties" : {
-                      "description" : {
-                        "type" : "string"
-                      },
-                      "displayText" : {
-                        "type" : "string"
-                      },
-                      "exclusive" : {
-                        "type" : "boolean"
-                      },
-                      "freeText" : {
-                        "type" : "boolean"
-                      },
-                      "id" : {
-                        "type" : "string"
-                      }
-                    }
-                  }
-                },
-                "subTitle" : {
-                  "type" : "string"
-                },
-                "title" : {
-                  "type" : "string"
-                },
-                "type" : {
-                  "type" : "string",
-                  "enum" : [ "RADIO", "SHORT_TEXT", "LONG_TEXT", "ADDRESS", "CHECKBOX" ]
-                },
-                "validationType" : {
-                  "type" : "string",
-                  "enum" : [ "MANDATORY", "OPTIONAL" ]
-                },
-                "validation" : {
-                  "type" : "object",
-                  "properties" : {
-                    "type": {
-                      "type" : "string",
-                      "enum" : [ "MANDATORY", "OPTIONAL" ]
-                    },
-                    "regex": {
-                      "type" : "string"
-                    },
-                    "message": {
-                      "type" : "string"
-                    }
-                  }
-                }
-              }
+              "$ref" : "#/definitions/AssessmentConfigQuestion"
             }
           },
           "title" : {
@@ -108,6 +130,9 @@
     "pathway" : {
       "type" : "string",
       "enum" : [ "ACCOMMODATION", "ATTITUDES_THINKING_AND_BEHAVIOUR", "CHILDREN_FAMILIES_AND_COMMUNITY", "DRUGS_AND_ALCOHOL", "EDUCATION_SKILLS_AND_WORK", "FINANCE_AND_ID", "HEALTH" ]
+    },
+    "requireStatusQuestion" : {
+      "type" : "boolean"
     },
     "version" : {
       "type" : "integer"

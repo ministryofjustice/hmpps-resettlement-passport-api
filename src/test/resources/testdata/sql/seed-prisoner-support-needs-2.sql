@@ -235,7 +235,6 @@ INSERT INTO prisoner_support_need_update (id, prisoner_support_need_id, created_
     (93,   93,   'A user', '2024-03-05T09:36:31.713421', 'This is an update', 'DECLINED',    true, false, false, null),
     (94,   94,   'A user', '2024-03-06T09:36:31.713421', 'This is an update', 'MET',         true, false, false, null),
     (1094, 1094, 'A user', '2024-03-07T09:36:31.713421', 'This is an update', 'NOT_STARTED', true, false, false, null),
-    (95,   95,   'A user', '2024-03-08T09:36:31.713421', 'This is an update', 'IN_PROGRESS', true, false, false, null),
     (96,   96,   'A user', '2024-03-01T09:36:31.713421', 'This is an update', 'DECLINED',    true, false, false, null),
     (97,   97,   'A user', '2024-03-02T09:36:31.713421', 'This is an update', 'MET',         true, false, false, null),
     (98,   98,   'A user', '2024-03-03T09:36:31.713421', 'This is an update', 'NOT_STARTED', true, false, false, null),
@@ -244,13 +243,11 @@ INSERT INTO prisoner_support_need_update (id, prisoner_support_need_id, created_
     (101,  101,  'A user', '2024-03-06T09:36:31.713421', 'This is an update', 'MET',         true, false, false, null),
     (102,  102,  'A user', '2024-03-07T09:36:31.713421', 'This is an update', 'NOT_STARTED', true, false, false, null),
     (1102, 1102, 'A user', '2024-03-08T09:36:31.713421', 'This is an update', 'IN_PROGRESS', true, false, false, null),
-    (103,  103,  'A user', '2024-03-01T09:36:31.713421', 'This is an update', 'DECLINED',    true, false, false, null),
     (104,  104,  'A user', '2024-03-02T09:36:31.713421', 'This is an update', 'MET',         true, false, false, null),
     (105,  105,  'A user', '2024-03-03T09:36:31.713421', 'This is an update', 'NOT_STARTED', true, false, false, null),
     (106,  106,  'A user', '2024-03-04T09:36:31.713421', 'This is an update', 'IN_PROGRESS', true, false, false, null),
     (107,  107,  'A user', '2024-03-05T09:36:31.713421', 'This is an update', 'DECLINED',    true, false, false, null),
     (1107, 1107, 'A user', '2024-03-06T09:36:31.713421', 'This is an update', 'NOT_STARTED', true, false, false, null),
-    (108,  108,  'A user', '2024-03-07T09:36:31.713421', 'This is an update', 'IN_PROGRESS', true, false, false, null),
     (109,  109,  'A user', '2024-03-08T09:36:31.713421', 'This is an update', 'DECLINED',    true, false, false, null),
     (110,  110,  'A user', '2024-03-05T09:36:31.713421', 'This is an update', 'MET',         true, false, false, null),
     (111,  111,  'A user', '2024-03-06T09:36:31.713421', 'This is an update', 'MET',         true, false, false, null),
@@ -354,7 +351,6 @@ update prisoner_support_need set latest_update_id = 1091 where id = 1091;
 update prisoner_support_need set latest_update_id = 93   where id = 93;
 update prisoner_support_need set latest_update_id = 94   where id = 94;
 update prisoner_support_need set latest_update_id = 1094 where id = 1094;
-update prisoner_support_need set latest_update_id = 95   where id = 95;
 update prisoner_support_need set latest_update_id = 96   where id = 96;
 update prisoner_support_need set latest_update_id = 97   where id = 97;
 update prisoner_support_need set latest_update_id = 98   where id = 98;
@@ -363,13 +359,11 @@ update prisoner_support_need set latest_update_id = 100  where id = 100;
 update prisoner_support_need set latest_update_id = 101  where id = 101;
 update prisoner_support_need set latest_update_id = 102  where id = 102;
 update prisoner_support_need set latest_update_id = 1102 where id = 1102;
-update prisoner_support_need set latest_update_id = 103  where id = 103;
 update prisoner_support_need set latest_update_id = 104  where id = 104;
 update prisoner_support_need set latest_update_id = 105  where id = 105;
 update prisoner_support_need set latest_update_id = 106  where id = 106;
 update prisoner_support_need set latest_update_id = 107  where id = 107;
 update prisoner_support_need set latest_update_id = 1107 where id = 1107;
-update prisoner_support_need set latest_update_id = 108  where id = 108;
 update prisoner_support_need set latest_update_id = 109  where id = 109;
 update prisoner_support_need set latest_update_id = 110  where id = 110;
 update prisoner_support_need set latest_update_id = 111  where id = 111;

@@ -61,7 +61,7 @@
       "isPrisonResponsible": true,
       "isProbationResponsible": false,
       "notStarted": 5,
-      "inProgress": 5,
+      "inProgress": 4,
       "met": 4,
       "declined": 4,
       "lastUpdated": "2024-03-08"
@@ -72,9 +72,9 @@
       "isPrisonResponsible": true,
       "isProbationResponsible": false,
       "notStarted": 3,
-      "inProgress": 3,
+      "inProgress": 2,
       "met": 5,
-      "declined": 5,
+      "declined": 4,
       "lastUpdated": "2024-03-24"
     }
   ]

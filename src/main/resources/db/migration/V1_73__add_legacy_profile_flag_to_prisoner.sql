@@ -1,0 +1,1 @@
+alter table prisoner add legacy_profile boolean;

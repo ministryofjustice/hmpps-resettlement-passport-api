@@ -24,7 +24,8 @@
         "id": 1,
         "nomsId": "G1458GV",
         "creationDate": "2024-01-01T12:21:38.709",
-        "prisonId": null
+        "prisonId": null,
+        "legacyProfile": null
       },
       "logs": [],
       "applicationSubmittedDate": "2023-08-16T12:21:38.709",

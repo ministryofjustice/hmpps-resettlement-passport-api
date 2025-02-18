@@ -23,6 +23,9 @@ data class PrisonerEntity(
 
   @Column(name = "prison_id")
   var prisonId: String?,
+
+  @Column(name = "legacy_profile")
+  var legacyProfile: Boolean? = null,
 ) {
   fun id() = id ?: throw IllegalStateException("Tried to get id before saving")
 }

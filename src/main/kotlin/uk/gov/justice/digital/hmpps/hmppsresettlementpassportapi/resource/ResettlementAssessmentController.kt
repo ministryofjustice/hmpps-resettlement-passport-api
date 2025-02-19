@@ -329,9 +329,11 @@ class ResettlementAssessmentController(
     @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
+    @RequestParam("supportNeedsLegacyProfile")
+    supportNeedsLegacyProfile: Boolean = true,
   ): ResettlementAssessmentSubmitResponse {
     auditService.audit(AuditAction.SUBMIT_ASSESSMENT, nomsId, auth, buildDetails(assessmentType, null))
-    return resettlementAssessmentService.submitResettlementAssessmentByNomsId(nomsId, assessmentType, useNewDeliusCaseNoteFormat, useNewDpsCaseNoteFormat, auth, resettlementAssessmentStrategy)
+    return resettlementAssessmentService.submitResettlementAssessmentByNomsId(nomsId, assessmentType, useNewDeliusCaseNoteFormat, useNewDpsCaseNoteFormat, auth, resettlementAssessmentStrategy, supportNeedsLegacyProfile)
   }
 
   @GetMapping("/{nomsId}/resettlement-assessment/{pathway}/latest", produces = [MediaType.APPLICATION_JSON_VALUE])

@@ -38,12 +38,16 @@ class ResettlementAssessmentResetServiceTest {
   @Mock
   private lateinit var pathwayAndStatusService: PathwayAndStatusService
 
+  @Mock
+  private lateinit var supportNeedsLegacyProfileService: SupportNeedsLegacyProfileService
+
   @BeforeEach
   fun beforeEach() {
     resettlementAssessmentResetService = ResettlementAssessmentResetService(
       resettlementAssessmentService,
       caseNotesService,
       pathwayAndStatusService,
+      supportNeedsLegacyProfileService,
     )
   }
 

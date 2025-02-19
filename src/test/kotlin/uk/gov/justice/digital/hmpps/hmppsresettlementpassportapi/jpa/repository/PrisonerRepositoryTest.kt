@@ -52,7 +52,7 @@ class PrisonerRepositoryTest : RepositoryTestBase() {
   @Sql("classpath:testdata/sql/seed-1-prisoner.sql")
   fun `test edit legacy profile on prisoner`() {
     val prisonerFromDatabase = prisonerRepository.findById(1).get()
-    prisonerFromDatabase.legacyProfile = true
+    prisonerFromDatabase.supportNeedsLegacyProfile = true
     prisonerRepository.save(prisonerFromDatabase)
 
     assertThat(prisonerFromDatabase).usingRecursiveComparison().isEqualTo(PrisonerEntity(1, "G4161UF", LocalDateTime.parse("2024-02-19T09:36:28.713421"), "MDI", true))

@@ -14,6 +14,7 @@ class ResettlementAssessmentResetService(
   private val resettlementAssessmentService: ResettlementAssessmentService,
   private val caseNotesService: CaseNotesService,
   private val pathwayAndStatusService: PathwayAndStatusService,
+  private val supportNeedsLegacyProfileService: SupportNeedsLegacyProfileService,
 ) {
 
   @Transactional
@@ -29,6 +30,9 @@ class ResettlementAssessmentResetService(
     resettlementAssessmentService.deleteAllResettlementAssessments(nomsId)
     Pathway.entries.forEach { pathway -> pathwayAndStatusService.updatePathwayStatus(nomsId, PathwayAndStatus(pathway, Status.NOT_STARTED)) }
     caseNotesService.sendProfileResetCaseNote(nomsId, userId, reason)
+
+    // Set the supportNeedsLegacyProfile to false
+    supportNeedsLegacyProfileService.setSupportNeedsLegacyFlag(nomsId, false)
   }
 
   fun getReason(profileReset: ProfileReset): String {

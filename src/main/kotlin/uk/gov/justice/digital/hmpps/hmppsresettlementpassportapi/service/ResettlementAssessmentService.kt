@@ -53,6 +53,7 @@ class ResettlementAssessmentService(
   private val caseNoteRetryRepository: CaseNoteRetryRepository,
   private val profileTagsRepository: ProfileTagsRepository,
   @Value("\${psfr.base.url}") private val psfrBaseUrl: String,
+  private val supportNeedsLegacyProfileService: SupportNeedsLegacyProfileService,
 ) {
 
   companion object {
@@ -106,7 +107,7 @@ class ResettlementAssessmentService(
     )
 
   @Transactional
-  fun submitResettlementAssessmentByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType, useNewDeliusCaseNoteFormat: Boolean, useNewDpsCaseNoteFormat: Boolean, auth: String, resettlementAssessmentStrategy: ResettlementAssessmentStrategy): ResettlementAssessmentSubmitResponse {
+  fun submitResettlementAssessmentByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType, useNewDeliusCaseNoteFormat: Boolean, useNewDpsCaseNoteFormat: Boolean, auth: String, resettlementAssessmentStrategy: ResettlementAssessmentStrategy, supportNeedsLegacyProfile: Boolean): ResettlementAssessmentSubmitResponse {
     // Check auth - must be NOMIS
     val authSource = getClaimFromJWTToken(auth, "auth_source")?.lowercase()
     if (authSource != "nomis") {
@@ -246,6 +247,12 @@ class ResettlementAssessmentService(
         )
       },
     )
+
+    // Set the supportNeedsLegacyProfile flag (if needed)
+    if (supportNeedsLegacyProfile && assessmentType == ResettlementAssessmentType.RESETTLEMENT_PLAN) {
+      supportNeedsLegacyProfileService.setSupportNeedsLegacyFlag(nomsId, true)
+    }
+
     return ResettlementAssessmentSubmitResponse(deliusCaseNoteFailed = failedCaseNotes.isNotEmpty())
   }
 

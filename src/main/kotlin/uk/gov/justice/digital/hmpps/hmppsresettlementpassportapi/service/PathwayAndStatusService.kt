@@ -65,6 +65,7 @@ class PathwayAndStatusService(
         PrisonerEntity(
           nomsId = nomsId,
           prisonId = prisonId,
+          supportNeedsLegacyProfile = false,
         ),
       )
       Pathway.entries.forEach {

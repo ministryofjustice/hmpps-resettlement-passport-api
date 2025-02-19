@@ -98,6 +98,9 @@ class ResettlementAssessmentServiceTest {
   private lateinit var pathwayStatusRepository: PathwayStatusRepository
 
   @Mock
+  private lateinit var supportNeedsLegacyProfileService: SupportNeedsLegacyProfileService
+
+  @Mock
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
@@ -114,6 +117,7 @@ class ResettlementAssessmentServiceTest {
       caseNoteRetryRepository,
       profileTagsRepository,
       "https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk",
+      supportNeedsLegacyProfileService,
     )
 
     resettlementAssessmentStrategy = ResettlementAssessmentStrategy(

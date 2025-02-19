@@ -1,0 +1,1 @@
+alter table prisoner add support_needs_legacy_profile boolean;

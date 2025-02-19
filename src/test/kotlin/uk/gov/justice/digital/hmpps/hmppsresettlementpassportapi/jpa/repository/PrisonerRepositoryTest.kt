@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.context.jdbc.Sql
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import java.time.LocalDateTime
 
@@ -35,5 +36,25 @@ class PrisonerRepositoryTest : RepositoryTestBase() {
     )
 
     assertThat(prisonerRepository.findDistinctPrisonIds()).isEqualTo(listOf("AA1", "AA2", "AA3", "AA4"))
+  }
+
+  @Test
+  fun `test persist new prisoner with legacy profile`() {
+    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.parse("2025-02-18T12:00:01"), "xyz1", false)
+    prisonerRepository.save(prisoner)
+
+    val prisonerFromDatabase = prisonerRepository.findAll()[0]
+
+    assertThat(prisonerFromDatabase).usingRecursiveComparison().isEqualTo(prisoner)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-1-prisoner.sql")
+  fun `test edit legacy profile on prisoner`() {
+    val prisonerFromDatabase = prisonerRepository.findById(1).get()
+    prisonerFromDatabase.supportNeedsLegacyProfile = true
+    prisonerRepository.save(prisonerFromDatabase)
+
+    assertThat(prisonerFromDatabase).usingRecursiveComparison().isEqualTo(PrisonerEntity(1, "G4161UF", LocalDateTime.parse("2024-02-19T09:36:28.713421"), "MDI", true))
   }
 }

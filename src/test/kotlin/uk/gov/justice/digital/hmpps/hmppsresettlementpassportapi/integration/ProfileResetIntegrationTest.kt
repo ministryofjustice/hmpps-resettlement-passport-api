@@ -16,10 +16,12 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResetReaso
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import java.time.LocalDateTime
 
@@ -30,6 +32,9 @@ class ProfileResetIntegrationTest : IntegrationTestBase() {
 
   @Autowired
   private lateinit var pathwayStatusRepository: PathwayStatusRepository
+
+  @Autowired
+  private lateinit var prisonerRepository: PrisonerRepository
 
   private val fakeNow = LocalDateTime.parse("2024-10-01T12:00:00")
 
@@ -100,6 +105,10 @@ class ProfileResetIntegrationTest : IntegrationTestBase() {
       .usingRecursiveComparison()
       .ignoringFields("when")
       .isEqualTo(mapOf("correlationId" to null, "details" to null, "service" to "hmpps-resettlement-passport-api", "subjectId" to "ABC1234", "subjectType" to "PRISONER_ID", "what" to "RESET_PROFILE", "when" to "2025-01-06T13:48:20.391273Z", "who" to "RESETTLEMENTPASSPORT_ADM"))
+
+    // Prisoner should have supportNeedsLegacyProfile set to false
+    val expectedPrisoner = PrisonerEntity(1, "ABC1234", LocalDateTime.parse("2023-08-16T12:21:38.709"), "MDI", false)
+    Assertions.assertEquals(expectedPrisoner, prisonerRepository.findById(1).get())
 
     unmockkAll()
   }

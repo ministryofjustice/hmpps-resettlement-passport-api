@@ -42,7 +42,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
       .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
 
     val prisonerEntity1 = prisonerRepository.findByNomsId("123")
-    val expectedPrisonerEntity1 = PrisonerEntity(null, nomsId, LocalDateTime.now(), "MDI")
+    val expectedPrisonerEntity1 = PrisonerEntity(null, nomsId, LocalDateTime.now(), "MDI", false)
     assertThat(expectedPrisonerEntity1).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java)
       .ignoringFields("id").isEqualTo(prisonerEntity1)
 
@@ -60,7 +60,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
       .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
 
     val prisonerEntity2 = prisonerRepository.findByNomsId("123")
-    val expectedPrisonerEntity2 = PrisonerEntity(null, nomsId, LocalDateTime.now(), "MDI")
+    val expectedPrisonerEntity2 = PrisonerEntity(null, nomsId, LocalDateTime.now(), "MDI", false)
     assertThat(expectedPrisonerEntity2).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java)
       .ignoringFields("id").isEqualTo(prisonerEntity2)
   }
@@ -111,7 +111,7 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
       .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
 
     val prisonerEntity = prisonerRepository.findByNomsId("123")
-    val expectedPrisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), "MDI")
+    val expectedPrisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), "MDI", false)
     assertThat(expectedPrisonerEntity).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java)
       .ignoringFields("id").isEqualTo(prisonerEntity)
   }

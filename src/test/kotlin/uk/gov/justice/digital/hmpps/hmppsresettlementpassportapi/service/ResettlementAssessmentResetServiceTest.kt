@@ -38,12 +38,16 @@ class ResettlementAssessmentResetServiceTest {
   @Mock
   private lateinit var pathwayAndStatusService: PathwayAndStatusService
 
+  @Mock
+  private lateinit var supportNeedsLegacyProfileService: SupportNeedsLegacyProfileService
+
   @BeforeEach
   fun beforeEach() {
     resettlementAssessmentResetService = ResettlementAssessmentResetService(
       resettlementAssessmentService,
       caseNotesService,
       pathwayAndStatusService,
+      supportNeedsLegacyProfileService,
     )
   }
 
@@ -65,6 +69,7 @@ class ResettlementAssessmentResetServiceTest {
     verify(resettlementAssessmentService).deleteAllResettlementAssessments(nomsId)
     verifyNoInteractions(caseNotesService)
     verifyNoInteractions(pathwayAndStatusService)
+    verifyNoInteractions(supportNeedsLegacyProfileService)
   }
 
   @Test
@@ -81,6 +86,7 @@ class ResettlementAssessmentResetServiceTest {
     verify(resettlementAssessmentService).deleteAllResettlementAssessments(nomsId)
     verify(caseNotesService).sendProfileResetCaseNote(nomsId, "J_DOE", "The person has been recalled to prison")
     Pathway.entries.forEach { verify(pathwayAndStatusService).updatePathwayStatus(nomsId, PathwayAndStatus(it, Status.NOT_STARTED)) }
+    verify(supportNeedsLegacyProfileService).setSupportNeedsLegacyFlag(nomsId, false)
   }
 
   @ParameterizedTest

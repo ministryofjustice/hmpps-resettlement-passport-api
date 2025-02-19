@@ -117,7 +117,7 @@ class ResettlementAssessmentServiceTest {
       caseNoteRetryRepository,
       profileTagsRepository,
       "https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk",
-      supportNeedsLegacyProfileService
+      supportNeedsLegacyProfileService,
     )
 
     resettlementAssessmentStrategy = ResettlementAssessmentStrategy(

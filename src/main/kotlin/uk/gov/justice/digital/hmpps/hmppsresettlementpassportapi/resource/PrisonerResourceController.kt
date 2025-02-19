@@ -98,9 +98,6 @@ class PrisonerResourceController(
     @Parameter(description = "Filter on assessmentRequired. Cannot be used if pathwayView is provided.")
     @RequestParam(value = "assessmentRequired")
     assessmentRequired: Boolean?,
-    @Parameter(description = "Prisoners in watchList.")
-    @RequestParam(value = "watchList")
-    watchList: Boolean?,
     @Parameter(description = "Include prisoners with release date in past in results")
     @RequestParam(value = "includePastReleaseDates")
     includePastReleaseDates: Boolean = false,
@@ -110,7 +107,7 @@ class PrisonerResourceController(
     @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
-  ): PrisonersList = prisonerService.getPrisonersByPrisonId(term, prisonId, days, pathwayView, pathwayStatus, assessmentRequired, page, size, sort, watchList, includePastReleaseDates, auth, workerId)
+  ): PrisonersList = prisonerService.getPrisonersByPrisonId(term, prisonId, days, pathwayView, pathwayStatus, assessmentRequired, page, size, sort, includePastReleaseDates, auth, workerId)
 
   @GetMapping("/prisoner/{nomsId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get prisoner by noms Id", description = "Prisoner Details based on noms Id")

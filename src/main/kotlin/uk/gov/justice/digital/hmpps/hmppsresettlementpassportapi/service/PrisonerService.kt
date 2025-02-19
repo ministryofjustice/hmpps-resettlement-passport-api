@@ -37,7 +37,6 @@ class PrisonerService(
   private val pathwayStatusRepository: PathwayStatusRepository,
   private val resettlementAssessmentRepository: ResettlementAssessmentRepository,
   private val profileTagsRepository: ProfileTagsRepository,
-  private val watchlistService: WatchlistService,
   private val pathwayAndStatusService: PathwayAndStatusService,
   private val deliusApiService: ResettlementPassportDeliusApiService,
   private val caseAllocationService: CaseAllocationService,
@@ -60,7 +59,6 @@ class PrisonerService(
     pageNumber: Int,
     pageSize: Int,
     sort: String,
-    watchList: Boolean?,
     includePastReleaseDates: Boolean,
     auth: String,
     workerId: String?,
@@ -110,7 +108,7 @@ class PrisonerService(
       )
     }
 
-    val fullList = objectMapper(prisoners, pathwayView, pathwayStatus, prisonId, assessmentRequired, watchList, staffUsername, workerId)
+    val fullList = objectMapper(prisoners, pathwayView, pathwayStatus, prisonId, assessmentRequired, staffUsername, workerId)
 
     sortPrisoners(sort, fullList)
 
@@ -197,7 +195,6 @@ class PrisonerService(
     pathwayStatusToFilter: Status?,
     prisonId: String,
     assessmentRequiredFilter: Boolean?,
-    watchListFilter: Boolean?,
     staffUsername: String,
     workerId: String?,
   ): MutableList<Prisoners> {
@@ -214,7 +211,6 @@ class PrisonerService(
     val lastReportToNomsIdMap = resettlementAssessmentService.getLastReportToNomsIdByPrisonId(prisonId)
 
     val defaultPathwayStatuses = getDefaultPathwayStatuses()
-    val watchedOffenders = watchlistService.findAllWatchedPrisonerForStaff(staffUsername)
     val assignedWorkers = caseAllocationService.getAllAssignedResettlementWorkers(prisonId)
     val assignedWorkersMap = assignedWorkers.groupBy { it?.prisonerId ?: 0 }
     searchList.forEach { prisonersSearch ->
@@ -226,11 +222,6 @@ class PrisonerService(
       val sortedPathwayStatuses: List<PathwayStatus>?
       val pathwayStatus: Status?
       val lastUpdatedDateFromPathwayStatus: LocalDate?
-      val isInWatchList = watchedOffenders.contains(prisonerId)
-
-      if (watchListFilter == true && !isInWatchList) {
-        return@forEach
-      }
 
       val assigned = assignedWorkersMap[prisonerId]
 
@@ -364,8 +355,6 @@ class PrisonerService(
 
     val pathwayStatuses = getPathwayStatuses(prisonerEntity)
     val assessmentStatus = isAssessmentRequired(prisonerEntity)
-    val staffUsername = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get name from auth token")
-    val isInWatchlist = watchlistService.isPrisonerInWatchList(staffUsername, prisonerEntity)
     var profileTagList = ProfileTagList(listOf())
     if (includeProfileTags) {
       profileTagList = getProfileTags(prisonerEntity.nomsId)
@@ -378,7 +367,6 @@ class PrisonerService(
       resettlementReviewAvailable = assessmentStatus.resettlementReviewAvailable,
       immediateNeedsSubmitted = assessmentStatus.immediateNeedsSubmitted,
       preReleaseSubmitted = assessmentStatus.preReleaseSubmitted,
-      isInWatchlist = isInWatchlist,
       profile = profileTagList,
     )
     return pr

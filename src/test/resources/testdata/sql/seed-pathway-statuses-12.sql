@@ -7,14 +7,6 @@ VALUES(2, '456', '2023-08-17 12:25:45.306', 'xyz');
 INSERT INTO prisoner
 (id, noms_id, creation_date, prison_id)
 VALUES(3, '789', '2023-08-17 12:26:03.441', 'xyz');
-
-INSERT INTO watchlist
-(id, prisoner_id, staff_username, creation_date)
-VALUES
-    (1, 1, 'RESETTLEMENTPASSPORT_ADM', '2023-08-16 12:21:38.709'),
-    (2, 2, 'staff2', '2023-08-17 12:25:45.306'),
-    (3, 3, 'staff3', '2023-08-17 12:26:03.441');
-
 INSERT INTO pathway_status
 (id, prisoner_id, pathway, status, updated_date)
 VALUES(1, 1, 'ACCOMMODATION', 'NOT_STARTED', '2023-08-16 12:21:44.234');

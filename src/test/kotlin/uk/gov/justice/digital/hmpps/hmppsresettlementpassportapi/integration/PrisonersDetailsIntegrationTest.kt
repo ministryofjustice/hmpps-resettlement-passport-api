@@ -90,33 +90,6 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  @Sql("classpath:testdata/sql/seed-pathway-statuses-12.sql")
-  fun `Get Prisoner Details happy path - add in watchlist flag`() {
-    var expectedOutput = readFile("testdata/expectation/prisoner-details-6.json")
-    val dob = LocalDate.of(1982, 10, 24)
-    val age = Period.between(dob, LocalDate.now()).years
-    expectedOutput = expectedOutput.replace("REPLACE_WITH_AGE", "$age")
-    val nomsId = "123"
-    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
-    prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
-    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
-    deliusApiMockServer.stubGetPersonalDetailsFromCrn("abc", 200)
-
-    webTestClient.get()
-      .uri("/resettlement-passport/prisoner/$nomsId")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
-      .exchange()
-      .expectStatus().isOk
-      .expectHeader().contentType("application/json")
-      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
-
-    val prisonerEntity = prisonerRepository.findByNomsId("123")
-    val expectedPrisonerEntity = PrisonerEntity(null, nomsId, LocalDateTime.now(), "xyz")
-    assertThat(expectedPrisonerEntity).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java)
-      .ignoringFields("id").isEqualTo(prisonerEntity)
-  }
-
-  @Test
   fun `Get Prisoner Details - error getting CRN - blank database`() {
     var expectedOutput = readFile("testdata/expectation/prisoner-details-5.json")
     val dob = LocalDate.of(1982, 10, 24)

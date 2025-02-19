@@ -76,9 +76,6 @@ class PrisonerServiceTest {
   private lateinit var deliusApiService: ResettlementPassportDeliusApiService
 
   @Mock
-  private lateinit var watchlistService: WatchlistService
-
-  @Mock
   private lateinit var profileTagsRepository: ProfileTagsRepository
 
   @Mock
@@ -102,7 +99,6 @@ class PrisonerServiceTest {
       pathwayStatusRepository,
       resettlementAssessmentRepository,
       profileTagsRepository,
-      watchlistService,
       pathwayAndStatusService,
       deliusApiService,
       caseAllocationService,
@@ -169,7 +165,6 @@ class PrisonerServiceTest {
         0,
         10,
         "releaseDate,DESC",
-        false,
         false,
         "123",
         null,
@@ -273,7 +268,6 @@ class PrisonerServiceTest {
         pageNumber = 0,
         pageSize = 10,
         sort = "releaseDate,DESC",
-        watchList = false,
         includePastReleaseDates = true,
         auth = "123",
         null,
@@ -567,7 +561,6 @@ class PrisonerServiceTest {
         10,
         "releaseDate,DESC",
         false,
-        false,
         "123",
         null,
       )
@@ -596,7 +589,6 @@ class PrisonerServiceTest {
         0,
         20,
         "releaseDate,ASC",
-        false,
         false,
         "123",
         null,
@@ -630,7 +622,6 @@ class PrisonerServiceTest {
         10,
         "name,ASC",
         false,
-        false,
         "123",
         null,
       )
@@ -648,7 +639,7 @@ class PrisonerServiceTest {
     whenever(prisonerSearchApiService.findPrisonersByPrisonId(prisonId)).thenReturn(mockedJsonResponse.content)
 
     val prisonersList =
-      prisonerService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 5, "name,ASC", false, false, "123", null)
+      prisonerService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 5, "name,ASC", false, "123", null)
     Assertions.assertEquals(expectedPageSize, prisonersList.pageSize)
     prisonersList.content?.toList()?.let { Assertions.assertEquals(expectedPageSize, it.size) }
   }
@@ -683,7 +674,6 @@ class PrisonerServiceTest {
         10,
         "name,ASC",
         false,
-        false,
         "123",
         null,
       )
@@ -709,7 +699,6 @@ class PrisonerServiceTest {
       0,
       10,
       "releaseDate,DESC",
-      false,
       false,
       "123",
       null,
@@ -737,7 +726,6 @@ class PrisonerServiceTest {
       0,
       10,
       "releaseDate,DESC",
-      false,
       false,
       "123",
       null,
@@ -1165,7 +1153,7 @@ class PrisonerServiceTest {
         "HDCED",
       ),
     )
-    val actualPrisoners = prisonerService.objectMapper(prisoners, null, null, "MDI", null, false, "123", null)
+    val actualPrisoners = prisonerService.objectMapper(prisoners, null, null, "MDI", null, "123", null)
     Assertions.assertEquals(prisonersMapped, actualPrisoners)
   }
 
@@ -1176,7 +1164,7 @@ class PrisonerServiceTest {
     mockPathwayStatusEntities()
     whenever(caseAllocationService.getAllAssignedResettlementWorkers("MDI")).thenReturn(createCaseAllocationList())
 
-    val actualPrisoners = prisonerService.objectMapper(prisoners, null, null, "MDI", null, false, "123", workerId)
+    val actualPrisoners = prisonerService.objectMapper(prisoners, null, null, "MDI", null, "123", workerId)
     Assertions.assertEquals(expectedPrisoners.size, actualPrisoners.size)
     Assertions.assertEquals(expectedPrisoners, actualPrisoners)
   }

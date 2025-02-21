@@ -26,39 +26,41 @@
     },
     {
       "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-      "status": "IN_PROGRESS",
+      "status": "NOT_STARTED",
       "lastDateChange": "2023-08-17"
     },
     {
       "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
-      "status": "SUPPORT_NOT_REQUIRED",
+      "status": "NOT_STARTED",
       "lastDateChange": "2023-08-17"
     },
     {
       "pathway": "DRUGS_AND_ALCOHOL",
-      "status": "SUPPORT_DECLINED",
+      "status": "NOT_STARTED",
       "lastDateChange": "2023-08-17"
     },
     {
       "pathway": "EDUCATION_SKILLS_AND_WORK",
-      "status": "DONE",
+      "status": "NOT_STARTED",
       "lastDateChange": "2023-08-17"
     },
     {
       "pathway": "FINANCE_AND_ID",
-      "status": "IN_PROGRESS",
+      "status": "NOT_STARTED",
       "lastDateChange": "2023-08-17"
     },
     {
       "pathway": "HEALTH",
-      "status": "SUPPORT_NOT_REQUIRED",
+      "status": "NOT_STARTED",
       "lastDateChange": "2023-08-17"
     }
   ],
-  "assessmentRequired": false,
-  "resettlementReviewAvailable":true,
-  "immediateNeedsSubmitted": true,
+  "assessmentRequired": true,
+  "resettlementReviewAvailable": false,
+  "immediateNeedsSubmitted": false,
   "preReleaseSubmitted": false,
-  "profile": {"tags":[]},
+  "profile": {
+    "tags": []
+  },
   "supportNeedsLegacyProfile": false
 }

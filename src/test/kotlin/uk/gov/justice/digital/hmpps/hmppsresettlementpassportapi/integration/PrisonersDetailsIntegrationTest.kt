@@ -340,6 +340,63 @@ class PrisonersDetailsIntegrationTest : IntegrationTestBase() {
       .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
   }
 
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoners-legacy-profile-2.sql")
+  fun `Get Prisoner Details happy path - test supportNeedsLegacyProfile=null`() {
+    val expectedOutput = readFileAndReplaceAge("testdata/expectation/prisoner-details-legacy-profile-null.json")
+    val nomsId = "123"
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
+    deliusApiMockServer.stubGetPersonalDetailsFromCrn("abc", 200)
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoners-legacy-profile-2.sql")
+  fun `Get Prisoner Details happy path - test supportNeedsLegacyProfile=true`() {
+    val expectedOutput = readFileAndReplaceAge("testdata/expectation/prisoner-details-legacy-profile-true.json")
+    val nomsId = "456"
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
+    deliusApiMockServer.stubGetPersonalDetailsFromCrn("abc", 200)
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoners-legacy-profile-2.sql")
+  fun `Get Prisoner Details happy path - test supportNeedsLegacyProfile=false`() {
+    val expectedOutput = readFileAndReplaceAge("testdata/expectation/prisoner-details-legacy-profile-false.json")
+    val nomsId = "789"
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+    prisonApiMockServer.stubGetPrisonerImages(nomsId, 200)
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
+    deliusApiMockServer.stubGetPersonalDetailsFromCrn("abc", 200)
+
+    webTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
+  }
+
   private fun readFileAndReplaceAge(resourceName: String): String {
     val prisonerJson = readFile(resourceName)
     val dob = LocalDate.of(1982, 10, 24)

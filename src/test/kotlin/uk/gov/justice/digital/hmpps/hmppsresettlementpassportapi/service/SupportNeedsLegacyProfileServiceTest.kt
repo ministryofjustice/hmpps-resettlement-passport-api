@@ -59,4 +59,10 @@ class SupportNeedsLegacyProfileServiceTest {
     }
     verifyNoMoreInteractions(prisonerRepository)
   }
+
+  @Test
+  fun `test setSupportNeedsLegacyProfile`() {
+    supportNeedsLegacyProfileService.setSupportNeedsLegacyProfile()
+    verify(prisonerRepository).updateProfileResetLegacyProfileFlags()
+  }
 }

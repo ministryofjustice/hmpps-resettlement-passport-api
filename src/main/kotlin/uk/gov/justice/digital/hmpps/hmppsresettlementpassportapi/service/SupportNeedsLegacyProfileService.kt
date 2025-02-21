@@ -6,11 +6,18 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.Resource
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 
 @Service
-class SupportNeedsLegacyProfileService(private val prisonerRepository: PrisonerRepository) {
+class SupportNeedsLegacyProfileService(
+  private val prisonerRepository: PrisonerRepository,
+) {
   @Transactional
   fun setSupportNeedsLegacyFlag(nomsId: String, flag: Boolean) {
     val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Unable to find prisoner $nomsId in database.")
     prisoner.supportNeedsLegacyProfile = flag
     prisonerRepository.save(prisoner)
+  }
+
+  @Transactional
+  fun setSupportNeedsLegacyProfile() {
+    prisonerRepository.updateProfileResetLegacyProfileFlags()
   }
 }

@@ -33,5 +33,6 @@ interface PrisonerSupportNeedRepository : JpaRepository<PrisonerSupportNeedEntit
   )
   fun getPrisonerSupportNeedsByPrisonId(prisonId: String): List<Array<Any?>>
   fun findByIdAndDeletedIsFalse(id: Long): PrisonerSupportNeedEntity?
+  fun findFirstByPrisonerIdAndSupportNeedIdAndOtherDetailAndDeletedIsFalseOrderByCreatedDateDesc(prisonerId: Long, supportNeedId: Long, otherDetail: String?): PrisonerSupportNeedEntity?
   fun findFirstBySupportNeedIdAndOtherDetailAndDeletedIsFalseOrderByCreatedDateDesc(supportNeedId: Long, otherDetail: String?): PrisonerSupportNeedEntity?
 }

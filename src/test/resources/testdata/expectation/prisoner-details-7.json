@@ -67,5 +67,6 @@
       "COMMUNITY_ORG_SUPPORT",
       "CARE_HEALTH_SUPPORT",
       "MANAGE_DEBT_ARREARS"
-    ]}
+    ]},
+  "supportNeedsLegacyProfile": false
 }

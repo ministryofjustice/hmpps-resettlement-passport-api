@@ -368,6 +368,7 @@ class PrisonerService(
       immediateNeedsSubmitted = assessmentStatus.immediateNeedsSubmitted,
       preReleaseSubmitted = assessmentStatus.preReleaseSubmitted,
       profile = profileTagList,
+      supportNeedsLegacyProfile = prisonerEntity.supportNeedsLegacyProfile ?: false,
     )
     return pr
   }

@@ -69,6 +69,7 @@ data class Prisoner(
   val immediateNeedsSubmitted: Boolean,
   val preReleaseSubmitted: Boolean,
   val profile: ProfileTagList,
+  val supportNeedsLegacyProfile: Boolean,
 )
 
 data class LastReport(

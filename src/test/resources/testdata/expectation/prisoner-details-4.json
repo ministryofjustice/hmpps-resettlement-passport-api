@@ -59,5 +59,6 @@
   "resettlementReviewAvailable":false,
   "immediateNeedsSubmitted": true,
   "preReleaseSubmitted": true,
-  "profile": {"tags":[]}
+  "profile": {"tags":[]},
+  "supportNeedsLegacyProfile": false
 }

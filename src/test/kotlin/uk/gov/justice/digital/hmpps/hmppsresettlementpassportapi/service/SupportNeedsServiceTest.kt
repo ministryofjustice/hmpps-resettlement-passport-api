@@ -698,7 +698,7 @@ class SupportNeedsServiceTest {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
 
-    whenever(prisonerSupportNeedRepository.findFirstBySupportNeedIdAndOtherDetailAndDeletedIsFalseOrderByCreatedDateDesc(8, null)).thenReturn(null)
+    whenever(prisonerSupportNeedRepository.findFirstByPrisonerIdAndSupportNeedIdAndOtherDetailAndDeletedIsFalseOrderByCreatedDateDesc(1, 8, null)).thenReturn(null)
     whenever(supportNeedRepository.findByIdAndDeletedIsFalse(8)).thenReturn(getSupportNeed(8, Pathway.HEALTH))
     whenever(prisonerSupportNeedRepository.save(PrisonerSupportNeedEntity(prisonerId = 1, supportNeed = getSupportNeed(8, Pathway.HEALTH), otherDetail = null, createdBy = "A User", createdDate = fakeNow))).thenReturn(PrisonerSupportNeedEntity(id = 9, prisonerId = 1, supportNeed = getSupportNeed(8, Pathway.HEALTH), otherDetail = null, createdBy = "A User", createdDate = fakeNow))
     whenever(prisonerSupportNeedUpdateRepository.save(PrisonerSupportNeedUpdateEntity(prisonerSupportNeedId = 9, createdBy = "A User", createdDate = fakeNow, updateText = "This is an update 1", status = SupportNeedStatus.NOT_STARTED, isPrison = true, isProbation = false)))

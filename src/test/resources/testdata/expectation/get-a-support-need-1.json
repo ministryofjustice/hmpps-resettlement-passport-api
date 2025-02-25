@@ -6,6 +6,7 @@
   "previousUpdates": [
     {
       "id": 3,
+      "prisonerNeedId": 1,
       "title": "End a tenancy",
       "status": "IN_PROGRESS",
       "isPrisonResponsible": true,
@@ -16,6 +17,7 @@
     },
     {
       "id": 4,
+      "prisonerNeedId": 1,
       "title": "End a tenancy",
       "status": "MET",
       "isPrisonResponsible": true,
@@ -26,6 +28,7 @@
     },
     {
       "id": 1,
+      "prisonerNeedId": 1,
       "title": "End a tenancy",
       "status": "NOT_STARTED",
       "isPrisonResponsible": false,

@@ -2,6 +2,7 @@
   "updates": [
     {
       "id": 9,
+      "prisonerNeedId": 5,
       "title": "Arrange storage for personal possessions while in prison",
       "status": "DECLINED",
       "isPrisonResponsible": false,
@@ -12,6 +13,7 @@
     },
     {
       "id": 6,
+      "prisonerNeedId": 3,
       "title": "Mortgage support while in prison",
       "status": "NOT_STARTED",
       "isPrisonResponsible": true,
@@ -22,6 +24,7 @@
     },
     {
       "id": 7,
+      "prisonerNeedId": 4,
       "title": "Home adaptations to stay in current accommodation (changes to make it safer and easier to move around and do everyday tasks)",
       "status": "MET",
       "isPrisonResponsible": true,
@@ -32,6 +35,7 @@
     },
     {
       "id": 3,
+      "prisonerNeedId": 1,
       "title": "End a tenancy",
       "status": "IN_PROGRESS",
       "isPrisonResponsible": true,
@@ -42,6 +46,7 @@
     },
     {
       "id": 8,
+      "prisonerNeedId": 4,
       "title": "Home adaptations to stay in current accommodation (changes to make it safer and easier to move around and do everyday tasks)",
       "status": "IN_PROGRESS",
       "isPrisonResponsible": true,
@@ -52,6 +57,7 @@
     },
     {
       "id": 4,
+      "prisonerNeedId": 1,
       "title": "End a tenancy",
       "status": "MET",
       "isPrisonResponsible": true,
@@ -62,6 +68,7 @@
     },
     {
       "id": 5,
+      "prisonerNeedId": 3,
       "title": "Mortgage support while in prison",
       "status": "IN_PROGRESS",
       "isPrisonResponsible": true,
@@ -72,6 +79,7 @@
     },
     {
       "id": 1,
+      "prisonerNeedId": 1,
       "title": "End a tenancy",
       "status": "NOT_STARTED",
       "isPrisonResponsible": false,

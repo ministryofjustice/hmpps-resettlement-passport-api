@@ -40,6 +40,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedUpdateRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.SupportNeedRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CaseNotesApiService
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -62,9 +63,15 @@ class SupportNeedsServiceTest {
   @Mock
   private lateinit var supportNeedRepository: SupportNeedRepository
 
+  @Mock
+  private lateinit var caseNotesApiService: CaseNotesApiService
+
+  @Mock
+  private lateinit var deliusContactService: DeliusContactService
+
   @BeforeEach
   fun beforeEach() {
-    supportNeedsService = SupportNeedsService(prisonerSupportNeedRepository, prisonerSupportNeedUpdateRepository, prisonerRepository, supportNeedRepository)
+    supportNeedsService = SupportNeedsService(prisonerSupportNeedRepository, prisonerSupportNeedUpdateRepository, prisonerRepository, supportNeedRepository, caseNotesApiService, deliusContactService)
   }
 
   @Test
@@ -368,7 +375,7 @@ class SupportNeedsServiceTest {
 
   @ParameterizedTest
   @MethodSource("test getPathwayUpdatesByNomsId data")
-  fun `test getPathwayUpdatesByNomsId`(page: Int, size: Int, sort: String, prisonerSupportNeedsId: Long?, expectedResult: SupportNeedUpdates) {
+  fun `test getPathwayUpdatesByNomsId`(page: Int, size: Int, sort: String, prisonerSupportNeedId: Long?, expectedResult: SupportNeedUpdates) {
     val nomsId = "A123"
     val pathway = Pathway.ACCOMMODATION
 
@@ -397,7 +404,7 @@ class SupportNeedsServiceTest {
         PrisonerSupportNeedUpdateEntity(id = 11, prisonerSupportNeedId = 4, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-16T12:09:34"), updateText = "This is some update text 11", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = true),
       ),
     )
-    Assertions.assertEquals(expectedResult, supportNeedsService.getPathwayUpdatesByNomsId(nomsId, pathway, page, size, sort, prisonerSupportNeedsId))
+    Assertions.assertEquals(expectedResult, supportNeedsService.getPathwayUpdatesByNomsId(nomsId, pathway, page, size, sort, prisonerSupportNeedId))
   }
 
   private fun `test getPathwayUpdatesByNomsId data`() = Stream.of(
@@ -487,17 +494,17 @@ class SupportNeedsServiceTest {
 
   private fun getExpectedSupportNeedUpdateUpdates(ids: List<Long>): List<SupportNeedUpdate> {
     val completeList = listOf(
-      SupportNeedUpdate(id = 1, title = "Title 1", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 1", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-10T12:09:34")),
-      SupportNeedUpdate(id = 2, title = "Title 1", status = SupportNeedStatus.MET, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 2", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-15T12:09:34")),
-      SupportNeedUpdate(id = 3, title = "Title 1", status = SupportNeedStatus.IN_PROGRESS, isPrisonResponsible = true, isProbationResponsible = false, text = "This is some update text 3", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-13T12:09:34")),
-      SupportNeedUpdate(id = 4, title = "Title 2", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 4", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-18T12:09:34")),
-      SupportNeedUpdate(id = 5, title = "Title 2", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 5", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-17T12:09:34")),
-      SupportNeedUpdate(id = 6, title = "Title 2", status = SupportNeedStatus.NOT_STARTED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 6", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-11T12:09:34")),
-      SupportNeedUpdate(id = 7, title = "Title 2", status = SupportNeedStatus.NOT_STARTED, isPrisonResponsible = false, isProbationResponsible = false, text = "This is some update text 7", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-19T12:09:34")),
-      SupportNeedUpdate(id = 8, title = "Title 3", status = SupportNeedStatus.MET, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 8", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-12T12:09:34")),
-      SupportNeedUpdate(id = 9, title = "Title 3", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 9", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-20T12:09:34")),
-      SupportNeedUpdate(id = 10, title = "Title 4", status = SupportNeedStatus.MET, isPrisonResponsible = true, isProbationResponsible = false, text = "This is some update text 10", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-21T12:09:34")),
-      SupportNeedUpdate(id = 11, title = "Title 4", status = SupportNeedStatus.IN_PROGRESS, isPrisonResponsible = true, isProbationResponsible = true, text = "This is some update text 11", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-16T12:09:34")),
+      SupportNeedUpdate(id = 1, prisonerNeedId = 1, title = "Title 1", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 1", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-10T12:09:34")),
+      SupportNeedUpdate(id = 2, prisonerNeedId = 1, title = "Title 1", status = SupportNeedStatus.MET, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 2", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-15T12:09:34")),
+      SupportNeedUpdate(id = 3, prisonerNeedId = 1, title = "Title 1", status = SupportNeedStatus.IN_PROGRESS, isPrisonResponsible = true, isProbationResponsible = false, text = "This is some update text 3", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-13T12:09:34")),
+      SupportNeedUpdate(id = 4, prisonerNeedId = 2, title = "Title 2", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 4", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-18T12:09:34")),
+      SupportNeedUpdate(id = 5, prisonerNeedId = 2, title = "Title 2", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 5", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-17T12:09:34")),
+      SupportNeedUpdate(id = 6, prisonerNeedId = 2, title = "Title 2", status = SupportNeedStatus.NOT_STARTED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 6", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-11T12:09:34")),
+      SupportNeedUpdate(id = 7, prisonerNeedId = 2, title = "Title 2", status = SupportNeedStatus.NOT_STARTED, isPrisonResponsible = false, isProbationResponsible = false, text = "This is some update text 7", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-19T12:09:34")),
+      SupportNeedUpdate(id = 8, prisonerNeedId = 3, title = "Title 3", status = SupportNeedStatus.MET, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 8", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-12T12:09:34")),
+      SupportNeedUpdate(id = 9, prisonerNeedId = 3, title = "Title 3", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 9", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-20T12:09:34")),
+      SupportNeedUpdate(id = 10, prisonerNeedId = 4, title = "Title 4", status = SupportNeedStatus.MET, isPrisonResponsible = true, isProbationResponsible = false, text = "This is some update text 10", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-21T12:09:34")),
+      SupportNeedUpdate(id = 11, prisonerNeedId = 4, title = "Title 4", status = SupportNeedStatus.IN_PROGRESS, isPrisonResponsible = true, isProbationResponsible = true, text = "This is some update text 11", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-16T12:09:34")),
     )
     return ids.map { id -> completeList.first { it.id == id } }
   }
@@ -660,11 +667,11 @@ class SupportNeedsServiceTest {
       isProbationResponsible = true,
       status = SupportNeedStatus.DECLINED,
       previousUpdates = listOf(
-        SupportNeedUpdate(id = 4, title = "Title 1", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 4", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-18T12:09:34")),
-        SupportNeedUpdate(id = 5, title = "Title 1", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 5", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-17T12:09:34")),
-        SupportNeedUpdate(id = 2, title = "Title 1", status = SupportNeedStatus.MET, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 2", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-15T12:09:34")),
-        SupportNeedUpdate(id = 3, title = "Title 1", status = SupportNeedStatus.IN_PROGRESS, isPrisonResponsible = true, isProbationResponsible = false, text = "This is some update text 3", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-13T12:09:34")),
-        SupportNeedUpdate(id = 1, title = "Title 1", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 1", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-10T12:09:34")),
+        SupportNeedUpdate(id = 4, prisonerNeedId = prisonerSupportNeedId, title = "Title 1", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 4", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-18T12:09:34")),
+        SupportNeedUpdate(id = 5, prisonerNeedId = prisonerSupportNeedId, title = "Title 1", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 5", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-17T12:09:34")),
+        SupportNeedUpdate(id = 2, prisonerNeedId = prisonerSupportNeedId, title = "Title 1", status = SupportNeedStatus.MET, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 2", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-15T12:09:34")),
+        SupportNeedUpdate(id = 3, prisonerNeedId = prisonerSupportNeedId, title = "Title 1", status = SupportNeedStatus.IN_PROGRESS, isPrisonResponsible = true, isProbationResponsible = false, text = "This is some update text 3", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-13T12:09:34")),
+        SupportNeedUpdate(id = 1, prisonerNeedId = prisonerSupportNeedId, title = "Title 1", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 1", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-10T12:09:34")),
       ),
     )
 

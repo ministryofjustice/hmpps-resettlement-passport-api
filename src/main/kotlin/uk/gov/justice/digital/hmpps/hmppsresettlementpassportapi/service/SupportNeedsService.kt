@@ -332,7 +332,7 @@ class SupportNeedsService(
         ?: throw ResourceNotFoundException("Cannot find prisoner support need ${need.prisonerSupportNeedId}")
     } else {
       // Check if there's any existing in case of any parallel working, if there is return this
-      val existingPrisonerSupportNeed = prisonerSupportNeedRepository.findFirstBySupportNeedIdAndOtherDetailAndDeletedIsFalseOrderByCreatedDateDesc(need.needId, need.otherDesc)
+      val existingPrisonerSupportNeed = prisonerSupportNeedRepository.findFirstByPrisonerIdAndSupportNeedIdAndOtherDetailAndDeletedIsFalseOrderByCreatedDateDesc(prisonerId, need.needId, need.otherDesc)
       if (existingPrisonerSupportNeed != null) {
         return existingPrisonerSupportNeed
       } else {

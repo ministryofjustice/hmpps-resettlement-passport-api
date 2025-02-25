@@ -105,15 +105,15 @@ class PrisonerSupportNeedRepositoryTest : RepositoryTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-prisoner-support-needs-5.sql")
-  fun `test findFirstBySupportNeedIdAndOtherDetailAndDeletedIsFalseOrderByCreatedDateDesc - happy path 1`() {
+  fun `test findFirstByPrisonerIdAndSupportNeedIdAndOtherDetailAndDeletedIsFalseOrderByCreatedDateDesc - happy path 1`() {
     val expectedSupportNeeds = PrisonerSupportNeedEntity(id = 103, prisonerId = 1, supportNeed = supportNeedRepository.findById(3).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = 106)
-    Assertions.assertEquals(expectedSupportNeeds, prisonerSupportNeedRepository.findFirstBySupportNeedIdAndOtherDetailAndDeletedIsFalseOrderByCreatedDateDesc(3, null))
+    Assertions.assertEquals(expectedSupportNeeds, prisonerSupportNeedRepository.findFirstByPrisonerIdAndSupportNeedIdAndOtherDetailAndDeletedIsFalseOrderByCreatedDateDesc(1, 3, null))
   }
 
   @Test
   @Sql("classpath:testdata/sql/seed-prisoner-support-needs-5.sql")
-  fun `test findFirstBySupportNeedIdAndOtherDetailAndDeletedIsFalseOrderByCreatedDateDesc - happy path 2`() {
+  fun `test findFirstByPrisonerIdAndSupportNeedIdAndOtherDetailAndDeletedIsFalseOrderByCreatedDateDesc - happy path 2`() {
     val expectedSupportNeeds = PrisonerSupportNeedEntity(id = 104, prisonerId = 1, supportNeed = supportNeedRepository.findById(5).get(), otherDetail = "Other 1", createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = 107)
-    Assertions.assertEquals(expectedSupportNeeds, prisonerSupportNeedRepository.findFirstBySupportNeedIdAndOtherDetailAndDeletedIsFalseOrderByCreatedDateDesc(5, "Other 1"))
+    Assertions.assertEquals(expectedSupportNeeds, prisonerSupportNeedRepository.findFirstByPrisonerIdAndSupportNeedIdAndOtherDetailAndDeletedIsFalseOrderByCreatedDateDesc(1, 5, "Other 1"))
   }
 }

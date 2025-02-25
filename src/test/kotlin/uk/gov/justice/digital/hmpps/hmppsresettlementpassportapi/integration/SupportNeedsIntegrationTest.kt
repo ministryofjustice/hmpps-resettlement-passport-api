@@ -416,6 +416,7 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
       PrisonerSupportNeedEntity(id = 104, prisonerId = 1, supportNeed = supportNeedRepository.findById(5).get(), otherDetail = "Other 1", createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = 107),
       PrisonerSupportNeedEntity(id = 105, prisonerId = 1, supportNeed = supportNeedRepository.findById(5).get(), otherDetail = "Other 2", createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = 109),
       PrisonerSupportNeedEntity(id = 106, prisonerId = 1, supportNeed = supportNeedRepository.findById(15).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = null),
+      PrisonerSupportNeedEntity(id = 201, prisonerId = 2, supportNeed = supportNeedRepository.findById(8).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = 201),
     )
     Assertions.assertEquals(expectedPrisonerSupportNeeds, prisonerSupportNeedRepository.findAll().sortedBy { it.id })
 
@@ -433,6 +434,7 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
       PrisonerSupportNeedUpdateEntity(id = 107, prisonerSupportNeedId = 104, createdBy = "User A", createdDate = LocalDateTime.parse("2024-02-03T10:36:32.713421"), updateText = "This is an update 6", status = SupportNeedStatus.MET, isPrison = true, isProbation = false, deleted = false, deletedDate = null),
       PrisonerSupportNeedUpdateEntity(id = 108, prisonerSupportNeedId = 104, createdBy = "User C", createdDate = LocalDateTime.parse("2024-02-03T09:36:32.713421"), updateText = "This is an update 7", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = true, deleted = false, deletedDate = null),
       PrisonerSupportNeedUpdateEntity(id = 109, prisonerSupportNeedId = 105, createdBy = "User B", createdDate = LocalDateTime.parse("2024-02-11T09:36:32.713421"), updateText = "This is an update 8", status = SupportNeedStatus.DECLINED, isPrison = false, isProbation = false, deleted = false, deletedDate = null),
+      PrisonerSupportNeedUpdateEntity(id = 201, prisonerSupportNeedId = 201, createdBy = "User A", createdDate = LocalDateTime.parse("2024-01-31T09:36:32.713421"), updateText = "This is an update", status = SupportNeedStatus.NOT_STARTED, isPrison = false, isProbation = false, deleted = false, deletedDate = null),
     )
     Assertions.assertEquals(expectedPrisonerSupportNeedUpdates, prisonerSupportNeedUpdateRepository.findAll().sortedBy { it.id })
   }
@@ -525,6 +527,7 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
       PrisonerSupportNeedEntity(id = 104, prisonerId = 1, supportNeed = supportNeedRepository.findById(5).get(), otherDetail = "Other 1", createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = 107),
       PrisonerSupportNeedEntity(id = 105, prisonerId = 1, supportNeed = supportNeedRepository.findById(5).get(), otherDetail = "Other 2", createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = 109),
       PrisonerSupportNeedEntity(id = 106, prisonerId = 1, supportNeed = supportNeedRepository.findById(15).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = null),
+      PrisonerSupportNeedEntity(id = 201, prisonerId = 2, supportNeed = supportNeedRepository.findById(8).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = 201),
     )
     Assertions.assertEquals(expectedPrisonerSupportNeeds, prisonerSupportNeedRepository.findAll().sortedBy { it.id })
 
@@ -538,6 +541,7 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
       PrisonerSupportNeedUpdateEntity(id = 107, prisonerSupportNeedId = 104, createdBy = "User A", createdDate = LocalDateTime.parse("2024-02-03T10:36:32.713421"), updateText = "This is an update 6", status = SupportNeedStatus.MET, isPrison = true, isProbation = false, deleted = false, deletedDate = null),
       PrisonerSupportNeedUpdateEntity(id = 108, prisonerSupportNeedId = 104, createdBy = "User C", createdDate = LocalDateTime.parse("2024-02-03T09:36:32.713421"), updateText = "This is an update 7", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = true, deleted = false, deletedDate = null),
       PrisonerSupportNeedUpdateEntity(id = 109, prisonerSupportNeedId = 105, createdBy = "User B", createdDate = LocalDateTime.parse("2024-02-11T09:36:32.713421"), updateText = "This is an update 8", status = SupportNeedStatus.DECLINED, isPrison = false, isProbation = false, deleted = false, deletedDate = null),
+      PrisonerSupportNeedUpdateEntity(id = 201, prisonerSupportNeedId = 201, createdBy = "User A", createdDate = LocalDateTime.parse("2024-01-31T09:36:32.713421"), updateText = "This is an update", status = SupportNeedStatus.NOT_STARTED, isPrison = false, isProbation = false, deleted = false, deletedDate = null),
     )
     Assertions.assertEquals(expectedPrisonerSupportNeedUpdates, prisonerSupportNeedUpdateRepository.findAll().sortedBy { it.id })
   }
@@ -597,6 +601,7 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
       PrisonerSupportNeedEntity(id = 104, prisonerId = 1, supportNeed = supportNeedRepository.findById(5).get(), otherDetail = "Other 1", createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = 107),
       PrisonerSupportNeedEntity(id = 105, prisonerId = 1, supportNeed = supportNeedRepository.findById(5).get(), otherDetail = "Other 2", createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = 109),
       PrisonerSupportNeedEntity(id = 106, prisonerId = 1, supportNeed = supportNeedRepository.findById(15).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = null),
+      PrisonerSupportNeedEntity(id = 201, prisonerId = 2, supportNeed = supportNeedRepository.findById(8).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = 201),
     )
     Assertions.assertEquals(expectedPrisonerSupportNeeds, prisonerSupportNeedRepository.findAll().sortedBy { it.id })
 
@@ -611,6 +616,7 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
       PrisonerSupportNeedUpdateEntity(id = 107, prisonerSupportNeedId = 104, createdBy = "User A", createdDate = LocalDateTime.parse("2024-02-03T10:36:32.713421"), updateText = "This is an update 6", status = SupportNeedStatus.MET, isPrison = true, isProbation = false, deleted = false, deletedDate = null),
       PrisonerSupportNeedUpdateEntity(id = 108, prisonerSupportNeedId = 104, createdBy = "User C", createdDate = LocalDateTime.parse("2024-02-03T09:36:32.713421"), updateText = "This is an update 7", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = true, deleted = false, deletedDate = null),
       PrisonerSupportNeedUpdateEntity(id = 109, prisonerSupportNeedId = 105, createdBy = "User B", createdDate = LocalDateTime.parse("2024-02-11T09:36:32.713421"), updateText = "This is an update 8", status = SupportNeedStatus.DECLINED, isPrison = false, isProbation = false, deleted = false, deletedDate = null),
+      PrisonerSupportNeedUpdateEntity(id = 201, prisonerSupportNeedId = 201, createdBy = "User A", createdDate = LocalDateTime.parse("2024-01-31T09:36:32.713421"), updateText = "This is an update", status = SupportNeedStatus.NOT_STARTED, isPrison = false, isProbation = false, deleted = false, deletedDate = null),
     )
     Assertions.assertEquals(expectedPrisonerSupportNeedUpdates, prisonerSupportNeedUpdateRepository.findAll().sortedBy { it.id })
   }

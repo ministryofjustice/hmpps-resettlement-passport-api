@@ -34,4 +34,19 @@ class SupportNeedRepositoryTest : RepositoryTestBase() {
     Assertions.assertNull(supportNeedRepository.findByIdAndDeletedIsFalse(100001))
     Assertions.assertNotNull(supportNeedRepository.findByIdAndDeletedIsFalse(1))
   }
+
+  @Test
+  fun `test legacy support needs`() {
+    // Check that the legacy support needs are the only hidden ones
+    val expectedSupportNeeds = listOf(
+      SupportNeedEntity(id = 114, pathway = Pathway.ACCOMMODATION, section = "Legacy support need", title = "Accommodation", hidden = true, excludeFromCount = false, allowOtherDetail = false, createdDate = LocalDateTime.parse("2025-02-24T16:53:08.373958"), deleted = false, deletedDate = null),
+      SupportNeedEntity(id = 115, pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, section = "Legacy support need", title = "Attitudes, thinking and behaviour", hidden = true, excludeFromCount = false, allowOtherDetail = false, createdDate = LocalDateTime.parse("2025-02-24T16:53:08.373958"), deleted = false, deletedDate = null),
+      SupportNeedEntity(id = 116, pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, section = "Legacy support need", title = "Children, families and communities", hidden = true, excludeFromCount = false, allowOtherDetail = false, createdDate = LocalDateTime.parse("2025-02-24T16:53:08.373958"), deleted = false, deletedDate = null),
+      SupportNeedEntity(id = 117, pathway = Pathway.DRUGS_AND_ALCOHOL, section = "Legacy support need", title = "Drugs and alcohol", hidden = true, excludeFromCount = false, allowOtherDetail = false, createdDate = LocalDateTime.parse("2025-02-24T16:53:08.373958"), deleted = false, deletedDate = null),
+      SupportNeedEntity(id = 118, pathway = Pathway.EDUCATION_SKILLS_AND_WORK, section = "Legacy support need", title = "Education, skills and work", hidden = true, excludeFromCount = false, allowOtherDetail = false, createdDate = LocalDateTime.parse("2025-02-24T16:53:08.373958"), deleted = false, deletedDate = null),
+      SupportNeedEntity(id = 119, pathway = Pathway.FINANCE_AND_ID, section = "Legacy support need", title = "Finance and ID", hidden = true, excludeFromCount = false, allowOtherDetail = false, createdDate = LocalDateTime.parse("2025-02-24T16:53:08.373958"), deleted = false, deletedDate = null),
+      SupportNeedEntity(id = 120, pathway = Pathway.HEALTH, section = "Legacy support need", title = "Health", hidden = true, excludeFromCount = false, allowOtherDetail = false, createdDate = LocalDateTime.parse("2025-02-24T16:53:08.373958"), deleted = false, deletedDate = null),
+    )
+    assertThat(supportNeedRepository.findAll().filter { it.hidden }).usingRecursiveComparison().ignoringFields("createdDate").isEqualTo(expectedSupportNeeds)
+  }
 }

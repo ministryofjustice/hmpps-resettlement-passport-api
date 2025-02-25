@@ -184,3 +184,13 @@ fun generateContentOnlyDpsCaseNoteText(assessmentType: ResettlementAssessmentTyp
 fun removeOtherPrefix(answer: String) = answer.removePrefix("OTHER_SUPPORT_NEEDS:").trim()
 
 fun getLatestDate(dates: Array<LocalDate?>) = dates.filterNotNull().maxByOrNull { it }
+
+fun convertPathwayToCaseNoteType(pathway: Pathway) = when (pathway) {
+  Pathway.ACCOMMODATION -> CaseNoteType.ACCOMMODATION
+  Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR -> CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR
+  Pathway.CHILDREN_FAMILIES_AND_COMMUNITY -> CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY
+  Pathway.DRUGS_AND_ALCOHOL -> CaseNoteType.DRUGS_AND_ALCOHOL
+  Pathway.EDUCATION_SKILLS_AND_WORK -> CaseNoteType.EDUCATION_SKILLS_AND_WORK
+  Pathway.FINANCE_AND_ID -> CaseNoteType.FINANCE_AND_ID
+  Pathway.HEALTH -> CaseNoteType.HEALTH
+}

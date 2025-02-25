@@ -109,7 +109,7 @@ class CaseNotesService(
 
   private fun getProfileResetCaseNotes(nomsId: String, days: Int, createdByUserId: Int): List<PathwayCaseNote> = caseNotesApiService.getCaseNotesByNomsId(nomsId, days, CaseNoteType.All, createdByUserId).filter { it.text.startsWith(PROFILE_RESET_TEXT_PREFIX) }
 
-  fun getResettlementAssessmentCaseNotes(prisonerId: Long, caseNoteType: CaseNoteType): List<PathwayCaseNote> = when (caseNoteType) {
+  private fun getResettlementAssessmentCaseNotes(prisonerId: Long, caseNoteType: CaseNoteType): List<PathwayCaseNote> = when (caseNoteType) {
     CaseNoteType.All -> emptyList()
     CaseNoteType.ACCOMMODATION -> makePathwayCaseNotes(
       resettlementAssessmentRepository.findAllByPrisonerIdAndPathwayAndAssessmentStatus(

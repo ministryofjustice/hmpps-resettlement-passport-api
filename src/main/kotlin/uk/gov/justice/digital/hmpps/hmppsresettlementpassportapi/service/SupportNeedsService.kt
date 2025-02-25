@@ -192,7 +192,7 @@ class SupportNeedsService(
     val mappedPrisonerSupportNeedUpdates = mapToSupportNeedUpdate(prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndDeletedIsFalse(prisonerSupportNeeds.mapNotNull { it.id }), allPrisonerNeedsMapped)
 
     // Get old-style pathway case notes from external API
-    val caseNoteType = caseNotesApiService.convertPathwayToCaseNoteType(pathway)
+    val caseNoteType = convertPathwayToCaseNoteType(pathway)
     val mappedPathwayCaseNotesFromApi = mapFromCaseNoteToSupportNeedUpdate(caseNotesApiService.getCaseNotesByNomsId(nomsId, 0, caseNoteType, 0), pathway)
 
     // Get all old-style case notes from Delius users from database

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayNeedsSummary
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeed
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedIdAndTitle
@@ -26,6 +27,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedUpdateRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.SupportNeedRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CaseNotesApiService
 import java.time.LocalDateTime
 
 @Service
@@ -34,6 +36,8 @@ class SupportNeedsService(
   private val prisonerSupportNeedUpdateRepository: PrisonerSupportNeedUpdateRepository,
   private val prisonerRepository: PrisonerRepository,
   private val supportNeedRepository: SupportNeedRepository,
+  private val caseNotesApiService: CaseNotesApiService,
+  private val deliusContactService: DeliusContactService,
 ) {
 
   fun getNeedsSummary(prisonerId: Long?): List<SupportNeedSummary> {
@@ -181,27 +185,40 @@ class SupportNeedsService(
     val sortDirection = sort.split(',')[1]
 
     val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Cannot find prisoner $nomsId")
+
+    // Get prisoner_support_need_updates from database
     val prisonerSupportNeeds = prisonerSupportNeedRepository.findAllByPrisonerIdAndSupportNeedPathwayAndDeletedIsFalse(prisoner.id!!, pathway)
-    val filteredPrisonerSupportNeedUpdates = prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndDeletedIsFalse(prisonerSupportNeeds.mapNotNull { it.id })
-      .filter { if (prisonerSupportNeedId != null) it.prisonerSupportNeedId == prisonerSupportNeedId else true }
-    val sortedPrisonerSupportNeedUpdates = if (sortDirection == "ASC") filteredPrisonerSupportNeedUpdates.sortedBy { it.createdDate } else filteredPrisonerSupportNeedUpdates.sortedByDescending { it.createdDate }
+    val allPrisonerNeedsMapped = mapToPrisonerNeedIdAndTitle(prisonerSupportNeeds)
+    val mappedPrisonerSupportNeedUpdates = mapToSupportNeedUpdate(prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndDeletedIsFalse(prisonerSupportNeeds.mapNotNull { it.id }), allPrisonerNeedsMapped)
+
+    // Get old-style pathway case notes from external API
+    val caseNoteType = convertPathwayToCaseNoteType(pathway)
+    val mappedPathwayCaseNotesFromApi = mapFromCaseNoteToSupportNeedUpdate(caseNotesApiService.getCaseNotesByNomsId(nomsId, 0, caseNoteType, 0), pathway)
+
+    // Get all old-style case notes from Delius users from database
+    val mappedDeliusUserCaseNotes = mapFromCaseNoteToSupportNeedUpdate(deliusContactService.getCaseNotesByNomsId(nomsId, caseNoteType), pathway)
+
+    // Combine case notes from different sources and apply filtering
+    // Note that we can only filter by the prisonerSupportNeedId
+    val combinedMappedUpdates = (mappedPrisonerSupportNeedUpdates + mappedPathwayCaseNotesFromApi + mappedDeliusUserCaseNotes)
+      .filter { if (prisonerSupportNeedId != null) it.prisonerNeedId == prisonerSupportNeedId else true }
+
+    // Apply sorting
+    val sortedCombinedMappedUpdates = if (sortDirection == "ASC") combinedMappedUpdates.sortedBy { it.createdAt } else combinedMappedUpdates.sortedByDescending { it.createdAt }
 
     val startIndex = page * size
     val maxEndIndex = (page + 1) * size
-    val endIndex = if (sortedPrisonerSupportNeedUpdates.size < maxEndIndex) sortedPrisonerSupportNeedUpdates.size else maxEndIndex
-    val updatePage = sortedPrisonerSupportNeedUpdates.subList(startIndex, endIndex)
-    val last = sortedPrisonerSupportNeedUpdates.size == endIndex
-
-    val allPrisonerNeedsMapped = mapToPrisonerNeedIdAndTitle(prisonerSupportNeeds)
-    val updatePageMapped = mapToSupportNeedUpdate(updatePage, allPrisonerNeedsMapped)
+    val endIndex = if (sortedCombinedMappedUpdates.size < maxEndIndex) sortedCombinedMappedUpdates.size else maxEndIndex
+    val updatePage = sortedCombinedMappedUpdates.subList(startIndex, endIndex)
+    val last = sortedCombinedMappedUpdates.size == endIndex
 
     return SupportNeedUpdates(
-      updates = updatePageMapped,
+      updates = updatePage,
       allPrisonerNeeds = allPrisonerNeedsMapped,
       size = size,
       page = page,
       sortName = sort,
-      totalElements = sortedPrisonerSupportNeedUpdates.size,
+      totalElements = sortedCombinedMappedUpdates.size,
       last = last,
     )
   }
@@ -211,6 +228,7 @@ class SupportNeedsService(
   fun mapToSupportNeedUpdate(prisonerSupportNeedUpdates: List<PrisonerSupportNeedUpdateEntity>, allPrisonerNeeds: List<PrisonerNeedIdAndTitle>) = prisonerSupportNeedUpdates.map { psnu ->
     SupportNeedUpdate(
       id = psnu.id!!,
+      prisonerNeedId = psnu.prisonerSupportNeedId,
       title = allPrisonerNeeds.first { psnu.prisonerSupportNeedId == it.id }.title,
       status = psnu.status,
       isPrisonResponsible = psnu.isPrison,
@@ -232,7 +250,7 @@ class SupportNeedsService(
     // Need to return each non-hidden support need and also any "others" from the prisonerSupportNeeds
     val supportNeeds = supportNeedsFromDatabase.filter { !it.hidden }.map { sn ->
       SupportNeed(
-        id = sn.id!!,
+        id = sn.id,
         title = sn.title,
         category = sn.section,
         allowUserDesc = sn.allowOtherDetail,
@@ -242,7 +260,7 @@ class SupportNeedsService(
       )
     } + prisonerSupportNeedsFromDatabase.filter { it.supportNeed.allowOtherDetail }.map { psn ->
       SupportNeed(
-        id = psn.supportNeed.id!!,
+        id = psn.supportNeed.id,
         title = psn.otherDetail ?: psn.supportNeed.title,
         category = psn.supportNeed.section,
         allowUserDesc = false,
@@ -279,6 +297,7 @@ class SupportNeedsService(
       previousUpdates = updates.map {
         SupportNeedUpdate(
           id = it.id!!,
+          prisonerNeedId = prisonerSupportNeedId,
           title = title,
           status = it.status,
           isPrisonResponsible = it.isPrison,
@@ -379,5 +398,19 @@ class SupportNeedsService(
     prisonerSupportNeed.latestUpdateId = savedPrisonerSupportNeedUpdate.id
 
     prisonerSupportNeedRepository.save(prisonerSupportNeed)
+  }
+
+  fun mapFromCaseNoteToSupportNeedUpdate(caseNotes: List<PathwayCaseNote>, pathway: Pathway) = caseNotes.map {
+    SupportNeedUpdate(
+      id = 0,
+      prisonerNeedId = null,
+      title = "${pathway.displayName} (case note)",
+      status = null,
+      isPrisonResponsible = null,
+      isProbationResponsible = null,
+      text = it.text,
+      createdBy = it.createdBy,
+      createdAt = it.creationDateTime,
+    )
   }
 }

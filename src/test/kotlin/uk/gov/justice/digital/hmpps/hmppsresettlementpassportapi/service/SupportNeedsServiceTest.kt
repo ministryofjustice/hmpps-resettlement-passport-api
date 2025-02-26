@@ -18,7 +18,10 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotePathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayNeedsSummary
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeed
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedIdAndTitle
@@ -40,6 +43,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedUpdateRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.SupportNeedRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CaseNotesApiService
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -62,9 +66,15 @@ class SupportNeedsServiceTest {
   @Mock
   private lateinit var supportNeedRepository: SupportNeedRepository
 
+  @Mock
+  private lateinit var caseNotesApiService: CaseNotesApiService
+
+  @Mock
+  private lateinit var deliusContactService: DeliusContactService
+
   @BeforeEach
   fun beforeEach() {
-    supportNeedsService = SupportNeedsService(prisonerSupportNeedRepository, prisonerSupportNeedUpdateRepository, prisonerRepository, supportNeedRepository)
+    supportNeedsService = SupportNeedsService(prisonerSupportNeedRepository, prisonerSupportNeedUpdateRepository, prisonerRepository, supportNeedRepository, caseNotesApiService, deliusContactService)
   }
 
   @Test
@@ -368,7 +378,7 @@ class SupportNeedsServiceTest {
 
   @ParameterizedTest
   @MethodSource("test getPathwayUpdatesByNomsId data")
-  fun `test getPathwayUpdatesByNomsId`(page: Int, size: Int, sort: String, prisonerSupportNeedsId: Long?, expectedResult: SupportNeedUpdates) {
+  fun `test getPathwayUpdatesByNomsId`(page: Int, size: Int, sort: String, prisonerSupportNeedIdFilter: Long?, caseNotesFromApi: List<PathwayCaseNote>, caseNotesFromDeliusUsers: List<PathwayCaseNote>, expectedResult: SupportNeedUpdates) {
     val nomsId = "A123"
     val pathway = Pathway.ACCOMMODATION
 
@@ -397,7 +407,9 @@ class SupportNeedsServiceTest {
         PrisonerSupportNeedUpdateEntity(id = 11, prisonerSupportNeedId = 4, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-16T12:09:34"), updateText = "This is some update text 11", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = true),
       ),
     )
-    Assertions.assertEquals(expectedResult, supportNeedsService.getPathwayUpdatesByNomsId(nomsId, pathway, page, size, sort, prisonerSupportNeedsId))
+    whenever(caseNotesApiService.getCaseNotesByNomsId(nomsId, 0, CaseNoteType.ACCOMMODATION, 0)).thenReturn(caseNotesFromApi)
+    whenever(deliusContactService.getCaseNotesByNomsId(nomsId, CaseNoteType.ACCOMMODATION)).thenReturn(caseNotesFromDeliusUsers)
+    Assertions.assertEquals(expectedResult, supportNeedsService.getPathwayUpdatesByNomsId(nomsId, pathway, page, size, sort, prisonerSupportNeedIdFilter))
   }
 
   private fun `test getPathwayUpdatesByNomsId data`() = Stream.of(
@@ -406,6 +418,8 @@ class SupportNeedsServiceTest {
       11,
       "createdDate,DESC",
       null,
+      listOf<PathwayCaseNote>(),
+      listOf<PathwayCaseNote>(),
       getExpectedSupportNeedUpdates(listOf(10, 9, 7, 4, 5, 11, 2, 3, 8, 6, 1), 0, 11, "createdDate,DESC", true),
     ),
     Arguments.of(
@@ -413,6 +427,11 @@ class SupportNeedsServiceTest {
       11,
       "createdDate,DESC",
       1L,
+      listOf(
+        // This won't be returned due to the filter being set to prisonerSupportNeedId=1
+        PathwayCaseNote("DPS-1", CaseNotePathway.ACCOMMODATION, LocalDateTime.parse("2024-12-18T13:00:01"), LocalDateTime.parse("2024-12-18T13:00:01"), "A User", "This is a case note 1"),
+      ),
+      listOf<PathwayCaseNote>(),
       getExpectedSupportNeedUpdates(listOf(2, 3, 1), 0, 11, "createdDate,DESC", true, 3),
     ),
     Arguments.of(
@@ -420,6 +439,8 @@ class SupportNeedsServiceTest {
       11,
       "createdDate,DESC",
       17L,
+      listOf<PathwayCaseNote>(),
+      listOf<PathwayCaseNote>(),
       getExpectedSupportNeedUpdates(emptyList(), 0, 11, "createdDate,DESC", true, 0),
     ),
     Arguments.of(
@@ -427,6 +448,8 @@ class SupportNeedsServiceTest {
       20,
       "createdDate,DESC",
       null,
+      listOf<PathwayCaseNote>(),
+      listOf<PathwayCaseNote>(),
       getExpectedSupportNeedUpdates(listOf(10, 9, 7, 4, 5, 11, 2, 3, 8, 6, 1), 0, 20, "createdDate,DESC", true),
     ),
     Arguments.of(
@@ -434,6 +457,8 @@ class SupportNeedsServiceTest {
       5,
       "createdDate,DESC",
       null,
+      listOf<PathwayCaseNote>(),
+      listOf<PathwayCaseNote>(),
       getExpectedSupportNeedUpdates(listOf(10, 9, 7, 4, 5), 0, 5, "createdDate,DESC", false),
     ),
     Arguments.of(
@@ -441,6 +466,8 @@ class SupportNeedsServiceTest {
       5,
       "createdDate,DESC",
       null,
+      listOf<PathwayCaseNote>(),
+      listOf<PathwayCaseNote>(),
       getExpectedSupportNeedUpdates(listOf(11, 2, 3, 8, 6), 1, 5, "createdDate,DESC", false),
     ),
     Arguments.of(
@@ -448,6 +475,8 @@ class SupportNeedsServiceTest {
       5,
       "createdDate,DESC",
       null,
+      listOf<PathwayCaseNote>(),
+      listOf<PathwayCaseNote>(),
       getExpectedSupportNeedUpdates(listOf(1), 2, 5, "createdDate,DESC", true),
     ),
     Arguments.of(
@@ -455,6 +484,8 @@ class SupportNeedsServiceTest {
       5,
       "createdDate,ASC",
       null,
+      listOf<PathwayCaseNote>(),
+      listOf<PathwayCaseNote>(),
       getExpectedSupportNeedUpdates(listOf(1, 6, 8, 3, 2), 0, 5, "createdDate,ASC", false),
     ),
     Arguments.of(
@@ -462,6 +493,8 @@ class SupportNeedsServiceTest {
       5,
       "createdDate,ASC",
       null,
+      listOf<PathwayCaseNote>(),
+      listOf<PathwayCaseNote>(),
       getExpectedSupportNeedUpdates(listOf(11, 5, 4, 7, 9), 1, 5, "createdDate,ASC", false),
     ),
     Arguments.of(
@@ -469,11 +502,30 @@ class SupportNeedsServiceTest {
       5,
       "createdDate,ASC",
       null,
+      listOf<PathwayCaseNote>(),
+      listOf<PathwayCaseNote>(),
       getExpectedSupportNeedUpdates(listOf(10), 2, 5, "createdDate,ASC", true),
+    ),
+    Arguments.of(
+      0,
+      20,
+      "createdDate,DESC",
+      null,
+      listOf(
+        PathwayCaseNote("DPS-1", CaseNotePathway.ACCOMMODATION, LocalDateTime.parse("2024-12-18T13:00:01"), LocalDateTime.parse("2024-12-18T13:00:01"), "A User", "This is a case note 1"),
+        PathwayCaseNote("DPS-2", CaseNotePathway.ACCOMMODATION, LocalDateTime.parse("2024-12-17T13:00:01"), LocalDateTime.parse("2024-12-17T13:00:01"), "C User", "This is a case note 2"),
+        PathwayCaseNote("DPS-3", CaseNotePathway.ACCOMMODATION, LocalDateTime.parse("2024-12-19T13:00:01"), LocalDateTime.parse("2024-12-19T13:00:01"), "B User", "This is a case note 3"),
+      ),
+      listOf(
+        PathwayCaseNote("delius-1", CaseNotePathway.ACCOMMODATION, LocalDateTime.parse("2024-12-18T14:00:01"), LocalDateTime.parse("2024-12-18T14:00:01"), "A User", "This is a case note 4"),
+        PathwayCaseNote("delius-2", CaseNotePathway.ACCOMMODATION, LocalDateTime.parse("2024-12-17T14:00:01"), LocalDateTime.parse("2024-12-17T14:00:01"), "C User", "This is a case note 5"),
+        PathwayCaseNote("delius-3", CaseNotePathway.ACCOMMODATION, LocalDateTime.parse("2024-12-19T14:00:01"), LocalDateTime.parse("2024-12-19T14:00:01"), "B User", "This is a case note 6"),
+      ),
+      getExpectedSupportNeedUpdates(listOf(10, 9, "delius-3", "DPS-3", 7, "delius-1", "DPS-1", 4, "delius-2", "DPS-2", 5, 11, 2, 3, 8, 6, 1), 0, 20, "createdDate,DESC", true, 17),
     ),
   )
 
-  private fun getExpectedSupportNeedUpdates(ids: List<Long>, page: Int, size: Int, sort: String, last: Boolean, totalElements: Int = 11) = SupportNeedUpdates(
+  private fun getExpectedSupportNeedUpdates(ids: List<Any>, page: Int, size: Int, sort: String, last: Boolean, totalElements: Int = 11) = SupportNeedUpdates(
     updates = getExpectedSupportNeedUpdateUpdates(ids),
     allPrisonerNeeds = getExpectedAllPrisonerNeeds(),
     size = size,
@@ -485,21 +537,27 @@ class SupportNeedsServiceTest {
 
   private fun getExpectedAllPrisonerNeeds() = listOf(PrisonerNeedIdAndTitle(id = 1, title = "Title 1"), PrisonerNeedIdAndTitle(id = 2, title = "Title 2"), PrisonerNeedIdAndTitle(id = 3, title = "Title 3"), PrisonerNeedIdAndTitle(id = 4, title = "Title 4"), PrisonerNeedIdAndTitle(id = 5, title = "Title 5"))
 
-  private fun getExpectedSupportNeedUpdateUpdates(ids: List<Long>): List<SupportNeedUpdate> {
-    val completeList = listOf(
-      SupportNeedUpdate(id = 1, title = "Title 1", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 1", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-10T12:09:34")),
-      SupportNeedUpdate(id = 2, title = "Title 1", status = SupportNeedStatus.MET, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 2", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-15T12:09:34")),
-      SupportNeedUpdate(id = 3, title = "Title 1", status = SupportNeedStatus.IN_PROGRESS, isPrisonResponsible = true, isProbationResponsible = false, text = "This is some update text 3", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-13T12:09:34")),
-      SupportNeedUpdate(id = 4, title = "Title 2", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 4", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-18T12:09:34")),
-      SupportNeedUpdate(id = 5, title = "Title 2", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 5", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-17T12:09:34")),
-      SupportNeedUpdate(id = 6, title = "Title 2", status = SupportNeedStatus.NOT_STARTED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 6", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-11T12:09:34")),
-      SupportNeedUpdate(id = 7, title = "Title 2", status = SupportNeedStatus.NOT_STARTED, isPrisonResponsible = false, isProbationResponsible = false, text = "This is some update text 7", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-19T12:09:34")),
-      SupportNeedUpdate(id = 8, title = "Title 3", status = SupportNeedStatus.MET, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 8", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-12T12:09:34")),
-      SupportNeedUpdate(id = 9, title = "Title 3", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 9", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-20T12:09:34")),
-      SupportNeedUpdate(id = 10, title = "Title 4", status = SupportNeedStatus.MET, isPrisonResponsible = true, isProbationResponsible = false, text = "This is some update text 10", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-21T12:09:34")),
-      SupportNeedUpdate(id = 11, title = "Title 4", status = SupportNeedStatus.IN_PROGRESS, isPrisonResponsible = true, isProbationResponsible = true, text = "This is some update text 11", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-16T12:09:34")),
+  private fun getExpectedSupportNeedUpdateUpdates(ids: List<Any>): List<SupportNeedUpdate> {
+    val completeList = mapOf(
+      1 to SupportNeedUpdate(id = 1, prisonerNeedId = 1, title = "Title 1", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 1", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-10T12:09:34")),
+      2 to SupportNeedUpdate(id = 2, prisonerNeedId = 1, title = "Title 1", status = SupportNeedStatus.MET, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 2", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-15T12:09:34")),
+      3 to SupportNeedUpdate(id = 3, prisonerNeedId = 1, title = "Title 1", status = SupportNeedStatus.IN_PROGRESS, isPrisonResponsible = true, isProbationResponsible = false, text = "This is some update text 3", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-13T12:09:34")),
+      4 to SupportNeedUpdate(id = 4, prisonerNeedId = 2, title = "Title 2", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 4", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-18T12:09:34")),
+      5 to SupportNeedUpdate(id = 5, prisonerNeedId = 2, title = "Title 2", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 5", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-17T12:09:34")),
+      6 to SupportNeedUpdate(id = 6, prisonerNeedId = 2, title = "Title 2", status = SupportNeedStatus.NOT_STARTED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 6", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-11T12:09:34")),
+      7 to SupportNeedUpdate(id = 7, prisonerNeedId = 2, title = "Title 2", status = SupportNeedStatus.NOT_STARTED, isPrisonResponsible = false, isProbationResponsible = false, text = "This is some update text 7", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-19T12:09:34")),
+      8 to SupportNeedUpdate(id = 8, prisonerNeedId = 3, title = "Title 3", status = SupportNeedStatus.MET, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 8", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-12T12:09:34")),
+      9 to SupportNeedUpdate(id = 9, prisonerNeedId = 3, title = "Title 3", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 9", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-20T12:09:34")),
+      10 to SupportNeedUpdate(id = 10, prisonerNeedId = 4, title = "Title 4", status = SupportNeedStatus.MET, isPrisonResponsible = true, isProbationResponsible = false, text = "This is some update text 10", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-21T12:09:34")),
+      11 to SupportNeedUpdate(id = 11, prisonerNeedId = 4, title = "Title 4", status = SupportNeedStatus.IN_PROGRESS, isPrisonResponsible = true, isProbationResponsible = true, text = "This is some update text 11", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-16T12:09:34")),
+      "DPS-1" to SupportNeedUpdate(id = 0, prisonerNeedId = null, title = "Accommodation (case note)", status = null, isPrisonResponsible = null, isProbationResponsible = null, text = "This is a case note 1", createdBy = "A User", createdAt = LocalDateTime.parse("2024-12-18T13:00:01")),
+      "DPS-2" to SupportNeedUpdate(id = 0, prisonerNeedId = null, title = "Accommodation (case note)", status = null, isPrisonResponsible = null, isProbationResponsible = null, text = "This is a case note 2", createdBy = "C User", createdAt = LocalDateTime.parse("2024-12-17T13:00:01")),
+      "DPS-3" to SupportNeedUpdate(id = 0, prisonerNeedId = null, title = "Accommodation (case note)", status = null, isPrisonResponsible = null, isProbationResponsible = null, text = "This is a case note 3", createdBy = "B User", createdAt = LocalDateTime.parse("2024-12-19T13:00:01")),
+      "delius-1" to SupportNeedUpdate(id = 0, prisonerNeedId = null, title = "Accommodation (case note)", status = null, isPrisonResponsible = null, isProbationResponsible = null, text = "This is a case note 4", createdBy = "A User", createdAt = LocalDateTime.parse("2024-12-18T14:00:01")),
+      "delius-2" to SupportNeedUpdate(id = 0, prisonerNeedId = null, title = "Accommodation (case note)", status = null, isPrisonResponsible = null, isProbationResponsible = null, text = "This is a case note 5", createdBy = "C User", createdAt = LocalDateTime.parse("2024-12-17T14:00:01")),
+      "delius-3" to SupportNeedUpdate(id = 0, prisonerNeedId = null, title = "Accommodation (case note)", status = null, isPrisonResponsible = null, isProbationResponsible = null, text = "This is a case note 6", createdBy = "B User", createdAt = LocalDateTime.parse("2024-12-19T14:00:01")),
     )
-    return ids.map { id -> completeList.first { it.id == id } }
+    return ids.map { id -> completeList[id]!! }
   }
 
   @Test
@@ -660,11 +718,11 @@ class SupportNeedsServiceTest {
       isProbationResponsible = true,
       status = SupportNeedStatus.DECLINED,
       previousUpdates = listOf(
-        SupportNeedUpdate(id = 4, title = "Title 1", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 4", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-18T12:09:34")),
-        SupportNeedUpdate(id = 5, title = "Title 1", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 5", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-17T12:09:34")),
-        SupportNeedUpdate(id = 2, title = "Title 1", status = SupportNeedStatus.MET, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 2", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-15T12:09:34")),
-        SupportNeedUpdate(id = 3, title = "Title 1", status = SupportNeedStatus.IN_PROGRESS, isPrisonResponsible = true, isProbationResponsible = false, text = "This is some update text 3", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-13T12:09:34")),
-        SupportNeedUpdate(id = 1, title = "Title 1", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 1", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-10T12:09:34")),
+        SupportNeedUpdate(id = 4, prisonerNeedId = prisonerSupportNeedId, title = "Title 1", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 4", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-18T12:09:34")),
+        SupportNeedUpdate(id = 5, prisonerNeedId = prisonerSupportNeedId, title = "Title 1", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 5", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-17T12:09:34")),
+        SupportNeedUpdate(id = 2, prisonerNeedId = prisonerSupportNeedId, title = "Title 1", status = SupportNeedStatus.MET, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 2", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-15T12:09:34")),
+        SupportNeedUpdate(id = 3, prisonerNeedId = prisonerSupportNeedId, title = "Title 1", status = SupportNeedStatus.IN_PROGRESS, isPrisonResponsible = true, isProbationResponsible = false, text = "This is some update text 3", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-13T12:09:34")),
+        SupportNeedUpdate(id = 1, prisonerNeedId = prisonerSupportNeedId, title = "Title 1", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 1", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-10T12:09:34")),
       ),
     )
 
@@ -822,4 +880,57 @@ class SupportNeedsServiceTest {
 
     Assertions.assertEquals("Cannot find prisoner support need on prisoner $nomsId", exception.message)
   }
+
+  @ParameterizedTest
+  @MethodSource("test mapFromCaseNoteToSupportNeedUpdate data")
+  fun `test mapFromCaseNoteToSupportNeedUpdate`(caseNotes: List<PathwayCaseNote>, pathway: Pathway, expectedSupportNeedUpdates: List<SupportNeedUpdate>) {
+    Assertions.assertEquals(expectedSupportNeedUpdates, supportNeedsService.mapFromCaseNoteToSupportNeedUpdate(caseNotes, pathway))
+  }
+
+  private fun `test mapFromCaseNoteToSupportNeedUpdate data`() = Stream.of(
+    Arguments.of(
+      listOf<PathwayCaseNote>(),
+      Pathway.ACCOMMODATION,
+      listOf<SupportNeedUpdate>(),
+    ),
+    Arguments.of(
+      listOf(getPathwayCaseNote(1, CaseNotePathway.ACCOMMODATION), getPathwayCaseNote(2, CaseNotePathway.ACCOMMODATION), getPathwayCaseNote(3, CaseNotePathway.ACCOMMODATION)),
+      Pathway.ACCOMMODATION,
+      listOf(getSupportNeedUpdate(1, title = "Accommodation (case note)"), getSupportNeedUpdate(2, title = "Accommodation (case note)"), getSupportNeedUpdate(3, title = "Accommodation (case note)")),
+    ),
+    Arguments.of(
+      listOf(getPathwayCaseNote(1, CaseNotePathway.ATTITUDES_THINKING_AND_BEHAVIOUR), getPathwayCaseNote(2, CaseNotePathway.ATTITUDES_THINKING_AND_BEHAVIOUR), getPathwayCaseNote(3, CaseNotePathway.ATTITUDES_THINKING_AND_BEHAVIOUR)),
+      Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+      listOf(getSupportNeedUpdate(1, title = "Attitudes, thinking and behaviour (case note)"), getSupportNeedUpdate(2, title = "Attitudes, thinking and behaviour (case note)"), getSupportNeedUpdate(3, title = "Attitudes, thinking and behaviour (case note)")),
+    ),
+    Arguments.of(
+      listOf(getPathwayCaseNote(1, CaseNotePathway.CHILDREN_FAMILIES_AND_COMMUNITY), getPathwayCaseNote(2, CaseNotePathway.CHILDREN_FAMILIES_AND_COMMUNITY), getPathwayCaseNote(3, CaseNotePathway.CHILDREN_FAMILIES_AND_COMMUNITY)),
+      Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
+      listOf(getSupportNeedUpdate(1, title = "Children, families and communities (case note)"), getSupportNeedUpdate(2, title = "Children, families and communities (case note)"), getSupportNeedUpdate(3, title = "Children, families and communities (case note)")),
+    ),
+    Arguments.of(
+      listOf(getPathwayCaseNote(1, CaseNotePathway.DRUGS_AND_ALCOHOL), getPathwayCaseNote(2, CaseNotePathway.DRUGS_AND_ALCOHOL), getPathwayCaseNote(3, CaseNotePathway.DRUGS_AND_ALCOHOL)),
+      Pathway.DRUGS_AND_ALCOHOL,
+      listOf(getSupportNeedUpdate(1, title = "Drugs and alcohol (case note)"), getSupportNeedUpdate(2, title = "Drugs and alcohol (case note)"), getSupportNeedUpdate(3, title = "Drugs and alcohol (case note)")),
+    ),
+    Arguments.of(
+      listOf(getPathwayCaseNote(1, CaseNotePathway.EDUCATION_SKILLS_AND_WORK), getPathwayCaseNote(2, CaseNotePathway.EDUCATION_SKILLS_AND_WORK), getPathwayCaseNote(3, CaseNotePathway.EDUCATION_SKILLS_AND_WORK)),
+      Pathway.EDUCATION_SKILLS_AND_WORK,
+      listOf(getSupportNeedUpdate(1, title = "Education, skills and work (case note)"), getSupportNeedUpdate(2, title = "Education, skills and work (case note)"), getSupportNeedUpdate(3, title = "Education, skills and work (case note)")),
+    ),
+    Arguments.of(
+      listOf(getPathwayCaseNote(1, CaseNotePathway.FINANCE_AND_ID), getPathwayCaseNote(2, CaseNotePathway.FINANCE_AND_ID), getPathwayCaseNote(3, CaseNotePathway.FINANCE_AND_ID)),
+      Pathway.FINANCE_AND_ID,
+      listOf(getSupportNeedUpdate(1, title = "Finance and ID (case note)"), getSupportNeedUpdate(2, title = "Finance and ID (case note)"), getSupportNeedUpdate(3, title = "Finance and ID (case note)")),
+    ),
+    Arguments.of(
+      listOf(getPathwayCaseNote(1, CaseNotePathway.HEALTH), getPathwayCaseNote(2, CaseNotePathway.HEALTH), getPathwayCaseNote(3, CaseNotePathway.HEALTH)),
+      Pathway.HEALTH,
+      listOf(getSupportNeedUpdate(1, title = "Health (case note)"), getSupportNeedUpdate(2, title = "Health (case note)"), getSupportNeedUpdate(3, title = "Health (case note)")),
+    ),
+  )
+
+  private fun getPathwayCaseNote(i: Int, pathway: CaseNotePathway) = PathwayCaseNote(caseNoteId = "$i", pathway = pathway, creationDateTime = LocalDateTime.parse("2025-01-31T12:00:00").plusHours(i.toLong()), occurenceDateTime = LocalDateTime.parse("2025-01-31T12:00:00").minusHours(i.toLong()), createdBy = "User $i", text = "Case note text $i")
+
+  private fun getSupportNeedUpdate(i: Int, title: String) = SupportNeedUpdate(id = 0, prisonerNeedId = null, title = title, status = null, isPrisonResponsible = null, isProbationResponsible = null, text = "Case note text $i", createdBy = "User $i", createdAt = LocalDateTime.parse("2025-01-31T12:00:00").plusHours(i.toLong()))
 }

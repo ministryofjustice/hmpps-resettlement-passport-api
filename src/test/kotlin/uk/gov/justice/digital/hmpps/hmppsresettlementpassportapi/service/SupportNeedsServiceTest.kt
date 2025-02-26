@@ -691,8 +691,8 @@ class SupportNeedsServiceTest {
     whenever(prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(3)).thenReturn(PrisonerSupportNeedEntity(id = 2, prisonerId = 1, supportNeed = getSupportNeed(1, Pathway.HEALTH), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.now()))
     whenever(prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(3)).thenReturn(emptyList())
 
-    val exception = assertThrows<ServerWebInputException> { supportNeedsService.getPrisonerNeedById(nomsId, 3) }
-    Assertions.assertEquals("400 BAD_REQUEST \"Cannot get prisoner support need as there are no updates available\"", exception.message)
+    val expectedPrisonerNeedWithUpdates = PrisonerNeedWithUpdates(title = "Title 1", isPrisonResponsible = null, isProbationResponsible = null, status = null, previousUpdates = emptyList())
+    Assertions.assertEquals(expectedPrisonerNeedWithUpdates, supportNeedsService.getPrisonerNeedById(nomsId, 3))
   }
 
   @Test

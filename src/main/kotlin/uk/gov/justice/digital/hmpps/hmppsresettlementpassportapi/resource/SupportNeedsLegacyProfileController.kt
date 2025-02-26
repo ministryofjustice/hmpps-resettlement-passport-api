@@ -28,4 +28,19 @@ class SupportNeedsLegacyProfileController(private val supportNeedsLegacyProfileS
     supportNeedsLegacyProfileService.setSupportNeedsLegacyProfile()
     return ResponseEntity.ok().build()
   }
+
+  @PostMapping("/add-legacy-support-needs", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(summary = "Add pathway-level legacy support needs to all prisoners with supportNeedsLegacyProfile flag set (if needed)")
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+      ),
+    ],
+  )
+  fun addLegacySupportNeeds(): ResponseEntity<Void> {
+    supportNeedsLegacyProfileService.addLegacySupportNeeds()
+    return ResponseEntity.ok().build()
+  }
 }

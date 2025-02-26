@@ -13,6 +13,8 @@ import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.SupportNeedRepository
 import java.time.LocalDateTime
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -23,9 +25,15 @@ class SupportNeedsLegacyProfileServiceTest {
   @Mock
   private lateinit var prisonerRepository: PrisonerRepository
 
+  @Mock
+  private lateinit var supportNeedRepository: SupportNeedRepository
+
+  @Mock
+  private lateinit var prisonerSupportNeedRepository: PrisonerSupportNeedRepository
+
   @BeforeEach
   fun beforeEach() {
-    supportNeedsLegacyProfileService = SupportNeedsLegacyProfileService(prisonerRepository)
+    supportNeedsLegacyProfileService = SupportNeedsLegacyProfileService(prisonerRepository, supportNeedRepository, prisonerSupportNeedRepository)
   }
 
   @Test

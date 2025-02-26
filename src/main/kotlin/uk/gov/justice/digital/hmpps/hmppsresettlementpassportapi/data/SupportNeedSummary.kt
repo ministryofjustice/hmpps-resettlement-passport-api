@@ -39,9 +39,9 @@ data class PathwayNeedsSummary(
 data class PrisonerNeed(
   val id: Long,
   val title: String,
-  val isPrisonResponsible: Boolean,
-  val isProbationResponsible: Boolean,
-  val status: SupportNeedStatus,
+  val isPrisonResponsible: Boolean?,
+  val isProbationResponsible: Boolean?,
+  val status: SupportNeedStatus?,
   val numberOfUpdates: Int,
   val lastUpdated: LocalDate,
 )

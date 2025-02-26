@@ -23,28 +23,6 @@
       "createdAt": "2024-02-05T09:36:32.713421"
     },
     {
-      "id": 0,
-      "prisonerNeedId": null,
-      "title": "Accommodation (case note)",
-      "status": null,
-      "isPrisonResponsible": null,
-      "isProbationResponsible": null,
-      "text": "Case from from Delius user 3",
-      "createdBy": "User D",
-      "createdAt": "2024-02-04T11:36:32.713421"
-    },
-    {
-      "id": 0,
-      "prisonerNeedId": null,
-      "title": "Accommodation (case note)",
-      "status": null,
-      "isPrisonResponsible": null,
-      "isProbationResponsible": null,
-      "text": "Case from from Delius user 1",
-      "createdBy": "User D",
-      "createdAt": "2024-02-04T09:36:32.713421"
-    },
-    {
       "id": 7,
       "prisonerNeedId": 4,
       "title": "Home adaptations to stay in current accommodation (changes to make it safer and easier to move around and do everyday tasks)",
@@ -109,39 +87,6 @@
       "text": "This is an update 1",
       "createdBy": "User A",
       "createdAt": "2024-02-01T09:36:32.713421"
-    },
-    {
-      "id": 0,
-      "prisonerNeedId": null,
-      "title": "Accommodation (case note)",
-      "status": null,
-      "isPrisonResponsible": null,
-      "isProbationResponsible": null,
-      "text": "This is a 2nd test case note message from Resettlement Passport",
-      "createdBy": "Paul Smith",
-      "createdAt": "2023-09-05T14:03:18.14468552"
-    },
-    {
-      "id": 0,
-      "prisonerNeedId": null,
-      "title": "Accommodation (case note)",
-      "status": null,
-      "isPrisonResponsible": null,
-      "isProbationResponsible": null,
-      "text": "This is a test case note message from Resettlement Passport",
-      "createdBy": "Mike Small",
-      "createdAt": "2023-09-05T13:57:13.214269427"
-    },
-    {
-      "id": 0,
-      "prisonerNeedId": null,
-      "title": "Accommodation (case note)",
-      "status": null,
-      "isPrisonResponsible": null,
-      "isProbationResponsible": null,
-      "text": "Test case note",
-      "createdBy": "James Smith",
-      "createdAt": "2023-09-05T13:54:56.992827119"
     }
   ],
   "allPrisonerNeeds": [
@@ -166,9 +111,9 @@
       "title": "No accommodation before custody support needs identified"
     }
   ],
-  "size": 20,
+  "size": 10,
   "page": 0,
   "sortName": "createdDate,DESC",
-  "totalElements": 13,
+  "totalElements": 8,
   "last": true
 }

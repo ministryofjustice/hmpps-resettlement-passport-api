@@ -173,13 +173,16 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  @Sql("classpath:testdata/sql/seed-prisoner-support-needs-4.sql")
+  @Sql(scripts = ["classpath:testdata/sql/seed-prisoner-support-needs-4.sql", "classpath:testdata/sql/seed-delius-case-notes-1.sql"])
   fun `test get pathway support need updates - happy path with defaults`() {
     val expectedOutput = readFile("testdata/expectation/pathway-support-needs-updates-1.json")
     val nomsId = "G4161UF"
     val pathway = Pathway.ACCOMMODATION
+
+    caseNotesApiMockServer.stubGetCaseNotesSpecificPathway(nomsId, 500, 0, "RESET", "ACCOM", 200)
+
     authedWebTestClient.get()
-      .uri("/resettlement-passport/prisoner/$nomsId/needs/$pathway/updates")
+      .uri("/resettlement-passport/prisoner/$nomsId/needs/$pathway/updates?size=20")
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
@@ -192,8 +195,28 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
     val expectedOutput = readFile("testdata/expectation/pathway-support-needs-updates-2.json")
     val nomsId = "G4161UF"
     val pathway = Pathway.ACCOMMODATION
+
+    caseNotesApiMockServer.stubGetCaseNotesSpecificPathway(nomsId, 500, 0, "RESET", "ACCOM", 200)
+
     authedWebTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/needs/$pathway/updates?page=0&size=5&sort=createdDate,ASC&filterByPrisonerSupportNeedId=1")
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoner-support-needs-4.sql")
+  fun `test get pathway support need updates - error from case notes api`() {
+    val expectedOutput = readFile("testdata/expectation/pathway-support-needs-updates-3.json")
+    val nomsId = "G4161UF"
+    val pathway = Pathway.ACCOMMODATION
+
+    caseNotesApiMockServer.stubGetCaseNotesSpecificPathway(nomsId, 500, 0, "RESET", "ACCOM", 500)
+
+    authedWebTestClient.get()
+      .uri("/resettlement-passport/prisoner/$nomsId/needs/$pathway/updates")
       .exchange()
       .expectStatus().isOk
       .expectHeader().contentType("application/json")

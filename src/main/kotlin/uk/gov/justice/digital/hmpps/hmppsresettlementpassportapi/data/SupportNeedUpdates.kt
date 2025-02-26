@@ -14,10 +14,11 @@ data class SupportNeedUpdates(
 
 data class SupportNeedUpdate(
   val id: Long,
+  val prisonerNeedId: Long?,
   val title: String,
-  val status: SupportNeedStatus,
-  val isPrisonResponsible: Boolean,
-  val isProbationResponsible: Boolean,
+  val status: SupportNeedStatus?,
+  val isPrisonResponsible: Boolean?,
+  val isProbationResponsible: Boolean?,
   val text: String?,
   val createdBy: String,
   val createdAt: LocalDateTime,

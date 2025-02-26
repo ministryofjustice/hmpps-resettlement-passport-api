@@ -622,6 +622,22 @@ class ServiceUtilsTest {
     Arguments.of(arrayOf(LocalDate.parse("2024-09-07")), LocalDate.parse("2024-09-07")),
     Arguments.of(arrayOf(LocalDate.parse("2024-09-06"), null, LocalDate.parse("2025-01-01"), LocalDate.parse("2024-09-07"), null), LocalDate.parse("2025-01-01")),
   )
+
+  @ParameterizedTest
+  @MethodSource("test convertPathwayToCaseNoteType data")
+  fun `test convertPathwayToCaseNoteType`(pathway: Pathway, expectedCaseNoteType: CaseNoteType) {
+    Assertions.assertEquals(expectedCaseNoteType, convertPathwayToCaseNoteType(pathway))
+  }
+
+  private fun `test convertPathwayToCaseNoteType data`() = Stream.of(
+    Arguments.of(Pathway.ACCOMMODATION, CaseNoteType.ACCOMMODATION),
+    Arguments.of(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR),
+    Arguments.of(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY),
+    Arguments.of(Pathway.DRUGS_AND_ALCOHOL, CaseNoteType.DRUGS_AND_ALCOHOL),
+    Arguments.of(Pathway.EDUCATION_SKILLS_AND_WORK, CaseNoteType.EDUCATION_SKILLS_AND_WORK),
+    Arguments.of(Pathway.FINANCE_AND_ID, CaseNoteType.FINANCE_AND_ID),
+    Arguments.of(Pathway.HEALTH, CaseNoteType.HEALTH),
+  )
 }
 
 enum class TestEnum {
@@ -629,12 +645,6 @@ enum class TestEnum {
   NO,
   DONT_KNOW,
   NA,
-}
-
-enum class TestEnum2 {
-  OPTION_1,
-  OPTION_2,
-  OPTION_3,
 }
 
 enum class TestEnumWithCustomLabels : EnumWithLabel {

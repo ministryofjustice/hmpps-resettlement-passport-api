@@ -316,6 +316,7 @@ class SupportNeedsServiceTest {
     val expectedPathwayNeedsSummary = PathwayNeedsSummary(
       prisonerNeeds = listOf(
         PrisonerNeed(id = 1, title = "Title 1", isPrisonResponsible = false, isProbationResponsible = true, status = SupportNeedStatus.DECLINED, numberOfUpdates = 4, lastUpdated = LocalDate.parse("2024-12-12")),
+        PrisonerNeed(id = 2, title = "Title 2", isPrisonResponsible = null, isProbationResponsible = null, status = null, numberOfUpdates = 0, lastUpdated = LocalDate.parse("2025-01-29")),
         PrisonerNeed(id = 4, title = "Other support need 1", isPrisonResponsible = false, isProbationResponsible = false, status = SupportNeedStatus.NOT_STARTED, numberOfUpdates = 2, lastUpdated = LocalDate.parse("2024-12-12")),
         PrisonerNeed(id = 5, title = "Other support need 2", isPrisonResponsible = true, isProbationResponsible = true, status = SupportNeedStatus.IN_PROGRESS, numberOfUpdates = 2, lastUpdated = LocalDate.parse("2024-12-15")),
       ),
@@ -691,8 +692,8 @@ class SupportNeedsServiceTest {
     whenever(prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(3)).thenReturn(PrisonerSupportNeedEntity(id = 2, prisonerId = 1, supportNeed = getSupportNeed(1, Pathway.HEALTH), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.now()))
     whenever(prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(3)).thenReturn(emptyList())
 
-    val exception = assertThrows<ServerWebInputException> { supportNeedsService.getPrisonerNeedById(nomsId, 3) }
-    Assertions.assertEquals("400 BAD_REQUEST \"Cannot get prisoner support need as there are no updates available\"", exception.message)
+    val expectedPrisonerNeedWithUpdates = PrisonerNeedWithUpdates(title = "Title 1", isPrisonResponsible = null, isProbationResponsible = null, status = null, previousUpdates = emptyList())
+    Assertions.assertEquals(expectedPrisonerNeedWithUpdates, supportNeedsService.getPrisonerNeedById(nomsId, 3))
   }
 
   @Test

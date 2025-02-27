@@ -33,4 +33,5 @@ interface PrisonerRepository : JpaRepository<PrisonerEntity, Long> {
     nativeQuery = true,
   )
   fun updateProfileResetLegacyProfileFlags()
+  fun findAllBySupportNeedsLegacyProfileIsTrue(): List<PrisonerEntity>
 }

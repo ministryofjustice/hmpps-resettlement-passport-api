@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
@@ -67,5 +68,11 @@ class PrisonerRepositoryTest : RepositoryTestBase() {
     val prisonersFromDatabase = prisonerRepository.findAll().sortedBy { it.id }.associate { it.id to it.supportNeedsLegacyProfile }
 
     assertThat(prisonersFromDatabase).usingRecursiveComparison().isEqualTo(expectedUpdatedPrisoners)
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoners-legacy-profile.sql")
+  fun `test findAllBySupportNeedsLegacyProfileIsTrue`() {
+    Assertions.assertEquals(listOf(8L), prisonerRepository.findAllBySupportNeedsLegacyProfileIsTrue().map { it.id })
   }
 }

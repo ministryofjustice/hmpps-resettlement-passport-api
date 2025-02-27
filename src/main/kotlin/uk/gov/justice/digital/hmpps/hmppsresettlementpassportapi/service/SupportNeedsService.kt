@@ -155,15 +155,15 @@ class SupportNeedsService(
     val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Cannot find prisoner $nomsId")
     val prisonerSupportNeeds = prisonerSupportNeedRepository.findAllByPrisonerIdAndSupportNeedPathwayAndDeletedIsFalse(prisoner.id!!, pathway)
     val prisonerSupportNeedsToUpdateMap = prisonerSupportNeeds.associateWith { prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(it.id!!) }
-    val needs = prisonerSupportNeedsToUpdateMap.filter { !it.key.supportNeed.excludeFromCount && it.value.isNotEmpty() }.map { (psn, updates) ->
+    val needs = prisonerSupportNeedsToUpdateMap.filter { !it.key.supportNeed.excludeFromCount }.map { (psn, updates) ->
       PrisonerNeed(
         id = psn.id!!,
         title = getTitleFromPrisonerSupportNeed(psn),
-        isPrisonResponsible = updates.first().isPrison,
-        isProbationResponsible = updates.first().isProbation,
-        status = updates.first().status,
+        isPrisonResponsible = updates.firstOrNull()?.isPrison,
+        isProbationResponsible = updates.firstOrNull()?.isProbation,
+        status = updates.firstOrNull()?.status,
         numberOfUpdates = updates.size,
-        lastUpdated = updates.first().createdDate.toLocalDate(),
+        lastUpdated = updates.firstOrNull()?.createdDate?.toLocalDate() ?: psn.createdDate.toLocalDate(),
       )
     }.sortedBy { it.id }
     return PathwayNeedsSummary(prisonerNeeds = needs)
@@ -283,17 +283,13 @@ class SupportNeedsService(
 
     val updates = prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdAndDeletedIsFalseOrderByCreatedDateDesc(prisonerSupportNeedId)
 
-    if (updates.isEmpty()) {
-      throw ServerWebInputException("Cannot get prisoner support need as there are no updates available")
-    }
-
     val title = getTitleFromPrisonerSupportNeed(prisonerSupportNeed)
 
     return PrisonerNeedWithUpdates(
       title = title,
-      isPrisonResponsible = updates[0].isPrison,
-      isProbationResponsible = updates[0].isProbation,
-      status = updates[0].status,
+      isPrisonResponsible = updates.firstOrNull()?.isPrison,
+      isProbationResponsible = updates.firstOrNull()?.isProbation,
+      status = updates.firstOrNull()?.status,
       previousUpdates = updates.map {
         SupportNeedUpdate(
           id = it.id!!,

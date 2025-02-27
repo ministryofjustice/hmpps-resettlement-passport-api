@@ -33,7 +33,7 @@ class SupportNeedsLegacyProfileService(
     val legacyPrisoners = prisonerRepository.findAllBySupportNeedsLegacyProfileIsTrue()
 
     legacyPrisoners.forEach { prisoner ->
-      val existingLegacySupportNeeds = prisonerSupportNeedRepository.countPrisonerSupportNeedEntityByPrisonerId(prisoner.id)
+      val existingLegacySupportNeeds = prisonerSupportNeedRepository.countPrisonerSupportNeedEntityByPrisonerIdAndDeletedIsFalse(prisoner.id)
       // Only add legacy support needs if there are no needs currently set
       if (existingLegacySupportNeeds == 0) {
         val prisonerSupportNeeds = legacySupportNeeds.map { sn ->

@@ -116,4 +116,10 @@ class PrisonerSupportNeedRepositoryTest : RepositoryTestBase() {
     val expectedSupportNeeds = PrisonerSupportNeedEntity(id = 104, prisonerId = 1, supportNeed = supportNeedRepository.findById(5).get(), otherDetail = "Other 1", createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = 107)
     Assertions.assertEquals(expectedSupportNeeds, prisonerSupportNeedRepository.findFirstByPrisonerIdAndSupportNeedIdAndOtherDetailAndDeletedIsFalseOrderByCreatedDateDesc(1, 5, "Other 1"))
   }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoner-support-needs-5.sql")
+  fun `test countPrisonerSupportNeedEntityByPrisonerIdAndDeletedIsFalse`() {
+    Assertions.assertEquals(5, prisonerSupportNeedRepository.countPrisonerSupportNeedEntityByPrisonerIdAndDeletedIsFalse(1))
+  }
 }

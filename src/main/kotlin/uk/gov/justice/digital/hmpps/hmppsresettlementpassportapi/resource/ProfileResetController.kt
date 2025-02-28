@@ -71,7 +71,7 @@ class ProfileResetController(private val resettlementAssessmentResetService: Res
     auth: String,
   ): ResponseEntity<Void> {
     auditService.audit(AuditAction.RESET_PROFILE, prisonerId, auth, null)
-    resettlementAssessmentResetService.resetProfile(prisonerId, profileReset, auth, supportNeedsEnabled ?: false)
+    resettlementAssessmentResetService.resetProfile(prisonerId, profileReset, auth, supportNeedsEnabled)
     return ResponseEntity.ok().build()
   }
 }

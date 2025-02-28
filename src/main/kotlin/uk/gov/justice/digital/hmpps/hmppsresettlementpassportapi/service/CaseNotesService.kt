@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import org.springframework.context.MessageSource
+import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
@@ -17,12 +19,10 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CaseNotesApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.OffsetDateTime
-import java.util.Objects
+import java.util.*
 
 const val PROFILE_RESET_TEXT_PREFIX = "Prepare someone for release reports and support needs reset\n\nReason for reset: "
 const val PROFILE_RESET_TEXT_SUFFIX = "\n\nAny previous immediate needs and pre-release reports have been saved in our archive, but are no longer visible in PSfR.\n\nAll previous support needs have been removed, but updates are still visible."
-const val LEGACY_PROFILE_RESET_TEXT_PREFIX = "Prepare someone for release reports and statuses reset\n\nReason for reset: "
-const val LEGACY_PROFILE_RESET_TEXT_SUFFIX = "\n\nAny previous immediate needs and pre-release reports have been saved in our archive, but are no longer visible in PSfR.\n\nAll pathway resettlement statuses have been set back to 'Not Started'."
 const val PROFILE_RESET_TEXT_SUPPORT = "\n\nContact the service desk if you think there's a problem."
 
 @Service
@@ -32,6 +32,7 @@ class CaseNotesService(
   val prisonerRepository: PrisonerRepository,
   val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
   val resettlementAssessmentRepository: ResettlementAssessmentRepository,
+  val messageSource: MessageSource,
 ) {
   fun getCaseNotesByNomsId(nomsId: String, page: Int, size: Int, sort: String, days: Int, caseNoteType: CaseNoteType, createdByUserId: Int): CaseNotesList {
     if (page < 0 || size <= 0) {
@@ -106,9 +107,9 @@ class CaseNotesService(
 
   fun sendProfileResetCaseNote(nomsId: String, userId: String, reason: String, supportNeedsEnabled: Boolean) {
     val noteText = if (supportNeedsEnabled) {
-      PROFILE_RESET_TEXT_PREFIX + reason + PROFILE_RESET_TEXT_SUFFIX + PROFILE_RESET_TEXT_SUPPORT
+      messageSource.getMessage("case-notes.reset.default", arrayOf(reason), LocaleContextHolder.getLocale())
     } else {
-      LEGACY_PROFILE_RESET_TEXT_PREFIX + reason + LEGACY_PROFILE_RESET_TEXT_SUFFIX + PROFILE_RESET_TEXT_SUPPORT
+      messageSource.getMessage("case-notes.reset.legacy", arrayOf(reason), LocaleContextHolder.getLocale())
     }
 
     postBCSTCaseNoteToDps(nomsId, noteText, userId, DpsCaseNoteSubType.GEN)

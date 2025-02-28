@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.context.MessageSource
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotePathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotesList
@@ -49,6 +50,7 @@ class CaseNotesServiceTest {
       mockkClass(PrisonerRepository::class),
       mockkClass(ResettlementPassportDeliusApiService::class),
       mockkClass(ResettlementAssessmentRepository::class),
+      mockkClass(MessageSource::class),
     )
     Assertions.assertEquals(expectedList, caseNotesService.removeDuplicates(inputList))
   }
@@ -90,6 +92,7 @@ class CaseNotesServiceTest {
       prisonerRepository,
       mockkClass(ResettlementPassportDeliusApiService::class),
       resettlementAssessmentRepository,
+      mockkClass(MessageSource::class),
     )
     val size = expectedList.size
 
@@ -138,6 +141,7 @@ class CaseNotesServiceTest {
       prisonerRepository,
       mockkClass(ResettlementPassportDeliusApiService::class),
       resettlementAssessmentRepository,
+      mockkClass(MessageSource::class),
     )
 
     Assertions.assertEquals(

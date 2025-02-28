@@ -192,7 +192,7 @@ class SupportNeedsServiceTest {
     getPrisonerSupportNeed(n = 17, pathway = Pathway.FINANCE_AND_ID, includeLatestUpdate = true),
   )
 
-  private fun getPrisonerSupportNeed(n: Int, pathway: Pathway, excludeFromCount: Boolean = false, includeLatestUpdate: Boolean = false) = PrisonerSupportNeedEntity(
+  private fun getPrisonerSupportNeed(n: Int, pathway: Pathway, excludeFromCount: Boolean = false, includeLatestUpdate: Boolean = false, deleted: Boolean = false) = PrisonerSupportNeedEntity(
     id = n.toLong(),
     prisonerId = 1,
     supportNeed = getSupportNeed(n, pathway, excludeFromCount),
@@ -200,6 +200,7 @@ class SupportNeedsServiceTest {
     createdBy = "Someone",
     createdDate = LocalDateTime.parse("2023-09-12T12:10:00"),
     latestUpdateId = if (includeLatestUpdate) n.toLong() else null,
+    deleted = deleted,
   )
 
   private fun getSupportNeed(n: Int, pathway: Pathway, excludeFromCount: Boolean = false, allowOtherDetail: Boolean = false, hidden: Boolean = false) = SupportNeedEntity(
@@ -384,16 +385,18 @@ class SupportNeedsServiceTest {
     val pathway = Pathway.ACCOMMODATION
 
     whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.parse("2025-01-28T12:09:34"), prisonId = "MDI"))
-    whenever(prisonerSupportNeedRepository.findAllByPrisonerIdAndSupportNeedPathwayAndDeletedIsFalse(1, pathway)).thenReturn(
+    whenever(prisonerSupportNeedRepository.findAllByPrisonerIdAndSupportNeedPathway(1, pathway)).thenReturn(
       listOf(
         getPrisonerSupportNeed(1, pathway),
         getPrisonerSupportNeed(2, pathway),
         getPrisonerSupportNeed(3, pathway),
         getPrisonerSupportNeed(4, pathway),
         getPrisonerSupportNeed(5, pathway),
+        // Deleted prisoner support need should not appear in the list of allPrisonerNeeds but any updates should be returned.
+        getPrisonerSupportNeed(6, pathway, deleted = true),
       ),
     )
-    whenever(prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndDeletedIsFalse(listOf(1, 2, 3, 4, 5))).thenReturn(
+    whenever(prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndDeletedIsFalse(listOf(1, 2, 3, 4, 5, 6))).thenReturn(
       listOf(
         PrisonerSupportNeedUpdateEntity(id = 1, prisonerSupportNeedId = 1, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-10T12:09:34"), updateText = "This is some update text 1", status = SupportNeedStatus.DECLINED, isPrison = false, isProbation = true),
         PrisonerSupportNeedUpdateEntity(id = 2, prisonerSupportNeedId = 1, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-15T12:09:34"), updateText = "This is some update text 2", status = SupportNeedStatus.MET, isPrison = false, isProbation = true),
@@ -406,6 +409,8 @@ class SupportNeedsServiceTest {
         PrisonerSupportNeedUpdateEntity(id = 9, prisonerSupportNeedId = 3, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-20T12:09:34"), updateText = "This is some update text 9", status = SupportNeedStatus.DECLINED, isPrison = false, isProbation = true),
         PrisonerSupportNeedUpdateEntity(id = 10, prisonerSupportNeedId = 4, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-21T12:09:34"), updateText = "This is some update text 10", status = SupportNeedStatus.MET, isPrison = true, isProbation = false),
         PrisonerSupportNeedUpdateEntity(id = 11, prisonerSupportNeedId = 4, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-16T12:09:34"), updateText = "This is some update text 11", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = true),
+        // Update linked to a deleted prisoner support need should be returned
+        PrisonerSupportNeedUpdateEntity(id = 12, prisonerSupportNeedId = 6, createdBy = "User A", createdDate = LocalDateTime.parse("2024-12-22T12:09:34"), updateText = "This is some update text 12", status = null, isPrison = false, isProbation = false),
       ),
     )
     whenever(caseNotesApiService.getCaseNotesByNomsId(nomsId, 0, CaseNoteType.ACCOMMODATION, 0)).thenReturn(caseNotesFromApi)
@@ -416,12 +421,12 @@ class SupportNeedsServiceTest {
   private fun `test getPathwayUpdatesByNomsId data`() = Stream.of(
     Arguments.of(
       0,
-      11,
+      12,
       "createdDate,DESC",
       null,
       listOf<PathwayCaseNote>(),
       listOf<PathwayCaseNote>(),
-      getExpectedSupportNeedUpdates(listOf(10, 9, 7, 4, 5, 11, 2, 3, 8, 6, 1), 0, 11, "createdDate,DESC", true),
+      getExpectedSupportNeedUpdates(listOf(12, 10, 9, 7, 4, 5, 11, 2, 3, 8, 6, 1), 0, 12, "createdDate,DESC", true),
     ),
     Arguments.of(
       0,
@@ -451,7 +456,7 @@ class SupportNeedsServiceTest {
       null,
       listOf<PathwayCaseNote>(),
       listOf<PathwayCaseNote>(),
-      getExpectedSupportNeedUpdates(listOf(10, 9, 7, 4, 5, 11, 2, 3, 8, 6, 1), 0, 20, "createdDate,DESC", true),
+      getExpectedSupportNeedUpdates(listOf(12, 10, 9, 7, 4, 5, 11, 2, 3, 8, 6, 1), 0, 20, "createdDate,DESC", true),
     ),
     Arguments.of(
       0,
@@ -460,7 +465,7 @@ class SupportNeedsServiceTest {
       null,
       listOf<PathwayCaseNote>(),
       listOf<PathwayCaseNote>(),
-      getExpectedSupportNeedUpdates(listOf(10, 9, 7, 4, 5), 0, 5, "createdDate,DESC", false),
+      getExpectedSupportNeedUpdates(listOf(12, 10, 9, 7, 4), 0, 5, "createdDate,DESC", false),
     ),
     Arguments.of(
       1,
@@ -469,7 +474,7 @@ class SupportNeedsServiceTest {
       null,
       listOf<PathwayCaseNote>(),
       listOf<PathwayCaseNote>(),
-      getExpectedSupportNeedUpdates(listOf(11, 2, 3, 8, 6), 1, 5, "createdDate,DESC", false),
+      getExpectedSupportNeedUpdates(listOf(5, 11, 2, 3, 8), 1, 5, "createdDate,DESC", false),
     ),
     Arguments.of(
       2,
@@ -478,7 +483,7 @@ class SupportNeedsServiceTest {
       null,
       listOf<PathwayCaseNote>(),
       listOf<PathwayCaseNote>(),
-      getExpectedSupportNeedUpdates(listOf(1), 2, 5, "createdDate,DESC", true),
+      getExpectedSupportNeedUpdates(listOf(6, 1), 2, 5, "createdDate,DESC", true),
     ),
     Arguments.of(
       0,
@@ -505,7 +510,7 @@ class SupportNeedsServiceTest {
       null,
       listOf<PathwayCaseNote>(),
       listOf<PathwayCaseNote>(),
-      getExpectedSupportNeedUpdates(listOf(10), 2, 5, "createdDate,ASC", true),
+      getExpectedSupportNeedUpdates(listOf(10, 12), 2, 5, "createdDate,ASC", true),
     ),
     Arguments.of(
       0,
@@ -522,11 +527,11 @@ class SupportNeedsServiceTest {
         PathwayCaseNote("delius-2", CaseNotePathway.ACCOMMODATION, LocalDateTime.parse("2024-12-17T14:00:01"), LocalDateTime.parse("2024-12-17T14:00:01"), "C User", "This is a case note 5"),
         PathwayCaseNote("delius-3", CaseNotePathway.ACCOMMODATION, LocalDateTime.parse("2024-12-19T14:00:01"), LocalDateTime.parse("2024-12-19T14:00:01"), "B User", "This is a case note 6"),
       ),
-      getExpectedSupportNeedUpdates(listOf(10, 9, "delius-3", "DPS-3", 7, "delius-1", "DPS-1", 4, "delius-2", "DPS-2", 5, 11, 2, 3, 8, 6, 1), 0, 20, "createdDate,DESC", true, 17),
+      getExpectedSupportNeedUpdates(listOf(12, 10, 9, "delius-3", "DPS-3", 7, "delius-1", "DPS-1", 4, "delius-2", "DPS-2", 5, 11, 2, 3, 8, 6, 1), 0, 20, "createdDate,DESC", true, 18),
     ),
   )
 
-  private fun getExpectedSupportNeedUpdates(ids: List<Any>, page: Int, size: Int, sort: String, last: Boolean, totalElements: Int = 11) = SupportNeedUpdates(
+  private fun getExpectedSupportNeedUpdates(ids: List<Any>, page: Int, size: Int, sort: String, last: Boolean, totalElements: Int = 12) = SupportNeedUpdates(
     updates = getExpectedSupportNeedUpdateUpdates(ids),
     allPrisonerNeeds = getExpectedAllPrisonerNeeds(),
     size = size,
@@ -551,6 +556,7 @@ class SupportNeedsServiceTest {
       9 to SupportNeedUpdate(id = 9, prisonerNeedId = 3, title = "Title 3", status = SupportNeedStatus.DECLINED, isPrisonResponsible = false, isProbationResponsible = true, text = "This is some update text 9", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-20T12:09:34")),
       10 to SupportNeedUpdate(id = 10, prisonerNeedId = 4, title = "Title 4", status = SupportNeedStatus.MET, isPrisonResponsible = true, isProbationResponsible = false, text = "This is some update text 10", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-21T12:09:34")),
       11 to SupportNeedUpdate(id = 11, prisonerNeedId = 4, title = "Title 4", status = SupportNeedStatus.IN_PROGRESS, isPrisonResponsible = true, isProbationResponsible = true, text = "This is some update text 11", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-16T12:09:34")),
+      12 to SupportNeedUpdate(id = 12, prisonerNeedId = 6, title = "Title 6", status = null, isPrisonResponsible = false, isProbationResponsible = false, text = "This is some update text 12", createdBy = "User A", createdAt = LocalDateTime.parse("2024-12-22T12:09:34")),
       "DPS-1" to SupportNeedUpdate(id = 0, prisonerNeedId = null, title = "Accommodation (case note)", status = null, isPrisonResponsible = null, isProbationResponsible = null, text = "This is a case note 1", createdBy = "A User", createdAt = LocalDateTime.parse("2024-12-18T13:00:01")),
       "DPS-2" to SupportNeedUpdate(id = 0, prisonerNeedId = null, title = "Accommodation (case note)", status = null, isPrisonResponsible = null, isProbationResponsible = null, text = "This is a case note 2", createdBy = "C User", createdAt = LocalDateTime.parse("2024-12-17T13:00:01")),
       "DPS-3" to SupportNeedUpdate(id = 0, prisonerNeedId = null, title = "Accommodation (case note)", status = null, isPrisonResponsible = null, isProbationResponsible = null, text = "This is a case note 3", createdBy = "B User", createdAt = LocalDateTime.parse("2024-12-19T13:00:01")),
@@ -567,7 +573,7 @@ class SupportNeedsServiceTest {
     val pathway = Pathway.ACCOMMODATION
 
     whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.parse("2025-01-28T12:09:34"), prisonId = "MDI"))
-    whenever(prisonerSupportNeedRepository.findAllByPrisonerIdAndSupportNeedPathwayAndDeletedIsFalse(1, pathway)).thenReturn(emptyList())
+    whenever(prisonerSupportNeedRepository.findAllByPrisonerIdAndSupportNeedPathway(1, pathway)).thenReturn(emptyList())
 
     val expectedResult = SupportNeedUpdates(
       updates = emptyList(),
@@ -934,4 +940,111 @@ class SupportNeedsServiceTest {
   private fun getPathwayCaseNote(i: Int, pathway: CaseNotePathway) = PathwayCaseNote(caseNoteId = "$i", pathway = pathway, creationDateTime = LocalDateTime.parse("2025-01-31T12:00:00").plusHours(i.toLong()), occurenceDateTime = LocalDateTime.parse("2025-01-31T12:00:00").minusHours(i.toLong()), createdBy = "User $i", text = "Case note text $i")
 
   private fun getSupportNeedUpdate(i: Int, title: String) = SupportNeedUpdate(id = 0, prisonerNeedId = null, title = title, status = null, isPrisonResponsible = null, isProbationResponsible = null, text = "Case note text $i", createdBy = "User $i", createdAt = LocalDateTime.parse("2025-01-31T12:00:00").plusHours(i.toLong()))
+
+  @Test
+  fun `test resetSupportNeeds - happy path`() {
+    val nomsId = "A123"
+    val reason = "This is the reason."
+    val user = "User B"
+    val fakeNow = LocalDateTime.parse("2025-02-01T12:00:00")
+
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, prisonId = "ABC"))
+    whenever(prisonerSupportNeedRepository.findAllByPrisonerIdAndDeletedIsFalse(1)).thenReturn(
+      listOf(
+        PrisonerSupportNeedEntity(
+          id = 1,
+          prisonerId = 1,
+          supportNeed = getSupportNeed(1, Pathway.ACCOMMODATION),
+          otherDetail = null,
+          createdBy = "User A",
+          createdDate = LocalDateTime.parse("2025-01-31T12:00:00"),
+        ),
+        PrisonerSupportNeedEntity(
+          id = 2,
+          prisonerId = 1,
+          supportNeed = getSupportNeed(2, Pathway.HEALTH),
+          otherDetail = null,
+          createdBy = "User A",
+          createdDate = LocalDateTime.parse("2025-01-31T12:00:00"),
+        ),
+        PrisonerSupportNeedEntity(
+          id = 3,
+          prisonerId = 1,
+          supportNeed = getSupportNeed(3, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, excludeFromCount = true),
+          otherDetail = null,
+          createdBy = "User A",
+          createdDate = LocalDateTime.parse("2025-01-31T12:00:00"),
+        ),
+      ),
+    )
+
+    supportNeedsService.resetSupportNeeds(nomsId, reason, user)
+
+    verify(prisonerSupportNeedRepository).save(
+      PrisonerSupportNeedEntity(
+        id = 1,
+        prisonerId = 1,
+        supportNeed = getSupportNeed(1, Pathway.ACCOMMODATION),
+        otherDetail = null,
+        createdBy = "User A",
+        createdDate = LocalDateTime.parse("2025-01-31T12:00:00"),
+        deleted = true,
+        deletedDate = fakeNow,
+      ),
+    )
+
+    verify(prisonerSupportNeedRepository).save(
+      PrisonerSupportNeedEntity(
+        id = 2,
+        prisonerId = 1,
+        supportNeed = getSupportNeed(2, Pathway.HEALTH),
+        otherDetail = null,
+        createdBy = "User A",
+        createdDate = LocalDateTime.parse("2025-01-31T12:00:00"),
+        deleted = true,
+        deletedDate = fakeNow,
+      ),
+    )
+
+    verify(prisonerSupportNeedRepository).save(
+      PrisonerSupportNeedEntity(
+        id = 3,
+        prisonerId = 1,
+        supportNeed = getSupportNeed(3, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, excludeFromCount = true),
+        otherDetail = null,
+        createdBy = "User A",
+        createdDate = LocalDateTime.parse("2025-01-31T12:00:00"),
+        deleted = true,
+        deletedDate = fakeNow,
+      ),
+    )
+
+    verify(prisonerSupportNeedUpdateRepository).saveAll(
+      listOf(
+        PrisonerSupportNeedUpdateEntity(
+          prisonerSupportNeedId = 1,
+          createdBy = user,
+          createdDate = fakeNow,
+          updateText = "Support need removed because of profile reset\n\nReason for reset: $reason",
+          status = null,
+          isPrison = false,
+          isProbation = false,
+        ),
+        PrisonerSupportNeedUpdateEntity(
+          prisonerSupportNeedId = 2,
+          createdBy = user,
+          createdDate = fakeNow,
+          updateText = "Support need removed because of profile reset\n\nReason for reset: $reason",
+          status = null,
+          isPrison = false,
+          isProbation = false,
+        ),
+      ),
+    )
+
+    unmockkAll()
+  }
 }

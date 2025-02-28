@@ -62,6 +62,8 @@ class ProfileResetController(private val resettlementAssessmentResetService: Res
     @PathVariable("prisonerId")
     @Parameter(required = true)
     prisonerId: String,
+    @Parameter
+    supportNeedsEnabled: Boolean = false,
     @RequestBody
     profileReset: ProfileReset,
     @Schema(hidden = true)
@@ -69,7 +71,7 @@ class ProfileResetController(private val resettlementAssessmentResetService: Res
     auth: String,
   ): ResponseEntity<Void> {
     auditService.audit(AuditAction.RESET_PROFILE, prisonerId, auth, null)
-    resettlementAssessmentResetService.resetProfile(prisonerId, profileReset, auth)
+    resettlementAssessmentResetService.resetProfile(prisonerId, profileReset, auth, supportNeedsEnabled ?: false)
     return ResponseEntity.ok().build()
   }
 }

@@ -19,7 +19,7 @@ class ResettlementAssessmentResetService(
 ) {
 
   @Transactional
-  fun resetProfile(nomsId: String, profileReset: ProfileReset, auth: String) {
+  fun resetProfile(nomsId: String, profileReset: ProfileReset, auth: String, supportNeedsEnabled: Boolean) {
     val authSource = getClaimFromJWTToken(auth, "auth_source")?.lowercase()
     if (authSource != "nomis") {
       throw ServerWebInputException("Endpoint must be called with a user token with authSource of NOMIS")
@@ -42,7 +42,7 @@ class ResettlementAssessmentResetService(
     supportNeedsService.resetSupportNeeds(nomsId, reason, name)
 
     // Send a case note to DPS
-    caseNotesService.sendProfileResetCaseNote(nomsId, userId, reason)
+    caseNotesService.sendProfileResetCaseNote(nomsId, userId, reason, supportNeedsEnabled)
   }
 
   fun getReason(profileReset: ProfileReset): String {

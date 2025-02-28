@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
+import org.springframework.data.domain.Sort
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ProfileReset
@@ -97,8 +98,8 @@ class ProfileResetIntegrationTest : IntegrationTestBase() {
       ResettlementAssessmentEntity(id = 9, prisonerId = 1, pathway = Pathway.ACCOMMODATION, statusChangedTo = Status.SUPPORT_NOT_REQUIRED, assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf()), creationDate = LocalDateTime.parse("2023-01-12T10:23:59"), createdBy = "C User", assessmentStatus = ResettlementAssessmentStatus.COMPLETE, caseNoteText = "Case note related to Accommodation", createdByUserId = "USER_3", version = 1, submissionDate = null, userDeclaration = false, deleted = true, deletedDate = fakeNow),
     )
 
-    Assertions.assertEquals(expectedPathwayStatuses, pathwayStatusRepository.findAll())
-    Assertions.assertEquals(expectedResettlementAssessments, resettlementAssessmentRepository.findAll())
+    Assertions.assertEquals(expectedPathwayStatuses, pathwayStatusRepository.findAll(Sort.by(Sort.Direction.ASC, "id")))
+    Assertions.assertEquals(expectedResettlementAssessments, resettlementAssessmentRepository.findAll(Sort.by(Sort.Direction.ASC, "id")))
 
     val auditQueueMessage = sqsClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(auditQueueUrl).build()).get().messages()[0]
     assertThat(ObjectMapper().readValue(auditQueueMessage.body(), Map::class.java))

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ProfileReset
@@ -62,6 +63,8 @@ class ProfileResetController(private val resettlementAssessmentResetService: Res
     @PathVariable("prisonerId")
     @Parameter(required = true)
     prisonerId: String,
+    @RequestParam
+    supportNeedsEnabled: Boolean = false,
     @RequestBody
     profileReset: ProfileReset,
     @Schema(hidden = true)
@@ -69,7 +72,7 @@ class ProfileResetController(private val resettlementAssessmentResetService: Res
     auth: String,
   ): ResponseEntity<Void> {
     auditService.audit(AuditAction.RESET_PROFILE, prisonerId, auth, null)
-    resettlementAssessmentResetService.resetProfile(prisonerId, profileReset, auth)
+    resettlementAssessmentResetService.resetProfile(prisonerId, profileReset, auth, supportNeedsEnabled)
     return ResponseEntity.ok().build()
   }
 }

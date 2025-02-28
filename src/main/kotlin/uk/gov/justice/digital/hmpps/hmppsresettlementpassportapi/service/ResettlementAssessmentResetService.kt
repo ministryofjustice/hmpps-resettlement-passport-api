@@ -18,7 +18,7 @@ class ResettlementAssessmentResetService(
 ) {
 
   @Transactional
-  fun resetProfile(nomsId: String, profileReset: ProfileReset, auth: String) {
+  fun resetProfile(nomsId: String, profileReset: ProfileReset, auth: String, supportNeedsEnabled: Boolean) {
     val authSource = getClaimFromJWTToken(auth, "auth_source")?.lowercase()
     if (authSource != "nomis") {
       throw ServerWebInputException("Endpoint must be called with a user token with authSource of NOMIS")
@@ -29,7 +29,7 @@ class ResettlementAssessmentResetService(
 
     resettlementAssessmentService.deleteAllResettlementAssessments(nomsId)
     Pathway.entries.forEach { pathway -> pathwayAndStatusService.updatePathwayStatus(nomsId, PathwayAndStatus(pathway, Status.NOT_STARTED)) }
-    caseNotesService.sendProfileResetCaseNote(nomsId, userId, reason)
+    caseNotesService.sendProfileResetCaseNote(nomsId, userId, reason, supportNeedsEnabled)
 
     // Set the supportNeedsLegacyProfile to false
     supportNeedsLegacyProfileService.setSupportNeedsLegacyFlag(nomsId, false)

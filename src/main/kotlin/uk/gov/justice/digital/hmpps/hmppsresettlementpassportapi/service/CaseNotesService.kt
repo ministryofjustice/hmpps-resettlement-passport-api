@@ -19,8 +19,10 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 import java.time.OffsetDateTime
 import java.util.Objects
 
-const val PROFILE_RESET_TEXT_PREFIX = "Prepare someone for release reports and statuses reset\n\nReason for reset: "
-const val PROFILE_RESET_TEXT_SUFFIX = "\n\nAny previous immediate needs and pre-release reports have been saved in our archive, but are no longer visible in PSfR.\n\nAll pathway resettlement statuses have been set back to 'Not Started'."
+const val PROFILE_RESET_TEXT_PREFIX = "Prepare someone for release reports and support needs reset\n\nReason for reset: "
+const val PROFILE_RESET_TEXT_SUFFIX = "\n\nAny previous immediate needs and pre-release reports have been saved in our archive, but are no longer visible in PSfR.\n\nAll previous support needs have been removed, but updates are still visible."
+const val LEGACY_PROFILE_RESET_TEXT_PREFIX = "Prepare someone for release reports and statuses reset\n\nReason for reset: "
+const val LEGACY_PROFILE_RESET_TEXT_SUFFIX = "\n\nAny previous immediate needs and pre-release reports have been saved in our archive, but are no longer visible in PSfR.\n\nAll pathway resettlement statuses have been set back to 'Not Started'."
 const val PROFILE_RESET_TEXT_SUPPORT = "\n\nContact the service desk if you think there's a problem."
 
 @Service
@@ -102,8 +104,13 @@ class CaseNotesService(
     return CaseNotesList(null, null, null, null, 0, false)
   }
 
-  fun sendProfileResetCaseNote(nomsId: String, userId: String, reason: String) {
-    val noteText = PROFILE_RESET_TEXT_PREFIX + reason + PROFILE_RESET_TEXT_SUFFIX + PROFILE_RESET_TEXT_SUPPORT
+  fun sendProfileResetCaseNote(nomsId: String, userId: String, reason: String, supportNeedsEnabled: Boolean) {
+    val noteText = if (supportNeedsEnabled) {
+      PROFILE_RESET_TEXT_PREFIX + reason + PROFILE_RESET_TEXT_SUFFIX + PROFILE_RESET_TEXT_SUPPORT
+    } else {
+      LEGACY_PROFILE_RESET_TEXT_PREFIX + reason + LEGACY_PROFILE_RESET_TEXT_SUFFIX + PROFILE_RESET_TEXT_SUPPORT
+    }
+
     postBCSTCaseNoteToDps(nomsId, noteText, userId, DpsCaseNoteSubType.GEN)
   }
 

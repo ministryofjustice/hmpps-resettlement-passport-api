@@ -63,7 +63,7 @@ class ResettlementAssessmentResetServiceTest {
     whenever(resettlementAssessmentService.deleteAllResettlementAssessments(nomsId)).thenThrow(ResourceNotFoundException(""))
 
     assertThrows<ResourceNotFoundException> {
-      resettlementAssessmentResetService.resetProfile(nomsId, profileReset, auth)
+      resettlementAssessmentResetService.resetProfile(nomsId, profileReset, auth, false)
     }
 
     verify(resettlementAssessmentService).deleteAllResettlementAssessments(nomsId)
@@ -81,10 +81,10 @@ class ResettlementAssessmentResetServiceTest {
       additionalDetails = null,
     )
 
-    resettlementAssessmentResetService.resetProfile(nomsId, profileReset, auth)
+    resettlementAssessmentResetService.resetProfile(nomsId, profileReset, auth, false)
 
     verify(resettlementAssessmentService).deleteAllResettlementAssessments(nomsId)
-    verify(caseNotesService).sendProfileResetCaseNote(nomsId, "J_DOE", "The person has been recalled to prison")
+    verify(caseNotesService).sendProfileResetCaseNote(nomsId, "J_DOE", "The person has been recalled to prison", false)
     Pathway.entries.forEach { verify(pathwayAndStatusService).updatePathwayStatus(nomsId, PathwayAndStatus(it, Status.NOT_STARTED)) }
     verify(supportNeedsLegacyProfileService).setSupportNeedsLegacyFlag(nomsId, false)
   }

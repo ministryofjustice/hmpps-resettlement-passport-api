@@ -31,7 +31,7 @@ data class PrisonerSupportNeedUpdateEntity(
   val updateText: String?,
 
   @Enumerated(EnumType.STRING)
-  val status: SupportNeedStatus,
+  val status: SupportNeedStatus?,
 
   @Column(name = "is_prison")
   val isPrison: Boolean,

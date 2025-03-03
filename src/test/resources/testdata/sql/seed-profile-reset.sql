@@ -34,3 +34,12 @@ INSERT INTO resettlement_assessment (id, prisoner_id, pathway, assessment_status
     (8, 1, 'HEALTH', 'SUBMITTED', 'BCST2', '{"assessment": []}'::jsonb, 'NOT_STARTED', '2023-01-09 20:02:45.000', 'B User', 'Case note related to Health', 'USER_2');
 INSERT INTO resettlement_assessment (id, prisoner_id, pathway, assessment_status, assessment_type, assessment, status_changed_to, created_date, created_by, case_note_text, created_by_user_id) VALUES
     (9, 1, 'ACCOMMODATION', 'COMPLETE', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_NOT_REQUIRED', '2023-01-12 10:23:59.000', 'C User', 'Case note related to Accommodation', 'USER_3');
+
+INSERT INTO prisoner_support_need (id, prisoner_id, support_need_id, other_detail, created_by, created_date, is_deleted, deleted_date, latest_update_id) values
+    (1, 1, 1, null, 'Someone', '2024-02-21T09:36:28.713421', true, '2024-02-21T09:37:28.713421', null),
+    (2, 1, 1, null, 'Someone', '2024-02-21T09:36:28.713421', false, null, null),
+    (3, 1, 7, null, 'Someone', '2024-02-21T09:36:28.713421', false, null, null);
+
+INSERT INTO prisoner_support_need_update (id, prisoner_support_need_id, created_by, created_date, update_text, status, is_prison, is_probation, is_deleted, deleted_date) values
+    (101, 2, 'A user', '2024-02-22T09:36:32.713421', 'This is an update 1', 'MET', true, true, true, null),
+    (102, 2, 'A user', '2024-02-22T09:36:30.713421', 'This is an update 2', 'IN_PROGRESS', true, false, false, null);

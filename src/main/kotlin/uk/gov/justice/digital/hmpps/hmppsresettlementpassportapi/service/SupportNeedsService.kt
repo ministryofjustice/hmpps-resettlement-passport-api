@@ -187,7 +187,7 @@ class SupportNeedsService(
     val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Cannot find prisoner $nomsId")
 
     // Get prisoner_support_need_updates from database
-    val prisonerSupportNeeds = prisonerSupportNeedRepository.findAllByPrisonerIdAndSupportNeedPathwayAndDeletedIsFalse(prisoner.id!!, pathway)
+    val prisonerSupportNeeds = prisonerSupportNeedRepository.findAllByPrisonerIdAndSupportNeedPathway(prisoner.id!!, pathway)
     val allPrisonerNeedsMapped = mapToPrisonerNeedIdAndTitle(prisonerSupportNeeds)
     val mappedPrisonerSupportNeedUpdates = mapToSupportNeedUpdate(prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndDeletedIsFalse(prisonerSupportNeeds.mapNotNull { it.id }), allPrisonerNeedsMapped)
 
@@ -214,7 +214,7 @@ class SupportNeedsService(
 
     return SupportNeedUpdates(
       updates = updatePage,
-      allPrisonerNeeds = allPrisonerNeedsMapped,
+      allPrisonerNeeds = mapToPrisonerNeedIdAndTitle(prisonerSupportNeeds.filter { !it.deleted }),
       size = size,
       page = page,
       sortName = sort,
@@ -408,5 +408,32 @@ class SupportNeedsService(
       createdBy = it.createdBy,
       createdAt = it.creationDateTime,
     )
+  }
+
+  @Transactional
+  fun resetSupportNeeds(nomsId: String, reason: String, user: String) {
+    val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Cannot find prisoner $nomsId")
+
+    val existingPrisonerSupportNeeds = prisonerSupportNeedRepository.findAllByPrisonerIdAndDeletedIsFalse(prisoner.id!!)
+
+    existingPrisonerSupportNeeds.forEach {
+      it.deleted = true
+      it.deletedDate = LocalDateTime.now()
+      prisonerSupportNeedRepository.save(it)
+    }
+
+    val profileResetUpdates = existingPrisonerSupportNeeds.filter { !it.supportNeed.excludeFromCount }.map {
+      PrisonerSupportNeedUpdateEntity(
+        prisonerSupportNeedId = it.id!!,
+        createdBy = user,
+        createdDate = LocalDateTime.now(),
+        updateText = "Support need removed because of profile reset\n\nReason for reset: $reason",
+        status = null,
+        isPrison = false,
+        isProbation = false,
+      )
+    }
+
+    prisonerSupportNeedUpdateRepository.saveAll(profileResetUpdates)
   }
 }

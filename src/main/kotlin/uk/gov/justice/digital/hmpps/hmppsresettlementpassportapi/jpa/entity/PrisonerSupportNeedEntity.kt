@@ -34,10 +34,10 @@ data class PrisonerSupportNeedEntity(
   val createdDate: LocalDateTime,
 
   @Column(name = "is_deleted")
-  val deleted: Boolean = false,
+  var deleted: Boolean = false,
 
   @Column(name = "deleted_date")
-  val deletedDate: LocalDateTime? = null,
+  var deletedDate: LocalDateTime? = null,
 
   @Column(name = "latest_update_id")
   var latestUpdateId: Long? = null,

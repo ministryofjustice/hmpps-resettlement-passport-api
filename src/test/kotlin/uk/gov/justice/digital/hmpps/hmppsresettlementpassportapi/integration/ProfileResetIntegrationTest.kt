@@ -15,15 +15,21 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ProfileReset
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResetReason
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedUpdateEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedUpdateRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.SupportNeedRepository
 import java.time.LocalDateTime
 
 class ProfileResetIntegrationTest : IntegrationTestBase() {
@@ -36,6 +42,15 @@ class ProfileResetIntegrationTest : IntegrationTestBase() {
 
   @Autowired
   private lateinit var prisonerRepository: PrisonerRepository
+
+  @Autowired
+  private lateinit var prisonerSupportNeedRepository: PrisonerSupportNeedRepository
+
+  @Autowired
+  private lateinit var prisonerSupportNeedUpdateRepository: PrisonerSupportNeedUpdateRepository
+
+  @Autowired
+  private lateinit var supportNeedRepository: SupportNeedRepository
 
   private val fakeNow = LocalDateTime.parse("2024-10-01T12:00:00")
 
@@ -185,6 +200,21 @@ class ProfileResetIntegrationTest : IntegrationTestBase() {
     // Prisoner should have supportNeedsLegacyProfile set to false
     val expectedPrisoner = PrisonerEntity(1, "ABC1234", LocalDateTime.parse("2023-08-16T12:21:38.709"), "MDI", false)
     Assertions.assertEquals(expectedPrisoner, prisonerRepository.findById(1).get())
+
+    // Check prisoner support needs have been deleted and updates added
+    val expectedPrisonerSupportNeeds = listOf(
+      PrisonerSupportNeedEntity(id = 1, prisonerId = 1, supportNeed = supportNeedRepository.findById(1).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = true, deletedDate = LocalDateTime.parse("2024-02-21T09:37:28.713421"), latestUpdateId = null),
+      PrisonerSupportNeedEntity(id = 2, prisonerId = 1, supportNeed = supportNeedRepository.findById(1).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = true, deletedDate = fakeNow, latestUpdateId = null),
+      PrisonerSupportNeedEntity(id = 3, prisonerId = 1, supportNeed = supportNeedRepository.findById(7).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = true, deletedDate = fakeNow, latestUpdateId = null),
+    )
+    Assertions.assertEquals(expectedPrisonerSupportNeeds, prisonerSupportNeedRepository.findAll().sortedBy { it.id })
+
+    val expectedPrisonerSupportNeedUpdates = listOf(
+      PrisonerSupportNeedUpdateEntity(id = 1, prisonerSupportNeedId = 2, createdBy = "RESETTLEMENTPASSPORT_ADM", createdDate = fakeNow, updateText = "Support need removed because of profile reset\n\nReason for reset: Some additional details", status = null, isPrison = false, isProbation = false, deleted = false, deletedDate = null),
+      PrisonerSupportNeedUpdateEntity(id = 101, prisonerSupportNeedId = 2, createdBy = "A user", createdDate = LocalDateTime.parse("2024-02-22T09:36:32.713421"), updateText = "This is an update 1", status = SupportNeedStatus.MET, isPrison = true, isProbation = true, deleted = true, deletedDate = null),
+      PrisonerSupportNeedUpdateEntity(id = 102, prisonerSupportNeedId = 2, createdBy = "A user", createdDate = LocalDateTime.parse("2024-02-22T09:36:30.713421"), updateText = "This is an update 2", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = false, deleted = false, deletedDate = null),
+    )
+    Assertions.assertEquals(expectedPrisonerSupportNeedUpdates, prisonerSupportNeedUpdateRepository.findAll().sortedBy { it.id })
 
     unmockkAll()
   }

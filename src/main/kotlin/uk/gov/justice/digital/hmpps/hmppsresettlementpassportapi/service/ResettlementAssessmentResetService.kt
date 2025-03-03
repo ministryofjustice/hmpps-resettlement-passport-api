@@ -15,6 +15,7 @@ class ResettlementAssessmentResetService(
   private val caseNotesService: CaseNotesService,
   private val pathwayAndStatusService: PathwayAndStatusService,
   private val supportNeedsLegacyProfileService: SupportNeedsLegacyProfileService,
+  private val supportNeedsService: SupportNeedsService,
 ) {
 
   @Transactional
@@ -24,15 +25,24 @@ class ResettlementAssessmentResetService(
       throw ServerWebInputException("Endpoint must be called with a user token with authSource of NOMIS")
     }
     val userId = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get sub from auth token")
+    val name = getClaimFromJWTToken(auth, "name") ?: userId
 
     val reason = getReason(profileReset)
 
+    // Delete any resettlement reports
     resettlementAssessmentService.deleteAllResettlementAssessments(nomsId)
+
+    // Reset all pathway statuses back to not started
     Pathway.entries.forEach { pathway -> pathwayAndStatusService.updatePathwayStatus(nomsId, PathwayAndStatus(pathway, Status.NOT_STARTED)) }
-    caseNotesService.sendProfileResetCaseNote(nomsId, userId, reason, supportNeedsEnabled)
 
     // Set the supportNeedsLegacyProfile to false
     supportNeedsLegacyProfileService.setSupportNeedsLegacyFlag(nomsId, false)
+
+    // Delete any support needs and add an update to any existing
+    supportNeedsService.resetSupportNeeds(nomsId, reason, name)
+
+    // Send a case note to DPS
+    caseNotesService.sendProfileResetCaseNote(nomsId, userId, reason, supportNeedsEnabled)
   }
 
   fun getReason(profileReset: ProfileReset): String {

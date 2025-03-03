@@ -122,4 +122,18 @@ class PrisonerSupportNeedRepositoryTest : RepositoryTestBase() {
   fun `test countPrisonerSupportNeedEntityByPrisonerIdAndDeletedIsFalse`() {
     Assertions.assertEquals(5, prisonerSupportNeedRepository.countPrisonerSupportNeedEntityByPrisonerIdAndDeletedIsFalse(1))
   }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-prisoner-support-needs-4.sql")
+  fun `test findAllByPrisonerIdAndSupportNeedPathway`() {
+    val expectedSupportNeeds = listOf(
+      PrisonerSupportNeedEntity(id = 1, prisonerId = 1, supportNeed = supportNeedRepository.findById(1).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = null),
+      PrisonerSupportNeedEntity(id = 2, prisonerId = 1, supportNeed = supportNeedRepository.findById(2).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = true, deletedDate = LocalDateTime.parse("2024-02-22T09:36:28.713421"), latestUpdateId = null),
+      PrisonerSupportNeedEntity(id = 3, prisonerId = 1, supportNeed = supportNeedRepository.findById(3).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = null),
+      PrisonerSupportNeedEntity(id = 4, prisonerId = 1, supportNeed = supportNeedRepository.findById(4).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = null),
+      PrisonerSupportNeedEntity(id = 5, prisonerId = 1, supportNeed = supportNeedRepository.findById(5).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = null),
+      PrisonerSupportNeedEntity(id = 6, prisonerId = 1, supportNeed = supportNeedRepository.findById(7).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = null),
+    )
+    Assertions.assertEquals(expectedSupportNeeds, prisonerSupportNeedRepository.findAllByPrisonerIdAndSupportNeedPathway(1, Pathway.ACCOMMODATION))
+  }
 }

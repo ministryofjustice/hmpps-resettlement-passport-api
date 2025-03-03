@@ -12,6 +12,8 @@ interface PrisonerSupportNeedRepository : JpaRepository<PrisonerSupportNeedEntit
 
   fun findAllByPrisonerIdAndSupportNeedPathwayAndDeletedIsFalse(prisonerId: Long, pathway: Pathway): List<PrisonerSupportNeedEntity>
 
+  fun findAllByPrisonerIdAndSupportNeedPathway(prisonerId: Long, pathway: Pathway): List<PrisonerSupportNeedEntity>
+
   @Query(
     """
     select

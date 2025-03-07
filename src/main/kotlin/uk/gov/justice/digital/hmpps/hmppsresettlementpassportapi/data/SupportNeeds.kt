@@ -9,7 +9,7 @@ data class SupportNeed(
   val title: String,
   val category: String?,
   val allowUserDesc: Boolean,
-  val isOther: Boolean,
   val isUpdatable: Boolean,
+  val isPreSelected: Boolean,
   val existingPrisonerSupportNeedId: Long?,
 )

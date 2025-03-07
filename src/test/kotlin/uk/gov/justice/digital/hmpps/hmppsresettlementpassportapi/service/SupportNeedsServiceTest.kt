@@ -203,10 +203,10 @@ class SupportNeedsServiceTest {
     deleted = deleted,
   )
 
-  private fun getSupportNeed(n: Int, pathway: Pathway, excludeFromCount: Boolean = false, allowOtherDetail: Boolean = false, hidden: Boolean = false) = SupportNeedEntity(
+  private fun getSupportNeed(n: Int, pathway: Pathway, excludeFromCount: Boolean = false, allowOtherDetail: Boolean = false, hidden: Boolean = false, section: String? = null) = SupportNeedEntity(
     id = n.toLong(),
     pathway = pathway,
-    section = "Section $n",
+    section = section ?: "Section $n",
     title = "Title $n",
     hidden = hidden,
     excludeFromCount = excludeFromCount,
@@ -602,12 +602,22 @@ class SupportNeedsServiceTest {
     whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.parse("2025-01-28T12:09:34"), prisonId = "MDI"))
     whenever(supportNeedRepository.findByPathwayAndDeletedIsFalse(pathway)).thenReturn(
       listOf(
-        getSupportNeed(n = 1, pathway = pathway),
-        getSupportNeed(n = 2, pathway = pathway),
-        getSupportNeed(n = 3, pathway = pathway),
-        getSupportNeed(n = 4, pathway = pathway, allowOtherDetail = true),
-        getSupportNeed(n = 5, pathway = pathway, excludeFromCount = true),
-        getSupportNeed(n = 6, pathway = pathway, hidden = true),
+        // In section 1 we should get back only 3 and 4, hide 5 as support needs in this section have previously been selected. 6 is hidden so will not be returned.
+        // Note that any custom "other" support needs will never be returned.
+        getSupportNeed(n = 1, pathway = pathway, section = "Section 1"),
+        getSupportNeed(n = 2, pathway = pathway, section = "Section 1"),
+        getSupportNeed(n = 3, pathway = pathway, section = "Section 1"),
+        getSupportNeed(n = 4, pathway = pathway, allowOtherDetail = true, section = "Section 1"),
+        getSupportNeed(n = 5, pathway = pathway, excludeFromCount = true, section = "Section 1"),
+        getSupportNeed(n = 6, pathway = pathway, hidden = true, section = "Section 1"),
+        // In section 2, only 9 has previously been selected so we should return 7, 8, 9 with 9 pre-selected
+        getSupportNeed(n = 7, pathway = pathway, section = "Section 2"),
+        getSupportNeed(n = 8, pathway = pathway, section = "Section 2"),
+        getSupportNeed(n = 9, pathway = pathway, excludeFromCount = true, section = "Section 2"),
+        // Nothing in section 3 has been previously selected so return 10, 11, 12
+        getSupportNeed(n = 10, pathway = pathway, section = "Section 3"),
+        getSupportNeed(n = 11, pathway = pathway, section = "Section 3"),
+        getSupportNeed(n = 12, pathway = pathway, excludeFromCount = true, section = "Section 3"),
       ),
     )
     whenever(prisonerSupportNeedRepository.findAllByPrisonerIdAndSupportNeedPathwayAndDeletedIsFalse(1, pathway)).thenReturn(
@@ -615,7 +625,7 @@ class SupportNeedsServiceTest {
         PrisonerSupportNeedEntity(
           id = 11,
           prisonerId = 1,
-          supportNeed = getSupportNeed(n = 1, pathway = pathway),
+          supportNeed = getSupportNeed(n = 1, pathway = pathway, section = "Section 1"),
           otherDetail = null,
           createdBy = "Someone",
           createdDate = LocalDateTime.parse("2023-09-12T12:10:00"),
@@ -624,7 +634,7 @@ class SupportNeedsServiceTest {
         PrisonerSupportNeedEntity(
           id = 12,
           prisonerId = 1,
-          supportNeed = getSupportNeed(n = 2, pathway = pathway),
+          supportNeed = getSupportNeed(n = 2, pathway = pathway, section = "Section 1"),
           otherDetail = null,
           createdBy = "Someone",
           createdDate = LocalDateTime.parse("2023-09-12T12:10:00"),
@@ -633,7 +643,7 @@ class SupportNeedsServiceTest {
         PrisonerSupportNeedEntity(
           id = 14,
           prisonerId = 1,
-          supportNeed = getSupportNeed(n = 4, pathway = pathway, allowOtherDetail = true),
+          supportNeed = getSupportNeed(n = 4, pathway = pathway, allowOtherDetail = true, section = "Section 1"),
           otherDetail = "This is other 1",
           createdBy = "Someone",
           createdDate = LocalDateTime.parse("2023-09-12T12:10:00"),
@@ -642,8 +652,17 @@ class SupportNeedsServiceTest {
         PrisonerSupportNeedEntity(
           id = 15,
           prisonerId = 1,
-          supportNeed = getSupportNeed(n = 4, pathway = pathway, allowOtherDetail = true),
+          supportNeed = getSupportNeed(n = 4, pathway = pathway, allowOtherDetail = true, section = "Section 1"),
           otherDetail = "This is other 2",
+          createdBy = "Someone",
+          createdDate = LocalDateTime.parse("2023-09-12T12:10:00"),
+          latestUpdateId = null,
+        ),
+        PrisonerSupportNeedEntity(
+          id = 16,
+          prisonerId = 1,
+          supportNeed = getSupportNeed(n = 9, pathway = pathway, excludeFromCount = true, section = "Section 2"),
+          otherDetail = null,
           createdBy = "Someone",
           createdDate = LocalDateTime.parse("2023-09-12T12:10:00"),
           latestUpdateId = null,
@@ -653,13 +672,14 @@ class SupportNeedsServiceTest {
 
     val expectedResult = SupportNeeds(
       supportNeeds = listOf(
-        SupportNeed(id = 1, title = "Title 1", category = "Section 1", allowUserDesc = false, isOther = false, isUpdatable = true, existingPrisonerSupportNeedId = 11),
-        SupportNeed(id = 2, title = "Title 2", category = "Section 2", allowUserDesc = false, isOther = false, isUpdatable = true, existingPrisonerSupportNeedId = 12),
-        SupportNeed(id = 3, title = "Title 3", category = "Section 3", allowUserDesc = false, isOther = false, isUpdatable = true, existingPrisonerSupportNeedId = null),
-        SupportNeed(id = 4, title = "Title 4", category = "Section 4", allowUserDesc = true, isOther = false, isUpdatable = true, existingPrisonerSupportNeedId = null),
-        SupportNeed(id = 5, title = "Title 5", category = "Section 5", allowUserDesc = false, isOther = false, isUpdatable = false, existingPrisonerSupportNeedId = null),
-        SupportNeed(id = 4, title = "This is other 1", category = "Section 4", allowUserDesc = false, isOther = true, isUpdatable = true, existingPrisonerSupportNeedId = 14),
-        SupportNeed(id = 4, title = "This is other 2", category = "Section 4", allowUserDesc = false, isOther = true, isUpdatable = true, existingPrisonerSupportNeedId = 15),
+        SupportNeed(id = 3, title = "Title 3", category = "Section 1", allowUserDesc = false, isUpdatable = true, isPreSelected = false, existingPrisonerSupportNeedId = null),
+        SupportNeed(id = 4, title = "Title 4", category = "Section 1", allowUserDesc = true, isUpdatable = true, isPreSelected = false, existingPrisonerSupportNeedId = null),
+        SupportNeed(id = 7, title = "Title 7", category = "Section 2", allowUserDesc = false, isUpdatable = true, isPreSelected = false, existingPrisonerSupportNeedId = null),
+        SupportNeed(id = 8, title = "Title 8", category = "Section 2", allowUserDesc = false, isUpdatable = true, isPreSelected = false, existingPrisonerSupportNeedId = null),
+        SupportNeed(id = 9, title = "Title 9", category = "Section 2", allowUserDesc = false, isUpdatable = false, isPreSelected = true, existingPrisonerSupportNeedId = 16),
+        SupportNeed(id = 10, title = "Title 10", category = "Section 3", allowUserDesc = false, isUpdatable = true, isPreSelected = false, existingPrisonerSupportNeedId = null),
+        SupportNeed(id = 11, title = "Title 11", category = "Section 3", allowUserDesc = false, isUpdatable = true, isPreSelected = false, existingPrisonerSupportNeedId = null),
+        SupportNeed(id = 12, title = "Title 12", category = "Section 3", allowUserDesc = false, isUpdatable = false, isPreSelected = false, existingPrisonerSupportNeedId = null),
       ),
     )
 

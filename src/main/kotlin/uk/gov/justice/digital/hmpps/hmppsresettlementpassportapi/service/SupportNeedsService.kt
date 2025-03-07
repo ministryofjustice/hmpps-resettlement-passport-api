@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNee
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedsUpdateRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedUpdateEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.SupportNeedEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedUpdateRepository
@@ -247,31 +248,42 @@ class SupportNeedsService(
     val supportNeedsFromDatabase = supportNeedRepository.findByPathwayAndDeletedIsFalse(pathway)
     val prisonerSupportNeedsFromDatabase = prisonerSupportNeedRepository.findAllByPrisonerIdAndSupportNeedPathwayAndDeletedIsFalse(prisoner.id!!, pathway)
 
-    // Need to return each non-hidden support need and also any "others" from the prisonerSupportNeeds
-    val supportNeeds = supportNeedsFromDatabase.filter { !it.hidden }.map { sn ->
-      SupportNeed(
-        id = sn.id,
-        title = sn.title,
-        category = sn.section,
-        allowUserDesc = sn.allowOtherDetail,
-        isOther = false,
-        isUpdatable = !sn.excludeFromCount,
-        existingPrisonerSupportNeedId = if (!sn.allowOtherDetail) prisonerSupportNeedsFromDatabase.find { it.supportNeed.id == sn.id }?.id else null,
-      )
-    } + prisonerSupportNeedsFromDatabase.filter { it.supportNeed.allowOtherDetail }.map { psn ->
-      SupportNeed(
-        id = psn.supportNeed.id,
-        title = psn.otherDetail ?: psn.supportNeed.title,
-        category = psn.supportNeed.section,
-        allowUserDesc = false,
-        isOther = true,
-        isUpdatable = true,
-        existingPrisonerSupportNeedId = psn.id,
-      )
+    // Need to return each non-hidden support need that isn't already added to the prisoner
+    // If only the "No support needs identified" option was chosen then return this pre-checked other do not return this at all.
+    val supportNeeds = supportNeedsFromDatabase.mapNotNull { sn ->
+      val linkedPrisonerSupportNeeds = prisonerSupportNeedsFromDatabase.filter { it.supportNeed == sn }
+      if (isSupportNeedAvailable(sn, linkedPrisonerSupportNeeds, prisonerSupportNeedsFromDatabase)) {
+        SupportNeed(
+          id = sn.id,
+          title = sn.title,
+          category = sn.section,
+          allowUserDesc = sn.allowOtherDetail,
+          isUpdatable = !sn.excludeFromCount,
+          isPreSelected = isSupportNeedPreSelected(sn, linkedPrisonerSupportNeeds, prisonerSupportNeedsFromDatabase),
+          existingPrisonerSupportNeedId = getExistingPrisonerSupportNeedId(sn, prisonerSupportNeedsFromDatabase),
+        )
+      } else {
+        null
+      }
     }
 
     return SupportNeeds(supportNeeds = supportNeeds)
   }
+
+  fun isSupportNeedAvailable(supportNeedEntity: SupportNeedEntity, linkedPrisonerSupportNeeds: List<PrisonerSupportNeedEntity>, allPrisonerSupportNeeds: List<PrisonerSupportNeedEntity>): Boolean {
+    // If this is a "No support needs identified" i.e. excludeFromCount=true, then it should only be included if no other support needs in section are already selected
+    return if (supportNeedEntity.excludeFromCount) {
+      !allPrisonerSupportNeeds.any { it.supportNeed.section == supportNeedEntity.section && !it.supportNeed.excludeFromCount }
+    } else {
+      // Should be included if the need hasn't already been selected or is the "other" support need (as this should always be returned)
+      // Also exclude any hidden support needs
+      (linkedPrisonerSupportNeeds.isEmpty() || supportNeedEntity.allowOtherDetail) && !supportNeedEntity.hidden
+    }
+  }
+
+  fun isSupportNeedPreSelected(supportNeedEntity: SupportNeedEntity, linkedPrisonerSupportNeeds: List<PrisonerSupportNeedEntity>, allPrisonerSupportNeeds: List<PrisonerSupportNeedEntity>) = supportNeedEntity.excludeFromCount && linkedPrisonerSupportNeeds.isNotEmpty() && allPrisonerSupportNeeds.none { it.supportNeed.section == supportNeedEntity.section && !it.supportNeed.excludeFromCount }
+
+  fun getExistingPrisonerSupportNeedId(supportNeedEntity: SupportNeedEntity, allPrisonerSupportNeeds: List<PrisonerSupportNeedEntity>) = allPrisonerSupportNeeds.filter { !supportNeedEntity.allowOtherDetail && it.supportNeed.id == supportNeedEntity.id }.maxByOrNull { it.createdDate }?.id
 
   fun getPrisonerNeedById(nomsId: String, prisonerSupportNeedId: Long): PrisonerNeedWithUpdates {
     val prisoner = prisonerRepository.findByNomsId(nomsId) ?: throw ResourceNotFoundException("Cannot find prisoner $nomsId")

@@ -368,6 +368,9 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
   @Sql("classpath:testdata/sql/seed-prisoner-support-needs-5.sql")
   fun `test post support needs - happy path`() {
     val nomsId = "G4161UF"
+
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+
     authedWebTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/needs")
       .bodyValue(
@@ -604,6 +607,9 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
   fun `test patch support needs - happy path`() {
     val nomsId = "G4161UF"
     val prisonerNeedId = 101
+
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+
     authedWebTestClient.patch()
       .uri("/resettlement-passport/prisoner/$nomsId/need/$prisonerNeedId")
       .bodyValue(

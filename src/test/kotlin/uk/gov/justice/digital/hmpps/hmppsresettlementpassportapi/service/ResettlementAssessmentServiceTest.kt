@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import com.microsoft.applicationinsights.TelemetryClient
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
@@ -101,6 +102,9 @@ class ResettlementAssessmentServiceTest {
   private lateinit var supportNeedsLegacyProfileService: SupportNeedsLegacyProfileService
 
   @Mock
+  private lateinit var telemetryClient: TelemetryClient
+
+  @Mock
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
@@ -118,6 +122,7 @@ class ResettlementAssessmentServiceTest {
       profileTagsRepository,
       "https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk",
       supportNeedsLegacyProfileService,
+      telemetryClient,
     )
 
     resettlementAssessmentStrategy = ResettlementAssessmentStrategy(
@@ -126,6 +131,8 @@ class ResettlementAssessmentServiceTest {
       prisonerRepository,
       pathwayStatusRepository,
       profileTagsRepository,
+      prisonerSearchApiService,
+      telemetryClient,
     )
   }
 

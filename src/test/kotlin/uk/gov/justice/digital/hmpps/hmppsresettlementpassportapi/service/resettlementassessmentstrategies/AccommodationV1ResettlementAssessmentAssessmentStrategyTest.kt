@@ -656,10 +656,14 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
 
     val nomsId = "abc"
     val pathway = Pathway.ACCOMMODATION
+    val edit = existingAssessment?.assessmentStatus == ResettlementAssessmentStatus.SUBMITTED
 
     val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "ABC")
 
     Mockito.lenient().`when`(prisonerRepository.findByNomsId(nomsId)).thenReturn(prisonerEntity)
+    if (edit) {
+      stubPrisonerDetails(nomsId)
+    }
 
     if (existingAssessment != null) {
       whenever(
@@ -685,6 +689,13 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
       }
       Assertions.assertEquals(expectedException::class, actualException::class)
       Assertions.assertEquals(expectedException.message, actualException.message)
+    }
+
+    if (edit) {
+      verifyEventSentToAppInsights(
+        "PSFR_ReportUpdated",
+        mapOf("reportType" to assessmentType.name, "pathway" to "ACCOMMODATION", "prisonId" to "MDI", "prisonerId" to "abc", "submittedBy" to "USER_1", "authSource" to "nomis"),
+      )
     }
 
     unmockkAll()

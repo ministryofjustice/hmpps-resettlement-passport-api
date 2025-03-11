@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import com.microsoft.applicationinsights.TelemetryClient
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
@@ -35,6 +36,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNee
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedUpdates
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeeds
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedsUpdateRequest
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedUpdateEntity
@@ -44,6 +46,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedUpdateRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.SupportNeedRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CaseNotesApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -72,9 +75,15 @@ class SupportNeedsServiceTest {
   @Mock
   private lateinit var deliusContactService: DeliusContactService
 
+  @Mock
+  private lateinit var telemetryClient: TelemetryClient
+
+  @Mock
+  private lateinit var prisonerSearchApiService: PrisonerSearchApiService
+
   @BeforeEach
   fun beforeEach() {
-    supportNeedsService = SupportNeedsService(prisonerSupportNeedRepository, prisonerSupportNeedUpdateRepository, prisonerRepository, supportNeedRepository, caseNotesApiService, deliusContactService)
+    supportNeedsService = SupportNeedsService(prisonerSupportNeedRepository, prisonerSupportNeedUpdateRepository, prisonerRepository, supportNeedRepository, caseNotesApiService, deliusContactService, telemetryClient, prisonerSearchApiService)
   }
 
   @Test
@@ -779,6 +788,8 @@ class SupportNeedsServiceTest {
 
     mockkStatic(::getClaimFromJWTToken)
     every { getClaimFromJWTToken(auth, "name") } returns "A User"
+    every { getClaimFromJWTToken(auth, "sub") } returns "A_USER"
+    every { getClaimFromJWTToken(auth, "auth_source") } returns "nomis"
 
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
@@ -788,10 +799,13 @@ class SupportNeedsServiceTest {
     whenever(prisonerSupportNeedRepository.save(PrisonerSupportNeedEntity(prisonerId = 1, supportNeed = getSupportNeed(8, Pathway.HEALTH), otherDetail = null, createdBy = "A User", createdDate = fakeNow))).thenReturn(PrisonerSupportNeedEntity(id = 9, prisonerId = 1, supportNeed = getSupportNeed(8, Pathway.HEALTH), otherDetail = null, createdBy = "A User", createdDate = fakeNow))
     whenever(prisonerSupportNeedUpdateRepository.save(PrisonerSupportNeedUpdateEntity(prisonerSupportNeedId = 9, createdBy = "A User", createdDate = fakeNow, updateText = "This is an update 1", status = SupportNeedStatus.NOT_STARTED, isPrison = true, isProbation = false)))
       .thenReturn(PrisonerSupportNeedUpdateEntity(id = 12, prisonerSupportNeedId = 9, createdBy = "A User", createdDate = fakeNow, updateText = "This is an update 1", status = SupportNeedStatus.NOT_STARTED, isPrison = true, isProbation = false))
+    stubPrisonerDetails(nomsId)
 
     supportNeedsService.postSupportNeeds(nomsId, prisonerNeedsRequest, auth)
 
     verify(prisonerSupportNeedRepository).save(PrisonerSupportNeedEntity(id = 9, prisonerId = 1, supportNeed = getSupportNeed(8, Pathway.HEALTH), otherDetail = null, createdBy = "A User", createdDate = fakeNow, latestUpdateId = 12))
+
+    verify(telemetryClient).trackEvent("PSFR_SupportNeedsSubmitted", mapOf("supportNeedIds" to "[8]", "prisonId" to "MDI", "prisonerId" to "A123", "submittedBy" to "A_USER", "authSource" to "nomis"), null)
 
     unmockkAll()
   }
@@ -812,10 +826,13 @@ class SupportNeedsServiceTest {
 
     mockkStatic(::getClaimFromJWTToken)
     every { getClaimFromJWTToken(auth, "name") } returns "A User"
+    every { getClaimFromJWTToken(auth, "sub") } returns "A_USER"
+    every { getClaimFromJWTToken(auth, "auth_source") } returns "nomis"
 
     whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.parse("2025-01-28T12:09:34"), prisonId = "MDI"))
     whenever(prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(prisonerNeedId)).thenReturn(PrisonerSupportNeedEntity(prisonerId = 1, supportNeed = getSupportNeed(8, Pathway.HEALTH), otherDetail = null, createdBy = "A User", createdDate = fakeNow))
     whenever(prisonerSupportNeedUpdateRepository.save(PrisonerSupportNeedUpdateEntity(prisonerSupportNeedId = 1234L, createdBy = "A User", createdDate = fakeNow, updateText = "Some support need text", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = false))).thenReturn(PrisonerSupportNeedUpdateEntity(id = 567, prisonerSupportNeedId = 123L, createdBy = "A User", createdDate = fakeNow, updateText = "Some support need text", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = false))
+    stubPrisonerDetails(nomsId)
 
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
@@ -823,6 +840,8 @@ class SupportNeedsServiceTest {
     supportNeedsService.patchPrisonerNeedById(nomsId, prisonerNeedId, supportNeedsUpdateRequest, auth)
 
     verify(prisonerSupportNeedRepository).save(PrisonerSupportNeedEntity(prisonerId = 1, latestUpdateId = 567, supportNeed = getSupportNeed(8, Pathway.HEALTH), otherDetail = null, createdBy = "A User", createdDate = fakeNow))
+
+    verify(telemetryClient).trackEvent("PSFR_SupportNeedUpdated", mapOf("prisonerSupportNeedId" to "1234", "prisonId" to "MDI", "prisonerId" to "A123", "submittedBy" to "A_USER", "authSource" to "nomis"), null)
 
     unmockkAll()
   }
@@ -1067,4 +1086,6 @@ class SupportNeedsServiceTest {
 
     unmockkAll()
   }
+
+  private fun stubPrisonerDetails(nomsId: String) = whenever(prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)).thenReturn(PrisonersSearch(prisonerNumber = nomsId, prisonId = "MDI", firstName = "First Name", lastName = "Last Name", prisonName = "Moorland (HMP)"))
 }

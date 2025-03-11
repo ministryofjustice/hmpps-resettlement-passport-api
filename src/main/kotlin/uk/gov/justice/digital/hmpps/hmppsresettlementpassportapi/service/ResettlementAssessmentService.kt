@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import com.microsoft.applicationinsights.TelemetryClient
 import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -54,6 +55,7 @@ class ResettlementAssessmentService(
   private val profileTagsRepository: ProfileTagsRepository,
   @Value("\${psfr.base.url}") private val psfrBaseUrl: String,
   private val supportNeedsLegacyProfileService: SupportNeedsLegacyProfileService,
+  private val telemetryClient: TelemetryClient,
 ) {
 
   companion object {
@@ -134,13 +136,11 @@ class ResettlementAssessmentService(
       )
       if (resettlementAssessment != null) {
         val pages = resettlementAssessmentStrategy.getConfigPages(assessmentType, pathway, resettlementAssessment.version)
-        log.info("Pages size ${pages.size}")
         assessmentList.add(resettlementAssessment)
         tagList = tagList + processProfileTags(resettlementAssessment, pages)
       }
     }
     profileTagList.tags = tagList
-    log.info("ProfileTagList size ${profileTagList.tags.size}")
 
     if (assessmentList.size != Pathway.entries.size) {
       throw RuntimeException("Found [${assessmentList.size}] assessments for prisoner [$nomsId]. This should be all ${Pathway.entries.size} pathways!")
@@ -252,6 +252,19 @@ class ResettlementAssessmentService(
     if (supportNeedsLegacyProfile && assessmentType == ResettlementAssessmentType.RESETTLEMENT_PLAN) {
       supportNeedsLegacyProfileService.setSupportNeedsLegacyFlag(nomsId, true)
     }
+
+    // Send event to app insights
+    telemetryClient.trackEvent(
+      "PSFR_ReportSubmitted",
+      mapOf(
+        "reportType" to assessmentType.name,
+        "prisonId" to prisonCode,
+        "prisonerId" to nomsId,
+        "submittedBy" to userId,
+        "authSource" to authSource,
+      ),
+      null,
+    )
 
     return ResettlementAssessmentSubmitResponse(deliusCaseNoteFailed = failedCaseNotes.isNotEmpty())
   }

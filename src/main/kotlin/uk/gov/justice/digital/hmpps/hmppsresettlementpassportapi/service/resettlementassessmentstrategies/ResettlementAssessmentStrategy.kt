@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies
 
+import com.microsoft.applicationinsights.TelemetryClient
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
@@ -29,6 +30,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ProfileTagsRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClaimFromJWTToken
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.validateAnswer
 import java.time.LocalDateTime
@@ -40,6 +42,8 @@ class ResettlementAssessmentStrategy(
   private val prisonerRepository: PrisonerRepository,
   private val pathwayStatusRepository: PathwayStatusRepository,
   private val profileTagsRepository: ProfileTagsRepository,
+  private val prisonerSearchApiService: PrisonerSearchApiService,
+  private val telemetryClient: TelemetryClient,
 ) {
 
   fun getConfigPages(
@@ -231,6 +235,23 @@ class ResettlementAssessmentStrategy(
 
     saveAssessment(resettlementAssessmentEntity)
     generateProfileTags(prisonerEntity, assessmentType)
+
+    // If it's an edit, send event to app insights
+    if (edit) {
+      val prisonCode = prisonerSearchApiService.findPrisonerPersonalDetails(nomsId).prisonId
+      telemetryClient.trackEvent(
+        "PSFR_ReportUpdated",
+        mapOf(
+          "reportType" to assessmentType.name,
+          "pathway" to pathway.name,
+          "prisonId" to prisonCode,
+          "prisonerId" to nomsId,
+          "submittedBy" to userId,
+          "authSource" to authSource,
+        ),
+        null,
+      )
+    }
   }
 
   fun validateQuestionAndAnswerSet(

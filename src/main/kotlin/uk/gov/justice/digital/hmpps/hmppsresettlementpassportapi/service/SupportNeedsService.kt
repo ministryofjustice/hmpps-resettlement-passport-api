@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import com.microsoft.applicationinsights.TelemetryClient
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
@@ -29,6 +30,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedUpdateRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.SupportNeedRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CaseNotesApiService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import java.time.LocalDateTime
 
 @Service
@@ -39,6 +41,8 @@ class SupportNeedsService(
   private val supportNeedRepository: SupportNeedRepository,
   private val caseNotesApiService: CaseNotesApiService,
   private val deliusContactService: DeliusContactService,
+  private val telemetryClient: TelemetryClient,
+  private val prisonerSearchApiService: PrisonerSearchApiService,
 ) {
 
   fun getNeedsSummary(prisonerId: Long?): List<SupportNeedSummary> {
@@ -350,6 +354,24 @@ class SupportNeedsService(
         prisonerSupportNeedRepository.save(prisonerSupportNeed)
       }
     }
+
+    // Send event to app insights
+    val prisonCode = prisonerSearchApiService.findPrisonerPersonalDetails(nomsId).prisonId
+    val username = getClaimFromJWTToken(auth, "sub")
+      ?: throw ServerWebInputException("JWT token must include a claim for 'sub'")
+    val authSource = getClaimFromJWTToken(auth, "auth_source")?.lowercase()
+      ?: throw ServerWebInputException("JWT token must include a claim for 'auth_source'")
+    telemetryClient.trackEvent(
+      "PSFR_SupportNeedsSubmitted",
+      mapOf(
+        "supportNeedIds" to prisonerNeedsRequest.needs.map { it.needId }.toString(),
+        "prisonId" to prisonCode,
+        "prisonerId" to nomsId,
+        "submittedBy" to username,
+        "authSource" to authSource,
+      ),
+      null,
+    )
   }
 
   private fun getAndSavePrisonerSupportNeed(need: PrisonerNeedRequest, prisonerId: Long, name: String): PrisonerSupportNeedEntity {
@@ -406,6 +428,24 @@ class SupportNeedsService(
     prisonerSupportNeed.latestUpdateId = savedPrisonerSupportNeedUpdate.id
 
     prisonerSupportNeedRepository.save(prisonerSupportNeed)
+
+    // Send event to app insights
+    val prisonCode = prisonerSearchApiService.findPrisonerPersonalDetails(nomsId).prisonId
+    val username = getClaimFromJWTToken(auth, "sub")
+      ?: throw ServerWebInputException("JWT token must include a claim for 'sub'")
+    val authSource = getClaimFromJWTToken(auth, "auth_source")?.lowercase()
+      ?: throw ServerWebInputException("JWT token must include a claim for 'auth_source'")
+    telemetryClient.trackEvent(
+      "PSFR_SupportNeedUpdated",
+      mapOf(
+        "prisonerSupportNeedId" to prisonerNeedId.toString(),
+        "prisonId" to prisonCode,
+        "prisonerId" to nomsId,
+        "submittedBy" to username,
+        "authSource" to authSource,
+      ),
+      null,
+    )
   }
 
   fun mapFromCaseNoteToSupportNeedUpdate(caseNotes: List<PathwayCaseNote>, pathway: Pathway) = caseNotes.map {

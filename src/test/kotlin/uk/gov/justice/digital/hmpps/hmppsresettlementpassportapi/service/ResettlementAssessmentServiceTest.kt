@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
+import com.microsoft.applicationinsights.TelemetryClient
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
@@ -29,6 +30,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LastReport
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.TagAndQuestionMapping
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.Answer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.LatestResettlementAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.LatestResettlementAssessmentResponseQuestionAndAnswer
@@ -38,6 +40,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentOption
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentSubmitResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
@@ -101,6 +104,9 @@ class ResettlementAssessmentServiceTest {
   private lateinit var supportNeedsLegacyProfileService: SupportNeedsLegacyProfileService
 
   @Mock
+  private lateinit var telemetryClient: TelemetryClient
+
+  @Mock
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
@@ -118,6 +124,7 @@ class ResettlementAssessmentServiceTest {
       profileTagsRepository,
       "https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk",
       supportNeedsLegacyProfileService,
+      telemetryClient,
     )
 
     resettlementAssessmentStrategy = ResettlementAssessmentStrategy(
@@ -126,6 +133,8 @@ class ResettlementAssessmentServiceTest {
       prisonerRepository,
       pathwayStatusRepository,
       profileTagsRepository,
+      prisonerSearchApiService,
+      telemetryClient,
     )
   }
 
@@ -952,4 +961,67 @@ class ResettlementAssessmentServiceTest {
     override val submissionDate: LocalDateTime?
       get() = submissionDate
   }
+
+  @Test
+  fun `test submitResettlementAssessmentByNomsId - ensure event is sent to app insights`() {
+    val auth = "auth"
+    val nomsId = "A123"
+    val assessmentType = ResettlementAssessmentType.BCST2
+    val crn = "CRN1"
+    val prisonCode = "MDI"
+
+    mockkStatic(::getClaimFromJWTToken)
+    every { getClaimFromJWTToken(auth, "name") } returns "A User"
+    every { getClaimFromJWTToken(auth, "sub") } returns "A_USER"
+    every { getClaimFromJWTToken(auth, "auth_source") } returns "nomis"
+
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, prisonId = prisonCode))
+    Pathway.entries.forEachIndexed { i, pathway ->
+      whenever(resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInAndDeletedIsFalseOrderByCreationDateDesc(1, pathway, assessmentType, listOf(ResettlementAssessmentStatus.COMPLETE)))
+        .thenReturn(
+          ResettlementAssessmentEntity(
+            id = i.toLong(),
+            prisonerId = 1,
+            pathway = pathway,
+            statusChangedTo = null,
+            assessmentType = assessmentType,
+            assessment = ResettlementAssessmentQuestionAndAnswerList(listOf()),
+            creationDate = LocalDateTime.parse("2025-01-23T12:00:00"),
+            createdBy = "User A",
+            assessmentStatus = ResettlementAssessmentStatus.COMPLETE,
+            caseNoteText = null,
+            createdByUserId = "USER_A",
+            version = 1,
+            submissionDate = LocalDateTime.parse("2025-01-23T12:00:00"),
+            userDeclaration = null,
+          ),
+        )
+    }
+
+    whenever(prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)).thenReturn(PrisonersSearch(prisonerNumber = nomsId, prisonId = prisonCode, prisonName = "A Prison", firstName = "A", lastName = "B"))
+
+    whenever(resettlementPassportDeliusApiService.getCrn(nomsId)).thenReturn(crn)
+    whenever(caseNotesService.postBCSTCaseNoteToDelius(crn = crn, prisonCode = prisonCode, notes = getExpectedDeliusCaseNoteText(), name = "A User", deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT, description = null)).thenReturn(true)
+
+    val response = resettlementAssessmentService.submitResettlementAssessmentByNomsId(nomsId, assessmentType, true, true, auth, resettlementAssessmentStrategy, false)
+
+    Assertions.assertEquals(ResettlementAssessmentSubmitResponse(false), response)
+
+    verify(telemetryClient).trackEvent("PSFR_ReportSubmitted", mapOf("reportType" to assessmentType.name, "prisonId" to prisonCode, "prisonerId" to nomsId, "submittedBy" to "A_USER", "authSource" to "nomis"), null)
+
+    unmockkAll()
+  }
+
+  private fun getExpectedDeliusCaseNoteText() =
+    """
+      Immediate needs report completed.
+
+      View accommodation report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/accommodation/?prisonerNumber=A123&fromDelius=true#assessment-information
+      View attitudes, thinking and behaviour report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/attitudes-thinking-and-behaviour/?prisonerNumber=A123&fromDelius=true#assessment-information
+      View children, families and communities report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/children-families-and-communities/?prisonerNumber=A123&fromDelius=true#assessment-information
+      View drugs and alcohol report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/drugs-and-alcohol/?prisonerNumber=A123&fromDelius=true#assessment-information
+      View education, skills and work report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/education-skills-and-work/?prisonerNumber=A123&fromDelius=true#assessment-information
+      View finance and ID report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/finance-and-id/?prisonerNumber=A123&fromDelius=true#assessment-information
+      View health report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/health-status/?prisonerNumber=A123&fromDelius=true#assessment-information
+    """.trimIndent()
 }

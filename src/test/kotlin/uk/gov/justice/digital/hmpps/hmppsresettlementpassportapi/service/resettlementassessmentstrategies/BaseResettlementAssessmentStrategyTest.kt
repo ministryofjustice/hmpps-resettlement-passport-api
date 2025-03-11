@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies
 
+import com.microsoft.applicationinsights.TelemetryClient
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
@@ -11,11 +12,13 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResettlementAssessmentConfig
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
@@ -28,6 +31,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ProfileTagsRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import java.time.LocalDateTime
 import java.util.stream.Stream
 
@@ -48,6 +52,12 @@ abstract class BaseResettlementAssessmentStrategyTest(val pathway: Pathway, val 
   @Mock
   lateinit var profileTagsRepository: ProfileTagsRepository
 
+  @Mock
+  private lateinit var telemetryClient: TelemetryClient
+
+  @Mock
+  private lateinit var prisonerSearchApiService: PrisonerSearchApiService
+
   val testDate: LocalDateTime = LocalDateTime.parse("2023-08-16T12:00:00")
 
   @BeforeEach
@@ -58,6 +68,8 @@ abstract class BaseResettlementAssessmentStrategyTest(val pathway: Pathway, val 
       prisonerRepository,
       pathwayStatusRepository,
       profileTagsRepository,
+      prisonerSearchApiService,
+      telemetryClient,
     )
   }
 
@@ -128,4 +140,10 @@ abstract class BaseResettlementAssessmentStrategyTest(val pathway: Pathway, val 
   }
 
   abstract fun `test get page from Id - no existing assessment data`(): Stream<Arguments>
+
+  fun stubPrisonerDetails(nomsId: String) = whenever(prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)).thenReturn(
+    PrisonersSearch(prisonerNumber = nomsId, prisonId = "MDI", firstName = "First Name", lastName = "Last Name", prisonName = "Moorland (HMP)"),
+  )
+
+  fun verifyEventSentToAppInsights(name: String, properties: Map<String, String>) = verify(telemetryClient).trackEvent(name, properties, null)
 }

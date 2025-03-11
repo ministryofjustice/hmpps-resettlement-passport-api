@@ -136,13 +136,11 @@ class ResettlementAssessmentService(
       )
       if (resettlementAssessment != null) {
         val pages = resettlementAssessmentStrategy.getConfigPages(assessmentType, pathway, resettlementAssessment.version)
-        log.info("Pages size ${pages.size}")
         assessmentList.add(resettlementAssessment)
         tagList = tagList + processProfileTags(resettlementAssessment, pages)
       }
     }
     profileTagList.tags = tagList
-    log.info("ProfileTagList size ${profileTagList.tags.size}")
 
     if (assessmentList.size != Pathway.entries.size) {
       throw RuntimeException("Found [${assessmentList.size}] assessments for prisoner [$nomsId]. This should be all ${Pathway.entries.size} pathways!")

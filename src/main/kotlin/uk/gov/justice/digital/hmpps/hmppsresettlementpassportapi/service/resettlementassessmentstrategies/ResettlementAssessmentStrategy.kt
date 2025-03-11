@@ -243,6 +243,7 @@ class ResettlementAssessmentStrategy(
         "PSFR_ReportUpdated",
         mapOf(
           "reportType" to assessmentType.name,
+          "pathway" to pathway.name,
           "prisonId" to prisonCode,
           "prisonerId" to nomsId,
           "submittedBy" to userId,

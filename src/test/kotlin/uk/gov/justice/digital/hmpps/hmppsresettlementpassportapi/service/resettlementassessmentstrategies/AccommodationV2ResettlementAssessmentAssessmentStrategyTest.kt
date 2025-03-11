@@ -1143,7 +1143,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
     if (edit) {
       verifyEventSentToAppInsights(
         "PSFR_ReportUpdated",
-        mapOf("reportType" to assessmentType.name, "prisonId" to "MDI", "prisonerId" to "abc", "submittedBy" to "USER_1", "authSource" to "nomis"),
+        mapOf("reportType" to assessmentType.name, "pathway" to "ACCOMMODATION", "prisonId" to "MDI", "prisonerId" to "abc", "submittedBy" to "USER_1", "authSource" to "nomis"),
       )
     }
 

@@ -994,7 +994,7 @@ class ResettlementAssessmentServiceTest {
             version = 1,
             submissionDate = LocalDateTime.parse("2025-01-23T12:00:00"),
             userDeclaration = null,
-          )
+          ),
         )
     }
 
@@ -1023,5 +1023,5 @@ class ResettlementAssessmentServiceTest {
       View education, skills and work report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/education-skills-and-work/?prisonerNumber=A123&fromDelius=true#assessment-information
       View finance and ID report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/finance-and-id/?prisonerNumber=A123&fromDelius=true#assessment-information
       View health report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/health-status/?prisonerNumber=A123&fromDelius=true#assessment-information
-  """.trimIndent()
+    """.trimIndent()
 }

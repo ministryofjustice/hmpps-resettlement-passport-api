@@ -355,4 +355,30 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody().json(expectedOutput, JsonCompareMode.STRICT)
   }
+
+  @Test
+  fun `Get All Prisoners - 400 lastReportCompleted not a valid value`() {
+    val prisonId = "MDI"
+    webTestClient.get()
+      .uri("/resettlement-passport/prison/$prisonId/prisoners?term=&page=0&size=10&sort=releaseDate,DESC&lastReportCompleted=TEST")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isBadRequest
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .jsonPath("status").isEqualTo(400)
+  }
+
+  @Test
+  fun `Get All Prisoners happy path - lastReportCompleted is a valid value`() {
+    val prisonId = "MDI"
+    val validLastReportCompleted = listOf("BCST2", "RESETTLEMENT_PLAN", "NONE").random()
+    webTestClient.get()
+      .uri("/resettlement-passport/prison/$prisonId/prisoners?term=&page=0&size=10&sort=releaseDate,DESC&lastReportCompleted=$validLastReportCompleted")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+  }
 }

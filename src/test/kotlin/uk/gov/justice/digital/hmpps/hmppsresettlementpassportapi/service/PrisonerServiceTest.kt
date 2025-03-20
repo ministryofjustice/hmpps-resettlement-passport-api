@@ -22,6 +22,8 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LastReport
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LastReportCompleted
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
@@ -1274,6 +1276,57 @@ class PrisonerServiceTest {
           lastReport = null,
         )
       },
+    ),
+  )
+
+  @ParameterizedTest
+  @MethodSource("test filtering by lastReportCompleted")
+  fun `Prisoner List - filter by lastReportCompleted`(lastReportCompleted: LastReportCompleted?, expectedPrisonerNumbers: List<String>) {
+    val allPrisoners = List(6) { i ->
+      PrisonersSearch(
+        prisonerNumber = "A${i + 1}",
+        firstName = "",
+        lastName = "",
+        prisonId = "MDI",
+        prisonName = "",
+      )
+    }
+
+    whenever(resettlementAssessmentService.getLastReportToNomsIdByPrisonId(any()))
+      .thenReturn(
+        mapOf(
+          "A1" to LastReport(type = ResettlementAssessmentType.BCST2, dateCompleted = LocalDate.parse("2024-09-07")),
+          "A2" to LastReport(type = ResettlementAssessmentType.RESETTLEMENT_PLAN, dateCompleted = LocalDate.parse("2024-09-08")),
+          "A3" to LastReport(type = ResettlementAssessmentType.RESETTLEMENT_PLAN, dateCompleted = LocalDate.parse("2024-09-09")),
+        ),
+      )
+
+    val filteredPrisoners = prisonerService.objectMapper(
+      searchList = allPrisoners,
+      prisonId = "MDI",
+      staffUsername = "123",
+      lastReportCompleted = lastReportCompleted,
+    )
+
+    Assertions.assertEquals(expectedPrisonerNumbers, filteredPrisoners.map { it.prisonerNumber })
+  }
+
+  private fun `test filtering by lastReportCompleted`() = Stream.of(
+    Arguments.of(
+      null,
+      listOf("A1", "A2", "A3", "A4", "A5", "A6"),
+    ),
+    Arguments.of(
+      LastReportCompleted.BCST2,
+      listOf("A1"),
+    ),
+    Arguments.of(
+      LastReportCompleted.RESETTLEMENT_PLAN,
+      listOf("A2", "A3"),
+    ),
+    Arguments.of(
+      LastReportCompleted.NONE,
+      listOf("A4", "A5", "A6"),
     ),
   )
 

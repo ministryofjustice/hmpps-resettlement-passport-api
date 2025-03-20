@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LastReportCompleted
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoner
@@ -62,6 +63,7 @@ class PrisonerService(
     includePastReleaseDates: Boolean,
     auth: String,
     workerId: String?,
+    lastReportCompleted: LastReportCompleted? = null,
   ): PrisonersList {
     if (pathwayStatus != null && pathwayView == null) {
       throw ServerWebInputException("pathwayStatus cannot be used without pathwayView")
@@ -108,7 +110,7 @@ class PrisonerService(
       )
     }
 
-    val fullList = objectMapper(prisoners, pathwayView, pathwayStatus, prisonId, assessmentRequired, staffUsername, workerId)
+    val fullList = objectMapper(prisoners, pathwayView, pathwayStatus, prisonId, assessmentRequired, staffUsername, workerId, lastReportCompleted)
 
     sortPrisoners(sort, fullList)
 
@@ -191,12 +193,13 @@ class PrisonerService(
 
   fun objectMapper(
     searchList: List<PrisonersSearch>,
-    pathwayView: Pathway?,
-    pathwayStatusToFilter: Status?,
+    pathwayView: Pathway? = null,
+    pathwayStatusToFilter: Status? = null,
     prisonId: String,
-    assessmentRequiredFilter: Boolean?,
+    assessmentRequiredFilter: Boolean? = null,
     staffUsername: String,
-    workerId: String?,
+    workerId: String? = null,
+    lastReportCompleted: LastReportCompleted? = null,
   ): MutableList<Prisoners> {
     val prisonersList = mutableListOf<Prisoners>()
 
@@ -265,6 +268,14 @@ class PrisonerService(
       val needs = needsToNomsIdMap[prisonersSearch.prisonerNumber] ?: supportNeedsService.getDefaultNeedsSummary()
       val lastReport = lastReportToNomsIdMap[prisonersSearch.prisonerNumber]
       val lastUpdatedDate = getLatestDate(arrayOf(lastUpdatedDateFromPathwayStatus) + needs.map { it.lastUpdated }.toTypedArray())
+
+      when (lastReportCompleted) {
+        null -> Unit
+        LastReportCompleted.NONE ->
+          if (lastReport != null) return@forEach
+        else ->
+          if (lastReport?.type != lastReportCompleted.assessmentType) return@forEach
+      }
 
       if (pathwayStatusToFilter == null || pathwayStatusToFilter == pathwayStatus) {
         val prisoner = Prisoners(

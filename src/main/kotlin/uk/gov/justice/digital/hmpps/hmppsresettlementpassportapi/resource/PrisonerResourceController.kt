@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LastReportCompleted
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoner
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
@@ -104,10 +105,14 @@ class PrisonerResourceController(
     @Parameter(description = "filter on resettlement worker")
     @RequestParam(value = "workerId")
     workerId: String?,
+    @Schema(example = "BCST2")
+    @Parameter(description = "Last report completed")
+    @RequestParam(value = "lastReportCompleted")
+    lastReportCompleted: LastReportCompleted?,
     @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
-  ): PrisonersList = prisonerService.getPrisonersByPrisonId(term, prisonId, days, pathwayView, pathwayStatus, assessmentRequired, page, size, sort, includePastReleaseDates, auth, workerId)
+  ): PrisonersList = prisonerService.getPrisonersByPrisonId(term, prisonId, days, pathwayView, pathwayStatus, assessmentRequired, page, size, sort, includePastReleaseDates, auth, workerId, lastReportCompleted)
 
   @GetMapping("/prisoner/{nomsId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Get prisoner by noms Id", description = "Prisoner Details based on noms Id")

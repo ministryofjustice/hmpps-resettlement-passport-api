@@ -36,7 +36,7 @@ class OpenApiConfiguration(
     .info(
       Info().title("HMPPS Resettlement Passport  API")
         .version(version)
-        .description("API for viewing and managing Resettlemet Passport for prison leavers")
+        .description("API for viewing and managing Resettlement Passport for prison leavers")
         .contact(Contact().name("HMPPS Digital Studio").email("feedback@digital.justice.gov.uk")),
     )
     .components(

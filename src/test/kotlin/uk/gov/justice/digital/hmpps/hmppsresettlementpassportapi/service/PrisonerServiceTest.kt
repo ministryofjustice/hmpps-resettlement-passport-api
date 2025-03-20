@@ -22,11 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.*
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
@@ -168,6 +164,7 @@ class PrisonerServiceTest {
         false,
         "123",
         null,
+        null,
       )
 
     val expectedPrisonerList = PrisonersList(
@@ -270,6 +267,7 @@ class PrisonerServiceTest {
         sort = "releaseDate,DESC",
         includePastReleaseDates = true,
         auth = "123",
+        null,
         null,
       )
 
@@ -563,6 +561,7 @@ class PrisonerServiceTest {
         false,
         "123",
         null,
+        null,
       )
 
     Assertions.assertEquals(getExpectedPrisonersListReleaseDateDesc(), prisoners)
@@ -591,6 +590,7 @@ class PrisonerServiceTest {
         "releaseDate,ASC",
         false,
         "123",
+        null,
         null,
       )
     Assertions.assertEquals(
@@ -624,6 +624,7 @@ class PrisonerServiceTest {
         false,
         "123",
         null,
+        null,
       )
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
@@ -639,7 +640,7 @@ class PrisonerServiceTest {
     whenever(prisonerSearchApiService.findPrisonersByPrisonId(prisonId)).thenReturn(mockedJsonResponse.content)
 
     val prisonersList =
-      prisonerService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 5, "name,ASC", false, "123", null)
+      prisonerService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 5, "name,ASC", false, "123", null, null)
     Assertions.assertEquals(expectedPageSize, prisonersList.pageSize)
     prisonersList.content?.toList()?.let { Assertions.assertEquals(expectedPageSize, it.size) }
   }
@@ -676,6 +677,7 @@ class PrisonerServiceTest {
         false,
         "123",
         null,
+        null,
       )
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
   }
@@ -701,6 +703,7 @@ class PrisonerServiceTest {
       "releaseDate,DESC",
       false,
       "123",
+      null,
       null,
     )
 
@@ -728,6 +731,7 @@ class PrisonerServiceTest {
       "releaseDate,DESC",
       false,
       "123",
+      null,
       null,
     )
 
@@ -1153,7 +1157,7 @@ class PrisonerServiceTest {
         "HDCED",
       ),
     )
-    val actualPrisoners = prisonerService.objectMapper(prisoners, null, null, "MDI", null, "123", null)
+    val actualPrisoners = prisonerService.objectMapper(prisoners, null, null, "MDI", null, "123", null, null)
     Assertions.assertEquals(prisonersMapped, actualPrisoners)
   }
 
@@ -1164,7 +1168,7 @@ class PrisonerServiceTest {
     mockPathwayStatusEntities()
     whenever(caseAllocationService.getAllAssignedResettlementWorkers("MDI")).thenReturn(createCaseAllocationList())
 
-    val actualPrisoners = prisonerService.objectMapper(prisoners, null, null, "MDI", null, "123", workerId)
+    val actualPrisoners = prisonerService.objectMapper(prisoners, null, null, "MDI", null, "123", workerId, null)
     Assertions.assertEquals(expectedPrisoners.size, actualPrisoners.size)
     Assertions.assertEquals(expectedPrisoners, actualPrisoners)
   }
@@ -1276,6 +1280,67 @@ class PrisonerServiceTest {
       },
     ),
   )
+
+  @Test
+  fun `Prisoner List - filter by lastReportCompleted`() {
+    // list of prisoners we're going to search - numbered A1-A6
+    val prisoners = List(6) { i ->
+      PrisonersSearch(
+        prisonerNumber = "A${i+1}",
+        firstName = "",
+        lastName = "",
+        prisonId = "MDI",
+        prisonName = ""
+      )
+    }
+
+    // mock completed reports for prisoners A1-A3
+    whenever(resettlementAssessmentService.getLastReportToNomsIdByPrisonId(any()))
+      .thenReturn(mapOf(
+        "A1" to LastReport(type = ResettlementAssessmentType.BCST2, dateCompleted = LocalDate.parse("2024-09-07")),
+        "A2" to LastReport(type = ResettlementAssessmentType.RESETTLEMENT_PLAN, dateCompleted = LocalDate.parse("2024-09-08")),
+        "A3" to LastReport(type = ResettlementAssessmentType.RESETTLEMENT_PLAN, dateCompleted = LocalDate.parse("2024-09-09")),
+      ))
+
+    // no lastReportCompleted filter - should return all (A1-A6)
+    val searchAll = prisonerService.objectMapper(
+      searchList = prisoners,
+      prisonId = "MDI",
+      staffUsername = "123"
+    )
+
+    Assertions.assertEquals(listOf("A1", "A2", "A3", "A4", "A5", "A6"), searchAll.map{ it.prisonerNumber })
+
+    // lastReportCompleted filtering for BCST2 - should return only A1
+    val searchBCST2 = prisonerService.objectMapper(
+      searchList = prisoners,
+      prisonId = "MDI",
+      staffUsername = "123",
+      lastReportCompleted = ResettlementReportFilter.BCST2
+    )
+
+    Assertions.assertEquals(listOf("A1"), searchBCST2.map{ it.prisonerNumber })
+
+    // lastReportCompleted filtering for resettlemt plan - should return A2 and A3
+    val searchResettlementPlan = prisonerService.objectMapper(
+      searchList = prisoners,
+      prisonId = "MDI",
+      staffUsername = "123",
+      lastReportCompleted = ResettlementReportFilter.RESETTLEMENT_PLAN
+    )
+
+    Assertions.assertEquals(listOf("A2", "A3"), searchResettlementPlan.map{ it.prisonerNumber })
+
+    // lastReportCompleted filtering for prisoners with no completed reports - should return A4-A6
+    val searchNoCompletedReports = prisonerService.objectMapper(
+      searchList = prisoners,
+      prisonId = "MDI",
+      staffUsername = "123",
+      lastReportCompleted = ResettlementReportFilter.NONE
+    )
+
+    Assertions.assertEquals(listOf("A4", "A5", "A6"), searchNoCompletedReports.map{ it.prisonerNumber })
+  }
 
   @Test
   fun `sort prisoners by release eligibility date- ascending`() {

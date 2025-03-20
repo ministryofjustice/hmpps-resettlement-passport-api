@@ -17,54 +17,72 @@ pages:
               - id: "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_RENTED_HOUSING"
                 title: "Enter the address"
                 type: "ADDRESS"
+                validation:
+                  type: "OPTIONAL"
           - id: "PRIVATE_HOUSING_OWNED"
             displayText: "Private housing owned by them"
             nestedQuestions:
               - id: "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_HOUSING_OWNED"
                 title: "Enter the address"
                 type: "ADDRESS"
+                validation:
+                  type: "OPTIONAL"
           - id: "FAMILY_OR_FRIENDS"
             displayText: "With family or friends"
             nestedQuestions:
               - id: "WHERE_DID_THEY_LIVE_ADDRESS_FAMILY_OR_FRIENDS"
                 title: "Enter the address"
                 type: "ADDRESS"
+                validation:
+                  type: "OPTIONAL"
           - id: "SOCIAL_HOUSING"
             displayText: "Social housing"
             nestedQuestions:
               - id: "WHERE_DID_THEY_LIVE_ADDRESS_SOCIAL_HOUSING"
                 title: "Enter the address"
                 type: "ADDRESS"
+                validation:
+                  type: "OPTIONAL"
           - id: "LOCAL_AUTHORITY_OR_SUPPORTED_HOUSING"
             displayText: "Local authority care or supported housing"
             nestedQuestions:
               - id: "WHERE_DID_THEY_LIVE_ADDRESS_LOCAL_AUTHORITY_OR_SUPPORTED_HOUSING"
                 title: "Enter the address"
                 type: "ADDRESS"
+                validation:
+                  type: "OPTIONAL"
           - id: "HOSTEL"
             displayText: "Hostel"
             nestedQuestions:
               - id: "WHERE_DID_THEY_LIVE_ADDRESS_HOSTEL"
                 title: "Enter the address"
                 type: "ADDRESS"
+                validation:
+                  type: "OPTIONAL"
           - id: "EMERGENCY_HOUSING"
             displayText: "Emergency housing from the council"
             nestedQuestions:
               - id: "WHERE_DID_THEY_LIVE_ADDRESS_EMERGENCY_HOUSING"
                 title: "Enter the address"
                 type: "ADDRESS"
+                validation:
+                  type: "OPTIONAL"
           - id: "APPROVED_PREMISES"
             displayText: "Community accommodation, including approved premises, CAS2 and CAS3"
             nestedQuestions:
               - id: "WHERE_DID_THEY_LIVE_ADDRESS_APPROVED_PREMISES"
                 title: "Enter the address"
                 type: "ADDRESS"
+                validation:
+                  type: "OPTIONAL"
           - id: "IMMIGRATION_ACCOMMODATION"
             displayText: "Immigration accommodation provided by the Home Office"
             nestedQuestions:
               - id: "WHERE_DID_THEY_LIVE_ADDRESS_IMMIGRATION_ACCOMMODATION"
                 title: "Enter the address"
                 type: "ADDRESS"
+                validation:
+                  type: "OPTIONAL"
           - id: "NO_PERMANENT_OR_FIXED"
             displayText: "No permanent or fixed address"
           - id: "NO_ANSWER"
@@ -89,6 +107,8 @@ pages:
               - id: "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS"
                 title: "Enter the address"
                 type: "ADDRESS"
+                validation:
+                  type: "OPTIONAL"
           - id: "DOES_NOT_HAVE_ANYWHERE"
             displayText: "Does not have anywhere to live"
           - id: "NO_ANSWER"

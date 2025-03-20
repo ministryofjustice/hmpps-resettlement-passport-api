@@ -5,13 +5,13 @@ import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.LastReportCompleted
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoner
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerPersonal
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementReportFilter
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.PersonalDetail
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonerImage
@@ -63,7 +63,7 @@ class PrisonerService(
     includePastReleaseDates: Boolean,
     auth: String,
     workerId: String?,
-    lastReportCompleted: ResettlementReportFilter?,
+    lastReportCompleted: LastReportCompleted? = null,
   ): PrisonersList {
     if (pathwayStatus != null && pathwayView == null) {
       throw ServerWebInputException("pathwayStatus cannot be used without pathwayView")
@@ -199,7 +199,7 @@ class PrisonerService(
     assessmentRequiredFilter: Boolean? = null,
     staffUsername: String,
     workerId: String? = null,
-    lastReportCompleted: ResettlementReportFilter? = null,
+    lastReportCompleted: LastReportCompleted? = null,
   ): MutableList<Prisoners> {
     val prisonersList = mutableListOf<Prisoners>()
 
@@ -271,7 +271,7 @@ class PrisonerService(
 
       when (lastReportCompleted) {
         null -> Unit
-        ResettlementReportFilter.NONE ->
+        LastReportCompleted.NONE ->
           if (lastReport != null) return@forEach
         else ->
           if (lastReport?.type != lastReportCompleted.assessmentType) return@forEach

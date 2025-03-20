@@ -5,7 +5,14 @@ import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.*
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoner
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerPersonal
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Prisoners
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonersList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResettlementReportFilter
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.PersonalDetail
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonerImage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
@@ -268,7 +275,6 @@ class PrisonerService(
           if (lastReport != null) return@forEach
         else ->
           if (lastReport?.type != lastReportCompleted.assessmentType) return@forEach
-
       }
 
       if (pathwayStatusToFilter == null || pathwayStatusToFilter == pathwayStatus) {

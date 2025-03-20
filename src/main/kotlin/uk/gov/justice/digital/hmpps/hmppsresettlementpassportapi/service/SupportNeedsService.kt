@@ -439,6 +439,7 @@ class SupportNeedsService(
       "PSFR_SupportNeedUpdated",
       mapOf(
         "prisonerSupportNeedId" to prisonerNeedId.toString(),
+        "supportNeedId" to prisonerSupportNeed.supportNeed.id.toString(),
         "prisonId" to prisonCode,
         "prisonerId" to nomsId,
         "submittedBy" to username,

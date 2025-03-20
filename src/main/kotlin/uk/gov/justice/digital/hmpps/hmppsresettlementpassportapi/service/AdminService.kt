@@ -5,6 +5,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseNoteRetryRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.SupportNeedRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseNoteRetryService.Companion.MAX_RETRIES
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import java.time.LocalDateTime
@@ -17,6 +18,7 @@ class AdminService(
   private val caseAllocationService: CaseAllocationService,
   private val prisonerSearchApiService: PrisonerSearchApiService,
   private val prisonerService: PrisonerService,
+  private val supportNeedRepository: SupportNeedRepository,
 ) {
 
   companion object {
@@ -58,6 +60,9 @@ class AdminService(
         log.warn("Failed to send case_allocation_assigned_prisoners_percentage metric for prisoner with code [$prisonId]", e)
       }
     }
+
+    val allSupportNeeds = supportNeedRepository.findAll().map { mapOf("supportNeedId" to it.id, "supportNeedTitle" to it.title, "pathway" to it.pathway.name, "section" to it.section, "deleted" to it.deleted) }
+    telemetryClient.trackMetric("support_needs_all", allSupportNeeds.size.toDouble(), null, null, null, null, mapOf("supportNeedDetails" to allSupportNeeds.toString()))
     log.info("Finished sending metrics to app insights")
   }
 }

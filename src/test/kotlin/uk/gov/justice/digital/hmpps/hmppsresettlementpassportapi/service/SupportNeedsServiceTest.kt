@@ -841,7 +841,7 @@ class SupportNeedsServiceTest {
 
     verify(prisonerSupportNeedRepository).save(PrisonerSupportNeedEntity(prisonerId = 1, latestUpdateId = 567, supportNeed = getSupportNeed(8, Pathway.HEALTH), otherDetail = null, createdBy = "A User", createdDate = fakeNow))
 
-    verify(telemetryClient).trackEvent("PSFR_SupportNeedUpdated", mapOf("prisonerSupportNeedId" to "1234", "prisonId" to "MDI", "prisonerId" to "A123", "submittedBy" to "A_USER", "authSource" to "nomis"), null)
+    verify(telemetryClient).trackEvent("PSFR_SupportNeedUpdated", mapOf("prisonerSupportNeedId" to "1234", "supportNeedId" to "8", "prisonId" to "MDI", "prisonerId" to "A123", "submittedBy" to "A_USER", "authSource" to "nomis"), null)
 
     unmockkAll()
   }

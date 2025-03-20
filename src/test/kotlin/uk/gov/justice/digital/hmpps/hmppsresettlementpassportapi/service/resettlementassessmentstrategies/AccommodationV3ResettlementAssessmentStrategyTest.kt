@@ -74,7 +74,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
   override fun `test get page from Id - no existing assessment data`(): Stream<Arguments> = Stream.of(
     Arguments.of(
       "ACCOMMODATION_REPORT",
-      getExpectedV3V4AccommodationReportPage(),
+      getExpectedV3AccommodationReportPage(),
     ),
     Arguments.of(
       "SUPPORT_REQUIREMENTS",
@@ -229,7 +229,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
     ).thenReturn(null)
 
     // Answers from BCST2 should be pre-populated
-    val expectedPage = getExpectedV3V4AccommodationReportPage(
+    val expectedPage = getExpectedV3AccommodationReportPage(
       mapOf(
         "WHERE_DID_THEY_LIVE" to StringAnswer("SOCIAL_HOUSING"),
         "WHERE_DID_THEY_LIVE_ADDRESS_SOCIAL_HOUSING" to MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123"))),
@@ -280,7 +280,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
     ).thenReturn(null)
 
     // Answers from BCST2 should NOT be pre-populated as the version is different
-    val expectedPage = getExpectedV3V4AccommodationReportPage()
+    val expectedPage = getExpectedV3AccommodationReportPage()
     val page = resettlementAssessmentStrategy.getPageFromId(
       nomsId = nomsId,
       pathway = Pathway.ACCOMMODATION,
@@ -628,7 +628,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
   )
 }
 
-fun getExpectedV3V4AccommodationReportPage(answers: Map<String, Answer<*>>? = null) = ResettlementAssessmentResponsePage(
+fun getExpectedV3AccommodationReportPage(answers: Map<String, Answer<*>>? = null) = ResettlementAssessmentResponsePage(
   id = "ACCOMMODATION_REPORT",
   title = "Accommodation report",
   questionsAndAnswers = listOf(

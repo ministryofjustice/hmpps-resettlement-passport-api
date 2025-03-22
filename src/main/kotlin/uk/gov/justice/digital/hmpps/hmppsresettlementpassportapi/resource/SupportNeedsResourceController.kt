@@ -24,6 +24,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedsRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedsUpdateRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.SupportNeedsService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 
 @RestController
 @Validated
@@ -31,6 +33,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.Support
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class SupportNeedsResourceController(
   private val supportNeedsService: SupportNeedsService,
+  private val auditService: AuditService,
 ) {
   @GetMapping("/{nomsId}/needs/summary")
   @Operation(summary = "Get summary of support needs", description = "Get summary of support needs")
@@ -249,6 +252,7 @@ class SupportNeedsResourceController(
     @RequestHeader("Authorization")
     auth: String,
   ): ResponseEntity<Void> {
+    auditService.audit(AuditAction.SUBMIT_SUPPORT_NEEDS, nomsId, auth)
     supportNeedsService.postSupportNeeds(nomsId, prisonerNeedsRequest, auth)
     return ResponseEntity.ok().build()
   }
@@ -291,5 +295,9 @@ class SupportNeedsResourceController(
     @Schema(hidden = true)
     @RequestHeader("Authorization")
     auth: String,
-  ) = supportNeedsService.patchPrisonerNeedById(nomsId, prisonerNeedId, supportNeedsUpdateRequest, auth)
+  ): ResponseEntity<Void> {
+    auditService.audit(AuditAction.UPDATE_SUPPORT_NEED, nomsId, auth)
+    supportNeedsService.patchPrisonerNeedById(nomsId, prisonerNeedId, supportNeedsUpdateRequest, auth)
+    return ResponseEntity.ok().build()
+  }
 }

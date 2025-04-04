@@ -26,9 +26,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.extract
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-private const val CASELOAD_ID_HEADER_NAME = "CaseloadId"
-private const val CASELOAD_ID_HEADER_VALUE = "***"
-
 @Service
 class CaseNotesApiService(
   private val caseNotesWebClientCredentials: WebClient,
@@ -116,7 +113,7 @@ class CaseNotesApiService(
             "startDate" to startDate,
             "endDate" to endDate,
           ),
-        ).header(CASELOAD_ID_HEADER_NAME, CASELOAD_ID_HEADER_VALUE)
+        )
         .retrieve()
       val pageOfData = data.bodyToMono<CaseNotes>().onErrorReturn(
         {
@@ -192,7 +189,6 @@ class CaseNotesApiService(
           "/case-notes/{nomsId}",
           nomsId,
         ).contentType(MediaType.APPLICATION_JSON)
-        .header(CASELOAD_ID_HEADER_NAME, CASELOAD_ID_HEADER_VALUE)
         .bodyValue(
           mapOf(
             "locationId" to prisonCode,

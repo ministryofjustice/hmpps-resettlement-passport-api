@@ -26,6 +26,9 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.extract
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+private const val CASELOAD_ID_HEADER_NAME = "CaseloadId"
+private const val CASELOAD_ID_HEADER_VALUE = "***"
+
 @Service
 class CaseNotesApiService(
   private val caseNotesWebClientCredentials: WebClient,
@@ -113,14 +116,26 @@ class CaseNotesApiService(
             "startDate" to startDate,
             "endDate" to endDate,
           ),
-        )
+        ).header(CASELOAD_ID_HEADER_NAME, CASELOAD_ID_HEADER_VALUE)
         .retrieve()
       val pageOfData = data.bodyToMono<CaseNotes>().onErrorReturn(
         {
-          log.warn("Unexpected error from Case Notes API - ignoring but NOMIS case notes will be missing from response!", it)
+          log.warn(
+            "Unexpected error from Case Notes API - ignoring but NOMIS case notes will be missing from response!",
+            it,
+          )
           it is WebClientException
         },
-        CaseNotes(number = 0, first = false, last = true, empty = true, numberOfElements = 0, size = 0, totalPages = 0, totalElements = 0),
+        CaseNotes(
+          number = 0,
+          first = false,
+          last = true,
+          empty = true,
+          numberOfElements = 0,
+          size = 0,
+          totalPages = 0,
+          totalElements = 0,
+        ),
       ).block()
       if (pageOfData != null) {
         listToReturn.addAll(pageOfData.content!!)
@@ -177,6 +192,7 @@ class CaseNotesApiService(
           "/case-notes/{nomsId}",
           nomsId,
         ).contentType(MediaType.APPLICATION_JSON)
+        .header(CASELOAD_ID_HEADER_NAME, CASELOAD_ID_HEADER_VALUE)
         .bodyValue(
           mapOf(
             "locationId" to prisonCode,
@@ -186,7 +202,10 @@ class CaseNotesApiService(
           ),
         )
         .retrieve()
-        .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found when posting case note of type $type and subtype $subType") })
+        .onStatus(
+          { it == HttpStatus.NOT_FOUND },
+          { throw ResourceNotFoundException("Prisoner $nomsId not found when posting case note of type $type and subtype $subType") },
+        )
         .bodyToMono<CaseNote>()
         .exponentialBackOffRetry()
         .awaitSingle()

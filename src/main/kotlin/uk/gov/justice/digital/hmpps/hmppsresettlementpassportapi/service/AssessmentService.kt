@@ -7,15 +7,19 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWi
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Assessment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.AssessmentEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.AssessmentSkipEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentSkipRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.IdTypeRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Service
 class AssessmentService(
   private val assessmentRepository: AssessmentRepository,
+  private val assessmentSkipRepository: AssessmentSkipRepository,
   private val prisonerRepository: PrisonerRepository,
   private val idTypeRepository: IdTypeRepository,
 ) {
@@ -41,7 +45,7 @@ class AssessmentService(
     val assessment = assessmentRepository.findByPrisonerIdAndIsDeletedAndCreationDateBetween(
       prisoner.id(),
       fromDate = fromDate.atStartOfDay(),
-      toDate = toDate.atStartOfDay(),
+      toDate = toDate.atTime(LocalTime.MAX),
     ) ?: throw ResourceNotFoundException("assessment not found")
     return if (assessment.isDeleted) null else assessment
   }
@@ -94,4 +98,6 @@ class AssessmentService(
     }
     deleteAssessment(assessment)
   }
+
+  fun findSkippedAssessmentsForPrisoner(prisonerId: Long, fromDate: LocalDate, toDate: LocalDate): List<AssessmentSkipEntity> = assessmentSkipRepository.findByPrisonerIdAndCreationDateBetween(prisonerId, fromDate.atStartOfDay(), toDate.atTime(LocalTime.MAX))
 }

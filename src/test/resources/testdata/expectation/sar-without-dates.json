@@ -18,6 +18,35 @@
       "isDeleted": false,
       "deletionDate": null
     },
+    "skippedAssessments": [
+      {
+        "assessmentType": "BCST2",
+        "createdBy": "MKERRY_GEN",
+        "creationDate": "2020-09-01T12:00:00",
+        "id": 1,
+        "moreInfo": "Skipped as completed in OASys",
+        "prisonerId": 1,
+        "reason": "COMPLETED_IN_OASYS"
+      },
+      {
+        "assessmentType": "BCST2",
+        "createdBy": "MKERRY_GEN",
+        "creationDate": "2022-09-01T12:00:00",
+        "id": 2,
+        "moreInfo": "Skipped as on early release",
+        "prisonerId": 1,
+        "reason": "EARLY_RELEASE"
+      },
+      {
+        "assessmentType": "BCST2",
+        "createdBy": "MKERRY_GEN",
+        "creationDate": "2023-09-01T12:00:00",
+        "id": 3,
+        "moreInfo": "Skipped for other reason",
+        "prisonerId": 1,
+        "reason": "OTHER"
+      }
+    ],
     "bankApplication": {
       "id": 1,
       "prisoner": {
@@ -80,6 +109,57 @@
       "deletionDate": null,
       "dateIdReceived": null
     },
+    "pathwayStatus": [
+      {
+        "id": 1,
+        "prisonerId": 1,
+        "pathway": "ACCOMMODATION",
+        "status": "NOT_STARTED",
+        "updatedDate": "2023-08-16T12:21:44.234"
+      },
+      {
+        "id": 2,
+        "prisonerId": 1,
+        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
+        "status": "IN_PROGRESS",
+        "updatedDate": "2023-08-17T12:28:10.466"
+      },
+      {
+        "id": 3,
+        "prisonerId": 1,
+        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
+        "status": "SUPPORT_NOT_REQUIRED",
+        "updatedDate": "2023-08-17T12:28:10.475"
+      },
+      {
+        "id": 4,
+        "prisonerId": 1,
+        "pathway": "DRUGS_AND_ALCOHOL",
+        "status": "SUPPORT_DECLINED",
+        "updatedDate": "2023-08-17T12:28:10.479"
+      },
+      {
+        "id": 5,
+        "prisonerId": 1,
+        "pathway": "EDUCATION_SKILLS_AND_WORK",
+        "status": "DONE",
+        "updatedDate": "2023-08-17T12:28:10.483"
+      },
+      {
+        "id": 6,
+        "prisonerId": 1,
+        "pathway": "FINANCE_AND_ID",
+        "status": "IN_PROGRESS",
+        "updatedDate": "2023-08-17T12:28:10.49"
+      },
+      {
+        "id": 7,
+        "prisonerId": 1,
+        "pathway": "HEALTH",
+        "status": "SUPPORT_NOT_REQUIRED",
+        "updatedDate": "2023-08-17T12:28:10.493"
+      }
+    ],
     "statusSummary": [
       {
         "type": "BCST2",
@@ -555,6 +635,314 @@
             }
           ]
         }
+      }
+    ],
+    "supportNeeds": [
+      {
+        "createdBy": "Matthew Kerry",
+        "createdDate": "2020-09-01T12:00:00",
+        "deleted": true,
+        "deletedDate": "2023-09-01T12:00:00",
+        "id": 1,
+        "latestUpdateId": null,
+        "otherDetail": null,
+        "prisonerId": 1,
+        "supportNeed": {
+          "allowOtherDetail": false,
+          "createdDate": "2020-01-01T00:00:00",
+          "deleted": false,
+          "deletedDate": null,
+          "excludeFromCount": false,
+          "hidden": false,
+          "id": 999999,
+          "pathway": "ACCOMMODATION",
+          "section": "Test support need",
+          "title": "Used for exact creation date"
+        }
+      },
+      {
+        "createdBy": "Matthew Kerry",
+        "createdDate": "2022-09-01T12:00:00",
+        "deleted": false,
+        "deletedDate": null,
+        "id": 2,
+        "latestUpdateId": null,
+        "otherDetail": null,
+        "prisonerId": 1,
+        "supportNeed": {
+          "allowOtherDetail": false,
+          "createdDate": "2020-01-01T00:00:00",
+          "deleted": false,
+          "deletedDate": null,
+          "excludeFromCount": false,
+          "hidden": false,
+          "id": 999999,
+          "pathway": "ACCOMMODATION",
+          "section": "Test support need",
+          "title": "Used for exact creation date"
+        }
+      },
+      {
+        "createdBy": "Matthew Kerry",
+        "createdDate": "2023-09-01T12:00:00",
+        "deleted": false,
+        "deletedDate": null,
+        "id": 3,
+        "latestUpdateId": null,
+        "otherDetail": null,
+        "prisonerId": 1,
+        "supportNeed": {
+          "allowOtherDetail": false,
+          "createdDate": "2020-01-01T00:00:00",
+          "deleted": false,
+          "deletedDate": null,
+          "excludeFromCount": false,
+          "hidden": false,
+          "id": 999999,
+          "pathway": "ACCOMMODATION",
+          "section": "Test support need",
+          "title": "Used for exact creation date"
+        }
+      }
+    ],
+    "supportNeedUpdates": [
+      {
+        "createdBy": "Matthew Kerry",
+        "createdDate": "2020-09-01T12:00:00",
+        "deleted": true,
+        "deletedDate": "2020-09-01T13:00:00",
+        "id": 1,
+        "isPrison": false,
+        "isProbation": true,
+        "prisonerSupportNeedId": 3,
+        "status": "IN_PROGRESS",
+        "updateText": "Support need in progress 1"
+      },
+      {
+        "createdBy": "Matthew Kerry",
+        "createdDate": "2020-09-01T14:00:00",
+        "deleted": false,
+        "deletedDate": null,
+        "id": 2,
+        "isPrison": false,
+        "isProbation": true,
+        "prisonerSupportNeedId": 3,
+        "status": "IN_PROGRESS",
+        "updateText": "Support need in progress 2"
+      },
+      {
+        "createdBy": "Matthew Kerry",
+        "createdDate": "2022-09-01T14:00:00",
+        "deleted": false,
+        "deletedDate": null,
+        "id": 3,
+        "isPrison": false,
+        "isProbation": true,
+        "prisonerSupportNeedId": 3,
+        "status": "IN_PROGRESS",
+        "updateText": "Support need in progress 3"
+      },
+      {
+        "createdBy": "Matthew Kerry",
+        "createdDate": "2023-09-01T14:00:00",
+        "deleted": false,
+        "deletedDate": null,
+        "id": 4,
+        "isPrison": false,
+        "isProbation": true,
+        "prisonerSupportNeedId": 3,
+        "status": "MET",
+        "updateText": "Support need met"
+      }
+    ],
+    "caseAllocation": [
+      {
+        "creationDate": "2020-09-01T12:00:00",
+        "deletionDate": "2020-09-02T12:00:00",
+        "id": 1,
+        "isDeleted": true,
+        "prisonerId": 1,
+        "staffFirstname": "Michael",
+        "staffId": 999999,
+        "staffLastname": "Scott"
+      },
+      {
+        "creationDate": "2022-09-01T12:00:00",
+        "deletionDate": "2022-09-02T12:00:00",
+        "id": 2,
+        "isDeleted": true,
+        "prisonerId": 1,
+        "staffFirstname": "Michael",
+        "staffId": 999999,
+        "staffLastname": "Scott"
+      },
+      {
+        "creationDate": "2023-09-01T12:00:00",
+        "deletionDate": null,
+        "id": 3,
+        "isDeleted": false,
+        "prisonerId": 1,
+        "staffFirstname": "Michael",
+        "staffId": 999999,
+        "staffLastname": "Scott"
+      }
+    ],
+    "profileTags": [
+      {
+        "id": 1,
+        "prisonerId": 1,
+        "profileTags": {
+          "tags": [
+            "NO_FIXED_ABODE"
+          ]
+        },
+        "tags": {
+          "tags": [
+            "NO_FIXED_ABODE"
+          ]
+        },
+        "updatedDate": "2020-01-01T00:00:00"
+      },
+      {
+        "id": 2,
+        "prisonerId": 1,
+        "profileTags": {
+          "tags": [
+            "HELP_TO_CONTACT_BANK"
+          ]
+        },
+        "tags": {
+          "tags": [
+            "HELP_TO_CONTACT_BANK"
+          ]
+        },
+        "updatedDate": "2020-01-01T00:00:00"
+      }
+    ],
+    "todoItems": [
+      {
+        "completed": false,
+        "createdByUrn": "999999",
+        "creationDate": "2020-09-01T12:00:00",
+        "dueDate": "2030-01-01",
+        "id": "f2b40916-7399-4491-bf96-03b15d114a4d",
+        "notes": "This is a to do item",
+        "prisonerId": 1,
+        "title": "Title",
+        "updatedAt": "2020-09-01T12:00:00",
+        "updatedByUrn": "999999"
+      },
+      {
+        "completed": false,
+        "createdByUrn": "999999",
+        "creationDate": "2022-09-01T12:00:00",
+        "dueDate": "2030-01-01",
+        "id": "48b6d8c4-be42-492e-bebc-71d4e396676d",
+        "notes": "This is a to do item",
+        "prisonerId": 1,
+        "title": "Title",
+        "updatedAt": "2022-09-01T12:00:00",
+        "updatedByUrn": "999999"
+      },
+      {
+        "completed": false,
+        "createdByUrn": "999999",
+        "creationDate": "2023-09-01T12:00:00",
+        "dueDate": "2030-01-01",
+        "id": "796e405b-2b56-4ba8-a237-15f2151bb1b0",
+        "notes": "This is a to do item",
+        "prisonerId": 1,
+        "title": "Title",
+        "updatedAt": "2023-09-01T12:00:00",
+        "updatedByUrn": "999999"
+      }
+    ],
+    "caseNotes": [
+      {
+        "author": "Matthew Kerry",
+        "id": 1,
+        "nextRuntime": "2020-09-01T12:01:00",
+        "notes": "Case note 1",
+        "originalSubmissionDate": "2020-09-01T12:00:00",
+        "prisonCode": "MDI",
+        "prisoner": {
+          "creationDate": "2024-01-01T12:21:38.709",
+          "id": 1,
+          "nomsId": "G1458GV",
+          "prisonId": null,
+          "supportNeedsLegacyProfile": null
+        },
+        "retryCount": 0,
+        "type": "IMMEDIATE_NEEDS_REPORT"
+      },
+      {
+        "author": "Matthew Kerry",
+        "id": 2,
+        "nextRuntime": "2022-09-01T12:01:00",
+        "notes": "Case note 1",
+        "originalSubmissionDate": "2022-09-01T12:00:00",
+        "prisonCode": "MDI",
+        "prisoner": {
+          "creationDate": "2024-01-01T12:21:38.709",
+          "id": 1,
+          "nomsId": "G1458GV",
+          "prisonId": null,
+          "supportNeedsLegacyProfile": null
+        },
+        "retryCount": 0,
+        "type": "IMMEDIATE_NEEDS_REPORT"
+      },
+      {
+        "author": "Matthew Kerry",
+        "id": 3,
+        "nextRuntime": "2023-09-01T12:01:00",
+        "notes": "Case note 1",
+        "originalSubmissionDate": "2023-09-01T12:00:00",
+        "prisonCode": "MDI",
+        "prisoner": {
+          "creationDate": "2024-01-01T12:21:38.709",
+          "id": 1,
+          "nomsId": "G1458GV",
+          "prisonId": null,
+          "supportNeedsLegacyProfile": null
+        },
+        "retryCount": 0,
+        "type": "IMMEDIATE_NEEDS_REPORT"
+      }
+    ],
+    "documents": [
+      {
+        "category": "LICENCE_CONDITIONS",
+        "creationDate": "2020-09-01T12:01:00",
+        "deletionDate": "2020-09-02T12:01:00",
+        "id": 1,
+        "isDeleted": true,
+        "originalDocumentFileName": "license1.pdf",
+        "originalDocumentKey": "8ad7b2e2-7160-4731-8b85-bacf49756a23",
+        "pdfDocumentKey": "c33e3a56-545f-41ee-bb44-632746480f22",
+        "prisonerId": 1
+      },
+      {
+        "category": "LICENCE_CONDITIONS",
+        "creationDate": "2022-09-01T12:01:00",
+        "deletionDate": "2022-09-02T12:01:00",
+        "id": 2,
+        "isDeleted": true,
+        "originalDocumentFileName": "license2.pdf",
+        "originalDocumentKey": "3e5a4c5b-86d8-4617-bfbe-15aa3a91dfd3",
+        "pdfDocumentKey": "32deeb98-30f4-4baa-b187-1b0276736797",
+        "prisonerId": 1
+      },
+      {
+        "category": "LICENCE_CONDITIONS",
+        "creationDate": "2023-09-01T12:01:00",
+        "deletionDate": null,
+        "id": 3,
+        "isDeleted": false,
+        "originalDocumentFileName": "license3.pdf",
+        "originalDocumentKey": "10ad790a-6981-4b9c-bace-604c0468ec5b",
+        "pdfDocumentKey": "ed25e653-607f-428b-9c0d-06cc67465fb7",
+        "prisonerId": 1
       }
     ]
   }

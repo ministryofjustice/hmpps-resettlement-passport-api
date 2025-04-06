@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Service
 class BankApplicationService(
@@ -52,7 +53,7 @@ class BankApplicationService(
     val bankApplication = bankApplicationRepository.findByPrisonerIdAndIsDeletedAndCreationDateBetween(
       prisoner.id(),
       fromDate = fromDate.atStartOfDay(),
-      toDate = toDate.atStartOfDay(),
+      toDate = toDate.atTime(LocalTime.MAX),
     )
       ?: throw ResourceNotFoundException(" no none deleted bank applications for prisoner: ${prisoner.nomsId} found in database")
     return getBankApplicationResponse(bankApplication, prisoner)

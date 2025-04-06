@@ -828,3 +828,85 @@ VALUES (46, 1, 'RESETTLEMENT_PLAN', '{
   ]
 }', '2024-05-22 16:06:48.238178', 'Matthew Kerry', 'hello', 'MKERRY_GEN', 'HEALTH', 'SUBMITTED',
         'SUPPORT_DECLINED', '2024-05-22 16:06:54.339643');
+
+INSERT INTO assessment_skip(id, prisoner_id, assessment_type, reason, more_info, created_by, creation_date)
+VALUES(1, 1, '0', 'COMPLETED_IN_OASYS', 'Skipped as completed in OASys', 'MKERRY_GEN', '2020-09-01 12:00:00.000');
+INSERT INTO assessment_skip(id, prisoner_id, assessment_type, reason, more_info, created_by, creation_date)
+VALUES(2, 1, '0', 'EARLY_RELEASE', 'Skipped as on early release', 'MKERRY_GEN', '2022-09-01 12:00:00.000');
+INSERT INTO assessment_skip(id, prisoner_id, assessment_type, reason, more_info, created_by, creation_date)
+VALUES(3, 1, '0', 'OTHER', 'Skipped for other reason', 'MKERRY_GEN', '2023-09-01 12:00:00.000');
+
+INSERT INTO support_need
+(id, pathway, "section", title, hidden, exclude_from_count, allow_other_detail, created_date, is_deleted, deleted_date)
+VALUES(999999, 'ACCOMMODATION', 'Test support need', 'Used for exact creation date', false, false, false, '2020-01-01 00:00:00.000', false, NULL)
+ON CONFLICT DO NOTHING;
+INSERT INTO prisoner_support_need
+(id, prisoner_id, support_need_id, other_detail, created_by, created_date, is_deleted, deleted_date, latest_update_id)
+VALUES(1, 1, 999999, NULL, 'Matthew Kerry', '2020-09-01 12:00:00.000', true, '2023-09-01 12:00:00.000', NULL);
+INSERT INTO prisoner_support_need
+(id, prisoner_id, support_need_id, other_detail, created_by, created_date, is_deleted, deleted_date, latest_update_id)
+VALUES(2, 1, 999999, NULL, 'Matthew Kerry', '2022-09-01 12:00:00.000', false, NULL, NULL);
+INSERT INTO prisoner_support_need
+(id, prisoner_id, support_need_id, other_detail, created_by, created_date, is_deleted, deleted_date, latest_update_id)
+VALUES(3, 1, 999999, NULL, 'Matthew Kerry', '2023-09-01 12:00:00.000', false, NULL, NULL);
+
+INSERT INTO prisoner_support_need_update
+(id, prisoner_support_need_id, created_by, created_date, update_text, status, is_prison, is_probation, is_deleted, deleted_date)
+VALUES(1, 3, 'Matthew Kerry', '2020-09-01 12:00:00.000', 'Support need in progress 1', 'IN_PROGRESS', false, true, true, '2020-09-01 13:00:00.000');
+INSERT INTO prisoner_support_need_update
+(id, prisoner_support_need_id, created_by, created_date, update_text, status, is_prison, is_probation, is_deleted, deleted_date)
+VALUES(2, 3, 'Matthew Kerry', '2020-09-01 14:00:00.000', 'Support need in progress 2', 'IN_PROGRESS', false, true, false, NULL);
+INSERT INTO prisoner_support_need_update
+(id, prisoner_support_need_id, created_by, created_date, update_text, status, is_prison, is_probation, is_deleted, deleted_date)
+VALUES(3, 3, 'Matthew Kerry', '2022-09-01 14:00:00.000', 'Support need in progress 3', 'IN_PROGRESS', false, true, false, NULL);
+INSERT INTO prisoner_support_need_update
+(id, prisoner_support_need_id, created_by, created_date, update_text, status, is_prison, is_probation, is_deleted, deleted_date)
+VALUES(4, 3, 'Matthew Kerry', '2023-09-01 14:00:00.000', 'Support need met', 'MET', false, true, false, NULL);
+
+INSERT INTO case_allocation
+(id, prisoner_id, staff_id, staff_firstname, staff_lastname, is_deleted, when_created, deleted_at)
+VALUES(1, 1, 999999, 'Michael', 'Scott', true, '2020-09-01 12:00:00.000', '2020-09-02 12:00:00.000');
+INSERT INTO case_allocation
+(id, prisoner_id, staff_id, staff_firstname, staff_lastname, is_deleted, when_created, deleted_at)
+VALUES(2, 1, 999999, 'Michael', 'Scott', true, '2022-09-01 12:00:00.000', '2022-09-02 12:00:00.000');
+INSERT INTO case_allocation
+(id, prisoner_id, staff_id, staff_firstname, staff_lastname, is_deleted, when_created, deleted_at)
+VALUES(3, 1, 999999, 'Michael', 'Scott', false, '2023-09-01 12:00:00.000', null);
+
+/* Note: There should only be one profile_tag record per prisoner but it is not enforced the db */
+INSERT INTO profile_tag
+(id, prisoner_id, profile_tags, updated_date)
+VALUES(1, 1, '{"tags": ["NO_FIXED_ABODE"]}'::jsonb, '2020-01-01 00:00:00.000');
+INSERT INTO profile_tag
+(id, prisoner_id, profile_tags, updated_date)
+VALUES(2, 1, '{"tags": ["HELP_TO_CONTACT_BANK"]}'::jsonb, '2020-01-01 00:00:00.000');
+
+INSERT INTO todo_item
+(id, prisoner_id, title, notes, due_date, completed, created_by_urn, updated_by_urn, creation_date, updated_at)
+VALUES('f2b40916-7399-4491-bf96-03b15d114a4d'::uuid, 1, 'Title', 'This is a to do item', '2030-01-01', false, '999999', '999999', '2020-09-01 12:00:00.000', '2020-09-01 12:00:00.000');
+INSERT INTO todo_item
+(id, prisoner_id, title, notes, due_date, completed, created_by_urn, updated_by_urn, creation_date, updated_at)
+VALUES('48b6d8c4-be42-492e-bebc-71d4e396676d'::uuid, 1, 'Title', 'This is a to do item', '2030-01-01', false, '999999', '999999', '2022-09-01 12:00:00.000', '2022-09-01 12:00:00.000');
+INSERT INTO todo_item
+(id, prisoner_id, title, notes, due_date, completed, created_by_urn, updated_by_urn, creation_date, updated_at)
+VALUES('796e405b-2b56-4ba8-a237-15f2151bb1b0'::uuid, 1, 'Title', 'This is a to do item', '2030-01-01', false, '999999', '999999', '2023-09-01 12:00:00.000', '2023-09-01 12:00:00.000');
+
+INSERT INTO case_note_retry
+(id, prisoner_id, "type", notes, author, prison_code, original_submission_date, retry_count, next_runtime)
+VALUES(1, 1, 'IMMEDIATE_NEEDS_REPORT', 'Case note 1', 'Matthew Kerry', 'MDI', '2020-09-01 12:00:00.000', 0, '2020-09-01 12:01:00.000');
+INSERT INTO case_note_retry
+(id, prisoner_id, "type", notes, author, prison_code, original_submission_date, retry_count, next_runtime)
+VALUES(2, 1, 'IMMEDIATE_NEEDS_REPORT', 'Case note 1', 'Matthew Kerry', 'MDI', '2022-09-01 12:00:00.000', 0, '2022-09-01 12:01:00.000');
+INSERT INTO case_note_retry
+(id, prisoner_id, "type", notes, author, prison_code, original_submission_date, retry_count, next_runtime)
+VALUES(3, 1, 'IMMEDIATE_NEEDS_REPORT', 'Case note 1', 'Matthew Kerry', 'MDI', '2023-09-01 12:00:00.000', 0, '2023-09-01 12:01:00.000');
+
+INSERT INTO document_location
+(id, prisoner_id, original_document_key, creation_date, pdf_document_key, category, original_document_file_name, is_deleted, deleted_date)
+VALUES(1, 1, '8ad7b2e2-7160-4731-8b85-bacf49756a23'::uuid, '2020-09-01 12:01:00.000', 'c33e3a56-545f-41ee-bb44-632746480f22'::uuid, 'LICENCE_CONDITIONS', 'license1.pdf', true, '2020-09-02 12:01:00.000');
+INSERT INTO document_location
+(id, prisoner_id, original_document_key, creation_date, pdf_document_key, category, original_document_file_name, is_deleted, deleted_date)
+VALUES(2, 1, '3e5a4c5b-86d8-4617-bfbe-15aa3a91dfd3'::uuid, '2022-09-01 12:01:00.000', '32deeb98-30f4-4baa-b187-1b0276736797'::uuid, 'LICENCE_CONDITIONS', 'license2.pdf', true, '2022-09-02 12:01:00.000');
+INSERT INTO document_location
+(id, prisoner_id, original_document_key, creation_date, pdf_document_key, category, original_document_file_name, is_deleted, deleted_date)
+VALUES(3, 1, '10ad790a-6981-4b9c-bace-604c0468ec5b'::uuid, '2023-09-01 12:01:00.000', 'ed25e653-607f-428b-9c0d-06cc67465fb7'::uuid, 'LICENCE_CONDITIONS', 'license3.pdf', false, null);

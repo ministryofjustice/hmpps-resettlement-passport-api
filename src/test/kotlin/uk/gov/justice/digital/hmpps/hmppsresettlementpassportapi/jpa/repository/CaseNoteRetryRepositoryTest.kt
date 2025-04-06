@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseNoteRetryEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 class CaseNoteRetryRepositoryTest : RepositoryTestBase() {
 
@@ -87,6 +89,73 @@ class CaseNoteRetryRepositoryTest : RepositoryTestBase() {
     val actualResults = caseNoteRetryRepository.findByNextRuntimeBeforeAndRetryCountLessThan(LocalDateTime.parse("2024-07-02T12:12:12"), 10)
 
     Assertions.assertEquals(expectedResults, actualResults)
+  }
+
+  @Test
+  fun `test findByPrisonerAndOriginalSubmissionDateBetween`() {
+    // Seed database with prisoners and case notes
+    val prisoner1 = prisonerRepository.save(PrisonerEntity(null, "NOMS1", LocalDateTime.parse("2023-12-13T12:00:00"), "MDI"))
+    val prisoner2 = prisonerRepository.save(PrisonerEntity(null, "NOMS2", LocalDateTime.parse("2023-12-13T12:00:00"), "MDI"))
+
+    val searchDate = LocalDate.now().atTime(LocalTime.NOON)
+
+    val caseNotes = listOf(
+      CaseNoteRetryEntity(
+        id = null,
+        prisoner = prisoner2,
+        type = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
+        notes = "some notes to be sent",
+        author = "John Smith",
+        prisonCode = "ABC",
+        originalSubmissionDate = searchDate.minusDays(10),
+        retryCount = 0,
+        nextRuntime = searchDate.plusHours(2),
+      ),
+      CaseNoteRetryEntity(
+        id = null,
+        prisoner = prisoner2,
+        type = DeliusCaseNoteType.PRE_RELEASE_REPORT,
+        notes = "case notes text",
+        author = "Jane Smith",
+        prisonCode = "EFG",
+        originalSubmissionDate = searchDate.minusDays(5),
+        retryCount = 5,
+        nextRuntime = searchDate.plusHours(2),
+      ),
+      CaseNoteRetryEntity(
+        id = null,
+        prisoner = prisoner2,
+        type = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
+        notes = "case notes text here",
+        author = "Alan Johnson",
+        prisonCode = "ABC",
+        originalSubmissionDate = searchDate,
+        retryCount = 9,
+        nextRuntime = searchDate.plusHours(2),
+      ),
+    )
+
+    caseNoteRetryRepository.saveAll(caseNotes)
+
+    // Prisoner 1 has no case notes
+    Assertions.assertEquals(
+      listOf<CaseNoteRetryEntity>(),
+      caseNoteRetryRepository.findByPrisonerAndOriginalSubmissionDateBetween(
+        prisoner1,
+        searchDate.minusDays(7),
+        searchDate.plusDays(1),
+      ),
+    )
+
+    // Prisoner 2 has three - one out of search range and two inside
+    Assertions.assertEquals(
+      caseNotes.filter { it.originalSubmissionDate > searchDate.minusDays(7) },
+      caseNoteRetryRepository.findByPrisonerAndOriginalSubmissionDateBetween(
+        prisoner2,
+        searchDate.minusDays(7),
+        searchDate.plusDays(1),
+      ),
+    )
   }
 
   private fun getTestPrisonerEntity(nomsId: String) = PrisonerEntity(null, nomsId, LocalDateTime.parse("2023-09-01T15:09:21"), "MDI")

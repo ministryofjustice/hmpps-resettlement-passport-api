@@ -35,6 +35,7 @@ class CaseNotesClientCredentialsService(
       .builder()
       .baseUrl(caseNotesRootUri)
       .defaultHeader("Authorization", "Bearer $accessToken")
+      .defaultHeader("CaseloadId", "***")
       .build()
   }
 }

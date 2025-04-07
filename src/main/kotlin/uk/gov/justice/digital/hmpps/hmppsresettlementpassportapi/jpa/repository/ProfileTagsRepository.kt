@@ -10,6 +10,8 @@ interface ProfileTagsRepository : JpaRepository<ProfileTagsEntity, Long> {
 
   fun findByPrisonerId(prisonerId: Long): ProfileTagsEntity
 
+  fun findAllByPrisonerId(prisonerId: Long): List<ProfileTagsEntity>
+
   fun findFirstByPrisonerId(prisonerId: Long): ProfileTagsEntity
 
   fun existsProfileTagsEntityByPrisonerId(prisonerId: Long): Boolean

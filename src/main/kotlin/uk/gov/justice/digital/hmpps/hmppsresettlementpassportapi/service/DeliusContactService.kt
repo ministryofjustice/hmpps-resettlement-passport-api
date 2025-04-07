@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Service
 class DeliusContactService(private val deliusContactRepository: DeliusContactRepository, private val prisonerRepository: PrisonerRepository) {
@@ -62,7 +63,7 @@ class DeliusContactService(private val deliusContactRepository: DeliusContactRep
       prisoner.id(),
       contactType,
       fromDate.atStartOfDay(),
-      toDate.atStartOfDay(),
+      toDate.atTime(LocalTime.MAX),
     )
     return mapDeliusContactsToPathwayCaseNotes(deliusContacts)
   }

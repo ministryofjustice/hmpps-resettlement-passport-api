@@ -5,6 +5,7 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
@@ -12,13 +13,19 @@ import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Assessment
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.AssessmentSkipReason
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.AssessmentEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.AssessmentSkipEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.IdTypeEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentSkipRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.IdTypeRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.*
 
 @ExtendWith(MockitoExtension::class)
@@ -32,13 +39,16 @@ class AssessmentServiceTest {
   private lateinit var assessmentRepository: AssessmentRepository
 
   @Mock
+  private lateinit var assessmentSkipRepository: AssessmentSkipRepository
+
+  @Mock
   private lateinit var idTypeRepository: IdTypeRepository
   private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
   @BeforeEach
   fun beforeEach() {
-    assessmentService = AssessmentService(assessmentRepository, prisonerRepository, idTypeRepository)
+    assessmentService = AssessmentService(assessmentRepository, assessmentSkipRepository, prisonerRepository, idTypeRepository)
   }
 
   @Test
@@ -103,5 +113,28 @@ class AssessmentServiceTest {
     Mockito.verify(assessmentRepository).save(expectedAssessmentEntity)
 
     unmockkStatic(LocalDateTime::class)
+  }
+
+  @Nested
+  inner class FindSkippedAssessmentsForPrisoner {
+    private val toDate = LocalDate.of(2025, 4, 11)
+    private val fromDate = toDate.minusDays(7)
+
+    @Test
+    fun `should search between the start of fromDate and the end of toDate`() {
+      Mockito.`when`(assessmentSkipRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(null)
+
+      assessmentService.findSkippedAssessmentsForPrisoner(1, fromDate, toDate)
+      Mockito.verify(assessmentSkipRepository).findByPrisonerIdAndCreationDateBetween(1, fromDate.atStartOfDay(), toDate.atTime(LocalTime.MAX))
+    }
+
+    @Test
+    fun `should return from repository`() {
+      val skipHistory = listOf(AssessmentSkipEntity(null, ResettlementAssessmentType.BCST2, 1, AssessmentSkipReason.TRANSFER, null, null, null))
+      Mockito.`when`(assessmentSkipRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(skipHistory)
+
+      val response = assessmentService.findSkippedAssessmentsForPrisoner(1, fromDate, toDate)
+      Assertions.assertEquals(skipHistory, response)
+    }
   }
 }

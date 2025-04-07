@@ -6,6 +6,7 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
@@ -14,7 +15,9 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.web.server.ServerWebInputException
@@ -49,6 +52,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.*
 import java.util.stream.Stream
 
@@ -1085,6 +1089,53 @@ class SupportNeedsServiceTest {
     )
 
     unmockkAll()
+  }
+
+  @Nested
+  inner class GetAllSupportNeedsForPrisoner {
+    private val toDate = LocalDate.of(2025, 4, 11)
+    private val fromDate = toDate.minusDays(7)
+
+    @Test
+    fun `should search between the start of fromDate and the end of toDate`() {
+      Mockito.`when`(prisonerSupportNeedRepository.findAllByPrisonerIdAndCreatedDateBetween(any(), any(), any())).thenReturn(null)
+
+      supportNeedsService.getAllSupportNeedsForPrisoner(1, fromDate, toDate)
+      Mockito.verify(prisonerSupportNeedRepository).findAllByPrisonerIdAndCreatedDateBetween(1, fromDate.atStartOfDay(), toDate.atTime(LocalTime.MAX))
+    }
+
+    @Test
+    fun `should return result from repository`() {
+      val supportNeeds = getPrisonerSupportNeeds()
+      Mockito.`when`(prisonerSupportNeedRepository.findAllByPrisonerIdAndCreatedDateBetween(any(), any(), any())).thenReturn(supportNeeds)
+
+      val response = supportNeedsService.getAllSupportNeedsForPrisoner(1, fromDate, toDate)
+      Assertions.assertEquals(supportNeeds, response)
+    }
+  }
+
+  @Nested
+  inner class GetAllSupportNeedUpdatesForPrisoner {
+    private val toDate = LocalDate.of(2025, 4, 11)
+    private val fromDate = toDate.minusDays(7)
+    private val supportNeeds = getPrisonerSupportNeeds()
+
+    @Test
+    fun `should search between the start of fromDate and the end of toDate`() {
+      Mockito.`when`(prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndCreatedDateBetween(any(), any(), any())).thenReturn(null)
+
+      supportNeedsService.getAllSupportNeedUpdatesForPrisoner(supportNeeds, fromDate, toDate)
+      Mockito.verify(prisonerSupportNeedUpdateRepository).findAllByPrisonerSupportNeedIdInAndCreatedDateBetween(supportNeeds.mapNotNull { it.id }, fromDate.atStartOfDay(), toDate.atTime(LocalTime.MAX))
+    }
+
+    @Test
+    fun `should return result from repository`() {
+      val updates = listOf(getPrisonerSupportNeedUpdate(n = 1, status = SupportNeedStatus.MET, createdDateDay = "12", isPrisonResponsible = false, isProbationResponsible = false))
+      Mockito.`when`(prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndCreatedDateBetween(any(), any(), any())).thenReturn(updates)
+
+      val response = supportNeedsService.getAllSupportNeedUpdatesForPrisoner(supportNeeds, fromDate, toDate)
+      Assertions.assertEquals(updates, response)
+    }
   }
 
   private fun stubPrisonerDetails(nomsId: String) = whenever(prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)).thenReturn(PrisonersSearch(prisonerNumber = nomsId, prisonId = "MDI", firstName = "First Name", lastName = "Last Name", prisonName = "Moorland (HMP)"))

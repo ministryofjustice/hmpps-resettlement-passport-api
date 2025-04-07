@@ -85,4 +85,28 @@ class PathwayStatusRepositoryTest : RepositoryTestBase() {
           pathwayStatusesPrisoner3.map { Tuple(it.prisonerId, it.pathway, it.status) },
       )
   }
+
+  @Test
+  fun `test findByPrisonerId query`() {
+    // Seed database with prisoners and pathway statuses
+    val prisoner1 = prisonerRepository.save(PrisonerEntity(null, "NOMS1", LocalDateTime.parse("2023-12-13T12:00:00"), "MDI"))
+    val prisoner2 = prisonerRepository.save(PrisonerEntity(null, "NOMS2", LocalDateTime.parse("2023-12-13T12:00:00"), "MDI"))
+
+    val pathwayStatuses = listOf(
+      PathwayStatusEntity(null, prisoner2.id(), Pathway.ACCOMMODATION, Status.NOT_STARTED, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner2.id(), Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, Status.SUPPORT_NOT_REQUIRED, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner2.id(), Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, Status.SUPPORT_DECLINED, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner2.id(), Pathway.DRUGS_AND_ALCOHOL, Status.IN_PROGRESS, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner2.id(), Pathway.EDUCATION_SKILLS_AND_WORK, Status.DONE, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner2.id(), Pathway.FINANCE_AND_ID, Status.NOT_STARTED, LocalDateTime.parse("2023-09-12T12:34:56")),
+      PathwayStatusEntity(null, prisoner2.id(), Pathway.HEALTH, Status.DONE, LocalDateTime.parse("2023-09-12T12:34:56")),
+    )
+
+    pathwayStatusRepository.saveAll(pathwayStatuses)
+
+    // Prisoner 1 has no pathway statuses
+    // Prisoner 2 has all pathways set
+    assertThat(pathwayStatusRepository.findByPrisonerId(prisoner1.id())).isEmpty()
+    assertThat(pathwayStatusRepository.findByPrisonerId(prisoner2.id())).isEqualTo(pathwayStatuses)
+  }
 }

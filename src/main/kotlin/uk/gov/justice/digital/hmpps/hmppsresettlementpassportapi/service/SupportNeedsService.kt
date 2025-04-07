@@ -31,7 +31,9 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.SupportNeedRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CaseNotesApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Service
 class SupportNeedsService(
@@ -488,5 +490,18 @@ class SupportNeedsService(
     }
 
     prisonerSupportNeedUpdateRepository.saveAll(profileResetUpdates)
+  }
+
+  fun getAllSupportNeedsForPrisoner(prisonerId: Long, startDate: LocalDate, endDate: LocalDate): List<PrisonerSupportNeedEntity> {
+    val from = startDate.atStartOfDay()
+    val to = endDate.atTime(LocalTime.MAX)
+
+    return prisonerSupportNeedRepository.findAllByPrisonerIdAndCreatedDateBetween(prisonerId, from, to)
+  }
+  fun getAllSupportNeedUpdatesForPrisoner(supportNeeds: List<PrisonerSupportNeedEntity>, startDate: LocalDate, endDate: LocalDate): List<PrisonerSupportNeedUpdateEntity> {
+    val from = startDate.atStartOfDay()
+    val to = endDate.atTime(LocalTime.MAX)
+
+    return prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndCreatedDateBetween(supportNeeds.mapNotNull { it.id }, from, to)
   }
 }

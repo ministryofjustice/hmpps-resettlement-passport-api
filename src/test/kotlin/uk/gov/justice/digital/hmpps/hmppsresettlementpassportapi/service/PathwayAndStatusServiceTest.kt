@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
 import org.springframework.http.HttpStatusCode
 import org.springframework.transaction.support.TransactionOperations
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
@@ -98,5 +99,16 @@ class PathwayAndStatusServiceTest {
 
     assertThrows<ResourceNotFoundException> { pathwayAndStatusService.updatePathwayStatus(nomsId, PathwayAndStatus(pathway, newStatus)) }
     Mockito.verify(pathwayStatusRepository, Mockito.never()).save(Mockito.any())
+  }
+
+  @Test
+  fun `test findAllPathwayStatusForPrisoner - should return result from repository`() {
+    val prisonerEntity = PrisonerEntity(1, "nomsId", testDate, "prisonId")
+    val pathwayData = PathwayStatusEntity(1, prisonerEntity.id(), Pathway.ACCOMMODATION, Status.NOT_STARTED, LocalDateTime.now())
+    Mockito.`when`(pathwayStatusRepository.findByPrisonerId(any())).thenReturn(listOf(pathwayData))
+
+    val result = pathwayAndStatusService.findAllPathwayStatusForPrisoner(prisonerEntity)
+
+    Assertions.assertEquals(listOf(pathwayData), result)
   }
 }

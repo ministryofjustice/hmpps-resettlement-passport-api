@@ -5,9 +5,12 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseNoteRetryEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseNoteRetryRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Service
 class CaseNoteRetryService(
@@ -48,6 +51,13 @@ class CaseNoteRetryService(
       log.warn("Retry failed for case note for ${caseNote.prisoner.nomsId} as no CRN found. Will schedule next retry.")
       scheduleNextRetry(caseNote)
     }
+  }
+
+  fun findByPrisoner(prisoner: PrisonerEntity, startDate: LocalDate, endDate: LocalDate): List<CaseNoteRetryEntity> {
+    val from = startDate.atStartOfDay()
+    val to = endDate.atTime(LocalTime.MAX)
+
+    return caseNoteRetryRepository.findByPrisonerAndOriginalSubmissionDateBetween(prisoner, from, to)
   }
 
   fun scheduleNextRetry(caseNote: CaseNoteRetryEntity) {

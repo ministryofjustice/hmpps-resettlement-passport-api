@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import dev.forkhandles.result4k.valueOrNull
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
@@ -23,7 +24,9 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Docu
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.DocumentsRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.*
 
 @ExtendWith(MockitoExtension::class)
@@ -160,5 +163,41 @@ class DocumentServiceTest {
     documentsEntity.isDeleted = true
     documentsEntity.deletionDate = fakeNow
     Mockito.verify(documentsRepository).save(documentsEntity)
+  }
+
+  @Nested
+  inner class ListDocuments {
+    private val toDate = LocalDate.of(2025, 4, 11)
+    private val fromDate = toDate.minusDays(7)
+
+    @Test
+    fun `should search between the start of fromDate and the end of toDate`() {
+      Mockito.`when`(documentsRepository.findAllByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(null)
+
+      documentService.listDocuments(1, fromDate, toDate)
+      Mockito.verify(documentsRepository).findAllByPrisonerIdAndCreationDateBetween(1, fromDate.atStartOfDay(), toDate.atTime(LocalTime.MAX))
+    }
+
+    @Test
+    fun `should return data from repository`() {
+      val data = listOf(
+        DocumentsEntity(
+          id = null,
+          prisonerId = 1,
+          originalDocumentKey = UUID.randomUUID(),
+          pdfDocumentKey = UUID.randomUUID(),
+          creationDate = toDate.minusDays(5).atTime(LocalTime.NOON),
+          category = DocumentCategory.LICENCE_CONDITIONS,
+          originalDocumentFileName = "license2.pdf",
+          isDeleted = false,
+          deletionDate = null,
+        ),
+      )
+
+      Mockito.`when`(documentsRepository.findAllByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(data)
+
+      val response = documentService.listDocuments(1, fromDate, toDate)
+      Assertions.assertEquals(data, response)
+    }
   }
 }

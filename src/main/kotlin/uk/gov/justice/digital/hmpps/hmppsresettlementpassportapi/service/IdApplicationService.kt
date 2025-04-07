@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Service
 class IdApplicationService(
@@ -32,7 +33,7 @@ class IdApplicationService(
     val idApplicationEntityList = idApplicationRepository.findByPrisonerIdAndIsDeletedAndCreationDateBetween(
       prisoner.id(),
       fromDate = fromDate.atStartOfDay(),
-      toDate = toDate.atStartOfDay(),
+      toDate = toDate.atTime(LocalTime.MAX),
     )
     if (idApplicationEntityList.isEmpty()) {
       throw ResourceNotFoundException("No active ID application found for prisoner with id $nomsId")

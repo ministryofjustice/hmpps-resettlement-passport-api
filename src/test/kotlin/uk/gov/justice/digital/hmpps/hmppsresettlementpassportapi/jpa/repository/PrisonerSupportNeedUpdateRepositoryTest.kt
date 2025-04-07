@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository
 
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
@@ -95,5 +96,51 @@ class PrisonerSupportNeedUpdateRepositoryTest : RepositoryTestBase() {
       PrisonerSupportNeedUpdateEntity(id = 8, prisonerSupportNeedId = 4, createdBy = "User C", createdDate = LocalDateTime.parse("2024-02-03T09:36:32.713421"), updateText = "This is an update 7", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = true, deleted = false, deletedDate = null),
     )
     Assertions.assertEquals(expectedUpdates, prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndDeletedIsFalse(listOf(1, 3, 4)).sortedBy { it.id })
+  }
+
+  @Nested
+  inner class FindAllByPrisonerSupportNeedIdInAndCreatedDateBetween {
+
+    private val searchDate = LocalDateTime.parse("2024-02-22T09:36:30.713421")
+
+    private val supportNeedUpdates = listOf(
+      PrisonerSupportNeedUpdateEntity(id = 1, prisonerSupportNeedId = 2, createdBy = "A user", createdDate = LocalDateTime.parse("2024-02-22T09:36:32.713421"), updateText = "This is an update 1", status = SupportNeedStatus.MET, isPrison = true, isProbation = true, deleted = true, deletedDate = null),
+      PrisonerSupportNeedUpdateEntity(id = 2, prisonerSupportNeedId = 2, createdBy = "A user", createdDate = LocalDateTime.parse("2024-02-22T09:36:30.713421"), updateText = "This is an update 2", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = false, deleted = false, deletedDate = null),
+      PrisonerSupportNeedUpdateEntity(id = 3, prisonerSupportNeedId = 2, createdBy = "A user", createdDate = LocalDateTime.parse("2024-02-22T09:36:31.713421"), updateText = "This is an update 3", status = SupportNeedStatus.MET, isPrison = false, isProbation = true, deleted = false, deletedDate = null),
+      PrisonerSupportNeedUpdateEntity(id = 4, prisonerSupportNeedId = 2, createdBy = "A user", createdDate = LocalDateTime.parse("2024-02-22T09:36:29.713421"), updateText = "This is an update 4", status = SupportNeedStatus.DECLINED, isPrison = false, isProbation = false, deleted = false, deletedDate = null),
+    )
+
+    @Test
+    @Sql("classpath:testdata/sql/seed-prisoner-support-needs-1.sql")
+    fun `should return matching updates within date range`() {
+      val searchWithinRange = prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndCreatedDateBetween(
+        listOf(2, 99, 100),
+        searchDate.minusHours(1),
+        searchDate.plusHours(1),
+      ).sortedBy { it.id }
+      Assertions.assertEquals(supportNeedUpdates, searchWithinRange)
+    }
+
+    @Test
+    @Sql("classpath:testdata/sql/seed-prisoner-support-needs-1.sql")
+    fun `should not return updates outside of date range`() {
+      val searchOutOfRange = prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndCreatedDateBetween(
+        listOf(2, 99, 100),
+        searchDate.minusHours(2),
+        searchDate.minusHours(1),
+      )
+      Assertions.assertEquals(listOf<PrisonerSupportNeedEntity>(), searchOutOfRange)
+    }
+
+    @Test
+    @Sql("classpath:testdata/sql/seed-prisoner-support-needs-1.sql")
+    fun `should not return updates that don't match on support need id`() {
+      val searchNoMatchForSupportNeedId = prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndCreatedDateBetween(
+        listOf(99, 100),
+        searchDate.minusHours(1),
+        searchDate.plusHours(1),
+      )
+      Assertions.assertEquals(listOf<PrisonerSupportNeedEntity>(), searchNoMatchForSupportNeedId)
+    }
   }
 }

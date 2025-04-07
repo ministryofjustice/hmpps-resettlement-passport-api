@@ -4,19 +4,24 @@ import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseNoteRetryEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseNoteRetryRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 @ExtendWith(MockitoExtension::class)
 class CaseNoteRetryServiceTest {
@@ -197,6 +202,43 @@ class CaseNoteRetryServiceTest {
     Mockito.verify(metricsService).incrementCounter("delius_case_note_retry_give_up")
 
     Mockito.verifyNoMoreInteractions(caseNotesService, caseNoteRetryRepository, metricsService, resettlementPassportDeliusApiService)
+  }
+
+  @Nested
+  inner class FindByPrisoner {
+    private val toDate = LocalDate.of(2025, 4, 11)
+    private val fromDate = toDate.minusDays(7)
+    private val testPrisoner = getTestPrisonerEntity("nomsId")
+
+    @Test
+    fun `should search between the start of fromDate and the end of toDate`() {
+      Mockito.`when`(caseNoteRetryRepository.findByPrisonerAndOriginalSubmissionDateBetween(any(), any(), any())).thenReturn(null)
+
+      caseNoteRetryService.findByPrisoner(testPrisoner, fromDate, toDate)
+      Mockito.verify(caseNoteRetryRepository).findByPrisonerAndOriginalSubmissionDateBetween(testPrisoner, fromDate.atStartOfDay(), toDate.atTime(LocalTime.MAX))
+    }
+
+    @Test
+    fun `should return data from repository`() {
+      val data = listOf(
+        CaseNoteRetryEntity(
+          id = 1,
+          prisoner = getTestPrisonerEntity("A001ABC"),
+          type = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
+          notes = "some notes to be sent",
+          author = "John Smith",
+          prisonCode = "ABC",
+          originalSubmissionDate = LocalDateTime.parse("2024-07-01T08:12:23"),
+          retryCount = 0,
+          nextRuntime = LocalDateTime.parse("2024-07-01T08:12:23"),
+        ),
+      )
+
+      Mockito.`when`(caseNoteRetryRepository.findByPrisonerAndOriginalSubmissionDateBetween(any(), any(), any())).thenReturn(data)
+
+      val response = caseNoteRetryService.findByPrisoner(testPrisoner, fromDate, toDate)
+      Assertions.assertEquals(data, response)
+    }
   }
 
   private fun getTestPrisonerEntity(nomsId: String) = PrisonerEntity(1, nomsId, LocalDateTime.parse("2023-09-01T15:09:21"), "MDI")

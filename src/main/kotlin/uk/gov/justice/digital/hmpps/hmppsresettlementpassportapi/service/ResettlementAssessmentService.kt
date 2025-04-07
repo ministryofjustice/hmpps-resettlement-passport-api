@@ -41,6 +41,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettl
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.processProfileTags
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Service
 class ResettlementAssessmentService(
@@ -81,7 +82,7 @@ class ResettlementAssessmentService(
       prisonerEntity.id(),
       assessmentType,
       fromDate.atStartOfDay(),
-      toDate.atStartOfDay(),
+      toDate.atTime(LocalTime.MAX),
     )
     return getAssessmentSummary(resettlementEntityList)
   }
@@ -403,7 +404,7 @@ class ResettlementAssessmentService(
         pathway,
         ResettlementAssessmentStatus.SUBMITTED,
         fromDate.atStartOfDay(),
-        toDate.atStartOfDay(),
+        toDate.atTime(LocalTime.MAX),
       )
         ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"),
       resettlementAssessmentStrategies,
@@ -548,4 +549,6 @@ class ResettlementAssessmentService(
 
   fun getLastReportToNomsIdByPrisonId(prisonId: String) = resettlementAssessmentRepository.findLastReportByPrison(prisonId)
     .associate { it.nomsId to LastReport(type = it.assessmentType, dateCompleted = if (it.submissionDate != null) it.submissionDate!!.toLocalDate() else it.createdDate.toLocalDate()) }
+
+  fun getProfileTagsByPrisonerId(prisonerId: Long) = profileTagsRepository.findAllByPrisonerId(prisonerId)
 }

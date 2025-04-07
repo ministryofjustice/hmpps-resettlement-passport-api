@@ -5,10 +5,13 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
+import java.time.LocalDateTime
 
 @Repository
 interface PrisonerSupportNeedRepository : JpaRepository<PrisonerSupportNeedEntity, Long> {
   fun findAllByPrisonerIdAndDeletedIsFalse(prisonerId: Long): List<PrisonerSupportNeedEntity>
+
+  fun findAllByPrisonerIdAndCreatedDateBetween(prisonerId: Long, from: LocalDateTime, to: LocalDateTime): List<PrisonerSupportNeedEntity>
 
   fun findAllByPrisonerIdAndSupportNeedPathwayAndDeletedIsFalse(prisonerId: Long, pathway: Pathway): List<PrisonerSupportNeedEntity>
 

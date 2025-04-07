@@ -117,10 +117,22 @@ class CaseNotesApiService(
         .retrieve()
       val pageOfData = data.bodyToMono<CaseNotes>().onErrorReturn(
         {
-          log.warn("Unexpected error from Case Notes API - ignoring but NOMIS case notes will be missing from response!", it)
+          log.warn(
+            "Unexpected error from Case Notes API - ignoring but NOMIS case notes will be missing from response!",
+            it,
+          )
           it is WebClientException
         },
-        CaseNotes(number = 0, first = false, last = true, empty = true, numberOfElements = 0, size = 0, totalPages = 0, totalElements = 0),
+        CaseNotes(
+          number = 0,
+          first = false,
+          last = true,
+          empty = true,
+          numberOfElements = 0,
+          size = 0,
+          totalPages = 0,
+          totalElements = 0,
+        ),
       ).block()
       if (pageOfData != null) {
         listToReturn.addAll(pageOfData.content!!)
@@ -186,7 +198,10 @@ class CaseNotesApiService(
           ),
         )
         .retrieve()
-        .onStatus({ it == HttpStatus.NOT_FOUND }, { throw ResourceNotFoundException("Prisoner $nomsId not found when posting case note of type $type and subtype $subType") })
+        .onStatus(
+          { it == HttpStatus.NOT_FOUND },
+          { throw ResourceNotFoundException("Prisoner $nomsId not found when posting case note of type $type and subtype $subType") },
+        )
         .bodyToMono<CaseNote>()
         .exponentialBackOffRetry()
         .awaitSingle()

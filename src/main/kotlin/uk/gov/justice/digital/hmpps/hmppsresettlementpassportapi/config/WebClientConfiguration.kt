@@ -76,7 +76,7 @@ class WebClientConfiguration(
   fun keyWorkerWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient = getWebClientCredentials(authorizedClientManager, keyWorkerRootUri)
 
   @Bean
-  fun caseNotesWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient = getWebClientCredentials(authorizedClientManager, caseNotesRootUri)
+  fun caseNotesWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient = getWebClientCredentials(authorizedClientManager, caseNotesRootUri, mapOf("CaseloadId" to "***"))
 
   @Bean
   fun allocationManagerWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient = getWebClientCredentials(authorizedClientManager, allocationManagerRootUri)
@@ -90,7 +90,7 @@ class WebClientConfiguration(
   @Bean
   fun interventionsWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient = getWebClientCredentials(authorizedClientManager, interventionsRootUri)
 
-  private fun getWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager, baseUrl: String): WebClient {
+  private fun getWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager, baseUrl: String, defaultHeaders: Map<String, String> = emptyMap()): WebClient {
     val oauth2Client = ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
     oauth2Client.setDefaultClientRegistrationId(SYSTEM_USERNAME)
 
@@ -106,6 +106,11 @@ class WebClientConfiguration(
             objectMapper,
           ),
         )
+      }
+      .defaultHeaders { headers ->
+        defaultHeaders.forEach { (key, value) ->
+          headers.set(key, value)
+        }
       }
       .observationRegistry(observationRegistry)
       .build()

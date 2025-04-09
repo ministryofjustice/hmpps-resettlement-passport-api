@@ -25,8 +25,8 @@ spec:
           for: 5m
           labels:
             severity: { { index .Values "generic-prometheus-alerts" "alertSeverity" } }
-            annotations:
-              message: Service SSL Certificate is expiring in 2 weeks. It should have auto renewed.
-              runbook_url: https://dsdmoj.atlassian.net/wiki/spaces/RR/pages/5615747926/Expired+certificates
-              dashboard_url: { { $.Values.grafanaUrl } }/d/application-alerts/application-alerts?orgId=1&var-namespace={{ $targetNamespace }}
-              summary: SSL Certificate is expiring in 2 weeks.
+          annotations:
+            message: Service SSL Certificate is expiring in 2 weeks. It should have auto renewed.
+            runbook_url: https://dsdmoj.atlassian.net/wiki/spaces/RR/pages/5615747926/Expired+certificates
+            dashboard_url: { { $.Values.grafanaUrl } }/d/application-alerts/application-alerts?orgId=1&var-namespace={{ $targetNamespace }}
+            summary: SSL Certificate is expiring in 2 weeks.

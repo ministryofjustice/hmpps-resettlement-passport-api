@@ -21,7 +21,7 @@ class CachingConfiguration(private val buildProperties: BuildProperties) {
 
   @Bean
   fun cacheManager(connectionFactory: RedisConnectionFactory): RedisCacheManager = RedisCacheManager.builder(connectionFactory)
-    .withCacheConfiguration("prisoner-search-api-find-prisoners-by-prison-id", getCacheConfiguration(Duration.ofMinutes(10)))
+    .withCacheConfiguration("prisoner-search-api-find-prisoners-by-search-term", getCacheConfiguration(Duration.ofMinutes(10)))
     .withCacheConfiguration("prisoner-search-api-find-prisoners-personal-details", getCacheConfiguration(Duration.ofMinutes(5)))
     .withCacheConfiguration("interventions-api-fetch-probation-case-referrals", getCacheConfiguration(Duration.ofHours(1)))
     .withCacheConfiguration("allocation-manager-api-get-poms-by-noms-id", getCacheConfiguration(Duration.ofHours(2)))

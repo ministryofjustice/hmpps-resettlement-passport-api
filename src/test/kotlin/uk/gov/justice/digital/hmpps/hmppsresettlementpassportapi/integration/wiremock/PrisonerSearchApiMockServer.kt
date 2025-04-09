@@ -8,14 +8,14 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.rea
 
 class PrisonerSearchApiMockServer : WireMockServerBase() {
 
-  fun stubGetPrisonersList(prisonId: String, size: Int, page: Int, status: Int) {
-    stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-1.json", prisonId, size, page, status)
+  fun stubGetPrisonersList(prisonId: String, size: Int, page: Int, term: String, status: Int) {
+    stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-1.json", prisonId, size, page, term, status)
   }
 
-  fun stubGetPrisonersList(jsonResponseFile: String, prisonId: String, size: Int, page: Int, status: Int) {
+  fun stubGetPrisonersList(jsonResponseFile: String, prisonId: String, size: Int, page: Int, term: String, status: Int) {
     val prisonersListJSON = readFile(jsonResponseFile)
     stubFor(
-      get("/prison/$prisonId/prisoners?size=$size&page=$page&sort=prisonerNumber").willReturn(
+      get("/prison/$prisonId/prisoners?term=$term&size=$size&page=$page&sort=prisonerNumber").willReturn(
         if (status == 200) {
           jsonSuccess(prisonersListJSON)
         } else {

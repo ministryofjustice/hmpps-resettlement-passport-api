@@ -15,17 +15,18 @@ class PrisonerSearchApiService(
   private val prisonerSearchWebClientClientCredentials: WebClient,
 ) {
 
-  @Cacheable("prisoner-search-api-find-prisoners-by-prison-id")
-  fun findPrisonersByPrisonId(prisonId: String): List<PrisonersSearch> {
+  @Cacheable("prisoner-search-api-find-prisoners-by-search-term")
+  fun findPrisonersBySearchTerm(prisonId: String, searchTerm: String?): List<PrisonersSearch> {
     val listToReturn = mutableListOf<PrisonersSearch>()
 
     var page = 0
     do {
       val data = prisonerSearchWebClientClientCredentials.get()
         .uri(
-          "/prison/{prisonId}/prisoners?size={size}&page={page}&sort={sort}",
+          "/prison/{prisonId}/prisoners?term={term}&size={size}&page={page}&sort={sort}",
           mapOf(
             "prisonId" to prisonId,
+            "term" to searchTerm,
             // NB: API allows up 3,000 results per page
             "size" to 500,
             "page" to page,

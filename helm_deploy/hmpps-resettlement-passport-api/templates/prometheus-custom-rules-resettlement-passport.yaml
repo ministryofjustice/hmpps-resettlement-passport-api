@@ -10,23 +10,13 @@ spec:
   groups:
     - name: resettlement-passport-application-rules
       rules:
-          - alert: ExternalAPICritical
-            expr: (((count by (client_name) ((rate(http_client_requests_seconds_count{namespace = "{{ $targetNamespace }}", status!~"2\\d{2}", status!="404"}[24h]))) / (count by (client_name) (rate(http_client_requests_seconds_count{namespace = "{{ $targetNamespace }}" }[24h]))))) * 100) > 5
-            for: 5m
-            labels:
-              severity: {{ index .Values "generic-prometheus-alerts" "alertSeverity" }}
-            annotations:
-              message: The External API's errors for HTTP request {{ `{{` }} $labels.client_name }} has exceeded 5% on host {{ index .Values "generic-service" "ingress" "host"}}
-              runbook_url: https://dsdmoj.atlassian.net/wiki/spaces/RR/pages/5119475840/External+API+Failures
-              dashboard_url: {{ $.Values.grafanaUrl }}/d/application-alerts/application-alerts?orgId=1&var-namespace={{ $targetNamespace }}
-              summary: External API's Failures
-          - alert: DatabaseConnectionFailure
-            expr: rate(spring_data_repository_invocations_seconds_count{exception="JDBCConnectionException", namespace="{{ $targetNamespace }}"}[1h]) > 0
-            for: 5m
-            labels:
-              severity: {{ index .Values "generic-prometheus-alerts" "alertSeverity" }}
-            annotations:
-              message: Database connection failure detection - check database logs in RDS!
-              runbook_url: https://dsdmoj.atlassian.net/wiki/spaces/RR/pages/4469850163/Development+Guides
-              dashboard_url: {{ $.Values.grafanaUrl }}/d/application-alerts/application-alerts?orgId=1&var-namespace={{ $targetNamespace }}
-              summary: Database connection failures
+        - alert: DatabaseConnectionFailure
+          expr: rate(spring_data_repository_invocations_seconds_count{exception="JDBCConnectionException", namespace="{{ $targetNamespace }}"}[1h]) > 0
+          for: 5m
+          labels:
+            severity: {{ index .Values "generic-prometheus-alerts" "alertSeverity" }}
+          annotations:
+            message: Database connection failure detection - check database logs in RDS!
+            runbook_url: https://dsdmoj.atlassian.net/wiki/spaces/RR/pages/4469850163/Development+Guides
+            dashboard_url: {{ $.Values.grafanaUrl }}/d/application-alerts/application-alerts?orgId=1&var-namespace={{ $targetNamespace }}
+            summary: Database connection failures

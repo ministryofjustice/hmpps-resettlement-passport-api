@@ -66,7 +66,8 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
     // Update test stub to filter on Finn Chandlevieve
     prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-filtered-1.json", prisonId, 500, 0, "Finn", 200)
 
-    // Call GET prisoners with search term and assert json (should use cache and still be there)
+    // Call GET prisoners with search term and assert json (should not use cache because the search term is different,
+    // so returns the filtered results)
     webTestClient.get()
       .uri("/resettlement-passport/prison/$prisonId/prisoners?term=Finn&page=0&size=10&sort=releaseDate,DESC")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))

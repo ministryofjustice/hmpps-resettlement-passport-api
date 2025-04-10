@@ -26,7 +26,7 @@ class PrisonerSearchApiService(
           "/prison/{prisonId}/prisoners?term={term}&size={size}&page={page}&sort={sort}",
           mapOf(
             "prisonId" to prisonId,
-            "term" to searchTerm,
+            "term" to (searchTerm ?: ""),
             // NB: API allows up 3,000 results per page
             "size" to 500,
             "page" to page,

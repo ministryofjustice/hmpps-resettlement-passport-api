@@ -40,7 +40,7 @@ class AdminService(
     prisonList.forEach { prisonId ->
       try {
         val numberOfPrisonersAssigned = caseAllocationService.getNumberOfAssignedPrisoners(prisonId)
-        val numberOfPrisonersInPrison = prisonerSearchApiService.findPrisonersByPrisonId(prisonId).size
+        val numberOfPrisonersInPrison = prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "").size
         val percentageOfPrisonersAssigned =
           (numberOfPrisonersAssigned.toDouble() / numberOfPrisonersInPrison.toDouble()) * 100
         telemetryClient.trackMetric(

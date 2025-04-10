@@ -8,7 +8,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteTy
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusAuthor
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ValidationType
@@ -131,11 +130,6 @@ fun convertToDeliusCaseNoteType(assessmentType: ResettlementAssessmentType) = wh
 }
 
 tailrec fun getFibonacciNumber(n: Int, a: Int = 0, b: Int = 1): Long = if (n == 0) a.toLong() else getFibonacciNumber(n - 1, b, a + b)
-
-fun searchTermMatchesPrisoner(searchTerm: String, prisoner: PrisonersSearch): Boolean {
-  val trimmedSearchTerm = searchTerm.trim()
-  return prisoner.prisonerNumber.lowercase() == trimmedSearchTerm.lowercase() || prisoner.firstName.lowercase().startsWith(trimmedSearchTerm.lowercase()) || prisoner.lastName.lowercase().startsWith(trimmedSearchTerm.lowercase())
-}
 
 fun generateLinkOnlyDeliusCaseNoteText(nomsId: String, assessmentType: ResettlementAssessmentType, psfrBaseUrl: String) = """
   ${assessmentType.displayName} report completed.

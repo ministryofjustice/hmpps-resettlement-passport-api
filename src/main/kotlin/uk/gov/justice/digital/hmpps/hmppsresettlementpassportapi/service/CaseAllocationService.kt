@@ -162,7 +162,7 @@ class CaseAllocationService(
 
   @Transactional
   fun getCasesAllocationCount(prisonId: String): CasesCountResponse {
-    val prisonerSearchList = prisonerSearchApiService.findPrisonersByPrisonId(prisonId)
+    val prisonerSearchList = prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")
     if (prisonerSearchList.isEmpty()) {
       throw ResourceNotFoundException("PrisonId $prisonId not found")
     }

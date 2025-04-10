@@ -94,10 +94,10 @@ class AdminServiceTest {
     whenever(caseAllocationService.getNumberOfAssignedPrisoners("CCI")).thenReturn(7)
     whenever(caseAllocationService.getNumberOfAssignedPrisoners("DDI")).thenReturn(0)
 
-    whenever(prisonerSearchApiService.findPrisonersByPrisonId("AAI")).thenReturn(getMocks(10))
-    whenever(prisonerSearchApiService.findPrisonersByPrisonId("BBI")).thenReturn(getMocks(35))
-    whenever(prisonerSearchApiService.findPrisonersByPrisonId("CCI")).thenReturn(getMocks(102))
-    whenever(prisonerSearchApiService.findPrisonersByPrisonId("DDI")).thenThrow(RuntimeException("Something went wrong"))
+    whenever(prisonerSearchApiService.findPrisonersBySearchTerm("AAI", "")).thenReturn(getMocks(10))
+    whenever(prisonerSearchApiService.findPrisonersBySearchTerm("BBI", "")).thenReturn(getMocks(35))
+    whenever(prisonerSearchApiService.findPrisonersBySearchTerm("CCI", "")).thenReturn(getMocks(102))
+    whenever(prisonerSearchApiService.findPrisonersBySearchTerm("DDI", "")).thenThrow(RuntimeException("Something went wrong"))
 
     whenever(supportNeedRepository.findAll()).thenReturn(
       listOf(

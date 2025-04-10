@@ -87,13 +87,9 @@ class PrisonerService(
         "Page $pageNumber and Size $pageSize",
       )
     }
-    prisonerSearchApiService.findPrisonersByPrisonId(prisonId).forEach {
+    prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, searchTerm).forEach {
       setDisplayedReleaseDate(it)
       prisoners.add(it)
-    }
-
-    if (searchTerm?.isNotBlank() == true) {
-      prisoners.retainAll { searchTermMatchesPrisoner(searchTerm, it) }
     }
 
     processReleaseDateFiltering(days, prisoners, includePastReleaseDates)

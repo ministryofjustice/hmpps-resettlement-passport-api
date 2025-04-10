@@ -154,7 +154,7 @@ class PrisonerServiceTest {
 
     val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-1.json")
 
-    whenever(prisonerSearchApiService.findPrisonersByPrisonId(prisonId)).thenReturn(mockedJsonResponse.content)
+    whenever(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
 
     val prisonersList =
       prisonerService.getPrisonersByPrisonId(
@@ -257,7 +257,7 @@ class PrisonerServiceTest {
     val prisonId = "MDI"
 
     val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-1.json")
-    whenever(prisonerSearchApiService.findPrisonersByPrisonId(prisonId)).thenReturn(mockedJsonResponse.content)
+    whenever(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
 
     val prisonersList =
       prisonerService.getPrisonersByPrisonId(
@@ -549,7 +549,7 @@ class PrisonerServiceTest {
     val prisonId = "MDI"
 
     val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-2.json")
-    whenever(prisonerSearchApiService.findPrisonersByPrisonId(prisonId)).thenReturn(mockedJsonResponse.content)
+    whenever(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
 
     val prisoners =
       prisonerService.getPrisonersByPrisonId(
@@ -578,7 +578,7 @@ class PrisonerServiceTest {
     val expectedPrisonerId = "A8339DY"
 
     val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-1.json")
-    whenever(prisonerSearchApiService.findPrisonersByPrisonId(prisonId)).thenReturn(mockedJsonResponse.content)
+    whenever(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
 
     val prisonersList =
       prisonerService.getPrisonersByPrisonId(
@@ -610,7 +610,7 @@ class PrisonerServiceTest {
     val expectedPrisonerId = "G1458GV"
 
     val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-1.json")
-    whenever(prisonerSearchApiService.findPrisonersByPrisonId(prisonId)).thenReturn(mockedJsonResponse.content)
+    whenever(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
 
     val prisonersList =
       prisonerService.getPrisonersByPrisonId(
@@ -638,12 +638,73 @@ class PrisonerServiceTest {
     val expectedPageSize = 3
 
     val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-1.json")
-    whenever(prisonerSearchApiService.findPrisonersByPrisonId(prisonId)).thenReturn(mockedJsonResponse.content)
+    whenever(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
 
     val prisonersList =
       prisonerService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 5, "name,ASC", false, "123", null)
     Assertions.assertEquals(expectedPageSize, prisonersList.pageSize)
     prisonersList.content?.toList()?.let { Assertions.assertEquals(expectedPageSize, it.size) }
+  }
+
+  @Test
+  fun `test get PrisonersList happy path full json with filter on name`() {
+    mockDatabaseCalls()
+
+    val prisonId = "MDI"
+    val searchTerm = "Finn"
+
+    val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-filtered-1.json")
+
+    whenever(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, searchTerm)).thenReturn(mockedJsonResponse.content)
+
+    val prisonersList =
+      prisonerService.getPrisonersByPrisonId(
+        searchTerm,
+        prisonId,
+        0,
+        null,
+        null,
+        null,
+        0,
+        10,
+        "releaseDate,DESC",
+        false,
+        "123",
+        null,
+      )
+
+    val expectedPrisonerList = PrisonersList(
+      content = listOf(
+        Prisoners(
+          prisonerNumber = "G1458GV",
+          firstName = "FINN",
+          middleNames = "CHANDLEVIEVE",
+          lastName = "CRAWFIS",
+          releaseDate = LocalDate.parse("2099-09-12"),
+          releaseType = "CRD",
+          lastUpdatedDate = LocalDate.now(),
+          status = listOf(
+            PathwayStatus(pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, lastDateChange = LocalDate.now()),
+            PathwayStatus(pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, status = Status.NOT_STARTED, lastDateChange = LocalDate.now()),
+          ),
+          pathwayStatus = null,
+          homeDetentionCurfewEligibilityDate = LocalDate.parse("2018-10-16"),
+          paroleEligibilityDate = null,
+          releaseEligibilityDate = LocalDate.parse("2018-10-16"),
+          releaseEligibilityType = "HDCED",
+          releaseOnTemporaryLicenceDate = null,
+          assessmentRequired = true,
+          needs = listOf(),
+          lastReport = null,
+        ),
+      ),
+      pageSize = 1,
+      page = 0,
+      sortName = "releaseDate,DESC",
+      totalElements = 1,
+      last = true,
+    )
+    Assertions.assertEquals(expectedPrisonerList, prisonersList)
   }
 
   @Test
@@ -663,7 +724,7 @@ class PrisonerServiceTest {
     )
 
     val mockedJsonResponse: PrisonersSearchList = readStringAsObject(mockedJsonResponseString)
-    whenever(prisonerSearchApiService.findPrisonersByPrisonId(prisonId)).thenReturn(mockedJsonResponse.content)
+    whenever(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
     val prisonersList =
       prisonerService.getPrisonersByPrisonId(
         "",
@@ -689,7 +750,7 @@ class PrisonerServiceTest {
     val prisonId = "MDI"
 
     val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-2.json")
-    whenever(prisonerSearchApiService.findPrisonersByPrisonId(prisonId)).thenReturn(mockedJsonResponse.content)
+    whenever(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
 
     val prisoners = prisonerService.getPrisonersByPrisonId(
       "",
@@ -716,7 +777,7 @@ class PrisonerServiceTest {
     val prisonId = "MDI"
 
     val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-2.json")
-    whenever(prisonerSearchApiService.findPrisonersByPrisonId(prisonId)).thenReturn(mockedJsonResponse.content)
+    whenever(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
 
     val prisoners = prisonerService.getPrisonersByPrisonId(
       "",

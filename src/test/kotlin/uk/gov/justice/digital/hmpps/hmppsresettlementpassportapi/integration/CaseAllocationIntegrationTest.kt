@@ -261,7 +261,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
     every { LocalDateTime.now() } returns fakeNow
     val expectedOutput = readFile("testdata/expectation/case-allocation-get-workers-capacity-result.json")
     val prisonId = "MDI"
-    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, 500, 0, 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, 500, 0, "", 200)
     webTestClient.get()
       .uri("/resettlement-passport/workers/capacity?prisonId=$prisonId")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -313,7 +313,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
     every { LocalDateTime.now() } returns fakeNow
     val prisonId = "MDI"
     val expectedOutput = " {\"unassignedCount\":10,\"assignedList\":[]} "
-    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, 500, 0, 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, 500, 0, "", 200)
     webTestClient.get()
       .uri("/resettlement-passport/workers/capacity?prisonId=$prisonId")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -384,7 +384,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
     every { LocalDateTime.now() } returns fakeNow
     val expectedOutput1 = readFile("testdata/expectation/case-allocation-post-result-1.json")
     manageUsersApiMockServer.stubGetManageUsersData("MDI", 200)
-    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-volume-test-1.json", "MDI", 500, 0, 200)
+    prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-volume-test-1.json", "MDI", 500, 0, "", 200)
     val staffId = 485931
 
     webTestClient.post()

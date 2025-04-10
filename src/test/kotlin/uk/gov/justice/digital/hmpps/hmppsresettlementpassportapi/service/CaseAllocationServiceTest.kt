@@ -257,7 +257,7 @@ class CaseAllocationServiceTest {
     Mockito.`when`(caseAllocationRepository.findCaseCountByPrisonId(prisonId)).thenReturn(caseAllocationCountTestResponseList)
     Mockito.`when`(caseAllocationRepository.findTotalCaseCountByPrisonId(prisonId)).thenReturn(3)
     val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-1.json")
-    whenever(prisonerSearchApiService.findPrisonersByPrisonId(prisonId)).thenReturn(mockedJsonResponse.content)
+    whenever(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
     val result = caseAllocationService.getCasesAllocationCount(prisonId)
     Assertions.assertEquals(caseAllocationCountTestResponseList[0].staffId, result.assignedList[0]?.staffId)
     Assertions.assertEquals(7, result.unassignedCount)

@@ -51,12 +51,13 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentSimpleQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentSkipRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseNoteRetryRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.LastReportProjection
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ProfileTagsRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettlementAssessmentService.User
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettlementAssessmentService.UserAndCaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.AssessmentConfigOption
@@ -95,9 +96,6 @@ class ResettlementAssessmentServiceTest {
   private lateinit var resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService
 
   @Mock
-  private lateinit var caseNoteRetryRepository: CaseNoteRetryRepository
-
-  @Mock
   private lateinit var profileTagsRepository: ProfileTagsRepository
 
   @Mock
@@ -123,7 +121,6 @@ class ResettlementAssessmentServiceTest {
       assessmentSkipRepository,
       prisonerSearchApiService,
       resettlementPassportDeliusApiService,
-      caseNoteRetryRepository,
       profileTagsRepository,
       "https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk",
       supportNeedsLegacyProfileService,
@@ -159,14 +156,14 @@ class ResettlementAssessmentServiceTest {
 
     // immediate needs report
     val expectedUserAndCaseNotes = listOf(
-      ResettlementAssessmentService.UserAndCaseNote(
-        user = ResettlementAssessmentService.User(user1, user1),
+      UserAndCaseNote(
+        user = User(user1, user1),
         caseNoteText = "Part 1 of 2\n\n${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 1 of 2",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
-      ResettlementAssessmentService.UserAndCaseNote(
-        user = ResettlementAssessmentService.User(user2, user2),
+      UserAndCaseNote(
+        user = User(user2, user2),
         caseNoteText = "Part 2 of 2\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 2 of 2",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
@@ -184,14 +181,14 @@ class ResettlementAssessmentServiceTest {
 
     // pre-release report
     val expectedUserAndCaseNotesPreRelease = listOf(
-      ResettlementAssessmentService.UserAndCaseNote(
-        user = ResettlementAssessmentService.User(user1, user1),
+      UserAndCaseNote(
+        user = User(user1, user1),
         caseNoteText = "Part 1 of 2\n\n${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}",
         description = "NOMIS - Pre-release report - Part 1 of 2",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
-      ResettlementAssessmentService.UserAndCaseNote(
-        user = ResettlementAssessmentService.User(user2, user2),
+      UserAndCaseNote(
+        user = User(user2, user2),
         caseNoteText = "Part 2 of 2\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}",
         description = "NOMIS - Pre-release report - Part 2 of 2",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
@@ -217,8 +214,8 @@ class ResettlementAssessmentServiceTest {
       createSubmittedResettlementAssessmentEntity(Pathway.ACCOMMODATION, user, "${Pathway.ACCOMMODATION.displayName} case note - $caseNotePostfix"),
     )
 
-    val expectedUserAndCaseNote = ResettlementAssessmentService.UserAndCaseNote(
-      user = ResettlementAssessmentService.User(user, user),
+    val expectedUserAndCaseNote = UserAndCaseNote(
+      user = User(user, user),
       caseNoteText = getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix),
       deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       description = null,
@@ -479,8 +476,8 @@ class ResettlementAssessmentServiceTest {
     val assessmentList = getSubmittedResettlementAssessmentEntities(user, caseNotePostfix)
 
     val expectedUserAndCaseNotes = listOf(
-      ResettlementAssessmentService.UserAndCaseNote(
-        user = ResettlementAssessmentService.User(user, user),
+      UserAndCaseNote(
+        user = User(user, user),
         caseNoteText = "${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
         description = null,
@@ -496,8 +493,8 @@ class ResettlementAssessmentServiceTest {
     val assessmentList = getSubmittedResettlementAssessmentEntities(user, null, true)
 
     val expectedUserAndCaseNotes = listOf(
-      ResettlementAssessmentService.UserAndCaseNote(
-        user = ResettlementAssessmentService.User(user, user),
+      UserAndCaseNote(
+        user = User(user, user),
         caseNoteText = "Accommodation\n\nNo case note recorded\n\n\nAttitudes, thinking and behaviour\n\nNo case note recorded\n\n\nChildren, families and communities\n\nNo case note recorded\n\n\nDrugs and alcohol\n\nNo case note recorded\n\n\nEducation, skills and work\n\nNo case note recorded\n\n\nFinance and ID\n\nNo case note recorded\n\n\nHealth\n\nNo case note recorded",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
         description = null,
@@ -514,8 +511,8 @@ class ResettlementAssessmentServiceTest {
     val assessmentList = getSubmittedResettlementAssessmentEntities(user, caseNotePostfix)
 
     val expectedUserAndCaseNotes = listOf(
-      ResettlementAssessmentService.UserAndCaseNote(
-        user = ResettlementAssessmentService.User(user, user),
+      UserAndCaseNote(
+        user = User(user, user),
         caseNoteText = "${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
         description = null,
@@ -532,8 +529,8 @@ class ResettlementAssessmentServiceTest {
     val assessmentList = getSubmittedResettlementAssessmentEntities(user, caseNotePostfix)
 
     val expectedUserAndCaseNotes = listOf(
-      ResettlementAssessmentService.UserAndCaseNote(
-        user = ResettlementAssessmentService.User(user, user),
+      UserAndCaseNote(
+        user = User(user, user),
         caseNoteText = "${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
         description = null,
@@ -551,20 +548,20 @@ class ResettlementAssessmentServiceTest {
     val assessmentList = getSubmittedResettlementAssessmentEntities(user, caseNotePostfix)
 
     val expectedUserAndCaseNotes = listOf(
-      ResettlementAssessmentService.UserAndCaseNote(
-        user = ResettlementAssessmentService.User(user, user),
+      UserAndCaseNote(
+        user = User(user, user),
         caseNoteText = "Part 1 of 3\n\n${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 1 of 3",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
-      ResettlementAssessmentService.UserAndCaseNote(
-        user = ResettlementAssessmentService.User(user, user),
+      UserAndCaseNote(
+        user = User(user, user),
         caseNoteText = "Part 2 of 3\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 2 of 3",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
-      ResettlementAssessmentService.UserAndCaseNote(
-        user = ResettlementAssessmentService.User(user, user),
+      UserAndCaseNote(
+        user = User(user, user),
         caseNoteText = "Part 3 of 3\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 3 of 3",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
@@ -592,20 +589,20 @@ class ResettlementAssessmentServiceTest {
     )
 
     val expectedUserAndCaseNotes = listOf(
-      ResettlementAssessmentService.UserAndCaseNote(
-        user = ResettlementAssessmentService.User(user1, user1),
+      UserAndCaseNote(
+        user = User(user1, user1),
         caseNoteText = "Part 1 of 3\n\n${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 1 of 3",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
-      ResettlementAssessmentService.UserAndCaseNote(
-        user = ResettlementAssessmentService.User(user2, user2),
+      UserAndCaseNote(
+        user = User(user2, user2),
         caseNoteText = "Part 2 of 3\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 2 of 3",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
-      ResettlementAssessmentService.UserAndCaseNote(
-        user = ResettlementAssessmentService.User(user3, user3),
+      UserAndCaseNote(
+        user = User(user3, user3),
         caseNoteText = "Part 3 of 3\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 3 of 3",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
@@ -633,26 +630,26 @@ class ResettlementAssessmentServiceTest {
     )
 
     val expectedUserAndCaseNotes = listOf(
-      ResettlementAssessmentService.UserAndCaseNote(
-        user = ResettlementAssessmentService.User(user1, user1),
+      UserAndCaseNote(
+        user = User(user1, user1),
         caseNoteText = "Part 1 of 4\n\n${getExpectedCaseNotesText(Pathway.ACCOMMODATION, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.EDUCATION_SKILLS_AND_WORK, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 1 of 4",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
-      ResettlementAssessmentService.UserAndCaseNote(
-        user = ResettlementAssessmentService.User(user1, user1),
+      UserAndCaseNote(
+        user = User(user1, user1),
         caseNoteText = "Part 2 of 4\n\n${getExpectedCaseNotesText(Pathway.HEALTH, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 2 of 4",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
-      ResettlementAssessmentService.UserAndCaseNote(
-        user = ResettlementAssessmentService.User(user2, user2),
+      UserAndCaseNote(
+        user = User(user2, user2),
         caseNoteText = "Part 3 of 4\n\n${getExpectedCaseNotesText(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, caseNotePostfix)}\n\n\n${getExpectedCaseNotesText(Pathway.DRUGS_AND_ALCOHOL, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 3 of 4",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
       ),
-      ResettlementAssessmentService.UserAndCaseNote(
-        user = ResettlementAssessmentService.User(user3, user3),
+      UserAndCaseNote(
+        user = User(user3, user3),
         caseNoteText = "Part 4 of 4\n\n${getExpectedCaseNotesText(Pathway.FINANCE_AND_ID, caseNotePostfix)}",
         description = "NOMIS - Immediate needs report - Part 4 of 4",
         deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
@@ -1014,6 +1011,70 @@ class ResettlementAssessmentServiceTest {
 
     unmockkAll()
   }
+
+  @Test
+  fun `test submitResettlementAssessmentByNomsId - ensure case note submission failure event is sent to app insights`() {
+    val auth = "auth"
+    val nomsId = "A123"
+    val assessmentType = ResettlementAssessmentType.BCST2
+    val crn = "CRN1"
+    val prisonCode = "MDI"
+    val jwtTokenName = "A User"
+    val jwtTokenSub = "A_USER"
+
+    mockkStatic(::getClaimFromJWTToken)
+    every { getClaimFromJWTToken(auth, "name") } returns jwtTokenName
+    every { getClaimFromJWTToken(auth, "sub") } returns jwtTokenSub
+    every { getClaimFromJWTToken(auth, "auth_source") } returns "nomis"
+
+    whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, prisonId = prisonCode))
+    Pathway.entries.forEachIndexed { i, pathway ->
+      whenever(resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInAndDeletedIsFalseOrderByCreationDateDesc(1, pathway, assessmentType, listOf(ResettlementAssessmentStatus.COMPLETE)))
+        .thenReturn(
+          ResettlementAssessmentEntity(
+            id = i.toLong(),
+            prisonerId = 1,
+            pathway = pathway,
+            statusChangedTo = null,
+            assessmentType = assessmentType,
+            assessment = ResettlementAssessmentQuestionAndAnswerList(listOf()),
+            creationDate = LocalDateTime.parse("2025-01-23T12:00:00"),
+            createdBy = "User A",
+            assessmentStatus = ResettlementAssessmentStatus.COMPLETE,
+            caseNoteText = null,
+            createdByUserId = "USER_A",
+            version = 1,
+            submissionDate = LocalDateTime.parse("2025-01-23T12:00:00"),
+            userDeclaration = null,
+          ),
+        )
+    }
+
+    whenever(prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)).thenReturn(PrisonersSearch(prisonerNumber = nomsId, prisonId = prisonCode, prisonName = "A Prison", firstName = "A", lastName = "B"))
+
+    whenever(resettlementPassportDeliusApiService.getCrn(nomsId)).thenReturn(crn)
+    whenever(caseNotesService.postBCSTCaseNoteToDelius(crn = crn, prisonCode = prisonCode, notes = getExpectedDeliusCaseNoteText(), name = jwtTokenName, deliusCaseNoteType = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT, description = null)).thenReturn(false)
+
+    val response = resettlementAssessmentService.submitResettlementAssessmentByNomsId(nomsId, assessmentType, true, true, auth, resettlementAssessmentStrategy, false)
+
+    Assertions.assertEquals(ResettlementAssessmentSubmitResponse(true), response)
+
+    val expectedContentOnlyDpsCaseNote = toContentOnlyDpsCaseNote(jwtTokenName, jwtTokenSub, assessmentType)
+
+    verify(telemetryClient).trackEvent("PSFR_ReportCaseSubmissionFailure", mapOf("reportType" to expectedContentOnlyDpsCaseNote.deliusCaseNoteType.name, "prisonId" to prisonCode, "prisonerId" to nomsId, "user" to jwtTokenSub, "authSource" to "nomis"), null)
+
+    unmockkAll()
+  }
+
+  private fun toContentOnlyDpsCaseNote(
+    name: String,
+    userId: String,
+    assessmentType: ResettlementAssessmentType,
+  ): UserAndCaseNote = UserAndCaseNote(
+    user = User(userId, name),
+    deliusCaseNoteType = convertToDeliusCaseNoteType(assessmentType),
+    caseNoteText = generateContentOnlyDpsCaseNoteText(assessmentType),
+  )
 
   private fun getExpectedDeliusCaseNoteText() =
     """

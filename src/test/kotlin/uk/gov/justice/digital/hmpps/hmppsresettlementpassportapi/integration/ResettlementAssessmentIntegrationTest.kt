@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.json.JsonCompareMode
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DeliusCaseNoteType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.AssessmentSkipReason
@@ -19,7 +18,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseNoteRetryEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
@@ -27,7 +25,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentSimpleQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentSkipRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseNoteRetryRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
@@ -46,9 +43,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
   @Autowired
   private lateinit var assessmentSkipRepository: AssessmentSkipRepository
-
-  @Autowired
-  private lateinit var caseNoteRetryRepository: CaseNoteRetryRepository
 
   @Autowired
   private lateinit var prisonerRepository: PrisonerRepository
@@ -582,9 +576,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
     assertThat(pathwayStatusesInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedPathwayStatuses)
 
-    // Check there is nothing in the case_note_retry table
-    Assertions.assertEquals(0, caseNoteRetryRepository.findAll().size)
-
     // Check that the prisoner's supportNeedsLegacyProfile has not been changed (as this is a BCST2)
     val prisoner = prisonerRepository.findById(1).get()
     val expectedPrisoner = PrisonerEntity(1, "ABC1234", LocalDateTime.parse("2023-08-16T12:21:38.709"), "MDI", null)
@@ -646,9 +637,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     )
 
     assertThat(pathwayStatusesInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedPathwayStatuses)
-
-    // Check there is nothing in the case_note_retry table
-    Assertions.assertEquals(0, caseNoteRetryRepository.findAll().size)
 
     // Check that the prisoner's supportNeedsLegacyProfile has been changed (as this is a RESETTLEMENT_PLAN)
     val prisoner = prisonerRepository.findById(1).get()
@@ -712,9 +700,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
     assertThat(pathwayStatusesInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedPathwayStatuses)
 
-    // Check there is nothing in the case_note_retry table
-    Assertions.assertEquals(0, caseNoteRetryRepository.findAll().size)
-
     // Check that the prisoner's supportNeedsLegacyProfile has not been changed (as the supportNeedsLegacyProfile is set to false)
     val prisoner = prisonerRepository.findById(1).get()
     val expectedPrisoner = PrisonerEntity(1, "ABC1234", LocalDateTime.parse("2023-08-16T12:21:38.709"), "MDI", null)
@@ -777,9 +762,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
     assertThat(pathwayStatusesInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedPathwayStatuses)
 
-    // Check there is nothing in the case_note_retry table
-    Assertions.assertEquals(0, caseNoteRetryRepository.findAll().size)
-
     unmockkAll()
   }
 
@@ -838,9 +820,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
     assertThat(pathwayStatusesInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedPathwayStatuses)
 
-    // Check there is nothing in the case_note_retry table
-    Assertions.assertEquals(0, caseNoteRetryRepository.findAll().size)
-
     unmockkAll()
   }
 
@@ -898,9 +877,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     )
 
     assertThat(pathwayStatusesInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedPathwayStatuses)
-
-    // Check there is nothing in the case_note_retry table
-    Assertions.assertEquals(0, caseNoteRetryRepository.findAll().size)
 
     unmockkAll()
   }
@@ -1019,24 +995,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
     assertThat(pathwayStatusesInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedPathwayStatuses)
 
-    // Check that failed case notes have been added to case_note_retry table
-    val caseNoteRetriesInDatabase = caseNoteRetryRepository.findAll()
-    val expectedCaseNoteRetries = listOf(
-      CaseNoteRetryEntity(
-        id = 1,
-        prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), prisonId = "MDI"),
-        type = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
-        notes = "Accommodation\n\nCase note related to accommodation\n\n\nAttitudes, thinking and behaviour\n\nCase note related to Attitudes, thinking and behaviour\n\n\nChildren, families and communities\n\nCase note related to Children, family and communities\n\n\nDrugs and alcohol\n\nCase note related to Drugs and alcohol\n\n\nEducation, skills and work\n\nCase note related to education, skills and work\n\n\nFinance and ID\n\nCase note related to Finance and ID\n\n\nHealth\n\nCase note related to Health",
-        author = "A User",
-        prisonCode = "MDI",
-        originalSubmissionDate = LocalDateTime.parse("2023-08-16T12:21:38.709"),
-        retryCount = 0,
-        nextRuntime = LocalDateTime.parse("2023-08-16T12:21:38.709"),
-      ),
-    )
-
-    assertThat(caseNoteRetriesInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedCaseNoteRetries)
-
     unmockkAll()
   }
 
@@ -1089,24 +1047,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     )
 
     assertThat(pathwayStatusesInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedPathwayStatuses)
-
-    // Check that failed case notes have been added to case_note_retry table
-    val caseNoteRetriesInDatabase = caseNoteRetryRepository.findAll()
-    val expectedCaseNoteRetries = listOf(
-      CaseNoteRetryEntity(
-        id = 1,
-        prisoner = PrisonerEntity(id = 1, nomsId = "ABC1234", creationDate = LocalDateTime.parse("2023-08-16T12:21:38.709"), prisonId = "MDI"),
-        type = DeliusCaseNoteType.IMMEDIATE_NEEDS_REPORT,
-        notes = "Accommodation\n\nCase note related to accommodation\n\n\nAttitudes, thinking and behaviour\n\nCase note related to Attitudes, thinking and behaviour\n\n\nChildren, families and communities\n\nCase note related to Children, family and communities\n\n\nDrugs and alcohol\n\nCase note related to Drugs and alcohol\n\n\nEducation, skills and work\n\nCase note related to education, skills and work\n\n\nFinance and ID\n\nCase note related to Finance and ID\n\n\nHealth\n\nCase note related to Health",
-        author = "A User",
-        prisonCode = "MDI",
-        originalSubmissionDate = LocalDateTime.parse("2023-08-16T12:21:38.709"),
-        retryCount = 0,
-        nextRuntime = LocalDateTime.parse("2023-08-16T12:21:38.709"),
-      ),
-    )
-
-    assertThat(caseNoteRetriesInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedCaseNoteRetries)
 
     unmockkAll()
   }

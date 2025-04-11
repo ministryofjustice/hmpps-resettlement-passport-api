@@ -17,23 +17,14 @@ import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseNoteRetryEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.SupportNeedEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseNoteRetryRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.SupportNeedRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseNoteRetryService.Companion.MAX_RETRIES
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
 class AdminServiceTest {
   private lateinit var adminService: AdminService
-
-  @Mock
-  private lateinit var caseNoteRetryRepository: CaseNoteRetryRepository
-
-  @Mock
-  private lateinit var caseNoteRetryService: CaseNoteRetryService
 
   @Mock
   private lateinit var telemetryClient: TelemetryClient
@@ -70,19 +61,7 @@ class AdminServiceTest {
 
   @BeforeEach
   fun beforeEach() {
-    adminService = AdminService(caseNoteRetryService, caseNoteRetryRepository, telemetryClient, caseAllocationService, prisonerSearchApiService, prisonerService, supportNeedRepository)
-  }
-
-  @Test
-  fun `test retryFailedDeliusCaseNotes`() {
-    val caseNotesToRetry = listOf(Mockito.mock(CaseNoteRetryEntity::class.java), Mockito.mock(CaseNoteRetryEntity::class.java), Mockito.mock(CaseNoteRetryEntity::class.java))
-    Mockito.`when`(caseNoteRetryRepository.findByNextRuntimeBeforeAndRetryCountLessThan(fakeNow, MAX_RETRIES)).thenReturn(caseNotesToRetry)
-
-    adminService.retryFailedDeliusCaseNotes()
-
-    caseNotesToRetry.forEach {
-      Mockito.verify(caseNoteRetryService).processDeliusCaseNote(it)
-    }
+    adminService = AdminService(telemetryClient, caseAllocationService, prisonerSearchApiService, prisonerService, supportNeedRepository)
   }
 
   @Test

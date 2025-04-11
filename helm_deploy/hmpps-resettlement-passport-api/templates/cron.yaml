@@ -1,29 +1,6 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: retry-failed-delius-case-notes
-spec:
-  schedule: "*/10 * * * *"
-  jobTemplate:
-    spec:
-      template:
-        spec:
-          securityContext:
-            runAsUser: 1000
-          containers:
-            - name: curl
-              image: alpine/curl
-              imagePullPolicy: IfNotPresent
-              command:
-                - /bin/sh
-                - -c
-                - date && echo Running PUT /retry-failed-delius-case-notes on resettlement-passport-api && curl -v -X PUT http://hmpps-resettlement-passport-api/retry-failed-delius-case-notes
-          restartPolicy: Never
-  concurrencyPolicy: Forbid
----
-apiVersion: batch/v1
-kind: CronJob
-metadata:
   name: send-app-insights-metrics
 spec:
   schedule: "0 0,12 * * *"

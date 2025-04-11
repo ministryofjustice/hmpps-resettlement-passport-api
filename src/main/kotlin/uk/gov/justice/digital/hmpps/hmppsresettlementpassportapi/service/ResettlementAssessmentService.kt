@@ -25,13 +25,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentSubmitResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.AssessmentSkipEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseNoteRetryEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ProfileTagList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ProfileTagsEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentSkipRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseNoteRetryRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ProfileTagsRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
@@ -52,7 +50,6 @@ class ResettlementAssessmentService(
   private val assessmentSkipRepository: AssessmentSkipRepository,
   private val prisonerSearchApiService: PrisonerSearchApiService,
   private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
-  private val caseNoteRetryRepository: CaseNoteRetryRepository,
   private val profileTagsRepository: ProfileTagsRepository,
   @Value("\${psfr.base.url}") private val psfrBaseUrl: String,
   private val supportNeedsLegacyProfileService: SupportNeedsLegacyProfileService,
@@ -64,9 +61,13 @@ class ResettlementAssessmentService(
   }
 
   @Transactional
-  fun getResettlementAssessmentSummaryByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType): List<PrisonerResettlementAssessment> {
+  fun getResettlementAssessmentSummaryByNomsId(
+    nomsId: String,
+    assessmentType: ResettlementAssessmentType,
+  ): List<PrisonerResettlementAssessment> {
     val prisonerEntity = getPrisonerEntityOrThrow(nomsId)
-    val resettlementEntityList = resettlementAssessmentRepository.findLatestForEachPathway(prisonerEntity.id(), assessmentType)
+    val resettlementEntityList =
+      resettlementAssessmentRepository.findLatestForEachPathway(prisonerEntity.id(), assessmentType)
     return getAssessmentSummary(resettlementEntityList)
   }
 
@@ -110,7 +111,15 @@ class ResettlementAssessmentService(
     )
 
   @Transactional
-  fun submitResettlementAssessmentByNomsId(nomsId: String, assessmentType: ResettlementAssessmentType, useNewDeliusCaseNoteFormat: Boolean, useNewDpsCaseNoteFormat: Boolean, auth: String, resettlementAssessmentStrategy: ResettlementAssessmentStrategy, supportNeedsLegacyProfile: Boolean): ResettlementAssessmentSubmitResponse {
+  fun submitResettlementAssessmentByNomsId(
+    nomsId: String,
+    assessmentType: ResettlementAssessmentType,
+    useNewDeliusCaseNoteFormat: Boolean,
+    useNewDpsCaseNoteFormat: Boolean,
+    auth: String,
+    resettlementAssessmentStrategy: ResettlementAssessmentStrategy,
+    supportNeedsLegacyProfile: Boolean,
+  ): ResettlementAssessmentSubmitResponse {
     // Check auth - must be NOMIS
     val authSource = getClaimFromJWTToken(auth, "auth_source")?.lowercase()
     if (authSource != "nomis") {
@@ -129,14 +138,16 @@ class ResettlementAssessmentService(
     // For each pathway, get the latest complete assessment
     Pathway.entries.forEach { pathway ->
 
-      val resettlementAssessment = resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInAndDeletedIsFalseOrderByCreationDateDesc(
-        prisonerId = prisonerEntity.id(),
-        pathway = pathway,
-        assessmentType = assessmentType,
-        assessmentStatus = listOf(ResettlementAssessmentStatus.COMPLETE),
-      )
+      val resettlementAssessment =
+        resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentTypeAndAssessmentStatusInAndDeletedIsFalseOrderByCreationDateDesc(
+          prisonerId = prisonerEntity.id(),
+          pathway = pathway,
+          assessmentType = assessmentType,
+          assessmentStatus = listOf(ResettlementAssessmentStatus.COMPLETE),
+        )
       if (resettlementAssessment != null) {
-        val pages = resettlementAssessmentStrategy.getConfigPages(assessmentType, pathway, resettlementAssessment.version)
+        val pages =
+          resettlementAssessmentStrategy.getConfigPages(assessmentType, pathway, resettlementAssessment.version)
         assessmentList.add(resettlementAssessment)
         tagList = tagList + processProfileTags(resettlementAssessment, pages)
       }
@@ -223,31 +234,16 @@ class ResettlementAssessmentService(
           description = it.description,
         )
         if (!success) {
-          log.warn("Cannot send report case note to Delius due to error on API for prisoner ${prisonerEntity.nomsId}. Adding to failed case notes for retry.")
+          log.warn("Cannot send report case note to Delius due to error on API for prisoner ${prisonerEntity.nomsId}. Adding to failed case notes submission event.")
           failedCaseNotes.add(it)
         }
       }
     } else {
-      log.warn("Cannot send report case notes to Delius as no CRN is available for prisoner ${prisonerEntity.nomsId}. Adding to failed case notes for retry.")
+      log.warn("Cannot send report case notes to Delius as no CRN is available for prisoner ${prisonerEntity.nomsId}. Adding to failed case notes submission event.")
       failedCaseNotes.addAll(groupedAssessmentsDelius)
     }
 
-    caseNoteRetryRepository.saveAll(
-      failedCaseNotes.map { failedCaseNote ->
-        CaseNoteRetryEntity(
-          id = null,
-          prisoner = prisonerEntity,
-          type = failedCaseNote.deliusCaseNoteType,
-          notes = failedCaseNote.caseNoteText,
-          author = failedCaseNote.user.name,
-          prisonCode = prisonCode,
-          originalSubmissionDate = LocalDateTime.now(),
-          retryCount = 0,
-          // Set this to now to retry on the next run of the retry cron job
-          nextRuntime = LocalDateTime.now(),
-        )
-      },
-    )
+    maybeSendCaseNoteSubmissionEvents(failedCaseNotes, prisonCode, nomsId, authSource)
 
     // Set the supportNeedsLegacyProfile flag (if needed)
     if (supportNeedsLegacyProfile && assessmentType == ResettlementAssessmentType.RESETTLEMENT_PLAN) {
@@ -270,7 +266,32 @@ class ResettlementAssessmentService(
     return ResettlementAssessmentSubmitResponse(deliusCaseNoteFailed = failedCaseNotes.isNotEmpty())
   }
 
-  fun processAndGroupAssessmentCaseNotes(assessmentList: List<ResettlementAssessmentEntity>, limitChars: Boolean, assessmentType: ResettlementAssessmentType): List<UserAndCaseNote> {
+  private fun maybeSendCaseNoteSubmissionEvents(
+    failedCaseNotes: MutableList<UserAndCaseNote>,
+    prisonCode: String,
+    nomsId: String,
+    authSource: String,
+  ) {
+    failedCaseNotes.map { failedCaseNote ->
+      telemetryClient.trackEvent(
+        "PSFR_ReportDeliusCaseNoteSubmissionFailure",
+        mapOf(
+          "reportType" to failedCaseNote.deliusCaseNoteType.name,
+          "prisonId" to prisonCode,
+          "prisonerId" to nomsId,
+          "user" to failedCaseNote.user.userId,
+          "authSource" to authSource,
+        ),
+        null,
+      )
+    }
+  }
+
+  fun processAndGroupAssessmentCaseNotes(
+    assessmentList: List<ResettlementAssessmentEntity>,
+    limitChars: Boolean,
+    assessmentType: ResettlementAssessmentType,
+  ): List<UserAndCaseNote> {
     val deliusCaseNoteType = convertToDeliusCaseNoteType(assessmentType)
     val maxCaseNoteLength = if (limitChars) {
       // Limit for DPS is 4000 but set this lower to account for line breaks between each pathway and the Part x of y text at the start (should be about 25 chars)
@@ -359,18 +380,30 @@ class ResettlementAssessmentService(
     val name: String,
   )
 
-  fun getLatestResettlementAssessmentByNomsIdAndPathway(nomsId: String, pathway: Pathway, resettlementAssessmentStrategies: ResettlementAssessmentStrategy): LatestResettlementAssessmentResponse {
+  fun getLatestResettlementAssessmentByNomsIdAndPathway(
+    nomsId: String,
+    pathway: Pathway,
+    resettlementAssessmentStrategies: ResettlementAssessmentStrategy,
+  ): LatestResettlementAssessmentResponse {
     val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
 
     val latestResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndDeletedIsFalseOrderByCreationDateDesc(prisonerEntity.id(), pathway, ResettlementAssessmentStatus.SUBMITTED)
+      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndDeletedIsFalseOrderByCreationDateDesc(
+        prisonerEntity.id(),
+        pathway,
+        ResettlementAssessmentStatus.SUBMITTED,
+      )
         ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"),
       resettlementAssessmentStrategies,
     )
 
     val originalResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndDeletedIsFalseOrderByCreationDateAsc(prisonerEntity.id(), pathway, ResettlementAssessmentStatus.SUBMITTED)
+      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndDeletedIsFalseOrderByCreationDateAsc(
+        prisonerEntity.id(),
+        pathway,
+        ResettlementAssessmentStatus.SUBMITTED,
+      )
         ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"),
       resettlementAssessmentStrategies,
     )
@@ -435,15 +468,34 @@ class ResettlementAssessmentService(
     }
   }
 
-  fun convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(resettlementAssessmentEntity: ResettlementAssessmentEntity, resettlementAssessmentStrategies: ResettlementAssessmentStrategy): ResettlementAssessmentResponse {
-    val flattenedQuestions = resettlementAssessmentStrategies.getFlattenedQuestionListPreserveOrder(resettlementAssessmentEntity.pathway, resettlementAssessmentEntity.assessmentType, resettlementAssessmentEntity.version)
+  fun convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
+    resettlementAssessmentEntity: ResettlementAssessmentEntity,
+    resettlementAssessmentStrategies: ResettlementAssessmentStrategy,
+  ): ResettlementAssessmentResponse {
+    val flattenedQuestions = resettlementAssessmentStrategies.getFlattenedQuestionListPreserveOrder(
+      resettlementAssessmentEntity.pathway,
+      resettlementAssessmentEntity.assessmentType,
+      resettlementAssessmentEntity.version,
+    )
     val questionsAndAnswers = flattenedQuestions.mapNotNull { questionFromConfig ->
-      val questionAndAnswerFromDatabase = resettlementAssessmentEntity.assessment.assessment.firstOrNull { it.questionId == questionFromConfig.id }
-      if (questionAndAnswerFromDatabase != null && questionAndAnswerFromDatabase.questionId !in listOf("SUPPORT_NEEDS", "SUPPORT_NEEDS_PRERELEASE", "CASE_NOTE_SUMMARY")) {
+      val questionAndAnswerFromDatabase =
+        resettlementAssessmentEntity.assessment.assessment.firstOrNull { it.questionId == questionFromConfig.id }
+      if (questionAndAnswerFromDatabase != null &&
+        questionAndAnswerFromDatabase.questionId !in listOf(
+          "SUPPORT_NEEDS",
+          "SUPPORT_NEEDS_PRERELEASE",
+          "CASE_NOTE_SUMMARY",
+        )
+      ) {
         LatestResettlementAssessmentResponseQuestionAndAnswer(
           questionTitle = questionFromConfig.title,
           answer = convertAnswerToString(questionFromConfig.options, questionAndAnswerFromDatabase.answer),
-          originalPageId = resettlementAssessmentStrategies.findPageIdFromQuestionId(questionFromConfig.id, resettlementAssessmentEntity.assessmentType, resettlementAssessmentEntity.pathway, resettlementAssessmentEntity.version),
+          originalPageId = resettlementAssessmentStrategies.findPageIdFromQuestionId(
+            questionFromConfig.id,
+            resettlementAssessmentEntity.assessmentType,
+            resettlementAssessmentEntity.pathway,
+            resettlementAssessmentEntity.version,
+          ),
         )
       } else {
         null
@@ -464,6 +516,7 @@ class ResettlementAssessmentService(
       is ListAnswer -> {
         answer.answer?.filter { it.isNotBlank() }?.map { removeOtherPrefix(it) }
       }
+
       is MapAnswer -> {
         if (answer.answer != null) {
           answer.answer!!.flatMap { it.values }.filter { it.isNotBlank() }.map { it.trim() }
@@ -471,6 +524,7 @@ class ResettlementAssessmentService(
           null
         }
       }
+
       else -> {
         throw RuntimeException("Unknown answer type ${answer::class.qualifiedName}")
       }
@@ -479,7 +533,10 @@ class ResettlementAssessmentService(
     return if (answerComponents != null) convertFromListToStringWithLineBreaks(answerComponents, options) else null
   }
 
-  fun convertFromListToStringWithLineBreaks(stringElements: List<String>, options: List<ResettlementAssessmentOption>?) = stringElements
+  fun convertFromListToStringWithLineBreaks(
+    stringElements: List<String>,
+    options: List<ResettlementAssessmentOption>?,
+  ) = stringElements
     .filter { it.isNotBlank() }
     .map { it.trim() }
     .map { element -> options?.find { it.id == element }?.displayText ?: element }
@@ -492,7 +549,8 @@ class ResettlementAssessmentService(
     }
 
     val prisonerEntity = getPrisonerEntityOrThrow(nomsId)
-    val resettlementEntityList = resettlementAssessmentRepository.findLatestForEachPathway(prisonerEntity.id(), assessmentType)
+    val resettlementEntityList =
+      resettlementAssessmentRepository.findLatestForEachPathway(prisonerEntity.id(), assessmentType)
     val assessmentSummary = getAssessmentSummary(resettlementEntityList)
     if (assessmentSummary.any { it.assessmentStatus != ResettlementAssessmentStatus.NOT_STARTED }) {
       throw ServerWebInputException("Cannot skip assessment that has already been started")
@@ -508,7 +566,12 @@ class ResettlementAssessmentService(
     )
   }
 
-  fun generateLinkOnlyDeliusCaseNote(nomsId: String, name: String, userId: String, assessmentType: ResettlementAssessmentType): UserAndCaseNote = UserAndCaseNote(
+  fun generateLinkOnlyDeliusCaseNote(
+    nomsId: String,
+    name: String,
+    userId: String,
+    assessmentType: ResettlementAssessmentType,
+  ): UserAndCaseNote = UserAndCaseNote(
     user = User(userId, name),
     deliusCaseNoteType = convertToDeliusCaseNoteType(assessmentType),
     caseNoteText = generateLinkOnlyDeliusCaseNoteText(nomsId, assessmentType, psfrBaseUrl),
@@ -524,7 +587,11 @@ class ResettlementAssessmentService(
     }
   }
 
-  fun generateContentOnlyDpsCaseNote(name: String, userId: String, assessmentType: ResettlementAssessmentType): UserAndCaseNote = UserAndCaseNote(
+  fun generateContentOnlyDpsCaseNote(
+    name: String,
+    userId: String,
+    assessmentType: ResettlementAssessmentType,
+  ): UserAndCaseNote = UserAndCaseNote(
     user = User(userId, name),
     deliusCaseNoteType = convertToDeliusCaseNoteType(assessmentType),
     caseNoteText = generateContentOnlyDpsCaseNoteText(assessmentType),
@@ -540,7 +607,8 @@ class ResettlementAssessmentService(
       if (lastReportFromDB != null) {
         return LastReport(
           type = lastReportFromDB.assessmentType,
-          dateCompleted = lastReportFromDB.submissionDate?.toLocalDate() ?: throw RuntimeException("Submission date is unexpectedly null"),
+          dateCompleted = lastReportFromDB.submissionDate?.toLocalDate()
+            ?: throw RuntimeException("Submission date is unexpectedly null"),
         )
       }
     }

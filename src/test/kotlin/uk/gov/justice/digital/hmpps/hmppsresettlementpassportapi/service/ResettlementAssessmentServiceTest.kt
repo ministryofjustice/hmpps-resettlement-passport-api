@@ -1061,7 +1061,7 @@ class ResettlementAssessmentServiceTest {
 
     val expectedContentOnlyDpsCaseNote = toContentOnlyDpsCaseNote(jwtTokenName, jwtTokenSub, assessmentType)
 
-    verify(telemetryClient).trackEvent("PSFR_ReportCaseSubmissionFailure", mapOf("reportType" to expectedContentOnlyDpsCaseNote.deliusCaseNoteType.name, "prisonId" to prisonCode, "prisonerId" to nomsId, "user" to jwtTokenSub, "authSource" to "nomis"), null)
+    verify(telemetryClient).trackEvent("PSFR_ReportDeliusCaseNoteSubmissionFailure", mapOf("reportType" to expectedContentOnlyDpsCaseNote.deliusCaseNoteType.name, "prisonId" to prisonCode, "prisonerId" to nomsId, "user" to jwtTokenSub, "authSource" to "nomis"), null)
 
     unmockkAll()
   }

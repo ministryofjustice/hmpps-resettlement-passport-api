@@ -274,7 +274,7 @@ class ResettlementAssessmentService(
   ) {
     failedCaseNotes.map { failedCaseNote ->
       telemetryClient.trackEvent(
-        "PSFR_ReportCaseSubmissionFailure",
+        "PSFR_ReportDeliusCaseNoteSubmissionFailure",
         mapOf(
           "reportType" to failedCaseNote.deliusCaseNoteType.name,
           "prisonId" to prisonCode,

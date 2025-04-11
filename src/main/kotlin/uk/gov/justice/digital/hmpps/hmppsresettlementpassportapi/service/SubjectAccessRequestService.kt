@@ -10,7 +10,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.AssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.AssessmentSkipEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseNoteRetryEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DocumentsEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.IdApplicationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
@@ -39,7 +38,6 @@ class SubjectAccessRequestService(
   private val supportNeedsService: SupportNeedsService,
   private val caseAllocationService: CaseAllocationService,
   private val todoService: TodoService,
-  private val caseNoteRetryService: CaseNoteRetryService,
   private val documentService: DocumentService,
 ) : HmppsPrisonSubjectAccessRequestService {
 
@@ -69,7 +67,6 @@ class SubjectAccessRequestService(
     val caseAllocation = caseAllocationService.getCaseAllocationHistoryByPrisonerId(prisonerId, startDate, endDate)
     val profileTags = resettlementAssessmentService.getProfileTagsByPrisonerId(prisonerId)
     val todoItems = todoService.getByPrisonerId(prisonerId, startDate, endDate)
-    val caseNotes = caseNoteRetryService.findByPrisoner(prisonerEntity, startDate, endDate)
     val documents = documentService.listDocuments(prisonerId, startDate, endDate)
 
     val resettlementData = ResettlementSarContent(
@@ -87,7 +84,6 @@ class SubjectAccessRequestService(
       caseAllocation,
       profileTags,
       todoItems,
-      caseNotes,
       documents,
     )
     return HmppsSubjectAccessRequestContent(
@@ -161,7 +157,6 @@ data class ResettlementSarContent(
   val caseAllocation: List<CaseAllocationEntity>?,
   val profileTags: List<ProfileTagsEntity>?,
   val todoItems: List<TodoEntity>?,
-  val caseNotes: List<CaseNoteRetryEntity>?,
   val documents: Collection<DocumentsEntity>?,
 )
 

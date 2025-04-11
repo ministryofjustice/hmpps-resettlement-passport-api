@@ -891,16 +891,6 @@ INSERT INTO todo_item
 (id, prisoner_id, title, notes, due_date, completed, created_by_urn, updated_by_urn, creation_date, updated_at)
 VALUES('796e405b-2b56-4ba8-a237-15f2151bb1b0'::uuid, 1, 'Title', 'This is a to do item', '2030-01-01', false, '999999', '999999', '2023-09-01 12:00:00.000', '2023-09-01 12:00:00.000');
 
-INSERT INTO case_note_retry
-(id, prisoner_id, "type", notes, author, prison_code, original_submission_date, retry_count, next_runtime)
-VALUES(1, 1, 'IMMEDIATE_NEEDS_REPORT', 'Case note 1', 'Matthew Kerry', 'MDI', '2020-09-01 12:00:00.000', 0, '2020-09-01 12:01:00.000');
-INSERT INTO case_note_retry
-(id, prisoner_id, "type", notes, author, prison_code, original_submission_date, retry_count, next_runtime)
-VALUES(2, 1, 'IMMEDIATE_NEEDS_REPORT', 'Case note 1', 'Matthew Kerry', 'MDI', '2022-09-01 12:00:00.000', 0, '2022-09-01 12:01:00.000');
-INSERT INTO case_note_retry
-(id, prisoner_id, "type", notes, author, prison_code, original_submission_date, retry_count, next_runtime)
-VALUES(3, 1, 'IMMEDIATE_NEEDS_REPORT', 'Case note 1', 'Matthew Kerry', 'MDI', '2023-09-01 12:00:00.000', 0, '2023-09-01 12:01:00.000');
-
 INSERT INTO document_location
 (id, prisoner_id, original_document_key, creation_date, pdf_document_key, category, original_document_file_name, is_deleted, deleted_date)
 VALUES(1, 1, '8ad7b2e2-7160-4731-8b85-bacf49756a23'::uuid, '2020-09-01 12:01:00.000', 'c33e3a56-545f-41ee-bb44-632746480f22'::uuid, 'LICENCE_CONDITIONS', 'license1.pdf', true, '2020-09-02 12:01:00.000');

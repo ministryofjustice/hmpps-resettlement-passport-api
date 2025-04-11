@@ -655,25 +655,6 @@
         "updatedByUrn": "999999"
       }
     ],
-    "caseNotes": [
-      {
-        "author": "Matthew Kerry",
-        "id": 3,
-        "nextRuntime": "2023-09-01T12:01:00",
-        "notes": "Case note 1",
-        "originalSubmissionDate": "2023-09-01T12:00:00",
-        "prisonCode": "MDI",
-        "prisoner": {
-          "creationDate": "2024-01-01T12:21:38.709",
-          "id": 1,
-          "nomsId": "G1458GV",
-          "prisonId": null,
-          "supportNeedsLegacyProfile": null
-        },
-        "retryCount": 0,
-        "type": "IMMEDIATE_NEEDS_REPORT"
-      }
-    ],
     "documents": [
       {
         "category": "LICENCE_CONDITIONS",

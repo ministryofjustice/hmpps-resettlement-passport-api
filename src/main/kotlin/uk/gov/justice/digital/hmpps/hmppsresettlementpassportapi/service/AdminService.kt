@@ -4,7 +4,6 @@ import com.microsoft.applicationinsights.TelemetryClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.SupportNeedRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 
 @Service
@@ -13,7 +12,6 @@ class AdminService(
   private val caseAllocationService: CaseAllocationService,
   private val prisonerSearchApiService: PrisonerSearchApiService,
   private val prisonerService: PrisonerService,
-  private val supportNeedRepository: SupportNeedRepository,
 ) {
 
   companion object {

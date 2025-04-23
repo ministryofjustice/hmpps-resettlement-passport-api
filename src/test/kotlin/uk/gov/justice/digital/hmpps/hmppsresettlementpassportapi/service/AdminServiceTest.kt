@@ -15,10 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.SupportNeedEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.SupportNeedRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import java.time.LocalDateTime
 
@@ -37,9 +34,6 @@ class AdminServiceTest {
 
   @Mock
   private lateinit var prisonerService: PrisonerService
-
-  @Mock
-  private lateinit var supportNeedRepository: SupportNeedRepository
 
   companion object {
 
@@ -61,7 +55,7 @@ class AdminServiceTest {
 
   @BeforeEach
   fun beforeEach() {
-    adminService = AdminService(telemetryClient, caseAllocationService, prisonerSearchApiService, prisonerService, supportNeedRepository)
+    adminService = AdminService(telemetryClient, caseAllocationService, prisonerSearchApiService, prisonerService)
   }
 
   @Test

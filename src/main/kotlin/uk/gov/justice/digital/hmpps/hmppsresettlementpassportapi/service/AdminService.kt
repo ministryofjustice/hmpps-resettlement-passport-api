@@ -47,8 +47,6 @@ class AdminService(
       }
     }
 
-    val allSupportNeeds = supportNeedRepository.findAll().map { mapOf("supportNeedId" to it.id, "supportNeedTitle" to it.title, "pathway" to it.pathway.name, "section" to it.section, "deleted" to it.deleted) }
-    telemetryClient.trackMetric("support_needs_all", allSupportNeeds.size.toDouble(), null, null, null, null, mapOf("supportNeedDetails" to allSupportNeeds.toString()))
     log.info("Finished sending metrics to app insights")
   }
 }

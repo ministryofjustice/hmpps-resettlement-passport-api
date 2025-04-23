@@ -78,22 +78,11 @@ class AdminServiceTest {
     whenever(prisonerSearchApiService.findPrisonersBySearchTerm("CCI", "")).thenReturn(getMocks(102))
     whenever(prisonerSearchApiService.findPrisonersBySearchTerm("DDI", "")).thenThrow(RuntimeException("Something went wrong"))
 
-    whenever(supportNeedRepository.findAll()).thenReturn(
-      listOf(
-        SupportNeedEntity(1, Pathway.ACCOMMODATION, section = "Section 1", title = "Title 1", hidden = false, excludeFromCount = false, allowOtherDetail = false, createdDate = LocalDateTime.now()),
-        SupportNeedEntity(2, Pathway.ACCOMMODATION, section = "Section 1", title = "Title 2", hidden = false, excludeFromCount = false, allowOtherDetail = false, createdDate = LocalDateTime.now()),
-        SupportNeedEntity(3, Pathway.ACCOMMODATION, section = "Section 2", title = "Title 3", hidden = false, excludeFromCount = false, allowOtherDetail = false, createdDate = LocalDateTime.now()),
-        SupportNeedEntity(4, Pathway.ACCOMMODATION, section = "Section 2", title = "Title 4", hidden = false, excludeFromCount = false, allowOtherDetail = false, createdDate = LocalDateTime.now(), deleted = true),
-        SupportNeedEntity(5, Pathway.ACCOMMODATION, section = "Section 3", title = "Title 5", hidden = false, excludeFromCount = false, allowOtherDetail = false, createdDate = LocalDateTime.now()),
-      ),
-    )
-
     adminService.sendMetricsToAppInsights()
 
     verify(telemetryClient).trackMetric("case_allocation_assigned_prisoners_percentage", 50.0, null, null, null, null, mapOf("prisonId" to "AAI", "numberOfPrisonersAssigned" to "5", "totalNumberOfPrisoners" to "10"))
     verify(telemetryClient).trackMetric("case_allocation_assigned_prisoners_percentage", 28.57142857142857, null, null, null, null, mapOf("prisonId" to "BBI", "numberOfPrisonersAssigned" to "10", "totalNumberOfPrisoners" to "35"))
     verify(telemetryClient).trackMetric("case_allocation_assigned_prisoners_percentage", 6.862745098039216, null, null, null, null, mapOf("prisonId" to "CCI", "numberOfPrisonersAssigned" to "7", "totalNumberOfPrisoners" to "102"))
-    verify(telemetryClient).trackMetric("support_needs_all", 5.0, null, null, null, null, mapOf("supportNeedDetails" to "[{supportNeedId=1, supportNeedTitle=Title 1, pathway=ACCOMMODATION, section=Section 1, deleted=false}, {supportNeedId=2, supportNeedTitle=Title 2, pathway=ACCOMMODATION, section=Section 1, deleted=false}, {supportNeedId=3, supportNeedTitle=Title 3, pathway=ACCOMMODATION, section=Section 2, deleted=false}, {supportNeedId=4, supportNeedTitle=Title 4, pathway=ACCOMMODATION, section=Section 2, deleted=true}, {supportNeedId=5, supportNeedTitle=Title 5, pathway=ACCOMMODATION, section=Section 3, deleted=false}]"))
     verifyNoMoreInteractions(telemetryClient)
   }
 

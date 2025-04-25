@@ -41,7 +41,7 @@ class CaseAllocationService(
   }
 
   @Transactional
-  fun unAssignCase(caseAllocation: CaseAllocation): List<CaseAllocationEntity?> {
+  fun unAssignCase(caseAllocation: CaseAllocation, auth: String): List<CaseAllocationEntity?> {
     val caseList = emptyList<CaseAllocationEntity?>().toMutableList()
     for (nomsId in caseAllocation.nomsIds) {
       val prisoner = prisonerRepository.findByNomsId(nomsId)
@@ -50,6 +50,20 @@ class CaseAllocationService(
         ?: throw ResourceNotFoundException("Unable to unassign, no officer assigned for prisoner with id $nomsId")
       val case = delete(caseAllocationExists)
       caseList.add(case)
+    }
+
+    val staffUserName =
+      getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get name from auth token")
+    caseList.filterNotNull().forEach { case ->
+      telemetryClient.trackEvent(
+        "PSFR_CaseUnallocation",
+        mapOf(
+          "prisonId" to caseAllocation.prisonId,
+          "prisonerId" to case.prisonerId.toString(),
+          "unallocatedByUsername" to staffUserName,
+        ),
+        null,
+      )
     }
     return caseList
   }
@@ -73,7 +87,8 @@ class CaseAllocationService(
 
   @Transactional
   fun assignCase(caseAllocation: CaseAllocation, auth: String): MutableList<CaseAllocationPostResponse?> {
-    val assignedByUsername = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get username from auth token")
+    val assignedByUsername =
+      getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get username from auth token")
 
     val caseList = emptyList<CaseAllocationPostResponse?>().toMutableList()
     if (caseAllocation.staffId != null && caseAllocation.prisonId != null && caseAllocation.nomsIds.isNotEmpty()) {

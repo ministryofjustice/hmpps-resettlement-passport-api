@@ -15,7 +15,7 @@ generic-service:
     API_BASE_URL_PRISON: https://prison-api.prison.service.justice.gov.uk
     API_BASE_URL_CASE-NOTES: https://offender-case-notes.service.justice.gov.uk
     API_BASE_URL_KEY-WORKER: https://keyworker-api.prison.service.justice.gov.uk
-    API_BASE_URL_ALLOCATION-MANAGER: https://moic.service.justice.gov.uk
+    API_BASE_URL_ALLOCATION-MANAGER: https://allocation-manager-production.apps.live.cloud-platform.service.justice.gov.uk
     API_BASE_URL_RESETTLEMENT-PASSPORT-DELIUS: https://resettlement-passport-and-delius.hmpps.service.justice.gov.uk
     API_BASE_URL_EDUCATION-EMPLOYMENT:  https://education-employment-api.hmpps.service.justice.gov.uk
     API_BASE_URL_INTERVENTIONS-SERVICE: https://hmpps-interventions-service.apps.live-1.cloud-platform.service.justice.gov.uk

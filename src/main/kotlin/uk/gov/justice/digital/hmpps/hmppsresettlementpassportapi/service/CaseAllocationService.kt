@@ -41,7 +41,9 @@ class CaseAllocationService(
   }
 
   @Transactional
-  fun unAssignCase(caseAllocation: CaseAllocation): List<CaseAllocationEntity?> {
+  fun unAssignCase(caseAllocation: CaseAllocation, auth: String): List<CaseAllocationEntity?> {
+    val staffUserName =
+      getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get name from auth token")
     val caseList = emptyList<CaseAllocationEntity?>().toMutableList()
     for (nomsId in caseAllocation.nomsIds) {
       val prisoner = prisonerRepository.findByNomsId(nomsId)
@@ -49,6 +51,7 @@ class CaseAllocationService(
       val caseAllocationExists = getCaseAllocationByPrisonerId(prisoner.id())
         ?: throw ResourceNotFoundException("Unable to unassign, no officer assigned for prisoner with id $nomsId")
       val case = delete(caseAllocationExists)
+      trackUnallocationEvent(caseAllocation, case, staffUserName)
       caseList.add(case)
     }
     return caseList
@@ -57,7 +60,11 @@ class CaseAllocationService(
   @Transactional
   fun getCaseAllocationByPrisonerId(prisonerId: Long): CaseAllocationEntity? = caseAllocationRepository.findByPrisonerIdAndIsDeleted(prisonerId, false)
 
-  fun getCaseAllocationHistoryByPrisonerId(prisonerId: Long, startDate: LocalDate, endDate: LocalDate): List<CaseAllocationEntity> {
+  fun getCaseAllocationHistoryByPrisonerId(
+    prisonerId: Long,
+    startDate: LocalDate,
+    endDate: LocalDate,
+  ): List<CaseAllocationEntity> {
     val from = startDate.atStartOfDay()
     val to = endDate.atTime(LocalTime.MAX)
     return caseAllocationRepository.findByPrisonerIdAndCreationDateBetween(prisonerId, from, to)
@@ -73,7 +80,8 @@ class CaseAllocationService(
 
   @Transactional
   fun assignCase(caseAllocation: CaseAllocation, auth: String): MutableList<CaseAllocationPostResponse?> {
-    val assignedByUsername = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get username from auth token")
+    val assignedByUsername =
+      getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get username from auth token")
 
     val caseList = emptyList<CaseAllocationPostResponse?>().toMutableList()
     if (caseAllocation.staffId != null && caseAllocation.prisonId != null && caseAllocation.nomsIds.isNotEmpty()) {
@@ -132,7 +140,13 @@ class CaseAllocationService(
   }
 
   @Transactional
-  fun create(nomsId: String, staffId: Int, staffFirstName: String, staffLastName: String, prisonerId: Long): CaseAllocationEntity? {
+  fun create(
+    nomsId: String,
+    staffId: Int,
+    staffFirstName: String,
+    staffLastName: String,
+    prisonerId: Long,
+  ): CaseAllocationEntity? {
     val caseAllocationEntity =
       CaseAllocationEntity(
         null,
@@ -181,4 +195,20 @@ class CaseAllocationService(
   }
 
   fun getNumberOfAssignedPrisoners(prisonId: String) = caseAllocationRepository.findTotalCaseCountByPrisonId(prisonId)
+
+  private fun trackUnallocationEvent(
+    caseAllocation: CaseAllocation,
+    case: CaseAllocationEntity,
+    staffUserName: String,
+  ) {
+    telemetryClient.trackEvent(
+      "PSFR_CaseUnallocation",
+      mapOf(
+        "prisonId" to caseAllocation.prisonId,
+        "prisonerId" to case.prisonerId.toString(),
+        "unallocatedByUsername" to staffUserName,
+      ),
+      null,
+    )
+  }
 }

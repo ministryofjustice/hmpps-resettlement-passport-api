@@ -118,7 +118,7 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
     caseAllocation.nomsIds.forEach { nomsId ->
       auditService.audit(AuditAction.CASE_UNALLOCATION, nomsId, auth, null)
     }
-    return caseAllocationService.unAssignCase(caseAllocation)
+    return caseAllocationService.unAssignCase(caseAllocation, auth)
   }
 
   @GetMapping("/cases/{staffId}", produces = [MediaType.APPLICATION_JSON_VALUE])

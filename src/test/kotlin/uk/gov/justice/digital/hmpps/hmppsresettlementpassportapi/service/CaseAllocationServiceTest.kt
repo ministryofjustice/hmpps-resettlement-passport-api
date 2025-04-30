@@ -132,6 +132,9 @@ class CaseAllocationServiceTest {
   fun `test removeCaseAllocation - unassign the allocation`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
+    mockkStatic(::getClaimFromJWTToken)
+    every { getClaimFromJWTToken("auth", "sub") } returns "USERNAME"
+
     val caseList = emptyList<CaseAllocationEntity?>().toMutableList()
     val prisonerEntity = PrisonerEntity(1, "123", testDate, "xyz")
     val caseAllocationEntity = CaseAllocationEntity(
@@ -159,10 +162,19 @@ class CaseAllocationServiceTest {
     )
     Mockito.`when`(prisonerRepository.findByNomsId(prisonerEntity.nomsId)).thenReturn(prisonerEntity)
     Mockito.`when`(caseAllocationRepository.findByPrisonerIdAndIsDeleted(prisonerEntity.id(), false)).thenReturn(caseAllocationEntity)
-    val result = caseAllocationService.unAssignCase(caseAllocation)
+    val result = caseAllocationService.unAssignCase(caseAllocation, "auth")
 
     Mockito.verify(caseAllocationRepository).save(expectedCaseAllocationEntity)
     Assertions.assertEquals(caseList, result)
+    Mockito.verify(telemetryClient).trackEvent(
+      "PSFR_CaseUnallocation",
+      mapOf(
+        "prisonId" to caseAllocation.prisonId,
+        "prisonerId" to expectedCaseAllocationEntity.prisonerId.toString(),
+        "unallocatedByUsername" to "USERNAME",
+      ),
+      null,
+    )
     unmockkStatic(LocalDateTime::class)
   }
 
@@ -170,7 +182,6 @@ class CaseAllocationServiceTest {
   fun `test getAllCaseAllocationByStaffId - returns case allocations`() {
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     val prisonerEntity1 = PrisonerEntity(2, "acb", testDate, "xyz")
-//    Mockito.`when`(prisonerRepository.findByNomsId(prisonerEntity.nomsId)).thenReturn(prisonerEntity)
     val caseAllocationEntity = CaseAllocationEntity(
       prisonerId = prisonerEntity.id(),
       staffId = 4321,
@@ -254,9 +265,11 @@ class CaseAllocationServiceTest {
     val caseAllocationCountTestResponseList = emptyList<CaseAllocationCountResponseImp>().toMutableList()
     caseAllocationCountTestResponseList.add(caseAllocationCountTestResponse1)
     caseAllocationCountTestResponseList.add(caseAllocationCountTestResponse2)
-    Mockito.`when`(caseAllocationRepository.findCaseCountByPrisonId(prisonId)).thenReturn(caseAllocationCountTestResponseList)
+    Mockito.`when`(caseAllocationRepository.findCaseCountByPrisonId(prisonId))
+      .thenReturn(caseAllocationCountTestResponseList)
     Mockito.`when`(caseAllocationRepository.findTotalCaseCountByPrisonId(prisonId)).thenReturn(3)
-    val mockedJsonResponse: PrisonersSearchList = readFileAsObject("testdata/prisoner-search-api/prisoner-search-1.json")
+    val mockedJsonResponse: PrisonersSearchList =
+      readFileAsObject("testdata/prisoner-search-api/prisoner-search-1.json")
     whenever(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
     val result = caseAllocationService.getCasesAllocationCount(prisonId)
     Assertions.assertEquals(caseAllocationCountTestResponseList[0].staffId, result.assignedList[0]?.staffId)
@@ -270,11 +283,13 @@ class CaseAllocationServiceTest {
 
     @Test
     fun `should search between the start of fromDate and the end of toDate`() {
-      Mockito.`when`(caseAllocationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(null)
+      Mockito.`when`(caseAllocationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any()))
+        .thenReturn(null)
 
       caseAllocationService.getCaseAllocationHistoryByPrisonerId(1, fromDate, toDate)
 
-      Mockito.verify(caseAllocationRepository).findByPrisonerIdAndCreationDateBetween(1, fromDate.atStartOfDay(), toDate.atTime(LocalTime.MAX))
+      Mockito.verify(caseAllocationRepository)
+        .findByPrisonerIdAndCreationDateBetween(1, fromDate.atStartOfDay(), toDate.atTime(LocalTime.MAX))
     }
 
     @Test
@@ -290,7 +305,8 @@ class CaseAllocationServiceTest {
           deletionDate = null,
         ),
       )
-      Mockito.`when`(caseAllocationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(data)
+      Mockito.`when`(caseAllocationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any()))
+        .thenReturn(data)
 
       val result = caseAllocationService.getCaseAllocationHistoryByPrisonerId(1, fromDate, toDate)
 

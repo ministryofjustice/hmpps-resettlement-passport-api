@@ -47,4 +47,21 @@ class AssessmentRepositoryTest : RepositoryTestBase() {
 
     assertThat(assessmentFromDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(assessment1)
   }
+
+  @Test
+  fun `test findByPrisonerIdAndCreationDateBetween`() {
+    val prisoner = prisonerRepository.save(PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "xyz1"))
+
+    val idDocument = setOf(IdTypeEntity(1, "Birth certificate"))
+
+    val assessment1 = AssessmentEntity(null, prisoner.id(), LocalDateTime.now(), LocalDateTime.now(), isBankAccountRequired = true, isIdRequired = true, idDocument, false, null)
+    val assessment2 = AssessmentEntity(null, prisoner.id(), LocalDateTime.now(), LocalDateTime.now(), isBankAccountRequired = true, isIdRequired = true, idDocument, true, LocalDateTime.now())
+
+    assessmentRepository.save(assessment1)
+    assessmentRepository.save(assessment2)
+
+    val assessmentFromDatabase = assessmentRepository.findByPrisonerIdAndCreationDateBetween(prisoner.id(), LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(1))
+
+    assertThat(assessmentFromDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(listOf(assessment1, assessment2))
+  }
 }

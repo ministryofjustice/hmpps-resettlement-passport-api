@@ -47,16 +47,15 @@ class BankApplicationService(
     nomsId: String,
     fromDate: LocalDate,
     toDate: LocalDate,
-  ): BankApplicationResponse? {
+  ): List<BankApplicationResponse> {
     val prisoner = prisonerRepository.findByNomsId(nomsId)
       ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val bankApplication = bankApplicationRepository.findByPrisonerIdAndIsDeletedAndCreationDateBetween(
+
+    return bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(
       prisoner.id(),
       fromDate = fromDate.atStartOfDay(),
       toDate = toDate.atTime(LocalTime.MAX),
-    )
-      ?: throw ResourceNotFoundException(" no none deleted bank applications for prisoner: ${prisoner.nomsId} found in database")
-    return getBankApplicationResponse(bankApplication, prisoner)
+    ).map { getBankApplicationResponse(it, prisoner) }
   }
 
   private fun getBankApplicationResponse(

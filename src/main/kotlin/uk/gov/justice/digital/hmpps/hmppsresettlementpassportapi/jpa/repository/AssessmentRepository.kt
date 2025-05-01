@@ -9,10 +9,9 @@ import java.time.LocalDateTime
 interface AssessmentRepository : JpaRepository<AssessmentEntity, Long> {
   fun findByPrisonerIdAndIsDeleted(prisonerId: Long, isDeleted: Boolean = false): AssessmentEntity?
 
-  fun findByPrisonerIdAndIsDeletedAndCreationDateBetween(
+  fun findByPrisonerIdAndCreationDateBetween(
     prisonerId: Long,
-    isDeleted: Boolean = false,
     fromDate: LocalDateTime,
     toDate: LocalDateTime,
-  ): AssessmentEntity?
+  ): List<AssessmentEntity>
 }

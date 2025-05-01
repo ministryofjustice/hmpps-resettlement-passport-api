@@ -116,6 +116,32 @@ class AssessmentServiceTest {
   }
 
   @Nested
+  inner class GetAssessmentByPrisonerIdAndCreationDate {
+    private val toDate = LocalDate.of(2025, 4, 11)
+    private val fromDate = toDate.minusDays(7)
+
+    @Test
+    fun `should search between the start of fromDate and the end of toDate`() {
+      Mockito.`when`(assessmentRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(null)
+
+      assessmentService.getAssessmentByPrisonerIdAndCreationDate(1, fromDate, toDate)
+      Mockito.verify(assessmentRepository).findByPrisonerIdAndCreationDateBetween(1, fromDate.atStartOfDay(), toDate.atTime(LocalTime.MAX))
+    }
+
+    @Test
+    fun `should return from repository`() {
+      val idDocument = setOf(IdTypeEntity(1, "Birth certificate"))
+      val assessment = AssessmentEntity(null, 1, LocalDateTime.now(), LocalDateTime.now(), isBankAccountRequired = true, isIdRequired = true, idDocument, false, null)
+      val assessments = listOf(assessment)
+
+      Mockito.`when`(assessmentRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(assessments)
+
+      val response = assessmentService.getAssessmentByPrisonerIdAndCreationDate(1, fromDate, toDate)
+      Assertions.assertEquals(assessments, response)
+    }
+  }
+
+  @Nested
   inner class FindSkippedAssessmentsForPrisoner {
     private val toDate = LocalDate.of(2025, 4, 11)
     private val fromDate = toDate.minusDays(7)

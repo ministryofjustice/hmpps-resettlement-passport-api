@@ -5,6 +5,7 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
@@ -20,7 +21,9 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.IdTypeRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import java.math.BigDecimal
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 @ExtendWith(MockitoExtension::class)
 class IdApplicationServiceTest {
@@ -215,5 +218,36 @@ class IdApplicationServiceTest {
     Mockito.`when`(idApplicationRepository.findByPrisonerIdAndIsDeleted(prisonerEntity.id())).thenReturn(idApplicationEntityList)
     val result = idApplicationService.getAllIdApplicationsByNomsId(prisonerEntity.nomsId)
     Assertions.assertEquals(idApplicationEntityList, result)
+  }
+
+  @Nested
+  inner class GetIdApplicationByPrisonerIdAndCreationDate {
+    private val toDate = LocalDate.of(2025, 4, 11)
+    private val fromDate = toDate.minusDays(7)
+
+    @Test
+    fun `should search between the start of fromDate and the end of toDate`() {
+      Mockito.`when`(idApplicationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(null)
+
+      idApplicationService.getIdApplicationByPrisonerIdAndCreationDate(1, fromDate, toDate)
+      Mockito.verify(idApplicationRepository).findByPrisonerIdAndCreationDateBetween(1, fromDate.atStartOfDay(), toDate.atTime(LocalTime.MAX))
+    }
+
+    @Test
+    fun `should return from repository`() {
+      val idApplication = IdApplicationEntity(
+        prisonerId = 1,
+        idType = IdTypeEntity(1, "Birth Certificate"),
+        creationDate = fakeNow,
+        applicationSubmittedDate = fakeNow,
+        isPriorityApplication = false,
+        costOfApplication = BigDecimal(10.00),
+      )
+
+      Mockito.`when`(idApplicationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(listOf(idApplication))
+
+      val response = idApplicationService.getIdApplicationByPrisonerIdAndCreationDate(1, fromDate, toDate)
+      Assertions.assertEquals(listOf(idApplication), response)
+    }
   }
 }

@@ -421,52 +421,14 @@ class ResettlementAssessmentService(
     }
   }
 
-  fun getLatestResettlementAssessmentByNomsIdAndPathwayAndCreationDate(
-    nomsId: String,
-    pathway: Pathway,
-    resettlementAssessmentStrategies: ResettlementAssessmentStrategy,
+  fun getAllResettlementAssessmentsByPrisonerIdAndCreationDate(
+    prisonerId: Long,
     fromDate: LocalDate,
     toDate: LocalDate,
-  ): LatestResettlementAssessmentResponse {
-    val prisonerEntity = prisonerRepository.findByNomsId(nomsId)
-      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-
-    val latestResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndCreationDateBetweenAndDeletedIsFalseOrderByCreationDateDesc(
-        prisonerEntity.id(),
-        pathway,
-        ResettlementAssessmentStatus.SUBMITTED,
-        fromDate.atStartOfDay(),
-        toDate.atTime(LocalTime.MAX),
-      )
-        ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"),
-      resettlementAssessmentStrategies,
-    )
-
-    val originalResettlementAssessment = convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
-      resettlementAssessmentRepository.findFirstByPrisonerIdAndPathwayAndAssessmentStatusAndCreationDateBetweenAndDeletedIsFalseOrderByCreationDateAsc(
-        prisonerEntity.id(),
-        pathway,
-        ResettlementAssessmentStatus.SUBMITTED,
-        fromDate.atStartOfDay(),
-        toDate.atStartOfDay(),
-      )
-        ?: throw ResourceNotFoundException("No submitted resettlement assessment found for prisoner $nomsId / pathway $pathway"),
-      resettlementAssessmentStrategies,
-    )
-
-    // If the latest and original assessments from the same, then only return the latest otherwise return both
-    return if (latestResettlementAssessment == originalResettlementAssessment) {
-      LatestResettlementAssessmentResponse(
-        latestAssessment = latestResettlementAssessment,
-      )
-    } else {
-      LatestResettlementAssessmentResponse(
-        originalAssessment = originalResettlementAssessment,
-        latestAssessment = latestResettlementAssessment,
-      )
-    }
-  }
+    resettlementAssessmentStrategies: ResettlementAssessmentStrategy,
+  ): List<ResettlementAssessmentResponse> = resettlementAssessmentRepository
+    .findAllByPrisonerIdAndCreationDateBetween(prisonerId, fromDate.atStartOfDay(), toDate.atTime(LocalTime.MAX))
+    .map { convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(it, resettlementAssessmentStrategies) }
 
   fun convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
     resettlementAssessmentEntity: ResettlementAssessmentEntity,

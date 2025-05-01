@@ -39,16 +39,11 @@ class AssessmentService(
   }
 
   @Transactional
-  fun getAssessmentByNomsIdAndCreationDate(nomsId: String, fromDate: LocalDate, toDate: LocalDate): AssessmentEntity? {
-    val prisoner = prisonerRepository.findByNomsId(nomsId)
-      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val assessment = assessmentRepository.findByPrisonerIdAndIsDeletedAndCreationDateBetween(
-      prisoner.id(),
-      fromDate = fromDate.atStartOfDay(),
-      toDate = toDate.atTime(LocalTime.MAX),
-    ) ?: throw ResourceNotFoundException("assessment not found")
-    return if (assessment.isDeleted) null else assessment
-  }
+  fun getAssessmentByPrisonerIdAndCreationDate(prisonerId: Long, fromDate: LocalDate, toDate: LocalDate): List<AssessmentEntity> = assessmentRepository.findByPrisonerIdAndCreationDateBetween(
+    prisonerId,
+    fromDate = fromDate.atStartOfDay(),
+    toDate = toDate.atTime(LocalTime.MAX),
+  )
 
   @Transactional
   fun deleteAssessment(assessment: AssessmentEntity) {

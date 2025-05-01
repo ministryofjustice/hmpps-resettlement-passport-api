@@ -3,10 +3,9 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoContentException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplicationResponse
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.LatestResettlementAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.PrisonerResettlementAssessment
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.AssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.AssessmentSkipEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
@@ -54,14 +53,14 @@ class SubjectAccessRequestService(
       ?: throw NoContentException("Prisoner with id $prn not found in database")
     val prisonerId = prisonerEntity.id!!
 
-    val assessmentData = getAssessment(prn, startDate, endDate)
+    val assessmentData = assessmentService.getAssessmentByPrisonerIdAndCreationDate(prisonerId, startDate, endDate)
     val skippedAssessments = assessmentService.findSkippedAssessmentsForPrisoner(prisonerId, startDate, endDate)
-    val bankApplicationData = getBankAccount(prn, startDate, endDate)
+    val bankApplicationData = bankApplicationService.getBankApplicationByNomsIdAndCreationDate(prn, startDate, endDate)
     val deliusContactData = getDeliusContact(prn, startDate, endDate)
-    val idApplicationData = getId(prn, startDate, endDate)
+    val idApplicationData = idApplicationService.getIdApplicationByPrisonerIdAndCreationDate(prisonerId, startDate, endDate)
     val pathwayStatus = pathwayAndStatusService.findAllPathwayStatusForPrisoner(prisonerEntity)
     val resettlementAssessmentsPathwayStatus = getPathwayStatus(prn, startDate, endDate)
-    val resettlementAssessments = getResettlementAssessments(prn, startDate, endDate)
+    val resettlementAssessments = resettlementAssessmentService.getAllResettlementAssessmentsByPrisonerIdAndCreationDate(prisonerId, startDate, endDate, resettlementAssessmentStrategies)
     val supportNeeds = supportNeedsService.getAllSupportNeedsForPrisoner(prisonerId, startDate, endDate)
     val supportNeedUpdates = supportNeedsService.getAllSupportNeedUpdatesForPrisoner(supportNeeds, startDate, endDate)
     val caseAllocation = caseAllocationService.getCaseAllocationHistoryByPrisonerId(prisonerId, startDate, endDate)
@@ -91,20 +90,8 @@ class SubjectAccessRequestService(
     )
   }
 
-  private fun getAssessment(prn: String, fromDate: LocalDate, toDate: LocalDate): AssessmentEntity? = runCatching {
-    assessmentService.getAssessmentByNomsIdAndCreationDate(prn, fromDate, toDate)
-  }.getOrNull()
-
-  private fun getBankAccount(prn: String, fromDate: LocalDate, toDate: LocalDate): BankApplicationResponse? = runCatching {
-    bankApplicationService.getBankApplicationByNomsIdAndCreationDate(prn, fromDate, toDate)
-  }.getOrNull()
-
   private fun getDeliusContact(prn: String, fromDate: LocalDate, toDate: LocalDate): List<PathwayCaseNote>? = runCatching {
     deliusContactService.getAllCaseNotesByNomsIdAndCreationDate(prn, fromDate, toDate)
-  }.getOrNull()
-
-  private fun getId(prn: String, fromDate: LocalDate, toDate: LocalDate): IdApplicationEntity? = runCatching {
-    idApplicationService.getIdApplicationByNomsIdAndCreationDate(prn, fromDate, toDate)
   }.getOrNull()
 
   private fun getPathwayStatus(
@@ -124,37 +111,21 @@ class SubjectAccessRequestService(
       )
     }.getOrNull()
   }
-
-  private fun getResettlementAssessments(
-    prn: String,
-    fromDate: LocalDate,
-    toDate: LocalDate,
-  ): List<LatestResettlementAssessmentResponse> = Pathway.entries.mapNotNull { pathway ->
-    runCatching {
-      resettlementAssessmentService.getLatestResettlementAssessmentByNomsIdAndPathwayAndCreationDate(
-        prn,
-        pathway,
-        resettlementAssessmentStrategies,
-        fromDate,
-        toDate,
-      )
-    }.getOrNull()
-  }
 }
 
 data class ResettlementSarContent(
   val prisoner: PrisonerEntity?,
-  val assessment: AssessmentEntity?,
+  val assessments: List<AssessmentEntity>,
   val skippedAssessments: List<AssessmentSkipEntity>?,
-  val bankApplication: BankApplicationResponse?,
+  val bankApplications: List<BankApplicationResponse>,
   val deliusContact: List<PathwayCaseNote>?,
-  val idApplication: IdApplicationEntity?,
+  val idApplications: List<IdApplicationEntity>,
   val pathwayStatus: List<PathwayStatusEntity>?,
   val statusSummary: List<ResettlementAssessmentPathwayStatus>?,
-  val resettlementAssessment: List<LatestResettlementAssessmentResponse>?,
+  val resettlementAssessments: List<ResettlementAssessmentResponse>,
   val supportNeeds: List<PrisonerSupportNeedEntity>?,
   val supportNeedUpdates: List<PrisonerSupportNeedUpdateEntity>?,
-  val caseAllocation: List<CaseAllocationEntity>?,
+  val caseAllocations: List<CaseAllocationEntity>?,
   val profileTags: List<ProfileTagsEntity>?,
   val todoItems: List<TodoEntity>?,
   val documents: Collection<DocumentsEntity>?,

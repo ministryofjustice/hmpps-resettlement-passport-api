@@ -55,7 +55,7 @@ class SubjectAccessRequestService(
 
     val assessmentData = assessmentService.getAssessmentByPrisonerIdAndCreationDate(prisonerId, startDate, endDate)
     val skippedAssessments = assessmentService.findSkippedAssessmentsForPrisoner(prisonerId, startDate, endDate)
-    val bankApplicationData = bankApplicationService.getBankApplicationByNomsIdAndCreationDate(prn, startDate, endDate)
+    val bankApplicationData = bankApplicationService.getBankApplicationsByPrisonerAndCreationDate(prisonerEntity, startDate, endDate)
     val deliusContactData = getDeliusContact(prn, startDate, endDate)
     val idApplicationData = idApplicationService.getIdApplicationByPrisonerIdAndCreationDate(prisonerId, startDate, endDate)
     val pathwayStatus = pathwayAndStatusService.findAllPathwayStatusForPrisoner(prisonerEntity)

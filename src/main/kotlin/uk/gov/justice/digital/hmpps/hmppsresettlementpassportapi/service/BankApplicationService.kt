@@ -43,20 +43,15 @@ class BankApplicationService(
   }
 
   @Transactional
-  fun getBankApplicationByNomsIdAndCreationDate(
-    nomsId: String,
+  fun getBankApplicationsByPrisonerAndCreationDate(
+    prisoner: PrisonerEntity,
     fromDate: LocalDate,
     toDate: LocalDate,
-  ): List<BankApplicationResponse> {
-    val prisoner = prisonerRepository.findByNomsId(nomsId)
-      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-
-    return bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(
-      prisoner.id(),
-      fromDate = fromDate.atStartOfDay(),
-      toDate = toDate.atTime(LocalTime.MAX),
-    ).map { getBankApplicationResponse(it, prisoner) }
-  }
+  ): List<BankApplicationResponse> = bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(
+    prisoner.id(),
+    fromDate = fromDate.atStartOfDay(),
+    toDate = toDate.atTime(LocalTime.MAX),
+  ).map { getBankApplicationResponse(it, prisoner) }
 
   private fun getBankApplicationResponse(
     bankApplication: BankApplicationEntity,

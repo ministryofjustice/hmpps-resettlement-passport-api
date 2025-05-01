@@ -158,37 +158,26 @@ class BankApplicationServiceTest {
   }
 
   @Nested
-  inner class GetBankApplicationByNomsIdAndCreationDate {
+  inner class GetBankApplicationsByPrisonerAndCreationDate {
 
     private val prisoner = PrisonerEntity(1, "acb", testDate, "xyz")
     private val toDate = LocalDate.of(2025, 4, 11)
     private val fromDate = toDate.minusDays(7)
 
     @Test
-    fun `throw an exception if the prisoner is not found`() {
-      Mockito.`when`(prisonerRepository.findByNomsId(any())).thenReturn(null)
-
-      assertThrows<ResourceNotFoundException> {
-        bankApplicationService.getBankApplicationByNomsIdAndCreationDate(prisoner.nomsId, fromDate, toDate)
-      }
-    }
-
-    @Test
     fun `should search between the start of the start date and the end of the end date`() {
-      Mockito.`when`(prisonerRepository.findByNomsId(any())).thenReturn(prisoner)
       Mockito.`when`(bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(emptyList())
 
-      bankApplicationService.getBankApplicationByNomsIdAndCreationDate(prisoner.nomsId, fromDate, toDate)
+      bankApplicationService.getBankApplicationsByPrisonerAndCreationDate(prisoner, fromDate, toDate)
 
       Mockito.verify(bankApplicationRepository).findByPrisonerIdAndCreationDateBetween(prisoner.id(), fromDate.atStartOfDay(), toDate.atTime(LocalTime.MAX))
     }
 
     @Test
     fun `should return an empty list if there are no db records found`() {
-      Mockito.`when`(prisonerRepository.findByNomsId(any())).thenReturn(prisoner)
       Mockito.`when`(bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(emptyList())
 
-      val response = bankApplicationService.getBankApplicationByNomsIdAndCreationDate(prisoner.nomsId, fromDate, toDate)
+      val response = bankApplicationService.getBankApplicationsByPrisonerAndCreationDate(prisoner, fromDate, toDate)
 
       Assertions.assertEquals(emptyList<BankApplicationResponse>(), response)
     }
@@ -197,11 +186,11 @@ class BankApplicationServiceTest {
     fun `should transform db records into a list of BankApplicationResponse`() {
       val bankApplicationEntity = BankApplicationEntity(1, prisoner.id(), setOf(BankApplicationStatusLogEntity(null, null, "Pending", fakeNow)), fakeNow, fakeNow, status = "Pending", isDeleted = false, bankName = "Lloyds")
       val logEntities = listOf(BankApplicationStatusLogEntity(1, bankApplicationEntity, "Pending", fakeNow))
-      Mockito.`when`(prisonerRepository.findByNomsId(any())).thenReturn(prisoner)
+
       Mockito.`when`(bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(listOf(bankApplicationEntity))
       Mockito.`when`(bankApplicationStatusLogRepository.findByBankApplication(any())).thenReturn(logEntities)
 
-      val actual = bankApplicationService.getBankApplicationByNomsIdAndCreationDate(prisoner.nomsId, fromDate, toDate)
+      val actual = bankApplicationService.getBankApplicationsByPrisonerAndCreationDate(prisoner, fromDate, toDate)
 
       val expected = listOf(
         BankApplicationResponse(

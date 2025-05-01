@@ -115,8 +115,6 @@ class CaseAllocationServiceTest {
     caseAllocationList.add(caseAllocationEntity)
     caseAllocationList.add(caseAllocationEntity2)
     Mockito.`when`(caseAllocationRepository.save(any())).thenReturn(caseAllocationEntity)
-    // Mockito.`when`(caseAllocationRepository.findByStaffIdAndIsDeleted(4321, false)).thenReturn(caseAllocationList)
-    // Mockito.`when`(caseAllocationService.getAllCaseAllocationByStaffId(4321)).thenReturn(caseAllocationList)
     val result = caseAllocationService.assignCase(caseAllocationPost, "auth")
     Mockito.verify(caseAllocationRepository).save(caseAllocationEntity)
     caseList.add(caseAllocationPostResponse)
@@ -166,8 +164,8 @@ class CaseAllocationServiceTest {
     Mockito.verify(telemetryClient).trackEvent(
       "PSFR_CaseUnallocation",
       mapOf(
-        "prisonId" to caseAllocation.prisonId,
-        "prisonerId" to expectedCaseAllocationEntity.prisonerId.toString(),
+        "prisonId" to prisonerEntity.prisonId,
+        "prisonerId" to prisonerEntity.nomsId,
         "unallocatedByUsername" to "USERNAME",
       ),
       null,

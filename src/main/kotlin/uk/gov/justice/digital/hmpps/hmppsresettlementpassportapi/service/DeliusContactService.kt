@@ -12,9 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Cont
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.DeliusContactEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.DeliusContactRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 @Service
 class DeliusContactService(private val deliusContactRepository: DeliusContactRepository, private val prisonerRepository: PrisonerRepository) {
@@ -51,19 +49,16 @@ class DeliusContactService(private val deliusContactRepository: DeliusContactRep
     return mapDeliusContactsToPathwayCaseNotes(deliusContacts)
   }
 
-  fun getAllCaseNotesByNomsIdAndCreationDate(
-    nomsId: String,
-    fromDate: LocalDate,
-    toDate: LocalDate,
+  fun getAllCaseNotesByPrisonerIdAndCreationDate(
+    prisonerId: Long,
+    fromDate: LocalDateTime,
+    toDate: LocalDateTime,
   ): List<PathwayCaseNote> {
-    val prisoner = prisonerRepository.findByNomsId(nomsId)
-      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val contactType = ContactType.CASE_NOTE
     val deliusContacts = deliusContactRepository.findByPrisonerIdAndContactTypeAndCreatedDateBetween(
-      prisoner.id(),
-      contactType,
-      fromDate.atStartOfDay(),
-      toDate.atTime(LocalTime.MAX),
+      prisonerId,
+      ContactType.CASE_NOTE,
+      fromDate,
+      toDate,
     )
     return mapDeliusContactsToPathwayCaseNotes(deliusContacts)
   }

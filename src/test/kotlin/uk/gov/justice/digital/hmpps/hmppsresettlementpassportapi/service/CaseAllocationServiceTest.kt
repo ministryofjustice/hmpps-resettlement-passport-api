@@ -12,7 +12,6 @@ import io.mockk.unmockkAll
 import io.mockk.unmockkStatic
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
@@ -32,9 +31,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ManageUsersApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 @ExtendWith(MockitoExtension::class)
 class CaseAllocationServiceTest {
@@ -276,42 +273,25 @@ class CaseAllocationServiceTest {
     Assertions.assertEquals(7, result.unassignedCount)
   }
 
-  @Nested
-  inner class GetCaseAllocationHistoryByPrisonerId {
-    private val toDate = LocalDate.of(2025, 4, 11)
-    private val fromDate = toDate.minusDays(7)
+  @Test
+  fun `test getCaseAllocationHistoryByPrisonerId should return data from repository`() {
+    val data = listOf(
+      CaseAllocationEntity(
+        prisonerId = 1,
+        staffId = 4321,
+        staffFirstname = "PSO Firstname",
+        staffLastname = "PSO Lastname",
+        creationDate = fakeNow,
+        isDeleted = false,
+        deletionDate = null,
+      ),
+    )
+    Mockito.`when`(caseAllocationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any()))
+      .thenReturn(data)
 
-    @Test
-    fun `should search between the start of fromDate and the end of toDate`() {
-      Mockito.`when`(caseAllocationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any()))
-        .thenReturn(null)
+    val result = caseAllocationService.getCaseAllocationHistoryByPrisonerId(1, LocalDateTime.now(), LocalDateTime.now())
 
-      caseAllocationService.getCaseAllocationHistoryByPrisonerId(1, fromDate, toDate)
-
-      Mockito.verify(caseAllocationRepository)
-        .findByPrisonerIdAndCreationDateBetween(1, fromDate.atStartOfDay(), toDate.atTime(LocalTime.MAX))
-    }
-
-    @Test
-    fun `should return data from repository`() {
-      val data = listOf(
-        CaseAllocationEntity(
-          prisonerId = 1,
-          staffId = 4321,
-          staffFirstname = "PSO Firstname",
-          staffLastname = "PSO Lastname",
-          creationDate = fakeNow,
-          isDeleted = false,
-          deletionDate = null,
-        ),
-      )
-      Mockito.`when`(caseAllocationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any()))
-        .thenReturn(data)
-
-      val result = caseAllocationService.getCaseAllocationHistoryByPrisonerId(1, fromDate, toDate)
-
-      Assertions.assertEquals(data, result)
-    }
+    Assertions.assertEquals(data, result)
   }
 
   private inline fun <reified T> readFileAsObject(filename: String): T = readStringAsObject(readFile(filename))

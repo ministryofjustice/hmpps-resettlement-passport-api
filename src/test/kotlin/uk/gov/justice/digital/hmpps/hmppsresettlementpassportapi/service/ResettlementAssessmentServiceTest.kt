@@ -1098,4 +1098,33 @@ class ResettlementAssessmentServiceTest {
 
     Assertions.assertEquals(data, result)
   }
+
+  @Test
+  fun `test getAllResettlementAssessmentsByPrisonerIdAndCreationDate should return from repository and map the response`() {
+    val entity = ResettlementAssessmentEntity(
+      id = 12,
+      prisonerId = 1,
+      pathway = Pathway.HEALTH,
+      statusChangedTo = Status.NOT_STARTED,
+      assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN,
+      assessment = ResettlementAssessmentQuestionAndAnswerList(emptyList()),
+      creationDate = LocalDateTime.parse("2023-09-09T12:00:03"),
+      createdBy = "User A",
+      assessmentStatus = ResettlementAssessmentStatus.SUBMITTED,
+      caseNoteText = null,
+      createdByUserId = "123",
+      version = 1,
+      submissionDate = LocalDateTime.parse("2023-09-09T12:00:04"),
+      userDeclaration = null,
+      deleted = false,
+      deletedDate = null,
+    )
+
+    Mockito.`when`(resettlementAssessmentRepository.findAllByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(listOf(entity))
+
+    val expected = listOf(resettlementAssessmentService.convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(entity, resettlementAssessmentStrategy))
+    val actual = resettlementAssessmentService.getAllResettlementAssessmentsByPrisonerIdAndCreationDate(1, fakeNow, fakeNow, resettlementAssessmentStrategy)
+
+    Assertions.assertEquals(expected, actual)
+  }
 }

@@ -17,7 +17,7 @@ class TodoRepositoryTest : RepositoryTestBase() {
   lateinit var todoRepository: TodoRepository
 
   @Test
-  fun `test findByPrisonerId query`() {
+  fun `test findAllByPrisonerIdAndCreationDateBetween query`() {
     // Seed database with prisoners and to do items
     val prisoner1 = prisonerRepository.save(PrisonerEntity(null, "NOMS1", LocalDateTime.parse("2023-12-13T12:00:00"), "MDI"))
     val prisoner2 = prisonerRepository.save(PrisonerEntity(null, "NOMS2", LocalDateTime.parse("2023-12-13T12:00:00"), "MDI"))

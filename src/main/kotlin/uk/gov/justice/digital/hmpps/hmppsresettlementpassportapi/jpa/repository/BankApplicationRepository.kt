@@ -10,12 +10,11 @@ import java.time.LocalDateTime
 interface BankApplicationRepository : JpaRepository<BankApplicationEntity, Long> {
   fun findByPrisonerIdAndIsDeleted(prisonerId: Long, isDeleted: Boolean = false): BankApplicationEntity?
 
-  fun findByPrisonerIdAndIsDeletedAndCreationDateBetween(
+  fun findByPrisonerIdAndCreationDateBetween(
     prisonerId: Long,
-    isDeleted: Boolean = false,
     fromDate: LocalDateTime,
     toDate: LocalDateTime,
-  ): BankApplicationEntity?
+  ): List<BankApplicationEntity>
 
   @Query(
     value = """

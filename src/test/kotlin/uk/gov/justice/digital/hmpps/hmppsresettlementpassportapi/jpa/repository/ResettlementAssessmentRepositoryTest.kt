@@ -216,6 +216,30 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
   }
 
   @Test
+  fun `test findAllByPrisonerIdAndCreationDateBetween returns correct data`() {
+    val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.parse("2022-12-20T10:13:03"), "xyz1")
+    prisonerRepository.save(prisoner)
+
+    val assessment1 = generateResettlementAssessmentEntity(prisoner, Pathway.ACCOMMODATION, ResettlementAssessmentStatus.SUBMITTED, LocalDateTime.now())
+    val assessment2 = generateResettlementAssessmentEntity(prisoner, Pathway.DRUGS_AND_ALCOHOL, ResettlementAssessmentStatus.SUBMITTED, LocalDateTime.now())
+    val assessment3 = generateResettlementAssessmentEntity(prisoner, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, ResettlementAssessmentStatus.SUBMITTED, LocalDateTime.now().minusDays(2))
+    val assessment4 = generateResettlementAssessmentEntity(prisoner, Pathway.FINANCE_AND_ID, ResettlementAssessmentStatus.SUBMITTED, LocalDateTime.now().plusDays(2))
+
+    resettlementAssessmentRepository.saveAll(listOf(assessment1, assessment2, assessment3, assessment4))
+
+    val result = resettlementAssessmentRepository.findAllByPrisonerIdAndCreationDateBetween(prisoner.id(), LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(1))
+
+    org.assertj.core.api.Assertions.assertThat(result).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(listOf(assessment1, assessment2))
+  }
+
+  @Test
+  fun `test findAllByPrisonerIdAndCreationDateBetween returns an empty list if no data found`() {
+    val result = resettlementAssessmentRepository.findAllByPrisonerIdAndCreationDateBetween(1, LocalDateTime.now(), LocalDateTime.now())
+
+    org.assertj.core.api.Assertions.assertThat(result).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(emptyList<ResettlementAssessmentEntity>())
+  }
+
+  @Test
   @Sql("classpath:testdata/sql/seed-resettlement-assessment-18.sql")
   fun `test findFirstByPrisonerIdAndAssessmentStatusAndDeletedIsFalseAndSubmissionDateIsNotNullOrderBySubmissionDateDesc`() {
     val expectedResettlementAssessment = ResettlementAssessmentEntity(id = 9, prisonerId = 1, pathway = Pathway.HEALTH, statusChangedTo = Status.NOT_STARTED, assessmentType = ResettlementAssessmentType.BCST2, assessment = ResettlementAssessmentQuestionAndAnswerList(assessment = listOf()), creationDate = LocalDateTime.parse("2023-01-09T19:02:45"), createdBy = "A User", assessmentStatus = ResettlementAssessmentStatus.SUBMITTED, caseNoteText = null, createdByUserId = "USER_1", version = 1, submissionDate = LocalDateTime.parse("2023-01-09T21:02:45"), userDeclaration = false, deleted = false, deletedDate = null)

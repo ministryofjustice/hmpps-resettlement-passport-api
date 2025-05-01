@@ -84,7 +84,7 @@ class CaseAllocationRepositoryTest : RepositoryTestBase() {
   }
 
   @Test
-  fun `test findByPrisonerId query`() {
+  fun `test findByPrisonerIdAndCreationDateBetween query`() {
     // Seed database with prisoners and case allocations
     val prisoner1 = prisonerRepository.save(PrisonerEntity(null, "NOMS1", LocalDateTime.parse("2023-12-13T12:00:00"), "MDI"))
     val prisoner2 = prisonerRepository.save(PrisonerEntity(null, "NOMS2", LocalDateTime.parse("2023-12-13T12:00:00"), "MDI"))

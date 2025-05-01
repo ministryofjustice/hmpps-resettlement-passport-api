@@ -66,7 +66,7 @@ class AssessmentSkipRepositoryTest : RepositoryTestBase() {
         createdDate.minusDays(2),
         createdDate.minusDays(1),
       )
-      Assertions.assertEquals(listOf<AssessmentSkipEntity>(), result)
+      Assertions.assertEquals(emptyList<AssessmentSkipEntity>(), result)
     }
 
     @Test
@@ -77,7 +77,7 @@ class AssessmentSkipRepositoryTest : RepositoryTestBase() {
         createdDate.minusDays(1),
         createdDate.plusDays(1),
       )
-      Assertions.assertEquals(listOf<AssessmentSkipEntity>(), result)
+      Assertions.assertEquals(emptyList<AssessmentSkipEntity>(), result)
     }
   }
 }

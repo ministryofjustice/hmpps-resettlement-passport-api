@@ -12,9 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentSkipRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.IdTypeRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 @Service
 class AssessmentService(
@@ -39,16 +37,7 @@ class AssessmentService(
   }
 
   @Transactional
-  fun getAssessmentByNomsIdAndCreationDate(nomsId: String, fromDate: LocalDate, toDate: LocalDate): AssessmentEntity? {
-    val prisoner = prisonerRepository.findByNomsId(nomsId)
-      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val assessment = assessmentRepository.findByPrisonerIdAndIsDeletedAndCreationDateBetween(
-      prisoner.id(),
-      fromDate = fromDate.atStartOfDay(),
-      toDate = toDate.atTime(LocalTime.MAX),
-    ) ?: throw ResourceNotFoundException("assessment not found")
-    return if (assessment.isDeleted) null else assessment
-  }
+  fun getAssessmentByPrisonerIdAndCreationDate(prisonerId: Long, fromDate: LocalDateTime, toDate: LocalDateTime): List<AssessmentEntity> = assessmentRepository.findByPrisonerIdAndCreationDateBetween(prisonerId, fromDate, toDate)
 
   @Transactional
   fun deleteAssessment(assessment: AssessmentEntity) {
@@ -99,5 +88,5 @@ class AssessmentService(
     deleteAssessment(assessment)
   }
 
-  fun findSkippedAssessmentsForPrisoner(prisonerId: Long, fromDate: LocalDate, toDate: LocalDate): List<AssessmentSkipEntity> = assessmentSkipRepository.findByPrisonerIdAndCreationDateBetween(prisonerId, fromDate.atStartOfDay(), toDate.atTime(LocalTime.MAX))
+  fun getSkippedAssessmentsForPrisoner(prisonerId: Long, fromDate: LocalDateTime, toDate: LocalDateTime): List<AssessmentSkipEntity> = assessmentSkipRepository.findByPrisonerIdAndCreationDateBetween(prisonerId, fromDate, toDate)
 }

@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Bank
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.BankApplicationStatusLogEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import java.time.LocalDateTime
+import kotlin.collections.emptyList
 
 class BankApplicationRepositoryTest : RepositoryTestBase() {
   @Autowired
@@ -58,7 +59,7 @@ class BankApplicationRepositoryTest : RepositoryTestBase() {
   }
 
   @Test
-  fun `test findByPrisonerIdAndCreationDateBetween`() {
+  fun `test findByPrisonerIdAndCreationDateBetween with results`() {
     val prisoner = prisonerRepository.save(PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "xyz1"))
 
     val logs1 = setOf(BankApplicationStatusLogEntity(null, null, statusChangedTo = "Application Started", changedAtDate = LocalDateTime.now()))
@@ -73,5 +74,12 @@ class BankApplicationRepositoryTest : RepositoryTestBase() {
     val assessmentFromDatabase = bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(prisoner.id(), LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(1))
 
     Assertions.assertThat(assessmentFromDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(listOf(application1, application2))
+  }
+
+  @Test
+  fun `test findByPrisonerIdAndCreationDateBetween without results`() {
+    val assessmentFromDatabase = bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(1, LocalDateTime.now(), LocalDateTime.now())
+
+    Assertions.assertThat(assessmentFromDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(emptyList<BankApplicationEntity>())
   }
 }

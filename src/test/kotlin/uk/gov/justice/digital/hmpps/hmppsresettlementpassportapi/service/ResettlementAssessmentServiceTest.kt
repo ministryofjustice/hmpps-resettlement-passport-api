@@ -7,7 +7,6 @@ import io.mockk.unmockkAll
 import org.apache.commons.lang3.RandomStringUtils
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
@@ -66,7 +65,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettl
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.processProfileTags
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -1101,45 +1099,32 @@ class ResettlementAssessmentServiceTest {
     Assertions.assertEquals(data, result)
   }
 
-  @Nested
-  inner class GetAllResettlementAssessmentsByPrisonerIdAndCreationDate {
-    private val toDate = LocalDate.of(2025, 4, 11)
-    private val fromDate = toDate.minusDays(7)
+  @Test
+  fun `test getAllResettlementAssessmentsByPrisonerIdAndCreationDate should return from repository and map the response`() {
+    val entity = ResettlementAssessmentEntity(
+      id = 12,
+      prisonerId = 1,
+      pathway = Pathway.HEALTH,
+      statusChangedTo = Status.NOT_STARTED,
+      assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN,
+      assessment = ResettlementAssessmentQuestionAndAnswerList(emptyList()),
+      creationDate = LocalDateTime.parse("2023-09-09T12:00:03"),
+      createdBy = "User A",
+      assessmentStatus = ResettlementAssessmentStatus.SUBMITTED,
+      caseNoteText = null,
+      createdByUserId = "123",
+      version = 1,
+      submissionDate = LocalDateTime.parse("2023-09-09T12:00:04"),
+      userDeclaration = null,
+      deleted = false,
+      deletedDate = null,
+    )
 
-    @Test
-    fun `should search between the start of fromDate and the end of toDate`() {
-      Mockito.`when`(resettlementAssessmentRepository.findAllByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(emptyList())
-      resettlementAssessmentService.getAllResettlementAssessmentsByPrisonerIdAndCreationDate(1, fromDate, toDate, resettlementAssessmentStrategy)
-      verify(resettlementAssessmentRepository).findAllByPrisonerIdAndCreationDateBetween(1, fromDate.atStartOfDay(), toDate.atTime(LocalTime.MAX))
-    }
+    Mockito.`when`(resettlementAssessmentRepository.findAllByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(listOf(entity))
 
-    @Test
-    fun `should return from repository`() {
-      val entity = ResettlementAssessmentEntity(
-        id = 12,
-        prisonerId = 1,
-        pathway = Pathway.HEALTH,
-        statusChangedTo = Status.NOT_STARTED,
-        assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN,
-        assessment = ResettlementAssessmentQuestionAndAnswerList(emptyList()),
-        creationDate = LocalDateTime.parse("2023-09-09T12:00:03"),
-        createdBy = "User A",
-        assessmentStatus = ResettlementAssessmentStatus.SUBMITTED,
-        caseNoteText = null,
-        createdByUserId = "123",
-        version = 1,
-        submissionDate = LocalDateTime.parse("2023-09-09T12:00:04"),
-        userDeclaration = null,
-        deleted = false,
-        deletedDate = null,
-      )
+    val expected = listOf(resettlementAssessmentService.convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(entity, resettlementAssessmentStrategy))
+    val actual = resettlementAssessmentService.getAllResettlementAssessmentsByPrisonerIdAndCreationDate(1, fakeNow, fakeNow, resettlementAssessmentStrategy)
 
-      Mockito.`when`(resettlementAssessmentRepository.findAllByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(listOf(entity))
-
-      val expected = listOf(resettlementAssessmentService.convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(entity, resettlementAssessmentStrategy))
-      val actual = resettlementAssessmentService.getAllResettlementAssessmentsByPrisonerIdAndCreationDate(1, fromDate, toDate, resettlementAssessmentStrategy)
-
-      Assertions.assertEquals(expected, actual)
-    }
+    Assertions.assertEquals(expected, actual)
   }
 }

@@ -129,7 +129,7 @@ class PrisonerSupportNeedUpdateRepositoryTest : RepositoryTestBase() {
         searchDate.minusHours(2),
         searchDate.minusHours(1),
       )
-      Assertions.assertEquals(listOf<PrisonerSupportNeedEntity>(), searchOutOfRange)
+      Assertions.assertEquals(emptyList<PrisonerSupportNeedUpdateEntity>(), searchOutOfRange)
     }
 
     @Test
@@ -140,7 +140,7 @@ class PrisonerSupportNeedUpdateRepositoryTest : RepositoryTestBase() {
         searchDate.minusHours(1),
         searchDate.plusHours(1),
       )
-      Assertions.assertEquals(listOf<PrisonerSupportNeedEntity>(), searchNoMatchForSupportNeedId)
+      Assertions.assertEquals(emptyList<PrisonerSupportNeedUpdateEntity>(), searchNoMatchForSupportNeedId)
     }
   }
 }

@@ -22,9 +22,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.VirusScanResult.NoVirusFound
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.VirusScanResult.VirusFound
 import java.io.InputStream
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.util.UUID
 
 private val logger = KotlinLogging.logger {}
@@ -156,11 +154,7 @@ class DocumentService(
     documentsRepository.findAllByNomsIdAndCategory(nomsId, category)
   }
 
-  fun listDocuments(prisonerId: Long, startDate: LocalDate, endDate: LocalDate): List<DocumentsEntity> {
-    val from = startDate.atStartOfDay()
-    val to = endDate.atTime(LocalTime.MAX)
-    return documentsRepository.findAllByPrisonerIdAndCreationDateBetween(prisonerId, from, to)
-  }
+  fun getDocuments(prisonerId: Long, startDate: LocalDateTime, endDate: LocalDateTime): List<DocumentsEntity> = documentsRepository.findAllByPrisonerIdAndCreationDateBetween(prisonerId, startDate, endDate)
 
   fun deleteUploadDocumentByNomisId(nomsId: String, category: DocumentCategory) {
     if (!DocumentCategory.entries.contains(category)) {

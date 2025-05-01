@@ -11,9 +11,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.IdAp
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.IdApplicationRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.IdTypeRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 @Service
 class IdApplicationService(
@@ -23,15 +21,7 @@ class IdApplicationService(
 ) {
 
   @Transactional
-  fun getIdApplicationByPrisonerIdAndCreationDate(
-    prisonerId: Long,
-    fromDate: LocalDate,
-    toDate: LocalDate,
-  ): List<IdApplicationEntity> = idApplicationRepository.findByPrisonerIdAndCreationDateBetween(
-    prisonerId,
-    fromDate = fromDate.atStartOfDay(),
-    toDate = toDate.atTime(LocalTime.MAX),
-  )
+  fun getIdApplicationByPrisonerIdAndCreationDate(prisonerId: Long, fromDate: LocalDateTime, toDate: LocalDateTime): List<IdApplicationEntity> = idApplicationRepository.findByPrisonerIdAndCreationDateBetween(prisonerId, fromDate = fromDate, toDate = toDate)
 
   @Transactional
   fun createIdApplication(idApplicationPost: IdApplicationPost, nomsId: String): IdApplicationEntity {

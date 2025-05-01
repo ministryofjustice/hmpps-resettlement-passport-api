@@ -25,9 +25,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.BankApplicationRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.BankApplicationStatusLogRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.util.*
 import kotlin.collections.emptyList
 
@@ -161,23 +159,12 @@ class BankApplicationServiceTest {
   inner class GetBankApplicationsByPrisonerAndCreationDate {
 
     private val prisoner = PrisonerEntity(1, "acb", testDate, "xyz")
-    private val toDate = LocalDate.of(2025, 4, 11)
-    private val fromDate = toDate.minusDays(7)
-
-    @Test
-    fun `should search between the start of the start date and the end of the end date`() {
-      Mockito.`when`(bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(emptyList())
-
-      bankApplicationService.getBankApplicationsByPrisonerAndCreationDate(prisoner, fromDate, toDate)
-
-      Mockito.verify(bankApplicationRepository).findByPrisonerIdAndCreationDateBetween(prisoner.id(), fromDate.atStartOfDay(), toDate.atTime(LocalTime.MAX))
-    }
 
     @Test
     fun `should return an empty list if there are no db records found`() {
       Mockito.`when`(bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(emptyList())
 
-      val response = bankApplicationService.getBankApplicationsByPrisonerAndCreationDate(prisoner, fromDate, toDate)
+      val response = bankApplicationService.getBankApplicationsByPrisonerAndCreationDate(prisoner, fakeNow, fakeNow)
 
       Assertions.assertEquals(emptyList<BankApplicationResponse>(), response)
     }
@@ -190,7 +177,7 @@ class BankApplicationServiceTest {
       Mockito.`when`(bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(listOf(bankApplicationEntity))
       Mockito.`when`(bankApplicationStatusLogRepository.findByBankApplication(any())).thenReturn(logEntities)
 
-      val actual = bankApplicationService.getBankApplicationsByPrisonerAndCreationDate(prisoner, fromDate, toDate)
+      val actual = bankApplicationService.getBankApplicationsByPrisonerAndCreationDate(prisoner, fakeNow, fakeNow)
 
       val expected = listOf(
         BankApplicationResponse(

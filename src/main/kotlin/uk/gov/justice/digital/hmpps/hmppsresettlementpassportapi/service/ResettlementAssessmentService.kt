@@ -37,9 +37,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.ResettlementAssessmentStrategy
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.processProfileTags
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 @Service
 class ResettlementAssessmentService(
@@ -72,18 +70,17 @@ class ResettlementAssessmentService(
   }
 
   @Transactional
-  fun getResettlementAssessmentSummaryByNomsIdAndCreationDate(
-    nomsId: String,
+  fun getResettlementAssessmentSummaryByPrisonerIdAndAssessmentTypeAndCreationDate(
+    prisonerId: Long,
     assessmentType: ResettlementAssessmentType,
-    fromDate: LocalDate,
-    toDate: LocalDate,
+    fromDate: LocalDateTime,
+    toDate: LocalDateTime,
   ): List<PrisonerResettlementAssessment> {
-    val prisonerEntity = getPrisonerEntityOrThrow(nomsId)
     val resettlementEntityList = resettlementAssessmentRepository.findLatestForEachPathwayAndCreationDateBetween(
-      prisonerEntity.id(),
+      prisonerId,
       assessmentType,
-      fromDate.atStartOfDay(),
-      toDate.atTime(LocalTime.MAX),
+      fromDate,
+      toDate,
     )
     return getAssessmentSummary(resettlementEntityList)
   }
@@ -423,11 +420,11 @@ class ResettlementAssessmentService(
 
   fun getAllResettlementAssessmentsByPrisonerIdAndCreationDate(
     prisonerId: Long,
-    fromDate: LocalDate,
-    toDate: LocalDate,
+    fromDate: LocalDateTime,
+    toDate: LocalDateTime,
     resettlementAssessmentStrategies: ResettlementAssessmentStrategy,
   ): List<ResettlementAssessmentResponse> = resettlementAssessmentRepository
-    .findAllByPrisonerIdAndCreationDateBetween(prisonerId, fromDate.atStartOfDay(), toDate.atTime(LocalTime.MAX))
+    .findAllByPrisonerIdAndCreationDateBetween(prisonerId, fromDate, toDate)
     .map { convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(it, resettlementAssessmentStrategies) }
 
   fun convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(

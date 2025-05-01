@@ -14,9 +14,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.BankApplicationRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.BankApplicationStatusLogRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 @Service
 class BankApplicationService(
@@ -45,12 +43,12 @@ class BankApplicationService(
   @Transactional
   fun getBankApplicationsByPrisonerAndCreationDate(
     prisoner: PrisonerEntity,
-    fromDate: LocalDate,
-    toDate: LocalDate,
+    fromDate: LocalDateTime,
+    toDate: LocalDateTime,
   ): List<BankApplicationResponse> = bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(
     prisoner.id(),
-    fromDate = fromDate.atStartOfDay(),
-    toDate = toDate.atTime(LocalTime.MAX),
+    fromDate,
+    toDate,
   ).map { getBankApplicationResponse(it, prisoner) }
 
   private fun getBankApplicationResponse(

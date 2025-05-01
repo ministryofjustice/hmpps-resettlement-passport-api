@@ -5,7 +5,6 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
@@ -23,9 +22,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentSkipRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.IdTypeRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.util.*
 
 @ExtendWith(MockitoExtension::class)
@@ -115,52 +112,22 @@ class AssessmentServiceTest {
     unmockkStatic(LocalDateTime::class)
   }
 
-  @Nested
-  inner class GetAssessmentByPrisonerIdAndCreationDate {
-    private val toDate = LocalDate.of(2025, 4, 11)
-    private val fromDate = toDate.minusDays(7)
+  @Test
+  fun `test GetAssessmentByPrisonerIdAndCreationDate should return from repository`() {
+    val assessments = listOf(AssessmentEntity(null, 1, LocalDateTime.now(), LocalDateTime.now(), isBankAccountRequired = true, isIdRequired = true, setOf(IdTypeEntity(1, "Birth certificate")), false, null))
 
-    @Test
-    fun `should search between the start of fromDate and the end of toDate`() {
-      Mockito.`when`(assessmentRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(null)
+    Mockito.`when`(assessmentRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(assessments)
 
-      assessmentService.getAssessmentByPrisonerIdAndCreationDate(1, fromDate, toDate)
-      Mockito.verify(assessmentRepository).findByPrisonerIdAndCreationDateBetween(1, fromDate.atStartOfDay(), toDate.atTime(LocalTime.MAX))
-    }
-
-    @Test
-    fun `should return from repository`() {
-      val idDocument = setOf(IdTypeEntity(1, "Birth certificate"))
-      val assessment = AssessmentEntity(null, 1, LocalDateTime.now(), LocalDateTime.now(), isBankAccountRequired = true, isIdRequired = true, idDocument, false, null)
-      val assessments = listOf(assessment)
-
-      Mockito.`when`(assessmentRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(assessments)
-
-      val response = assessmentService.getAssessmentByPrisonerIdAndCreationDate(1, fromDate, toDate)
-      Assertions.assertEquals(assessments, response)
-    }
+    val response = assessmentService.getAssessmentByPrisonerIdAndCreationDate(1, LocalDateTime.now(), LocalDateTime.now())
+    Assertions.assertEquals(assessments, response)
   }
 
-  @Nested
-  inner class FindSkippedAssessmentsForPrisoner {
-    private val toDate = LocalDate.of(2025, 4, 11)
-    private val fromDate = toDate.minusDays(7)
+  @Test
+  fun `test GetSkippedAssessmentsForPrisoner should return from repository`() {
+    val skipHistory = listOf(AssessmentSkipEntity(null, ResettlementAssessmentType.BCST2, 1, AssessmentSkipReason.TRANSFER, null, null, null))
+    Mockito.`when`(assessmentSkipRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(skipHistory)
 
-    @Test
-    fun `should search between the start of fromDate and the end of toDate`() {
-      Mockito.`when`(assessmentSkipRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(null)
-
-      assessmentService.findSkippedAssessmentsForPrisoner(1, fromDate, toDate)
-      Mockito.verify(assessmentSkipRepository).findByPrisonerIdAndCreationDateBetween(1, fromDate.atStartOfDay(), toDate.atTime(LocalTime.MAX))
-    }
-
-    @Test
-    fun `should return from repository`() {
-      val skipHistory = listOf(AssessmentSkipEntity(null, ResettlementAssessmentType.BCST2, 1, AssessmentSkipReason.TRANSFER, null, null, null))
-      Mockito.`when`(assessmentSkipRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(skipHistory)
-
-      val response = assessmentService.findSkippedAssessmentsForPrisoner(1, fromDate, toDate)
-      Assertions.assertEquals(skipHistory, response)
-    }
+    val response = assessmentService.getSkippedAssessmentsForPrisoner(1, LocalDateTime.now(), LocalDateTime.now())
+    Assertions.assertEquals(skipHistory, response)
   }
 }

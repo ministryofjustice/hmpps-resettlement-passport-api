@@ -14,9 +14,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.BankApplicationRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.BankApplicationStatusLogRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 @Service
 class BankApplicationService(
@@ -43,21 +41,15 @@ class BankApplicationService(
   }
 
   @Transactional
-  fun getBankApplicationByNomsIdAndCreationDate(
-    nomsId: String,
-    fromDate: LocalDate,
-    toDate: LocalDate,
-  ): BankApplicationResponse? {
-    val prisoner = prisonerRepository.findByNomsId(nomsId)
-      ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-    val bankApplication = bankApplicationRepository.findByPrisonerIdAndIsDeletedAndCreationDateBetween(
-      prisoner.id(),
-      fromDate = fromDate.atStartOfDay(),
-      toDate = toDate.atTime(LocalTime.MAX),
-    )
-      ?: throw ResourceNotFoundException(" no none deleted bank applications for prisoner: ${prisoner.nomsId} found in database")
-    return getBankApplicationResponse(bankApplication, prisoner)
-  }
+  fun getBankApplicationsByPrisonerAndCreationDate(
+    prisoner: PrisonerEntity,
+    fromDate: LocalDateTime,
+    toDate: LocalDateTime,
+  ): List<BankApplicationResponse> = bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(
+    prisoner.id(),
+    fromDate,
+    toDate,
+  ).map { getBankApplicationResponse(it, prisoner) }
 
   private fun getBankApplicationResponse(
     bankApplication: BankApplicationEntity,

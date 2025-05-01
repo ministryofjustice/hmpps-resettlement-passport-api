@@ -15,9 +15,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ManageUsersApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 @Service
 class CaseAllocationService(
@@ -60,15 +58,7 @@ class CaseAllocationService(
   @Transactional
   fun getCaseAllocationByPrisonerId(prisonerId: Long): CaseAllocationEntity? = caseAllocationRepository.findByPrisonerIdAndIsDeleted(prisonerId, false)
 
-  fun getCaseAllocationHistoryByPrisonerId(
-    prisonerId: Long,
-    startDate: LocalDate,
-    endDate: LocalDate,
-  ): List<CaseAllocationEntity> {
-    val from = startDate.atStartOfDay()
-    val to = endDate.atTime(LocalTime.MAX)
-    return caseAllocationRepository.findByPrisonerIdAndCreationDateBetween(prisonerId, from, to)
-  }
+  fun getCaseAllocationHistoryByPrisonerId(prisonerId: Long, startDate: LocalDateTime, endDate: LocalDateTime): List<CaseAllocationEntity> = caseAllocationRepository.findByPrisonerIdAndCreationDateBetween(prisonerId, startDate, endDate)
 
   @Transactional
   fun delete(caseAllocation: CaseAllocationEntity): CaseAllocationEntity {

@@ -40,6 +40,18 @@ class PrisonerRepositoryTest : RepositoryTestBase() {
   }
 
   @Test
+  fun `test findByNomsId returns an entity or null`() {
+    val prisoner1 = PrisonerEntity(null, "NOM0001", LocalDateTime.now(), "AA1")
+    val prisoner2 = PrisonerEntity(null, "NOM0002", LocalDateTime.now(), "AA2")
+
+    prisonerRepository.saveAll(listOf(prisoner1, prisoner2))
+
+    assertThat(prisonerRepository.findByNomsId(prisoner1.nomsId)).isEqualTo(prisoner1)
+    assertThat(prisonerRepository.findByNomsId(prisoner2.nomsId)).isEqualTo(prisoner2)
+    assertThat(prisonerRepository.findByNomsId("NOM0003")).isNull()
+  }
+
+  @Test
   fun `test persist new prisoner with legacy profile`() {
     val prisoner = PrisonerEntity(null, "NOM1234", LocalDateTime.parse("2025-02-18T12:00:01"), "xyz1", false)
     prisonerRepository.save(prisoner)

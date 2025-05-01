@@ -5,6 +5,7 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
@@ -16,6 +17,7 @@ import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.DuplicateDataFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplication
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplicationLog
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplicationResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.BankApplicationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.BankApplicationStatusLogEntity
@@ -25,6 +27,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import java.time.LocalDateTime
 import java.util.*
+import kotlin.collections.emptyList
 
 @ExtendWith(MockitoExtension::class)
 class BankApplicationServiceTest {
@@ -150,5 +153,53 @@ class BankApplicationServiceTest {
     assertThrows<DuplicateDataFoundException> { bankApplicationService.createBankApplication(bankApplication, prisonerEntity.nomsId, true) }
     Mockito.verify(bankApplicationRepository, Mockito.never()).save(Mockito.any())
     unmockkStatic(LocalDateTime::class)
+  }
+
+  @Nested
+  inner class GetBankApplicationsByPrisonerAndCreationDate {
+
+    private val prisoner = PrisonerEntity(1, "acb", testDate, "xyz")
+
+    @Test
+    fun `should return an empty list if there are no db records found`() {
+      Mockito.`when`(bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(emptyList())
+
+      val response = bankApplicationService.getBankApplicationsByPrisonerAndCreationDate(prisoner, fakeNow, fakeNow)
+
+      Assertions.assertEquals(emptyList<BankApplicationResponse>(), response)
+    }
+
+    @Test
+    fun `should transform db records into a list of BankApplicationResponse`() {
+      val bankApplicationEntity = BankApplicationEntity(1, prisoner.id(), setOf(BankApplicationStatusLogEntity(null, null, "Pending", fakeNow)), fakeNow, fakeNow, status = "Pending", isDeleted = false, bankName = "Lloyds")
+      val logEntities = listOf(BankApplicationStatusLogEntity(1, bankApplicationEntity, "Pending", fakeNow))
+
+      Mockito.`when`(bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(listOf(bankApplicationEntity))
+      Mockito.`when`(bankApplicationStatusLogRepository.findByBankApplication(any())).thenReturn(logEntities)
+
+      val actual = bankApplicationService.getBankApplicationsByPrisonerAndCreationDate(prisoner, fakeNow, fakeNow)
+
+      val expected = listOf(
+        BankApplicationResponse(
+          id = 1,
+          prisoner = prisoner,
+          logs = listOf(
+            BankApplicationLog(
+              id = 1,
+              status = "Pending",
+              changeDate = fakeNow,
+            ),
+          ),
+          applicationSubmittedDate = fakeNow,
+          currentStatus = "Pending",
+          bankResponseDate = null,
+          isAddedToPersonalItems = null,
+          addedToPersonalItemsDate = null,
+          bankName = "Lloyds",
+        ),
+      )
+
+      Assertions.assertEquals(expected, actual)
+    }
   }
 }

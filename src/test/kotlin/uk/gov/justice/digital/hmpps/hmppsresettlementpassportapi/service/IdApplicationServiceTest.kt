@@ -216,4 +216,21 @@ class IdApplicationServiceTest {
     val result = idApplicationService.getAllIdApplicationsByNomsId(prisonerEntity.nomsId)
     Assertions.assertEquals(idApplicationEntityList, result)
   }
+
+  @Test
+  fun `test getIdApplicationByPrisonerIdAndCreationDate should return from repository`() {
+    val idApplication = IdApplicationEntity(
+      prisonerId = 1,
+      idType = IdTypeEntity(1, "Birth Certificate"),
+      creationDate = fakeNow,
+      applicationSubmittedDate = fakeNow,
+      isPriorityApplication = false,
+      costOfApplication = BigDecimal(10.00),
+    )
+
+    Mockito.`when`(idApplicationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(listOf(idApplication))
+
+    val response = idApplicationService.getIdApplicationByPrisonerIdAndCreationDate(1, LocalDateTime.now(), LocalDateTime.now())
+    Assertions.assertEquals(listOf(idApplication), response)
+  }
 }

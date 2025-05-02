@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAlloca
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CasesCountResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.manageusersapi.ManageUser
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseAllocationRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ManageUsersApiService
@@ -49,7 +50,7 @@ class CaseAllocationService(
       val caseAllocationExists = getCaseAllocationByPrisonerId(prisoner.id())
         ?: throw ResourceNotFoundException("Unable to unassign, no officer assigned for prisoner with id $nomsId")
       val case = delete(caseAllocationExists)
-      trackUnallocationEvent(caseAllocation, case, staffUserName)
+      trackUnallocationEvent(prisoner, staffUserName)
       caseList.add(case)
     }
     return caseList
@@ -171,9 +172,8 @@ class CaseAllocationService(
       throw ResourceNotFoundException("PrisonId $prisonId not found")
     }
     val assignedList = caseAllocationRepository.findCaseCountByPrisonId(prisonId)
-    var unassignedCount = 0
     val assignedCount = caseAllocationRepository.findTotalCaseCountByPrisonId(prisonId)
-    unassignedCount = prisonerSearchList.size - assignedCount
+    val unassignedCount = prisonerSearchList.size - assignedCount
     val caseCountResponse = CasesCountResponse(unassignedCount, assignedList)
     return caseCountResponse
   }
@@ -187,15 +187,14 @@ class CaseAllocationService(
   fun getNumberOfAssignedPrisoners(prisonId: String) = caseAllocationRepository.findTotalCaseCountByPrisonId(prisonId)
 
   private fun trackUnallocationEvent(
-    caseAllocation: CaseAllocation,
-    case: CaseAllocationEntity,
+    prisonerEntity: PrisonerEntity,
     staffUserName: String,
   ) {
     telemetryClient.trackEvent(
       "PSFR_CaseUnallocation",
       mapOf(
-        "prisonId" to caseAllocation.prisonId,
-        "prisonerId" to case.prisonerId.toString(),
+        "prisonId" to prisonerEntity.prisonId,
+        "prisonerId" to prisonerEntity.nomsId,
         "unallocatedByUsername" to staffUserName,
       ),
       null,

@@ -10,6 +10,7 @@ import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 import io.mockk.unmockkStatic
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -18,6 +19,7 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.times
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocationCountResponseImp
@@ -60,7 +62,14 @@ class CaseAllocationServiceTest {
 
   @BeforeEach
   fun beforeEach() {
-    caseAllocationService = CaseAllocationService(prisonerRepository, caseAllocationRepository, manageUserApiService, prisonerSearchApiService, pathwayAndStatusService, telemetryClient)
+    caseAllocationService = CaseAllocationService(
+      prisonerRepository,
+      caseAllocationRepository,
+      manageUserApiService,
+      prisonerSearchApiService,
+      pathwayAndStatusService,
+      telemetryClient,
+    )
   }
 
   @Test
@@ -119,7 +128,16 @@ class CaseAllocationServiceTest {
     Mockito.verify(caseAllocationRepository).save(caseAllocationEntity)
     caseList.add(caseAllocationPostResponse)
     Assertions.assertEquals(caseList, result)
-    Mockito.verify(telemetryClient).trackEvent("PSFR_CaseAllocation", mapOf("prisonId" to "MDI", "prisonerId" to "123", "allocatedToStaffId" to "4321", "allocatedByUsername" to "USERNAME"), null)
+    Mockito.verify(telemetryClient).trackEvent(
+      "PSFR_CaseAllocation",
+      mapOf(
+        "prisonId" to "MDI",
+        "prisonerId" to "123",
+        "allocatedToStaffId" to "4321",
+        "allocatedByUsername" to "USERNAME",
+      ),
+      null,
+    )
     unmockkAll()
   }
 
@@ -156,7 +174,8 @@ class CaseAllocationServiceTest {
       nomsIds = arrayOf("123"),
     )
     Mockito.`when`(prisonerRepository.findByNomsId(prisonerEntity.nomsId)).thenReturn(prisonerEntity)
-    Mockito.`when`(caseAllocationRepository.findByPrisonerIdAndIsDeleted(prisonerEntity.id(), false)).thenReturn(caseAllocationEntity)
+    Mockito.`when`(caseAllocationRepository.findByPrisonerIdAndIsDeleted(prisonerEntity.id(), false))
+      .thenReturn(caseAllocationEntity)
     val result = caseAllocationService.unAssignCase(caseAllocation, "auth")
 
     Mockito.verify(caseAllocationRepository).save(expectedCaseAllocationEntity)
@@ -166,6 +185,65 @@ class CaseAllocationServiceTest {
       mapOf(
         "prisonId" to prisonerEntity.prisonId,
         "prisonerId" to prisonerEntity.nomsId,
+        "unallocatedByUsername" to "USERNAME",
+      ),
+      null,
+    )
+    unmockkStatic(LocalDateTime::class)
+  }
+
+  @Test
+  fun `test removeCaseAllocation - should ignore already unassigned prisoner while processing case unallocation request`() {
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+    mockkStatic(::getClaimFromJWTToken)
+    every { getClaimFromJWTToken("auth", "sub") } returns "USERNAME"
+
+    val expectedCaseList = emptyList<CaseAllocationEntity?>().toMutableList()
+    val prisonerEntity1 = PrisonerEntity(1, "123", testDate, "xyz")
+    val prisonerEntity2 = PrisonerEntity(2, "456", testDate, "xyz")
+
+    val caseAllocationEntity1 = CaseAllocationEntity(
+      prisonerId = prisonerEntity1.id(),
+      staffId = 4321,
+      staffFirstname = "PSO Firstname",
+      staffLastname = "PSO Lastname",
+      creationDate = fakeNow,
+      isDeleted = false,
+      deletionDate = null,
+    )
+
+    val expectedCaseAllocationEntity1 = CaseAllocationEntity(
+      prisonerId = prisonerEntity1.id(),
+      staffId = 4321,
+      staffFirstname = "PSO Firstname",
+      staffLastname = "PSO Lastname",
+      creationDate = fakeNow,
+      isDeleted = true,
+      deletionDate = fakeNow,
+    )
+    expectedCaseList.add(expectedCaseAllocationEntity1)
+
+    Mockito.`when`(prisonerRepository.findByNomsId(prisonerEntity1.nomsId)).thenReturn(prisonerEntity1)
+    Mockito.`when`(prisonerRepository.findByNomsId(prisonerEntity2.nomsId)).thenReturn(prisonerEntity2)
+
+    Mockito.`when`(caseAllocationRepository.findByPrisonerIdAndIsDeleted(prisonerEntity1.id(), false))
+      .thenReturn(caseAllocationEntity1)
+    whenever(caseAllocationRepository.findByPrisonerIdAndIsDeleted(prisonerEntity2.id(), false))
+      .thenReturn(null)
+
+    val caseAllocation = CaseAllocation(
+      nomsIds = arrayOf("123", "456"),
+    )
+    val result = caseAllocationService.unAssignCase(caseAllocation, "auth")
+
+    assertThat(expectedCaseList).isEqualTo(result)
+    Mockito.verify(caseAllocationRepository, times(1)).save(any<CaseAllocationEntity>())
+    Mockito.verify(telemetryClient).trackEvent(
+      "PSFR_CaseUnallocation",
+      mapOf(
+        "prisonId" to prisonerEntity1.prisonId,
+        "prisonerId" to prisonerEntity1.nomsId,
         "unallocatedByUsername" to "USERNAME",
       ),
       null,

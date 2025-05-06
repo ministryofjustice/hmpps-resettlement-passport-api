@@ -34,11 +34,8 @@ data class ProfileTagsEntity(
 
   @Column(name = "updated_date")
   var updatedDate: LocalDateTime? = null,
+)
 
-) {
-  val tags: ProfileTagList
-    get() = profileTags
-}
 data class ProfileTagList(
   var tags: List<String>,
 )

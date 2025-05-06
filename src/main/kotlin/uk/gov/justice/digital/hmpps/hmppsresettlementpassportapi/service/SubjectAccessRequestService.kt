@@ -110,7 +110,7 @@ data class ResettlementSarContent(
   val caseAllocations: List<CaseAllocationEntity>,
   val profileTags: List<ProfileTagsEntity>,
   val todoItems: List<TodoEntity>,
-  val documents: Collection<DocumentsEntity>,
+  val documents: List<DocumentsEntity>,
 )
 
 data class ResettlementAssessmentPathwayStatus(

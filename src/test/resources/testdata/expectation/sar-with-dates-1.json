@@ -599,22 +599,12 @@
             "NO_FIXED_ABODE"
           ]
         },
-        "tags": {
-          "tags": [
-            "NO_FIXED_ABODE"
-          ]
-        },
         "updatedDate": "2020-01-01T00:00:00"
       },
       {
         "id": 2,
         "prisonerId": 1,
         "profileTags": {
-          "tags": [
-            "HELP_TO_CONTACT_BANK"
-          ]
-        },
-        "tags": {
           "tags": [
             "HELP_TO_CONTACT_BANK"
           ]

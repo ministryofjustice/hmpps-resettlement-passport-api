@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import com.microsoft.applicationinsights.TelemetryClient
+import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.transaction.Transactional
 import jakarta.validation.ValidationException
 import org.springframework.stereotype.Service
@@ -17,6 +18,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ManageUsersApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import java.time.LocalDateTime
+
+private val logger = KotlinLogging.logger {}
 
 @Service
 class CaseAllocationService(
@@ -47,11 +50,12 @@ class CaseAllocationService(
     for (nomsId in caseAllocation.nomsIds) {
       val prisoner = prisonerRepository.findByNomsId(nomsId)
         ?: throw ResourceNotFoundException("Prisoner with id $nomsId not found in database")
-      val caseAllocationExists = getCaseAllocationByPrisonerId(prisoner.id())
-        ?: throw ResourceNotFoundException("Unable to unassign, no officer assigned for prisoner with id $nomsId")
-      val case = delete(caseAllocationExists)
-      trackUnallocationEvent(prisoner, staffUserName)
-      caseList.add(case)
+      getCaseAllocationByPrisonerId(prisoner.id())?.let { caseAllocationEntity ->
+        val case = delete(caseAllocationEntity)
+        trackUnallocationEvent(prisoner, staffUserName)
+        caseList.add(case)
+      }
+        ?: logger.info { "No officer assigned for prisoner with id $nomsId, ignoring this nomsId from case unallocation request." }
     }
     return caseList
   }
@@ -59,7 +63,11 @@ class CaseAllocationService(
   @Transactional
   fun getCaseAllocationByPrisonerId(prisonerId: Long): CaseAllocationEntity? = caseAllocationRepository.findByPrisonerIdAndIsDeleted(prisonerId, false)
 
-  fun getCaseAllocationHistoryByPrisonerId(prisonerId: Long, startDate: LocalDateTime, endDate: LocalDateTime): List<CaseAllocationEntity> = caseAllocationRepository.findByPrisonerIdAndCreationDateBetween(prisonerId, startDate, endDate)
+  fun getCaseAllocationHistoryByPrisonerId(
+    prisonerId: Long,
+    startDate: LocalDateTime,
+    endDate: LocalDateTime,
+  ): List<CaseAllocationEntity> = caseAllocationRepository.findByPrisonerIdAndCreationDateBetween(prisonerId, startDate, endDate)
 
   @Transactional
   fun delete(caseAllocation: CaseAllocationEntity): CaseAllocationEntity {

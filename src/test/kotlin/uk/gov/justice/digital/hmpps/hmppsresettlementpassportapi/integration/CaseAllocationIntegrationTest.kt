@@ -16,7 +16,7 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-1-prisoner.sql")
-  fun `Assign, UnAssign Case Allocation- happy path`() {
+  fun `Assign, UnAssign Case Allocation - happy path`() {
     mockkStatic(LocalDateTime::class)
     every { LocalDateTime.now() } returns fakeNow
     manageUsersApiMockServer.stubGetManageUsersData("MDI", 200)
@@ -54,6 +54,75 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
       .bodyValue(
         CaseAllocation(
           nomsIds = arrayOf("G4161UF"),
+          prisonId = "MDI",
+        ),
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput2)
+
+    webTestClient.get()
+      .uri("/resettlement-passport/workers/cases/$staffId")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+      .json("[]")
+
+    val auditQueueMessages = sqsClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(auditQueueUrl).maxNumberOfMessages(2).build()).get().messages()
+    assertThat(ObjectMapper().readValue(auditQueueMessages[0].body(), Map::class.java))
+      .usingRecursiveComparison()
+      .ignoringFields("when")
+      .isEqualTo(mapOf("correlationId" to null, "details" to null, "service" to "hmpps-resettlement-passport-api", "subjectId" to "G4161UF", "subjectType" to "PRISONER_ID", "what" to "CASE_ALLOCATION", "when" to "2025-01-06T13:48:20.391273Z", "who" to "RESETTLEMENTPASSPORT_ADM"))
+    assertThat(ObjectMapper().readValue(auditQueueMessages[1].body(), Map::class.java))
+      .usingRecursiveComparison()
+      .ignoringFields("when")
+      .isEqualTo(mapOf("correlationId" to null, "details" to null, "service" to "hmpps-resettlement-passport-api", "subjectId" to "G4161UF", "subjectType" to "PRISONER_ID", "what" to "CASE_UNALLOCATION", "when" to "2025-01-06T13:48:20.391273Z", "who" to "RESETTLEMENTPASSPORT_ADM"))
+  }
+
+  @Test
+  @Sql("classpath:testdata/sql/seed-2-prisoner.sql")
+  fun `Assign, UnAssign Case Allocation - where one prisoner is unallocated`() {
+    mockkStatic(LocalDateTime::class)
+    every { LocalDateTime.now() } returns fakeNow
+    manageUsersApiMockServer.stubGetManageUsersData("MDI", 200)
+
+    val expectedOutput1 = readFile("testdata/expectation/case-allocation-post-result.json")
+    val expectedOutput2 = readFile("testdata/expectation/case-allocation-patch-result.json")
+    val staffId = 485931
+
+    webTestClient.get()
+      .uri("/resettlement-passport/workers/cases/$staffId")
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+      .json("[]")
+
+    webTestClient.post()
+      .uri("/resettlement-passport/workers/cases")
+      .bodyValue(
+        CaseAllocation(
+          nomsIds = arrayOf("G4161UF"),
+          staffId = staffId,
+          prisonId = "MDI",
+        ),
+      )
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+      .exchange()
+      .expectStatus().isOk
+      .expectHeader().contentType("application/json")
+      .expectBody()
+      .json(expectedOutput1)
+
+    webTestClient.patch()
+      .uri("/resettlement-passport/workers/cases")
+      .bodyValue(
+        CaseAllocation(
+          nomsIds = arrayOf("G4161UF", "G1458GV"),
           prisonId = "MDI",
         ),
       )
@@ -158,10 +227,10 @@ class CaseAllocationIntegrationTest : IntegrationTestBase() {
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
-      .expectStatus().isNotFound
+      .expectStatus().isOk
       .expectHeader().contentType("application/json")
       .expectBody()
-      .jsonPath("status").isEqualTo(404)
+      .json("[]")
   }
 
   @Test

@@ -34,6 +34,9 @@ generic-prometheus-alerts:
   alertSeverity: hmpps-resettlement-passport-non-prod
   businessHoursOnly: true
 
+custom-prometheus-alerts:
+  businessHoursOnly: true
+
 clamav:
   replicaCount: 1
 

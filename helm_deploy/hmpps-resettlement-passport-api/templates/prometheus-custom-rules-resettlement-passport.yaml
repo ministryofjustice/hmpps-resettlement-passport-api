@@ -1,4 +1,7 @@
 {{- $targetNamespace := .Release.Namespace }}
+{{- $targetApplicationBusinessHours := printf "and ON() %s:business_hours" (index .Values "generic-prometheus-alerts" "targetApplication") | replace "-" "_" }}
+{{- $businessOrAllHoursExpression := ternary $targetApplicationBusinessHours "" (index .Values "custom-prometheus-alerts" "businessHoursOnly")}}
+
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -11,7 +14,9 @@ spec:
     - name: resettlement-passport-application-rules
       rules:
         - alert: DatabaseConnectionFailure
-          expr: rate(spring_data_repository_invocations_seconds_count{exception="JDBCConnectionException", namespace="{{ $targetNamespace }}"}[1h]) > 0
+          expr: |-
+            rate(spring_data_repository_invocations_seconds_count{exception="JDBCConnectionException", namespace="{{ $targetNamespace }}"}[1h]) > 0
+            {{ $businessOrAllHoursExpression }}
           for: 5m
           labels:
             severity: {{ index .Values "generic-prometheus-alerts" "alertSeverity" }}

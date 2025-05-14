@@ -32,3 +32,6 @@ generic-service:
 generic-prometheus-alerts:
   alertSeverity: hmpps-resettlement-passport-prod
 
+custom-prometheus-alerts:
+  businessHoursOnly: false
+

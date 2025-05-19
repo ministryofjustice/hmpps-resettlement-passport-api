@@ -104,11 +104,7 @@ VALUES (25, 1, 'BCST2', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-<<<<<<< Updated upstream
-}', '2023-05-22 12:40:13.933994', 'Matthew Kerry', 'sadas', 'MKERRY_GEN', 'ACCOMMODATION', 'SUBMITTED',
-=======
-}', '2024-05-22 12:40:13.933994', 'Test User', 'sadas', 'TEST_GEN', 'ACCOMMODATION', 'SUBMITTED',
->>>>>>> Stashed changes
+}', '2023-05-22 12:40:13.933994', 'Test User', 'sadas', 'TEST_GEN', 'ACCOMMODATION', 'SUBMITTED',
         'SUPPORT_DECLINED', '2024-05-22 15:47:30.577230');
 INSERT INTO resettlement_assessment (id, prisoner_id, assessment_type, assessment, created_date, created_by,
                                      case_note_text, created_by_user_id, pathway, assessment_status,

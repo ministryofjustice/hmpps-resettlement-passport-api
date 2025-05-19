@@ -11,7 +11,7 @@
           "appointment_duration_in_minutes": "60",
           "superseded_indicator": false,
           "appointment_delivery_first_address_line": "11",
-          "appointment_delivery_second_address_line": "Downing Street",
+          "appointment_delivery_second_address_line": "Main Street",
           "appointment_delivery_town_city": "Gwent",
           "appointment_delivery_county": "The Forward Trust",
           "appointment_delivery_postcode": "S1 2NP"

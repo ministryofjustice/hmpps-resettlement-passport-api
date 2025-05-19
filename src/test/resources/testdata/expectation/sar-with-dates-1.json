@@ -11,7 +11,7 @@
     "skippedAssessments":  [
       {
         "assessmentType": "BCST2",
-        "createdBy": "MKERRY_GEN",
+        "createdBy": "TEST_GEN",
         "creationDate": "2023-09-01T12:00:00",
         "id": 3,
         "moreInfo": "Skipped for other reason",
@@ -152,6 +152,7 @@
     ],
     "resettlementAssessments": [
       {
+<<<<<<< Updated upstream
         "assessmentType": "BCST2",
         "lastUpdated": "2024-05-22T15:45:51.383575",
         "questionsAndAnswers": [
@@ -538,11 +539,418 @@
           }
         ],
         "updatedBy": "Matthew Kerry"
+=======
+        "originalAssessment": {
+          "assessmentType": "BCST2",
+          "lastUpdated": "2024-05-22T12:40:13.933994",
+          "updatedBy": "Test User",
+          "questionsAndAnswers": [
+            {
+              "questionTitle": "Where did the person in prison live before custody?",
+              "answer": "Social housing",
+              "originalPageId": "WHERE_DID_THEY_LIVE"
+            },
+            {
+              "questionTitle": "Enter the address",
+              "answer": "A Road\nSome Town\nYorkshire\nAB13 C45",
+              "originalPageId": "WHERE_DID_THEY_LIVE_ADDRESS"
+            },
+            {
+              "questionTitle": "Does the person in prison or their family need help to keep their home while they are in prison?",
+              "answer": "No answer provided",
+              "originalPageId": "HELP_TO_KEEP_HOME"
+            },
+            {
+              "questionTitle": "Where will the person in prison live when they are released?",
+              "answer": "No answer provided",
+              "originalPageId": "WHERE_WILL_THEY_LIVE_1"
+            }
+          ]
+        },
+        "latestAssessment": {
+          "assessmentType": "RESETTLEMENT_PLAN",
+          "lastUpdated": "2024-05-22T16:02:41.310279",
+          "updatedBy": "Test User",
+          "questionsAndAnswers": [
+            {
+              "questionTitle": "Where did the person in prison live before custody?",
+              "answer": "Social housing",
+              "originalPageId": "WHERE_DID_THEY_LIVE"
+            },
+            {
+              "questionTitle": "Enter the address",
+              "answer": "A Road\nSome Town\nYorkshire\nAB13 C45",
+              "originalPageId": "WHERE_DID_THEY_LIVE_ADDRESS"
+            },
+            {
+              "questionTitle": "Does the person in prison or their family need help to keep their home while they are in prison?",
+              "answer": "No answer provided",
+              "originalPageId": "HELP_TO_KEEP_HOME"
+            },
+            {
+              "questionTitle": "Where will the person in prison live when they are released?",
+              "answer": "No answer provided",
+              "originalPageId": "WHERE_WILL_THEY_LIVE_1"
+            }
+          ]
+        }
+      },
+      {
+        "originalAssessment": {
+          "assessmentType": "BCST2",
+          "lastUpdated": "2024-05-22T15:45:51.383575",
+          "updatedBy": "Test User",
+          "questionsAndAnswers": [
+            {
+              "questionTitle": "Does the person in prison want support managing their emotions?",
+              "answer": "No",
+              "originalPageId": "HELP_TO_MANAGE_ANGER"
+            },
+            {
+              "questionTitle": "Does the person in prison want support with gambling issues?",
+              "answer": "No",
+              "originalPageId": "ISSUES_WITH_GAMBLING"
+            }
+          ]
+        },
+        "latestAssessment": {
+          "assessmentType": "RESETTLEMENT_PLAN",
+          "lastUpdated": "2024-05-22T16:05:17.294788",
+          "updatedBy": "Test User",
+          "questionsAndAnswers": [
+            {
+              "questionTitle": "Does the person in prison want support managing their emotions?",
+              "answer": "No",
+              "originalPageId": "HELP_TO_MANAGE_ANGER"
+            },
+            {
+              "questionTitle": "Does the person in prison want support with gambling issues?",
+              "answer": "No",
+              "originalPageId": "ISSUES_WITH_GAMBLING"
+            }
+          ]
+        }
+      },
+      {
+        "originalAssessment": {
+          "assessmentType": "BCST2",
+          "lastUpdated": "2024-05-22T15:46:17.002205",
+          "updatedBy": "Test User",
+          "questionsAndAnswers": [
+            {
+              "questionTitle": "Does the person in prison have a partner or spouse?",
+              "answer": "No answer provided",
+              "originalPageId": "PARTNER_OR_SPOUSE"
+            },
+            {
+              "questionTitle": "Is the person in prison the primary carer for any children?",
+              "answer": "No",
+              "originalPageId": "PRIMARY_CARER_FOR_CHILDREN"
+            },
+            {
+              "questionTitle": "Does the person in prison have caring responsibilities for any adults?",
+              "answer": "No answer provided",
+              "originalPageId": "CARING_FOR_ADULT"
+            },
+            {
+              "questionTitle": "Has the person in prison themselves ever received support from social services?",
+              "answer": "No answer provided",
+              "originalPageId": "SUPPORT_FROM_SOCIAL_SERVICES"
+            },
+            {
+              "questionTitle": "Will the person in prison have support from family, friends or their community outside of prison?",
+              "answer": "No answer provided",
+              "originalPageId": "FRIEND_FAMILY_COMMUNITY_SUPPORT"
+            },
+            {
+              "questionTitle": "Has the person in prison had any involvement in gang activity?",
+              "answer": "No answer provided",
+              "originalPageId": "INVOLVEMENT_IN_GANG_ACTIVITY"
+            },
+            {
+              "questionTitle": "Is the person in prison under threat outside of prison?",
+              "answer": "No answer provided",
+              "originalPageId": "UNDER_THREAT_OUTSIDE"
+            },
+            {
+              "questionTitle": "Does the person in prison need support from community organisations outside of prison?",
+              "answer": "No answer provided",
+              "originalPageId": "COMMUNITY_ORGANISATION_SUPPORT"
+            }
+          ]
+        },
+        "latestAssessment": {
+          "assessmentType": "RESETTLEMENT_PLAN",
+          "lastUpdated": "2024-05-22T16:05:40.499062",
+          "updatedBy": "Test User",
+          "questionsAndAnswers": [
+            {
+              "questionTitle": "Does the person in prison have a partner or spouse?",
+              "answer": "No answer provided",
+              "originalPageId": "PARTNER_OR_SPOUSE"
+            },
+            {
+              "questionTitle": "Is the person in prison the primary carer for any children?",
+              "answer": "No",
+              "originalPageId": "PRIMARY_CARER_FOR_CHILDREN"
+            },
+            {
+              "questionTitle": "Does the person in prison have caring responsibilities for any adults?",
+              "answer": "No answer provided",
+              "originalPageId": "CARING_FOR_ADULT"
+            },
+            {
+              "questionTitle": "Has the person in prison themselves ever received support from social services?",
+              "answer": "No answer provided",
+              "originalPageId": "SUPPORT_FROM_SOCIAL_SERVICES"
+            },
+            {
+              "questionTitle": "Will the person in prison have support from family, friends or their community outside of prison?",
+              "answer": "No answer provided",
+              "originalPageId": "FRIEND_FAMILY_COMMUNITY_SUPPORT"
+            },
+            {
+              "questionTitle": "Has the person in prison had any involvement in gang activity?",
+              "answer": "No answer provided",
+              "originalPageId": "INVOLVEMENT_IN_GANG_ACTIVITY"
+            },
+            {
+              "questionTitle": "Is the person in prison under threat outside of prison?",
+              "answer": "No answer provided",
+              "originalPageId": "UNDER_THREAT_OUTSIDE"
+            },
+            {
+              "questionTitle": "Does the person in prison need support from community organisations outside of prison?",
+              "answer": "No answer provided",
+              "originalPageId": "COMMUNITY_ORGANISATION_SUPPORT"
+            }
+          ]
+        }
+      },
+      {
+        "originalAssessment": {
+          "assessmentType": "BCST2",
+          "lastUpdated": "2024-05-22T15:46:31.837468",
+          "updatedBy": "Test User",
+          "questionsAndAnswers": [
+            {
+              "questionTitle": "Does the person in prison have any previous or current drug misuse issues?",
+              "answer": "No",
+              "originalPageId": "DRUG_ISSUES"
+            },
+            {
+              "questionTitle": "Does the person in prison have any previous or current alcohol misuse issues?",
+              "answer": "No",
+              "originalPageId": "ALCOHOL_ISSUES"
+            }
+          ]
+        },
+        "latestAssessment": {
+          "assessmentType": "RESETTLEMENT_PLAN",
+          "lastUpdated": "2024-05-22T16:05:57.32981",
+          "updatedBy": "Test User",
+          "questionsAndAnswers": [
+            {
+              "questionTitle": "Does the person in prison have any previous or current drug misuse issues?",
+              "answer": "Yes",
+              "originalPageId": "DRUG_ISSUES"
+            },
+            {
+              "questionTitle": "Does the person in prison want support with drug issues from the drug and alcohol team to help them prepare for release?",
+              "answer": "No",
+              "originalPageId": "SUPPORT_WITH_DRUG_ISSUES"
+            },
+            {
+              "questionTitle": "Does the person in prison have any previous or current alcohol misuse issues?",
+              "answer": "No",
+              "originalPageId": "ALCOHOL_ISSUES"
+            }
+          ]
+        }
+      },
+      {
+        "originalAssessment": {
+          "assessmentType": "BCST2",
+          "lastUpdated": "2024-05-22T15:46:50.480459",
+          "updatedBy": "Test User",
+          "questionsAndAnswers": [
+            {
+              "questionTitle": "Did the person in prison have a job before custody?",
+              "answer": "No answer provided",
+              "originalPageId": "JOB_BEFORE_CUSTODY"
+            },
+            {
+              "questionTitle": "Does the person in prison have a job when they are released?",
+              "answer": "No",
+              "originalPageId": "HAVE_A_JOB_AFTER_RELEASE"
+            },
+            {
+              "questionTitle": "Does the person in prison want support to find a job when they are released?",
+              "answer": "No answer provided",
+              "originalPageId": "SUPPORT_TO_FIND_JOB"
+            },
+            {
+              "questionTitle": "Was the person in prison in education or training before custody?",
+              "answer": "No answer provided",
+              "originalPageId": "IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY"
+            },
+            {
+              "questionTitle": "Does the person in prison want to start education or training after release?",
+              "answer": "No",
+              "originalPageId": "WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE"
+            }
+          ]
+        },
+        "latestAssessment": {
+          "assessmentType": "RESETTLEMENT_PLAN",
+          "lastUpdated": "2024-05-22T16:06:14.28783",
+          "updatedBy": "Test User",
+          "questionsAndAnswers": [
+            {
+              "questionTitle": "Did the person in prison have a job before custody?",
+              "answer": "No answer provided",
+              "originalPageId": "JOB_BEFORE_CUSTODY"
+            },
+            {
+              "questionTitle": "Does the person in prison have a job when they are released?",
+              "answer": "No",
+              "originalPageId": "HAVE_A_JOB_AFTER_RELEASE"
+            },
+            {
+              "questionTitle": "Does the person in prison want support to find a job when they are released?",
+              "answer": "No answer provided",
+              "originalPageId": "SUPPORT_TO_FIND_JOB"
+            },
+            {
+              "questionTitle": "Was the person in prison in education or training before custody?",
+              "answer": "No answer provided",
+              "originalPageId": "IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY"
+            },
+            {
+              "questionTitle": "Does the person in prison want to start education or training after release?",
+              "answer": "No",
+              "originalPageId": "WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE"
+            }
+          ]
+        }
+      },
+      {
+        "originalAssessment": {
+          "assessmentType": "BCST2",
+          "lastUpdated": "2024-05-22T15:47:14.182755",
+          "updatedBy": "Test User",
+          "questionsAndAnswers": [
+            {
+              "questionTitle": "Does the person in prison have a bank account?",
+              "answer": "No answer provided",
+              "originalPageId": "HAS_BANK_ACCOUNT"
+            },
+            {
+              "questionTitle": "Does the person in prison want help to apply for a bank account?",
+              "answer": "No",
+              "originalPageId": "HELP_WITH_BANK_ACCOUNT"
+            },
+            {
+              "questionTitle": "What ID documents does the person in prison have?",
+              "answer": "Birth or adoption certificate\nPassport",
+              "originalPageId": "WHAT_ID_DOCUMENTS"
+            },
+            {
+              "questionTitle": "Does the person leaving prison want help to apply for ID?",
+              "answer": "No answer provided",
+              "originalPageId": "HELP_APPLY_FOR_ID"
+            },
+            {
+              "questionTitle": "Was the person in prison receiving benefits before custody?",
+              "answer": "No answer provided",
+              "originalPageId": "RECEIVING_BENEFITS"
+            },
+            {
+              "questionTitle": "Does the person in prison have any debts or arrears?",
+              "answer": "No answer provided",
+              "originalPageId": "DEBTS_OR_ARREARS"
+            }
+          ]
+        },
+        "latestAssessment": {
+          "assessmentType": "RESETTLEMENT_PLAN",
+          "lastUpdated": "2024-05-22T16:06:32.454374",
+          "updatedBy": "Test User",
+          "questionsAndAnswers": [
+            {
+              "questionTitle": "Does the person in prison have a bank account?",
+              "answer": "No answer provided",
+              "originalPageId": "HAS_BANK_ACCOUNT"
+            },
+            {
+              "questionTitle": "Does the person in prison want help to apply for a bank account?",
+              "answer": "No",
+              "originalPageId": "HELP_WITH_BANK_ACCOUNT"
+            },
+            {
+              "questionTitle": "What ID documents does the person in prison have?",
+              "answer": "Birth or adoption certificate\nPassport",
+              "originalPageId": "WHAT_ID_DOCUMENTS"
+            },
+            {
+              "questionTitle": "Does the person leaving prison want help to apply for ID?",
+              "answer": "No answer provided",
+              "originalPageId": "HELP_APPLY_FOR_ID"
+            },
+            {
+              "questionTitle": "Was the person in prison receiving benefits before custody?",
+              "answer": "No answer provided",
+              "originalPageId": "RECEIVING_BENEFITS"
+            },
+            {
+              "questionTitle": "Does the person in prison have any debts or arrears?",
+              "answer": "No answer provided",
+              "originalPageId": "DEBTS_OR_ARREARS"
+            }
+          ]
+        }
+      },
+      {
+        "originalAssessment": {
+          "assessmentType": "BCST2",
+          "lastUpdated": "2024-05-22T15:47:28.145149",
+          "updatedBy": "Test User",
+          "questionsAndAnswers": [
+            {
+              "questionTitle": "Is the person in prison registered with a GP surgery outside of prison?",
+              "answer": "Yes",
+              "originalPageId": "REGISTERED_WITH_GP"
+            },
+            {
+              "questionTitle": "Does the person in prison want to meet with a prison healthcare team?",
+              "answer": "No",
+              "originalPageId": "MEET_HEALTHCARE_TEAM"
+            }
+          ]
+        },
+        "latestAssessment": {
+          "assessmentType": "RESETTLEMENT_PLAN",
+          "lastUpdated": "2024-05-22T16:06:48.238178",
+          "updatedBy": "Test User",
+          "questionsAndAnswers": [
+            {
+              "questionTitle": "Is the person in prison registered with a GP surgery outside of prison?",
+              "answer": "Yes",
+              "originalPageId": "REGISTERED_WITH_GP"
+            },
+            {
+              "questionTitle": "Does the person in prison want to meet with a prison healthcare team?",
+              "answer": "No",
+              "originalPageId": "MEET_HEALTHCARE_TEAM"
+            }
+          ]
+        }
+>>>>>>> Stashed changes
       }
     ],
     "supportNeeds": [
       {
-        "createdBy": "Matthew Kerry",
+        "createdBy": "Test User",
         "createdDate": "2023-09-01T12:00:00",
         "deleted": false,
         "deletedDate": null,
@@ -566,7 +974,7 @@
     ],
     "supportNeedUpdates": [
       {
-        "createdBy": "Matthew Kerry",
+        "createdBy": "Test User",
         "createdDate": "2023-09-01T14:00:00",
         "deleted": false,
         "deletedDate": null,

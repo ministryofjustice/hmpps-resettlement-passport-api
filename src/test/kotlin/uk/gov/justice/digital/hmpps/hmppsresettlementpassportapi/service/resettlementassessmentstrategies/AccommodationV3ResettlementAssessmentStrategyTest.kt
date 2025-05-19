@@ -199,7 +199,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
     val existingAssessment = ResettlementAssessmentQuestionAndAnswerList(
       listOf(
         ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE", StringAnswer("SOCIAL_HOUSING")),
-        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS_SOCIAL_HOUSING", MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS_SOCIAL_HOUSING", MapAnswer(listOf(mapOf("addressLine1" to "123 main street", "city" to "Leeds", "postcode" to "LS1 123")))),
         ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDITIONAL_DETAILS", StringAnswer("Some additional details")),
         ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_WILL_THEY_LIVE", StringAnswer("NO_ANSWER")),
         ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_WILL_THEY_LIVE_ADDITIONAL_DETAILS", StringAnswer("Some more additional details")),
@@ -232,7 +232,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
     val expectedPage = getExpectedV3AccommodationReportPage(
       mapOf(
         "WHERE_DID_THEY_LIVE" to StringAnswer("SOCIAL_HOUSING"),
-        "WHERE_DID_THEY_LIVE_ADDRESS_SOCIAL_HOUSING" to MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123"))),
+        "WHERE_DID_THEY_LIVE_ADDRESS_SOCIAL_HOUSING" to MapAnswer(listOf(mapOf("addressLine1" to "123 main street", "city" to "Leeds", "postcode" to "LS1 123"))),
         "WHERE_DID_THEY_LIVE_ADDITIONAL_DETAILS" to StringAnswer("Some additional details"),
         "WHERE_WILL_THEY_LIVE" to StringAnswer("NO_ANSWER"),
         "WHERE_WILL_THEY_LIVE_ADDITIONAL_DETAILS" to StringAnswer("Some more additional details"),
@@ -255,7 +255,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
     val existingAssessment = ResettlementAssessmentQuestionAndAnswerList(
       listOf(
         ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE", StringAnswer("SOCIAL_HOUSING")),
-        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", MapAnswer(listOf(mapOf("addressLine1" to "123 main street", "city" to "Leeds", "postcode" to "LS1 123")))),
         ResettlementAssessmentSimpleQuestionAndAnswer("SUPPORT_NEEDS", StringAnswer("SUPPORT_NOT_REQUIRED")),
       ),
     )

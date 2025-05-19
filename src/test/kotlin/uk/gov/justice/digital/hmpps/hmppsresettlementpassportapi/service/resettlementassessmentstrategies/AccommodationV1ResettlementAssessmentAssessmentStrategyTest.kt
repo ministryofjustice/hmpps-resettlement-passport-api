@@ -447,7 +447,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
     val existingAssessment = ResettlementAssessmentQuestionAndAnswerList(
       listOf(
         ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE", StringAnswer("SOCIAL_HOUSING")),
-        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", MapAnswer(listOf(mapOf("addressLine1" to "123 main street", "city" to "Leeds", "postcode" to "LS1 123")))),
       ),
     )
 
@@ -492,7 +492,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
     val existingAssessment = ResettlementAssessmentQuestionAndAnswerList(
       listOf(
         ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE", StringAnswer("SOCIAL_HOUSING")),
-        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", MapAnswer(listOf(mapOf("addressLine1" to "123 main street", "city" to "Leeds", "postcode" to "LS1 123")))),
       ),
     )
 
@@ -526,7 +526,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
             type = TypeOfQuestion.ADDRESS,
             options = null,
           ),
-          answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123"))),
+          answer = MapAnswer(listOf(mapOf("addressLine1" to "123 main street", "city" to "Leeds", "postcode" to "LS1 123"))),
           originalPageId = "WHERE_DID_THEY_LIVE_ADDRESS",
         ),
       ),
@@ -548,7 +548,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
     val existingAssessment = ResettlementAssessmentQuestionAndAnswerList(
       listOf(
         ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE", StringAnswer("SOCIAL_HOUSING")),
-        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", MapAnswer(listOf(mapOf("addressLine1" to "123 main street", "city" to "Leeds", "postcode" to "LS1 123")))),
         ResettlementAssessmentSimpleQuestionAndAnswer("SUPPORT_NEEDS", StringAnswer("SUPPORT_NOT_REQUIRED")),
         ResettlementAssessmentSimpleQuestionAndAnswer("CASE_NOTE_SUMMARY", StringAnswer("Some case notes text...")),
       ),
@@ -584,7 +584,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
             type = TypeOfQuestion.ADDRESS,
             options = null,
           ),
-          answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123"))),
+          answer = MapAnswer(listOf(mapOf("addressLine1" to "123 main street", "city" to "Leeds", "postcode" to "LS1 123"))),
           originalPageId = "WHERE_DID_THEY_LIVE_ADDRESS",
         ),
       ),
@@ -606,7 +606,7 @@ class AccommodationV1ResettlementAssessmentAssessmentStrategyTest : BaseResettle
     val existingAssessment = ResettlementAssessmentQuestionAndAnswerList(
       listOf(
         ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE", StringAnswer("SOCIAL_HOUSING")),
-        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", MapAnswer(listOf(mapOf("addressLine1" to "123 main street", "city" to "Leeds", "postcode" to "LS1 123")))),
       ),
     )
 

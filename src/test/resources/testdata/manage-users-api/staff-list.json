@@ -1,7 +1,7 @@
 {
   "content": [
     {
-      "username": "YMUSTAFA_GEN",
+      "username": "TEST1",
       "staffId": 485931,
       "firstName": "PSO Firstname",
       "lastName": "PSO Lastname",
@@ -18,7 +18,7 @@
       "staffStatus": "ACTIVE"
     },
     {
-      "username": "ZHUSSAIN_GEN",
+      "username": "TEST2",
       "staffId": 487343,
       "firstName": "PSO2 Firstname",
       "lastName": "PSO2 Lastname",
@@ -31,7 +31,7 @@
         "name": "Moorland (HMP & YOI)"
       },
       "dpsRoleCount": 6,
-      "email": "zahoor.hussain@digital.justice.gov.uk",
+      "email": "test@justice.gov.uk",
       "staffStatus": "ACTIVE"
     }
   ],

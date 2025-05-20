@@ -50,6 +50,6 @@ INSERT INTO delius_contact
 VALUES(8, 1, 'HEALTH', 'CASE_NOTE', '2020-01-09 02:09:23.476', NULL, NULL, 'string test string - another health case note', 'Liz Murphy');
 
 INSERT INTO resettlement_assessment (id, prisoner_id, pathway, assessment_status, assessment_type, assessment, status_changed_to, created_date, created_by, case_note_text, created_by_user_id, is_deleted, deleted_date) VALUES
-(1, 1, 'ACCOMMODATION', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some accom case note', 'STURNER_GEN', false, null),
-(2, 1, 'ACCOMMODATION', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-31 19:02:45.000', 'A User', null, 'STURNER_GEN', false, null),
-(3, 1, 'ACCOMMODATION', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-08-01 19:02:45.000', 'A User', null, 'STURNER_GEN', true, '2024-08-02 19:02:45.000');
+(1, 1, 'ACCOMMODATION', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some accom case note', 'TEST_GEN', false, null),
+(2, 1, 'ACCOMMODATION', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-31 19:02:45.000', 'A User', null, 'TEST_GEN', false, null),
+(3, 1, 'ACCOMMODATION', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-08-01 19:02:45.000', 'A User', null, 'TEST_GEN', true, '2024-08-02 19:02:45.000');

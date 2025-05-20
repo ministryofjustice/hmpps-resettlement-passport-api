@@ -50,10 +50,10 @@ INSERT INTO delius_contact
 VALUES(8, 1, 'HEALTH', 'CASE_NOTE', '2020-01-09 02:09:23.476', NULL, NULL, 'string test string - another health case note', 'Liz Murphy');
 
 INSERT INTO resettlement_assessment (id, prisoner_id, pathway, assessment_status, assessment_type, assessment, status_changed_to, created_date, created_by, case_note_text, created_by_user_id, is_deleted, deleted_date) VALUES
-(1, 1, 'ACCOMMODATION', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some accom case notes 1', 'STURNER_GEN', false, null),
-(2, 1, 'ACCOMMODATION', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some accom case notes 2', 'STURNER_GEN', false, null),
-(3, 1, 'ACCOMMODATION', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some accom case notes 3', 'STURNER_GEN', false, null),
-(4, 1, 'ACCOMMODATION', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some accom case notes 4', 'STURNER_GEN', true, '2024-07-30 19:02:45.000'),
-(5, 1, 'ACCOMMODATION', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some accom case notes 5', 'STURNER_GEN', true, '2024-07-30 19:02:45.000'),
-(6, 1, 'ACCOMMODATION', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some accom case notes 6', 'STURNER_GEN', true, '2024-07-30 19:02:45.000'),
-(7, 1, 'ACCOMMODATION', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some accom case notes 7', 'STURNER_GEN', true, '2024-07-30 19:02:45.000')
+(1, 1, 'ACCOMMODATION', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some accom case notes 1', 'TEST_GEN', false, null),
+(2, 1, 'ACCOMMODATION', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some accom case notes 2', 'TEST_GEN', false, null),
+(3, 1, 'ACCOMMODATION', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some accom case notes 3', 'TEST_GEN', false, null),
+(4, 1, 'ACCOMMODATION', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some accom case notes 4', 'TEST_GEN', true, '2024-07-30 19:02:45.000'),
+(5, 1, 'ACCOMMODATION', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some accom case notes 5', 'TEST_GEN', true, '2024-07-30 19:02:45.000'),
+(6, 1, 'ACCOMMODATION', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some accom case notes 6', 'TEST_GEN', true, '2024-07-30 19:02:45.000'),
+(7, 1, 'ACCOMMODATION', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some accom case notes 7', 'TEST_GEN', true, '2024-07-30 19:02:45.000')

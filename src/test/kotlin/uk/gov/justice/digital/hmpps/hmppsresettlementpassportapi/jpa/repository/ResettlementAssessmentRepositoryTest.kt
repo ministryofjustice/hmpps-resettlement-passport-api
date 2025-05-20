@@ -178,7 +178,7 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
       assessment = ResettlementAssessmentQuestionAndAnswerList(listOf(ResettlementAssessmentSimpleQuestionAndAnswer(questionId = "TEST_QUESTION_1", answer = StringAnswer("Test Answer 1")))),
       assessmentStatus = ResettlementAssessmentStatus.NOT_STARTED,
       caseNoteText = "Some case note text",
-      createdByUserId = "STURNER_GEN",
+      createdByUserId = "TEST_GEN",
       submissionDate = null,
       version = 1,
       userDeclaration = false,

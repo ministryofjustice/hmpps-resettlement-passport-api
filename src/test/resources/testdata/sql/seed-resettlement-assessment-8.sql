@@ -36,7 +36,7 @@ INSERT INTO resettlement_assessment (id, prisoner_id, pathway, assessment_status
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', 'SUPPORT_DECLINED', '2024-04-02 09:22:25.080465 +00:00', 'Matthew Kerry', 'D', 'MKERRY_GEN'),
+}', 'SUPPORT_DECLINED', '2024-04-02 09:22:25.080465 +00:00', 'Test User', 'D', 'TEST_GEN'),
 (2, 1, 'ATTITUDES_THINKING_AND_BEHAVIOUR', 'SUBMITTED', 'BCST2', '{
   "assessment": [
     {
@@ -68,7 +68,7 @@ INSERT INTO resettlement_assessment (id, prisoner_id, pathway, assessment_status
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', 'SUPPORT_NOT_REQUIRED', '2024-04-02 09:22:42.735799 +00:00', 'Matthew Kerry', 'a', 'MKERRY_GEN'),
+}', 'SUPPORT_NOT_REQUIRED', '2024-04-02 09:22:42.735799 +00:00', 'Test User', 'a', 'TEST_GEN'),
 (3, 1, 'CHILDREN_FAMILIES_AND_COMMUNITY', 'SUBMITTED', 'BCST2', '{
   "assessment": [
     {
@@ -142,7 +142,7 @@ INSERT INTO resettlement_assessment (id, prisoner_id, pathway, assessment_status
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', 'SUPPORT_NOT_REQUIRED', '2024-04-02 09:23:24.498140 +00:00', 'Matthew Kerry', 'a', 'MKERRY_GEN'),
+}', 'SUPPORT_NOT_REQUIRED', '2024-04-02 09:23:24.498140 +00:00', 'Test User', 'a', 'TEST_GEN'),
 (4, 1, 'DRUGS_AND_ALCOHOL', 'SUBMITTED', 'BCST2', '{
   "assessment": [
     {
@@ -174,7 +174,7 @@ INSERT INTO resettlement_assessment (id, prisoner_id, pathway, assessment_status
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', 'SUPPORT_NOT_REQUIRED', '2024-04-02 09:24:00.471236 +00:00', 'Matthew Kerry', 'a', 'MKERRY_GEN'),
+}', 'SUPPORT_NOT_REQUIRED', '2024-04-02 09:24:00.471236 +00:00', 'Test User', 'a', 'TEST_GEN'),
 (5, 1, 'EDUCATION_SKILLS_AND_WORK', 'SUBMITTED', 'BCST2', '{
   "assessment": [
     {
@@ -227,7 +227,7 @@ INSERT INTO resettlement_assessment (id, prisoner_id, pathway, assessment_status
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', 'SUPPORT_NOT_REQUIRED', '2024-04-02 09:24:21.616536 +00:00', 'Matthew Kerry', 'b', 'MKERRY_GEN'),
+}', 'SUPPORT_NOT_REQUIRED', '2024-04-02 09:24:21.616536 +00:00', 'Test User', 'b', 'TEST_GEN'),
 (6, 1, 'FINANCE_AND_ID', 'SUBMITTED', 'BCST2', '{
   "assessment": [
     {
@@ -291,7 +291,7 @@ INSERT INTO resettlement_assessment (id, prisoner_id, pathway, assessment_status
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', 'SUPPORT_NOT_REQUIRED', '2024-04-02 09:24:43.388222 +00:00', 'Matthew Kerry', 'a', 'MKERRY_GEN'),
+}', 'SUPPORT_NOT_REQUIRED', '2024-04-02 09:24:43.388222 +00:00', 'Test User', 'a', 'TEST_GEN'),
 (7, 1, 'HEALTH', 'SUBMITTED', 'BCST2', '{
   "assessment": [
     {
@@ -330,6 +330,6 @@ INSERT INTO resettlement_assessment (id, prisoner_id, pathway, assessment_status
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', 'SUPPORT_NOT_REQUIRED', '2024-04-02 09:24:58.336982 +00:00', 'Matthew Kerry', 'c', 'MKERRY_GEN');
+}', 'SUPPORT_NOT_REQUIRED', '2024-04-02 09:24:58.336982 +00:00', 'Test User', 'c', 'TEST_GEN');
 
 INSERT INTO pathway_status (id, prisoner_id, pathway, status, updated_date) VALUES (1, 1, 'ACCOMMODATION', 'DONE', '2024-04-02 09:25:01.126170 +00:00');

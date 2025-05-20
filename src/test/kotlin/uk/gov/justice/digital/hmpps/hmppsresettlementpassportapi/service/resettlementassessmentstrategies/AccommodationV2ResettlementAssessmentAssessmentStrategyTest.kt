@@ -450,7 +450,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
     val existingAssessment = ResettlementAssessmentQuestionAndAnswerList(
       listOf(
         ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE", StringAnswer("FAMILY_OR_FRIENDS")),
-        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS_FAMILY_OR_FRIENDS", MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS_FAMILY_OR_FRIENDS", MapAnswer(listOf(mapOf("addressLine1" to "123 main street", "city" to "Leeds", "postcode" to "LS1 123")))),
         ResettlementAssessmentSimpleQuestionAndAnswer("ADDITIONAL_INFORMATION_WHERE_DID_THEY_LIVE", StringAnswer("Some random additional text here")),
         ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_WILL_THEY_LIVE", StringAnswer("MOVE_TO_NEW_ADDRESS")),
         ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS", MapAnswer(listOf(mapOf("addressLine1" to "45 Street Lane", "city" to "Bradford", "postcode" to "BD12 345")))),
@@ -512,7 +512,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
                       title = "Enter the address",
                       type = TypeOfQuestion.ADDRESS,
                     ),
-                    answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123"))),
+                    answer = MapAnswer(listOf(mapOf("addressLine1" to "123 main street", "city" to "Leeds", "postcode" to "LS1 123"))),
                     originalPageId = "PAST_AND_FUTURE_ACCOMMODATION",
                   ),
                 ),
@@ -683,7 +683,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
     val existingAssessment = ResettlementAssessmentQuestionAndAnswerList(
       listOf(
         ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE", StringAnswer("FAMILY_OR_FRIENDS")),
-        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS_FAMILY_OR_FRIENDS", MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS_FAMILY_OR_FRIENDS", MapAnswer(listOf(mapOf("addressLine1" to "123 main street", "city" to "Leeds", "postcode" to "LS1 123")))),
         ResettlementAssessmentSimpleQuestionAndAnswer("ADDITIONAL_INFORMATION_WHERE_DID_THEY_LIVE", StringAnswer("Some random additional text here")),
         ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_WILL_THEY_LIVE", StringAnswer("MOVE_TO_NEW_ADDRESS")),
         ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS", MapAnswer(listOf(mapOf("addressLine1" to "45 Street Lane", "city" to "Bradford", "postcode" to "BD12 345")))),
@@ -761,7 +761,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
             title = "Enter the address",
             type = TypeOfQuestion.ADDRESS,
           ),
-          answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123"))),
+          answer = MapAnswer(listOf(mapOf("addressLine1" to "123 main street", "city" to "Leeds", "postcode" to "LS1 123"))),
           originalPageId = "PAST_AND_FUTURE_ACCOMMODATION",
         ),
         ResettlementAssessmentQuestionAndAnswer(
@@ -930,7 +930,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
     val existingAssessment = ResettlementAssessmentQuestionAndAnswerList(
       listOf(
         ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE", StringAnswer("FAMILY_OR_FRIENDS")),
-        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS_FAMILY_OR_FRIENDS", MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
+        ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS_FAMILY_OR_FRIENDS", MapAnswer(listOf(mapOf("addressLine1" to "123 main street", "city" to "Leeds", "postcode" to "LS1 123")))),
         ResettlementAssessmentSimpleQuestionAndAnswer("ADDITIONAL_INFORMATION_WHERE_DID_THEY_LIVE", StringAnswer("Some random additional text here")),
         ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_WILL_THEY_LIVE", StringAnswer("MOVE_TO_NEW_ADDRESS")),
         ResettlementAssessmentSimpleQuestionAndAnswer("WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS", MapAnswer(listOf(mapOf("addressLine1" to "45 Street Lane", "city" to "Bradford", "postcode" to "BD12 345")))),
@@ -1008,7 +1008,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
             title = "Enter the address",
             type = TypeOfQuestion.ADDRESS,
           ),
-          answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123"))),
+          answer = MapAnswer(listOf(mapOf("addressLine1" to "123 main street", "city" to "Leeds", "postcode" to "LS1 123"))),
           originalPageId = "PAST_AND_FUTURE_ACCOMMODATION",
         ),
         ResettlementAssessmentQuestionAndAnswer(
@@ -1407,7 +1407,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
             question = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_HOUSING_OWNED",
-            answer = MapAnswer(listOf(mapOf("addressLine1" to "123 Fake Street"))),
+            answer = MapAnswer(listOf(mapOf("addressLine1" to "123 main street"))),
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
             question = "ADDITIONAL_INFORMATION_WHERE_DID_THEY_LIVE",
@@ -1419,7 +1419,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
             question = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS",
-            answer = MapAnswer(listOf(mapOf("addressLine1" to "124 Fake Street"))),
+            answer = MapAnswer(listOf(mapOf("addressLine1" to "124 main street"))),
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
             question = "WHERE_WILL_THEY_LIVE_ADDRESS_ADDITIONAL_INFO_MOVE_TO_NEW_ADDRESS",
@@ -1452,7 +1452,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
             question = "WHERE_DID_THEY_LIVE_ADDRESS_PRIVATE_HOUSING_OWNED",
-            answer = MapAnswer(listOf(mapOf("addressLine1" to "123 Fake Street"))),
+            answer = MapAnswer(listOf(mapOf("addressLine1" to "123 main street"))),
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
             question = "ADDITIONAL_INFORMATION_WHERE_DID_THEY_LIVE",
@@ -1464,7 +1464,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
             question = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS",
-            answer = MapAnswer(listOf(mapOf("addressLine1" to "124 Fake Street"))),
+            answer = MapAnswer(listOf(mapOf("addressLine1" to "124 main street"))),
           ),
           ResettlementAssessmentRequestQuestionAndAnswer(
             question = "WHERE_WILL_THEY_LIVE_ADDRESS_ADDITIONAL_INFO_MOVE_TO_NEW_ADDRESS",
@@ -1506,7 +1506,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
 //          ),
 //          ResettlementAssessmentRequestQuestionAndAnswer(
 //            question = "WHERE_WILL_THEY_LIVE_ADDRESS_MOVE_TO_NEW_ADDRESS",
-//            answer = MapAnswer(listOf(mapOf("addressLine1" to "124 Fake Street"))),
+//            answer = MapAnswer(listOf(mapOf("addressLine1" to "124 main street"))),
 //          ),
 //          ResettlementAssessmentRequestQuestionAndAnswer(
 //            question = "WHERE_WILL_THEY_LIVE_ADDRESS_ADDITIONAL_INFO_MOVE_TO_NEW_ADDRESS",

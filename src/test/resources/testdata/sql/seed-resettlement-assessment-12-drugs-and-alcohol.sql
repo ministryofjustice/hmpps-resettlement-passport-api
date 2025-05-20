@@ -35,7 +35,7 @@ VALUES (28, 1, 'BCST2', '{
       "questionId": "CASE_NOTE_SUMMARY"
     }
   ]
-}', '2024-05-22 15:46:31.837468 +00:00', 'Matthew Kerry', 'sdsd', 'MKERRY_GEN', 'DRUGS_AND_ALCOHOL', 'SUBMITTED',
+}', '2024-05-22 15:46:31.837468 +00:00', 'Test User', 'sdsd', 'TEST_GEN', 'DRUGS_AND_ALCOHOL', 'SUBMITTED',
         'SUPPORT_DECLINED', '2024-05-22 15:47:31.027064 +00:00');
 
 INSERT INTO pathway_status (id, prisoner_id, pathway, status, updated_date) VALUES (1, 1, 'DRUGS_AND_ALCOHOL', 'DONE', '2024-04-02 09:25:01.126170 +00:00');

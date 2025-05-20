@@ -56,7 +56,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val currentPage = "WHERE_DID_THEY_LIVE"
     val questions = listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
       ResettlementAssessmentRequestQuestionAndAnswer("WHERE_DID_THEY_LIVE", answer = StringAnswer("PRIVATE_RENTED_HOUSING")),
-      ResettlementAssessmentRequestQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
+      ResettlementAssessmentRequestQuestionAndAnswer("WHERE_DID_THEY_LIVE_ADDRESS", answer = MapAnswer(listOf(mapOf("addressLine1" to "123 main street", "city" to "Leeds", "postcode" to "LS1 123")))),
     )
     val body = ResettlementAssessmentRequest(
       questionsAndAnswers = questions,
@@ -86,7 +86,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val currentPage = "WHERE_WILL_THEY_LIVE"
     val questions = listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
       ResettlementAssessmentRequestQuestionAndAnswer("WHERE_WILL_THEY_LIVE", answer = StringAnswer("NEW_ADDRESS")),
-      ResettlementAssessmentRequestQuestionAndAnswer("WHAT_IS_THE_ADDRESS", answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
+      ResettlementAssessmentRequestQuestionAndAnswer("WHAT_IS_THE_ADDRESS", answer = MapAnswer(listOf(mapOf("addressLine1" to "123 main street", "city" to "Leeds", "postcode" to "LS1 123")))),
     )
     val body = ResettlementAssessmentRequest(
       questionsAndAnswers = questions,
@@ -107,7 +107,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val currentPage = "WHERE_WILL_THEY_LIVE"
     val questions = listOf<ResettlementAssessmentRequestQuestionAndAnswer<*>>(
       ResettlementAssessmentRequestQuestionAndAnswer("WHERE_WILL_THEY_LIVE", answer = StringAnswer("NEW_ADDRESS")),
-      ResettlementAssessmentRequestQuestionAndAnswer("WHAT_IS_THE_ADDRESS", answer = MapAnswer(listOf(mapOf("addressLine1" to "123 fake street", "city" to "Leeds", "postcode" to "LS1 123")))),
+      ResettlementAssessmentRequestQuestionAndAnswer("WHAT_IS_THE_ADDRESS", answer = MapAnswer(listOf(mapOf("addressLine1" to "123 main street", "city" to "Leeds", "postcode" to "LS1 123")))),
     )
     val body = ResettlementAssessmentRequest(
       questionsAndAnswers = questions,

@@ -23,7 +23,7 @@
     "skippedAssessments":  [
       {
         "assessmentType": "BCST2",
-        "createdBy": "MKERRY_GEN",
+        "createdBy": "TEST_GEN",
         "creationDate": "2022-09-01T12:00:00",
         "id": 2,
         "moreInfo": "Skipped as on early release",
@@ -32,7 +32,7 @@
       },
       {
         "assessmentType": "BCST2",
-        "createdBy": "MKERRY_GEN",
+        "createdBy": "TEST_GEN",
         "creationDate": "2023-09-01T12:00:00",
         "id": 3,
         "moreInfo": "Skipped for other reason",
@@ -251,7 +251,7 @@
             "questionTitle": "Where will the person in prison live when they are released?"
           }
         ],
-        "updatedBy": "Matthew Kerry"
+        "updatedBy": "Test User"
       },
       {
         "assessmentType": "BCST2",
@@ -268,7 +268,7 @@
             "questionTitle": "Does the person in prison want support with gambling issues?"
           }
         ],
-        "updatedBy": "Matthew Kerry"
+        "updatedBy": "Test User"
       },
       {
         "assessmentType": "BCST2",
@@ -315,7 +315,7 @@
             "questionTitle": "Does the person in prison need support from community organisations outside of prison?"
           }
         ],
-        "updatedBy": "Matthew Kerry"
+        "updatedBy": "Test User"
       },
       {
         "assessmentType": "BCST2",
@@ -332,7 +332,7 @@
             "questionTitle": "Does the person in prison have any previous or current alcohol misuse issues?"
           }
         ],
-        "updatedBy": "Matthew Kerry"
+        "updatedBy": "Test User"
       },
       {
         "assessmentType": "BCST2",
@@ -364,7 +364,7 @@
             "questionTitle": "Does the person in prison want to start education or training after release?"
           }
         ],
-        "updatedBy": "Matthew Kerry"
+        "updatedBy": "Test User"
       },
       {
         "assessmentType": "BCST2",
@@ -401,7 +401,7 @@
             "questionTitle": "Does the person in prison have any debts or arrears?"
           }
         ],
-        "updatedBy": "Matthew Kerry"
+        "updatedBy": "Test User"
       },
       {
         "assessmentType": "BCST2",
@@ -418,7 +418,7 @@
             "questionTitle": "Does the person in prison want to meet with a prison healthcare team?"
           }
         ],
-        "updatedBy": "Matthew Kerry"
+        "updatedBy": "Test User"
       },
       {
         "assessmentType": "BCST2",
@@ -440,7 +440,7 @@
             "questionTitle": "Does the person in prison have any previous or current alcohol misuse issues?"
           }
         ],
-        "updatedBy": "Matthew Kerry"
+        "updatedBy": "Test User"
       },
       {
         "assessmentType": "RESETTLEMENT_PLAN",
@@ -467,7 +467,7 @@
             "questionTitle": "Where will the person in prison live when they are released?"
           }
         ],
-        "updatedBy": "Matthew Kerry"
+        "updatedBy": "Test User"
       },
       {
         "assessmentType": "RESETTLEMENT_PLAN",
@@ -484,7 +484,7 @@
             "questionTitle": "Does the person in prison want support with gambling issues?"
           }
         ],
-        "updatedBy": "Matthew Kerry"
+        "updatedBy": "Test User"
       },
       {
         "assessmentType": "RESETTLEMENT_PLAN",
@@ -531,7 +531,7 @@
             "questionTitle": "Does the person in prison need support from community organisations outside of prison?"
           }
         ],
-        "updatedBy": "Matthew Kerry"
+        "updatedBy": "Test User"
       },
       {
         "assessmentType": "RESETTLEMENT_PLAN",
@@ -553,7 +553,7 @@
             "questionTitle": "Does the person in prison have any previous or current alcohol misuse issues?"
           }
         ],
-        "updatedBy": "Matthew Kerry"
+        "updatedBy": "Test User"
       },
       {
         "assessmentType": "RESETTLEMENT_PLAN",
@@ -585,7 +585,7 @@
             "questionTitle": "Does the person in prison want to start education or training after release?"
           }
         ],
-        "updatedBy": "Matthew Kerry"
+        "updatedBy": "Test User"
       },
       {
         "assessmentType": "RESETTLEMENT_PLAN",
@@ -622,7 +622,7 @@
             "questionTitle": "Does the person in prison have any debts or arrears?"
           }
         ],
-        "updatedBy": "Matthew Kerry"
+        "updatedBy": "Test User"
       },
       {
         "assessmentType": "RESETTLEMENT_PLAN",
@@ -639,12 +639,12 @@
             "questionTitle": "Does the person in prison want to meet with a prison healthcare team?"
           }
         ],
-        "updatedBy": "Matthew Kerry"
+        "updatedBy": "Test User"
       }
     ],
     "supportNeeds": [
       {
-        "createdBy": "Matthew Kerry",
+        "createdBy": "Test User",
         "createdDate": "2022-09-01T12:00:00",
         "deleted": false,
         "deletedDate": null,
@@ -666,7 +666,7 @@
         }
       },
       {
-        "createdBy": "Matthew Kerry",
+        "createdBy": "Test User",
         "createdDate": "2023-09-01T12:00:00",
         "deleted": false,
         "deletedDate": null,
@@ -690,7 +690,7 @@
     ],
     "supportNeedUpdates": [
       {
-        "createdBy": "Matthew Kerry",
+        "createdBy": "Test User",
         "createdDate": "2022-09-01T14:00:00",
         "deleted": false,
         "deletedDate": null,
@@ -702,7 +702,7 @@
         "updateText": "Support need in progress 3"
       },
       {
-        "createdBy": "Matthew Kerry",
+        "createdBy": "Test User",
         "createdDate": "2023-09-01T14:00:00",
         "deleted": false,
         "deletedDate": null,

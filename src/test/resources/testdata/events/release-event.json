@@ -1,13 +1,13 @@
 {
   "Type" : "Notification",
-  "MessageId" : "72678476-a345-8537-ae56-1909387abc67",
-  "TopicArn" : "arn:aws:sns:eu-west-2:1234:cloud-platform-Digital-Prison-Services-1234",
+  "MessageId" : "efc2729d-9f2c-411f-bb6a-a04e238616e2",
+  "TopicArn" : "arn:aws:sns:eu-west-2:111111111111:prison-events-topic",
   "Message" : "{\"version\":1,\"eventType\":\"prison-offender-events.prisoner.released\",\"description\":\"A prisoner has been released from prison\",\"occurredAt\":\"2024-12-11T15:43:20Z\",\"publishedAt\":\"2024-12-11T16:33:20.437982210Z\",\"personReference\":{\"identifiers\":[{\"type\":\"NOMS\",\"value\":\"A4092EA\"}]},\"additionalInformation\":{\"nomsNumber\":\"A4092EA\",\"reason\":\"RELEASED\",\"details\":\"Movement reason code NCS\",\"currentLocation\":\"OUTSIDE_PRISON\",\"prisonId\":\"MDI\",\"nomisMovementReasonCode\":\"NCS\",\"currentPrisonStatus\":\"NOT_UNDER_PRISON_CARE\"}}",
   "Timestamp" : "2024-12-11T16:33:20.441Z",
   "SignatureVersion" : "1",
   "Signature" : "aaaaaaa",
   "SigningCertURL" : "https://sns.eu-west-2.amazonaws.com/SimpleNotificationService-aaaaaa.pem",
-  "UnsubscribeURL" : "https://sns.eu-west-2.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:eu-west-2:1234:cloud-platform-Digital-Prison-Services-aaaa:72678476-a345-8537-ae56-1909387abc67",
+  "UnsubscribeURL" : "https://sns.eu-west-2.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:eu-west-2:1234:cloud-platform-Digital-Prison-Services-aaaa:0ff38799-eda7-4ccc-96df-b8d4b21d89c6",
   "MessageAttributes" : {
     "traceparent" : {"Type":"String","Value":"00-12213335"},
     "eventType" : {"Type":"String","Value":"prison-offender-events.prisoner.released"}

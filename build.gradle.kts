@@ -34,7 +34,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.4.2")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.4.4")
   implementation("software.amazon.awssdk:s3")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
@@ -64,6 +64,9 @@ dependencies {
   implementation("com.pauldijou:jwt-core_2.11:5.0.0")
 
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.1.1")
+
+  // TODO: Remove once uk.gov.justice.hmpps.gradle-spring-boot version is bump includes the below
+  implementation("org.springframework.security:spring-security-core:6.4.6")
 
   constraints {
     implementation("io.netty:netty-handler:4.1.118.Final")

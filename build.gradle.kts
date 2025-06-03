@@ -65,9 +65,6 @@ dependencies {
 
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.1.1")
 
-//  // TODO: Remove once uk.gov.justice.hmpps.gradle-spring-boot version is bump includes the below
-//  implementation("org.springframework.security:spring-security-core:6.4.6")
-
   constraints {
     implementation("io.netty:netty-handler:4.1.118.Final")
   }

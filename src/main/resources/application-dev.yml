@@ -117,3 +117,7 @@ doc.conversion:
 
 psfr:
   base.url: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk
+
+app:
+  feature-flags:
+    readOnlyMode: false

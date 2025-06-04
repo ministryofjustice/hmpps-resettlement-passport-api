@@ -16,11 +16,26 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import org.springframework.web.server.ServerWebInputException
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.expection.OperationNotAllowedException
 import java.time.LocalDate
 import java.util.UUID
 
 @RestControllerAdvice
 class HmppsResettlementPassportApiExceptionHandler {
+
+  @ExceptionHandler(OperationNotAllowedException::class)
+  fun handleOperationNotAllowedException(e: OperationNotAllowedException): ResponseEntity<ErrorResponse> {
+    log.info("Operation not allowed exception: {}", e.message)
+    return ResponseEntity
+      .status(HttpStatus.FORBIDDEN)
+      .body(
+        ErrorResponse(
+          status = HttpStatus.FORBIDDEN.value(),
+          userMessage = "Operation is not allowed - ${e.message}",
+          developerMessage = e.message,
+        ),
+      )
+  }
 
   @ExceptionHandler(AccessDeniedException::class)
   fun handleAccessDeniedException(e: AccessDeniedException): ResponseEntity<ErrorResponse> {

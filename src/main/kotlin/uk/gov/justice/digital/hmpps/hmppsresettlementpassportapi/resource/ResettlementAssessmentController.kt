@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.aop.READ_ONLY_MODE_DISABLED
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.aop.RequiresFeature
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.AssessmentSkipRequest
@@ -48,6 +50,7 @@ class ResettlementAssessmentController(
 ) {
   @PostMapping("/{nomsId}/resettlement-assessment/{pathway}/next-page", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Returns next page of resettlement assessment", description = "Returns next page of resettlement assessment")
+  @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
       ApiResponse(
@@ -192,6 +195,7 @@ class ResettlementAssessmentController(
 
   @PostMapping("/{nomsId}/resettlement-assessment/{pathway}/complete", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Completes a resettlement assessment for the given nomsId and pathway", description = "Completes a resettlement assessment for the given nomsId and pathway")
+  @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
       ApiResponse(
@@ -243,6 +247,7 @@ class ResettlementAssessmentController(
 
   @PostMapping("/{nomsId}/resettlement-assessment/{pathway}/validate", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Validates the given resettlement assessment", description = "Validates the given resettlement assessment")
+  @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
       ApiResponse(
@@ -288,6 +293,7 @@ class ResettlementAssessmentController(
 
   @PostMapping("/{nomsId}/resettlement-assessment/submit", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Submit a completed resettlement assessment for the given nomsId", description = "Submit a completed resettlement assessment for the given nomsId")
+  @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
       ApiResponse(
@@ -392,6 +398,7 @@ class ResettlementAssessmentController(
 
   @PostMapping("/{nomsId}/resettlement-assessment/skip", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Skip an assessment")
+  @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
       ApiResponse(

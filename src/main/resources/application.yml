@@ -135,3 +135,7 @@ hmpps.s3:
 clamav:
   hostname: localhost
   port: 3310
+
+app:
+  feature-flags:
+    readOnlyMode: ${READ_ONLY_MODE_VALUE}

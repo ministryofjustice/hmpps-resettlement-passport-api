@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.aop.READ_ONLY_MODE_DISABLED
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.aop.RequiresFeature
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ProfileReset
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettlementAssessmentResetService
@@ -30,6 +32,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.A
 class ProfileResetController(private val resettlementAssessmentResetService: ResettlementAssessmentResetService, private val auditService: AuditService) {
   @PostMapping("/{prisonerId}/reset-profile")
   @Operation(summary = "Reset a profile", description = "Resets a prisoner's profile by removing any resettlement assessments and resetting statuses to NOT_STARTED. Also sends a case note with reason to DPS.")
+  @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
       ApiResponse(

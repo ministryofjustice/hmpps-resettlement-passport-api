@@ -25,7 +25,6 @@ class ProfileResetIntegrationReadOnlyModeTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-profile-reset.sql")
   fun `POST reset profile - forbidden`() {
-
     val nomsId = "ABC1234"
     val prisonId = "MDI"
     val expectedCaseNotes = "Prepare someone for release reports and support needs reset\\n\\n" +

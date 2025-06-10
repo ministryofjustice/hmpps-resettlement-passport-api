@@ -25,8 +25,6 @@ class ProfileResetIntegrationReadOnlyModeTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-profile-reset.sql")
   fun `POST reset profile - forbidden`() {
-//    mockkStatic(LocalDateTime::class)
-//    every { LocalDateTime.now() } returns fakeNow
 
     val nomsId = "ABC1234"
     val prisonId = "MDI"

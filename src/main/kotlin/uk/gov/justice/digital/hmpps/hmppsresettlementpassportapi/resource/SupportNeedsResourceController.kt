@@ -262,6 +262,7 @@ class SupportNeedsResourceController(
 
   @PatchMapping("/{nomsId}/need/{prisonerNeedId}")
   @Operation(summary = "Update an existing support need", description = "Update the status of an existing support need")
+  @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
       ApiResponse(

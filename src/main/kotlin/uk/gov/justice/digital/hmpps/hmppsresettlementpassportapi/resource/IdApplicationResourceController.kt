@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.aop.READ_ONLY_MODE_DISABLED
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.aop.RequiresFeature
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWithCodeFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.IdApplicationPatch
@@ -35,6 +37,7 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
 
   @PostMapping("/{nomsId}/idapplication", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create id application", description = "Create id application")
+  @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
       ApiResponse(
@@ -79,6 +82,7 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
 
   @DeleteMapping("/{nomsId}/idapplication/{idApplicationId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create Id Application", description = "Create Id Application for a prisoner")
+  @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
       ApiResponse(
@@ -135,6 +139,7 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
 
   @PatchMapping("/{nomsId}/idapplication/{idApplicationId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create assessment", description = "Create assessment")
+  @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
       ApiResponse(

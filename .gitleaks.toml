@@ -1,0 +1,12 @@
+title = "HMPPS-Resettlement-Passport-API Gitleaks configuration"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "token"
+description = "Possible token detected"
+regex = '''(?i)\b(.{55,65})(?:[\x60'"\s;]|\\[nr]|$)'''
+secretGroup = 1
+entropy = 5.1
+

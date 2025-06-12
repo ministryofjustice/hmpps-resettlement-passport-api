@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.aop.READ_ONLY_MODE_DISABLED
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.aop.RequiresFeature
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocation
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocationPostResponse
@@ -32,6 +34,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.A
 class CaseAllocationResourceController(private val caseAllocationService: CaseAllocationService, private val auditService: AuditService) {
   @PostMapping("/cases", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Assign one or more cases to a staff", description = "Assign one or more cases to a probation service officer")
+  @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
       ApiResponse(
@@ -79,6 +82,7 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
     summary = "Unassign one or more cases to a staff",
     description = "Unassign one or more cases to a probation service officer",
   )
+  @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
       ApiResponse(

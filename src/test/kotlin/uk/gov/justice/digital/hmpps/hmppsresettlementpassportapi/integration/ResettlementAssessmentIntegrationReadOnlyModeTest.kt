@@ -16,13 +16,13 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.FeatureFlagValueProvider
 
 @TestConfiguration
-class TestMockConfig {
+class ResettlementAssessmentTestMockConfig {
   @Bean
   @Primary
   fun featureFlagValueProvider(): FeatureFlagValueProvider = mockk { every { isReadOnlyMode() } returns true }
 }
 
-@Import(TestMockConfig::class)
+@Import(ResettlementAssessmentTestMockConfig::class)
 class ResettlementAssessmentIntegrationReadOnlyModeTest : IntegrationTestBase() {
 
   @Test

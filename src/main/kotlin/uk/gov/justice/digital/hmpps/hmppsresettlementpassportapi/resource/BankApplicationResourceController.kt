@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.aop.READ_ONLY_MODE_DISABLED
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.aop.RequiresFeature
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplication
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplicationResponse
@@ -74,6 +76,7 @@ class BankApplicationResourceController(private val bankApplicationService: Bank
 
   @PostMapping("/{nomsId}/bankapplication", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create assessment", description = "Create assessment")
+  @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
       ApiResponse(
@@ -118,6 +121,7 @@ class BankApplicationResourceController(private val bankApplicationService: Bank
 
   @DeleteMapping("/{nomsId}/bankapplication/{bankApplicationId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create assessment", description = "Create assessment")
+  @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
       ApiResponse(
@@ -164,6 +168,7 @@ class BankApplicationResourceController(private val bankApplicationService: Bank
 
   @PatchMapping("/{nomsId}/bankapplication/{bankApplicationId}", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(summary = "Create assessment", description = "Create assessment")
+  @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
       ApiResponse(

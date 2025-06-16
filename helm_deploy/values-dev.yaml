@@ -28,7 +28,7 @@ generic-service:
     PSFR_BASE_URL: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk
     API_BASE_URL_CURIOUS_SERVICE: http://hmpps-resettlement-passport-api-stubs/curious-api
     API_BASE_URL_MANAGE_USERS_SERVICE: https://manage-users-api-dev.hmpps.service.justice.gov.uk
-    READ_ONLY_MODE_VALUE: true
+    READ_ONLY_MODE_VALUE: false
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts

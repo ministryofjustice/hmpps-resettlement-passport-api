@@ -53,20 +53,6 @@ class CaseNotesServiceTest {
     Assertions.assertEquals(expectedList, caseNotesService.removeDuplicates(inputList))
   }
 
-  private fun `test remove duplicates data`() = Stream.of(
-    Arguments.of(emptyList<PathwayCaseNote>(), emptyList<PathwayCaseNote>()),
-    // Test where all element are unique
-    Arguments.of(generatePathwayCaseNotes(times = 1), generatePathwayCaseNotes(times = 1)),
-    // Test where there are 3 copies of each element
-    Arguments.of(generatePathwayCaseNotes(times = 3), generatePathwayCaseNotes(times = 1)),
-    // Test where the id is different but the rest is the same
-    Arguments.of(generatePathwayCaseNotesSameId(number = 100), generatePathwayCaseNotesSameId(number = 1)),
-    // Test where the creationDate is in the same Date but different time
-    Arguments.of(generatePathwayCaseNotesSameCreationDate(number = 100), generatePathwayCaseNotesSameCreationDate(number = 1)),
-    // Test where the occurrenceDate is in the same Date but different time
-    Arguments.of(generatePathwayCaseNotesSameOccurrenceDate(number = 100), generatePathwayCaseNotesSameOccurrenceDate(number = 1)),
-  )
-
   @ParameterizedTest
   @MethodSource("test get case notes data")
   fun `test get case notes`(caseNoteType: CaseNoteType, pathway: Pathway?, expectedList: List<PathwayCaseNote>) {
@@ -98,21 +84,6 @@ class CaseNotesServiceTest {
       caseNotesService.getCaseNotesByNomsId(nomsId, 0, 1, "", days, caseNoteType, createdBy),
     )
   }
-
-  private fun `test get case notes data`() = Stream.of(
-    // All shouldn't try and get profile reset case note as it should already be returned in initial call
-    Arguments.of(CaseNoteType.All, null, emptyList<PathwayCaseNote>()),
-    // Profile reset note returned for each pathway
-    Arguments.of(CaseNoteType.HEALTH, Pathway.HEALTH, generateProfileResetCaseNote()),
-    Arguments.of(CaseNoteType.ACCOMMODATION, Pathway.ACCOMMODATION, generateProfileResetCaseNote()),
-    Arguments.of(CaseNoteType.FINANCE_AND_ID, Pathway.FINANCE_AND_ID, generateProfileResetCaseNote()),
-    Arguments.of(CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY, Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, generateProfileResetCaseNote()),
-    Arguments.of(CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, generateProfileResetCaseNote()),
-    Arguments.of(CaseNoteType.DRUGS_AND_ALCOHOL, Pathway.DRUGS_AND_ALCOHOL, generateProfileResetCaseNote()),
-    Arguments.of(CaseNoteType.EDUCATION_SKILLS_AND_WORK, Pathway.EDUCATION_SKILLS_AND_WORK, generateProfileResetCaseNote()),
-    // No profile reset notes returned
-    Arguments.of(CaseNoteType.HEALTH, Pathway.HEALTH, emptyList<PathwayCaseNote>()),
-  )
 
   @ParameterizedTest
   @MethodSource("test get case notes data - status update")
@@ -146,146 +117,182 @@ class CaseNotesServiceTest {
     )
   }
 
-  private fun `test get case notes data - status update`() = Stream.of(
-    Arguments.of(CaseNoteType.All, null, Pair(null, emptyList<PathwayCaseNote>())),
-    Arguments.of(CaseNoteType.HEALTH, Pathway.HEALTH, getCaseNotePair(CaseNotePathway.HEALTH, Status.SUPPORT_REQUIRED, null, "Resettlement status set to: Support required")),
-    Arguments.of(CaseNoteType.ACCOMMODATION, Pathway.ACCOMMODATION, getCaseNotePair(CaseNotePathway.ACCOMMODATION, Status.IN_PROGRESS, null, "Resettlement status set to: In progress")),
-    Arguments.of(CaseNoteType.FINANCE_AND_ID, Pathway.FINANCE_AND_ID, getCaseNotePair(CaseNotePathway.FINANCE_AND_ID, Status.DONE, null, "Resettlement status set to: Done")),
-    Arguments.of(CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY, Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, getCaseNotePair(CaseNotePathway.CHILDREN_FAMILIES_AND_COMMUNITY, Status.NOT_STARTED, null, "Resettlement status set to: Not started")),
-    Arguments.of(CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, getCaseNotePair(CaseNotePathway.ATTITUDES_THINKING_AND_BEHAVIOUR, Status.SUPPORT_NOT_REQUIRED, null, "Resettlement status set to: Support not required")),
-    Arguments.of(CaseNoteType.DRUGS_AND_ALCOHOL, Pathway.DRUGS_AND_ALCOHOL, getCaseNotePair(CaseNotePathway.DRUGS_AND_ALCOHOL, Status.DONE, "Some actual case note text", "Some actual case note text")),
-    Arguments.of(CaseNoteType.EDUCATION_SKILLS_AND_WORK, Pathway.EDUCATION_SKILLS_AND_WORK, getCaseNotePair(CaseNotePathway.EDUCATION_SKILLS_AND_WORK, Status.SUPPORT_DECLINED, null, "Resettlement status set to: Support declined")),
-    Arguments.of(CaseNoteType.EDUCATION_SKILLS_AND_WORK, Pathway.EDUCATION_SKILLS_AND_WORK, getCaseNotePair(CaseNotePathway.EDUCATION_SKILLS_AND_WORK, null, null, null)),
-  )
 
-  private fun getCaseNotePair(pathway: CaseNotePathway, status: Status?, caseNoteText: String?, expectedCaseNoteText: String?): Pair<List<ResettlementAssessmentEntity>, List<PathwayCaseNote>> {
-    val id = 1L
-    val date = LocalDateTime.parse("2023-09-01T12:13:12")
-    val createdBy = "User1"
 
-    return Pair(
-      listOf(
-        ResettlementAssessmentEntity(
-          id = id,
-          prisonerId = 1,
-          pathway = Pathway.valueOf(pathway.name),
-          statusChangedTo = status,
-          assessmentType = ResettlementAssessmentType.BCST2,
-          assessment = ResettlementAssessmentQuestionAndAnswerList(listOf()),
-          creationDate = date,
-          createdBy = createdBy,
-          assessmentStatus = ResettlementAssessmentStatus.SUBMITTED,
-          caseNoteText = caseNoteText,
-          createdByUserId = "A_USER",
-          version = 1,
-          submissionDate = date,
-          userDeclaration = null,
-        ),
-      ),
-      if (expectedCaseNoteText != null) {
-        mutableListOf(
-          PathwayCaseNote(
-            caseNoteId = "ResettlementAssessmentCaseNote$id",
-            pathway = pathway,
-            creationDateTime = date,
-            occurenceDateTime = date,
-            createdBy = createdBy,
-            text = expectedCaseNoteText,
-          ),
-        )
-      } else {
-        mutableListOf()
-      },
+  companion object {
+    @JvmStatic
+    private fun `test remove duplicates data`() = listOf(
+      Arguments.of(emptyList<PathwayCaseNote>(), emptyList<PathwayCaseNote>()),
+      // Test where all element are unique
+      Arguments.of(generatePathwayCaseNotes(times = 1), generatePathwayCaseNotes(times = 1)),
+      // Test where there are 3 copies of each element
+      Arguments.of(generatePathwayCaseNotes(times = 3), generatePathwayCaseNotes(times = 1)),
+      // Test where the id is different but the rest is the same
+      Arguments.of(generatePathwayCaseNotesSameId(number = 100), generatePathwayCaseNotesSameId(number = 1)),
+      // Test where the creationDate is in the same Date but different time
+      Arguments.of(generatePathwayCaseNotesSameCreationDate(number = 100), generatePathwayCaseNotesSameCreationDate(number = 1)),
+      // Test where the occurrenceDate is in the same Date but different time
+      Arguments.of(generatePathwayCaseNotesSameOccurrenceDate(number = 100), generatePathwayCaseNotesSameOccurrenceDate(number = 1)),
     )
-  }
 
-  private fun generateProfileResetCaseNote() = mutableListOf(
-    PathwayCaseNote(
-      caseNoteId = "caseNoteId",
-      pathway = CaseNotePathway.OTHER,
-      creationDateTime = LocalDateTime.parse("2023-09-01T12:13:12"),
-      occurenceDateTime = LocalDateTime.parse("2023-09-01T12:13:12"),
-      createdBy = "user1",
-      text = PROFILE_RESET_TEXT_PREFIX + "some reason" + PROFILE_RESET_TEXT_SUFFIX + PROFILE_RESET_TEXT_SUPPORT,
-    ),
-  )
+    @JvmStatic
+    private fun `test get case notes data`() = listOf(
+      // All shouldn't try and get profile reset case note as it should already be returned in initial call
+      Arguments.of(CaseNoteType.All, null, emptyList<PathwayCaseNote>()),
+      // Profile reset note returned for each pathway
+      Arguments.of(CaseNoteType.HEALTH, Pathway.HEALTH, generateProfileResetCaseNote()),
+      Arguments.of(CaseNoteType.ACCOMMODATION, Pathway.ACCOMMODATION, generateProfileResetCaseNote()),
+      Arguments.of(CaseNoteType.FINANCE_AND_ID, Pathway.FINANCE_AND_ID, generateProfileResetCaseNote()),
+      Arguments.of(CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY, Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, generateProfileResetCaseNote()),
+      Arguments.of(CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, generateProfileResetCaseNote()),
+      Arguments.of(CaseNoteType.DRUGS_AND_ALCOHOL, Pathway.DRUGS_AND_ALCOHOL, generateProfileResetCaseNote()),
+      Arguments.of(CaseNoteType.EDUCATION_SKILLS_AND_WORK, Pathway.EDUCATION_SKILLS_AND_WORK, generateProfileResetCaseNote()),
+      // No profile reset notes returned
+      Arguments.of(CaseNoteType.HEALTH, Pathway.HEALTH, emptyList<PathwayCaseNote>()),
+    )
 
-  private fun generatePathwayCaseNote(seed: Long, createdBy: String, text: String, creationDateTime: LocalDateTime, occurrenceDateTime: LocalDateTime, pathway: CaseNotePathway) = PathwayCaseNote(
-    caseNoteId = seed.toString(),
-    pathway = pathway,
-    creationDateTime = creationDateTime,
-    occurenceDateTime = occurrenceDateTime,
-    createdBy = createdBy,
-    text = text,
-  )
+    @JvmStatic
+    private fun `test get case notes data - status update`() = listOf(
+      Arguments.of(CaseNoteType.All, null, Pair(null, emptyList<PathwayCaseNote>())),
+      Arguments.of(CaseNoteType.HEALTH, Pathway.HEALTH, getCaseNotePair(CaseNotePathway.HEALTH, Status.SUPPORT_REQUIRED, null, "Resettlement status set to: Support required")),
+      Arguments.of(CaseNoteType.ACCOMMODATION, Pathway.ACCOMMODATION, getCaseNotePair(CaseNotePathway.ACCOMMODATION, Status.IN_PROGRESS, null, "Resettlement status set to: In progress")),
+      Arguments.of(CaseNoteType.FINANCE_AND_ID, Pathway.FINANCE_AND_ID, getCaseNotePair(CaseNotePathway.FINANCE_AND_ID, Status.DONE, null, "Resettlement status set to: Done")),
+      Arguments.of(CaseNoteType.CHILDREN_FAMILIES_AND_COMMUNITY, Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, getCaseNotePair(CaseNotePathway.CHILDREN_FAMILIES_AND_COMMUNITY, Status.NOT_STARTED, null, "Resettlement status set to: Not started")),
+      Arguments.of(CaseNoteType.ATTITUDES_THINKING_AND_BEHAVIOUR, Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, getCaseNotePair(CaseNotePathway.ATTITUDES_THINKING_AND_BEHAVIOUR, Status.SUPPORT_NOT_REQUIRED, null, "Resettlement status set to: Support not required")),
+      Arguments.of(CaseNoteType.DRUGS_AND_ALCOHOL, Pathway.DRUGS_AND_ALCOHOL, getCaseNotePair(CaseNotePathway.DRUGS_AND_ALCOHOL, Status.DONE, "Some actual case note text", "Some actual case note text")),
+      Arguments.of(CaseNoteType.EDUCATION_SKILLS_AND_WORK, Pathway.EDUCATION_SKILLS_AND_WORK, getCaseNotePair(CaseNotePathway.EDUCATION_SKILLS_AND_WORK, Status.SUPPORT_DECLINED, null, "Resettlement status set to: Support declined")),
+      Arguments.of(CaseNoteType.EDUCATION_SKILLS_AND_WORK, Pathway.EDUCATION_SKILLS_AND_WORK, getCaseNotePair(CaseNotePathway.EDUCATION_SKILLS_AND_WORK, null, null, null)),
+    )
 
-  private fun generatePathwayCaseNotes(number: Long = 10000, times: Int): List<PathwayCaseNote> {
-    val list = mutableListOf<PathwayCaseNote>()
-    for (i in 1..number) {
-      repeat(times) {
+    private fun getCaseNotePair(pathway: CaseNotePathway, status: Status?, caseNoteText: String?, expectedCaseNoteText: String?): Pair<List<ResettlementAssessmentEntity>, List<PathwayCaseNote>> {
+      val id = 1L
+      val date = LocalDateTime.parse("2023-09-01T12:13:12")
+      val createdBy = "User1"
+
+      return Pair(
+        listOf(
+          ResettlementAssessmentEntity(
+            id = id,
+            prisonerId = 1,
+            pathway = Pathway.valueOf(pathway.name),
+            statusChangedTo = status,
+            assessmentType = ResettlementAssessmentType.BCST2,
+            assessment = ResettlementAssessmentQuestionAndAnswerList(listOf()),
+            creationDate = date,
+            createdBy = createdBy,
+            assessmentStatus = ResettlementAssessmentStatus.SUBMITTED,
+            caseNoteText = caseNoteText,
+            createdByUserId = "A_USER",
+            version = 1,
+            submissionDate = date,
+            userDeclaration = null,
+          ),
+        ),
+        if (expectedCaseNoteText != null) {
+          mutableListOf(
+            PathwayCaseNote(
+              caseNoteId = "ResettlementAssessmentCaseNote$id",
+              pathway = pathway,
+              creationDateTime = date,
+              occurenceDateTime = date,
+              createdBy = createdBy,
+              text = expectedCaseNoteText,
+            ),
+          )
+        } else {
+          mutableListOf()
+        },
+      )
+    }
+
+    private fun generateProfileResetCaseNote() = mutableListOf(
+      PathwayCaseNote(
+        caseNoteId = "caseNoteId",
+        pathway = CaseNotePathway.OTHER,
+        creationDateTime = LocalDateTime.parse("2023-09-01T12:13:12"),
+        occurenceDateTime = LocalDateTime.parse("2023-09-01T12:13:12"),
+        createdBy = "user1",
+        text = PROFILE_RESET_TEXT_PREFIX + "some reason" + PROFILE_RESET_TEXT_SUFFIX + PROFILE_RESET_TEXT_SUPPORT,
+      ),
+    )
+
+    private fun generatePathwayCaseNote(seed: Long, createdBy: String, text: String, creationDateTime: LocalDateTime, occurrenceDateTime: LocalDateTime, pathway: CaseNotePathway) = PathwayCaseNote(
+      caseNoteId = seed.toString(),
+      pathway = pathway,
+      creationDateTime = creationDateTime,
+      occurenceDateTime = occurrenceDateTime,
+      createdBy = createdBy,
+      text = text,
+    )
+
+    private fun generatePathwayCaseNotes(number: Long = 10000, times: Int): List<PathwayCaseNote> {
+      val list = mutableListOf<PathwayCaseNote>()
+      for (i in 1..number) {
+        repeat(times) {
+          list.add(
+            generatePathwayCaseNote(
+              seed = i,
+              createdBy = "createdBy$i",
+              text = "text$i",
+              creationDateTime = LocalDateTime.parse("2023-09-01T12:13:12").plusDays(i),
+              occurrenceDateTime = LocalDateTime.parse("2023-08-12T23:01:09").plusDays(i),
+              pathway = CaseNotePathway.entries[(i % CaseNotePathway.entries.size).toInt()],
+            ),
+          )
+        }
+      }
+      return list
+    }
+
+    private fun generatePathwayCaseNotesSameId(number: Long = 100): List<PathwayCaseNote> {
+      val list = mutableListOf<PathwayCaseNote>()
+      for (i in 1..number) {
         list.add(
           generatePathwayCaseNote(
             seed = i,
-            createdBy = "createdBy$i",
-            text = "text$i",
-            creationDateTime = LocalDateTime.parse("2023-09-01T12:13:12").plusDays(i),
-            occurrenceDateTime = LocalDateTime.parse("2023-08-12T23:01:09").plusDays(i),
-            pathway = CaseNotePathway.entries[(i % CaseNotePathway.entries.size).toInt()],
+            createdBy = "createdBy",
+            text = "text",
+            creationDateTime = LocalDateTime.parse("2023-09-01T12:13:12"),
+            occurrenceDateTime = LocalDateTime.parse("2023-08-12T23:01:09"),
+            pathway = CaseNotePathway.OTHER,
           ),
         )
       }
+      return list
     }
-    return list
-  }
 
-  private fun generatePathwayCaseNotesSameId(number: Long = 100): List<PathwayCaseNote> {
-    val list = mutableListOf<PathwayCaseNote>()
-    for (i in 1..number) {
-      list.add(
-        generatePathwayCaseNote(
-          seed = i,
-          createdBy = "createdBy",
-          text = "text",
-          creationDateTime = LocalDateTime.parse("2023-09-01T12:13:12"),
-          occurrenceDateTime = LocalDateTime.parse("2023-08-12T23:01:09"),
-          pathway = CaseNotePathway.OTHER,
-        ),
-      )
+    private fun generatePathwayCaseNotesSameCreationDate(number: Long = 100): List<PathwayCaseNote> {
+      val list = mutableListOf<PathwayCaseNote>()
+      for (i in 1..number) {
+        list.add(
+          generatePathwayCaseNote(
+            seed = i,
+            createdBy = "createdBy",
+            text = "text",
+            creationDateTime = LocalDateTime.parse("2023-09-01T00:00:00").plusSeconds(i),
+            occurrenceDateTime = LocalDateTime.parse("2023-08-12T00:00:00"),
+            pathway = CaseNotePathway.OTHER,
+          ),
+        )
+      }
+      return list
     }
-    return list
-  }
 
-  private fun generatePathwayCaseNotesSameCreationDate(number: Long = 100): List<PathwayCaseNote> {
-    val list = mutableListOf<PathwayCaseNote>()
-    for (i in 1..number) {
-      list.add(
-        generatePathwayCaseNote(
-          seed = i,
-          createdBy = "createdBy",
-          text = "text",
-          creationDateTime = LocalDateTime.parse("2023-09-01T00:00:00").plusSeconds(i),
-          occurrenceDateTime = LocalDateTime.parse("2023-08-12T00:00:00"),
-          pathway = CaseNotePathway.OTHER,
-        ),
-      )
+    private fun generatePathwayCaseNotesSameOccurrenceDate(number: Long = 100): List<PathwayCaseNote> {
+      val list = mutableListOf<PathwayCaseNote>()
+      for (i in 1..number) {
+        list.add(
+          generatePathwayCaseNote(
+            seed = i,
+            createdBy = "createdBy",
+            text = "text",
+            creationDateTime = LocalDateTime.parse("2023-09-01T00:00:00"),
+            occurrenceDateTime = LocalDateTime.parse("2023-08-12T00:00:00").plusSeconds(i),
+            pathway = CaseNotePathway.OTHER,
+          ),
+        )
+      }
+      return list
     }
-    return list
-  }
-
-  private fun generatePathwayCaseNotesSameOccurrenceDate(number: Long = 100): List<PathwayCaseNote> {
-    val list = mutableListOf<PathwayCaseNote>()
-    for (i in 1..number) {
-      list.add(
-        generatePathwayCaseNote(
-          seed = i,
-          createdBy = "createdBy",
-          text = "text",
-          creationDateTime = LocalDateTime.parse("2023-09-01T00:00:00"),
-          occurrenceDateTime = LocalDateTime.parse("2023-08-12T00:00:00").plusSeconds(i),
-          pathway = CaseNotePathway.OTHER,
-        ),
-      )
-    }
-    return list
   }
 }

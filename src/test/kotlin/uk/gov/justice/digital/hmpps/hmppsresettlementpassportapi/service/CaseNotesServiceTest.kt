@@ -40,7 +40,7 @@ class CaseNotesServiceTest {
   private lateinit var resettlementAssessmentRepository: ResettlementAssessmentRepository
 
   @ParameterizedTest
-  @MethodSource("test remove duplicates data")
+  @MethodSource("getDuplicateTestData")
   fun `test remove duplicates`(inputList: List<PathwayCaseNote>, expectedList: List<PathwayCaseNote>) {
     val caseNotesService = CaseNotesService(
       mockkClass(CaseNotesApiService::class),
@@ -53,7 +53,7 @@ class CaseNotesServiceTest {
   }
 
   @ParameterizedTest
-  @MethodSource("test get case notes data")
+  @MethodSource("getCaseNoteTestData")
   fun `test get case notes`(caseNoteType: CaseNoteType, pathway: Pathway?, expectedList: List<PathwayCaseNote>) {
     val nomsId = "12345"
     val createdBy = 1
@@ -85,7 +85,7 @@ class CaseNotesServiceTest {
   }
 
   @ParameterizedTest
-  @MethodSource("test get case notes data - status update")
+  @MethodSource("getCaseNoteStatusUpdateTestData")
   fun `test get case notes - status update`(caseNoteType: CaseNoteType, pathway: Pathway?, pair: Pair<List<ResettlementAssessmentEntity>, List<PathwayCaseNote>>) {
     val nomsId = "12345"
     val createdBy = 1
@@ -118,7 +118,7 @@ class CaseNotesServiceTest {
 
   companion object {
     @JvmStatic
-    private fun `test remove duplicates data`() = listOf(
+    fun getDuplicateTestData() = listOf(
       Arguments.of(emptyList<PathwayCaseNote>(), emptyList<PathwayCaseNote>()),
       // Test where all element are unique
       Arguments.of(generatePathwayCaseNotes(times = 1), generatePathwayCaseNotes(times = 1)),
@@ -133,7 +133,7 @@ class CaseNotesServiceTest {
     )
 
     @JvmStatic
-    private fun `test get case notes data`() = listOf(
+    fun getCaseNoteTestData() = listOf(
       // All shouldn't try and get profile reset case note as it should already be returned in initial call
       Arguments.of(CaseNoteType.All, null, emptyList<PathwayCaseNote>()),
       // Profile reset note returned for each pathway
@@ -149,7 +149,7 @@ class CaseNotesServiceTest {
     )
 
     @JvmStatic
-    private fun `test get case notes data - status update`() = listOf(
+    fun getCaseNoteStatusUpdateTestData() = listOf(
       Arguments.of(CaseNoteType.All, null, Pair(null, emptyList<PathwayCaseNote>())),
       Arguments.of(CaseNoteType.HEALTH, Pathway.HEALTH, getCaseNotePair(CaseNotePathway.HEALTH, Status.SUPPORT_REQUIRED, null, "Resettlement status set to: Support required")),
       Arguments.of(CaseNoteType.ACCOMMODATION, Pathway.ACCOMMODATION, getCaseNotePair(CaseNotePathway.ACCOMMODATION, Status.IN_PROGRESS, null, "Resettlement status set to: In progress")),

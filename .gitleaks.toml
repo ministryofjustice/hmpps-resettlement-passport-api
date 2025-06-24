@@ -1,4 +1,4 @@
-title = "HMPPS-Resettlement-Passport-API Gitleaks configuration"
+title = "HMPPS Gitleaks configuration"
 
 [extend]
 useDefault = true

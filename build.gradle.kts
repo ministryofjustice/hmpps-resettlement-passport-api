@@ -9,7 +9,7 @@ plugins {
   kotlin("plugin.spring") version kotlinVersion
   kotlin("plugin.jpa") version kotlinVersion
   kotlin("plugin.serialization") version kotlinVersion
-  id("org.example.gitleaks-kotlin-plugin") version "0.0.22"
+  id("org.example.gitleaks-kotlin-plugin") version "0.0.36"
 }
 
 dependencyCheck {

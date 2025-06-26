@@ -14,18 +14,18 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.Support
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class SupportNeedsLegacyProfileController(private val supportNeedsLegacyProfileService: SupportNeedsLegacyProfileService) {
 
-    @PostMapping("/add-legacy-support-needs", produces = [MediaType.APPLICATION_JSON_VALUE])
-    @Operation(summary = "Add pathway-level legacy support needs to all prisoners with supportNeedsLegacyProfile flag set (if needed)")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "Successful Operation",
-            ),
-        ],
-    )
-    fun addLegacySupportNeeds(): ResponseEntity<Void> {
-        supportNeedsLegacyProfileService.addLegacySupportNeeds()
-        return ResponseEntity.ok().build()
-    }
+  @PostMapping("/add-legacy-support-needs", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @Operation(summary = "Add pathway-level legacy support needs to all prisoners with supportNeedsLegacyProfile flag set (if needed)")
+  @ApiResponses(
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Successful Operation",
+      ),
+    ],
+  )
+  fun addLegacySupportNeeds(): ResponseEntity<Void> {
+    supportNeedsLegacyProfileService.addLegacySupportNeeds()
+    return ResponseEntity.ok().build()
+  }
 }

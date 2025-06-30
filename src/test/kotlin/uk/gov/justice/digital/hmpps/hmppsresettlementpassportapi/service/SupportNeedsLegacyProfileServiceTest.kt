@@ -75,12 +75,6 @@ class SupportNeedsLegacyProfileServiceTest {
   }
 
   @Test
-  fun `test setSupportNeedsLegacyProfile`() {
-    supportNeedsLegacyProfileService.setSupportNeedsLegacyProfile()
-    verify(prisonerRepository).updateProfileResetLegacyProfileFlags()
-  }
-
-  @Test
   fun `test addLegacySupportNeeds`() {
     val fakeNow = LocalDateTime.parse("2024-07-02T12:12:12")
     mockkStatic(LocalDateTime::class)

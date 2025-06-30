@@ -23,11 +23,6 @@ class SupportNeedsLegacyProfileService(
   }
 
   @Transactional
-  fun setSupportNeedsLegacyProfile() {
-    prisonerRepository.updateProfileResetLegacyProfileFlags()
-  }
-
-  @Transactional
   fun addLegacySupportNeeds() {
     val legacySupportNeeds = supportNeedRepository.findAllBySectionAndDeletedIsFalse("Legacy support need")
     val legacyPrisoners = prisonerRepository.findAllBySupportNeedsLegacyProfileIsTrue()

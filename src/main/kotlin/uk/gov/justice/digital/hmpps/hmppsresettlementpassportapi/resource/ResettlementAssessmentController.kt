@@ -49,7 +49,7 @@ class ResettlementAssessmentController(
   private val auditService: AuditService,
 ) {
   @PostMapping("/{nomsId}/resettlement-assessment/{pathway}/next-page", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Returns next page of resettlement assessment", description = "Returns next page of resettlement assessment")
+  @Operation(summary = "Returns next page of resettlement assessment", description = "Returns next page of resettlement assessment", deprecated = true)
   @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
@@ -194,7 +194,10 @@ class ResettlementAssessmentController(
   }
 
   @PostMapping("/{nomsId}/resettlement-assessment/{pathway}/complete", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Completes a resettlement assessment for the given nomsId and pathway", description = "Completes a resettlement assessment for the given nomsId and pathway")
+  @Operation(
+    summary = "Completes a resettlement assessment for the given nomsId and pathway",
+    description = "Completes a resettlement assessment for the given nomsId and pathway",
+    deprecated = true)
   @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
@@ -246,7 +249,7 @@ class ResettlementAssessmentController(
   }
 
   @PostMapping("/{nomsId}/resettlement-assessment/{pathway}/validate", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Validates the given resettlement assessment", description = "Validates the given resettlement assessment")
+  @Operation(summary = "Validates the given resettlement assessment", description = "Validates the given resettlement assessment", deprecated = true)
   @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
@@ -292,7 +295,10 @@ class ResettlementAssessmentController(
   }
 
   @PostMapping("/{nomsId}/resettlement-assessment/submit", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Submit a completed resettlement assessment for the given nomsId", description = "Submit a completed resettlement assessment for the given nomsId")
+  @Operation(
+    summary = "Submit a completed resettlement assessment for the given nomsId",
+    description = "Submit a completed resettlement assessment for the given nomsId",
+    deprecated = true)
   @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
@@ -397,7 +403,7 @@ class ResettlementAssessmentController(
   }
 
   @PostMapping("/{nomsId}/resettlement-assessment/skip", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Skip an assessment")
+  @Operation(summary = "Skip an assessment", deprecated = true)
   @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [

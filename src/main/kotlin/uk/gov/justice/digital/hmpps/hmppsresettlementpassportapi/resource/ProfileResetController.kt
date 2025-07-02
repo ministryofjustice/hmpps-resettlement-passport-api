@@ -34,7 +34,8 @@ class ProfileResetController(private val resettlementAssessmentResetService: Res
   @Operation(
     summary = "Reset a profile",
     description = "Resets a prisoner's profile by removing any resettlement assessments and resetting statuses to NOT_STARTED. Also sends a case note with reason to DPS.",
-    deprecated = true)
+    deprecated = true,
+  )
   @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [

@@ -197,7 +197,8 @@ class ResettlementAssessmentController(
   @Operation(
     summary = "Completes a resettlement assessment for the given nomsId and pathway",
     description = "Completes a resettlement assessment for the given nomsId and pathway",
-    deprecated = true)
+    deprecated = true,
+  )
   @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
@@ -298,7 +299,8 @@ class ResettlementAssessmentController(
   @Operation(
     summary = "Submit a completed resettlement assessment for the given nomsId",
     description = "Submit a completed resettlement assessment for the given nomsId",
-    deprecated = true)
+    deprecated = true,
+  )
   @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [

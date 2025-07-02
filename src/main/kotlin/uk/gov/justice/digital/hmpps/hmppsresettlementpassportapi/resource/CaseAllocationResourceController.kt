@@ -81,7 +81,7 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
   @Operation(
     summary = "Unassign one or more cases to a staff",
     description = "Unassign one or more cases to a probation service officer",
-    deprecated = true
+    deprecated = true,
   )
   @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(

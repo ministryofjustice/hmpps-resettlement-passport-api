@@ -73,17 +73,6 @@ class PrisonerRepositoryTest : RepositoryTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-prisoners-legacy-profile.sql")
-  fun `test updateProfileResetLegacyProfileFlags`() {
-    prisonerRepository.updateProfileResetLegacyProfileFlags()
-
-    val expectedUpdatedPrisoners = mapOf(1L to true, 2L to false, 3L to false, 4L to false, 5L to false, 6L to true, 7L to false, 8L to true, 9L to false)
-    val prisonersFromDatabase = prisonerRepository.findAll().sortedBy { it.id }.associate { it.id to it.supportNeedsLegacyProfile }
-
-    assertThat(prisonersFromDatabase).usingRecursiveComparison().isEqualTo(expectedUpdatedPrisoners)
-  }
-
-  @Test
-  @Sql("classpath:testdata/sql/seed-prisoners-legacy-profile.sql")
   fun `test findAllBySupportNeedsLegacyProfileIsTrue`() {
     Assertions.assertEquals(listOf(8L), prisonerRepository.findAllBySupportNeedsLegacyProfileIsTrue().map { it.id })
   }

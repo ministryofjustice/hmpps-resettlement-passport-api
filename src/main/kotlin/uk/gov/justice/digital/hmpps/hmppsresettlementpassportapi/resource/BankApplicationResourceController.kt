@@ -75,7 +75,7 @@ class BankApplicationResourceController(private val bankApplicationService: Bank
   ) = bankApplicationService.getBankApplicationByNomsId(nomsId)
 
   @PostMapping("/{nomsId}/bankapplication", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Create assessment", description = "Create assessment")
+  @Operation(summary = "Create assessment", description = "Create assessment", deprecated = true)
   @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
@@ -120,7 +120,7 @@ class BankApplicationResourceController(private val bankApplicationService: Bank
   }
 
   @DeleteMapping("/{nomsId}/bankapplication/{bankApplicationId}", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Create assessment", description = "Create assessment")
+  @Operation(summary = "Create assessment", description = "Create assessment", deprecated = true)
   @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
@@ -167,7 +167,7 @@ class BankApplicationResourceController(private val bankApplicationService: Bank
   }
 
   @PatchMapping("/{nomsId}/bankapplication/{bankApplicationId}", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Create assessment", description = "Create assessment")
+  @Operation(summary = "Create assessment", description = "Create assessment", deprecated = true)
   @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [

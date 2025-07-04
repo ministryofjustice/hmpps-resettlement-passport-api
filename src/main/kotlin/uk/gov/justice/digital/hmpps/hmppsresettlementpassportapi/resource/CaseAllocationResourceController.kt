@@ -33,7 +33,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.A
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class CaseAllocationResourceController(private val caseAllocationService: CaseAllocationService, private val auditService: AuditService) {
   @PostMapping("/cases", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Assign one or more cases to a staff", description = "Assign one or more cases to a probation service officer")
+  @Operation(summary = "Assign one or more cases to a staff", description = "Assign one or more cases to a probation service officer", deprecated = true)
   @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
@@ -81,6 +81,7 @@ class CaseAllocationResourceController(private val caseAllocationService: CaseAl
   @Operation(
     summary = "Unassign one or more cases to a staff",
     description = "Unassign one or more cases to a probation service officer",
+    deprecated = true,
   )
   @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(

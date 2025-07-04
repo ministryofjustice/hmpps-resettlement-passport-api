@@ -11,12 +11,18 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 
 @Service
-class CaseNotesClientCredentialsService(
+class ClientCredentialsService(
   val tokenWebClient: WebClient,
   @Value("\${api.base.url.case-notes}") private val caseNotesRootUri: String,
+  @Value("\${api.base.url.arn}") private val arnRootUri: String,
 ) {
 
-  private suspend fun getAccessToken(userId: String) = tokenWebClient.post()
+  enum class ServiceType {
+    CaseNotes,
+    Arn,
+  }
+
+  private suspend fun getAccessToken(userId: String): String? = tokenWebClient.post()
     .body(
       BodyInserters
         .fromFormData("grant_type", "client_credentials")
@@ -28,12 +34,15 @@ class CaseNotesClientCredentialsService(
     .exponentialBackOffRetry()
     .awaitSingle()?.accessToken
 
-  suspend fun getAuthorizedClient(userId: String): WebClient {
+  suspend fun getAuthorizedClient(userId: String, serviceType: ServiceType): WebClient {
     val accessToken = getAccessToken(userId) ?: throw RuntimeException("Unexpected error obtaining token for user $userId")
+    val uri = when (serviceType) {
+      ServiceType.CaseNotes -> caseNotesRootUri
+      ServiceType.Arn -> arnRootUri
+    }
 
-    return WebClient
-      .builder()
-      .baseUrl(caseNotesRootUri)
+    return WebClient.builder()
+      .baseUrl(uri)
       .defaultHeader("Authorization", "Bearer $accessToken")
       .defaultHeader("CaseloadId", "***")
       .build()

@@ -11,13 +11,16 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.MappaData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.RiskScore
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.RoshData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.RiskService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClaimFromJWTToken
 
 @RestController
 @Validated
@@ -64,7 +67,13 @@ class RiskResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-  ): RiskScore = riskService.getRiskScoresByNomsId(nomsId)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): RiskScore {
+    val userId = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get sub from auth token")
+    return riskService.getRiskScoresByNomsId(nomsId, userId)
+  }
 
   @GetMapping("{nomsId}/risk/rosh", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(
@@ -103,7 +112,13 @@ class RiskResourceController(
     @PathVariable("nomsId")
     @Parameter(required = true)
     nomsId: String,
-  ): RoshData = riskService.getRoshDataByNomsId(nomsId)
+    @Schema(hidden = true)
+    @RequestHeader("Authorization")
+    auth: String,
+  ): RoshData {
+    val userId = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get sub from auth token")
+    return riskService.getRoshDataByNomsId(nomsId, userId)
+  }
 
   @GetMapping("{nomsId}/risk/mappa", produces = [MediaType.APPLICATION_JSON_VALUE])
   @Operation(

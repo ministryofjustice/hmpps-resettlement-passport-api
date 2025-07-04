@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
-import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Category
@@ -21,20 +20,22 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.RsrScore
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ScoreLevel
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.arnapi.AllRoshRiskDataDto
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.arnapi.RiskScoresDto
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ClientCredentialsService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ClientCredentialsService.ServiceType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.convertStringToEnum
 import java.time.Duration
 
 @Service
 class ArnApiService(
-  private val arnWebClientClientCredentials: WebClient,
+  private val arnClientCredentialsService: ClientCredentialsService,
   @Value("\${api.timeout.arn:PT2S}") private val timeout: Duration,
 ) {
 
   @Cacheable("arn-api-get-risk-scores-by-crn")
-  fun getRiskScoresByCrn(crn: String): RiskScore {
+  fun getRiskScoresByCrn(crn: String, userId: String): RiskScore {
     // Use CRN to get risk scores from ARN
     val riskScoresDtoList = runBlocking {
-      arnWebClientClientCredentials.get()
+      arnClientCredentialsService.getAuthorizedClient(userId, ServiceType.Arn).get()
         .uri("/risks/crn/$crn/predictors/all")
         .retrieve()
         .onStatus(
@@ -93,10 +94,10 @@ class ArnApiService(
   fun List<RiskScoresDto>.getMostRecentRiskScore() = this.sortedBy { it.completedDate }.lastOrNull()
 
   @Cacheable("arn-api-get-rosh-data-by-crn")
-  fun getRoshDataByCrn(crn: String): RoshData {
+  fun getRoshDataByCrn(crn: String, userId: String): RoshData {
     // Use CRN to get risk scores from ARN
     val allRoshRiskData = runBlocking {
-      arnWebClientClientCredentials.get()
+      arnClientCredentialsService.getAuthorizedClient(userId, ServiceType.Arn).get()
         .uri("/risks/crn/$crn")
         .retrieve()
         .onStatus(

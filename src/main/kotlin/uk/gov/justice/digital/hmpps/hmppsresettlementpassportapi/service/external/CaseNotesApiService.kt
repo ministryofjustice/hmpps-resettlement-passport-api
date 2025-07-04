@@ -19,7 +19,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.casenotesapi.CaseNotes
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseNotesClientCredentialsService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ClientCredentialsService
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ClientCredentialsService.ServiceType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.enumIncludes
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.exponentialBackOffRetry
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.extractCaseNoteTypeFromBcstCaseNote
@@ -30,7 +31,7 @@ import java.time.format.DateTimeFormatter
 class CaseNotesApiService(
   private val caseNotesWebClientCredentials: WebClient,
   private val prisonerSearchApiService: PrisonerSearchApiService,
-  private val caseNotesClientCredentialsService: CaseNotesClientCredentialsService,
+  private val clientCredentialsService: ClientCredentialsService,
 
 ) {
 
@@ -184,7 +185,7 @@ class CaseNotesApiService(
     val prisonCode = prisonerSearchApiService.findPrisonerPersonalDetails(nomsId).prisonId
 
     return runBlocking {
-      caseNotesClientCredentialsService.getAuthorizedClient(userId).post()
+      clientCredentialsService.getAuthorizedClient(userId, ServiceType.CaseNotes).post()
         .uri(
           "/case-notes/{nomsId}",
           nomsId,

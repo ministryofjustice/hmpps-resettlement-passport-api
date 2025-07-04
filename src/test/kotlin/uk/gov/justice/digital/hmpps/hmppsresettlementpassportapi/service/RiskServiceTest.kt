@@ -31,13 +31,13 @@ class RiskServiceTest {
   fun `get risk scores - test missing crn from database`() {
     val nomsId = "ABC1234"
     Mockito.`when`(resettlementPassportDeliusApiService.getCrn(nomsId)).thenReturn(null)
-    assertThrows<ResourceNotFoundException> { riskService.getRiskScoresByNomsId(nomsId) }
+    assertThrows<ResourceNotFoundException> { riskService.getRiskScoresByNomsId(nomsId, "user1") }
   }
 
   @Test
   fun `get RoSH data - test missing crn from database`() {
     val nomsId = "ABC1234"
     Mockito.`when`(resettlementPassportDeliusApiService.getCrn(nomsId)).thenReturn(null)
-    assertThrows<ResourceNotFoundException> { riskService.getRoshDataByNomsId(nomsId) }
+    assertThrows<ResourceNotFoundException> { riskService.getRoshDataByNomsId(nomsId, "user1") }
   }
 }

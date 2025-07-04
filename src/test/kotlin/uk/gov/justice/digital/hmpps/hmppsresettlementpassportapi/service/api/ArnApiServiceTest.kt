@@ -13,6 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Category
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.RiskLevel
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.arnapi.RiskScoresDto
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ClientCredentialsService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ArnApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.jacksonCodecsConfigurer
 import java.time.LocalDateTime
@@ -25,19 +26,25 @@ import kotlin.time.toJavaDuration
 class ArnApiServiceTest {
 
   @Rule
-  val mockWebServer: MockWebServer = MockWebServer()
-  private val arnWebClientClient = WebClient.builder().baseUrl(mockWebServer.url("/").toUrl().toString())
-    .codecs(jacksonCodecsConfigurer)
-    .build()
+  @JvmField
+  public val mockWebServer: MockWebServer = MockWebServer()
 
-  private val arnApiService: ArnApiService = ArnApiService(arnWebClientClient, 10.milliseconds.toJavaDuration())
+  private val clientCredentialsService = ClientCredentialsService(
+    WebClient.builder().baseUrl(mockWebServer.url("/").toUrl().toString())
+      .codecs(jacksonCodecsConfigurer)
+      .build(),
+    "https://case-notes-service-url",
+    "https://arn-service-url",
+  )
+
+  private val arnApiService: ArnApiService = ArnApiService(clientCredentialsService, 10.milliseconds.toJavaDuration())
 
   @Test
   fun `times out when call to rosh api passes threshold`() {
     mockWebServer.enqueue(MockResponse().setResponseCode(404).setHeadersDelay(1, TimeUnit.SECONDS))
 
     assertThatThrownBy {
-      arnApiService.getRoshDataByCrn("crn")
+      arnApiService.getRoshDataByCrn("crn", "user1")
     }.isInstanceOf(TimeoutException::class.java)
   }
 
@@ -46,7 +53,7 @@ class ArnApiServiceTest {
     mockWebServer.enqueue(MockResponse().setResponseCode(404).setHeadersDelay(1, TimeUnit.SECONDS))
 
     assertThatThrownBy {
-      arnApiService.getRiskScoresByCrn("crn")
+      arnApiService.getRiskScoresByCrn("crn", "user1")
     }.isInstanceOf(TimeoutException::class.java)
   }
 

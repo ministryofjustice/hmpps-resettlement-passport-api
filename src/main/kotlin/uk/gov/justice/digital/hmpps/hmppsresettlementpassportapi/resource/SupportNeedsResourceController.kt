@@ -219,7 +219,7 @@ class SupportNeedsResourceController(
   ) = supportNeedsService.getPrisonerNeedById(nomsId, prisonerNeedId)
 
   @PostMapping("/{nomsId}/needs")
-  @Operation(summary = "POST new support needs and updates for a prisoner", description = "POST new support needs and updates for a prisoner")
+  @Operation(summary = "POST new support needs and updates for a prisoner", description = "POST new support needs and updates for a prisoner", deprecated = true)
   @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
@@ -261,7 +261,7 @@ class SupportNeedsResourceController(
   }
 
   @PatchMapping("/{nomsId}/need/{prisonerNeedId}")
-  @Operation(summary = "Update an existing support need", description = "Update the status of an existing support need")
+  @Operation(summary = "Update an existing support need", description = "Update the status of an existing support need", deprecated = true)
   @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [

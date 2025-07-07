@@ -36,7 +36,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.A
 class IdApplicationResourceController(private val idApplicationService: IdApplicationService, private val auditService: AuditService) {
 
   @PostMapping("/{nomsId}/idapplication", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Create id application", description = "Create id application")
+  @Operation(summary = "Create id application", description = "Create id application", deprecated = true)
   @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
@@ -81,7 +81,7 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
   }
 
   @DeleteMapping("/{nomsId}/idapplication/{idApplicationId}", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Create Id Application", description = "Create Id Application for a prisoner")
+  @Operation(summary = "Create Id Application", description = "Create Id Application for a prisoner", deprecated = true)
   @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [
@@ -138,7 +138,7 @@ class IdApplicationResourceController(private val idApplicationService: IdApplic
   }
 
   @PatchMapping("/{nomsId}/idapplication/{idApplicationId}", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @Operation(summary = "Create assessment", description = "Create assessment")
+  @Operation(summary = "Create assessment", description = "Create assessment", deprecated = true)
   @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [

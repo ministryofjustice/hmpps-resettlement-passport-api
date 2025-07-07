@@ -31,7 +31,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.A
 @PreAuthorize("hasRole('RESETTLEMENT_PASSPORT_EDIT')")
 class ProfileResetController(private val resettlementAssessmentResetService: ResettlementAssessmentResetService, private val auditService: AuditService) {
   @PostMapping("/{prisonerId}/reset-profile")
-  @Operation(summary = "Reset a profile", description = "Resets a prisoner's profile by removing any resettlement assessments and resetting statuses to NOT_STARTED. Also sends a case note with reason to DPS.")
+  @Operation(
+    summary = "Reset a profile",
+    description = "Resets a prisoner's profile by removing any resettlement assessments and resetting statuses to NOT_STARTED. Also sends a case note with reason to DPS.",
+    deprecated = true,
+  )
   @RequiresFeature(READ_ONLY_MODE_DISABLED)
   @ApiResponses(
     value = [

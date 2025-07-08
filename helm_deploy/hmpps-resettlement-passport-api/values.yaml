@@ -8,7 +8,7 @@ generic-service:
   replicaCount: 5
 
   image:
-    repository: quay.io/hmpps/hmpps-resettlement-passport-api
+    repository: ghcr.io/ministryofjustice/hmpps-resettlement-passport-api
     tag: app_version # override at deployment time
     port: 8080
 
@@ -49,7 +49,6 @@ generic-service:
     JAVA_OPTS: "-Xmx512m"
     SERVER_PORT: "8080"
     SPRING_PROFILES_ACTIVE: "logstash,offender-events"
-    APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=$(APPINSIGHTS_INSTRUMENTATIONKEY);IngestionEndpoint=https://northeurope-0.in.applicationinsights.azure.com/;LiveEndpoint=https://northeurope.livediagnostics.monitor.azure.com/"
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.json
     SCHEDULE_EXPRESSION_DELETE-EXPIRED-OTP: 0 0 3 * * *
     CLAMAV_HOSTNAME: hmpps-resettlement-passport-api-clamav
@@ -63,9 +62,10 @@ generic-service:
 
   namespace_secrets:
     hmpps-resettlement-passport-api:
-      APPINSIGHTS_INSTRUMENTATIONKEY: "APPINSIGHTS_INSTRUMENTATIONKEY"
       RESETTLEMENT_PASSPORT_API_CLIENT_ID: "SYSTEM_CLIENT_ID"
       RESETTLEMENT_PASSPORT_API_CLIENT_SECRET: "SYSTEM_CLIENT_SECRET"
+    hmpps-person-on-probation-user-api-application-insights:
+      APPLICATIONINSIGHTS_CONNECTION_STRING: "APPLICATIONINSIGHTS_CONNECTION_STRING"
     rds-postgresql-instance-output:
       DATABASE_USERNAME: "database_username"
       DATABASE_PASSWORD: "database_password"

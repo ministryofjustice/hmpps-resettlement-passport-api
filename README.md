@@ -1,6 +1,5 @@
 # hmpps-resettlement-passport-api
 [![repo standards badge](https://img.shields.io/badge/dynamic/json?color=blue&style=flat&logo=github&label=MoJ%20Compliant&query=%24.result&url=https%3A%2F%2Foperations-engineering-reports.cloud-platform.service.justice.gov.uk%2Fapi%2Fv1%2Fcompliant_public_repositories%2Fhmpps-resettlement-passport-api)](https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/public-github-repositories.html#hmpps-resettlement-passport-api "Link to report")
-[![CircleCI](https://circleci.com/gh/ministryofjustice/hmpps-resettlement-passport-api/tree/main.svg?style=svg)](https://circleci.com/gh/ministryofjustice/hmpps-resettlement-passport-api)
 [![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://resettlement-passport-api-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html)
 
 # Resettlement Passport API

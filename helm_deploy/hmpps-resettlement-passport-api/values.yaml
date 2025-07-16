@@ -64,7 +64,7 @@ generic-service:
     hmpps-resettlement-passport-api:
       RESETTLEMENT_PASSPORT_API_CLIENT_ID: "SYSTEM_CLIENT_ID"
       RESETTLEMENT_PASSPORT_API_CLIENT_SECRET: "SYSTEM_CLIENT_SECRET"
-    hmpps-person-on-probation-user-api-application-insights:
+    hmpps-resettlement-passport-api-application-insights:
       APPLICATIONINSIGHTS_CONNECTION_STRING: "APPLICATIONINSIGHTS_CONNECTION_STRING"
     rds-postgresql-instance-output:
       DATABASE_USERNAME: "database_username"

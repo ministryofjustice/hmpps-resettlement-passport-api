@@ -2,7 +2,7 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
   val kotlinVersion = "2.0.0"
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.3.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.3.2"
   id("org.springdoc.openapi-gradle-plugin") version "1.9.0"
   id("jacoco")
   id("org.sonarqube") version "6.2.0.5505"

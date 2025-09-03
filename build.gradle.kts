@@ -6,6 +6,7 @@ plugins {
   id("org.springdoc.openapi-gradle-plugin") version "1.9.0"
   id("jacoco")
   id("org.sonarqube") version "6.2.0.5505"
+  id("org.owasp.dependencycheck") version "12.1.3"
   kotlin("plugin.spring") version kotlinVersion
   kotlin("plugin.jpa") version kotlinVersion
   kotlin("plugin.serialization") version kotlinVersion
@@ -126,6 +127,7 @@ tasks.named<BootRun>("bootRun") {
 
 dependencyCheck {
   suppressionFiles.add("owasp-suppressions.xml")
+  nvd.datafeedUrl = "file:///opt/vulnz/cache"
 }
 
 abstract class EchoTask : DefaultTask() {

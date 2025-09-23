@@ -21,7 +21,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
     val expectedOutput = readFile("testdata/expectation/staff-contacts-1.json")
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGet("/probation-cases/$crn/community-manager", 200, "testdata/resettlement-passport-delius-api/prisoner-managers-1.json")
-    keyWorkerApiMockServer.stubGet("/key-worker/offender/$nomsId", 200, "testdata/key-worker-api/key-worker-1.json")
+    keyWorkerApiMockServer.stubGet("/prisoners/$nomsId/allocations/current", 200, "testdata/key-worker-api/key-worker-1.json")
     allocationManagerApiMockServer.stubGet("/api/allocation/$nomsId", 200, "testdata/allocation-manager-api/poms-1.json")
 
     webTestClient.get()
@@ -73,7 +73,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
     val nomsId = "123"
     val expectedOutput = readFile("testdata/expectation/staff-contacts-2.json")
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
-    keyWorkerApiMockServer.stubGet("/key-worker/offender/$nomsId", 200, "testdata/key-worker-api/key-worker-2.json")
+    keyWorkerApiMockServer.stubGet("/prisoners/$nomsId/allocations/current", 200, "testdata/key-worker-api/key-worker-2.json")
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/staff-contacts")
@@ -130,7 +130,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
     val expectedOutput = readFile("testdata/expectation/staff-contacts-2.json")
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
     // Note that even if an individual call to get a staff contact fails, we should just log this and return no data
-    keyWorkerApiMockServer.stubGet("/key-worker/offender/$nomsId", 404, null)
+    keyWorkerApiMockServer.stubGet("/prisoners/$nomsId/allocations/current", 404, null)
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/staff-contacts")
@@ -227,7 +227,7 @@ class StaffContactsIntegrationTest : IntegrationTestBase() {
     val expectedOutput = readFile("testdata/expectation/staff-contacts-1.json")
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGet("/probation-cases/$crn/community-manager", 200, "testdata/resettlement-passport-delius-api/prisoner-managers-1.json")
-    keyWorkerApiMockServer.stubGet("/key-worker/offender/$nomsId", 200, "testdata/key-worker-api/key-worker-1.json")
+    keyWorkerApiMockServer.stubGet("/prisoners/$nomsId/allocations/current", 200, "testdata/key-worker-api/key-worker-1.json")
     allocationManagerApiMockServer.stubGet("/api/allocation/$nomsId", 200, "testdata/allocation-manager-api/poms-1.json")
 
     webTestClient.get()

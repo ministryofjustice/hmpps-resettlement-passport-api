@@ -1,5 +1,16 @@
 {
-  "staffId": null,
-  "firstName": null,
-  "lastName": null
+  "prisonNumber": "G5384GE",
+  "hasHighComplexityOfNeeds": false,
+  "allocations": [],
+  "latestRecordedEvents": [],
+  "policies": [
+    {
+      "policy": "KEY_WORKER",
+      "enabled": true
+    },
+    {
+      "policy": "PERSONAL_OFFICER",
+      "enabled": true
+    }
+  ]
 }

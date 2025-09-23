@@ -1,5 +1,49 @@
 {
-  "staffId": 485588,
-  "firstName": "STEVE",
-  "lastName": "RENDELL"
+  "prisonNumber": "G5384GE",
+  "hasHighComplexityOfNeeds": false,
+  "allocations": [
+    {
+      "policy": {
+        "code": "KEY_WORKER",
+        "description": "Key worker"
+      },
+      "prison": {
+        "code": "MDI",
+        "description": "Moorland (HMP & YOI)"
+      },
+      "staffMember": {
+        "staffId": 485631,
+        "firstName": "FIRST",
+        "lastName": "LAST",
+        "emailAddresses": []
+      }
+    },
+    {
+      "policy": {
+        "code": "PERSONAL_OFFICER",
+        "description": "Personal officer"
+      },
+      "prison": {
+        "code": "MDI",
+        "description": "Moorland (HMP & YOI)"
+      },
+      "staffMember": {
+        "staffId": 45489,
+        "firstName": "ANOTHER",
+        "lastName": "NAME",
+        "emailAddresses": []
+      }
+    }
+  ],
+  "latestRecordedEvents": [],
+  "policies": [
+    {
+      "policy": "KEY_WORKER",
+      "enabled": true
+    },
+    {
+      "policy": "PERSONAL_OFFICER",
+      "enabled": true
+    }
+  ]
 }

@@ -17,8 +17,8 @@ api:
       #prison: https://prison-api-dev.prison.service.justice.gov.uk
       case-notes: http://localhost:9193/case-notes-api
       #case-notes: https://dev.offender-case-notes.service.justice.gov.uk
-      #key-worker: http://localhost:9193/key-worker-api
-      key-worker: https://keyworker-api-dev.prison.service.justice.gov.uk
+      key-worker: http://localhost:9193/key-worker-api
+      #key-worker: https://keyworker-api-dev.prison.service.justice.gov.uk
       allocation-manager: http://localhost:9193/allocation-manager-api
       #https://allocation-manager-staging.apps.live.cloud-platform.service.justice.gov.uk
       resettlement-passport-delius: http://localhost:9193/resettlement-passport-and-delius-api

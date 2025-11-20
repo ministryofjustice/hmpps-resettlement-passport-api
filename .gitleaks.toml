@@ -1,0 +1,8 @@
+title = "HMPPS Gitleaks configuration"
+# Add repository-specific entries to this file to extend the default configuration from .gitleaks-default.toml
+# See https://github.com/gitleaks/gitleaks for more information
+
+[extend]
+path = ".gitleaks-default.toml"
+
+

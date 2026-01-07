@@ -80,12 +80,12 @@ data class AssessmentSkipRequest(
   val moreInfo: String? = null,
 )
 
-enum class AssessmentSkipReason {
-  COMPLETED_IN_OASYS,
-  COMPLETED_IN_ANOTHER_PRISON,
-  EARLY_RELEASE,
-  TRANSFER,
-  OTHER,
+enum class AssessmentSkipReason(val displayText: String) {
+  COMPLETED_IN_OASYS("Completed in OASys"),
+  COMPLETED_IN_ANOTHER_PRISON("Completed in another prison"),
+  EARLY_RELEASE("Early release"),
+  TRANSFER("Transfer"),
+  OTHER("Other"),
 }
 
 data class ResettlementAssessmentSubmitResponse(

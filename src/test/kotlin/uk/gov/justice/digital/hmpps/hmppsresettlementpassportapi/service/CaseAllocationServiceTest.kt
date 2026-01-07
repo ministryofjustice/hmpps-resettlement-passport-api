@@ -362,12 +362,17 @@ class CaseAllocationServiceTest {
         deletionDate = null,
       ),
     )
+
+    val expected = listOf(CaseAllocationService.CaseAllocationSarContent(
+      staffLastname = "PSO Lastname",
+      creationDate = fakeNow,
+    ))
     Mockito.`when`(caseAllocationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any()))
       .thenReturn(data)
 
     val result = caseAllocationService.getCaseAllocationHistoryByPrisonerId(1, LocalDateTime.now(), LocalDateTime.now())
 
-    Assertions.assertEquals(data, result)
+    Assertions.assertEquals(expected, result)
   }
 
   private inline fun <reified T> readFileAsObject(filename: String): T = readStringAsObject(readFile(filename))

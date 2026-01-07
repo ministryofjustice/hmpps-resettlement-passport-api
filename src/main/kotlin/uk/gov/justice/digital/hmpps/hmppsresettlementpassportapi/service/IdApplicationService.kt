@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.IdAp
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.IdApplicationRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.IdTypeRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 @Service
@@ -21,7 +22,49 @@ class IdApplicationService(
 ) {
 
   @Transactional
-  fun getIdApplicationByPrisonerIdAndCreationDate(prisonerId: Long, fromDate: LocalDateTime, toDate: LocalDateTime): List<IdApplicationEntity> = idApplicationRepository.findByPrisonerIdAndCreationDateBetween(prisonerId, fromDate = fromDate, toDate = toDate)
+  fun getIdApplicationByPrisonerIdAndCreationDate(prisonerId: Long, fromDate: LocalDateTime, toDate: LocalDateTime): List<IdApplicationSarContent> = idApplicationRepository.findByPrisonerIdAndCreationDateBetween(prisonerId, fromDate = fromDate, toDate = toDate).map {
+    IdApplicationSarContent(
+      it.idType.name,
+      it.creationDate,
+      it.applicationSubmittedDate,
+      it.isPriorityApplication,
+      it.costOfApplication,
+      it.refundAmount,
+      it.haveGro,
+      it.isUkNationalBornOverseas,
+      it.countryBornIn,
+      it.caseNumber,
+      it.courtDetails,
+      it.driversLicenceType,
+      it.driversLicenceApplicationMadeAt,
+      it.isAddedToPersonalItems,
+      it.addedToPersonalItemsDate,
+      it.status,
+      it.statusUpdateDate,
+      it.dateIdReceived,
+    )
+  }
+
+  data class IdApplicationSarContent(
+    val idType: String,
+    val creationDate: LocalDateTime = LocalDateTime.now(),
+    val applicationSubmittedDate: LocalDateTime,
+    var isPriorityApplication: Boolean,
+    var costOfApplication: BigDecimal,
+    var refundAmount: BigDecimal? = null,
+    var haveGro: Boolean? = null,
+    var isUkNationalBornOverseas: Boolean? = null,
+    var countryBornIn: String? = null,
+    var caseNumber: String? = null,
+    var courtDetails: String? = null,
+    var driversLicenceType: String? = null,
+    var driversLicenceApplicationMadeAt: String? = null,
+    var isAddedToPersonalItems: Boolean? = null,
+    var addedToPersonalItemsDate: LocalDateTime? = null,
+    var status: String = "pending",
+    var statusUpdateDate: LocalDateTime? = null,
+    var dateIdReceived: LocalDateTime? = null,
+  )
 
   @Transactional
   fun createIdApplication(idApplicationPost: IdApplicationPost, nomsId: String): IdApplicationEntity {

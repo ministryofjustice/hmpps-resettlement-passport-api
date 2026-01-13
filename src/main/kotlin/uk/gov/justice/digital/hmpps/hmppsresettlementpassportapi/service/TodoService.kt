@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.TodoRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource.TodoPatchRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.resource.TodoRequest
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.reflect.full.declaredMemberProperties
@@ -36,7 +37,29 @@ class TodoService(
       ?: throw ResourceNotFoundException("No item found for $id")
   }
 
-  fun getByPrisonerId(prisonerId: Long, startDate: LocalDateTime, endDate: LocalDateTime): List<TodoEntity> = todoRepository.findAllByPrisonerIdAndCreationDateBetween(prisonerId, startDate, endDate)
+  fun getByPrisonerId(prisonerId: Long, startDate: LocalDateTime, endDate: LocalDateTime): List<TodoSarContent> = todoRepository.findAllByPrisonerIdAndCreationDateBetween(prisonerId, startDate, endDate).map {
+    TodoSarContent(
+      it.title,
+      it.notes,
+      it.dueDate,
+      it.completed,
+      it.createdByUrn,
+      it.updatedByUrn,
+      it.creationDate,
+      it.updatedAt,
+    )
+  }
+
+  data class TodoSarContent(
+    val title: String,
+    val notes: String? = null,
+    val dueDate: LocalDate? = null,
+    val completed: Boolean = false,
+    val createdByUrn: String,
+    val updatedByUrn: String = createdByUrn,
+    val creationDate: LocalDateTime = LocalDateTime.now(),
+    val updatedAt: LocalDateTime = LocalDateTime.now(),
+  )
 
   fun getList(nomsId: String, sortField: String? = null, sortDirection: Sort.Direction? = null): List<TodoEntity> {
     val sort = if (sortField != null) {

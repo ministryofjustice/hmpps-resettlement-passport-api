@@ -67,7 +67,14 @@ class CaseAllocationService(
     prisonerId: Long,
     startDate: LocalDateTime,
     endDate: LocalDateTime,
-  ): List<CaseAllocationEntity> = caseAllocationRepository.findByPrisonerIdAndCreationDateBetween(prisonerId, startDate, endDate)
+  ): List<CaseAllocationSarContent> = caseAllocationRepository.findByPrisonerIdAndCreationDateBetween(prisonerId, startDate, endDate).map {
+    CaseAllocationSarContent(it.creationDate, it.staffLastname)
+  }
+
+  data class CaseAllocationSarContent(
+    val creationDate: LocalDateTime,
+    val staffLastname: String,
+  )
 
   @Transactional
   fun delete(caseAllocation: CaseAllocationEntity): CaseAllocationEntity {

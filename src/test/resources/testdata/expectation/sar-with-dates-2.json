@@ -1,7 +1,6 @@
 {
   "content": {
     "prisoner": {
-      "id": 1,
       "nomsId": "G1458GV",
       "creationDate": "2024-01-01T12:21:38.709",
       "prisonId": null,
@@ -9,42 +8,32 @@
     },
     "assessments": [
       {
-        "id": 1,
-        "prisonerId": 1,
         "creationDate": "2023-08-16T12:21:38.709",
         "assessmentDate": "2023-08-16T12:21:38.709",
         "isBankAccountRequired": true,
         "isIdRequired": true,
-        "idDocuments": [],
-        "isDeleted": false,
-        "deletionDate": null
+        "idDocuments": []
       }
     ],
     "skippedAssessments":  [
       {
-        "assessmentType": "BCST2",
+        "assessmentType": "Immediate needs",
         "createdBy": "TEST_GEN",
         "creationDate": "2022-09-01T12:00:00",
-        "id": 2,
         "moreInfo": "Skipped as on early release",
-        "prisonerId": 1,
-        "reason": "EARLY_RELEASE"
+        "reason": "Early release"
       },
       {
-        "assessmentType": "BCST2",
+        "assessmentType": "Immediate needs",
         "createdBy": "TEST_GEN",
         "creationDate": "2023-09-01T12:00:00",
-        "id": 3,
         "moreInfo": "Skipped for other reason",
-        "prisonerId": 1,
-        "reason": "OTHER"
+        "reason": "Other"
       }
     ],
     "bankApplications": [
       {
-        "id": 1,
         "prisoner": {
-          "id": 1,
           "nomsId": "G1458GV",
           "creationDate": "2024-01-01T12:21:38.709",
           "prisonId": null,
@@ -61,30 +50,23 @@
     ],
     "deliusContacts": [
       {
-        "caseNoteId": "db-1",
-        "pathway": "ACCOMMODATION",
+        "pathway": "Accommodation",
         "creationDateTime": "2023-08-16T12:21:38.709",
         "occurenceDateTime": "2023-08-16T12:21:38.709",
-        "createdBy": "username1",
+        "createdBy": "name1",
         "text": "Some notes here"
       },
       {
-        "caseNoteId": "db-2",
-        "pathway": "HEALTH",
+        "pathway": "Health",
         "creationDateTime": "2024-06-01T12:21:38.709",
         "occurenceDateTime": "2024-06-01T12:21:38.709",
-        "createdBy": "username1",
+        "createdBy": "name1",
         "text": "health notes"
       }
     ],
     "idApplications": [
       {
-        "id": 1,
-        "prisonerId": 1,
-        "idType": {
-          "id": 2,
-          "name": "Marriage certificate"
-        },
+        "idType": "Marriage certificate",
         "creationDate": "2023-08-16T12:21:38.709",
         "applicationSubmittedDate": "2023-08-16T12:21:38.709",
         "isPriorityApplication": false,
@@ -101,588 +83,494 @@
         "addedToPersonalItemsDate": null,
         "status": "pending",
         "statusUpdateDate": "2023-08-16T12:21:38.709",
-        "isDeleted": false,
-        "deletionDate": null,
         "dateIdReceived": null
       }
     ],
     "pathwayStatus": [
       {
-        "id": 1,
-        "prisonerId": 1,
-        "pathway": "ACCOMMODATION",
-        "status": "NOT_STARTED",
+        "pathway": "Accommodation",
+        "status": "Not started",
         "updatedDate": "2023-08-16T12:21:44.234"
       },
       {
-        "id": 2,
-        "prisonerId": 1,
-        "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-        "status": "IN_PROGRESS",
+        "pathway": "Attitudes, thinking and behaviour",
+        "status": "In progress",
         "updatedDate": "2023-08-17T12:28:10.466"
       },
       {
-        "id": 3,
-        "prisonerId": 1,
-        "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
-        "status": "SUPPORT_NOT_REQUIRED",
+        "pathway": "Children, families and communities",
+        "status": "Support not required",
         "updatedDate": "2023-08-17T12:28:10.475"
       },
       {
-        "id": 4,
-        "prisonerId": 1,
-        "pathway": "DRUGS_AND_ALCOHOL",
-        "status": "SUPPORT_DECLINED",
+        "pathway": "Drugs and alcohol",
+        "status": "Support declined",
         "updatedDate": "2023-08-17T12:28:10.479"
       },
       {
-        "id": 5,
-        "prisonerId": 1,
-        "pathway": "EDUCATION_SKILLS_AND_WORK",
-        "status": "DONE",
+        "pathway": "Education, skills and work",
+        "status": "Done",
         "updatedDate": "2023-08-17T12:28:10.483"
       },
       {
-        "id": 6,
-        "prisonerId": 1,
-        "pathway": "FINANCE_AND_ID",
-        "status": "IN_PROGRESS",
+        "pathway": "Finance and ID",
+        "status": "In progress",
         "updatedDate": "2023-08-17T12:28:10.49"
       },
       {
-        "id": 7,
-        "prisonerId": 1,
-        "pathway": "HEALTH",
-        "status": "SUPPORT_NOT_REQUIRED",
+        "pathway": "Health",
+        "status": "Support not required",
         "updatedDate": "2023-08-17T12:28:10.493"
       }
     ],
     "statusSummary": [
       {
-        "type": "BCST2",
+        "type": "Immediate needs",
         "pathwayStatus": [
           {
-            "pathway": "ACCOMMODATION",
-            "assessmentStatus": "SUBMITTED"
+            "pathway": "Accommodation",
+            "assessmentStatus": "Submitted"
           },
           {
-            "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-            "assessmentStatus": "SUBMITTED"
+            "pathway": "Attitudes, thinking and behaviour",
+            "assessmentStatus": "Submitted"
           },
           {
-            "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
-            "assessmentStatus": "SUBMITTED"
+            "pathway": "Children, families and communities",
+            "assessmentStatus": "Submitted"
           },
           {
-            "pathway": "DRUGS_AND_ALCOHOL",
-            "assessmentStatus": "SUBMITTED"
+            "pathway": "Drugs and alcohol",
+            "assessmentStatus": "Submitted"
           },
           {
-            "pathway": "EDUCATION_SKILLS_AND_WORK",
-            "assessmentStatus": "SUBMITTED"
+            "pathway": "Education, skills and work",
+            "assessmentStatus": "Submitted"
           },
           {
-            "pathway": "FINANCE_AND_ID",
-            "assessmentStatus": "SUBMITTED"
+            "pathway": "Finance and ID",
+            "assessmentStatus": "Submitted"
           },
           {
-            "pathway": "HEALTH",
-            "assessmentStatus": "SUBMITTED"
+            "pathway": "Health",
+            "assessmentStatus": "Submitted"
           }
         ]
       },
       {
-        "type": "RESETTLEMENT_PLAN",
+        "type": "Pre-release",
         "pathwayStatus": [
           {
-            "pathway": "ACCOMMODATION",
-            "assessmentStatus": "SUBMITTED"
+            "pathway": "Accommodation",
+            "assessmentStatus": "Submitted"
           },
           {
-            "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
-            "assessmentStatus": "SUBMITTED"
+            "pathway": "Attitudes, thinking and behaviour",
+            "assessmentStatus": "Submitted"
           },
           {
-            "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
-            "assessmentStatus": "SUBMITTED"
+            "pathway": "Children, families and communities",
+            "assessmentStatus": "Submitted"
           },
           {
-            "pathway": "DRUGS_AND_ALCOHOL",
-            "assessmentStatus": "SUBMITTED"
+            "pathway": "Drugs and alcohol",
+            "assessmentStatus": "Submitted"
           },
           {
-            "pathway": "EDUCATION_SKILLS_AND_WORK",
-            "assessmentStatus": "SUBMITTED"
+            "pathway": "Education, skills and work",
+            "assessmentStatus": "Submitted"
           },
           {
-            "pathway": "FINANCE_AND_ID",
-            "assessmentStatus": "SUBMITTED"
+            "pathway": "Finance and ID",
+            "assessmentStatus": "Submitted"
           },
           {
-            "pathway": "HEALTH",
-            "assessmentStatus": "SUBMITTED"
+            "pathway": "Health",
+            "assessmentStatus": "Submitted"
           }
         ]
       }
     ],
     "resettlementAssessments": [
       {
-        "assessmentType": "BCST2",
+        "assessmentType": "Immediate needs",
         "lastUpdated": "2023-05-22T12:40:13.933994",
         "questionsAndAnswers": [
           {
             "answer": "Social housing",
-            "originalPageId": "WHERE_DID_THEY_LIVE",
             "questionTitle": "Where did the person in prison live before custody?"
           },
           {
             "answer": "A Road\nSome Town\nYorkshire\nAB13 C45",
-            "originalPageId": "WHERE_DID_THEY_LIVE_ADDRESS",
             "questionTitle": "Enter the address"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "HELP_TO_KEEP_HOME",
             "questionTitle": "Does the person in prison or their family need help to keep their home while they are in prison?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "WHERE_WILL_THEY_LIVE_1",
             "questionTitle": "Where will the person in prison live when they are released?"
           }
         ],
-        "updatedBy": "Test User"
+        "updatedBy": "User"
       },
       {
-        "assessmentType": "BCST2",
+        "assessmentType": "Immediate needs",
         "lastUpdated": "2024-05-22T15:45:51.383575",
         "questionsAndAnswers": [
           {
             "answer": "No",
-            "originalPageId": "HELP_TO_MANAGE_ANGER",
             "questionTitle": "Does the person in prison want support managing their emotions?"
           },
           {
             "answer": "No",
-            "originalPageId": "ISSUES_WITH_GAMBLING",
             "questionTitle": "Does the person in prison want support with gambling issues?"
           }
         ],
-        "updatedBy": "Test User"
+        "updatedBy": "User"
       },
       {
-        "assessmentType": "BCST2",
+        "assessmentType": "Immediate needs",
         "lastUpdated": "2024-05-22T15:46:17.002205",
         "questionsAndAnswers": [
           {
             "answer": "No answer provided",
-            "originalPageId": "PARTNER_OR_SPOUSE",
             "questionTitle": "Does the person in prison have a partner or spouse?"
           },
           {
             "answer": "No",
-            "originalPageId": "PRIMARY_CARER_FOR_CHILDREN",
             "questionTitle": "Is the person in prison the primary carer for any children?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "CARING_FOR_ADULT",
             "questionTitle": "Does the person in prison have caring responsibilities for any adults?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "SUPPORT_FROM_SOCIAL_SERVICES",
             "questionTitle": "Has the person in prison themselves ever received support from social services?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "FRIEND_FAMILY_COMMUNITY_SUPPORT",
             "questionTitle": "Will the person in prison have support from family, friends or their community outside of prison?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "INVOLVEMENT_IN_GANG_ACTIVITY",
             "questionTitle": "Has the person in prison had any involvement in gang activity?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "UNDER_THREAT_OUTSIDE",
             "questionTitle": "Is the person in prison under threat outside of prison?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "COMMUNITY_ORGANISATION_SUPPORT",
             "questionTitle": "Does the person in prison need support from community organisations outside of prison?"
           }
         ],
-        "updatedBy": "Test User"
+        "updatedBy": "User"
       },
       {
-        "assessmentType": "BCST2",
+        "assessmentType": "Immediate needs",
         "lastUpdated": "2024-05-22T15:46:31.837468",
         "questionsAndAnswers": [
           {
             "answer": "No",
-            "originalPageId": "DRUG_ISSUES",
             "questionTitle": "Does the person in prison have any previous or current drug misuse issues?"
           },
           {
             "answer": "No",
-            "originalPageId": "ALCOHOL_ISSUES",
             "questionTitle": "Does the person in prison have any previous or current alcohol misuse issues?"
           }
         ],
-        "updatedBy": "Test User"
+        "updatedBy": "User"
       },
       {
-        "assessmentType": "BCST2",
+        "assessmentType": "Immediate needs",
         "lastUpdated": "2024-05-22T15:46:50.480459",
         "questionsAndAnswers": [
           {
             "answer": "No answer provided",
-            "originalPageId": "JOB_BEFORE_CUSTODY",
             "questionTitle": "Did the person in prison have a job before custody?"
           },
           {
             "answer": "No",
-            "originalPageId": "HAVE_A_JOB_AFTER_RELEASE",
             "questionTitle": "Does the person in prison have a job when they are released?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "SUPPORT_TO_FIND_JOB",
             "questionTitle": "Does the person in prison want support to find a job when they are released?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY",
             "questionTitle": "Was the person in prison in education or training before custody?"
           },
           {
             "answer": "No",
-            "originalPageId": "WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE",
             "questionTitle": "Does the person in prison want to start education or training after release?"
           }
         ],
-        "updatedBy": "Test User"
+        "updatedBy": "User"
       },
       {
-        "assessmentType": "BCST2",
+        "assessmentType": "Immediate needs",
         "lastUpdated": "2024-05-22T15:47:14.182755",
         "questionsAndAnswers": [
           {
             "answer": "No answer provided",
-            "originalPageId": "HAS_BANK_ACCOUNT",
             "questionTitle": "Does the person in prison have a bank account?"
           },
           {
             "answer": "No",
-            "originalPageId": "HELP_WITH_BANK_ACCOUNT",
             "questionTitle": "Does the person in prison want help to apply for a bank account?"
           },
           {
             "answer": "Birth or adoption certificate\nPassport",
-            "originalPageId": "WHAT_ID_DOCUMENTS",
             "questionTitle": "What ID documents does the person in prison have?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "HELP_APPLY_FOR_ID",
             "questionTitle": "Does the person leaving prison want help to apply for ID?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "RECEIVING_BENEFITS",
             "questionTitle": "Was the person in prison receiving benefits before custody?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "DEBTS_OR_ARREARS",
             "questionTitle": "Does the person in prison have any debts or arrears?"
           }
         ],
-        "updatedBy": "Test User"
+        "updatedBy": "User"
       },
       {
-        "assessmentType": "BCST2",
+        "assessmentType": "Immediate needs",
         "lastUpdated": "2024-05-22T15:47:28.145149",
         "questionsAndAnswers": [
           {
             "answer": "Yes",
-            "originalPageId": "REGISTERED_WITH_GP",
             "questionTitle": "Is the person in prison registered with a GP surgery outside of prison?"
           },
           {
             "answer": "No",
-            "originalPageId": "MEET_HEALTHCARE_TEAM",
             "questionTitle": "Does the person in prison want to meet with a prison healthcare team?"
           }
         ],
-        "updatedBy": "Test User"
+        "updatedBy": "User"
       },
       {
-        "assessmentType": "BCST2",
+        "assessmentType": "Immediate needs",
         "lastUpdated": "2024-05-22T15:54:35.535989",
         "questionsAndAnswers": [
           {
             "answer": "Yes",
-            "originalPageId": "DRUG_ISSUES",
             "questionTitle": "Does the person in prison have any previous or current drug misuse issues?"
           },
           {
             "answer": "No",
-            "originalPageId": "SUPPORT_WITH_DRUG_ISSUES",
             "questionTitle": "Does the person in prison want support with drug issues from the drug and alcohol team to help them prepare for release?"
           },
           {
             "answer": "No",
-            "originalPageId": "ALCOHOL_ISSUES",
             "questionTitle": "Does the person in prison have any previous or current alcohol misuse issues?"
           }
         ],
-        "updatedBy": "Test User"
+        "updatedBy": "User"
       },
       {
-        "assessmentType": "RESETTLEMENT_PLAN",
+        "assessmentType": "Pre-release",
         "lastUpdated": "2024-05-22T16:02:41.310279",
         "questionsAndAnswers": [
           {
             "answer": "Social housing",
-            "originalPageId": "WHERE_DID_THEY_LIVE",
             "questionTitle": "Where did the person in prison live before custody?"
           },
           {
             "answer": "A Road\nSome Town\nYorkshire\nAB13 C45",
-            "originalPageId": "WHERE_DID_THEY_LIVE_ADDRESS",
             "questionTitle": "Enter the address"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "HELP_TO_KEEP_HOME",
             "questionTitle": "Does the person in prison or their family need help to keep their home while they are in prison?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "WHERE_WILL_THEY_LIVE_1",
             "questionTitle": "Where will the person in prison live when they are released?"
           }
         ],
-        "updatedBy": "Test User"
+        "updatedBy": "User"
       },
       {
-        "assessmentType": "RESETTLEMENT_PLAN",
+        "assessmentType": "Pre-release",
         "lastUpdated": "2024-05-22T16:05:17.294788",
         "questionsAndAnswers": [
           {
             "answer": "No",
-            "originalPageId": "HELP_TO_MANAGE_ANGER",
             "questionTitle": "Does the person in prison want support managing their emotions?"
           },
           {
             "answer": "No",
-            "originalPageId": "ISSUES_WITH_GAMBLING",
             "questionTitle": "Does the person in prison want support with gambling issues?"
           }
         ],
-        "updatedBy": "Test User"
+        "updatedBy": "User"
       },
       {
-        "assessmentType": "RESETTLEMENT_PLAN",
+        "assessmentType": "Pre-release",
         "lastUpdated": "2024-05-22T16:05:40.499062",
         "questionsAndAnswers": [
           {
             "answer": "No answer provided",
-            "originalPageId": "PARTNER_OR_SPOUSE",
             "questionTitle": "Does the person in prison have a partner or spouse?"
           },
           {
             "answer": "No",
-            "originalPageId": "PRIMARY_CARER_FOR_CHILDREN",
             "questionTitle": "Is the person in prison the primary carer for any children?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "CARING_FOR_ADULT",
             "questionTitle": "Does the person in prison have caring responsibilities for any adults?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "SUPPORT_FROM_SOCIAL_SERVICES",
             "questionTitle": "Has the person in prison themselves ever received support from social services?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "FRIEND_FAMILY_COMMUNITY_SUPPORT",
             "questionTitle": "Will the person in prison have support from family, friends or their community outside of prison?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "INVOLVEMENT_IN_GANG_ACTIVITY",
             "questionTitle": "Has the person in prison had any involvement in gang activity?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "UNDER_THREAT_OUTSIDE",
             "questionTitle": "Is the person in prison under threat outside of prison?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "COMMUNITY_ORGANISATION_SUPPORT",
             "questionTitle": "Does the person in prison need support from community organisations outside of prison?"
           }
         ],
-        "updatedBy": "Test User"
+        "updatedBy": "User"
       },
       {
-        "assessmentType": "RESETTLEMENT_PLAN",
+        "assessmentType": "Pre-release",
         "lastUpdated": "2024-05-22T16:05:57.32981",
         "questionsAndAnswers": [
           {
             "answer": "Yes",
-            "originalPageId": "DRUG_ISSUES",
             "questionTitle": "Does the person in prison have any previous or current drug misuse issues?"
           },
           {
             "answer": "No",
-            "originalPageId": "SUPPORT_WITH_DRUG_ISSUES",
             "questionTitle": "Does the person in prison want support with drug issues from the drug and alcohol team to help them prepare for release?"
           },
           {
             "answer": "No",
-            "originalPageId": "ALCOHOL_ISSUES",
             "questionTitle": "Does the person in prison have any previous or current alcohol misuse issues?"
           }
         ],
-        "updatedBy": "Test User"
+        "updatedBy": "User"
       },
       {
-        "assessmentType": "RESETTLEMENT_PLAN",
+        "assessmentType": "Pre-release",
         "lastUpdated": "2024-05-22T16:06:14.28783",
         "questionsAndAnswers": [
           {
             "answer": "No answer provided",
-            "originalPageId": "JOB_BEFORE_CUSTODY",
             "questionTitle": "Did the person in prison have a job before custody?"
           },
           {
             "answer": "No",
-            "originalPageId": "HAVE_A_JOB_AFTER_RELEASE",
             "questionTitle": "Does the person in prison have a job when they are released?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "SUPPORT_TO_FIND_JOB",
             "questionTitle": "Does the person in prison want support to find a job when they are released?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "IN_EDUCATION_OR_TRAINING_BEFORE_CUSTODY",
             "questionTitle": "Was the person in prison in education or training before custody?"
           },
           {
             "answer": "No",
-            "originalPageId": "WANT_TO_START_EDUCATION_OR_TRAINING_AFTER_RELEASE",
             "questionTitle": "Does the person in prison want to start education or training after release?"
           }
         ],
-        "updatedBy": "Test User"
+        "updatedBy": "User"
       },
       {
-        "assessmentType": "RESETTLEMENT_PLAN",
+        "assessmentType": "Pre-release",
         "lastUpdated": "2024-05-22T16:06:32.454374",
         "questionsAndAnswers": [
           {
             "answer": "No answer provided",
-            "originalPageId": "HAS_BANK_ACCOUNT",
             "questionTitle": "Does the person in prison have a bank account?"
           },
           {
             "answer": "No",
-            "originalPageId": "HELP_WITH_BANK_ACCOUNT",
             "questionTitle": "Does the person in prison want help to apply for a bank account?"
           },
           {
             "answer": "Birth or adoption certificate\nPassport",
-            "originalPageId": "WHAT_ID_DOCUMENTS",
             "questionTitle": "What ID documents does the person in prison have?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "HELP_APPLY_FOR_ID",
             "questionTitle": "Does the person leaving prison want help to apply for ID?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "RECEIVING_BENEFITS",
             "questionTitle": "Was the person in prison receiving benefits before custody?"
           },
           {
             "answer": "No answer provided",
-            "originalPageId": "DEBTS_OR_ARREARS",
             "questionTitle": "Does the person in prison have any debts or arrears?"
           }
         ],
-        "updatedBy": "Test User"
+        "updatedBy": "User"
       },
       {
-        "assessmentType": "RESETTLEMENT_PLAN",
+        "assessmentType": "Pre-release",
         "lastUpdated": "2024-05-22T16:06:48.238178",
         "questionsAndAnswers": [
           {
             "answer": "Yes",
-            "originalPageId": "REGISTERED_WITH_GP",
             "questionTitle": "Is the person in prison registered with a GP surgery outside of prison?"
           },
           {
             "answer": "No",
-            "originalPageId": "MEET_HEALTHCARE_TEAM",
             "questionTitle": "Does the person in prison want to meet with a prison healthcare team?"
           }
         ],
-        "updatedBy": "Test User"
+        "updatedBy": "User"
       }
     ],
     "supportNeeds": [
       {
-        "createdBy": "Test User",
+        "createdBy": "User",
         "createdDate": "2022-09-01T12:00:00",
-        "deleted": false,
-        "deletedDate": null,
-        "id": 2,
-        "latestUpdateId": null,
         "otherDetail": null,
-        "prisonerId": 1,
         "supportNeed": {
           "allowOtherDetail": false,
           "createdDate": "2020-01-01T00:00:00",
-          "deleted": false,
-          "deletedDate": null,
           "excludeFromCount": false,
           "hidden": false,
-          "id": 999999,
-          "pathway": "ACCOMMODATION",
+          "pathway": "Accommodation",
           "section": "Test support need",
           "title": "Used for exact creation date"
         }
       },
       {
-        "createdBy": "Test User",
+        "createdBy": "User",
         "createdDate": "2023-09-01T12:00:00",
-        "deleted": false,
-        "deletedDate": null,
-        "id": 3,
-        "latestUpdateId": null,
         "otherDetail": null,
-        "prisonerId": 1,
         "supportNeed": {
           "allowOtherDetail": false,
           "createdDate": "2020-01-01T00:00:00",
-          "deleted": false,
-          "deletedDate": null,
           "excludeFromCount": false,
           "hidden": false,
-          "id": 999999,
-          "pathway": "ACCOMMODATION",
+          "pathway": "Accommodation",
           "section": "Test support need",
           "title": "Used for exact creation date"
         }
@@ -690,69 +578,47 @@
     ],
     "supportNeedUpdates": [
       {
-        "createdBy": "Test User",
+        "createdBy": "User",
         "createdDate": "2022-09-01T14:00:00",
-        "deleted": false,
-        "deletedDate": null,
-        "id": 3,
         "isPrison": false,
         "isProbation": true,
         "prisonerSupportNeedId": 3,
-        "status": "IN_PROGRESS",
+        "status": "In progress",
         "updateText": "Support need in progress 3"
       },
       {
-        "createdBy": "Test User",
+        "createdBy": "User",
         "createdDate": "2023-09-01T14:00:00",
-        "deleted": false,
-        "deletedDate": null,
-        "id": 4,
         "isPrison": false,
         "isProbation": true,
         "prisonerSupportNeedId": 3,
-        "status": "MET",
+        "status": "Met",
         "updateText": "Support need met"
       }
     ],
     "caseAllocations": [
       {
         "creationDate": "2022-09-01T12:00:00",
-        "deletionDate": "2022-09-02T12:00:00",
-        "id": 2,
-        "isDeleted": true,
-        "prisonerId": 1,
-        "staffFirstname": "Michael",
-        "staffId": 999999,
         "staffLastname": "Scott"
       },
       {
         "creationDate": "2023-09-01T12:00:00",
-        "deletionDate": null,
-        "id": 3,
-        "isDeleted": false,
-        "prisonerId": 1,
-        "staffFirstname": "Michael",
-        "staffId": 999999,
         "staffLastname": "Scott"
       }
     ],
     "profileTags": [
       {
-        "id": 1,
-        "prisonerId": 1,
         "profileTags": {
           "tags": [
-            "NO_FIXED_ABODE"
+            "No fixed abode"
           ]
         },
         "updatedDate": "2020-01-01T00:00:00"
       },
       {
-        "id": 2,
-        "prisonerId": 1,
         "profileTags": {
           "tags": [
-            "HELP_TO_CONTACT_BANK"
+            "Help to contact bank"
           ]
         },
         "updatedDate": "2020-01-01T00:00:00"
@@ -764,9 +630,7 @@
         "createdByUrn": "999999",
         "creationDate": "2022-09-01T12:00:00",
         "dueDate": "2030-01-01",
-        "id": "48b6d8c4-be42-492e-bebc-71d4e396676d",
         "notes": "This is a to do item",
-        "prisonerId": 1,
         "title": "Title",
         "updatedAt": "2022-09-01T12:00:00",
         "updatedByUrn": "999999"
@@ -776,9 +640,7 @@
         "createdByUrn": "999999",
         "creationDate": "2023-09-01T12:00:00",
         "dueDate": "2030-01-01",
-        "id": "796e405b-2b56-4ba8-a237-15f2151bb1b0",
         "notes": "This is a to do item",
-        "prisonerId": 1,
         "title": "Title",
         "updatedAt": "2023-09-01T12:00:00",
         "updatedByUrn": "999999"
@@ -788,24 +650,16 @@
       {
         "category": "LICENCE_CONDITIONS",
         "creationDate": "2022-09-01T12:01:00",
-        "deletionDate": "2022-09-02T12:01:00",
-        "id": 2,
-        "isDeleted": true,
         "originalDocumentFileName": "license2.pdf",
         "originalDocumentKey": "3e5a4c5b-86d8-4617-bfbe-15aa3a91dfd3",
-        "pdfDocumentKey": "32deeb98-30f4-4baa-b187-1b0276736797",
-        "prisonerId": 1
+        "pdfDocumentKey": "32deeb98-30f4-4baa-b187-1b0276736797"
       },
       {
         "category": "LICENCE_CONDITIONS",
         "creationDate": "2023-09-01T12:01:00",
-        "deletionDate": null,
-        "id": 3,
-        "isDeleted": false,
         "originalDocumentFileName": "license3.pdf",
         "originalDocumentKey": "10ad790a-6981-4b9c-bace-604c0468ec5b",
-        "pdfDocumentKey": "ed25e653-607f-428b-9c0d-06cc67465fb7",
-        "prisonerId": 1
+        "pdfDocumentKey": "ed25e653-607f-428b-9c0d-06cc67465fb7"
       }
     ]
   }

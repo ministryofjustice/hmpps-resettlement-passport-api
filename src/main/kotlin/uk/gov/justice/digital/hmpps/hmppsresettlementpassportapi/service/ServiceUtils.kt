@@ -188,3 +188,5 @@ fun convertPathwayToCaseNoteType(pathway: Pathway) = when (pathway) {
   Pathway.FINANCE_AND_ID -> CaseNoteType.FINANCE_AND_ID
   Pathway.HEALTH -> CaseNoteType.HEALTH
 }
+
+fun convertFullNameToSurname(fullName: String) = fullName.split(" ").lastOrNull() ?: ""

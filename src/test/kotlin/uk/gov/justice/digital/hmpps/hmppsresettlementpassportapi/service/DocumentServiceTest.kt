@@ -181,13 +181,15 @@ class DocumentServiceTest {
       ),
     )
 
-    val expected = listOf(DocumentService.DocumentsSarContent(
-      originalDocumentKey = originalDocumentKey,
-      pdfDocumentKey = pdfDocumentKey,
-      creationDate = currentDate,
-      category = DocumentCategory.LICENCE_CONDITIONS,
-      originalDocumentFileName = "license2.pdf",
-    ))
+    val expected = listOf(
+      DocumentService.DocumentsSarContent(
+        originalDocumentKey = originalDocumentKey,
+        pdfDocumentKey = pdfDocumentKey,
+        creationDate = currentDate,
+        category = DocumentCategory.LICENCE_CONDITIONS,
+        originalDocumentFileName = "license2.pdf",
+      ),
+    )
 
     Mockito.`when`(documentsRepository.findAllByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(data)
 

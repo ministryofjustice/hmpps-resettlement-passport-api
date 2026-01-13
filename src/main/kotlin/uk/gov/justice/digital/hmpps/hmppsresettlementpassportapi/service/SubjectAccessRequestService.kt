@@ -130,7 +130,6 @@ class SubjectAccessRequestService(
       it.isProbation,
     )
   }
-
 }
 
 data class ResettlementSarContent(

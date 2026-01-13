@@ -363,10 +363,12 @@ class CaseAllocationServiceTest {
       ),
     )
 
-    val expected = listOf(CaseAllocationService.CaseAllocationSarContent(
-      staffLastname = "PSO Lastname",
-      creationDate = fakeNow,
-    ))
+    val expected = listOf(
+      CaseAllocationService.CaseAllocationSarContent(
+        staffLastname = "PSO Lastname",
+        creationDate = fakeNow,
+      ),
+    )
     Mockito.`when`(caseAllocationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any()))
       .thenReturn(data)
 

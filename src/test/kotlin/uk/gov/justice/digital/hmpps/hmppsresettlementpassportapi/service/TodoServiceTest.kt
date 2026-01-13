@@ -48,16 +48,18 @@ class TodoServiceTest {
       ),
     )
 
-    val expected = listOf(TodoService.TodoSarContent(
-      title = "title",
-      notes = null,
-      dueDate = null,
-      completed = false,
-      createdByUrn = "urn",
-      updatedByUrn = "urn",
-      creationDate = currentDate,
-      updatedAt = currentDate,
-    ))
+    val expected = listOf(
+      TodoService.TodoSarContent(
+        title = "title",
+        notes = null,
+        dueDate = null,
+        completed = false,
+        createdByUrn = "urn",
+        updatedByUrn = "urn",
+        creationDate = currentDate,
+        updatedAt = currentDate,
+      ),
+    )
 
     Mockito.`when`(todoRepository.findAllByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(data)
 

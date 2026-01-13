@@ -228,13 +228,15 @@ class IdApplicationServiceTest {
       costOfApplication = BigDecimal(10.00),
     )
 
-    val expected = listOf(IdApplicationService.IdApplicationSarContent(
-      idType = "Birth Certificate",
-      creationDate = fakeNow,
-      applicationSubmittedDate = fakeNow,
-      isPriorityApplication = false,
-      costOfApplication = BigDecimal(10.00),
-    ))
+    val expected = listOf(
+      IdApplicationService.IdApplicationSarContent(
+        idType = "Birth Certificate",
+        creationDate = fakeNow,
+        applicationSubmittedDate = fakeNow,
+        isPriorityApplication = false,
+        costOfApplication = BigDecimal(10.00),
+      ),
+    )
 
     Mockito.`when`(idApplicationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(listOf(idApplication))
 

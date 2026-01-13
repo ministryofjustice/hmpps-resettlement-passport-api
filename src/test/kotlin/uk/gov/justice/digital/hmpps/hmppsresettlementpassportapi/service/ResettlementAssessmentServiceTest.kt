@@ -1091,12 +1091,13 @@ class ResettlementAssessmentServiceTest {
 
   @Test
   fun `test getProfileTagsByPrisonerId`() {
-    val data = listOf(ProfileTagsEntity(null, 1, ProfileTagList(listOf("tag 1", "tag 2")), null))
+    val data = listOf(ProfileTagsEntity(null, 1, ProfileTagList(listOf("tag_1", "tag_2")), null))
+    val expected = listOf(ResettlementAssessmentService.ProfileTagsSarContent(ResettlementAssessmentService.ProfileTagListSarContent(listOf("Tag 1", "Tag 2")), null))
     Mockito.`when`(profileTagsRepository.findAllByPrisonerId(any())).thenReturn(data)
 
     val result = resettlementAssessmentService.getProfileTagsByPrisonerId(1)
 
-    Assertions.assertEquals(data, result)
+    Assertions.assertEquals(expected, result)
   }
 
   @Test
@@ -1122,7 +1123,7 @@ class ResettlementAssessmentServiceTest {
 
     Mockito.`when`(resettlementAssessmentRepository.findAllByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(listOf(entity))
 
-    val expected = listOf(resettlementAssessmentService.convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(entity, resettlementAssessmentStrategy))
+    val expected = listOf(resettlementAssessmentService.convertFromResettlementAssessmentEntityToResettlementAssessmentSarContent(entity, resettlementAssessmentStrategy))
     val actual = resettlementAssessmentService.getAllResettlementAssessmentsByPrisonerIdAndCreationDate(1, fakeNow, fakeNow, resettlementAssessmentStrategy)
 
     Assertions.assertEquals(expected, actual)

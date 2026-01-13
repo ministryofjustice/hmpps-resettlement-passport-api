@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNotePathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseNoteType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayCaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayStatusAndCaseNote
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Category
@@ -53,14 +54,43 @@ class DeliusContactService(private val deliusContactRepository: DeliusContactRep
     prisonerId: Long,
     fromDate: LocalDateTime,
     toDate: LocalDateTime,
-  ): List<PathwayCaseNote> {
+  ): List<PathwayCaseNoteSarContent> {
     val deliusContacts = deliusContactRepository.findByPrisonerIdAndContactTypeAndCreatedDateBetween(
       prisonerId,
       ContactType.CASE_NOTE,
       fromDate,
       toDate,
     )
-    return mapDeliusContactsToPathwayCaseNotes(deliusContacts)
+    return mapDeliusContactsToSarContent(deliusContacts)
+  }
+
+  fun mapDeliusContactsToSarContent(deliusContacts: List<DeliusContactEntity>): List<PathwayCaseNoteSarContent> = deliusContacts.map {
+    PathwayCaseNoteSarContent(
+      pathway = convertCategoryToHumanReadablePathway(it.category),
+      creationDateTime = it.createdDate,
+      occurenceDateTime = it.createdDate,
+      createdBy = convertFullNameToSurname(it.createdBy),
+      text = it.notes,
+    )
+  }
+
+  data class PathwayCaseNoteSarContent(
+    val pathway: String,
+    val creationDateTime: LocalDateTime,
+    val occurenceDateTime: LocalDateTime,
+    val createdBy: String,
+    val text: String,
+  )
+
+  fun convertCategoryToHumanReadablePathway(category: Category) = when (category) {
+    Category.ACCOMMODATION -> Pathway.ACCOMMODATION.displayName
+    Category.ATTITUDES_THINKING_AND_BEHAVIOUR -> Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR.displayName
+    Category.CHILDREN_FAMILIES_AND_COMMUNITY -> Pathway.CHILDREN_FAMILIES_AND_COMMUNITY.displayName
+    Category.DRUGS_AND_ALCOHOL -> Pathway.DRUGS_AND_ALCOHOL.displayName
+    Category.EDUCATION_SKILLS_AND_WORK -> Pathway.EDUCATION_SKILLS_AND_WORK.displayName
+    Category.FINANCE_AND_ID -> Pathway.FINANCE_AND_ID.displayName
+    Category.HEALTH -> Pathway.HEALTH.displayName
+    Category.BENEFITS -> throw IllegalArgumentException("Error retrieving case notes - cannot use BENEFITS category with a case note") // should never happen
   }
 
   fun mapDeliusContactsToPathwayCaseNotes(deliusContacts: List<DeliusContactEntity>): List<PathwayCaseNote> = deliusContacts.map {

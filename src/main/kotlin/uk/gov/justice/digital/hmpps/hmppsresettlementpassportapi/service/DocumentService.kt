@@ -154,7 +154,17 @@ class DocumentService(
     documentsRepository.findAllByNomsIdAndCategory(nomsId, category)
   }
 
-  fun getDocuments(prisonerId: Long, startDate: LocalDateTime, endDate: LocalDateTime): List<DocumentsEntity> = documentsRepository.findAllByPrisonerIdAndCreationDateBetween(prisonerId, startDate, endDate)
+  fun getDocuments(prisonerId: Long, startDate: LocalDateTime, endDate: LocalDateTime): List<DocumentsSarContent> = documentsRepository.findAllByPrisonerIdAndCreationDateBetween(prisonerId, startDate, endDate).map {
+    DocumentsSarContent(it.originalDocumentKey, it.pdfDocumentKey, it.creationDate, it.category, it.originalDocumentFileName)
+  }
+
+  data class DocumentsSarContent(
+    val originalDocumentKey: UUID?,
+    val pdfDocumentKey: UUID?,
+    val creationDate: LocalDateTime,
+    val category: DocumentCategory,
+    val originalDocumentFileName: String,
+  )
 
   fun deleteUploadDocumentByNomisId(nomsId: String, category: DocumentCategory) {
     if (!DocumentCategory.entries.contains(category)) {

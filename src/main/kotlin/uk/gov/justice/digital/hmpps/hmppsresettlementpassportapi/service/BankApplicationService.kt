@@ -45,11 +45,61 @@ class BankApplicationService(
     prisoner: PrisonerEntity,
     fromDate: LocalDateTime,
     toDate: LocalDateTime,
-  ): List<BankApplicationResponse> = bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(
+  ): List<BankApplicationSarContent> = bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(
     prisoner.id(),
     fromDate,
     toDate,
-  ).map { getBankApplicationResponse(it, prisoner) }
+  ).map { getBankApplicationSarContent(it, prisoner) }
+
+  data class BankApplicationSarContent(
+    val prisoner: PrisonerSarContent,
+    val logs: List<BankApplicationLogSarContent>,
+    val applicationSubmittedDate: LocalDateTime,
+    val currentStatus: String,
+    val bankName: String?,
+    val bankResponseDate: LocalDateTime? = null,
+    val isAddedToPersonalItems: Boolean? = null,
+    val addedToPersonalItemsDate: LocalDateTime? = null,
+  )
+
+  data class PrisonerSarContent(
+    val nomsId: String,
+    val creationDate: LocalDateTime = LocalDateTime.now(),
+    var prisonId: String?,
+    var supportNeedsLegacyProfile: Boolean? = null,
+  )
+
+  data class BankApplicationLogSarContent(
+    val status: String,
+    val changeDate: LocalDateTime,
+  )
+
+  private fun getBankApplicationSarContent(
+    bankApplication: BankApplicationEntity,
+    prisoner: PrisonerEntity,
+  ): BankApplicationSarContent {
+    bankApplication.logs = emptySet()
+    val logs = bankApplicationStatusLogRepository.findByBankApplication(bankApplication)
+    return BankApplicationSarContent(
+      prisoner = PrisonerSarContent(prisoner.nomsId, prisoner.creationDate, prisoner.prisonId, prisoner.supportNeedsLegacyProfile),
+      logs = if (logs.isNullOrEmpty()) {
+        emptyList()
+      } else {
+        logs.map {
+          BankApplicationLogSarContent(
+            it.statusChangedTo,
+            it.changedAtDate,
+          )
+        }
+      },
+      currentStatus = bankApplication.status,
+      bankName = bankApplication.bankName,
+      applicationSubmittedDate = bankApplication.applicationSubmittedDate,
+      bankResponseDate = bankApplication.bankResponseDate,
+      addedToPersonalItemsDate = bankApplication.addedToPersonalItemsDate,
+      isAddedToPersonalItems = bankApplication.isAddedToPersonalItems,
+    )
+  }
 
   private fun getBankApplicationResponse(
     bankApplication: BankApplicationEntity,

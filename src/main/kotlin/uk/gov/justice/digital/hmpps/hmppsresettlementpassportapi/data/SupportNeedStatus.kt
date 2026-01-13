@@ -1,8 +1,8 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 
-enum class SupportNeedStatus {
-  NOT_STARTED,
-  IN_PROGRESS,
-  MET,
-  DECLINED,
+enum class SupportNeedStatus(val displayName: String) {
+  NOT_STARTED("Not started"),
+  IN_PROGRESS("In progress"),
+  MET("Met"),
+  DECLINED("Declined"),
 }

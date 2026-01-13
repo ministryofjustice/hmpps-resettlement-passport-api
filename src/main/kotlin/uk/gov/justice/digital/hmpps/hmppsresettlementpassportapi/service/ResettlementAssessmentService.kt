@@ -423,20 +423,32 @@ class ResettlementAssessmentService(
     fromDate: LocalDateTime,
     toDate: LocalDateTime,
     resettlementAssessmentStrategies: ResettlementAssessmentStrategy,
-  ): List<ResettlementAssessmentResponse> = resettlementAssessmentRepository
+  ): List<ResettlementAssessmentSarContent> = resettlementAssessmentRepository
     .findAllByPrisonerIdAndCreationDateBetween(prisonerId, fromDate, toDate)
-    .map { convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(it, resettlementAssessmentStrategies) }
+    .map { convertFromResettlementAssessmentEntityToResettlementAssessmentSarContent(it, resettlementAssessmentStrategies) }
 
-  fun convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
+  data class ResettlementAssessmentSarContent(
+    val assessmentType: String,
+    val lastUpdated: LocalDateTime,
+    val updatedBy: String,
+    val questionsAndAnswers: List<LatestResettlementAssessmentResponseQuestionAndAnswerSarContent>,
+  )
+
+  data class LatestResettlementAssessmentResponseQuestionAndAnswerSarContent(
+    val questionTitle: String,
+    val answer: String?,
+  )
+
+  fun getQuestionsAndAnswersFromResettlementAssessmentEntity(
     resettlementAssessmentEntity: ResettlementAssessmentEntity,
     resettlementAssessmentStrategies: ResettlementAssessmentStrategy,
-  ): ResettlementAssessmentResponse {
+  ): List<LatestResettlementAssessmentResponseQuestionAndAnswer> {
     val flattenedQuestions = resettlementAssessmentStrategies.getFlattenedQuestionListPreserveOrder(
       resettlementAssessmentEntity.pathway,
       resettlementAssessmentEntity.assessmentType,
       resettlementAssessmentEntity.version,
     )
-    val questionsAndAnswers = flattenedQuestions.mapNotNull { questionFromConfig ->
+    return flattenedQuestions.mapNotNull { questionFromConfig ->
       val questionAndAnswerFromDatabase =
         resettlementAssessmentEntity.assessment.assessment.firstOrNull { it.questionId == questionFromConfig.id }
       if (questionAndAnswerFromDatabase != null &&
@@ -460,7 +472,37 @@ class ResettlementAssessmentService(
         null
       }
     }
+  }
 
+  fun convertFromResettlementAssessmentEntityToResettlementAssessmentSarContent(
+    resettlementAssessmentEntity: ResettlementAssessmentEntity,
+    resettlementAssessmentStrategies: ResettlementAssessmentStrategy,
+  ): ResettlementAssessmentSarContent {
+    val questionsAndAnswers = getQuestionsAndAnswersFromResettlementAssessmentEntity(
+      resettlementAssessmentEntity,
+      resettlementAssessmentStrategies,
+    )
+    return ResettlementAssessmentSarContent(
+      assessmentType = resettlementAssessmentEntity.assessmentType.displayName,
+      lastUpdated = resettlementAssessmentEntity.creationDate,
+      updatedBy = convertFullNameToSurname(resettlementAssessmentEntity.createdBy),
+      questionsAndAnswers = questionsAndAnswers.map {
+        LatestResettlementAssessmentResponseQuestionAndAnswerSarContent(
+          it.questionTitle,
+          it.answer,
+        )
+      },
+    )
+  }
+
+  fun convertFromResettlementAssessmentEntityToResettlementAssessmentResponse(
+    resettlementAssessmentEntity: ResettlementAssessmentEntity,
+    resettlementAssessmentStrategies: ResettlementAssessmentStrategy,
+  ): ResettlementAssessmentResponse {
+    val questionsAndAnswers = getQuestionsAndAnswersFromResettlementAssessmentEntity(
+      resettlementAssessmentEntity,
+      resettlementAssessmentStrategies,
+    )
     return ResettlementAssessmentResponse(
       assessmentType = resettlementAssessmentEntity.assessmentType,
       lastUpdated = resettlementAssessmentEntity.creationDate,
@@ -577,5 +619,14 @@ class ResettlementAssessmentService(
   fun getLastReportToNomsIdByPrisonId(prisonId: String) = resettlementAssessmentRepository.findLastReportByPrison(prisonId)
     .associate { it.nomsId to LastReport(type = it.assessmentType, dateCompleted = if (it.submissionDate != null) it.submissionDate!!.toLocalDate() else it.createdDate.toLocalDate()) }
 
-  fun getProfileTagsByPrisonerId(prisonerId: Long) = profileTagsRepository.findAllByPrisonerId(prisonerId)
+  fun getProfileTagsByPrisonerId(prisonerId: Long): List<ProfileTagsSarContent> = profileTagsRepository.findAllByPrisonerId(prisonerId).map {
+    var tags: List<String> = it.profileTags.tags.map { tag -> getProfileTagDesc(tag) }
+    ProfileTagsSarContent(ProfileTagListSarContent(tags), it.updatedDate)
+  }
+
+  fun getProfileTagDesc(tag: String): String = tag.lowercase().split("_").joinToString(" ").replaceFirstChar { c -> c.uppercase() }
+
+  data class ProfileTagsSarContent(val profileTags: ProfileTagListSarContent, val updatedDate: LocalDateTime?)
+
+  data class ProfileTagListSarContent(val tags: List<String>)
 }

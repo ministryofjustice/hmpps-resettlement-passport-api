@@ -17,7 +17,6 @@ import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.DuplicateDataFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplication
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplicationLog
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplicationResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.BankApplicationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.BankApplicationStatusLogEntity
@@ -25,6 +24,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.BankApplicationRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.BankApplicationStatusLogRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.BankApplicationService.BankApplicationLogSarContent
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.emptyList
@@ -180,12 +180,10 @@ class BankApplicationServiceTest {
       val actual = bankApplicationService.getBankApplicationsByPrisonerAndCreationDate(prisoner, fakeNow, fakeNow)
 
       val expected = listOf(
-        BankApplicationResponse(
-          id = 1,
-          prisoner = prisoner,
+        BankApplicationService.BankApplicationSarContent(
+          prisoner = BankApplicationService.PrisonerSarContent(prisoner.nomsId, prisoner.creationDate, prisoner.prisonId, prisoner.supportNeedsLegacyProfile),
           logs = listOf(
-            BankApplicationLog(
-              id = 1,
+            BankApplicationLogSarContent(
               status = "Pending",
               changeDate = fakeNow,
             ),

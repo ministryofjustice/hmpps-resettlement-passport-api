@@ -39,7 +39,17 @@ class PathwayAndStatusService(
   fun findPathwayStatusFromPathwayAndPrisoner(pathway: Pathway, prisoner: PrisonerEntity) = pathwayStatusRepository.findByPathwayAndPrisonerId(pathway, prisoner.id())
     ?: throw ResourceNotFoundException("Prisoner with id ${prisoner.nomsId} has no pathway_status entry for ${pathway.name} in database")
 
-  fun findAllPathwayStatusForPrisoner(prisoner: PrisonerEntity) = pathwayStatusRepository.findByPrisonerId(prisoner.id())
+  fun findAllPathwayStatusForPrisoner(prisoner: PrisonerEntity): List<PathwayStatusEntity> = pathwayStatusRepository.findByPrisonerId(prisoner.id())
+
+  fun findAllPathwayStatusSarContentForPrisoner(prisoner: PrisonerEntity): List<PathwayStatusSarContent> = pathwayStatusRepository.findByPrisonerId(prisoner.id()).map {
+    PathwayStatusSarContent(it.pathway.displayName, it.status.displayText, it.updatedDate)
+  }
+
+  data class PathwayStatusSarContent(
+    val pathway: String,
+    var status: String,
+    var updatedDate: LocalDateTime? = null,
+  )
 
   fun updatePathwayStatusWithNewStatus(pathwayStatus: PathwayStatusEntity, newStatus: Status) {
     pathwayStatus.status = newStatus

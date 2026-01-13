@@ -114,20 +114,30 @@ class AssessmentServiceTest {
 
   @Test
   fun `test GetAssessmentByPrisonerIdAndCreationDate should return from repository`() {
-    val assessments = listOf(AssessmentEntity(null, 1, LocalDateTime.now(), LocalDateTime.now(), isBankAccountRequired = true, isIdRequired = true, setOf(IdTypeEntity(1, "Birth certificate")), false, null))
-
+    val currentDate = LocalDateTime.now()
+    val assessments = listOf(AssessmentEntity(null, 1, currentDate, currentDate, isBankAccountRequired = true, isIdRequired = true, setOf(IdTypeEntity(1, "Birth certificate")), false, null))
+    val assessmentsSarContents = listOf(
+      AssessmentService.AssessmentSarContent(
+        currentDate,
+        currentDate,
+        isBankAccountRequired = true,
+        isIdRequired = true,
+        setOf(IdTypeEntity(1, "Birth certificate")),
+      ),
+    )
     Mockito.`when`(assessmentRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(assessments)
 
     val response = assessmentService.getAssessmentByPrisonerIdAndCreationDate(1, LocalDateTime.now(), LocalDateTime.now())
-    Assertions.assertEquals(assessments, response)
+    Assertions.assertEquals(assessmentsSarContents, response)
   }
 
   @Test
   fun `test GetSkippedAssessmentsForPrisoner should return from repository`() {
     val skipHistory = listOf(AssessmentSkipEntity(null, ResettlementAssessmentType.BCST2, 1, AssessmentSkipReason.TRANSFER, null, null, null))
+    val skipAssessmentsSarContents = listOf(AssessmentService.AssessmentSkipSarContent(ResettlementAssessmentType.BCST2.displayName, AssessmentSkipReason.TRANSFER.displayText, null, null, null))
     Mockito.`when`(assessmentSkipRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(skipHistory)
 
     val response = assessmentService.getSkippedAssessmentsForPrisoner(1, LocalDateTime.now(), LocalDateTime.now())
-    Assertions.assertEquals(skipHistory, response)
+    Assertions.assertEquals(skipAssessmentsSarContents, response)
   }
 }

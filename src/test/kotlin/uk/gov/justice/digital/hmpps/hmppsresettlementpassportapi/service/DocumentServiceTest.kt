@@ -164,13 +164,16 @@ class DocumentServiceTest {
 
   @Test
   fun `test getDocuments should return data from repository`() {
+    val currentDate = LocalDateTime.now()
+    val originalDocumentKey = UUID.randomUUID()
+    val pdfDocumentKey = UUID.randomUUID()
     val data = listOf(
       DocumentsEntity(
         id = null,
         prisonerId = 1,
-        originalDocumentKey = UUID.randomUUID(),
-        pdfDocumentKey = UUID.randomUUID(),
-        creationDate = LocalDateTime.now(),
+        originalDocumentKey = originalDocumentKey,
+        pdfDocumentKey = pdfDocumentKey,
+        creationDate = currentDate,
         category = DocumentCategory.LICENCE_CONDITIONS,
         originalDocumentFileName = "license2.pdf",
         isDeleted = false,
@@ -178,9 +181,19 @@ class DocumentServiceTest {
       ),
     )
 
+    val expected = listOf(
+      DocumentService.DocumentsSarContent(
+        originalDocumentKey = originalDocumentKey,
+        pdfDocumentKey = pdfDocumentKey,
+        creationDate = currentDate,
+        category = DocumentCategory.LICENCE_CONDITIONS,
+        originalDocumentFileName = "license2.pdf",
+      ),
+    )
+
     Mockito.`when`(documentsRepository.findAllByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(data)
 
     val response = documentService.getDocuments(1, LocalDateTime.now(), LocalDateTime.now())
-    Assertions.assertEquals(data, response)
+    Assertions.assertEquals(expected, response)
   }
 }

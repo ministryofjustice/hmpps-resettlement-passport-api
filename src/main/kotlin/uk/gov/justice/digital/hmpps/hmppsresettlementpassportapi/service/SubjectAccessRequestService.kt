@@ -119,7 +119,7 @@ class SubjectAccessRequestService(
     )
   }
 
-  private fun getSupportNeedUpdatesSarContent(supportNeeds: List<PrisonerSupportNeedUpdateEntity>): List<PrisonerSupportNeedUpdateSarContent> = supportNeeds.map {
+  private fun getSupportNeedUpdatesSarContent(supportNeedUpdates: List<PrisonerSupportNeedUpdateEntity>): List<PrisonerSupportNeedUpdateSarContent> = supportNeedUpdates.map {
     PrisonerSupportNeedUpdateSarContent(
       it.prisonerSupportNeedId,
       convertFullNameToSurname(it.createdBy),

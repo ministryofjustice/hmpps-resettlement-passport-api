@@ -122,7 +122,7 @@ class AssessmentServiceTest {
         currentDate,
         isBankAccountRequired = true,
         isIdRequired = true,
-        setOf(IdTypeEntity(1, "Birth certificate")),
+        setOf(AssessmentService.IdTypeSarContent("Birth certificate")),
       ),
     )
     Mockito.`when`(assessmentRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(assessments)

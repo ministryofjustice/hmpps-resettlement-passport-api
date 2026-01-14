@@ -7,7 +7,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.NoDataWi
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Assessment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.AssessmentEntity
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.IdTypeEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.AssessmentSkipRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.IdTypeRepository
@@ -41,12 +40,29 @@ class AssessmentService(
     val assessmentDate: LocalDateTime,
     var isBankAccountRequired: Boolean,
     var isIdRequired: Boolean,
-    var idDocuments: Set<IdTypeEntity>,
+    var idDocuments: Set<IdTypeSarContent>,
 
   )
 
+  data class IdTypeSarContent(
+    val name: String,
+  )
+
   @Transactional
-  fun getAssessmentByPrisonerIdAndCreationDate(prisonerId: Long, fromDate: LocalDateTime, toDate: LocalDateTime): List<AssessmentSarContent> = assessmentRepository.findByPrisonerIdAndCreationDateBetween(prisonerId, fromDate, toDate).map { assessmentEntity -> AssessmentSarContent(assessmentEntity.creationDate, assessmentEntity.assessmentDate, assessmentEntity.isBankAccountRequired, assessmentEntity.isIdRequired, assessmentEntity.idDocuments) }
+  fun getAssessmentByPrisonerIdAndCreationDate(
+    prisonerId: Long,
+    fromDate: LocalDateTime,
+    toDate: LocalDateTime,
+  ): List<AssessmentSarContent> = assessmentRepository.findByPrisonerIdAndCreationDateBetween(prisonerId, fromDate, toDate)
+    .map { assessmentEntity ->
+      AssessmentSarContent(
+        assessmentEntity.creationDate,
+        assessmentEntity.assessmentDate,
+        assessmentEntity.isBankAccountRequired,
+        assessmentEntity.isIdRequired,
+        assessmentEntity.idDocuments.map { IdTypeSarContent(it.name) }.toSet(),
+      )
+    }
 
   @Transactional
   fun deleteAssessment(assessment: AssessmentEntity) {

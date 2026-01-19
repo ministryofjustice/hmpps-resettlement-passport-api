@@ -437,7 +437,7 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
 
     val expectedPrisonerSupportNeeds = listOf(
-      PrisonerSupportNeedEntity(id = 1, prisonerId = 1, supportNeed = supportNeedRepository.findById(8).get(), otherDetail = null, createdBy = "test", createdDate = fakeNow, deleted = false, deletedDate = null, latestUpdateId = 1),
+      PrisonerSupportNeedEntity(id = 1, prisonerId = 10, supportNeed = supportNeedRepository.findById(8).get(), otherDetail = null, createdBy = "test", createdDate = fakeNow, deleted = false, deletedDate = null, latestUpdateId = 1),
       PrisonerSupportNeedEntity(id = 2, prisonerId = 1, supportNeed = supportNeedRepository.findById(5).get(), otherDetail = "Other 3", createdBy = "test", createdDate = fakeNow, deleted = false, deletedDate = null, latestUpdateId = 4),
       PrisonerSupportNeedEntity(id = 3, prisonerId = 1, supportNeed = supportNeedRepository.findById(11).get(), otherDetail = null, createdBy = "test", createdDate = fakeNow, deleted = false, deletedDate = null, latestUpdateId = null),
       PrisonerSupportNeedEntity(id = 101, prisonerId = 1, supportNeed = supportNeedRepository.findById(1).get(), otherDetail = null, createdBy = "Someone", createdDate = LocalDateTime.parse("2024-02-21T09:36:28.713421"), deleted = false, deletedDate = null, latestUpdateId = 2),

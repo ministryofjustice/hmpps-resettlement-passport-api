@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.BankApplicationStatusLogRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import java.time.LocalDateTime
+import kotlin.jvm.optionals.getOrElse
 
 @Service
 class BankApplicationService(
@@ -25,7 +26,7 @@ class BankApplicationService(
 
   @Transactional
   fun getBankApplicationById(id: Long) = bankApplicationRepository.findById(id)
-    ?: throw ResourceNotFoundException("Bank application with id $id not found in database")
+    .getOrElse { throw ResourceNotFoundException("Bank application with id $id not found in database") }
 
   @Transactional
   fun getBankApplicationByIdAndNomsId(id: Long, nomsId: String) = bankApplicationRepository.findByIdAndNomsId(id, nomsId)

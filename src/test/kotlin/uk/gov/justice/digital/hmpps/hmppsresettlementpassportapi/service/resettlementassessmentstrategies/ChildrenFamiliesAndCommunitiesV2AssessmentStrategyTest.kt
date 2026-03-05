@@ -381,7 +381,7 @@ class ChildrenFamiliesAndCommunitiesV2AssessmentStrategyTest : BaseResettlementA
     if (expectedException == null) {
       stubSave()
       resettlementAssessmentStrategy.completeAssessment(nomsId, pathway, assessmentType, assessment, "string", true)
-      Mockito.verify(resettlementAssessmentRepository).save(expectedEntity!!)
+      assertAssessmentHasBeenSaved(expectedEntity)
     } else {
       val actualException = assertThrows<Throwable> {
         resettlementAssessmentStrategy.completeAssessment(nomsId, pathway, assessmentType, assessment, "string", true)

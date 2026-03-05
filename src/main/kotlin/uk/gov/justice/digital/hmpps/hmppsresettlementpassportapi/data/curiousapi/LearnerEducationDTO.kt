@@ -3,28 +3,29 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.curiousap
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
 
+@JvmRecord
 data class LearnerEducationDTO(
-  @JsonProperty("prn")
+  @param:JsonProperty("prn")
   val nomsId: String,
-  @JsonProperty("establishmentId")
+  @param:JsonProperty("establishmentId")
   val establishmentId: String?,
-  @JsonProperty("establishmentName")
+  @param:JsonProperty("establishmentName")
   val establishmentName: String?,
-  @JsonProperty("courseName")
+  @param:JsonProperty("courseName")
   val courseName: String?,
-  @JsonProperty("courseCode")
+  @param:JsonProperty("courseCode")
   val courseCode: String?,
-  @JsonProperty("isAccredited")
+  @param:JsonProperty("isAccredited")
   val isAccredited: Boolean?,
-  @JsonProperty("aimSequenceNumber")
+  @param:JsonProperty("aimSequenceNumber")
   val aimSequenceNumber: Int?,
-  @JsonProperty("learningStartDate")
+  @param:JsonProperty("learningStartDate")
   val learningStartDate: LocalDate?,
-  @JsonProperty("learningPlannedEndDate")
+  @param:JsonProperty("learningPlannedEndDate")
   val learningPlannedEndDate: LocalDate?,
-  @JsonProperty("learningActualEndDate")
+  @param:JsonProperty("learningActualEndDate")
   val learningActualEndDate: LocalDate?,
-  @JsonProperty("learnersAimType")
+  @param:JsonProperty("learnersAimType")
   val learnersAimType: String?,
   val miNotionalNVQLevelV2: String?,
   val sectorSubjectAreaTier1: String?,
@@ -61,6 +62,7 @@ data class LearnerEducationDTO(
 
 )
 
+@JvmRecord
 data class LearnersEducationList(
   val content: MutableList<LearnerEducationDTO>?,
   val empty: Boolean,
@@ -70,20 +72,22 @@ data class LearnersEducationList(
   val numberOfElements: Int = 0,
   val pageable: Pageable?,
   val size: Int = 0,
-  val sort: List<Any>,
-  var totalElements: Int = 0,
+  val sort: Sort?,
+  val totalElements: Int = 0,
   val totalPages: Int = 0,
 )
 
+@JvmRecord
 data class Pageable(
   val offset: Int?,
   val pageNumber: Int?,
   val pageSize: Int?,
   val paged: Boolean,
-  val sort: List<Any>,
+  val sort: Sort?,
   val unpaged: Boolean,
 )
 
+@JvmRecord
 data class Sort(
   val empty: Boolean,
   val sorted: Boolean,

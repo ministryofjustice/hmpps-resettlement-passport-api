@@ -45,7 +45,7 @@ class PrisonerSupportNeedUpdateRepositoryTest : RepositoryTestBase() {
     )
 
     val update2 = PrisonerSupportNeedUpdateEntity(
-      prisonerSupportNeedId = prisonerSupportNeed.id!!,
+      prisonerSupportNeedId = prisonerSupportNeed.id,
       createdBy = "Jane Smith",
       createdDate = LocalDateTime.parse("2024-04-04T14:00:01"),
       updateText = "This is some more update text",
@@ -55,7 +55,7 @@ class PrisonerSupportNeedUpdateRepositoryTest : RepositoryTestBase() {
     )
 
     val update3 = PrisonerSupportNeedUpdateEntity(
-      prisonerSupportNeedId = prisonerSupportNeed.id!!,
+      prisonerSupportNeedId = prisonerSupportNeed.id,
       createdBy = "Jane Smith",
       createdDate = LocalDateTime.parse("2024-04-04T15:00:01"),
       updateText = "This is a deleted update",

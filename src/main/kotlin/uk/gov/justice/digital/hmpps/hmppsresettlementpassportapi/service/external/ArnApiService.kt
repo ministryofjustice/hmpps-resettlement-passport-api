@@ -28,7 +28,7 @@ import java.time.Duration
 @Service
 class ArnApiService(
   private val arnClientCredentialsService: ClientCredentialsService,
-  @Value("\${api.timeout.arn:PT2S}") private val timeout: Duration,
+  @param:Value("\${api.timeout.arn:PT2S}") private val timeout: Duration,
 ) {
 
   @Cacheable("arn-api-get-risk-scores-by-crn")
@@ -109,14 +109,14 @@ class ArnApiService(
         .awaitSingle()
     }
 
-    val overallRiskLevel = convertStringToEnum(RiskLevel::class, allRoshRiskData?.summary?.overallRiskLevel)
+    val overallRiskLevel = convertStringToEnum(RiskLevel::class, allRoshRiskData.summary.overallRiskLevel)
 
-    val categoryToRiskLevelMap = convertToCategoryToRiskLevelMap(allRoshRiskData?.summary?.riskInCommunity)
+    val categoryToRiskLevelMap = convertToCategoryToRiskLevelMap(allRoshRiskData.summary.riskInCommunity)
 
     return RoshData(
       categoryToRiskLevelMap,
       overallRiskLevel,
-      allRoshRiskData?.assessedOn,
+      allRoshRiskData.assessedOn,
     )
   }
 

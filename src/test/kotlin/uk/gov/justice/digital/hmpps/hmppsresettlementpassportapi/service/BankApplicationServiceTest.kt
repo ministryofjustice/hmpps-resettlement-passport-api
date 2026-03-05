@@ -54,7 +54,7 @@ class BankApplicationServiceTest {
     val bankApplicationEntity = BankApplicationEntity(1, 2, emptySet(), fakeNow, fakeNow, status = "Pending", bankName = "Lloyds")
     whenever(bankApplicationRepository.findById(1)).thenReturn(Optional.of(bankApplicationEntity))
 
-    val response = bankApplicationService.getBankApplicationById(1).get()
+    val response = bankApplicationService.getBankApplicationById(1)
 
     Assertions.assertEquals(bankApplicationEntity, response)
   }

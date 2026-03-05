@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.intervent
 
 import java.time.OffsetDateTime
 
+@JvmRecord
 data class ReferralDTO(
   val serviceCategories: List<String> = listOf(),
   val contractType: String,

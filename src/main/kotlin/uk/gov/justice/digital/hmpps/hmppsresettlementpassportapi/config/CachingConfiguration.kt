@@ -1,9 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.boot.info.BuildProperties
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
@@ -11,13 +8,32 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.cache.RedisCacheConfiguration
 import org.springframework.data.redis.cache.RedisCacheManager
 import org.springframework.data.redis.connection.RedisConnectionFactory
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer
+import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer
 import org.springframework.data.redis.serializer.RedisSerializationContext
+import org.springframework.data.redis.serializer.RedisSerializer
+import tools.jackson.databind.DefaultTyping
+import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator
+import tools.jackson.module.kotlin.kotlinModule
+import java.math.BigDecimal
 import java.time.Duration
 
 @EnableCaching
 @Configuration
 class CachingConfiguration(private val buildProperties: BuildProperties) {
+  private val jacksonJsonRedisSerializer by lazy {
+    GenericJacksonJsonRedisSerializer.builder().customize {
+      val subtypeValidator = BasicPolymorphicTypeValidator.builder()
+        .allowIfSubType("uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi")
+        .allowIfSubType(Collection::class.java)
+        .allowIfSubType(Map::class.java)
+        .allowIfSubType(BigDecimal::class.java)
+        .build()
+
+      it.addModule(kotlinModule())
+        .activateDefaultTyping(subtypeValidator, DefaultTyping.NON_FINAL_AND_RECORDS, JsonTypeInfo.As.PROPERTY)
+    }.build()
+  }
+  private val byteArraySerializer by lazy { RedisSerializer.byteArray() }
 
   @Bean
   fun cacheManager(connectionFactory: RedisConnectionFactory): RedisCacheManager = RedisCacheManager.builder(connectionFactory)
@@ -29,7 +45,7 @@ class CachingConfiguration(private val buildProperties: BuildProperties) {
     .withCacheConfiguration("arn-api-get-rosh-data-by-crn", getCacheConfiguration(Duration.ofHours(4)))
     .withCacheConfiguration("education-employment-api-get-readiness-profile-by-noms-id", getCacheConfiguration(Duration.ofHours(2)))
     .withCacheConfiguration("key-worker-api-get-key-worker-name", getCacheConfiguration(Duration.ofHours(2)))
-    .withCacheConfiguration("prison-api-get-prisoner-image-data", getCacheConfiguration(Duration.ofMinutes(30)))
+    .withCacheConfiguration("prison-api-get-prisoner-image-data", getCacheConfigurationByteArray(Duration.ofMinutes(30)))
     .withCacheConfiguration("prison-api-find-prisoner-image-details", getCacheConfiguration(Duration.ofMinutes(30)))
     .withCacheConfiguration("resettlement-passport-delius-api-get-crn", getCacheConfiguration(Duration.ofHours(1)))
     .withCacheConfiguration("resettlement-passport-delius-api-get-mappa-data-by-noms-id", getCacheConfiguration(Duration.ofHours(4)))
@@ -40,12 +56,17 @@ class CachingConfiguration(private val buildProperties: BuildProperties) {
     .withCacheConfiguration("prisoner-search-api-match-prisoners", getCacheConfiguration(Duration.ofMinutes(10)))
     .build()
 
-  private fun getCacheConfiguration(ttl: Duration): RedisCacheConfiguration {
-    val customObjectMapper = jacksonObjectMapper().registerModule(JavaTimeModule()).activateDefaultTyping(jacksonObjectMapper().polymorphicTypeValidator, ObjectMapper.DefaultTyping.EVERYTHING, JsonTypeInfo.As.PROPERTY)
-    val jackson2JsonRedisSerializer = GenericJackson2JsonRedisSerializer(customObjectMapper)
+  private fun getCacheConfiguration(
+    ttl: Duration,
+    redisSerializer: RedisSerializer<*> = jacksonJsonRedisSerializer,
+  ): RedisCacheConfiguration {
+    val valueSerializationPair = RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer)
+
     return RedisCacheConfiguration.defaultCacheConfig()
-      .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jackson2JsonRedisSerializer))
+      .serializeValuesWith(valueSerializationPair)
       .prefixCacheNameWith("${buildProperties.version}-")
       .entryTtl(ttl)
   }
+
+  private fun getCacheConfigurationByteArray(ttl: Duration) = getCacheConfiguration(ttl, byteArraySerializer)
 }

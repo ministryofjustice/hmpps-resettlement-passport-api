@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
@@ -471,7 +470,7 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
     val auditQueueMessage =
       sqsClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(auditQueueUrl).build()).get().messages()[0]
 
-    assertThat(ObjectMapper().readValue(auditQueueMessage.body(), Map::class.java)).usingRecursiveComparison()
+    assertThat(jsonMapper.readValue(auditQueueMessage.body(), Map::class.java)).usingRecursiveComparison()
       .ignoringFields("when").isEqualTo(
         mapOf(
           "correlationId" to null,
@@ -675,7 +674,7 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
     val auditQueueMessage =
       sqsClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(auditQueueUrl).build()).get().messages()[0]
 
-    assertThat(ObjectMapper().readValue(auditQueueMessage.body(), Map::class.java)).usingRecursiveComparison()
+    assertThat(jsonMapper.readValue(auditQueueMessage.body(), Map::class.java)).usingRecursiveComparison()
       .ignoringFields("when").isEqualTo(
         mapOf(
           "correlationId" to null,

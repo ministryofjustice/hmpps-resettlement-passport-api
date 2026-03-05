@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
-import com.google.common.io.Resources
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -8,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
 import org.springframework.cache.CacheManager
 import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
@@ -19,6 +19,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import software.amazon.awssdk.services.sqs.SqsAsyncClient
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest
 import software.amazon.awssdk.services.sqs.model.PurgeQueueRequest
+import tools.jackson.databind.json.JsonMapper
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBase
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.AllocationManagerApiMockServer
@@ -37,6 +38,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wir
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ResettlementPassportDeliusApiMockServer
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@AutoConfigureWebTestClient
 @ActiveProfiles("test")
 @Sql(scripts = ["classpath:testdata/sql/clear-all-data.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
@@ -64,6 +66,9 @@ abstract class IntegrationTestBase : TestBase() {
   @Qualifier("audit-sqs-client")
   lateinit var sqsClient: SqsAsyncClient
   lateinit var auditQueueUrl: String
+
+  @Autowired
+  lateinit var jsonMapper: JsonMapper
 
   @BeforeEach
   fun beforeEach() {
@@ -172,6 +177,8 @@ abstract class IntegrationTestBase : TestBase() {
       registry.add("api.base.url.curious-service") { "http://localhost:${curiousApiMockServer.port()}" }
       registry.add("api.base.url.manage-users-service") { "http://localhost:${manageUsersApiMockServer.port()}" }
     }
+
+    fun readFile(file: String): String = this::class.java.getResource("/$file")!!.readText()
   }
 
   init {
@@ -187,4 +194,4 @@ abstract class IntegrationTestBase : TestBase() {
   ): (HttpHeaders) -> Unit = jwtAuthHelper.setAuthorisation(user, roles, scopes, authSource)
 }
 
-fun readFile(file: String): String = Resources.getResource(file).readText()
+fun readFile(file: String): String = IntegrationTestBase.readFile(file)

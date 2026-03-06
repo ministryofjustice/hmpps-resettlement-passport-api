@@ -9,8 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
 import org.springframework.cache.CacheManager
+import org.springframework.context.annotation.Import
 import org.springframework.http.HttpHeaders
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.context.jdbc.Sql
@@ -20,8 +20,8 @@ import software.amazon.awssdk.services.sqs.SqsAsyncClient
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest
 import software.amazon.awssdk.services.sqs.model.PurgeQueueRequest
 import tools.jackson.databind.json.JsonMapper
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ReadOnlyModeTestMockConfig
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JwtAuthHelper
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.TestBase
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.AllocationManagerApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ArnApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CaseNotesApiMockServer
@@ -39,7 +39,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wir
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @AutoConfigureWebTestClient
-@ActiveProfiles("test")
 @Sql(scripts = ["classpath:testdata/sql/clear-all-data.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
 abstract class IntegrationTestBase : TestBase() {
@@ -62,6 +61,7 @@ abstract class IntegrationTestBase : TestBase() {
   @Autowired
   lateinit var cacheManager: CacheManager
 
+  @Suppress("SpringJavaInjectionPointsAutowiringInspection")
   @Autowired
   @Qualifier("audit-sqs-client")
   lateinit var sqsClient: SqsAsyncClient
@@ -159,6 +159,7 @@ abstract class IntegrationTestBase : TestBase() {
       manageUsersApiMockServer.stop()
     }
 
+    @Suppress("unused")
     @JvmStatic
     @DynamicPropertySource
     fun properties(registry: DynamicPropertyRegistry) {
@@ -193,5 +194,8 @@ abstract class IntegrationTestBase : TestBase() {
     authSource: String = "none",
   ): (HttpHeaders) -> Unit = jwtAuthHelper.setAuthorisation(user, roles, scopes, authSource)
 }
+
+@Import(ReadOnlyModeTestMockConfig::class)
+abstract class ReadOnlyIntegrationTestBase : IntegrationTestBase()
 
 fun readFile(file: String): String = IntegrationTestBase.readFile(file)

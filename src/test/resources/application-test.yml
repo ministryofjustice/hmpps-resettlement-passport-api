@@ -29,8 +29,6 @@ schedule:
     delete-expired-otp: 0 0 3 * * *
 
 spring:
-  devtools:
-    add-properties: true
   servlet:
     multipart:
       enabled: true

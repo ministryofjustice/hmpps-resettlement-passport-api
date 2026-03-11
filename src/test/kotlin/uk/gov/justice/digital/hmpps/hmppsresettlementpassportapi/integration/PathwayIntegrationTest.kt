@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -60,7 +59,7 @@ class PathwayIntegrationTest : IntegrationTestBase() {
       .isEqualTo(actualPathwayStatus.get())
 
     val auditQueueMessage = sqsClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(auditQueueUrl).build()).get().messages()[0]
-    assertThat(ObjectMapper().readValue(auditQueueMessage.body(), Map::class.java))
+    assertThat(jsonMapper.readValue(auditQueueMessage.body(), Map::class.java))
       .usingRecursiveComparison()
       .ignoringFields("when")
       .isEqualTo(mapOf("correlationId" to null, "details" to null, "service" to "hmpps-resettlement-passport-api", "subjectId" to "G4274GN", "subjectType" to "PRISONER_ID", "what" to "UPDATE_PATHWAY_STATUS_WITH_CASE_NOTE", "when" to "2025-01-06T13:48:20.391273Z", "who" to "RESETTLEMENTPASSPORT_ADM"))
@@ -236,7 +235,9 @@ class PathwayIntegrationTest : IntegrationTestBase() {
       .jsonPath("userMessage").isEqualTo("Validation failure - please check request parameters and try again")
       .jsonPath("developerMessage").value { message: String ->
         assertThat(message).contains(
-          """pathway: must be one of [ACCOMMODATION, ATTITUDES_THINKING_AND_BEHAVIOUR, CHILDREN_FAMILIES_AND_COMMUNITY, DRUGS_AND_ALCOHOL, EDUCATION_SKILLS_AND_WORK, FINANCE_AND_ID, HEALTH]""",
+          "Pathway",
+          "not one of the values accepted for Enum class",
+          "ACCOMMODATION, CHILDREN_FAMILIES_AND_COMMUNITY, FINANCE_AND_ID, DRUGS_AND_ALCOHOL, ATTITUDES_THINKING_AND_BEHAVIOUR, EDUCATION_SKILLS_AND_WORK, HEALTH]",
         )
       }
       .jsonPath("moreInfo").isEmpty

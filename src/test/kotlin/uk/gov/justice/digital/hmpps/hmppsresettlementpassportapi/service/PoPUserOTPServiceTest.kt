@@ -155,7 +155,7 @@ class PoPUserOTPServiceTest {
     )
 
     whenever(popUserOTPRepository.findByPrisonerId(prisonerEntity.id())).thenReturn(null)
-    whenever(popUserOTPRepository.save(any())).thenReturn(popUserOTPEntity)
+    whenever(popUserOTPRepository.save(any<PoPUserOTPEntity>())).thenReturn(popUserOTPEntity)
     whenever(prisonerSearchApiService.findPrisonerPersonalDetails(prisonerEntity.nomsId)).thenReturn(prisonerResponse)
     val result = popUserOTPService.createPoPUserOTP(prisonerEntity)
     Assertions.assertEquals(popUserOTPEntity.id, result.id)

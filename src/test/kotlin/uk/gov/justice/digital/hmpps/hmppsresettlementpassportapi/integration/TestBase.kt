@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers
+package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
@@ -16,6 +16,7 @@ abstract class TestBase {
     private val redisContainer = RedisContainer.instance
     private val localStackContainer = LocalStackContainer.instance
 
+    @Suppress("unused")
     @JvmStatic
     @DynamicPropertySource
     fun properties(registry: DynamicPropertyRegistry) {

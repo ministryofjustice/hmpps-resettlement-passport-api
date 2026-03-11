@@ -10,7 +10,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.Mockito
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.web.server.ServerWebInputException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
@@ -1131,7 +1130,7 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
     if (expectedException == null) {
       stubSave()
       resettlementAssessmentStrategy.completeAssessment(nomsId, pathway, assessmentType, assessment, "string", true)
-      Mockito.verify(resettlementAssessmentRepository).save(expectedEntity!!)
+      assertAssessmentHasBeenSaved(expectedEntity)
     } else {
       val actualException = assertThrows<Throwable> {
         resettlementAssessmentStrategy.completeAssessment(nomsId, pathway, assessmentType, assessment, "string", true)

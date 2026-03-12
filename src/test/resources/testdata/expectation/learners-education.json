@@ -35,7 +35,7 @@
   "number": 0,
   "numberOfElements": 2,
   "pageable": {
-    "sort": [],
+    "sort": null,
     "pageNumber": 0,
     "pageSize": 10,
     "offset": 0,
@@ -43,7 +43,7 @@
     "paged": true
   },
   "size": 10,
-  "sort": [],
+  "sort": null,
   "totalElements": 2,
   "totalPages": 1
 }

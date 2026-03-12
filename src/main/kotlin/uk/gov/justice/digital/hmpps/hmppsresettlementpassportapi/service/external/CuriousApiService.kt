@@ -19,13 +19,18 @@ class CuriousApiService(
 
   @Cacheable("curious-api-get-learner-education-by-noms-id")
   fun getLearnersEducation(nomsId: String, pageSize: Int, pageNumber: Int): LearnersEducationList? {
+    val listToReturn = LearnersEducationList(
+      mutableListOf(), true, false, false, 0, 0, null, 0, null, 0, 0,
+    )
+
+    var page = 0
     val data = curiousWebClientCredentials.get()
       .uri(
         "/sequation-virtual-campus2-api/learnerEducation/{nomsId}?size={size}&page={page}",
         mapOf(
           "nomsId" to nomsId,
           "size" to 1,
-          "page" to 0,
+          "page" to page,
 
         ),
       )

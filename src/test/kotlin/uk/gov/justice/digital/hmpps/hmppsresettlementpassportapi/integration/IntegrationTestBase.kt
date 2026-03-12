@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -19,7 +20,6 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import software.amazon.awssdk.services.sqs.SqsAsyncClient
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest
 import software.amazon.awssdk.services.sqs.model.PurgeQueueRequest
-import tools.jackson.databind.json.JsonMapper
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ReadOnlyModeTestMockConfig
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.AllocationManagerApiMockServer
@@ -67,8 +67,8 @@ abstract class IntegrationTestBase : TestBase() {
   lateinit var sqsClient: SqsAsyncClient
   lateinit var auditQueueUrl: String
 
-  @Autowired
-  lateinit var jsonMapper: JsonMapper
+  @field:Autowired
+  lateinit var objectMapper: ObjectMapper
 
   @BeforeEach
   fun beforeEach() {

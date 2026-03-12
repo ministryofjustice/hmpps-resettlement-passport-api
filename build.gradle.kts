@@ -2,7 +2,7 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
   val kotlinVersion = "2.3.10"
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.0.4"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.0.5"
   id("org.springdoc.openapi-gradle-plugin") version "1.9.0"
   id("jacoco")
   id("org.sonarqube") version "6.2.0.5505"
@@ -25,10 +25,6 @@ repositories {
   mavenCentral()
 }
 
-// Pin Jackson 3 for `DefaultTyping.NON_FINAL_AND_RECORDS` (since 3.1); It requires jackson-annotations 2.1+
-ext["jackson-bom.version"] = "3.1.0"
-ext["jackson-2-bom.version"] = "2.21.1"
-
 dependencies {
   annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
@@ -47,13 +43,15 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
 
+  implementation("org.flywaydb:flyway-core")
+
   runtimeOnly("org.springframework.boot:spring-boot-starter-jdbc")
   runtimeOnly("org.postgresql:postgresql:42.7.7")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
 
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
 
-  implementation("tools.jackson.module:jackson-module-kotlin:3.1.0")
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("io.micrometer:micrometer-registry-prometheus")
   implementation("xyz.capybara:clamav-client:2.1.2")
@@ -67,11 +65,9 @@ dependencies {
   implementation("io.github.oshai:kotlin-logging-jvm:7.0.7")
   implementation("com.pauldijou:jwt-core_2.11:5.0.0")
 
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.0.2") {
-    exclude("com.fasterxml.jackson.module:jackson-module-kotlin")
-  }
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.0.2")
 
-  implementation(platform("org.testcontainers:testcontainers-bom:1.21.2"))
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.0.2")
   testImplementation("org.awaitility:awaitility-kotlin")
   testImplementation("io.jsonwebtoken:jjwt-impl:0.12.6")
   testImplementation("io.jsonwebtoken:jjwt-jackson:0.12.6")

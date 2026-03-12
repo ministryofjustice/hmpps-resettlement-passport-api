@@ -51,6 +51,9 @@ feature:
 interventions-api-integration:
   crsAppointmentsEnabled: true
 
+hmpps:
+  test.jwt-helper-enabled: false
+
 hmpps.sqs:
   provider: localstack
   queues:

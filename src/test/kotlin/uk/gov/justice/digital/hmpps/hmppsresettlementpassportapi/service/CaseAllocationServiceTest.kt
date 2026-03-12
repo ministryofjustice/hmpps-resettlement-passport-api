@@ -1,10 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.microsoft.applicationinsights.TelemetryClient
 import io.mockk.every
 import io.mockk.mockkStatic
@@ -26,7 +21,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAlloca
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocationPostResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.manageusersapi.ManageUser
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.readFileAsObject
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseAllocationRepository
@@ -376,10 +371,4 @@ class CaseAllocationServiceTest {
 
     Assertions.assertEquals(expected, result)
   }
-
-  private inline fun <reified T> readFileAsObject(filename: String): T = readStringAsObject(readFile(filename))
-  private inline fun <reified T> readStringAsObject(string: String): T = jacksonObjectMapper().configure(
-    DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-    false,
-  ).registerKotlinModule().registerModule(JavaTimeModule()).readValue(string)
 }

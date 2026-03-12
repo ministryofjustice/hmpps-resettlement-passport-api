@@ -10,8 +10,10 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
@@ -146,4 +148,10 @@ abstract class BaseResettlementAssessmentStrategyTest(val pathway: Pathway, val 
   )
 
   fun verifyEventSentToAppInsights(name: String, properties: Map<String, String>) = verify(telemetryClient).trackEvent(name, properties, null)
+
+  protected fun assertAssessmentHasBeenSaved(expectedEntity: ResettlementAssessmentEntity?) {
+    val assessmentCaptor = argumentCaptor<ResettlementAssessmentEntity>()
+    Mockito.verify(resettlementAssessmentRepository).save(assessmentCaptor.capture())
+    Assertions.assertEquals(expectedEntity, assessmentCaptor.firstValue)
+  }
 }

@@ -1,15 +1,11 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.events
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.readFileAsObject
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.readStringAsObject
 
 class DomainEventTest {
-  private val objectMapper = Jackson2ObjectMapperBuilder.json().build<ObjectMapper>()
-
   @Test
   fun `Can get noms id`() {
     val event: DomainEvent = readEvent()
@@ -18,8 +14,8 @@ class DomainEventTest {
   }
 
   private fun readEvent(): DomainEvent {
-    val envelope: MessageEnvelope = objectMapper.readValue(readFile("testdata/events/recall-event.json"))
-    val event: DomainEvent = objectMapper.readValue(envelope.message)
+    val envelope: MessageEnvelope = readFileAsObject("testdata/events/recall-event.json")
+    val event: DomainEvent = readStringAsObject(envelope.message)
     return event
   }
 

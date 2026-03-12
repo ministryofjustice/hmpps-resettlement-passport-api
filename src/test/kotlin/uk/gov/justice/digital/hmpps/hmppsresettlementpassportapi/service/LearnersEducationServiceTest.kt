@@ -1,10 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -13,7 +8,7 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.curiousapi.LearnersEducationList
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.readFileAsObject
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.CuriousApiService
@@ -56,11 +51,4 @@ class LearnersEducationServiceTest {
       )
     Assertions.assertEquals(expectedCoursename, learnersCourseList.content?.get(0)?.courseName ?: 0)
   }
-
-  private inline fun <reified T> readFileAsObject(filename: String): T = readStringAsObject(readFile(filename))
-
-  private inline fun <reified T> readStringAsObject(string: String): T = jacksonObjectMapper().configure(
-    DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-    false,
-  ).registerKotlinModule().registerModule(JavaTimeModule()).readValue(string)
 }

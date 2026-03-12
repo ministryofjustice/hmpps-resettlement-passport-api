@@ -1,28 +1,13 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
-import io.mockk.every
-import io.mockk.mockk
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Import
-import org.springframework.context.annotation.Primary
 import org.springframework.test.context.jdbc.Sql
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.IdApplicationPatch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.IdApplicationPost
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.SupportNeedsIntegrationTest.Companion.fakeNow
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.FeatureFlagValueProvider
 import java.math.BigDecimal
 
-@TestConfiguration
-class IdApplicationTestMockConfig {
-  @Bean
-  @Primary
-  fun featureFlagValueProvider(): FeatureFlagValueProvider = mockk { every { isReadOnlyMode() } returns true }
-}
-
-@Import(IdApplicationTestMockConfig::class)
-class IdApplicationIntegrationReadOnlyModeTest : IntegrationTestBase() {
+class IdApplicationIntegrationReadOnlyModeTest : ReadOnlyIntegrationTestBase() {
 
   @Test
   @Sql("classpath:testdata/sql/seed-id-application.sql")

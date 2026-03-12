@@ -70,7 +70,7 @@ data class LearnersEducationList(
   val numberOfElements: Int = 0,
   val pageable: Pageable?,
   val size: Int = 0,
-  val sort: List<Any>,
+  val sort: Sort?,
   var totalElements: Int = 0,
   val totalPages: Int = 0,
 )
@@ -80,7 +80,7 @@ data class Pageable(
   val pageNumber: Int?,
   val pageSize: Int?,
   val paged: Boolean,
-  val sort: List<Any>,
+  val sort: Sort?,
   val unpaged: Boolean,
 )
 

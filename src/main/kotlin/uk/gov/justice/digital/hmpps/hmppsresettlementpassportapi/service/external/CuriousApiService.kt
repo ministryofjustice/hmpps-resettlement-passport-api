@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.curiousapi.LearnerEducationDTO
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.curiousapi.LearnersEducationList
 
 @Service
@@ -21,7 +20,7 @@ class CuriousApiService(
   @Cacheable("curious-api-get-learner-education-by-noms-id")
   fun getLearnersEducation(nomsId: String, pageSize: Int, pageNumber: Int): LearnersEducationList? {
     val listToReturn = LearnersEducationList(
-      mutableListOf<LearnerEducationDTO>(), true, false, false, 0, 0, null, 0, emptyList(), 0, 0,
+      mutableListOf(), true, false, false, 0, 0, null, 0, null, 0, 0,
     )
 
     var page = 0

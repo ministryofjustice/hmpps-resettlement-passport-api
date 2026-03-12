@@ -25,7 +25,7 @@ data class LearnersCourseList(
   val number: Int,
   val numberOfElements: Int,
   val pageable: uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.curiousapi.Pageable,
-  val sort: List<Any>,
+  val sort: uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.curiousapi.Sort?,
   val size: Int,
   val totalElements: Int,
   val totalPages: Int,

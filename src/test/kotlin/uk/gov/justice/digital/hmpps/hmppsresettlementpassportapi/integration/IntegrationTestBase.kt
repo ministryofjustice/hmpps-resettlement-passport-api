@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
 import org.springframework.cache.CacheManager
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpHeaders
@@ -37,6 +38,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wir
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ResettlementPassportDeliusApiMockServer
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@AutoConfigureWebTestClient
 @Sql(scripts = ["classpath:testdata/sql/clear-all-data.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
 abstract class IntegrationTestBase : TestBase() {

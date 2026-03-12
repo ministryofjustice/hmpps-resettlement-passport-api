@@ -2,7 +2,7 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
   val kotlinVersion = "2.3.10"
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.5.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.0.5"
   id("org.springdoc.openapi-gradle-plugin") version "1.9.0"
   id("jacoco")
   id("org.sonarqube") version "6.2.0.5505"
@@ -34,8 +34,9 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-data-redis")
+  implementation("org.springframework.boot:spring-boot-starter-flyway")
 
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.6.3")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:7.0.1")
   implementation("software.amazon.awssdk:s3")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
@@ -48,7 +49,7 @@ dependencies {
   runtimeOnly("org.postgresql:postgresql:42.7.7")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
 
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.16")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
 
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
@@ -64,24 +65,19 @@ dependencies {
   implementation("io.github.oshai:kotlin-logging-jvm:7.0.7")
   implementation("com.pauldijou:jwt-core_2.11:5.0.0")
 
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.8.2")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.0.2")
 
-  constraints {
-    implementation("io.netty:netty-handler:4.1.118.Final")
-  }
-
-  developmentOnly("org.springframework.boot:spring-boot-devtools")
-
-  implementation(platform("org.testcontainers:testcontainers-bom:1.21.2"))
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.0.2")
   testImplementation("org.awaitility:awaitility-kotlin")
   testImplementation("io.jsonwebtoken:jjwt-impl:0.12.6")
   testImplementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
   testImplementation("org.mockito:mockito-inline:5.2.0")
-  testImplementation("io.swagger.parser.v3:swagger-parser:2.1.30")
+  testImplementation("io.swagger.parser.v3:swagger-parser:2.1.38")
+  testImplementation("org.springframework.boot:spring-boot-webtestclient")
   testImplementation("org.springframework.security:spring-security-test")
   testImplementation("org.wiremock:wiremock-standalone:3.13.1")
-  testImplementation("org.testcontainers:postgresql")
-  testImplementation("org.testcontainers:localstack")
+  testImplementation("org.testcontainers:testcontainers-postgresql")
+  testImplementation("org.testcontainers:testcontainers-localstack")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")

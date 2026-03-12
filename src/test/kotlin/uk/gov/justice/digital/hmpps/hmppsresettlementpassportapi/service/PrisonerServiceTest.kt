@@ -1,10 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
@@ -32,6 +27,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.readFileAsObject
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.readStringAsObject
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
@@ -597,7 +594,7 @@ class PrisonerServiceTest {
       )
     Assertions.assertEquals(
       expectedPrisonerId,
-      prisonersList.content?.get((prisonersList.content!!.toList().size - 1))?.prisonerNumber
+      prisonersList.content?.get((prisonersList.content.toList().size - 1))?.prisonerNumber
         ?: 0,
     )
   }
@@ -2130,9 +2127,6 @@ class PrisonerServiceTest {
     needs = listOf(),
     lastReport = null,
   )
-
-  private inline fun <reified T> readFileAsObject(filename: String): T = readStringAsObject(readFile(filename))
-  private inline fun <reified T> readStringAsObject(string: String): T = jacksonObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).registerKotlinModule().registerModule(JavaTimeModule()).readValue(string)
 
   @ParameterizedTest(name = "{0}")
   @MethodSource("test processReleaseDateFiltering data")

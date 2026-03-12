@@ -361,7 +361,7 @@ class AccommodationV3ResettlementAssessmentStrategyTest : BaseResettlementAssess
     if (expectedException == null) {
       stubSave()
       resettlementAssessmentStrategy.completeAssessment(nomsId, pathway, assessmentType, assessment, "string", true)
-      Mockito.verify(resettlementAssessmentRepository).save(expectedEntity!!)
+      assertAssessmentHasBeenSaved(expectedEntity)
       if (existingAssessment != null) {
         Mockito.lenient().`when`(profileTagsRepository.findByPrisonerId(1)).thenReturn(profileTagsEntity)
         if (existingAssessment.assessmentStatus == ResettlementAssessmentStatus.SUBMITTED) {

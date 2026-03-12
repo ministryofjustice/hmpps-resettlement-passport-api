@@ -11,7 +11,7 @@ import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Test
-import org.springframework.boot.actuate.health.Status
+import org.springframework.boot.health.contributor.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ClamAVConfig
 import xyz.capybara.clamav.ClamavClient
 import xyz.capybara.clamav.ClamavException

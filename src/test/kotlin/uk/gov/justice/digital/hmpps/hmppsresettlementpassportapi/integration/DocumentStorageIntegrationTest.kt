@@ -339,7 +339,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
       .expectBody(DocumentResponse::class.java)
-      .value { document -> assertThat(document.value.originalDocumentKey).isEqualTo(document.value.pdfDocumentKey) }
+      .value { document -> assertThat(document!!.value.originalDocumentKey).isEqualTo(document.value.pdfDocumentKey) }
 
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/documents/1/download")
@@ -364,7 +364,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectHeader().contentType("application/json")
       .expectBody(DocumentResponse::class.java)
-      .value { document -> assertThat(document.value.originalDocumentFileName).isEqualTo("original-filename.pdf") }
+      .value { document -> assertThat(document!!.value.originalDocumentFileName).isEqualTo("original-filename.pdf") }
   }
 
   @Test

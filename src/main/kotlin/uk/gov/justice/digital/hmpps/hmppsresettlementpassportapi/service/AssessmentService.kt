@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.IdTypeRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import java.time.LocalDateTime
+import kotlin.jvm.optionals.getOrNull
 
 @Service
 class AssessmentService(
@@ -22,10 +23,7 @@ class AssessmentService(
 ) {
 
   @Transactional
-  fun getAssessmentById(id: Long): AssessmentEntity? {
-    val assessment = assessmentRepository.findById(id) ?: return null
-    return if (assessment.get().isDeleted) null else assessment.get()
-  }
+  fun getAssessmentById(id: Long): AssessmentEntity? = assessmentRepository.findById(id).getOrNull()?.takeUnless { it.isDeleted }
 
   @Transactional
   fun getAssessmentByNomsId(nomsId: String): AssessmentEntity? {

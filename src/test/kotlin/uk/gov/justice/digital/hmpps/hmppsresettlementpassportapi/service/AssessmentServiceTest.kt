@@ -72,7 +72,7 @@ class AssessmentServiceTest {
   @Test
   fun `test getAssessmentById - returns null if assessment does not exist`() {
     val assessmentId: Long = 1
-    Mockito.`when`(assessmentRepository.findById(assessmentId)).thenReturn(null)
+    Mockito.`when`(assessmentRepository.findById(assessmentId)).thenReturn(Optional.empty<AssessmentEntity>())
 
     val response = assessmentService.getAssessmentById(assessmentId)
     Assertions.assertNull(response)

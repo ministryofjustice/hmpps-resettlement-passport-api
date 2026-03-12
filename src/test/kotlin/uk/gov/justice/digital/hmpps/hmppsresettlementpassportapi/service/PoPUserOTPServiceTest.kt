@@ -257,7 +257,7 @@ class PoPUserOTPServiceTest {
     val oneLoginData = OneLoginData("urn1", "123457", "email@test.com", LocalDate.parse("1982-10-24"))
     val dob = testDate.toLocalDate()
     Mockito.lenient()
-      .`when`(popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(oneLoginData.otp ?: "0", dob, testDate))
+      .`when`(popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(oneLoginData.otp, dob, testDate))
       .thenReturn(null)
     assertThrows<ResourceNotFoundException> { popUserOTPService.getPoPUserVerified(oneLoginData) }
     unmockkStatic(LocalDateTime::class)

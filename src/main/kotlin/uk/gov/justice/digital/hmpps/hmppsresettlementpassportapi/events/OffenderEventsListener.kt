@@ -3,13 +3,13 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.events
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSetter
 import com.fasterxml.jackson.annotation.Nulls
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.awspring.cloud.sqs.annotation.SqsListener
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.annotation.PostConstruct
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
+import tools.jackson.databind.ObjectMapper
+import tools.jackson.module.kotlin.readValue
 import java.time.ZonedDateTime
 
 private val logger = KotlinLogging.logger {}
@@ -45,28 +45,27 @@ class OffenderEventsListener(
 }
 
 data class EventType(
-
-  @JsonProperty("Value")
+  @param:JsonProperty("Value")
   val value: String,
-  @JsonProperty("Type")
+  @param:JsonProperty("Type")
   val type: String,
 )
 
 data class MessageAttributes(val eventType: EventType)
 
 data class MessageEnvelope(
-  @JsonProperty("Message")
+  @param:JsonProperty("Message")
   val message: String,
-  @JsonProperty("MessageId")
+  @param:JsonProperty("MessageId")
   val messageId: String,
-  @JsonProperty("MessageAttributes")
+  @param:JsonProperty("MessageAttributes")
   val messageAttributes: MessageAttributes,
 )
 
 data class DomainEvent(
   val eventType: String,
   val occurredAt: ZonedDateTime = ZonedDateTime.now(),
-  @JsonSetter(nulls = Nulls.SKIP)
+  @param:JsonSetter(nulls = Nulls.SKIP)
   val additionalInformation: Map<String, Any?> = emptyMap(),
   val personReference: PersonReference = PersonReference(),
 ) {

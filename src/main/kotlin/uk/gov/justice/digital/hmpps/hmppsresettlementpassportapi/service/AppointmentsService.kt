@@ -36,7 +36,7 @@ class AppointmentsService(
   private val prisonerRepository: PrisonerRepository,
   private val rpDeliusApiService: ResettlementPassportDeliusApiService,
   private val interventionsApiService: InterventionsApiService,
-  @Value("\${interventions-api-integration.crsAppointmentsEnabled}") private val crsAppointmentIntegrationEnabled: Boolean,
+  @param:Value("\${interventions-api-integration.crsAppointmentsEnabled}") private val crsAppointmentIntegrationEnabled: Boolean,
   private val prisonerService: PrisonerService,
   private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
 ) {
@@ -162,7 +162,7 @@ class AppointmentsService(
             OffsetDateTime.parse(crsAppointment.appointmentDateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
               .toLocalTime()
         }
-        if (formattedDateVal?.isAfter(startDate.minusDays(1)) == true && formattedDateVal?.isBefore(endDate.plusDays(1)) == true) {
+        if (formattedDateVal?.isAfter(startDate.minusDays(1)) == true && formattedDateVal.isBefore(endDate.plusDays(1))) {
           val appointment: Appointment?
           val addressInfo = Address(
             null,

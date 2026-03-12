@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 
 import java.time.LocalDateTime
 
+@JvmRecord
 data class RoshData(
   val riskInCommunity: Map<Category, RiskLevel>,
   val overallRiskLevel: RiskLevel?,

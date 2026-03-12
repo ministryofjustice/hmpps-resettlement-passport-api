@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
+@JvmRecord
 data class RiskScore(
   val completedDate: LocalDateTime?,
   val assessmentStatus: String?,

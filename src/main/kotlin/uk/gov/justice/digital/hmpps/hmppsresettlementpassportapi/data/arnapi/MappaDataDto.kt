@@ -17,9 +17,9 @@ data class MappaDataDto(
 )
 
 data class KeyValueDto(
-  @JsonProperty("Code")
+  @param:JsonProperty("Code")
   val code: String?,
-  @JsonProperty("Description")
+  @param:JsonProperty("Description")
   val description: String?,
 )
 

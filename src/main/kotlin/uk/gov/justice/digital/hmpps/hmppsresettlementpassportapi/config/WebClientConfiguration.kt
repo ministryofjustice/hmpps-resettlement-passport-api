@@ -1,12 +1,12 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.micrometer.observation.ObservationRegistry
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
-import org.springframework.http.codec.json.Jackson2JsonEncoder
+import org.springframework.http.codec.ClientCodecConfigurer
+import org.springframework.http.codec.json.JacksonJsonEncoder
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager
@@ -17,30 +17,31 @@ import org.springframework.security.oauth2.client.web.reactive.function.client.S
 import org.springframework.web.reactive.function.client.ExchangeFilterFunctions
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
+import tools.jackson.databind.json.JsonMapper
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.SYSTEM_USERNAME
 import java.time.Duration
+import java.util.function.Consumer
 
 @Configuration
 @EnableScheduling
 class WebClientConfiguration(
-  @Value("\${api.base.url.prisoner-search}") private val prisonerSearchRootUri: String,
-  @Value("\${api.base.url.cvl}") private val cvlRootUri: String,
-  @Value("\${api.base.url.arn}") private val arnRootUri: String,
-  @Value("\${api.base.url.prison}") private val prisonRootUri: String,
-  @Value("\${api.base.url.case-notes}") private val caseNotesRootUri: String,
-  @Value("\${api.base.url.key-worker}") private val keyWorkerRootUri: String,
-  @Value("\${api.base.url.allocation-manager}") private val allocationManagerRootUri: String,
-  @Value("\${api.base.url.resettlement-passport-delius}") private val rpDeliusRootUri: String,
-  @Value("\${api.base.url.education-employment}") private val educationEmploymentRootUri: String,
-  @Value("\${api.base.url.interventions-service}") private val interventionsRootUri: String,
-  @Value("\${api.base.url.pop-user-service}") private val popUserRootUri: String,
-  @Value("\${api.base.url.gotenberg-api}") private val gotenbergRootUri: String,
-  @Value("\${api.base.url.curious-service}") private val curiousRootUri: String,
-  @Value("\${api.base.url.manage-users-service}") private val manageUsersRootUri: String,
-  private val objectMapper: ObjectMapper,
+  @param:Value("\${api.base.url.prisoner-search}") private val prisonerSearchRootUri: String,
+  @param:Value("\${api.base.url.cvl}") private val cvlRootUri: String,
+  @param:Value("\${api.base.url.arn}") private val arnRootUri: String,
+  @param:Value("\${api.base.url.prison}") private val prisonRootUri: String,
+  @param:Value("\${api.base.url.case-notes}") private val caseNotesRootUri: String,
+  @param:Value("\${api.base.url.key-worker}") private val keyWorkerRootUri: String,
+  @param:Value("\${api.base.url.allocation-manager}") private val allocationManagerRootUri: String,
+  @param:Value("\${api.base.url.resettlement-passport-delius}") private val rpDeliusRootUri: String,
+  @param:Value("\${api.base.url.education-employment}") private val educationEmploymentRootUri: String,
+  @param:Value("\${api.base.url.interventions-service}") private val interventionsRootUri: String,
+  @param:Value("\${api.base.url.pop-user-service}") private val popUserRootUri: String,
+  @param:Value("\${api.base.url.gotenberg-api}") private val gotenbergRootUri: String,
+  @param:Value("\${api.base.url.curious-service}") private val curiousRootUri: String,
+  @param:Value("\${api.base.url.manage-users-service}") private val manageUsersRootUri: String,
+  private val jsonMapper: JsonMapper,
   val clientRegistrationRepo: ClientRegistrationRepository,
   private val observationRegistry: ObservationRegistry,
-
 ) {
 
   @Bean
@@ -99,14 +100,7 @@ class WebClientConfiguration(
       .baseUrl(baseUrl)
       .clientConnector(ReactorClientHttpConnector(httpClient))
       .filter(oauth2Client)
-      .codecs { codecs ->
-        codecs.defaultCodecs().maxInMemorySize(5 * 1024 * 1024)
-        codecs.defaultCodecs().jackson2JsonEncoder(
-          Jackson2JsonEncoder(
-            objectMapper,
-          ),
-        )
-      }
+      .codecs(jsonCodecs())
       .defaultHeaders { headers ->
         defaultHeaders.forEach { (key, value) ->
           headers.set(key, value)
@@ -114,6 +108,11 @@ class WebClientConfiguration(
       }
       .observationRegistry(observationRegistry)
       .build()
+  }
+
+  private fun jsonCodecs(): Consumer<ClientCodecConfigurer> = { codecs ->
+    codecs.defaultCodecs().maxInMemorySize(5 * 1024 * 1024)
+    codecs.defaultCodecs().jacksonJsonEncoder(JacksonJsonEncoder(jsonMapper))
   }
 
   @Bean
@@ -137,14 +136,7 @@ class WebClientConfiguration(
     return WebClient.builder()
       .baseUrl(baseUrl)
       .clientConnector(ReactorClientHttpConnector(httpClient))
-      .codecs { codecs ->
-        codecs.defaultCodecs().maxInMemorySize(5 * 1024 * 1024)
-        codecs.defaultCodecs().jackson2JsonEncoder(
-          Jackson2JsonEncoder(
-            objectMapper,
-          ),
-        )
-      }
+      .codecs(jsonCodecs())
       .observationRegistry(observationRegistry)
       .build()
   }

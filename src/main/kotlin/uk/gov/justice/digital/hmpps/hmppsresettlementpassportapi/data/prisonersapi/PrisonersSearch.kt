@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisoners
 
 import java.time.LocalDate
 
+@JvmRecord
 data class PrisonersSearch(
   val prisonerNumber: String,
   val firstName: String,
@@ -22,10 +23,10 @@ data class PrisonersSearch(
   val prisonId: String,
   val prisonName: String,
   val cellLocation: String? = null,
-  var displayReleaseDate: LocalDate? = null,
   val recall: Boolean = false,
 )
 
+@JvmRecord
 data class PrisonersSearchList(
   val content: List<PrisonersSearch>?,
   val pageSize: Int?,

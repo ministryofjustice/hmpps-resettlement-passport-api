@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.tomakehurst.wiremock.client.WireMock.equalTo
 import com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath
 import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
@@ -207,7 +206,7 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
     )
 
     val auditQueueMessage = sqsClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(auditQueueUrl).build()).get().messages()[0]
-    assertThat(ObjectMapper().readValue(auditQueueMessage.body(), Map::class.java))
+    assertThat(jsonMapper.readValue(auditQueueMessage.body(), Map::class.java))
       .usingRecursiveComparison()
       .ignoringFields("when")
       .isEqualTo(mapOf("correlationId" to null, "details" to null, "service" to "hmpps-resettlement-passport-api", "subjectId" to "G1458GV", "subjectType" to "PRISONER_ID", "what" to "CREATE_APPOINTMENT", "when" to "2025-01-06T13:48:20.391273Z", "who" to "RESETTLEMENTPASSPORT_ADM"))

@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity
 
-import com.fasterxml.jackson.core.JsonProcessingException
-import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.persistence.AttributeConverter
 import jakarta.persistence.Column
 import jakarta.persistence.Convert
@@ -14,6 +12,8 @@ import jakarta.persistence.Table
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.type.SqlTypes
 import org.springframework.stereotype.Component
+import tools.jackson.core.JacksonException
+import tools.jackson.databind.ObjectMapper
 import java.io.IOException
 import java.time.LocalDateTime
 
@@ -47,13 +47,13 @@ class ProfileTagConverter(
 ) : AttributeConverter<ProfileTagList, String> {
   override fun convertToDatabaseColumn(meta: ProfileTagList): String = try {
     objectMapper.writeValueAsString(meta)
-  } catch (ex: JsonProcessingException) {
+  } catch (_: JacksonException) {
     throw RuntimeException("Error serialising data into profile tags")
   }
 
   override fun convertToEntityAttribute(dbData: String): ProfileTagList = try {
     objectMapper.readValue(dbData, ProfileTagList::class.java)
-  } catch (ex: IOException) {
+  } catch (_: IOException) {
     throw RuntimeException("Error deserialising data into profile tags")
   }
 }

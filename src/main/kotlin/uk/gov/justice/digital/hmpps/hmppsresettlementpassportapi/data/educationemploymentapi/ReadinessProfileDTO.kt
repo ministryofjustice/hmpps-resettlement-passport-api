@@ -3,13 +3,15 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.education
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.EnumWithLabel
 import java.time.LocalDateTime
 
+@JvmRecord
 data class ReadinessProfileDTO(
   val profileData: Profile?,
 )
 
+@JvmRecord
 data class Profile(
-  var status: ProfileStatus?,
-  var statusChangeDate: LocalDateTime?,
+  val status: ProfileStatus?,
+  val statusChangeDate: LocalDateTime?,
 )
 
 enum class ProfileStatus : EnumWithLabel {

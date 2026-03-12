@@ -13,8 +13,8 @@ import kotlin.time.toJavaDuration
 @Service
 class ClientCredentialsService(
   val tokenWebClient: WebClient,
-  @Value("\${api.base.url.case-notes}") private val caseNotesRootUri: String,
-  @Value("\${api.base.url.arn}") private val arnRootUri: String,
+  @param:Value("\${api.base.url.case-notes}") private val caseNotesRootUri: String,
+  @param:Value("\${api.base.url.arn}") private val arnRootUri: String,
 ) {
 
   enum class ServiceType {
@@ -32,7 +32,7 @@ class ClientCredentialsService(
     .bodyToMono<OAuthTokenResponse>()
     .timeout(1.seconds.toJavaDuration())
     .exponentialBackOffRetry()
-    .awaitSingle()?.accessToken
+    .awaitSingle().accessToken
 
   suspend fun getAuthorizedClient(userId: String, serviceType: ServiceType): WebClient {
     val accessToken = getAccessToken(userId) ?: throw RuntimeException("Unexpected error obtaining token for user $userId")
@@ -50,6 +50,6 @@ class ClientCredentialsService(
 }
 
 data class OAuthTokenResponse(
-  @JsonProperty("access_token")
+  @param:JsonProperty("access_token")
   val accessToken: String,
 )

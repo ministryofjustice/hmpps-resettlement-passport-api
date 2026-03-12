@@ -1,15 +1,12 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
-import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonMapperBuilder
-import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import org.assertj.core.api.Assertions.assertThat
 import org.springframework.test.web.reactive.server.WebTestClient
+import tools.jackson.module.kotlin.jsonMapper
+import tools.jackson.module.kotlin.kotlinModule
+import tools.jackson.module.kotlin.readValue
 
-val jsonMapper: JsonMapper = jacksonMapperBuilder()
-  .addModule(JavaTimeModule())
-  .build()
+val jsonMapper = jsonMapper { addModule(kotlinModule()) }
 
 inline fun <reified T> WebTestClient.ResponseSpec.returnBody(): T {
   val bodyJson: String = this
@@ -18,7 +15,7 @@ inline fun <reified T> WebTestClient.ResponseSpec.returnBody(): T {
     .returnResult()
     .responseBody!!
 
-  return jsonMapper.readValue<T>(bodyJson, jacksonTypeRef<T>())
+  return jsonMapper.readValue<T>(bodyJson)
 }
 
 inline fun <reified T> WebTestClient.ResponseSpec.expectBody(expected: T) {

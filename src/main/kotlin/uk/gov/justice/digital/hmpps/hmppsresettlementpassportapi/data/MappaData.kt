@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data
 
 import java.time.LocalDate
 
+@JvmRecord
 data class MappaData(
   val level: Int?,
   val levelDescription: String?,

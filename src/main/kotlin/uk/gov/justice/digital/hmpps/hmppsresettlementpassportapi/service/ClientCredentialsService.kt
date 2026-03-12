@@ -22,7 +22,7 @@ class ClientCredentialsService(
     Arn,
   }
 
-  private suspend fun getAccessToken(userId: String): String? = tokenWebClient.post()
+  private suspend fun getAccessToken(userId: String): String = tokenWebClient.post()
     .body(
       BodyInserters
         .fromFormData("grant_type", "client_credentials")
@@ -32,10 +32,10 @@ class ClientCredentialsService(
     .bodyToMono<OAuthTokenResponse>()
     .timeout(1.seconds.toJavaDuration())
     .exponentialBackOffRetry()
-    .awaitSingle()?.accessToken
+    .awaitSingle().accessToken
 
   suspend fun getAuthorizedClient(userId: String, serviceType: ServiceType): WebClient {
-    val accessToken = getAccessToken(userId) ?: throw RuntimeException("Unexpected error obtaining token for user $userId")
+    val accessToken = getAccessToken(userId)
     val uri = when (serviceType) {
       ServiceType.CaseNotes -> caseNotesRootUri
       ServiceType.Arn -> arnRootUri

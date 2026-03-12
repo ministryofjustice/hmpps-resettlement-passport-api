@@ -102,6 +102,9 @@ openApi {
 
 kotlin {
   jvmToolchain(21)
+  compilerOptions {
+    freeCompilerArgs.addAll("-Xannotation-default-target=param-property")
+  }
 }
 
 tasks.test {

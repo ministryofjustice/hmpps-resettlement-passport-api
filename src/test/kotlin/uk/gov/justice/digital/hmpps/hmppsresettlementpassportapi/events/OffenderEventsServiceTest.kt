@@ -1,15 +1,13 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.events
 
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.whenever
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.UUIDMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.UUIDMockExtension.Companion.mockRandomUUID
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
@@ -19,9 +17,9 @@ import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.util.*
 
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(MockitoExtension::class, UUIDMockExtension::class)
 class OffenderEventsServiceTest {
-  private lateinit var offenderEventsService: OffenderEventsService
+  private val offenderEventsService by lazy { OffenderEventsService(offenderEventsRepository, pathwayAndStatusService, prisonerRepository, caseAllocationService) }
 
   @Mock
   private lateinit var offenderEventsRepository: OffenderEventRepository
@@ -34,11 +32,6 @@ class OffenderEventsServiceTest {
 
   @Mock
   private lateinit var caseAllocationService: CaseAllocationService
-
-  @BeforeEach
-  fun beforeEach() {
-    offenderEventsService = OffenderEventsService(offenderEventsRepository, pathwayAndStatusService, prisonerRepository, caseAllocationService)
-  }
 
   @Test
   fun `test handleReleaseEvent - no nomsId`() {
@@ -86,9 +79,8 @@ class OffenderEventsServiceTest {
 
   @Test
   fun `test handleReleaseEvent - update prisoner's prisonId to OUT`() {
-    val randomUUID = UUID.randomUUID()
-    mockkStatic(UUID::class)
-    every { UUID.randomUUID() }.returns(randomUUID)
+    val entityId = UUID.randomUUID()
+      .also { mockRandomUUID(it) }
 
     val messageId = "123"
     val event = DomainEvent(
@@ -102,18 +94,13 @@ class OffenderEventsServiceTest {
     offenderEventsService.handleReleaseEvent(messageId, event)
 
     Mockito.verify(prisonerRepository).save(PrisonerEntity(id = 1, nomsId = "abc2", prisonId = "OUT", creationDate = LocalDateTime.parse("2023-10-30T22:09:08")))
-    Mockito.verify(offenderEventsRepository).save(OffenderEventEntity(id = randomUUID, prisonerId = 1, type = OffenderEventType.PRISON_RELEASE, nomsId = "abc2", occurredAt = ZonedDateTime.parse("2024-12-11T12:00:01+00:00"), reasonCode = "12"))
+    Mockito.verify(offenderEventsRepository).save(OffenderEventEntity(id = entityId, prisonerId = 1, type = OffenderEventType.PRISON_RELEASE, nomsId = "abc2", occurredAt = ZonedDateTime.parse("2024-12-11T12:00:01+00:00"), reasonCode = "12"))
     Mockito.verify(caseAllocationService).getCaseAllocationByPrisonerId(1)
     Mockito.verifyNoMoreInteractions(caseAllocationService)
-    unmockkAll()
   }
 
   @Test
   fun `test handleReleaseEvent - Transfer Event`() {
-    val randomUUID = UUID.randomUUID()
-    mockkStatic(UUID::class)
-    every { UUID.randomUUID() }.returns(randomUUID)
-
     val messageId = "123"
     val event = DomainEvent(
       eventType = "prison-offender-events.prisoner.released",
@@ -129,15 +116,10 @@ class OffenderEventsServiceTest {
     Mockito.verifyNoMoreInteractions(offenderEventsRepository)
     Mockito.verify(caseAllocationService).getCaseAllocationByPrisonerId(1)
     Mockito.verifyNoMoreInteractions(caseAllocationService)
-    unmockkAll()
   }
 
   @Test
   fun `test handleReleaseEvent - Transfer Event CaseAllocation available`() {
-    val randomUUID = UUID.randomUUID()
-    mockkStatic(UUID::class)
-    every { UUID.randomUUID() }.returns(randomUUID)
-
     val messageId = "123"
     val event = DomainEvent(
       eventType = "prison-offender-events.prisoner.released",
@@ -156,6 +138,5 @@ class OffenderEventsServiceTest {
     Mockito.verifyNoMoreInteractions(offenderEventsRepository)
     Mockito.verify(caseAllocationService).getCaseAllocationByPrisonerId(1)
     Mockito.verify(caseAllocationService).delete(caseAllocationEntity)
-    unmockkAll()
   }
 }

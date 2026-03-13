@@ -4,7 +4,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.github.tomakehurst.wiremock.client.WireMock
 import org.springframework.test.util.TestSocketUtils.findAvailableTcpPort
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.readFile
 
 open class WireMockServerBase : WireMockServer(findAvailableTcpPort()) {
   fun stubGet(path: String, status: Int, jsonResponseFile: String?) {

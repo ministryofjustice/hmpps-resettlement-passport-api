@@ -1,9 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import com.microsoft.applicationinsights.TelemetryClient
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -39,6 +36,10 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNee
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeeds
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedsUpdateRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension.Companion.mockCurrentTime
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JWTTokenMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JWTTokenMockExtension.Companion.mockClaimFromJWTToken
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedUpdateEntity
@@ -55,7 +56,7 @@ import java.util.*
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(MockitoExtension::class, CurrentDateTimeMockExtension::class, JWTTokenMockExtension::class)
 class SupportNeedsServiceTest {
   private lateinit var supportNeedsService: SupportNeedsService
 
@@ -788,13 +789,11 @@ class SupportNeedsServiceTest {
 
     whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.parse("2025-01-28T12:09:34"), prisonId = "MDI"))
 
-    mockkStatic(::getClaimFromJWTToken)
-    every { getClaimFromJWTToken(auth, "name") } returns "A User"
-    every { getClaimFromJWTToken(auth, "sub") } returns "A_USER"
-    every { getClaimFromJWTToken(auth, "auth_source") } returns "nomis"
+    mockClaimFromJWTToken(token = auth, claimValue = "A User", claimName = "name")
+    mockClaimFromJWTToken(token = auth, claimValue = "A_USER", claimName = "sub")
+    mockClaimFromJWTToken(token = auth, claimValue = "nomis", claimName = "auth_source")
 
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
+    mockCurrentTime(fakeNow)
 
     whenever(prisonerSupportNeedRepository.findFirstByPrisonerIdAndSupportNeedIdAndOtherDetailAndDeletedIsFalseOrderByCreatedDateDesc(1, 8, null)).thenReturn(null)
     whenever(supportNeedRepository.findByIdAndDeletedIsFalse(8)).thenReturn(getSupportNeed(8, Pathway.HEALTH))
@@ -808,8 +807,6 @@ class SupportNeedsServiceTest {
     verify(prisonerSupportNeedRepository).save(PrisonerSupportNeedEntity(id = 9, prisonerId = 1, supportNeed = getSupportNeed(8, Pathway.HEALTH), otherDetail = null, createdBy = "A User", createdDate = fakeNow, latestUpdateId = 12))
 
     verify(telemetryClient).trackEvent("PSFR_SupportNeedsSubmitted", mapOf("supportNeedIds" to "[8]", "prisonId" to "MDI", "prisonerId" to "A123", "submittedBy" to "A_USER", "authSource" to "nomis"), null)
-
-    unmockkAll()
   }
 
   @Test
@@ -826,26 +823,22 @@ class SupportNeedsServiceTest {
     val auth = "auth"
     val fakeNow = LocalDateTime.parse("2025-01-31T12:00:01")
 
-    mockkStatic(::getClaimFromJWTToken)
-    every { getClaimFromJWTToken(auth, "name") } returns "A User"
-    every { getClaimFromJWTToken(auth, "sub") } returns "A_USER"
-    every { getClaimFromJWTToken(auth, "auth_source") } returns "nomis"
+    mockClaimFromJWTToken(token = auth, claimValue = "A User", claimName = "name")
+    mockClaimFromJWTToken(token = auth, claimValue = "A_USER", claimName = "sub")
+    mockClaimFromJWTToken(token = auth, claimValue = "nomis", claimName = "auth_source")
 
     whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.parse("2025-01-28T12:09:34"), prisonId = "MDI"))
     whenever(prisonerSupportNeedRepository.findByIdAndDeletedIsFalse(prisonerNeedId)).thenReturn(PrisonerSupportNeedEntity(prisonerId = 1, supportNeed = getSupportNeed(8, Pathway.HEALTH), otherDetail = null, createdBy = "A User", createdDate = fakeNow))
     whenever(prisonerSupportNeedUpdateRepository.save(PrisonerSupportNeedUpdateEntity(prisonerSupportNeedId = 1234L, createdBy = "A User", createdDate = fakeNow, updateText = "Some support need text", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = false))).thenReturn(PrisonerSupportNeedUpdateEntity(id = 567, prisonerSupportNeedId = 123L, createdBy = "A User", createdDate = fakeNow, updateText = "Some support need text", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = false))
     stubPrisonerDetails(nomsId)
 
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
+    mockCurrentTime(fakeNow)
 
     supportNeedsService.patchPrisonerNeedById(nomsId, prisonerNeedId, supportNeedsUpdateRequest, auth)
 
     verify(prisonerSupportNeedRepository).save(PrisonerSupportNeedEntity(prisonerId = 1, latestUpdateId = 567, supportNeed = getSupportNeed(8, Pathway.HEALTH), otherDetail = null, createdBy = "A User", createdDate = fakeNow))
 
     verify(telemetryClient).trackEvent("PSFR_SupportNeedUpdated", mapOf("prisonerSupportNeedId" to "1234", "supportNeedId" to "8", "prisonId" to "MDI", "prisonerId" to "A123", "submittedBy" to "A_USER", "authSource" to "nomis"), null)
-
-    unmockkAll()
   }
 
   @Test
@@ -880,8 +873,7 @@ class SupportNeedsServiceTest {
       status = SupportNeedStatus.IN_PROGRESS,
     )
     val auth = "auth"
-    mockkStatic(::getClaimFromJWTToken)
-    every { getClaimFromJWTToken(auth, "name") } returns "A User"
+    mockClaimFromJWTToken(token = auth, claimValue = "A User", claimName = "name")
 
     whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(
       PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.now(), prisonId = "MDI"),
@@ -906,8 +898,7 @@ class SupportNeedsServiceTest {
       status = SupportNeedStatus.IN_PROGRESS,
     )
     val auth = "auth"
-    mockkStatic(::getClaimFromJWTToken)
-    every { getClaimFromJWTToken(auth, "name") } returns "A User"
+    mockClaimFromJWTToken(token = auth, claimValue = "A User", claimName = "name")
 
     whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(
       PrisonerEntity(id = 1, nomsId = nomsId, creationDate = LocalDateTime.now(), prisonId = "MDI"),
@@ -989,8 +980,7 @@ class SupportNeedsServiceTest {
     val user = "User B"
     val fakeNow = LocalDateTime.parse("2025-02-01T12:00:00")
 
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
+    mockCurrentTime(fakeNow)
 
     whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, prisonId = "ABC"))
     whenever(prisonerSupportNeedRepository.findAllByPrisonerIdAndDeletedIsFalse(1)).thenReturn(
@@ -1085,8 +1075,6 @@ class SupportNeedsServiceTest {
         ),
       ),
     )
-
-    unmockkAll()
   }
 
   @Test

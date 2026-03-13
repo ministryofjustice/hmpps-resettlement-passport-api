@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wi
 
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.readFile
 import java.util.Base64
 
 class PrisonApiMockServer : WireMockServerBase() {

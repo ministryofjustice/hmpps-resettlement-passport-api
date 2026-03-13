@@ -1,8 +1,8 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external
 
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.unmockkAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -30,7 +30,7 @@ class CvlApiServiceTest {
 
   @AfterEach
   fun reset() {
-    unmockkAll()
+    clearAllMocks()
   }
 
   @Test

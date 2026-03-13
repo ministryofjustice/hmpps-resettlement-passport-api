@@ -1,21 +1,27 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
-import io.mockk.every
-import io.mockk.mockkStatic
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.test.context.jdbc.Sql
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocation
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension.Companion.mockCurrentTime
 import java.time.LocalDateTime
 
+@ExtendWith(CurrentDateTimeMockExtension::class)
 class CaseAllocationIntegrationReadOnlyModeTest : ReadOnlyIntegrationTestBase() {
 
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
+  @BeforeEach
+  internal fun setUp() {
+    mockCurrentTime(fakeNow)
+  }
+
   @Test
   @Sql("classpath:testdata/sql/seed-1-prisoner.sql")
   fun `Assign, UnAssign Case Allocation - forbidden`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
     manageUsersApiMockServer.stubGetManageUsersData("MDI", 200)
 
     val staffId = 485931
@@ -45,8 +51,6 @@ class CaseAllocationIntegrationReadOnlyModeTest : ReadOnlyIntegrationTestBase() 
   @Test
   @Sql("classpath:testdata/sql/seed-1-prisoner-case-allocation.sql")
   fun `UnAssign Case Allocation - forbidden`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
     manageUsersApiMockServer.stubGetManageUsersData("MDI", 200)
     val staffId = 456769
 

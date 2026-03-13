@@ -1,12 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkAll
-import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Sort
 import org.springframework.test.context.jdbc.Sql
@@ -17,6 +15,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResetReaso
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension.Companion.mockCurrentTime
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
@@ -32,6 +32,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.SupportNeedRepository
 import java.time.LocalDateTime
 
+@ExtendWith(CurrentDateTimeMockExtension::class)
 class ProfileResetIntegrationTest : IntegrationTestBase() {
 
   @Autowired
@@ -57,8 +58,7 @@ class ProfileResetIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-profile-reset.sql")
   fun `POST reset profile - happy path and supportNeeds enabled`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
+    mockCurrentTime(fakeNow)
 
     val nomsId = "ABC1234"
     val prisonId = "MDI"
@@ -125,15 +125,12 @@ class ProfileResetIntegrationTest : IntegrationTestBase() {
     // Prisoner should have supportNeedsLegacyProfile set to false
     val expectedPrisoner = PrisonerEntity(1, "ABC1234", LocalDateTime.parse("2023-08-16T12:21:38.709"), "MDI", false)
     Assertions.assertEquals(expectedPrisoner, prisonerRepository.findById(1).get())
-
-    unmockkAll()
   }
 
   @Test
   @Sql("classpath:testdata/sql/seed-profile-reset.sql")
   fun `POST reset profile - happy path and supportNeeds disabled, send legacy case notes`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
+    mockCurrentTime(fakeNow)
 
     val nomsId = "ABC1234"
     val prisonId = "MDI"
@@ -215,8 +212,6 @@ class ProfileResetIntegrationTest : IntegrationTestBase() {
       PrisonerSupportNeedUpdateEntity(id = 102, prisonerSupportNeedId = 2, createdBy = "A user", createdDate = LocalDateTime.parse("2024-02-22T09:36:30.713421"), updateText = "This is an update 2", status = SupportNeedStatus.IN_PROGRESS, isPrison = true, isProbation = false, deleted = false, deletedDate = null),
     )
     Assertions.assertEquals(expectedPrisonerSupportNeedUpdates, prisonerSupportNeedUpdateRepository.findAll().sortedBy { it.id })
-
-    unmockkAll()
   }
 
   @Test

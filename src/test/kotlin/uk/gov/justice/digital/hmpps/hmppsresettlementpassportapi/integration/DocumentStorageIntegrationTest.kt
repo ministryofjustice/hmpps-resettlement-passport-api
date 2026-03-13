@@ -2,20 +2,22 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.io.Resources
-import io.mockk.every
-import io.mockk.mockkStatic
 import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
 import org.assertj.core.api.Assertions.within
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.web.reactive.function.BodyInserters
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.DocumentResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension.Companion.mockCurrentTime
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
+@ExtendWith(CurrentDateTimeMockExtension::class)
 class DocumentStorageIntegrationTest : IntegrationTestBase() {
 
   private val fakeNow = LocalDateTime.parse("2024-07-26T12:00:01")
@@ -329,8 +331,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
   @Sql("classpath:testdata/sql/seed-document-upload.sql")
   fun `Create uploadDocument pdf and getDocument pdf without conversion - happy path`() {
     val nomsId = "ABC1234"
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
+    mockCurrentTime(fakeNow)
     webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/documents/upload")
       .body(generateMultiPartFormRequestWeb("testdata/example-doc.pdf"))
@@ -354,8 +355,7 @@ class DocumentStorageIntegrationTest : IntegrationTestBase() {
   @Sql("classpath:testdata/sql/seed-document-upload.sql")
   fun `Uses original filename field when it is supplied`() {
     val nomsId = "ABC1234"
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
+    mockCurrentTime(fakeNow)
     webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/documents/upload")
       .body(generateMultiPartFormRequestWeb("testdata/example-doc.pdf", originalFilename = "original-filename.pdf"))

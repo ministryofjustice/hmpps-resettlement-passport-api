@@ -1,13 +1,8 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import com.microsoft.applicationinsights.TelemetryClient
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkAll
-import io.mockk.unmockkStatic
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
@@ -21,6 +16,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAlloca
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CaseAllocationPostResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.manageusersapi.ManageUser
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension.Companion.fakeNow
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension.Companion.testDate
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JWTTokenMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JWTTokenMockExtension.Companion.mockClaimFromJWTToken
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.readFileAsObject
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
@@ -30,9 +30,18 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
 import java.time.LocalDateTime
 
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(MockitoExtension::class, CurrentDateTimeMockExtension::class, JWTTokenMockExtension::class)
 class CaseAllocationServiceTest {
-  private lateinit var caseAllocationService: CaseAllocationService
+  private val caseAllocationService by lazy {
+    CaseAllocationService(
+      prisonerRepository,
+      caseAllocationRepository,
+      manageUserApiService,
+      prisonerSearchApiService,
+      pathwayAndStatusService,
+      telemetryClient,
+    )
+  }
 
   @Mock
   private lateinit var prisonerRepository: PrisonerRepository
@@ -52,28 +61,9 @@ class CaseAllocationServiceTest {
   @Mock
   private lateinit var telemetryClient: TelemetryClient
 
-  private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
-  private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
-
-  @BeforeEach
-  fun beforeEach() {
-    caseAllocationService = CaseAllocationService(
-      prisonerRepository,
-      caseAllocationRepository,
-      manageUserApiService,
-      prisonerSearchApiService,
-      pathwayAndStatusService,
-      telemetryClient,
-    )
-  }
-
   @Test
   fun `test createCaseAllocation - creates and returns caseAllocation`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
-    mockkStatic(::getClaimFromJWTToken)
-    every { getClaimFromJWTToken("auth", "sub") } returns "USERNAME"
-
+    mockClaimFromJWTToken()
     val manageUserList = emptyList<ManageUser>().toMutableList()
     val manageUser = ManageUser(4321, "PSO Firstname", "PSO Lastname")
     manageUserList.add(manageUser)
@@ -133,15 +123,11 @@ class CaseAllocationServiceTest {
       ),
       null,
     )
-    unmockkAll()
   }
 
   @Test
   fun `test removeCaseAllocation - unassign the allocation`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
-    mockkStatic(::getClaimFromJWTToken)
-    every { getClaimFromJWTToken("auth", "sub") } returns "USERNAME"
+    mockClaimFromJWTToken()
 
     val caseList = emptyList<CaseAllocationEntity?>().toMutableList()
     val prisonerEntity = PrisonerEntity(1, "123", testDate, "xyz")
@@ -184,15 +170,11 @@ class CaseAllocationServiceTest {
       ),
       null,
     )
-    unmockkStatic(LocalDateTime::class)
   }
 
   @Test
   fun `test removeCaseAllocation - should ignore already unassigned prisoner while processing case unallocation request`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
-    mockkStatic(::getClaimFromJWTToken)
-    every { getClaimFromJWTToken("auth", "sub") } returns "USERNAME"
+    mockClaimFromJWTToken()
 
     val expectedCaseList = emptyList<CaseAllocationEntity?>().toMutableList()
     val prisonerEntity1 = PrisonerEntity(1, "123", testDate, "xyz")
@@ -243,7 +225,6 @@ class CaseAllocationServiceTest {
       ),
       null,
     )
-    unmockkStatic(LocalDateTime::class)
   }
 
   @Test

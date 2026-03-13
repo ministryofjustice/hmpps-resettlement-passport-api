@@ -1,13 +1,13 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension.Companion.mockCurrentTime
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PoPUserOTPEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PoPUserOTPRepository
@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.Schedul
 import java.time.LocalDate
 import java.time.LocalDateTime
 
+@ExtendWith(CurrentDateTimeMockExtension::class)
 class SchedulerIntegrationTest : IntegrationTestBase() {
 
   @Autowired
@@ -36,12 +37,10 @@ class SchedulerIntegrationTest : IntegrationTestBase() {
   @Sql("classpath:testdata/sql/seed-pop-user-otp-3.sql")
   fun `test expired otp in database - happy path`() {
     val fakeNow = LocalDateTime.parse("2024-02-19T10:18:22.636066")
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
+    mockCurrentTime(fakeNow)
     val expectedOTPEntities = getExpectedPoPUserOTPEntities()
     schedulerService.deleteExpiredOTPScheduledTask()
     Assertions.assertEquals(expectedOTPEntities, popUserOTPRepository.findAll().sortedBy { it.id })
-    unmockkStatic(LocalDateTime::class)
   }
 
   private fun getExpectedPoPUserOTPEntities(): List<PoPUserOTPEntity> {

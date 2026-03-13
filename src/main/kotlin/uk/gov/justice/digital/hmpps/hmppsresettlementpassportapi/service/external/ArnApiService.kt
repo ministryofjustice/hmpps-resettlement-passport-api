@@ -109,14 +109,14 @@ class ArnApiService(
         .awaitSingle()
     }
 
-    val overallRiskLevel = convertStringToEnum(RiskLevel::class, allRoshRiskData?.summary?.overallRiskLevel)
+    val overallRiskLevel = convertStringToEnum(RiskLevel::class, allRoshRiskData.summary.overallRiskLevel)
 
-    val categoryToRiskLevelMap = convertToCategoryToRiskLevelMap(allRoshRiskData?.summary?.riskInCommunity)
+    val categoryToRiskLevelMap = convertToCategoryToRiskLevelMap(allRoshRiskData.summary.riskInCommunity)
 
     return RoshData(
       categoryToRiskLevelMap,
       overallRiskLevel,
-      allRoshRiskData?.assessedOn,
+      allRoshRiskData.assessedOn,
     )
   }
 

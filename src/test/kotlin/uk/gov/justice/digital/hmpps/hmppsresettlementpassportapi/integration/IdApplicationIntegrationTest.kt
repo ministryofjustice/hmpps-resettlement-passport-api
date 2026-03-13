@@ -1,17 +1,19 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.mockk.every
-import io.mockk.mockkStatic
 import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.test.context.jdbc.Sql
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.IdApplicationPatch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.IdApplicationPost
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension.Companion.mockCurrentTime
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
+@ExtendWith(CurrentDateTimeMockExtension::class)
 class IdApplicationIntegrationTest : IntegrationTestBase() {
 
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
@@ -19,8 +21,7 @@ class IdApplicationIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-bank-application.sql")
   fun `Create, update and delete bank application- happy path`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
+    mockCurrentTime(fakeNow)
 
     val expectedOutput = readFile("testdata/expectation/id-application-post-result.json")
     val expectedOutput2 = readFile("testdata/expectation/id-application-patch-result.json")

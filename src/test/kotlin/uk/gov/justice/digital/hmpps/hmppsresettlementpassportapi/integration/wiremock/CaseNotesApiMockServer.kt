@@ -4,7 +4,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.equalToJson
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.post
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.readFile
 
 class CaseNotesApiMockServer : WireMockServerBase() {
 

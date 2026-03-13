@@ -20,7 +20,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import software.amazon.awssdk.services.sqs.SqsAsyncClient
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest
 import software.amazon.awssdk.services.sqs.model.PurgeQueueRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ReadOnlyModeTestMockConfig
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ReadOnlyModeTestConfig
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JwtAuthHelper
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.AllocationManagerApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ArnApiMockServer
@@ -179,7 +179,8 @@ abstract class IntegrationTestBase : TestBase() {
       registry.add("api.base.url.manage-users-service") { "http://localhost:${manageUsersApiMockServer.port()}" }
     }
 
-    fun readFile(file: String): String = this::class.java.getResource("/$file")!!.readText()
+    @JvmStatic
+    protected fun readFile(file: String): String = this::class.java.getResource("/$file")!!.readText()
   }
 
   init {
@@ -195,7 +196,5 @@ abstract class IntegrationTestBase : TestBase() {
   ): (HttpHeaders) -> Unit = jwtAuthHelper.setAuthorisation(user, roles, scopes, authSource)
 }
 
-@Import(ReadOnlyModeTestMockConfig::class)
+@Import(ReadOnlyModeTestConfig::class)
 abstract class ReadOnlyIntegrationTestBase : IntegrationTestBase()
-
-fun readFile(file: String): String = IntegrationTestBase.readFile(file)

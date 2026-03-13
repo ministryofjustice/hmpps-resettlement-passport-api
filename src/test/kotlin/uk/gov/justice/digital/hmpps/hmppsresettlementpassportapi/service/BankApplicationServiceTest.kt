@@ -1,8 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -18,6 +15,9 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.Duplicat
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplication
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.BankApplicationResponse
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension.Companion.fakeNow
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension.Companion.testDate
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.BankApplicationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.BankApplicationStatusLogEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
@@ -25,11 +25,9 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.BankApplicationStatusLogRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.BankApplicationService.BankApplicationLogSarContent
-import java.time.LocalDateTime
 import java.util.*
-import kotlin.collections.emptyList
 
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(MockitoExtension::class, CurrentDateTimeMockExtension::class)
 class BankApplicationServiceTest {
   private lateinit var bankApplicationService: BankApplicationService
 
@@ -41,8 +39,6 @@ class BankApplicationServiceTest {
 
   @Mock
   private lateinit var bankApplicationStatusLogRepository: BankApplicationStatusLogRepository
-  private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
-  private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
   @BeforeEach
   fun beforeEach() {
@@ -93,8 +89,6 @@ class BankApplicationServiceTest {
 
   @Test
   fun `test deleteBankApplication - updates isDeleted and deletionDate`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity.id(), emptySet(), fakeNow, fakeNow, status = "Pending", bankName = "Lloyds")
     val expectedBankApplicationEntity = BankApplicationEntity(
@@ -112,13 +106,10 @@ class BankApplicationServiceTest {
     bankApplicationService.deleteBankApplication(bankApplicationEntity)
 
     Mockito.verify(bankApplicationRepository).save(expectedBankApplicationEntity)
-    unmockkStatic(LocalDateTime::class)
   }
 
   @Test
   fun `test createBankApplication - creates bank application`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     val bankApplication = BankApplication(applicationSubmittedDate = fakeNow, bankName = "Lloyds")
     val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity.id(), setOf(BankApplicationStatusLogEntity(null, null, "Pending", fakeNow)), fakeNow, fakeNow, status = "Pending", isDeleted = false, bankName = "Lloyds")
@@ -132,13 +123,10 @@ class BankApplicationServiceTest {
     bankApplicationService.createBankApplication(bankApplication, prisonerEntity.nomsId, false)
 
     Mockito.verify(bankApplicationStatusLogRepository).save(expectedLogEntity)
-    unmockkStatic(LocalDateTime::class)
   }
 
   @Test
   fun `test createBankApplication - creates bank application duplicate check`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     val bankApplication = BankApplication(applicationSubmittedDate = fakeNow, bankName = "Lloyds")
     val bankApplicationEntity = BankApplicationEntity(1, prisonerEntity.id(), setOf(BankApplicationStatusLogEntity(null, null, "Pending", fakeNow)), fakeNow, fakeNow, status = "Pending", isDeleted = false, bankName = "Lloyds")
@@ -152,7 +140,6 @@ class BankApplicationServiceTest {
     Mockito.verify(bankApplicationStatusLogRepository).save(expectedLogEntity)
     assertThrows<DuplicateDataFoundException> { bankApplicationService.createBankApplication(bankApplication, prisonerEntity.nomsId, true) }
     Mockito.verify(bankApplicationRepository, Mockito.never()).save(Mockito.any())
-    unmockkStatic(LocalDateTime::class)
   }
 
   @Nested
@@ -166,7 +153,7 @@ class BankApplicationServiceTest {
 
       val response = bankApplicationService.getBankApplicationsByPrisonerAndCreationDate(prisoner, fakeNow, fakeNow)
 
-      Assertions.assertEquals(emptyList<BankApplicationResponse>(), response)
+      Assertions.assertEquals(emptyList<BankApplicationService.BankApplicationSarContent>(), response)
     }
 
     @Test

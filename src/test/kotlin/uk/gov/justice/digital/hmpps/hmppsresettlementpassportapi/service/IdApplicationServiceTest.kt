@@ -1,8 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -13,6 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.IdApplicationPatch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.IdApplicationPost
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension.Companion.mockCurrentTime
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.IdApplicationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.IdTypeEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
@@ -22,7 +21,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(MockitoExtension::class, CurrentDateTimeMockExtension::class)
 class IdApplicationServiceTest {
   private lateinit var idApplicationService: IdApplicationService
 
@@ -40,12 +39,11 @@ class IdApplicationServiceTest {
   @BeforeEach
   fun beforeEach() {
     idApplicationService = IdApplicationService(idApplicationRepository, prisonerRepository, idTypeRepository)
+    mockCurrentTime(fakeNow)
   }
 
   @Test
   fun `test createIdApplication - creates and returns idApplication`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     val idTypeEntity = IdTypeEntity(1, "Drivers Licence")
     val idApplicationPost = IdApplicationPost(
@@ -86,13 +84,10 @@ class IdApplicationServiceTest {
     val result = idApplicationService.createIdApplication(idApplicationPost, prisonerEntity.nomsId)
     Mockito.verify(idApplicationRepository).save(idApplicationEntity)
     Assertions.assertEquals(idApplicationEntity, result)
-    unmockkStatic(LocalDateTime::class)
   }
 
   @Test
   fun `test updateIdApplication - updates and returns idAppliaction`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     val idTypeEntity = IdTypeEntity(1, "Drivers Licence")
     val idApplicationPatchDTO = IdApplicationPatch(
@@ -152,13 +147,10 @@ class IdApplicationServiceTest {
     val result = idApplicationService.updateIdApplication(idApplicationEntity, idApplicationPatchDTO)
     Mockito.verify(idApplicationRepository).save(expectedIdAssessment)
     Assertions.assertEquals(expectedIdAssessment, result)
-    unmockkStatic(LocalDateTime::class)
   }
 
   @Test
   fun `test deleteIdApplication - sets is deleted and deletion date`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     val idTypeEntity = IdTypeEntity(1, "Drivers Licence")
     val idApplicationEntity = IdApplicationEntity(
@@ -185,7 +177,6 @@ class IdApplicationServiceTest {
     idApplicationService.deleteIdApplication(idApplicationEntity)
 
     Mockito.verify(idApplicationRepository).save(expectedDeleteCall)
-    unmockkStatic(LocalDateTime::class)
   }
 
   @Test

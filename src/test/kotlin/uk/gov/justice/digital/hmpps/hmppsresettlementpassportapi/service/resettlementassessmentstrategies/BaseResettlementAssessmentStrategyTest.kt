@@ -25,6 +25,10 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentResponsePage
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension.Companion.mockCurrentTime
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JWTTokenMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JWTTokenMockExtension.Companion.mockClaimFromJWTToken
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
@@ -38,7 +42,7 @@ import java.time.LocalDateTime
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(MockitoExtension::class, CurrentDateTimeMockExtension::class, JWTTokenMockExtension::class)
 abstract class BaseResettlementAssessmentStrategyTest(val pathway: Pathway, val version: Int) {
   lateinit var resettlementAssessmentStrategy: ResettlementAssessmentStrategy
 
@@ -153,5 +157,15 @@ abstract class BaseResettlementAssessmentStrategyTest(val pathway: Pathway, val 
     val assessmentCaptor = argumentCaptor<ResettlementAssessmentEntity>()
     Mockito.verify(resettlementAssessmentRepository).save(assessmentCaptor.capture())
     Assertions.assertEquals(expectedEntity, assessmentCaptor.firstValue)
+  }
+
+  protected fun mockClaimFromJWTToken() {
+    mockClaimFromJWTToken(token = "string", claimValue = "System user", claimName = "name")
+    mockClaimFromJWTToken(token = "string", claimValue = "nomis", claimName = "auth_source")
+    mockClaimFromJWTToken(token = "string", claimValue = "USER_1", claimName = "sub")
+  }
+
+  protected fun mockCurrentTime() {
+    mockCurrentTime(testDate)
   }
 }

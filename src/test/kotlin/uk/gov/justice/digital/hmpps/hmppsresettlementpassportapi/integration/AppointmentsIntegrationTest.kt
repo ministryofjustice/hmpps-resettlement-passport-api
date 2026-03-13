@@ -5,21 +5,23 @@ import com.github.tomakehurst.wiremock.client.WireMock.equalTo
 import com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath
 import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.http.MediaType
 import org.springframework.test.context.jdbc.Sql
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CreateAppointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.CreateAppointmentAddress
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateMockExtension.Companion.mockCurrentDate
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Category
 import java.time.LocalDate
 import java.time.LocalDateTime
 
+@ExtendWith(CurrentDateMockExtension::class)
 class AppointmentsIntegrationTest : IntegrationTestBase() {
-  private val fakeNow = LocalDate.parse("2024-08-19")
+  private val testDate = LocalDate.parse("2024-08-19")
 
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
@@ -30,6 +32,8 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetAllAppointmentsFromCRN(crn, 200)
     interventionsServiceApiMockServer.stubGetCRSAppointmentsFromCRN(crn, 200)
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/appointments?futureOnly=false&page=0&size=50")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -145,14 +149,15 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-6.sql")
   fun `Get All Appointments happy path - including database`() {
-    mockkStatic(LocalDate::class)
-    every { LocalDate.now() } returns fakeNow
+    mockCurrentDate(testDate)
     val expectedOutput = readFile("testdata/expectation/appointments-2.json")
     val nomsId = "G1458GV"
     val crn = "CRN1"
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetAppointmentsFromCRN(crn, 200)
     interventionsServiceApiMockServer.stubGetCRSAppointmentsFromCRN(crn, 200)
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/appointments?page=0&size=50")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -282,14 +287,15 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-pathway-statuses-2.sql")
   fun `Get All Future Appointments only happy path`() {
-    mockkStatic(LocalDate::class)
-    every { LocalDate.now() } returns fakeNow
+    mockCurrentDate(testDate)
     val expectedOutput = readFile("testdata/expectation/appointments-1.json")
     val nomsId = "G1458GV"
     val crn = "CRN1"
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetAppointmentsFromCRN(crn, 200)
     interventionsServiceApiMockServer.stubGetCRSAppointmentsFromCRN(crn, 200)
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/appointments")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -312,6 +318,8 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetAppointmentsFromCRNNoResults(crn)
     interventionsServiceApiMockServer.stubGetCRSAppointmentsFromCRNNoResults(crn, 200)
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/appointments")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
@@ -335,6 +343,8 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
     deliusApiMockServer.stubGetCrnFromNomsId(nomsId, crn)
     deliusApiMockServer.stubGetAppointmentsFromCRNNoResults(crn)
     interventionsServiceApiMockServer.stubGetCRSAppointmentsFromCRNNoReferrals(crn, 200)
+    prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
+
     webTestClient.get()
       .uri("/resettlement-passport/prisoner/$nomsId/appointments")
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))

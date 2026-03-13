@@ -1,11 +1,9 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkAll
-import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.context.jdbc.Sql
@@ -18,6 +16,10 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentRequestQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension.Companion.mockCurrentTime
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentOffsetDateTimeMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentOffsetDateTimeMockExtension.Companion.mockCurrentOffsetTime
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentEntity
@@ -31,9 +33,11 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 
+@ExtendWith(CurrentDateTimeMockExtension::class, CurrentOffsetDateTimeMockExtension::class)
 class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
+  private val fakeNowOffset = OffsetDateTime.parse("2024-06-04T09:16:04+01:00")
 
   @Autowired
   private lateinit var resettlementAssessmentRepository: ResettlementAssessmentRepository
@@ -163,8 +167,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-resettlement-assessment-1.sql")
   fun `Get resettlement assessment summary by noms ID - happy path`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
+    mockCurrentTime(fakeNow)
     val expectedOutput = readFile("testdata/expectation/resettlement-assessment-summary-1.json")
 
     val nomsId = "G4161UF"
@@ -178,14 +181,12 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody()
       .json(expectedOutput)
-    unmockkAll()
   }
 
   @Test
   @Sql("classpath:testdata/sql/seed-resettlement-assessment-1-deleted.sql")
   fun `Get resettlement assessment summary by noms ID - happy path with deleted entries`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
+    mockCurrentTime(fakeNow)
     val expectedOutput = readFile("testdata/expectation/resettlement-assessment-summary-1.json")
 
     val nomsId = "G4161UF"
@@ -199,14 +200,12 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody()
       .json(expectedOutput)
-    unmockkAll()
   }
 
   @Test
   @Sql("classpath:testdata/sql/seed-resettlement-assessment-2.sql")
   fun `Get resettlement assessment summary by noms ID- no assessments in DB - happy path`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
+    mockCurrentTime(fakeNow)
     val expectedOutput = readFile("testdata/expectation/resettlement-assessment-summary-2.json")
 
     val nomsId = "G4161UF"
@@ -220,7 +219,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody()
       .json(expectedOutput)
-    unmockkAll()
   }
 
   @Test
@@ -532,10 +530,8 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val forename = "A"
     val surname = "User"
     val caseNoteText = "Accommodation\\n\\nCase note related to accommodation\\n\\n\\nAttitudes, thinking and behaviour\\n\\nCase note related to Attitudes, thinking and behaviour\\n\\n\\nChildren, families and communities\\n\\nCase note related to Children, family and communities\\n\\n\\nDrugs and alcohol\\n\\nCase note related to Drugs and alcohol\\n\\n\\nEducation, skills and work\\n\\nCase note related to education, skills and work\\n\\n\\nFinance and ID\\n\\nCase note related to Finance and ID\\n\\n\\nHealth\\n\\nCase note related to Health"
-    val fakeNowOffset = OffsetDateTime.parse("2024-06-04T09:16:04+01:00")
 
-    mockkStatic(OffsetDateTime::class)
-    every { OffsetDateTime.now() } returns fakeNowOffset
+    mockCurrentOffsetTime(fakeNowOffset)
 
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "INR", caseNoteText, prisonId, 200)
@@ -580,8 +576,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val prisoner = prisonerRepository.findById(1).get()
     val expectedPrisoner = PrisonerEntity(1, "ABC1234", LocalDateTime.parse("2023-08-16T12:21:38.709"), "MDI", null)
     Assertions.assertEquals(expectedPrisoner, prisoner)
-
-    unmockkAll()
   }
 
   @Test
@@ -594,10 +588,8 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val forename = "A"
     val surname = "User"
     val caseNoteText = "Accommodation\\n\\nCase note related to accommodation\\n\\n\\nAttitudes, thinking and behaviour\\n\\nCase note related to Attitudes, thinking and behaviour\\n\\n\\nChildren, families and communities\\n\\nCase note related to Children, family and communities\\n\\n\\nDrugs and alcohol\\n\\nCase note related to Drugs and alcohol\\n\\n\\nEducation, skills and work\\n\\nCase note related to education, skills and work\\n\\n\\nFinance and ID\\n\\nCase note related to Finance and ID\\n\\n\\nHealth\\n\\nCase note related to Health"
-    val fakeNowOffset = OffsetDateTime.parse("2024-06-04T09:16:04+01:00")
 
-    mockkStatic(OffsetDateTime::class)
-    every { OffsetDateTime.now() } returns fakeNowOffset
+    mockCurrentOffsetTime(fakeNowOffset)
 
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "PRR", caseNoteText, prisonId, 200)
@@ -642,8 +634,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val prisoner = prisonerRepository.findById(1).get()
     val expectedPrisoner = PrisonerEntity(1, "ABC1234", LocalDateTime.parse("2023-08-16T12:21:38.709"), "MDI", true)
     Assertions.assertEquals(expectedPrisoner, prisoner)
-
-    unmockkAll()
   }
 
   @Test
@@ -656,10 +646,8 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val forename = "A"
     val surname = "User"
     val caseNoteText = "Accommodation\\n\\nCase note related to accommodation\\n\\n\\nAttitudes, thinking and behaviour\\n\\nCase note related to Attitudes, thinking and behaviour\\n\\n\\nChildren, families and communities\\n\\nCase note related to Children, family and communities\\n\\n\\nDrugs and alcohol\\n\\nCase note related to Drugs and alcohol\\n\\n\\nEducation, skills and work\\n\\nCase note related to education, skills and work\\n\\n\\nFinance and ID\\n\\nCase note related to Finance and ID\\n\\n\\nHealth\\n\\nCase note related to Health"
-    val fakeNowOffset = OffsetDateTime.parse("2024-06-04T09:16:04+01:00")
 
-    mockkStatic(OffsetDateTime::class)
-    every { OffsetDateTime.now() } returns fakeNowOffset
+    mockCurrentOffsetTime(fakeNowOffset)
 
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "PRR", caseNoteText, prisonId, 200)
@@ -704,8 +692,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val prisoner = prisonerRepository.findById(1).get()
     val expectedPrisoner = PrisonerEntity(1, "ABC1234", LocalDateTime.parse("2023-08-16T12:21:38.709"), "MDI", null)
     Assertions.assertEquals(expectedPrisoner, prisoner)
-
-    unmockkAll()
   }
 
   @Test
@@ -718,10 +704,8 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val forename = "A"
     val surname = "User"
     val caseNoteText = "Accommodation\\n\\nCase note related to accommodation\\n\\n\\nAttitudes, thinking and behaviour\\n\\nCase note related to Attitudes, thinking and behaviour\\n\\n\\nChildren, families and communities\\n\\nCase note related to Children, family and communities\\n\\n\\nDrugs and alcohol\\n\\nCase note related to Drugs and alcohol\\n\\n\\nEducation, skills and work\\n\\nCase note related to education, skills and work\\n\\n\\nFinance and ID\\n\\nCase note related to Finance and ID\\n\\n\\nHealth\\n\\nCase note related to Health"
-    val fakeNowOffset = OffsetDateTime.parse("2024-06-04T09:16:04+01:00")
 
-    mockkStatic(OffsetDateTime::class)
-    every { OffsetDateTime.now() } returns fakeNowOffset
+    mockCurrentOffsetTime(fakeNowOffset)
 
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "INR", caseNoteText, prisonId, 200)
@@ -761,8 +745,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     )
 
     assertThat(pathwayStatusesInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedPathwayStatuses)
-
-    unmockkAll()
   }
 
   @Test
@@ -776,10 +758,8 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val surname = "Smith"
     val dpsCaseNoteText = "Immediate needs report completed.\\n\\nGo to prepare someone for release (PSfR) service to see the report information."
     val deliusCaseNoteText = "Immediate needs report completed.\\n\\nView accommodation report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/accommodation/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView attitudes, thinking and behaviour report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/attitudes-thinking-and-behaviour/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView children, families and communities report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/children-families-and-communities/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView drugs and alcohol report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/drugs-and-alcohol/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView education, skills and work report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/education-skills-and-work/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView finance and ID report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/finance-and-id/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView health report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/health-status/?prisonerNumber=ABC1234&fromDelius=true#assessment-information"
-    val fakeNowOffset = OffsetDateTime.parse("2024-06-04T09:16:04+01:00")
 
-    mockkStatic(OffsetDateTime::class)
-    every { OffsetDateTime.now() } returns fakeNowOffset
+    mockCurrentOffsetTime(fakeNowOffset)
 
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "INR", dpsCaseNoteText, prisonId, 200)
@@ -819,8 +799,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     )
 
     assertThat(pathwayStatusesInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedPathwayStatuses)
-
-    unmockkAll()
   }
 
   @Test
@@ -834,10 +812,8 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val surname = "Smith"
     val dpsCaseNoteText = "Immediate needs report completed.\\n\\nGo to prepare someone for release (PSfR) service to see the report information."
     val deliusCaseNoteText = "Immediate needs report completed.\\n\\nView accommodation report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/accommodation/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView attitudes, thinking and behaviour report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/attitudes-thinking-and-behaviour/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView children, families and communities report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/children-families-and-communities/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView drugs and alcohol report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/drugs-and-alcohol/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView education, skills and work report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/education-skills-and-work/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView finance and ID report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/finance-and-id/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView health report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/health-status/?prisonerNumber=ABC1234&fromDelius=true#assessment-information"
-    val fakeNowOffset = OffsetDateTime.parse("2024-06-04T09:16:04+01:00")
 
-    mockkStatic(OffsetDateTime::class)
-    every { OffsetDateTime.now() } returns fakeNowOffset
+    mockCurrentOffsetTime(fakeNowOffset)
 
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "INR", dpsCaseNoteText, prisonId, 200)
@@ -877,8 +853,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     )
 
     assertThat(pathwayStatusesInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedPathwayStatuses)
-
-    unmockkAll()
   }
 
   @Test
@@ -895,10 +869,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val caseNoteText1 = "Part 1 of 2\\n\\nAccommodation\\n\\nCase note related to accommodation\\n\\n\\nAttitudes, thinking and behaviour\\n\\nCase note related to Attitudes, thinking and behaviour"
     val caseNoteText2 = "Part 2 of 2\\n\\nChildren, families and communities\\n\\nCase note related to Children, family and communities\\n\\n\\nDrugs and alcohol\\n\\nCase note related to Drugs and alcohol\\n\\n\\nEducation, skills and work\\n\\nCase note related to education, skills and work\\n\\n\\nFinance and ID\\n\\nCase note related to Finance and ID\\n\\n\\nHealth\\n\\nCase note related to Health"
 
-    val fakeNowOffset = OffsetDateTime.parse("2024-06-04T09:16:04+01:00")
-
-    mockkStatic(OffsetDateTime::class)
-    every { OffsetDateTime.now() } returns fakeNowOffset
+    mockCurrentOffsetTime(fakeNowOffset)
 
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "INR", caseNoteText1, prisonId, 200)
@@ -940,7 +911,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     )
 
     assertThat(pathwayStatusesInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedPathwayStatuses)
-    unmockkAll()
   }
 
   @Test
@@ -951,10 +921,8 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val assessmentType = "BCST2"
     val prisonId = "MDI"
     val caseNoteText = "Accommodation\\n\\nCase note related to accommodation\\n\\n\\nAttitudes, thinking and behaviour\\n\\nCase note related to Attitudes, thinking and behaviour\\n\\n\\nChildren, families and communities\\n\\nCase note related to Children, family and communities\\n\\n\\nDrugs and alcohol\\n\\nCase note related to Drugs and alcohol\\n\\n\\nEducation, skills and work\\n\\nCase note related to education, skills and work\\n\\n\\nFinance and ID\\n\\nCase note related to Finance and ID\\n\\n\\nHealth\\n\\nCase note related to Health"
-    val fakeNowOffset = OffsetDateTime.parse("2024-06-04T09:16:04+01:00")
 
-    mockkStatic(OffsetDateTime::class)
-    every { OffsetDateTime.now() } returns fakeNowOffset
+    mockCurrentOffsetTime(fakeNowOffset)
 
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "INR", caseNoteText, prisonId, 200)
@@ -994,8 +962,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     )
 
     assertThat(pathwayStatusesInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedPathwayStatuses)
-
-    unmockkAll()
   }
 
   @Test
@@ -1005,10 +971,8 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val assessmentType = "BCST2"
     val prisonId = "MDI"
     val caseNoteText = "Accommodation\\n\\nCase note related to accommodation\\n\\n\\nAttitudes, thinking and behaviour\\n\\nCase note related to Attitudes, thinking and behaviour\\n\\n\\nChildren, families and communities\\n\\nCase note related to Children, family and communities\\n\\n\\nDrugs and alcohol\\n\\nCase note related to Drugs and alcohol\\n\\n\\nEducation, skills and work\\n\\nCase note related to education, skills and work\\n\\n\\nFinance and ID\\n\\nCase note related to Finance and ID\\n\\n\\nHealth\\n\\nCase note related to Health"
-    val fakeNowOffset = OffsetDateTime.parse("2024-06-04T09:16:04+01:00")
 
-    mockkStatic(OffsetDateTime::class)
-    every { OffsetDateTime.now() } returns fakeNowOffset
+    mockCurrentOffsetTime(fakeNowOffset)
 
     prisonerSearchApiMockServer.stubGetPrisonerDetails(nomsId, 200)
     caseNotesApiMockServer.stubPostCaseNotes(nomsId, "RESET", "INR", caseNoteText, prisonId, 200)
@@ -1047,8 +1011,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     )
 
     assertThat(pathwayStatusesInDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(expectedPathwayStatuses)
-
-    unmockkAll()
   }
 
   @Test
@@ -1130,7 +1092,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody()
       .json(expectedOutput, JsonCompareMode.STRICT)
-    unmockkAll()
   }
 
   @Test
@@ -1149,7 +1110,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody()
       .json(expectedOutput, JsonCompareMode.STRICT)
-    unmockkAll()
   }
 
   @Test
@@ -1168,7 +1128,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody()
       .json(expectedOutput, JsonCompareMode.STRICT)
-    unmockkAll()
   }
 
   @Test
@@ -1187,7 +1146,6 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody()
       .json(expectedOutput, JsonCompareMode.STRICT)
-    unmockkAll()
   }
 
   @Test

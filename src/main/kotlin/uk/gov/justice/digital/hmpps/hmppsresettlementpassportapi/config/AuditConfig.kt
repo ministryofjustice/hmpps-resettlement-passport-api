@@ -16,7 +16,7 @@ class AuditConfig {
 
 private class UsernameAuditorAware : AuditorAware<String> {
   override fun getCurrentAuditor(): Optional<String> {
-    val username = SecurityContextHolder.getContext()?.authentication?.name
+    val username = SecurityContextHolder.getContext().authentication?.name
     return Optional.ofNullable(username)
   }
 }

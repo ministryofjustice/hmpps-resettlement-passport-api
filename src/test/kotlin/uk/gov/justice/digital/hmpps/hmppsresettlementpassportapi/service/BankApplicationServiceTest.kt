@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.BankApplicationStatusLogRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.BankApplicationService.BankApplicationLogSarContent
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.BankApplicationService.BankApplicationSarContent
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.emptyList
@@ -54,7 +55,7 @@ class BankApplicationServiceTest {
     val bankApplicationEntity = BankApplicationEntity(1, 2, emptySet(), fakeNow, fakeNow, status = "Pending", bankName = "Lloyds")
     whenever(bankApplicationRepository.findById(1)).thenReturn(Optional.of(bankApplicationEntity))
 
-    val response = bankApplicationService.getBankApplicationById(1).get()
+    val response = bankApplicationService.getBankApplicationById(1)
 
     Assertions.assertEquals(bankApplicationEntity, response)
   }
@@ -166,7 +167,7 @@ class BankApplicationServiceTest {
 
       val response = bankApplicationService.getBankApplicationsByPrisonerAndCreationDate(prisoner, fakeNow, fakeNow)
 
-      Assertions.assertEquals(emptyList<BankApplicationResponse>(), response)
+      Assertions.assertEquals(emptyList<BankApplicationSarContent>(), response)
     }
 
     @Test
@@ -180,7 +181,7 @@ class BankApplicationServiceTest {
       val actual = bankApplicationService.getBankApplicationsByPrisonerAndCreationDate(prisoner, fakeNow, fakeNow)
 
       val expected = listOf(
-        BankApplicationService.BankApplicationSarContent(
+        BankApplicationSarContent(
           prisoner = BankApplicationService.PrisonerSarContent(prisoner.nomsId, prisoner.creationDate, prisoner.prisonId, prisoner.supportNeedsLegacyProfile),
           logs = listOf(
             BankApplicationLogSarContent(

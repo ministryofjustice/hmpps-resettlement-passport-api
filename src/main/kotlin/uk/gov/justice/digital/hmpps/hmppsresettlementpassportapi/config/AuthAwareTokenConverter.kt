@@ -27,7 +27,7 @@ class AuthAwareTokenConverter : Converter<Jwt, AuthAwareAuthenticationToken> {
   }
 
   private fun extractAuthorities(jwt: Jwt): Collection<GrantedAuthority> {
-    val authorities = mutableListOf<GrantedAuthority>().apply { addAll(jwtGrantedAuthoritiesConverter.convert(jwt)!!) }
+    val authorities = mutableListOf<GrantedAuthority>().apply { addAll(jwtGrantedAuthoritiesConverter.convert(jwt)) }
     if (jwt.claims.containsKey("authorities")) {
       when (val claimAuthorities = jwt.claims["authorities"]) {
         is Collection<*> -> {

@@ -326,7 +326,7 @@ class PrisonerService(
     val prisonerImageDetailsList = prisonApiService.findPrisonerImageDetails(nomsId)
     var prisonerImage: PrisonerImage? = null
     prisonerImageDetailsList.forEach {
-      if (prisonerImage == null || (prisonerImage!!.captureDateTime?.isBefore(it.captureDateTime) == true)) {
+      if (prisonerImage == null || (prisonerImage.captureDateTime?.isBefore(it.captureDateTime) == true)) {
         prisonerImage = it
       }
     }

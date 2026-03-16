@@ -92,6 +92,7 @@ class PrisonerServiceTest {
   @Mock
   private lateinit var resettlementAssessmentService: ResettlementAssessmentService
 
+  private val auth = "123"
   private val jwtToken = "123"
   private val claimValue = "ABC11D"
   private val testDate = LocalDate.of(2024, 8, 5)
@@ -142,7 +143,7 @@ class PrisonerServiceTest {
       prisonerService.getPrisonerDetailsByNomsId(
         expectedPrisonerId,
         false,
-        jwtToken,
+        auth,
       )
     Assertions.assertTrue(prisoner.personalDetails?.isHomeDetention!!)
   }
@@ -169,7 +170,7 @@ class PrisonerServiceTest {
         10,
         "releaseDate,DESC",
         false,
-        jwtToken,
+        auth,
         null,
       )
 
@@ -272,7 +273,7 @@ class PrisonerServiceTest {
         pageSize = 10,
         sort = "releaseDate,DESC",
         includePastReleaseDates = true,
-        auth = jwtToken,
+        auth = auth,
         null,
       )
 
@@ -564,7 +565,7 @@ class PrisonerServiceTest {
         10,
         "releaseDate,DESC",
         false,
-        jwtToken,
+        auth,
         null,
       )
 
@@ -593,7 +594,7 @@ class PrisonerServiceTest {
         20,
         "releaseDate,ASC",
         false,
-        jwtToken,
+        auth,
         null,
       )
     Assertions.assertEquals(
@@ -625,7 +626,7 @@ class PrisonerServiceTest {
         10,
         "name,ASC",
         false,
-        jwtToken,
+        auth,
         null,
       )
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
@@ -642,7 +643,7 @@ class PrisonerServiceTest {
     whenever(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
 
     val prisonersList =
-      prisonerService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 5, "name,ASC", false, jwtToken, null)
+      prisonerService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 5, "name,ASC", false, auth, null)
     Assertions.assertEquals(expectedPageSize, prisonersList.pageSize)
     prisonersList.content?.toList()?.let { Assertions.assertEquals(expectedPageSize, it.size) }
   }
@@ -670,7 +671,7 @@ class PrisonerServiceTest {
         10,
         "releaseDate,DESC",
         false,
-        jwtToken,
+        auth,
         null,
       )
 
@@ -738,7 +739,7 @@ class PrisonerServiceTest {
         10,
         "name,ASC",
         false,
-        jwtToken,
+        auth,
         null,
       )
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
@@ -764,7 +765,7 @@ class PrisonerServiceTest {
       10,
       "releaseDate,DESC",
       false,
-      jwtToken,
+      auth,
       null,
     )
 
@@ -791,7 +792,7 @@ class PrisonerServiceTest {
       10,
       "releaseDate,DESC",
       false,
-      jwtToken,
+      auth,
       null,
     )
 
@@ -1217,7 +1218,7 @@ class PrisonerServiceTest {
         "HDCED",
       ),
     )
-    val actualPrisoners = prisonerService.objectMapper(prisoners, null, null, "MDI", null, jwtToken, null)
+    val actualPrisoners = prisonerService.objectMapper(prisoners, null, null, "MDI", null, auth, null)
     Assertions.assertEquals(prisonersMapped, actualPrisoners)
   }
 
@@ -1228,7 +1229,7 @@ class PrisonerServiceTest {
     mockPathwayStatusEntities()
     whenever(caseAllocationService.getAllAssignedResettlementWorkers("MDI")).thenReturn(createCaseAllocationList())
 
-    val actualPrisoners = prisonerService.objectMapper(prisoners, null, null, "MDI", null, jwtToken, workerId)
+    val actualPrisoners = prisonerService.objectMapper(prisoners, null, null, "MDI", null, auth, workerId)
     Assertions.assertEquals(expectedPrisoners.size, actualPrisoners.size)
     Assertions.assertEquals(expectedPrisoners, actualPrisoners)
   }
@@ -1366,7 +1367,7 @@ class PrisonerServiceTest {
     val filteredPrisoners = prisonerService.objectMapper(
       searchList = allPrisoners,
       prisonId = "MDI",
-      staffUsername = "123",
+      staffUsername = auth,
       lastReportCompleted = lastReportCompleted,
     )
 

@@ -1,24 +1,30 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.mockk.every
-import io.mockk.mockkStatic
 import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.test.context.jdbc.Sql
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Assessment
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension.Companion.mockCurrentTime
 import java.time.LocalDateTime
 
+@ExtendWith(CurrentDateTimeMockExtension::class)
 class AssessmentIntegrationTest : IntegrationTestBase() {
 
   private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
+  @BeforeEach
+  internal fun setUp() {
+    mockCurrentTime(fakeNow)
+  }
+
   @Test
   @Sql("classpath:testdata/sql/seed-assessment-1.sql")
   fun `Get assessment by noms ID - happy path`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
     val expectedOutput = readFile("testdata/expectation/assessment-1.json")
 
     val nomsId = "123"
@@ -36,9 +42,6 @@ class AssessmentIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-assessment-1.sql")
   fun `Get assessment by noms ID - Not found`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
-
     val nomsId = "1234"
 
     webTestClient.get()
@@ -51,9 +54,6 @@ class AssessmentIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-assessment-2.sql")
   fun `create assessment - Happy path`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
-
     val nomsId = "123"
 
     webTestClient.get()
@@ -93,9 +93,6 @@ class AssessmentIntegrationTest : IntegrationTestBase() {
   @Test
   @Sql("classpath:testdata/sql/seed-assessment-1.sql")
   fun `delete assessment by ID - happy path`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
-
     val nomsId = "123"
 
     webTestClient.get()

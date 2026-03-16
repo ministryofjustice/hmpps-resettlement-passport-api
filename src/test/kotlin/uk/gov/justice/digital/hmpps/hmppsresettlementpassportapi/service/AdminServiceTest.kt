@@ -1,12 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import com.microsoft.applicationinsights.TelemetryClient
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkAll
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
@@ -16,12 +10,12 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
-import java.time.LocalDateTime
 
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(MockitoExtension::class, CurrentDateTimeMockExtension::class)
 class AdminServiceTest {
-  private lateinit var adminService: AdminService
+  private val adminService by lazy { AdminService(telemetryClient, caseAllocationService, prisonerSearchApiService, prisonerService) }
 
   @Mock
   private lateinit var telemetryClient: TelemetryClient
@@ -34,29 +28,6 @@ class AdminServiceTest {
 
   @Mock
   private lateinit var prisonerService: PrisonerService
-
-  companion object {
-
-    private val fakeNow = LocalDateTime.parse("2024-07-02T12:12:12")
-
-    @JvmStatic
-    @BeforeAll
-    fun beforeAll() {
-      mockkStatic(LocalDateTime::class)
-      every { LocalDateTime.now() } returns fakeNow
-    }
-
-    @JvmStatic
-    @AfterAll
-    fun afterAll() {
-      unmockkAll()
-    }
-  }
-
-  @BeforeEach
-  fun beforeEach() {
-    adminService = AdminService(telemetryClient, caseAllocationService, prisonerSearchApiService, prisonerService)
-  }
 
   @Test
   fun `test sendMetricsToAppInsights`() {

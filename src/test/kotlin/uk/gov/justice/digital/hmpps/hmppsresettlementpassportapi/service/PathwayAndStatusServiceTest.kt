@@ -1,8 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -18,6 +15,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.Resource
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayAndStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension.Companion.mockCurrentTime
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PathwayStatusRepository
@@ -25,7 +24,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDateTime
 
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(MockitoExtension::class, CurrentDateTimeMockExtension::class)
 class PathwayAndStatusServiceTest {
 
   private lateinit var pathwayAndStatusService: PathwayAndStatusService
@@ -49,14 +48,12 @@ class PathwayAndStatusServiceTest {
       prisonerRepository = prisonerRepository,
       transactionOperations = TransactionOperations.withoutTransaction(),
     )
+    // Mock calls to LocalDateTime.now() so we can test the updatedDate is being updated
+    mockCurrentTime(fakeNow)
   }
 
   @Test
   fun `test update pathway status`() {
-    // Mock calls to LocalDateTime.now() so we can test the updatedDate is being updated
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
-
     val nomsId = "abc"
     val prisonId = "xyz"
     val pathway = Pathway.ACCOMMODATION
@@ -73,8 +70,6 @@ class PathwayAndStatusServiceTest {
     val response = pathwayAndStatusService.updatePathwayStatus(nomsId, PathwayAndStatus(Pathway.ACCOMMODATION, Status.IN_PROGRESS))
     Assertions.assertEquals(HttpStatusCode.valueOf(200), response.statusCode)
     Mockito.verify(pathwayStatusRepository).save(expectedPathwayStatusEntity)
-
-    unmockkStatic(LocalDateTime::class)
   }
 
   @Test

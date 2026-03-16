@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
-import io.mockk.unmockkAll
-import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -319,7 +318,6 @@ class ATBResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody()
       .json(expectedOutput, JsonCompareMode.STRICT)
-    unmockkAll()
   }
 
   @Test
@@ -338,7 +336,6 @@ class ATBResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody()
       .json(expectedOutput, JsonCompareMode.STRICT)
-    unmockkAll()
   }
 
   @Test

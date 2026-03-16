@@ -1,9 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
 import com.microsoft.applicationinsights.TelemetryClient
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkAll
 import org.apache.commons.lang3.RandomStringUtils
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -43,6 +40,10 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettleme
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentSubmitResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.StringAnswer
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension.Companion.mockCurrentTime
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JWTTokenMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JWTTokenMockExtension.Companion.mockClaimFromJWTToken
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ProfileTagList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ProfileTagsEntity
@@ -68,7 +69,7 @@ import java.time.LocalDateTime
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(MockitoExtension::class, CurrentDateTimeMockExtension::class, JWTTokenMockExtension::class)
 class ResettlementAssessmentServiceTest {
   private lateinit var resettlementAssessmentService: ResettlementAssessmentService
 
@@ -136,6 +137,8 @@ class ResettlementAssessmentServiceTest {
       prisonerSearchApiService,
       telemetryClient,
     )
+
+    mockCurrentTime(fakeNow)
   }
 
   private fun getTestConfig() = ResettlementAssessmentConfig().assessmentQuestionSets(
@@ -737,9 +740,6 @@ class ResettlementAssessmentServiceTest {
 
   @Test
   fun `test deleteAllResettlementAssessments - happy path`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
-
     val nomsId = "12345"
     val prisonerId = 1L
 
@@ -766,8 +766,6 @@ class ResettlementAssessmentServiceTest {
     verify(resettlementAssessmentRepository).findAllByPrisonerIdAndDeletedIsFalse(prisonerId)
     verify(resettlementAssessmentRepository).save(deletedResettlementAssessmentEntity1)
     verify(resettlementAssessmentRepository).save(deletedResettlementAssessmentEntity2)
-
-    unmockkAll()
   }
 
   @Test
@@ -970,10 +968,9 @@ class ResettlementAssessmentServiceTest {
     val crn = "CRN1"
     val prisonCode = "MDI"
 
-    mockkStatic(::getClaimFromJWTToken)
-    every { getClaimFromJWTToken(auth, "name") } returns "A User"
-    every { getClaimFromJWTToken(auth, "sub") } returns "A_USER"
-    every { getClaimFromJWTToken(auth, "auth_source") } returns "nomis"
+    mockClaimFromJWTToken(token = auth, claimValue = "A User", claimName = "name")
+    mockClaimFromJWTToken(token = auth, claimValue = "A_USER", claimName = "sub")
+    mockClaimFromJWTToken(token = auth, claimValue = "nomis", claimName = "auth_source")
 
     whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, prisonId = prisonCode))
     Pathway.entries.forEachIndexed { i, pathway ->
@@ -1008,8 +1005,6 @@ class ResettlementAssessmentServiceTest {
     Assertions.assertEquals(ResettlementAssessmentSubmitResponse(false), response)
 
     verify(telemetryClient).trackEvent("PSFR_ReportSubmitted", mapOf("reportType" to assessmentType.name, "prisonId" to prisonCode, "prisonerId" to nomsId, "submittedBy" to "A_USER", "authSource" to "nomis"), null)
-
-    unmockkAll()
   }
 
   @Test
@@ -1022,10 +1017,9 @@ class ResettlementAssessmentServiceTest {
     val jwtTokenName = "A User"
     val jwtTokenSub = "A_USER"
 
-    mockkStatic(::getClaimFromJWTToken)
-    every { getClaimFromJWTToken(auth, "name") } returns jwtTokenName
-    every { getClaimFromJWTToken(auth, "sub") } returns jwtTokenSub
-    every { getClaimFromJWTToken(auth, "auth_source") } returns "nomis"
+    mockClaimFromJWTToken(token = auth, claimValue = jwtTokenName, claimName = "name")
+    mockClaimFromJWTToken(token = auth, claimValue = jwtTokenSub, claimName = "sub")
+    mockClaimFromJWTToken(token = auth, claimValue = "nomis", claimName = "auth_source")
 
     whenever(prisonerRepository.findByNomsId(nomsId)).thenReturn(PrisonerEntity(id = 1, nomsId = nomsId, prisonId = prisonCode))
     Pathway.entries.forEachIndexed { i, pathway ->
@@ -1062,8 +1056,6 @@ class ResettlementAssessmentServiceTest {
     val expectedContentOnlyDpsCaseNote = toContentOnlyDpsCaseNote(jwtTokenName, jwtTokenSub, assessmentType)
 
     verify(telemetryClient).trackEvent("PSFR_ReportDeliusCaseNoteSubmissionFailure", mapOf("reportType" to expectedContentOnlyDpsCaseNote.deliusCaseNoteType.name, "prisonId" to prisonCode, "prisonerId" to nomsId, "user" to jwtTokenSub, "authSource" to "nomis"), null)
-
-    unmockkAll()
   }
 
   private fun toContentOnlyDpsCaseNote(

@@ -15,7 +15,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusCreateAppointment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi.DeliusCreateAppointmentType
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.readFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.jacksonCodecsConfigurer
 import java.time.Duration

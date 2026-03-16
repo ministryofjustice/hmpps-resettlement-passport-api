@@ -1,8 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies
 
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -33,7 +30,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Rese
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentQuestionAndAnswerList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentSimpleQuestionAndAnswer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.getClaimFromJWTToken
 import java.time.LocalDateTime
 import java.util.stream.Stream
 
@@ -1095,12 +1091,8 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
   @ParameterizedTest
   @MethodSource("test complete assessment data")
   fun `test complete assessment`(assessmentType: ResettlementAssessmentType, assessment: ResettlementAssessmentCompleteRequest, expectedEntity: ResettlementAssessmentEntity?, expectedException: Throwable?, existingAssessment: ResettlementAssessmentEntity?) {
-    mockkStatic(::getClaimFromJWTToken)
-    every { getClaimFromJWTToken("string", "name") } returns "System user"
-    every { getClaimFromJWTToken("string", "auth_source") } returns "nomis"
-    every { getClaimFromJWTToken("string", "sub") } returns "USER_1"
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns testDate
+    mockClaimFromJWTToken()
+    mockCurrentTime()
 
     val nomsId = "abc"
     val pathway = Pathway.ACCOMMODATION
@@ -1145,8 +1137,6 @@ class AccommodationV2ResettlementAssessmentAssessmentStrategyTest : BaseResettle
         mapOf("reportType" to assessmentType.name, "pathway" to "ACCOMMODATION", "prisonId" to "MDI", "prisonerId" to "abc", "submittedBy" to "USER_1", "authSource" to "nomis"),
       )
     }
-
-    unmockkAll()
   }
 
   private fun `test complete assessment data`() = Stream.of(

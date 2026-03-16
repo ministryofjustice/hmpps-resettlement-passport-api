@@ -1,8 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -13,6 +10,9 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Assessment
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.AssessmentSkipReason
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension.Companion.fakeNow
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension.Companion.testDate
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.AssessmentEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.AssessmentSkipEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.IdTypeEntity
@@ -25,7 +25,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import java.time.LocalDateTime
 import java.util.*
 
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(MockitoExtension::class, CurrentDateTimeMockExtension::class)
 class AssessmentServiceTest {
   private lateinit var assessmentService: AssessmentService
 
@@ -40,8 +40,6 @@ class AssessmentServiceTest {
 
   @Mock
   private lateinit var idTypeRepository: IdTypeRepository
-  private val testDate = LocalDateTime.parse("2023-08-16T12:00:00")
-  private val fakeNow = LocalDateTime.parse("2023-08-17T12:00:01")
 
   @BeforeEach
   fun beforeEach() {
@@ -80,22 +78,16 @@ class AssessmentServiceTest {
 
   @Test
   fun `test deleteAssessment - sets deleted flag`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
     val prisonerEntity = PrisonerEntity(1, "acb", testDate, "xyz")
     val assessmentEntity = AssessmentEntity(1, prisonerEntity.id(), fakeNow, fakeNow, isBankAccountRequired = true, isIdRequired = true, idDocuments = emptySet(), isDeleted = false, deletionDate = null)
     val expectedAssessmentEntity = AssessmentEntity(1, prisonerEntity.id(), fakeNow, fakeNow, isBankAccountRequired = true, isIdRequired = true, idDocuments = emptySet(), isDeleted = true, deletionDate = fakeNow)
 
     assessmentService.deleteAssessment(assessmentEntity)
     Mockito.verify(assessmentRepository).save(expectedAssessmentEntity)
-
-    unmockkStatic(LocalDateTime::class)
   }
 
   @Test
   fun `test createAssessment - creates assessment`() {
-    mockkStatic(LocalDateTime::class)
-    every { LocalDateTime.now() } returns fakeNow
     val nomsId = "abc"
     val prisonerEntity = PrisonerEntity(1, nomsId, testDate, "xyz")
     val idTypes = listOf(IdTypeEntity(1, "Driving licence"), IdTypeEntity(2, "Birth certificate"), IdTypeEntity(1, "Something else"))
@@ -108,8 +100,6 @@ class AssessmentServiceTest {
 
     assessmentService.createAssessment(assessment)
     Mockito.verify(assessmentRepository).save(expectedAssessmentEntity)
-
-    unmockkStatic(LocalDateTime::class)
   }
 
   @Test

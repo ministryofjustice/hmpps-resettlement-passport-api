@@ -1,15 +1,12 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkAll
-import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
-import org.junit.jupiter.api.AfterAll
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.json.JsonCompareMode
@@ -19,6 +16,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNe
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PrisonerNeedsRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedStatus
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.SupportNeedsUpdateRequest
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension.Companion.mockCurrentTime
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerSupportNeedUpdateEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerSupportNeedRepository
@@ -26,6 +25,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.SupportNeedRepository
 import java.time.LocalDateTime
 
+@ExtendWith(CurrentDateTimeMockExtension::class)
 class SupportNeedsIntegrationTest : IntegrationTestBase() {
 
   @Autowired
@@ -39,19 +39,11 @@ class SupportNeedsIntegrationTest : IntegrationTestBase() {
 
   companion object {
     val fakeNow: LocalDateTime = LocalDateTime.parse("2025-01-09T12:00:00")
+  }
 
-    @JvmStatic
-    @BeforeAll
-    fun beforeAll() {
-      mockkStatic(LocalDateTime::class)
-      every { LocalDateTime.now() } returns fakeNow
-    }
-
-    @JvmStatic
-    @AfterAll
-    fun afterAll() {
-      unmockkAll()
-    }
+  @BeforeEach
+  internal fun setUp() {
+    mockCurrentTime(fakeNow)
   }
 
   @Test

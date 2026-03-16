@@ -1,15 +1,18 @@
-package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.events
+package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.events
 
-import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
 import kotlinx.coroutines.future.await
 import kotlinx.coroutines.test.runTest
+import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.kotlin.await
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.events.MovementReasonType
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.events.OffenderEventEntity
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.events.OffenderEventRepository
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.events.OffenderEventType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.IntegrationTestBase
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseAllocationRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
@@ -17,7 +20,7 @@ import uk.gov.justice.hmpps.sqs.HmppsQueueService
 import uk.gov.justice.hmpps.sqs.MissingQueueException
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 

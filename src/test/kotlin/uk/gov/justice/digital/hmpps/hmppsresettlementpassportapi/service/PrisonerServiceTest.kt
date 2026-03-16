@@ -1,9 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkAll
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -27,9 +23,15 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearchList
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentStatus
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateMockExtension.Companion.mockCurrentDate
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateTimeMockExtension.Companion.mockCurrentTime
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JWTTokenMockExtension
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JWTTokenMockExtension.Companion.mockClaimFromJWTToken
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.readFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.readFileAsObject
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.readStringAsObject
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.CaseAllocationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PathwayStatusEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
@@ -44,11 +46,12 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.externa
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(MockitoExtension::class, CurrentDateTimeMockExtension::class, CurrentDateMockExtension::class, JWTTokenMockExtension::class)
 class PrisonerServiceTest {
 
   private lateinit var prisonerService: PrisonerService
@@ -89,6 +92,12 @@ class PrisonerServiceTest {
   @Mock
   private lateinit var resettlementAssessmentService: ResettlementAssessmentService
 
+  private val auth = "123"
+  private val jwtToken = "123"
+  private val claimValue = "ABC11D"
+  private val testDate = LocalDate.of(2024, 8, 5)
+  private val fakeNow = LocalDateTime.of(testDate, LocalTime.of(0, 0, 0))
+
   @BeforeEach
   fun beforeEach() {
     prisonerService = PrisonerService(
@@ -105,13 +114,9 @@ class PrisonerServiceTest {
       supportNeedsService,
       resettlementAssessmentService,
     )
-    mockkStatic(::getClaimFromJWTToken)
-    every { getClaimFromJWTToken("123", "sub") } returns "ABC11D"
-  }
-
-  @AfterEach
-  fun afterEach() {
-    unmockkAll()
+    mockClaimFromJWTToken(jwtToken, claimValue)
+    mockCurrentDate(testDate)
+    mockCurrentTime(fakeNow)
   }
 
   @Test
@@ -120,7 +125,7 @@ class PrisonerServiceTest {
     val expectedPrisonerId = "A8339DY"
     val mockEntity = PrisonerEntity(
       nomsId = expectedPrisonerId,
-      creationDate = LocalDateTime.now(),
+      creationDate = fakeNow,
       prisonId = "MDI",
       id = 1L,
     )
@@ -138,7 +143,7 @@ class PrisonerServiceTest {
       prisonerService.getPrisonerDetailsByNomsId(
         expectedPrisonerId,
         false,
-        "123",
+        auth,
       )
     Assertions.assertTrue(prisoner.personalDetails?.isHomeDetention!!)
   }
@@ -165,7 +170,7 @@ class PrisonerServiceTest {
         10,
         "releaseDate,DESC",
         false,
-        "123",
+        auth,
         null,
       )
 
@@ -178,10 +183,10 @@ class PrisonerServiceTest {
           lastName = "CRD-LR-TEST",
           releaseDate = null,
           releaseType = "PRRD",
-          lastUpdatedDate = LocalDate.now(),
+          lastUpdatedDate = testDate,
           status = listOf(
-            PathwayStatus(pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, lastDateChange = LocalDate.now()),
-            PathwayStatus(pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, status = Status.NOT_STARTED, lastDateChange = LocalDate.now()),
+            PathwayStatus(pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, lastDateChange = testDate),
+            PathwayStatus(pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, status = Status.NOT_STARTED, lastDateChange = testDate),
           ),
           pathwayStatus = null,
           homeDetentionCurfewEligibilityDate = null,
@@ -200,10 +205,10 @@ class PrisonerServiceTest {
           lastName = "CRAWFIS",
           releaseDate = LocalDate.parse("2099-09-12"),
           releaseType = "CRD",
-          lastUpdatedDate = LocalDate.now(),
+          lastUpdatedDate = testDate,
           status = listOf(
-            PathwayStatus(pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, lastDateChange = LocalDate.now()),
-            PathwayStatus(pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, status = Status.NOT_STARTED, lastDateChange = LocalDate.now()),
+            PathwayStatus(pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, lastDateChange = testDate),
+            PathwayStatus(pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, status = Status.NOT_STARTED, lastDateChange = testDate),
           ),
           pathwayStatus = null,
           homeDetentionCurfewEligibilityDate = LocalDate.parse("2018-10-16"),
@@ -222,10 +227,10 @@ class PrisonerServiceTest {
           lastName = "MCVEIGH",
           releaseDate = LocalDate.parse("2099-08-01"),
           releaseType = "CRD",
-          lastUpdatedDate = LocalDate.now(),
+          lastUpdatedDate = testDate,
           status = listOf(
-            PathwayStatus(pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, status = Status.NOT_STARTED, lastDateChange = LocalDate.now()),
-            PathwayStatus(pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, status = Status.NOT_STARTED, lastDateChange = LocalDate.now()),
+            PathwayStatus(pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, status = Status.NOT_STARTED, lastDateChange = testDate),
+            PathwayStatus(pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, status = Status.NOT_STARTED, lastDateChange = testDate),
           ),
           pathwayStatus = null,
           homeDetentionCurfewEligibilityDate = LocalDate.parse("2021-02-03"),
@@ -268,7 +273,7 @@ class PrisonerServiceTest {
         pageSize = 10,
         sort = "releaseDate,DESC",
         includePastReleaseDates = true,
-        auth = "123",
+        auth = auth,
         null,
       )
 
@@ -281,10 +286,10 @@ class PrisonerServiceTest {
           lastName = "CRD-LR-TEST",
           releaseDate = null,
           releaseType = "PRRD",
-          lastUpdatedDate = LocalDate.now(),
+          lastUpdatedDate = testDate,
           status = listOf(
-            PathwayStatus(pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, lastDateChange = LocalDate.now()),
-            PathwayStatus(pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, status = Status.NOT_STARTED, lastDateChange = LocalDate.now()),
+            PathwayStatus(pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, lastDateChange = testDate),
+            PathwayStatus(pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, status = Status.NOT_STARTED, lastDateChange = testDate),
           ),
           pathwayStatus = null,
           homeDetentionCurfewEligibilityDate = null,
@@ -303,10 +308,10 @@ class PrisonerServiceTest {
           lastName = "CRAWFIS",
           releaseDate = LocalDate.parse("2099-09-12"),
           releaseType = "CRD",
-          lastUpdatedDate = LocalDate.now(),
+          lastUpdatedDate = testDate,
           status = listOf(
-            PathwayStatus(pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, lastDateChange = LocalDate.now()),
-            PathwayStatus(pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, status = Status.NOT_STARTED, lastDateChange = LocalDate.now()),
+            PathwayStatus(pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, lastDateChange = testDate),
+            PathwayStatus(pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, status = Status.NOT_STARTED, lastDateChange = testDate),
           ),
           pathwayStatus = null,
           homeDetentionCurfewEligibilityDate = LocalDate.parse("2018-10-16"),
@@ -325,10 +330,10 @@ class PrisonerServiceTest {
           lastName = "MCVEIGH",
           releaseDate = LocalDate.parse("2099-08-01"),
           releaseType = "CRD",
-          lastUpdatedDate = LocalDate.now(),
+          lastUpdatedDate = testDate,
           status = listOf(
-            PathwayStatus(pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, status = Status.NOT_STARTED, lastDateChange = LocalDate.now()),
-            PathwayStatus(pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, status = Status.NOT_STARTED, lastDateChange = LocalDate.now()),
+            PathwayStatus(pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, status = Status.NOT_STARTED, lastDateChange = testDate),
+            PathwayStatus(pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, status = Status.NOT_STARTED, lastDateChange = testDate),
           ),
           pathwayStatus = null,
           homeDetentionCurfewEligibilityDate = LocalDate.parse("2021-02-03"),
@@ -560,7 +565,7 @@ class PrisonerServiceTest {
         10,
         "releaseDate,DESC",
         false,
-        "123",
+        auth,
         null,
       )
 
@@ -589,7 +594,7 @@ class PrisonerServiceTest {
         20,
         "releaseDate,ASC",
         false,
-        "123",
+        auth,
         null,
       )
     Assertions.assertEquals(
@@ -621,7 +626,7 @@ class PrisonerServiceTest {
         10,
         "name,ASC",
         false,
-        "123",
+        auth,
         null,
       )
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
@@ -638,7 +643,7 @@ class PrisonerServiceTest {
     whenever(prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, "")).thenReturn(mockedJsonResponse.content)
 
     val prisonersList =
-      prisonerService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 5, "name,ASC", false, "123", null)
+      prisonerService.getPrisonersByPrisonId("", prisonId, 0, null, null, null, 0, 5, "name,ASC", false, auth, null)
     Assertions.assertEquals(expectedPageSize, prisonersList.pageSize)
     prisonersList.content?.toList()?.let { Assertions.assertEquals(expectedPageSize, it.size) }
   }
@@ -666,7 +671,7 @@ class PrisonerServiceTest {
         10,
         "releaseDate,DESC",
         false,
-        "123",
+        auth,
         null,
       )
 
@@ -679,10 +684,10 @@ class PrisonerServiceTest {
           lastName = "CRAWFIS",
           releaseDate = LocalDate.parse("2099-09-12"),
           releaseType = "CRD",
-          lastUpdatedDate = LocalDate.now(),
+          lastUpdatedDate = testDate,
           status = listOf(
-            PathwayStatus(pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, lastDateChange = LocalDate.now()),
-            PathwayStatus(pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, status = Status.NOT_STARTED, lastDateChange = LocalDate.now()),
+            PathwayStatus(pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, lastDateChange = testDate),
+            PathwayStatus(pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY, status = Status.NOT_STARTED, lastDateChange = testDate),
           ),
           pathwayStatus = null,
           homeDetentionCurfewEligibilityDate = LocalDate.parse("2018-10-16"),
@@ -712,7 +717,7 @@ class PrisonerServiceTest {
     val expectedPrisonerId = "G1458GV"
     val days = 84
     val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    val releaseDate = LocalDate.now().minusDays(days.toLong())
+    val releaseDate = testDate.minusDays(days.toLong())
 
     var mockedJsonResponseString = readFile("testdata/prisoner-search-api/prisoner-search-1.json")
     mockedJsonResponseString = mockedJsonResponseString.replace(
@@ -734,7 +739,7 @@ class PrisonerServiceTest {
         10,
         "name,ASC",
         false,
-        "123",
+        auth,
         null,
       )
     Assertions.assertEquals(expectedPrisonerId, prisonersList.content?.get(0)?.prisonerNumber ?: 0)
@@ -760,7 +765,7 @@ class PrisonerServiceTest {
       10,
       "releaseDate,DESC",
       false,
-      "123",
+      auth,
       null,
     )
 
@@ -787,7 +792,7 @@ class PrisonerServiceTest {
       10,
       "releaseDate,DESC",
       false,
-      "123",
+      auth,
       null,
     )
 
@@ -795,45 +800,45 @@ class PrisonerServiceTest {
   }
 
   private fun mockDatabaseCalls(mockFindByPrison: Boolean = true) {
-    val mockPathwayStatusEntities = listOf(
-      aPrisonerWithStatusResult(
-        prisonerId = 1,
-        nomsId = "G1458GV",
-        pathway = Pathway.ACCOMMODATION,
-        pathwayStatus = Status.NOT_STARTED,
-      ),
-      aPrisonerWithStatusResult(
-        prisonerId = 1,
-        nomsId = "G1458GV",
-        pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
-        pathwayStatus = Status.NOT_STARTED,
-      ),
-      aPrisonerWithStatusResult(
-        prisonerId = 2,
-        nomsId = "A8339DY",
-        pathway = Pathway.ACCOMMODATION,
-        pathwayStatus = Status.NOT_STARTED,
-      ),
-      aPrisonerWithStatusResult(
-        prisonerId = 2,
-        nomsId = "A8339DY",
-        pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
-        pathwayStatus = Status.NOT_STARTED,
-      ),
-      aPrisonerWithStatusResult(
-        prisonerId = 3,
-        nomsId = "A8229DY",
-        pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
-        pathwayStatus = Status.NOT_STARTED,
-      ),
-      aPrisonerWithStatusResult(
-        prisonerId = 3,
-        nomsId = "A8229DY",
-        pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
-        pathwayStatus = Status.NOT_STARTED,
-      ),
-    )
     if (mockFindByPrison) {
+      val mockPathwayStatusEntities = listOf(
+        aPrisonerWithStatusResult(
+          prisonerId = 1,
+          nomsId = "G1458GV",
+          pathway = Pathway.ACCOMMODATION,
+          pathwayStatus = Status.NOT_STARTED,
+        ),
+        aPrisonerWithStatusResult(
+          prisonerId = 1,
+          nomsId = "G1458GV",
+          pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
+          pathwayStatus = Status.NOT_STARTED,
+        ),
+        aPrisonerWithStatusResult(
+          prisonerId = 2,
+          nomsId = "A8339DY",
+          pathway = Pathway.ACCOMMODATION,
+          pathwayStatus = Status.NOT_STARTED,
+        ),
+        aPrisonerWithStatusResult(
+          prisonerId = 2,
+          nomsId = "A8339DY",
+          pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+          pathwayStatus = Status.NOT_STARTED,
+        ),
+        aPrisonerWithStatusResult(
+          prisonerId = 3,
+          nomsId = "A8229DY",
+          pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
+          pathwayStatus = Status.NOT_STARTED,
+        ),
+        aPrisonerWithStatusResult(
+          prisonerId = 3,
+          nomsId = "A8229DY",
+          pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
+          pathwayStatus = Status.NOT_STARTED,
+        ),
+      )
       whenever(pathwayStatusRepository.findByPrison(any())).thenReturn(mockPathwayStatusEntities)
     }
   }
@@ -843,7 +848,7 @@ class PrisonerServiceTest {
     override val nomsId = nomsId
     override val pathway = pathway
     override var pathwayStatus = pathwayStatus
-    override var updatedDate = LocalDateTime.now()
+    override var updatedDate = fakeNow
   }
 
   private fun mockDatabaseCallsForPathwayView() {
@@ -881,17 +886,17 @@ class PrisonerServiceTest {
         lastName = "CRD-LR-TEST",
         releaseDate = null,
         releaseType = "PRRD",
-        lastUpdatedDate = LocalDate.now(),
+        lastUpdatedDate = testDate,
         status = listOf(
           PathwayStatus(
             pathway = Pathway.ACCOMMODATION,
             status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.now(),
+            lastDateChange = testDate,
           ),
           PathwayStatus(
             pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
             status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.now(),
+            lastDateChange = testDate,
           ),
         ),
         pathwayStatus = null,
@@ -910,17 +915,17 @@ class PrisonerServiceTest {
         lastName = "MCVEIGH",
         releaseDate = LocalDate.parse("2099-08-01"),
         releaseType = "CRD",
-        lastUpdatedDate = LocalDate.now(),
+        lastUpdatedDate = testDate,
         status = listOf(
           PathwayStatus(
             pathway = Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR,
             status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.now(),
+            lastDateChange = testDate,
           ),
           PathwayStatus(
             pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
             status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.now(),
+            lastDateChange = testDate,
           ),
         ),
         pathwayStatus = null,
@@ -939,17 +944,17 @@ class PrisonerServiceTest {
         lastName = "CRAWFIS",
         releaseDate = LocalDate.parse("2098-09-12"),
         releaseType = "CRD",
-        lastUpdatedDate = LocalDate.now(),
+        lastUpdatedDate = testDate,
         status = listOf(
           PathwayStatus(
             pathway = Pathway.ACCOMMODATION,
             status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.now(),
+            lastDateChange = testDate,
           ),
           PathwayStatus(
             pathway = Pathway.CHILDREN_FAMILIES_AND_COMMUNITY,
             status = Status.NOT_STARTED,
-            lastDateChange = LocalDate.now(),
+            lastDateChange = testDate,
           ),
         ),
         pathwayStatus = null,
@@ -979,7 +984,7 @@ class PrisonerServiceTest {
         lastName = "CRD-LR-TEST",
         releaseDate = null,
         releaseType = "PRRD",
-        lastUpdatedDate = LocalDate.now(),
+        lastUpdatedDate = testDate,
         status = null,
         pathwayStatus = Status.DONE,
         homeDetentionCurfewEligibilityDate = null,
@@ -997,7 +1002,7 @@ class PrisonerServiceTest {
         lastName = "MCVEIGH",
         releaseDate = LocalDate.parse("2099-08-01"),
         releaseType = "CRD",
-        lastUpdatedDate = LocalDate.now(),
+        lastUpdatedDate = testDate,
         status = null,
         pathwayStatus = Status.NOT_STARTED,
         homeDetentionCurfewEligibilityDate = LocalDate.parse("2021-02-03"),
@@ -1015,7 +1020,7 @@ class PrisonerServiceTest {
         lastName = "CRAWFIS",
         releaseDate = LocalDate.parse("2098-09-12"),
         releaseType = "CRD",
-        lastUpdatedDate = LocalDate.now(),
+        lastUpdatedDate = testDate,
         status = null,
         pathwayStatus = Status.SUPPORT_DECLINED,
         homeDetentionCurfewEligibilityDate = LocalDate.parse("2018-10-16"),
@@ -1044,7 +1049,7 @@ class PrisonerServiceTest {
         lastName = "CRAWFIS",
         releaseDate = LocalDate.parse("2098-09-12"),
         releaseType = "CRD",
-        lastUpdatedDate = LocalDate.now(),
+        lastUpdatedDate = testDate,
         status = null,
         pathwayStatus = Status.SUPPORT_DECLINED,
         homeDetentionCurfewEligibilityDate = LocalDate.parse("2018-10-16"),
@@ -1213,7 +1218,7 @@ class PrisonerServiceTest {
         "HDCED",
       ),
     )
-    val actualPrisoners = prisonerService.objectMapper(prisoners, null, null, "MDI", null, "123", null)
+    val actualPrisoners = prisonerService.objectMapper(prisoners, null, null, "MDI", null, auth, null)
     Assertions.assertEquals(prisonersMapped, actualPrisoners)
   }
 
@@ -1224,7 +1229,7 @@ class PrisonerServiceTest {
     mockPathwayStatusEntities()
     whenever(caseAllocationService.getAllAssignedResettlementWorkers("MDI")).thenReturn(createCaseAllocationList())
 
-    val actualPrisoners = prisonerService.objectMapper(prisoners, null, null, "MDI", null, "123", workerId)
+    val actualPrisoners = prisonerService.objectMapper(prisoners, null, null, "MDI", null, auth, workerId)
     Assertions.assertEquals(expectedPrisoners.size, actualPrisoners.size)
     Assertions.assertEquals(expectedPrisoners, actualPrisoners)
   }
@@ -1240,9 +1245,9 @@ class PrisonerServiceTest {
           assignedWorkerFirstname = "firstName1",
           assignedWorkerLastname = "lastName1",
           assessmentRequired = true,
-          lastUpdatedDate = LocalDate.now(),
+          lastUpdatedDate = testDate,
           pathwayStatus = null,
-          status = listOf(PathwayStatus(pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, lastDateChange = LocalDate.now())),
+          status = listOf(PathwayStatus(pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, lastDateChange = testDate)),
           needs = listOf(),
           lastReport = null,
         )
@@ -1289,10 +1294,10 @@ class PrisonerServiceTest {
             null
           },
           assessmentRequired = true,
-          lastUpdatedDate = if (i < 3) LocalDate.now() else null,
+          lastUpdatedDate = if (i < 3) testDate else null,
           pathwayStatus = null,
           status = if (i < 3) {
-            listOf(PathwayStatus(pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, lastDateChange = LocalDate.now()))
+            listOf(PathwayStatus(pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, lastDateChange = testDate))
           } else {
             enumValues<Pathway>().map { pathway -> PathwayStatus(pathway = pathway, status = Status.NOT_STARTED) }
           },
@@ -1323,10 +1328,10 @@ class PrisonerServiceTest {
             null
           },
           assessmentRequired = true,
-          lastUpdatedDate = if (i < 3) LocalDate.now() else null,
+          lastUpdatedDate = if (i < 3) testDate else null,
           pathwayStatus = null,
           status = if (i < 3) {
-            listOf(PathwayStatus(pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, lastDateChange = LocalDate.now()))
+            listOf(PathwayStatus(pathway = Pathway.ACCOMMODATION, status = Status.NOT_STARTED, lastDateChange = testDate))
           } else {
             enumValues<Pathway>().map { pathway -> PathwayStatus(pathway = pathway, status = Status.NOT_STARTED) }
           },
@@ -1362,7 +1367,7 @@ class PrisonerServiceTest {
     val filteredPrisoners = prisonerService.objectMapper(
       searchList = allPrisoners,
       prisonId = "MDI",
-      staffUsername = "123",
+      staffUsername = auth,
       lastReportCompleted = lastReportCompleted,
     )
 
@@ -2131,15 +2136,14 @@ class PrisonerServiceTest {
   @ParameterizedTest(name = "{0}")
   @MethodSource("test processReleaseDateFiltering data")
   fun `test processReleaseDateFiltering`(desc: String, days: Int, prisoners: MutableList<PrisonersSearch>, includePastReleaseDates: Boolean, expectedList: List<PrisonersSearch>) {
-    mockkStatic(LocalDate::class)
-    every { LocalDate.now() } returns LocalDate.parse("2024-08-05")
-
     prisonerService.processReleaseDateFiltering(days, prisoners, includePastReleaseDates)
     Assertions.assertEquals(expectedList.map { it.displayReleaseDate }, prisoners.map { it.displayReleaseDate })
-
-    unmockkAll()
   }
 
+  /**
+   * @see uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CurrentDateMockExtension
+   */
+  @Suppress("unused")
   private fun `test processReleaseDateFiltering data`() = Stream.of(
     // Note - "now" is set to 2024-08-05 in this test.
     Arguments.of(
@@ -2222,7 +2226,7 @@ class PrisonerServiceTest {
 
   @Test
   fun `test getPrisonerReleaseDateByNomsId`() {
-    val nomsId = "123"
+    val nomsId = "A123456"
     whenever(prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)).thenReturn(
       PrisonersSearch(
         prisonerNumber = "A123456",

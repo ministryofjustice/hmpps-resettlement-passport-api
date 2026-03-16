@@ -104,7 +104,7 @@ class AppointmentsService(
       val appointment: Appointment?
       val duration: Duration? = try {
         it.duration?.let { it1 -> Duration.parseIsoString(it1) }
-      } catch (ex: IllegalArgumentException) {
+      } catch (_: IllegalArgumentException) {
         log.warn("Unable to parse the duration value  " + it.duration)
         null
       }
@@ -162,7 +162,7 @@ class AppointmentsService(
             OffsetDateTime.parse(crsAppointment.appointmentDateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
               .toLocalTime()
         }
-        if (formattedDateVal?.isAfter(startDate.minusDays(1)) == true && formattedDateVal?.isBefore(endDate.plusDays(1)) == true) {
+        if (formattedDateVal?.isAfter(startDate.minusDays(1)) == true && formattedDateVal.isBefore(endDate.plusDays(1))) {
           val appointment: Appointment?
           val addressInfo = Address(
             null,

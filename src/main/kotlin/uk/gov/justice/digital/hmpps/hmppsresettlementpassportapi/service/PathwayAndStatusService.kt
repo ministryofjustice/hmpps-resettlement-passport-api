@@ -84,7 +84,7 @@ class PathwayAndStatusService(
         pathwayStatusRepository.save(pathwayStatusEntity)
       }
       newPrisonerEntity
-    }!!
+    }
   } catch (e: DataIntegrityViolationException) {
     logger.warn(e) { "Failed to create prisoner as it already exists, loading" }
     getPrisonerEntityFromNomsId(nomsId)

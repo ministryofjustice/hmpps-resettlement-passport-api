@@ -106,24 +106,11 @@ class OffenderEventsIntegrationTest : IntegrationTestBase() {
     await.atMost(2.seconds.toJavaDuration()).untilAsserted {
       val savedOffenderEvent = offenderEventRepository.findAllByPrisonerId(1)
       assertThat(savedOffenderEvent).hasSize(1)
-      assertThat(savedOffenderEvent[0]).usingRecursiveComparison().ignoringFields("id", "creationDate")
-        .isEqualTo(
-          OffenderEventEntity(
-            id = UUID.randomUUID(),
-            prisonerId = 1,
-            nomsId = "A4092EA",
-            type = OffenderEventType.PRISON_RELEASE,
-            occurredAt = ZonedDateTime.parse("2024-12-11T15:43:20+00:00"),
-            reason = null,
-            reasonCode = "NCS",
-            creationDate = LocalDateTime.parse("2024-12-11T16:47:12.426329"),
-          ),
-        )
+      assertThat(savedOffenderEvent[0]).usingRecursiveComparison().ignoringFields("id", "creationDate").isEqualTo(OffenderEventEntity(id = UUID.randomUUID(), prisonerId = 1, nomsId = "A4092EA", type = OffenderEventType.PRISON_RELEASE, occurredAt = ZonedDateTime.parse("2024-12-11T15:43:20+00:00"), reason = null, reasonCode = "NCS", creationDate = LocalDateTime.parse("2024-12-11T16:47:12.426329")))
 
       val savedPrisoner = prisonerRepository.findAll()
       assertThat(savedPrisoner).hasSize(1)
-      assertThat(savedPrisoner[0])
-        .isEqualTo(PrisonerEntity(1, "A4092EA", LocalDateTime.parse("2023-08-16T12:21:38.709"), "OUT"))
+      assertThat(savedPrisoner[0]).isEqualTo(PrisonerEntity(1, "A4092EA", LocalDateTime.parse("2023-08-16T12:21:38.709"), "OUT"))
     }
   }
 
@@ -138,24 +125,11 @@ class OffenderEventsIntegrationTest : IntegrationTestBase() {
     await.atMost(2.seconds.toJavaDuration()).untilAsserted {
       val savedOffenderEvent = offenderEventRepository.findAllByPrisonerId(1)
       assertThat(savedOffenderEvent).hasSize(1)
-      assertThat(savedOffenderEvent[0]).usingRecursiveComparison().ignoringFields("id", "creationDate")
-        .isEqualTo(
-          OffenderEventEntity(
-            id = UUID.randomUUID(),
-            prisonerId = 1,
-            nomsId = "A4092EA",
-            type = OffenderEventType.PRISON_RELEASE,
-            occurredAt = ZonedDateTime.parse("2024-12-11T15:43:20+00:00"),
-            reason = null,
-            reasonCode = "NCS",
-            creationDate = LocalDateTime.parse("2024-12-11T16:47:12.426329"),
-          ),
-        )
+      assertThat(savedOffenderEvent[0]).usingRecursiveComparison().ignoringFields("id", "creationDate").isEqualTo(OffenderEventEntity(id = UUID.randomUUID(), prisonerId = 1, nomsId = "A4092EA", type = OffenderEventType.PRISON_RELEASE, occurredAt = ZonedDateTime.parse("2024-12-11T15:43:20+00:00"), reason = null, reasonCode = "NCS", creationDate = LocalDateTime.parse("2024-12-11T16:47:12.426329")))
 
       val savedPrisoner = prisonerRepository.findAll()
       assertThat(savedPrisoner).hasSize(1)
-      assertThat(savedPrisoner[0])
-        .isEqualTo(PrisonerEntity(1, "A4092EA", LocalDateTime.parse("2023-08-16T12:21:38.709"), "OUT"))
+      assertThat(savedPrisoner[0]).isEqualTo(PrisonerEntity(1, "A4092EA", LocalDateTime.parse("2023-08-16T12:21:38.709"), "OUT"))
 
       val savedCaseAllocation = caseAllocationRepository.findByPrisonerIdAndIsDeleted(1, true)
       assertThat(savedCaseAllocation).isNotNull

@@ -12,8 +12,8 @@ import xyz.capybara.clamav.ClamavClient
 
 @Configuration
 class ClamAVConfig(
-  @Value("\${clamav.hostname}") val clamavHost: String,
-  @Value("\${clamav.port}") val clamavPort: Int,
+  @param:Value("\${clamav.hostname}") val clamavHost: String,
+  @param:Value("\${clamav.port}") val clamavPort: Int,
 ) {
 
   private val log = LoggerFactory.getLogger(this::class.java)

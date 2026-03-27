@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service
 
-import com.google.common.io.Resources
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Disabled
@@ -29,7 +28,7 @@ class LibreOfficeDocumentConversionServiceTest {
       webClient,
     )
 
-    val fileData = Resources.getResource("testdata/PD1_example_oversized.docx").openStream()
+    val fileData = this::class.java.getResource("testdata/PD1_example_oversized.docx")!!.openStream()
     every { s3Client.putObject(any<Consumer<PutObjectRequest.Builder>>(), any<Path>()) }
       .returns(PutObjectResponse.builder().build())
 

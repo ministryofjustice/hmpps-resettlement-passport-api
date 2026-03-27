@@ -36,7 +36,7 @@ class AppointmentsService(
   private val prisonerRepository: PrisonerRepository,
   private val rpDeliusApiService: ResettlementPassportDeliusApiService,
   private val interventionsApiService: InterventionsApiService,
-  @Value("\${interventions-api-integration.crsAppointmentsEnabled}") private val crsAppointmentIntegrationEnabled: Boolean,
+  @param:Value("\${interventions-api-integration.crsAppointmentsEnabled}") private val crsAppointmentIntegrationEnabled: Boolean,
   private val prisonerService: PrisonerService,
   private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
 ) {

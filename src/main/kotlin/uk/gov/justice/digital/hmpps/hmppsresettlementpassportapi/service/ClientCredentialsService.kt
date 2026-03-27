@@ -13,8 +13,8 @@ import kotlin.time.toJavaDuration
 @Service
 class ClientCredentialsService(
   val tokenWebClient: WebClient,
-  @Value("\${api.base.url.case-notes}") private val caseNotesRootUri: String,
-  @Value("\${api.base.url.arn}") private val arnRootUri: String,
+  @param:Value("\${api.base.url.case-notes}") private val caseNotesRootUri: String,
+  @param:Value("\${api.base.url.arn}") private val arnRootUri: String,
 ) {
 
   enum class ServiceType {
@@ -50,6 +50,6 @@ class ClientCredentialsService(
 }
 
 data class OAuthTokenResponse(
-  @JsonProperty("access_token")
+  @param:JsonProperty("access_token")
   val accessToken: String,
 )

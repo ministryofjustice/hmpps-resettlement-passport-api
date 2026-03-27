@@ -35,7 +35,7 @@ class DocumentService(
   private val documentsRepository: DocumentsRepository,
   private val virusScanner: VirusScanner,
   private val documentConversionService: DocumentConversionService,
-  @Value("\${hmpps.s3.buckets.document-management.bucketName}") private val bucketName: String,
+  @param:Value("\${hmpps.s3.buckets.document-management.bucketName}") private val bucketName: String,
 ) {
 
   @Transactional

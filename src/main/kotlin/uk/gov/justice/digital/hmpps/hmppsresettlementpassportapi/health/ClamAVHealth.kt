@@ -11,9 +11,9 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ClamAVCo
 
 @Component("clamAV")
 class ClamAVHealth(
-  @Value("\${clamav.virus.scan.enabled:true}") val clamavEnabled: Boolean,
-  @Autowired private val clamAVConfig: ClamAVConfig,
-  @Autowired private val meterRegistry: MeterRegistry,
+  @param:Value("\${clamav.virus.scan.enabled:true}") val clamavEnabled: Boolean,
+  @param:Autowired private val clamAVConfig: ClamAVConfig,
+  @param:Autowired private val meterRegistry: MeterRegistry,
 ) : HealthIndicator {
   private val componentName = "clamAV"
 

@@ -10,7 +10,7 @@ fun interface VirusScanner {
   fun scan(documentBytes: ByteArray): VirusScanResult
 }
 
-class ClamavVirusScanner(@Autowired private val clamavClient: ClamavClient) : VirusScanner {
+class ClamavVirusScanner(@param:Autowired private val clamavClient: ClamavClient) : VirusScanner {
   override fun scan(documentBytes: ByteArray): VirusScanResult = when (val scanResult = clamavClient.scan(documentBytes.inputStream())) {
     OK -> NoVirusFound
     is VirusFound -> VirusScanResult.VirusFound(scanResult.foundViruses)

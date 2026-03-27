@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.deliusapi
 import java.time.LocalDate
 import java.time.ZonedDateTime
 
+@JvmRecord
 data class AccommodationsDelius(
   val nsiSubType: String,
   val referralDate: LocalDate?,
@@ -15,11 +16,14 @@ data class AccommodationsDelius(
   val mainAddress: Location?,
 )
 
+@JvmRecord
 data class OfficerInfo(
   val forename: String?,
   val surname: String?,
   val middlename: String?,
 )
+
+@JvmRecord
 data class Location(
   val buildingName: String?,
   val addressNumber: String?,

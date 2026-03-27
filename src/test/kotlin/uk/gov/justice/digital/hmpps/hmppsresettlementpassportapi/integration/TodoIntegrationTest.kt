@@ -35,7 +35,7 @@ class TodoIntegrationTest : IntegrationTestBase() {
         .jsonPath("$.id").isUuid()
 
       val auditQueueMessage = sqsClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(auditQueueUrl).build()).get().messages()[0]
-      assertThat(objectMapper.readValue(auditQueueMessage.body(), Map::class.java))
+      assertThat(jsonMapper.readValue(auditQueueMessage.body(), Map::class.java))
         .usingRecursiveComparison()
         .ignoringFields("when")
         .isEqualTo(mapOf("correlationId" to null, "details" to null, "service" to "hmpps-resettlement-passport-api", "subjectId" to "G4161UF", "subjectType" to "PRISONER_ID", "what" to "CREATE_TODO", "when" to "2025-01-06T13:48:20.391273Z", "who" to "test"))
@@ -210,11 +210,11 @@ class TodoIntegrationTest : IntegrationTestBase() {
       getTodoItems().expectBody().json("[]")
 
       val auditQueueMessages = sqsClient.receiveMessage(ReceiveMessageRequest.builder().queueUrl(auditQueueUrl).maxNumberOfMessages(2).build()).get().messages()
-      assertThat(objectMapper.readValue(auditQueueMessages[0].body(), Map::class.java))
+      assertThat(jsonMapper.readValue(auditQueueMessages[0].body(), Map::class.java))
         .usingRecursiveComparison()
         .ignoringFields("when")
         .isEqualTo(mapOf("correlationId" to null, "details" to null, "service" to "hmpps-resettlement-passport-api", "subjectId" to "G4161UF", "subjectType" to "PRISONER_ID", "what" to "CREATE_TODO", "when" to "2025-01-06T13:48:20.391273Z", "who" to "test"))
-      assertThat(objectMapper.readValue(auditQueueMessages[1].body(), Map::class.java))
+      assertThat(jsonMapper.readValue(auditQueueMessages[1].body(), Map::class.java))
         .usingRecursiveComparison()
         .ignoringFields("when")
         .isEqualTo(mapOf("correlationId" to null, "details" to null, "service" to "hmpps-resettlement-passport-api", "subjectId" to "G4161UF", "subjectType" to "PRISONER_ID", "what" to "DELETE_TODO", "when" to "2025-01-06T13:48:20.391273Z", "who" to "test"))

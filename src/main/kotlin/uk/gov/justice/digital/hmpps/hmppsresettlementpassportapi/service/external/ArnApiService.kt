@@ -28,7 +28,7 @@ import java.time.Duration
 @Service
 class ArnApiService(
   private val arnClientCredentialsService: ClientCredentialsService,
-  @Value("\${api.timeout.arn:PT2S}") private val timeout: Duration,
+  @param:Value("\${api.timeout.arn:PT2S}") private val timeout: Duration,
 ) {
 
   @Cacheable("arn-api-get-risk-scores-by-crn")

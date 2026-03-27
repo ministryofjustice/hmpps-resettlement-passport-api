@@ -49,7 +49,7 @@ class ResettlementAssessmentService(
   private val prisonerSearchApiService: PrisonerSearchApiService,
   private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
   private val profileTagsRepository: ProfileTagsRepository,
-  @Value("\${psfr.base.url}") private val psfrBaseUrl: String,
+  @param:Value("\${psfr.base.url}") private val psfrBaseUrl: String,
   private val supportNeedsLegacyProfileService: SupportNeedsLegacyProfileService,
   private val telemetryClient: TelemetryClient,
 ) {

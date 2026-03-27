@@ -2216,7 +2216,7 @@ class PrisonerServiceTest {
       prisonName = "ABC Prison",
       youthOffender = false,
       cellLocation = null,
-      displayReleaseDate = if (it != null) LocalDate.parse(it) else null,
+      confirmedReleaseDate = it?.let { LocalDate.parse(it) },
     )
   }
 

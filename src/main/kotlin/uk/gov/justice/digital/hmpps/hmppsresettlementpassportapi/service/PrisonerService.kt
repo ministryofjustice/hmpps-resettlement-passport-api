@@ -76,7 +76,6 @@ class PrisonerService(
     }
     val staffUsername = getClaimFromJWTToken(auth, "sub") ?: throw ServerWebInputException("Cannot get name from auth token")
 
-    val prisoners = mutableListOf<PrisonersSearch>()
     if (prisonId.isBlank()) {
       throw NoDataWithCodeFoundException("Prisoners", prisonId)
     }
@@ -87,10 +86,7 @@ class PrisonerService(
         "Page $pageNumber and Size $pageSize",
       )
     }
-    prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, searchTerm).forEach {
-      setDisplayedReleaseDate(it)
-      prisoners.add(it)
-    }
+    val prisoners = prisonerSearchApiService.findPrisonersBySearchTerm(prisonId, searchTerm).toMutableList()
 
     processReleaseDateFiltering(days, prisoners, includePastReleaseDates)
 
@@ -128,12 +124,12 @@ class PrisonerService(
   ) {
     if (days > 0) {
       val latestReleaseDate = LocalDate.now().plusDays(days.toLong())
-      prisoners.removeAll { it.displayReleaseDate == null || it.displayReleaseDate!! > latestReleaseDate }
+      prisoners.removeAll { prisoner -> prisoner.displayReleaseDate?.let { it > latestReleaseDate } ?: true }
     }
 
     if (!includePastReleaseDates) {
       val earliestReleaseDate = LocalDate.now().minusDays(1)
-      prisoners.removeAll { it.displayReleaseDate != null && it.displayReleaseDate!! <= earliestReleaseDate }
+      prisoners.removeAll { prisoner -> prisoner.displayReleaseDate?.let { it <= earliestReleaseDate } ?: false }
     }
   }
 
@@ -306,15 +302,10 @@ class PrisonerService(
     return prisonersList
   }
 
-  fun getPrisonerReleaseDateByNomsId(nomsId: String): LocalDate? {
-    val prisoner = prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)
-    setDisplayedReleaseDate(prisoner)
-    return prisoner.displayReleaseDate
-  }
+  fun getPrisonerReleaseDateByNomsId(nomsId: String) = prisonerSearchApiService.findPrisonerPersonalDetails(nomsId).displayReleaseDate
 
   fun getPrisonerDetailsByNomsId(nomsId: String, includeProfileTags: Boolean, auth: String): Prisoner {
     val prisonerSearch = prisonerSearchApiService.findPrisonerPersonalDetails(nomsId)
-    setDisplayedReleaseDate(prisonerSearch)
 
     // Add initial pathway statuses if required
     val prisonerEntity = pathwayAndStatusService.getOrCreatePrisoner(
@@ -334,12 +325,9 @@ class PrisonerService(
     if (prisonerSearch.dateOfBirth != null) {
       age = Period.between(prisonerSearch.dateOfBirth, LocalDate.now()).years
     }
-    var personalDetails = PersonalDetail(null.toString(), null, null, null)
-    if (crn != null) {
-      personalDetails = deliusApiService.getPersonalDetails(nomsId, crn)!!
-    } else {
-      personalDetails.contactDetails = PersonalDetail.ContactDetails(null, null, null)
-    }
+    val personalDetails = crn?.let { deliusApiService.getPersonalDetails(nomsId, crn)!! }
+      ?: PersonalDetail(null.toString(), null, null, PersonalDetail.ContactDetails(null, null, null))
+
     val prisonerPersonal = PrisonerPersonal(
       prisonerSearch.prisonerNumber,
       prisonerSearch.prisonId,
@@ -410,22 +398,6 @@ class PrisonerService(
       pathwayStatuses.add(pathwayStatus)
     }
     return pathwayStatuses
-  }
-
-  fun setDisplayedReleaseDate(prisoner: PrisonersSearch) {
-    if (prisoner.confirmedReleaseDate != null) {
-      prisoner.displayReleaseDate = prisoner.confirmedReleaseDate
-    } else if (prisoner.actualParoleDate != null) {
-      prisoner.displayReleaseDate = prisoner.actualParoleDate
-    } else if (prisoner.homeDetentionCurfewActualDate != null) {
-      prisoner.displayReleaseDate = prisoner.homeDetentionCurfewActualDate
-    } else if (prisoner.conditionalReleaseDate != null) {
-      prisoner.displayReleaseDate = prisoner.conditionalReleaseDate
-    } else if (prisoner.automaticReleaseDate != null) {
-      prisoner.displayReleaseDate = prisoner.automaticReleaseDate
-    } else {
-      prisoner.displayReleaseDate = null
-    }
   }
 
   fun getDisplayedReleaseEligibilityDate(prisoner: PrisonersSearch): LocalDate? {
@@ -503,3 +475,11 @@ private data class AssessmentRequiredResult(
   val immediateNeedsSubmitted: Boolean,
   val preReleaseSubmitted: Boolean,
 )
+
+// use extension properties to avoid mutable property set in data class (for `@JvmRecord`)
+val PrisonersSearch.displayReleaseDate: LocalDate?
+  get() = confirmedReleaseDate
+    ?: actualParoleDate
+    ?: homeDetentionCurfewActualDate
+    ?: conditionalReleaseDate
+    ?: automaticReleaseDate

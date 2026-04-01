@@ -63,14 +63,12 @@ dependencies {
   implementation("com.google.code.gson:gson")
   implementation("org.json:json:20250517")
   implementation("io.github.oshai:kotlin-logging-jvm:7.0.7")
-  implementation("com.pauldijou:jwt-core_2.11:5.0.0")
 
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.1.0")
 
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.1.0")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-test-support:2.1.1")
   testImplementation("org.awaitility:awaitility-kotlin")
-//  testImplementation("io.jsonwebtoken:jjwt-impl:0.12.6")
-//  testImplementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
   testImplementation("org.mockito:mockito-inline:5.2.0")
   testImplementation("io.swagger.parser.v3:swagger-parser:2.1.39")
   testImplementation("org.springframework.boot:spring-boot-webtestclient")

@@ -69,6 +69,14 @@ hmpps.s3:
     document-management:
       bucketName: "test-bucket"
 
+hmpps.sar:
+  tests:
+    expected-flyway-schema-version: "1.76"
+    expected-jpa-entity-schema.path: "/sar/entity-schema.json"
+    expected-render-result.path: "/sar/sar-generated-report.html"
+    expected-api-response.path: "/sar/sar-api-response.json"
+    attachments-expected: false
+
 clamav:
   virus:
     scan:

@@ -1,0 +1,214 @@
+{
+  "AssessmentEntity": {
+    "assessmentDate": "LocalDateTime",
+    "creationDate": "LocalDateTime",
+    "deletionDate": "LocalDateTime",
+    "id": "Long",
+    "idDocuments": "Set",
+    "isBankAccountRequired": "boolean",
+    "isDeleted": "boolean",
+    "isIdRequired": "boolean",
+    "prisonerId": "long"
+  },
+  "AssessmentSkipEntity": {
+    "assessmentType": "ResettlementAssessmentType",
+    "createdBy": "String",
+    "creationDate": "LocalDateTime",
+    "id": "Long",
+    "moreInfo": "String",
+    "prisonerId": "long",
+    "reason": "AssessmentSkipReason"
+  },
+  "BankApplicationEntity": {
+    "addedToPersonalItemsDate": "LocalDateTime",
+    "applicationSubmittedDate": "LocalDateTime",
+    "bankName": "String",
+    "bankResponseDate": "LocalDateTime",
+    "creationDate": "LocalDateTime",
+    "deletionDate": "LocalDateTime",
+    "id": "Long",
+    "isAddedToPersonalItems": "Boolean",
+    "isDeleted": "boolean",
+    "logs": "Set",
+    "prisonerId": "long",
+    "status": "String"
+  },
+  "BankApplicationStatusLogEntity": {
+    "bankApplication": "BankApplicationEntity",
+    "changedAtDate": "LocalDateTime",
+    "id": "Long",
+    "statusChangedTo": "String"
+  },
+  "CaseAllocationEntity": {
+    "creationDate": "LocalDateTime",
+    "deletionDate": "LocalDateTime",
+    "id": "Long",
+    "isDeleted": "boolean",
+    "prisonerId": "long",
+    "staffFirstname": "String",
+    "staffId": "Integer",
+    "staffLastname": "String"
+  },
+  "DeliusContactEntity": {
+    "appointmentDate": "LocalDateTime",
+    "appointmentDuration": "Integer",
+    "category": "Category",
+    "contactType": "ContactType",
+    "createdBy": "String",
+    "createdDate": "LocalDateTime",
+    "id": "Long",
+    "notes": "String",
+    "prisonerId": "long"
+  },
+  "DocumentsEntity": {
+    "category": "DocumentCategory",
+    "creationDate": "LocalDateTime",
+    "deletionDate": "LocalDateTime",
+    "id": "Long",
+    "isDeleted": "boolean",
+    "originalDocumentFileName": "String",
+    "originalDocumentKey": "UUID",
+    "pdfDocumentKey": "UUID",
+    "prisonerId": "long"
+  },
+  "IdApplicationEntity": {
+    "addedToPersonalItemsDate": "LocalDateTime",
+    "applicationSubmittedDate": "LocalDateTime",
+    "caseNumber": "String",
+    "costOfApplication": "BigDecimal",
+    "countryBornIn": "String",
+    "courtDetails": "String",
+    "creationDate": "LocalDateTime",
+    "dateIdReceived": "LocalDateTime",
+    "deletionDate": "LocalDateTime",
+    "driversLicenceApplicationMadeAt": "String",
+    "driversLicenceType": "String",
+    "haveGro": "Boolean",
+    "id": "Long",
+    "idType": "IdTypeEntity",
+    "isAddedToPersonalItems": "Boolean",
+    "isDeleted": "boolean",
+    "isPriorityApplication": "boolean",
+    "isUkNationalBornOverseas": "Boolean",
+    "prisonerId": "long",
+    "refundAmount": "BigDecimal",
+    "status": "String",
+    "statusUpdateDate": "LocalDateTime"
+  },
+  "IdTypeEntity": {
+    "id": "long",
+    "name": "String"
+  },
+  "LicenceConditionChangeAuditEntity": {
+    "confirmationDate": "LocalDateTime",
+    "creationDate": "LocalDateTime",
+    "id": "Long",
+    "licenceConditions": "LicenceConditions",
+    "prisonerId": "long",
+    "seen": "boolean",
+    "version": "int"
+  },
+  "OffenderEventEntity": {
+    "creationDate": "LocalDateTime",
+    "id": "UUID",
+    "nomsId": "String",
+    "occurredAt": "ZonedDateTime",
+    "prisonerId": "long",
+    "reason": "MovementReasonType",
+    "reasonCode": "String",
+    "type": "OffenderEventType"
+  },
+  "PathwayStatusEntity": {
+    "id": "Long",
+    "pathway": "Pathway",
+    "prisonerId": "long",
+    "status": "Status",
+    "updatedDate": "LocalDateTime"
+  },
+  "PoPUserOTPEntity": {
+    "creationDate": "LocalDateTime",
+    "dob": "LocalDate",
+    "expiryDate": "LocalDateTime",
+    "id": "Long",
+    "otp": "String",
+    "prisonerId": "long"
+  },
+  "PrisonerEntity": {
+    "creationDate": "LocalDateTime",
+    "id": "Long",
+    "nomsId": "String",
+    "prisonId": "String",
+    "supportNeedsLegacyProfile": "Boolean"
+  },
+  "PrisonerSupportNeedEntity": {
+    "createdBy": "String",
+    "createdDate": "LocalDateTime",
+    "deleted": "boolean",
+    "deletedDate": "LocalDateTime",
+    "id": "Long",
+    "latestUpdateId": "Long",
+    "otherDetail": "String",
+    "prisonerId": "long",
+    "supportNeed": "SupportNeedEntity"
+  },
+  "PrisonerSupportNeedUpdateEntity": {
+    "createdBy": "String",
+    "createdDate": "LocalDateTime",
+    "deleted": "boolean",
+    "deletedDate": "LocalDateTime",
+    "id": "Long",
+    "isPrison": "boolean",
+    "isProbation": "boolean",
+    "prisonerSupportNeedId": "long",
+    "status": "SupportNeedStatus",
+    "updateText": "String"
+  },
+  "ProfileTagsEntity": {
+    "id": "Long",
+    "prisonerId": "long",
+    "profileTags": "ProfileTagList",
+    "updatedDate": "LocalDateTime"
+  },
+  "ResettlementAssessmentEntity": {
+    "assessment": "ResettlementAssessmentQuestionAndAnswerList",
+    "assessmentStatus": "ResettlementAssessmentStatus",
+    "assessmentType": "ResettlementAssessmentType",
+    "caseNoteText": "String",
+    "createdBy": "String",
+    "createdByUserId": "String",
+    "creationDate": "LocalDateTime",
+    "deleted": "boolean",
+    "deletedDate": "LocalDateTime",
+    "id": "Long",
+    "pathway": "Pathway",
+    "prisonerId": "long",
+    "statusChangedTo": "Status",
+    "submissionDate": "LocalDateTime",
+    "userDeclaration": "Boolean",
+    "version": "int"
+  },
+  "SupportNeedEntity": {
+    "allowOtherDetail": "boolean",
+    "createdDate": "LocalDateTime",
+    "deleted": "boolean",
+    "deletedDate": "LocalDateTime",
+    "excludeFromCount": "boolean",
+    "hidden": "boolean",
+    "id": "long",
+    "pathway": "Pathway",
+    "section": "String",
+    "title": "String"
+  },
+  "TodoEntity": {
+    "completed": "boolean",
+    "createdByUrn": "String",
+    "creationDate": "LocalDateTime",
+    "dueDate": "LocalDate",
+    "id": "UUID",
+    "notes": "String",
+    "prisonerId": "long",
+    "title": "String",
+    "updatedAt": "LocalDateTime",
+    "updatedByUrn": "String"
+  }
+}

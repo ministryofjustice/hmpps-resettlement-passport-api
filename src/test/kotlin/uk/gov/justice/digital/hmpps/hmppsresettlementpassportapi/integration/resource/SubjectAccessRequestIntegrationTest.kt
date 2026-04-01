@@ -1,9 +1,10 @@
-package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
+package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.resource
 
 import net.javacrumbs.jsonunit.assertj.assertThatJson
 import net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.IntegrationTestBase
 import java.time.LocalDate
 
 class SubjectAccessRequestIntegrationTest : IntegrationTestBase() {

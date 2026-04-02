@@ -30,6 +30,7 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.ResettlementAssessmentRepository
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
+import kotlin.jvm.optionals.getOrNull
 
 class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
@@ -1281,14 +1282,17 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isNoContent
 
-    val savedSkip = assessmentSkipRepository.getReferenceById(1)
+    val savedSkip = assessmentSkipRepository.findById(1).getOrNull()
 
-    assertThat(savedSkip.assessmentType).isEqualTo(ResettlementAssessmentType.BCST2)
-    assertThat(savedSkip.prisonerId).isEqualTo(1)
-    assertThat(savedSkip.reason).isEqualTo(AssessmentSkipReason.COMPLETED_IN_OASYS)
-    assertThat(savedSkip.moreInfo).isEqualTo("something or other")
-    assertThat(savedSkip.createdBy).isEqualTo("RESETTLEMENTPASSPORT_ADM")
-    assertThat(savedSkip.creationDate).isNotNull()
+    with(savedSkip) {
+      assertThat(this).isNotNull
+      assertThat(this!!.assessmentType).isEqualTo(ResettlementAssessmentType.BCST2)
+      assertThat(prisonerId).isEqualTo(1)
+      assertThat(reason).isEqualTo(AssessmentSkipReason.COMPLETED_IN_OASYS)
+      assertThat(moreInfo).isEqualTo("something or other")
+      assertThat(createdBy).isEqualTo("RESETTLEMENTPASSPORT_ADM")
+      assertThat(creationDate).isNotNull
+    }
   }
 
   @Test

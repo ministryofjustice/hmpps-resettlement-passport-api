@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.IntegrationTestBase
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.readFile
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.CaseAllocationRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
@@ -18,6 +17,7 @@ import uk.gov.justice.hmpps.sqs.MissingQueueException
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 
@@ -57,8 +57,9 @@ class OffenderEventsIntegrationTest : IntegrationTestBase() {
       assertThat(saved).hasSize(1)
       assertThat(saved[0].reason).isEqualTo(MovementReasonType.RECALL)
     }
-    val prisoner = prisonerRepository.getReferenceById(1)
-    assertThat(prisoner.prisonId).describedAs { "Prison id should be updated" }.isEqualTo("SWI")
+    val prisoner = prisonerRepository.findById(1).getOrNull()
+    assertThat(prisoner).isNotNull
+    assertThat(prisoner!!.prisonId).describedAs { "Prison id should be updated" }.isEqualTo("SWI")
   }
 
   @Sql("classpath:testdata/sql/seed-prisoners-for-events.sql")

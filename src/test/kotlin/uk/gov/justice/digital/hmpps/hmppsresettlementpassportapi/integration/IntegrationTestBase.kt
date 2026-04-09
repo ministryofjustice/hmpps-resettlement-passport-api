@@ -21,7 +21,7 @@ import software.amazon.awssdk.services.sqs.SqsAsyncClient
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest
 import software.amazon.awssdk.services.sqs.model.PurgeQueueRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ReadOnlyModeTestMockConfig
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JwtAuthHelper
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CustomJwtAuthorisationHelper
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.AllocationManagerApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ArnApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.CaseNotesApiMockServer
@@ -36,27 +36,30 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wir
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonerSearchApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ResettlementPassportDeliusApiMockServer
+import uk.gov.justice.digital.hmpps.subjectaccessrequest.SarIntegrationTestHelper
+import uk.gov.justice.digital.hmpps.subjectaccessrequest.SarIntegrationTestHelperConfig
+import uk.gov.justice.hmpps.kotlin.auth.AuthSource
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @AutoConfigureWebTestClient
 @Sql(scripts = ["classpath:testdata/sql/clear-all-data.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
+@Import(SarIntegrationTestHelperConfig::class)
 abstract class IntegrationTestBase : TestBase() {
 
   @Autowired
   lateinit var webTestClient: WebTestClient
   protected val authedWebTestClient: WebTestClient by lazy {
-    webTestClient
-      .mutateWith { builder, _, _ ->
-        builder.defaultHeader(
-          HttpHeaders.AUTHORIZATION,
-          "Bearer ${jwtAuthHelper.createJwt(subject = "test", roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"))}",
-        )
-      }
+    webTestClient.mutateWith { builder, _, _ ->
+      builder.defaultHeaders(jwtAuthorisationHelper.setAuthorisationHeader(username = "test", roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
+    }
   }
 
   @Autowired
-  protected lateinit var jwtAuthHelper: JwtAuthHelper
+  protected lateinit var jwtAuthorisationHelper: CustomJwtAuthorisationHelper
+
+  @Autowired
+  protected lateinit var sarIntegrationTestHelper: SarIntegrationTestHelper
 
   @Autowired
   lateinit var cacheManager: CacheManager
@@ -187,12 +190,26 @@ abstract class IntegrationTestBase : TestBase() {
     System.setProperty("http.keepAlive", "false")
   }
 
+  /**
+   * @param user username
+   * @param roles roles granted to the given user
+   * @param scopes list of scopes, e.g. `read`, `write`
+   * @param authSource Source of authentication, default `nomis`
+   * @param name user's full name
+   */
   protected fun setAuthorisation(
     user: String = "RESETTLEMENTPASSPORT_ADM",
     roles: List<String> = listOf(),
     scopes: List<String> = listOf(),
-    authSource: String = "none",
-  ): (HttpHeaders) -> Unit = jwtAuthHelper.setAuthorisation(user, roles, scopes, authSource)
+    authSource: String = AuthSource.NOMIS.source,
+    name: String? = null,
+  ): (HttpHeaders) -> Unit = jwtAuthorisationHelper.setAuthorisationHeader(
+    username = user,
+    scope = scopes,
+    roles = roles,
+    authSource = authSource,
+    name = name,
+  )
 }
 
 @Import(ReadOnlyModeTestMockConfig::class)

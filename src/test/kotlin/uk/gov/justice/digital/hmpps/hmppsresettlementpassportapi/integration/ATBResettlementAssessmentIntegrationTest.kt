@@ -297,7 +297,7 @@ class ATBResettlementAssessmentIntegrationTest : IntegrationTestBase() {
         }
         """.trimIndent(),
       )
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), user = "System User"))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), user = "system_user", name = "System User"))
       .exchange()
       .expectStatus().isBadRequest
       .expectHeader().contentType("application/json")

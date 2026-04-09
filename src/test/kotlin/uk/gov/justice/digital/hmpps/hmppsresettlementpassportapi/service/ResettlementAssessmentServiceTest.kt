@@ -1101,7 +1101,7 @@ class ResettlementAssessmentServiceTest {
   }
 
   @Test
-  fun `test getAllResettlementAssessmentsByPrisonerIdAndCreationDate should return from repository and map the response`() {
+  fun `test OrderByCreationDateDesc should return from repository and map the response`() {
     val entity = ResettlementAssessmentEntity(
       id = 12,
       prisonerId = 1,
@@ -1121,7 +1121,7 @@ class ResettlementAssessmentServiceTest {
       deletedDate = null,
     )
 
-    Mockito.`when`(resettlementAssessmentRepository.findAllByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(listOf(entity))
+    Mockito.`when`(resettlementAssessmentRepository.findAllByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc(any(), any(), any())).thenReturn(listOf(entity))
 
     val expected = listOf(resettlementAssessmentService.convertFromResettlementAssessmentEntityToResettlementAssessmentSarContent(entity, resettlementAssessmentStrategy))
     val actual = resettlementAssessmentService.getAllResettlementAssessmentsByPrisonerIdAndCreationDate(1, fakeNow, fakeNow, resettlementAssessmentStrategy)

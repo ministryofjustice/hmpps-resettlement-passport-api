@@ -424,7 +424,7 @@ class ResettlementAssessmentService(
     toDate: LocalDateTime,
     resettlementAssessmentStrategies: ResettlementAssessmentStrategy,
   ): List<ResettlementAssessmentSarContent> = resettlementAssessmentRepository
-    .findAllByPrisonerIdAndCreationDateBetween(prisonerId, fromDate, toDate)
+    .findAllByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc(prisonerId, fromDate, toDate)
     .map { convertFromResettlementAssessmentEntityToResettlementAssessmentSarContent(it, resettlementAssessmentStrategies) }
 
   data class ResettlementAssessmentSarContent(

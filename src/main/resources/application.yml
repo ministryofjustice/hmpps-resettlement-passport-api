@@ -135,6 +135,12 @@ hmpps.s3:
     document-management:
       bucketName: ${S3_DOCUMENT_BUCKET_NAME}
 
+hmpps:
+  sar:
+    template:
+      path: /sar/template_hmpps-resettlement-passport-api.mustache
+      enabled: true
+
 clamav:
   hostname: localhost
   port: 3310

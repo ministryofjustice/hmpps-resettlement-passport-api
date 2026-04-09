@@ -1,0 +1,489 @@
+<h1 class="title">Prepare Someone for Release</h1>
+{{#.}}
+    {{#prisoner}}
+        <h2>Prisoner</h2>
+        <br/>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Case Reference Number</td>
+                <td class="data-column-25">Prison name</td>
+                <td class="data-column-25">Creation date</td>
+                <td class="data-column-25">Release date</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue crn }}</td>
+                <td>{{ getPrisonName prisonId }}</td>
+                <td>{{ optionalValue (formatDate creationDate) }}</td>
+                <td>{{ optionalValue (formatDate releaseDate) }}</td>
+            </tr>
+        </table>
+    {{/prisoner}}
+
+    <br/>
+    <h2>Assessment Information</h2>
+    {{#assessments}}
+        <h3>Assessment</h3>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Assessment date</td>
+                <td class="data-column-25">Creation date</td>
+                <td class="data-column-25">Is ID required</td>
+                <td class="data-column-25">Is bank account required</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue (formatDate assessmentDate) }}</td>
+                <td>{{ optionalValue (formatDate creationDate) }}</td>
+                <td>{{ convertBoolean isIdRequired }}</td>
+                <td>{{ convertBoolean isBankAccountRequired }}</td>
+            </tr>
+        </table>
+        <h4>ID Documents</h4>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-50">Document name</td>
+            </tr>
+        {{#idDocuments}}
+            <tr>
+                <td>{{ optionalValue name }}</td>
+            </tr>
+        {{/idDocuments}}
+        {{^idDocuments}}
+            <tr>
+                <td>No Data Held</td>
+            </tr>
+        {{/idDocuments}}
+        </table>
+    {{/assessments}}
+    {{^assessments}}
+        <p>No Data Held</p>
+    {{/assessments}}
+
+    <br/>
+    <h2>Skipped Assessments</h2>
+    {{#skippedAssessments}}
+        <h3>Skipped Assessment</h3>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-40">Created by</td>
+                <td class="data-column-30">Creation date</td>
+                <td class="data-column-30">Assessment type</td>
+            </tr>
+            <tr>
+                <td>{{ getUserLastName createdBy }}</td>
+                <td>{{ optionalValue (formatDate creationDate) }}</td>
+                <td>{{ optionalValue assessmentType }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-40">Reason</td>
+                <td class="data-column-60">More Info</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue reason }}</td>
+                <td>{{ optionalValue moreInfo }}</td>
+            </tr>
+        </table>
+    {{/skippedAssessments}}
+    {{^skippedAssessments}}
+        <p>No Data Held</p>
+    {{/skippedAssessments}}
+
+    <br/>
+    <h2>Bank Applications</h2>
+    {{#bankApplications}}
+        <h3>Bank Application</h3>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-35">Date application submitted</td>
+                <td class="data-column-25">Current status</td>
+                <td class="data-column-35">Is added to personal items</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue (formatDate applicationSubmittedDate) }}</td>
+                <td>{{ optionalValue currentStatus}}</td>
+                <td>{{ convertBoolean isAddedToPersonalItems }}</td>
+                <td></td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-35">Bank response date</td>
+                <td class="data-column-25">Bank name</td>
+                <td class="data-column-35">Date added to personal items</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue (formatDate bankResponseDate) }}</td>
+                <td>{{ optionalValue bankName}}</td>
+                <td>{{ optionalValue (formatDate addedToPersonalItemsDate) }}</td>
+            </tr>
+        </table>
+        <h4>Status Updates</h4>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-50">Status</td>
+                <td class="data-column-50">Change date</td>
+            </tr>
+        {{#logs}}
+            <tr>
+                <td>{{ optionalValue status }}</td>
+                <td>{{ optionalValue (formatDate changeDate)}}</td>
+            </tr>
+        {{/logs}}
+        {{^logs}}
+            <tr>
+                <td>No Data Held</td>
+                <td>No Data Held</td>
+            </tr>
+        {{/logs}}
+        </table>
+    {{/bankApplications}}
+    {{^bankApplications}}
+        <p>No Data Held</p>
+    {{/bankApplications}}
+
+    <br/>
+    <h2>Probation contacts</h2>
+    {{#deliusContacts}}
+        <h4>Case note</h4>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Pathway</td>
+                <td class="data-column-25">Creation date and time</td>
+                <td class="data-column-25">Occurrence date and time</td>
+                <td class="data-column-25">Created by</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue pathway }}</td>
+                <td>{{ optionalValue (formatDate creationDateTime) }}</td>
+                <td>{{ optionalValue (formatDate occurrenceDateTime) }}</td>
+                <td>{{ optionalValue createdBy }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-25">Text</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue text }}</td>
+            </tr>
+        </table>
+    {{/deliusContacts}}
+    {{^deliusContacts}}
+        <p>No Data Held</p>
+    {{/deliusContacts}}
+
+    <br/>
+    <h2>ID Applications</h2>
+    {{#idApplications}}
+        <h3>ID Application</h3>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">ID type</td>
+                <td class="data-column-30">Creation date</td>
+                <td class="data-column-30">Date application was submitted</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue idType }}</td>
+                <td>{{ optionalValue (formatDate creationDate) }}</td>
+                <td>{{ optionalValue (formatDate applicationSubmittedDate) }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Is priority application</td>
+                <td class="data-column-30">Cost of application (&pound;)</td>
+                <td class="data-column-30">Refund amount</td>
+            </tr>
+            <tr>
+                <td>{{ convertBoolean isPriorityApplication }}</td>
+                <td>{{ optionalValue costOfApplication }}</td>
+                <td>{{ optionalValue refundAmount }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Have General Register Office index reference</td>
+                <td class="data-column-30">Is UK national born overseas</td>
+                <td class="data-column-30">Country of birth</td>
+            </tr>
+            <tr>
+                <td>{{ convertBoolean haveGro }}</td>
+                <td>{{ convertBoolean isUkNationalBornOverseas }}</td>
+                <td>{{ optionalValue countryBornIn }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Court case number</td>
+                <td class="data-column-30">Court details</td>
+                <td class="data-column-30">Driver's licence type</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue caseNumber }}</td>
+                <td>{{ optionalValue courtDetails }}</td>
+                <td>{{ optionalValue driversLicenceType }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Driver's licence application made at</td>
+                <td class="data-column-30">Is added to personal items</td>
+                <td class="data-column-30">Date added to personal items</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue driversLicenceApplicationMadeAt }}</td>
+                <td>{{ convertBoolean isAddedToPersonalItems }}</td>
+                <td>{{ optionalValue (formatDate addedToPersonalItemsDate) }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Status</td>
+                <td class="data-column-30">Status update date</td>
+                <td class="data-column-30">Date ID received</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue status }}</td>
+                <td>{{ optionalValue (formatDate statusUpdateDate) }}</td>
+                <td>{{ optionalValue (formatDate dateIdReceived) }}</td>
+            </tr>
+        </table>
+    {{/idApplications}}
+    {{^idApplications}}
+        <p>No Data Held</p>
+    {{/idApplications}}
+
+    <br/>
+    <h2>Status summary</h2>
+    {{#statusSummary}}
+        <table class="summary-list">
+            <tr><td>Type</td><td>{{ optionalValue type }}</td></tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-50">Pathway</td>
+                <td class="data-column-50">Assessment status</td>
+            </tr>
+        {{#pathwayStatus}}
+            <tr>
+                <td>{{ optionalValue pathway }}</td>
+                <td>{{ optionalValue assessmentStatus }}</td>
+            </tr>
+        {{/pathwayStatus}}
+        {{^pathwayStatus}}
+            <tr>
+                <td>No Data Held</td>
+                <td>No Data Held</td>
+            </tr>
+        {{/pathwayStatus}}
+        </table>
+    {{/statusSummary}}
+    {{^statusSummary}}
+        <p>No Data Held</p>
+    {{/statusSummary}}
+
+    <br/>
+    <h2>Resettlement Assessments</h2>
+    {{#resettlementAssessments}}
+        <h3>Assessment</h3>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Assessment type</td>
+                <td class="data-column-30">Last updated</td>
+                <td class="data-column-30">Updated by</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue assessmentType }}</td>
+                <td>{{ optionalValue (formatDate lastUpdated) }}</td>
+                <td>{{ optionalValue updatedBy }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-50">Question title</td>
+                <td class="data-column-50">Answer</td>
+            </tr>
+            {{#questionsAndAnswers}}
+                <tr>
+                    <td>{{ optionalValue questionTitle }}</td>
+                    <td>{{ optionalValue answer }}</td>
+                </tr>
+            {{/questionsAndAnswers}}
+            {{^questionsAndAnswers}}
+                <tr>
+                    <td>No Data Held</td>
+                    <td>No Data Held</td>
+                </tr>
+            {{/questionsAndAnswers}}
+        </table>
+    {{/resettlementAssessments}}
+    {{^resettlementAssessments}}
+        <p>No Data Held</p>
+    {{/resettlementAssessments}}
+
+    <br/>
+    <h2>Support Needs</h2>
+    {{#supportNeeds}}
+        <h3>Support Need</h3>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Pathway</td>
+                <td class="data-column-25">Section</td>
+                <td class="data-column-20">Created by</td>
+                <td class="data-column-25">Created date</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue supportNeed.pathway }}</td>
+                <td>{{ optionalValue supportNeed.section }}</td>
+                <td>{{ optionalValue createdBy }}</td>
+                <td>{{ optionalValue (formatDate createdDate) }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Title</td>
+                <td class="data-column-25">Is hidden</td>
+                <td class="data-column-20">Exclude from count</td>
+                <td class="data-column-25">Allow other detail</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue supportNeed.title }}</td>
+                <td>{{ convertBoolean supportNeed.hidden }}</td>
+                <td>{{ convertBoolean supportNeed.excludeFromCount }}</td>
+                <td>{{ convertBoolean supportNeed.allowOtherDetail }}</td>
+            </tr>
+        </table>
+        <table class="summary-list">
+            <tr><td>Other detail</td><td>{{ optionalValue otherDetail }}</td></tr>
+        </table>
+    {{/supportNeeds}}
+    {{^supportNeeds}}
+        <p>No Data Held</p>
+    {{/supportNeeds}}
+
+    <br/>
+    <h2>Support Need Updates</h2>
+    {{#supportNeedUpdates}}
+        <h3>Support Need Update</h3>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Support Need ID</td>
+                <td class="data-column-30">Created by</td>
+                <td class="data-column-30">Created date</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue prisonerSupportNeedId }}</td>
+                <td>{{ optionalValue createdBy }}</td>
+                <td>{{ optionalValue (formatDate createdDate) }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Is Prison</td>
+                <td class="data-column-30">Is Probation</td>
+                <td class="data-column-30">Status</td>
+            </tr>
+            <tr>
+                <td>{{ convertBoolean isPrison }}</td>
+                <td>{{ convertBoolean isProbation }}</td>
+                <td>{{ optionalValue status }}</td>
+            </tr>
+        </table>
+        <table class="summary-list">
+            <tr><td>Update text</td><td>{{ optionalValue updateText }}</td></tr>
+        </table>
+    {{/supportNeedUpdates}}
+    {{^supportNeedUpdates}}
+        <p>No Data Held</p>
+    {{/supportNeedUpdates}}
+
+    <br/>
+    <h2>Case Allocations</h2>
+    {{#caseAllocations}}
+        <table class="data-table">
+            <tr>
+                <td class="data-column-50">Staff lastname</td>
+                <td class="data-column-50">Creation date</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue staffLastname }}</td>
+                <td>{{ optionalValue (formatDate creationDate) }}</td>
+            </tr>
+        </table>
+    {{/caseAllocations}}
+    {{^caseAllocations}}
+        <p>No Data Held</p>
+    {{/caseAllocations}}
+
+    <br/>
+    <h2>Profile Tags</h2>
+    {{#profileTags}}
+        <h3>Profile Tag</h3>
+        <table class="summary-list">
+            <tr><td>Updated date</td><td>{{ optionalValue (formatDate updatedDate) }}</td></tr>
+            <tr><td>Tags</td><td>{{#profileTags.tags}}{{.}}{{#unless @last}}, {{/unless}}{{/profileTags.tags}}{{^profileTags.tags}}No Data Held{{/profileTags.tags}}</td></tr>
+        </table>
+    {{/profileTags}}
+    {{^profileTags}}
+        <p>No Data Held</p>
+    {{/profileTags}}
+
+    <br/>
+    <h2>Todo Items</h2>
+    {{#todoItems}}
+        <h3>Todo Item</h3>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-70">Title</td>
+                <td class="data-column-30">Is completed</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue title }}</td>
+                <td>{{ convertBoolean completed }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Due date</td>
+                <td class="data-column-35">Creation date</td>
+                <td class="data-column-35">Updated at</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue (formatDate dueDate) }}</td>
+                <td>{{ optionalValue (formatDate creationDate) }}</td>
+                <td>{{ optionalValue (formatDate updatedAt) }}</td>
+            </tr>
+        </table>
+        <table class="summary-list">
+            <tr><td>Notes</td><td>{{ optionalValue notes }}</td></tr>
+        </table>
+    {{/todoItems}}
+    {{^todoItems}}
+        <p>No Data Held</p>
+    {{/todoItems}}
+
+    <br/>
+    <h2>Documents</h2>
+    {{#documents}}
+        <h3>Document</h3>
+        <table class="data-table">
+            <tr>
+                <td class="data-column-40">Original document filename</td>
+                <td class="data-column-30">Category</td>
+                <td class="data-column-30">Creation date</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue originalDocumentFileName }}</td>
+                <td>{{ optionalValue category }}</td>
+                <td>{{ optionalValue (formatDate creationDate) }}</td>
+            </tr>
+        </table>
+    {{/documents}}
+    {{^documents}}
+        <p>No Data Held</p>
+    {{/documents}}
+{{/.}}
+{{^.}}
+    <p>No data held</p>
+{{/.}}

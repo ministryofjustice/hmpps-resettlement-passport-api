@@ -104,7 +104,7 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
 
   fun findAllByPrisonerIdAndDeletedIsFalse(prisonerId: Long): List<ResettlementAssessmentEntity>
 
-  fun findAllByPrisonerIdAndCreationDateBetween(
+  fun findAllByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc(
     prisonerId: Long,
     fromDate: LocalDateTime,
     toDate: LocalDateTime,

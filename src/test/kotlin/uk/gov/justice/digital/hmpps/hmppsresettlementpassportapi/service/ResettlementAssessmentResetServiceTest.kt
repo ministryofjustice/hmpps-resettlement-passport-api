@@ -21,7 +21,8 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PathwayAnd
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ProfileReset
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.ResetReason
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Status
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JwtAuthHelper
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CustomJwtAuthorisationHelper
+import uk.gov.justice.hmpps.kotlin.auth.AuthSource
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -44,6 +45,8 @@ class ResettlementAssessmentResetServiceTest {
   @Mock
   private lateinit var supportNeedsService: SupportNeedsService
 
+  private var jwtAuthorisationHelper = CustomJwtAuthorisationHelper()
+
   @BeforeEach
   fun beforeEach() {
     resettlementAssessmentResetService = ResettlementAssessmentResetService(
@@ -58,7 +61,7 @@ class ResettlementAssessmentResetServiceTest {
   @Test
   fun `test deleteAllResettlementAssessments - no prisoner`() {
     val nomsId = "12345"
-    val auth = JwtAuthHelper().createJwt("J_DOE", authSource = "NOMIS")
+    val auth = makeAuth()
     val profileReset = ProfileReset(
       resetReason = ResetReason.RECALL_TO_PRISON,
       additionalDetails = null,
@@ -79,7 +82,7 @@ class ResettlementAssessmentResetServiceTest {
   @Test
   fun `test deleteAllResettlementAssessments - happy path`() {
     val nomsId = "12345"
-    val auth = JwtAuthHelper().createJwt("J_DOE", authSource = "NOMIS")
+    val auth = makeAuth()
     val profileReset = ProfileReset(
       resetReason = ResetReason.RECALL_TO_PRISON,
       additionalDetails = null,
@@ -105,6 +108,7 @@ class ResettlementAssessmentResetServiceTest {
     }
   }
 
+  @Suppress("unused")
   private fun `test getReason data`() = Stream.of(
     Arguments.of(ProfileReset(ResetReason.RECALL_TO_PRISON, null), "The person has been recalled to prison", false),
     Arguments.of(ProfileReset(ResetReason.RETURN_ON_NEW_SENTENCE, null), "The person has returned to prison on a new sentence", false),
@@ -113,4 +117,6 @@ class ResettlementAssessmentResetServiceTest {
     Arguments.of(ProfileReset(ResetReason.RECALL_TO_PRISON, "This is the reason"), null, true),
     Arguments.of(ProfileReset(ResetReason.RETURN_ON_NEW_SENTENCE, "This is the reason"), null, true),
   )
+
+  private fun makeAuth() = jwtAuthorisationHelper.createJwtAccessToken(username = "J_DOE", authSource = AuthSource.NOMIS.source).let { "Bearer $it" }
 }

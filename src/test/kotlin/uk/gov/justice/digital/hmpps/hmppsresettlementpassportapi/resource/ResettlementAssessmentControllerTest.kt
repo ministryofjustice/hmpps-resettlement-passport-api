@@ -7,12 +7,13 @@ import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.Pathway
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.resettlementassessment.ResettlementAssessmentCompleteRequest
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.JwtAuthHelper
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.helpers.CustomJwtAuthorisationHelper
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.ResettlementAssessmentType
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettlementAssessmentService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditAction
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.audit.AuditService
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.resettlementassessmentstrategies.ResettlementAssessmentStrategy
+import uk.gov.justice.hmpps.kotlin.auth.AuthSource
 
 class ResettlementAssessmentControllerTest {
   @Mock
@@ -26,7 +27,7 @@ class ResettlementAssessmentControllerTest {
 
   private lateinit var resettlementAssessmentController: ResettlementAssessmentController
 
-  private var jwtAuthHelper = JwtAuthHelper()
+  private var jwtAuthorisationHelper = CustomJwtAuthorisationHelper()
 
   @BeforeEach
   fun beforeEach() {
@@ -43,8 +44,7 @@ class ResettlementAssessmentControllerTest {
   fun `Get resettlement assessment summary by noms ID - Check Audit call`() {
     val nomsId = "G4161UF"
     val assessmentType = ResettlementAssessmentType.BCST2
-    val token = jwtAuthHelper.createJwt("John Doe", authSource = "NOMIS")
-    val auth = "Bearer $token"
+    val auth = makeAuth()
     val details = """
       {"assessmentType":"BCST2"}
     """.trim().trimIndent()
@@ -60,8 +60,7 @@ class ResettlementAssessmentControllerTest {
     val assessmentType = ResettlementAssessmentType.RESETTLEMENT_PLAN
     val pathway = Pathway.HEALTH
     val request = ResettlementAssessmentCompleteRequest(questionsAndAnswers = listOf(), version = 1)
-    val token = jwtAuthHelper.createJwt("John Doe", authSource = "NOMIS")
-    val auth = "Bearer $token"
+    val auth = makeAuth()
     val details = """
       {"assessmentType":"RESETTLEMENT_PLAN","pathway":"HEALTH"}
     """.trim().trimIndent()
@@ -75,8 +74,7 @@ class ResettlementAssessmentControllerTest {
   fun `post submit assessment by noms ID - Check Audit call`() {
     val nomsId = "G4161UF"
     val assessmentType = ResettlementAssessmentType.BCST2
-    val token = jwtAuthHelper.createJwt("John Doe", authSource = "NOMIS")
-    val auth = "Bearer $token"
+    val auth = makeAuth()
     val details = """
       {"assessmentType":"BCST2"}
     """.trim().trimIndent()
@@ -90,8 +88,7 @@ class ResettlementAssessmentControllerTest {
   fun `get resettlement assessment by noms ID - Check Audit call`() {
     val nomsId = "G4161UF"
     val pathway = Pathway.HEALTH
-    val token = jwtAuthHelper.createJwt("John Doe", authSource = "NOMIS")
-    val auth = "Bearer $token"
+    val auth = makeAuth()
     val details = """
       {"pathway":"HEALTH"}
     """.trim().trimIndent()
@@ -100,4 +97,10 @@ class ResettlementAssessmentControllerTest {
 
     verify(auditService).audit(AuditAction.GET_ASSESSMENT, nomsId, auth, details)
   }
+
+  private fun makeAuth() = jwtAuthorisationHelper.createJwtAccessToken(
+    username = "john_doe",
+    authSource = AuthSource.NOMIS.source,
+    name = "John Doe",
+  ).let { "Bearer $it" }
 }

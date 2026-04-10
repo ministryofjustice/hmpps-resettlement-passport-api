@@ -21,9 +21,9 @@ data class CaseNote(
 )
 
 data class CaseNoteAmendment(
-  val caseNoteAmendmentId: Long,
-  val creationDateTime: LocalDateTime,
-  val authorUserName: String?,
+  val id: String?,
+  val creationDateTime: LocalDateTime?,
+  val authorUserName: String,
   val authorName: String,
   val authorUserId: String?,
   val additionalNoteText: String,

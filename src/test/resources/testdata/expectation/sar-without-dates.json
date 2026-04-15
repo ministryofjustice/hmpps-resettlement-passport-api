@@ -3,8 +3,7 @@
     "prisoner": {
       "nomsId": "G1458GV",
       "creationDate": "2024-01-01T12:21:38.709",
-      "prisonId": null,
-      "supportNeedsLegacyProfile": null
+      "prisonId": null
     },
     "assessments": [
       {
@@ -40,35 +39,13 @@
     ],
     "bankApplications": [
       {
-        "prisoner": {
-          "nomsId": "G1458GV",
-          "creationDate": "2024-01-01T12:21:38.709",
-          "prisonId": null,
-          "supportNeedsLegacyProfile": null
-        },
-        "logs": [],
         "applicationSubmittedDate": "2023-08-16T12:21:38.709",
         "currentStatus": "Application submitted",
         "bankName": "Nationwide",
         "bankResponseDate": null,
         "isAddedToPersonalItems": false,
-        "addedToPersonalItemsDate": null
-      }
-    ],
-    "deliusContacts": [
-      {
-        "pathway": "Accommodation",
-        "creationDateTime": "2023-08-16T12:21:38.709",
-        "occurenceDateTime": "2023-08-16T12:21:38.709",
-        "createdBy": "name1",
-        "text": "Some notes here"
-      },
-      {
-        "pathway": "Health",
-        "creationDateTime": "2024-06-01T12:21:38.709",
-        "occurenceDateTime": "2024-06-01T12:21:38.709",
-        "createdBy": "name1",
-        "text": "health notes"
+        "addedToPersonalItemsDate": null,
+        "creationDate": "2023-08-16T12:21:38.709"
       }
     ],
     "idApplications": [
@@ -200,8 +177,10 @@
     ],
     "resettlementAssessments": [
       {
+        "statusChangedTo": "SUPPORT_DECLINED",
         "assessmentType": "Immediate needs",
         "lastUpdated": "2023-05-22T12:40:13.933994",
+        "caseNoteText": "sadas",
         "questionsAndAnswers": [
           {
             "answer": "Social housing",
@@ -223,8 +202,10 @@
         "updatedBy": "User"
       },
       {
+        "statusChangedTo": "SUPPORT_NOT_REQUIRED",
         "assessmentType": "Immediate needs",
         "lastUpdated": "2024-05-22T15:45:51.383575",
+        "caseNoteText": "asdsada",
         "questionsAndAnswers": [
           {
             "answer": "No",
@@ -238,8 +219,10 @@
         "updatedBy": "User"
       },
       {
+        "statusChangedTo": "SUPPORT_DECLINED",
         "assessmentType": "Immediate needs",
         "lastUpdated": "2024-05-22T15:46:17.002205",
+        "caseNoteText": " feffd",
         "questionsAndAnswers": [
           {
             "answer": "No answer provided",
@@ -277,8 +260,10 @@
         "updatedBy": "User"
       },
       {
+        "statusChangedTo": "SUPPORT_DECLINED",
         "assessmentType": "Immediate needs",
         "lastUpdated": "2024-05-22T15:46:31.837468",
+        "caseNoteText": "sdsd",
         "questionsAndAnswers": [
           {
             "answer": "No",
@@ -292,8 +277,10 @@
         "updatedBy": "User"
       },
       {
+        "statusChangedTo": "SUPPORT_DECLINED",
         "assessmentType": "Immediate needs",
         "lastUpdated": "2024-05-22T15:46:50.480459",
+        "caseNoteText": "sdsds",
         "questionsAndAnswers": [
           {
             "answer": "No answer provided",
@@ -319,8 +306,10 @@
         "updatedBy": "User"
       },
       {
+        "statusChangedTo": "SUPPORT_DECLINED",
         "assessmentType": "Immediate needs",
         "lastUpdated": "2024-05-22T15:47:14.182755",
+        "caseNoteText": "sdsd",
         "questionsAndAnswers": [
           {
             "answer": "No answer provided",
@@ -350,8 +339,10 @@
         "updatedBy": "User"
       },
       {
+        "statusChangedTo": "SUPPORT_DECLINED",
         "assessmentType": "Immediate needs",
         "lastUpdated": "2024-05-22T15:47:28.145149",
+        "caseNoteText": "dfdfd",
         "questionsAndAnswers": [
           {
             "answer": "Yes",
@@ -365,8 +356,10 @@
         "updatedBy": "User"
       },
       {
+        "statusChangedTo": null,
         "assessmentType": "Immediate needs",
         "lastUpdated": "2024-05-22T15:54:35.535989",
+        "caseNoteText": null,
         "questionsAndAnswers": [
           {
             "answer": "Yes",
@@ -384,8 +377,10 @@
         "updatedBy": "User"
       },
       {
+        "statusChangedTo": "SUPPORT_DECLINED",
         "assessmentType": "Pre-release",
         "lastUpdated": "2024-05-22T16:02:41.310279",
+        "caseNoteText": "hello",
         "questionsAndAnswers": [
           {
             "answer": "Social housing",
@@ -407,8 +402,10 @@
         "updatedBy": "User"
       },
       {
+        "statusChangedTo": "SUPPORT_NOT_REQUIRED",
         "assessmentType": "Pre-release",
         "lastUpdated": "2024-05-22T16:05:17.294788",
+        "caseNoteText": "hello",
         "questionsAndAnswers": [
           {
             "answer": "No",
@@ -422,8 +419,10 @@
         "updatedBy": "User"
       },
       {
+        "statusChangedTo": "SUPPORT_DECLINED",
         "assessmentType": "Pre-release",
         "lastUpdated": "2024-05-22T16:05:40.499062",
+        "caseNoteText": "hello",
         "questionsAndAnswers": [
           {
             "answer": "No answer provided",
@@ -461,8 +460,10 @@
         "updatedBy": "User"
       },
       {
+        "statusChangedTo": "SUPPORT_DECLINED",
         "assessmentType": "Pre-release",
         "lastUpdated": "2024-05-22T16:05:57.32981",
+        "caseNoteText": "hello",
         "questionsAndAnswers": [
           {
             "answer": "Yes",
@@ -480,8 +481,10 @@
         "updatedBy": "User"
       },
       {
+        "statusChangedTo": "SUPPORT_DECLINED",
         "assessmentType": "Pre-release",
         "lastUpdated": "2024-05-22T16:06:14.28783",
+        "caseNoteText": "hello",
         "questionsAndAnswers": [
           {
             "answer": "No answer provided",
@@ -507,8 +510,10 @@
         "updatedBy": "User"
       },
       {
+        "statusChangedTo": "SUPPORT_DECLINED",
         "assessmentType": "Pre-release",
         "lastUpdated": "2024-05-22T16:06:32.454374",
+        "caseNoteText": "hello",
         "questionsAndAnswers": [
           {
             "answer": "No answer provided",
@@ -538,8 +543,10 @@
         "updatedBy": "User"
       },
       {
+        "statusChangedTo": "SUPPORT_DECLINED",
         "assessmentType": "Pre-release",
         "lastUpdated": "2024-05-22T16:06:48.238178",
+        "caseNoteText": "hello",
         "questionsAndAnswers": [
           {
             "answer": "Yes",
@@ -559,10 +566,7 @@
         "createdDate": "2020-09-01T12:00:00",
         "otherDetail": null,
         "supportNeed": {
-          "allowOtherDetail": false,
           "createdDate": "2020-01-01T00:00:00",
-          "excludeFromCount": false,
-          "hidden": false,
           "pathway": "Accommodation",
           "section": "Test support need",
           "title": "Used for exact creation date"
@@ -573,10 +577,7 @@
         "createdDate": "2022-09-01T12:00:00",
         "otherDetail": null,
         "supportNeed": {
-          "allowOtherDetail": false,
           "createdDate": "2020-01-01T00:00:00",
-          "excludeFromCount": false,
-          "hidden": false,
           "pathway": "Accommodation",
           "section": "Test support need",
           "title": "Used for exact creation date"
@@ -587,10 +588,7 @@
         "createdDate": "2023-09-01T12:00:00",
         "otherDetail": null,
         "supportNeed": {
-          "allowOtherDetail": false,
           "createdDate": "2020-01-01T00:00:00",
-          "excludeFromCount": false,
-          "hidden": false,
           "pathway": "Accommodation",
           "section": "Test support need",
           "title": "Used for exact creation date"
@@ -603,7 +601,6 @@
         "createdDate": "2020-09-01T12:00:00",
         "isPrison": false,
         "isProbation": true,
-        "prisonerSupportNeedId": 3,
         "status": "In progress",
         "updateText": "Support need in progress 1"
       },
@@ -612,7 +609,6 @@
         "createdDate": "2020-09-01T14:00:00",
         "isPrison": false,
         "isProbation": true,
-        "prisonerSupportNeedId": 3,
         "status": "In progress",
         "updateText": "Support need in progress 2"
       },
@@ -621,7 +617,6 @@
         "createdDate": "2022-09-01T14:00:00",
         "isPrison": false,
         "isProbation": true,
-        "prisonerSupportNeedId": 3,
         "status": "In progress",
         "updateText": "Support need in progress 3"
       },
@@ -630,7 +625,6 @@
         "createdDate": "2023-09-01T14:00:00",
         "isPrison": false,
         "isProbation": true,
-        "prisonerSupportNeedId": 3,
         "status": "Met",
         "updateText": "Support need met"
       }
@@ -697,29 +691,6 @@
         "title": "Title",
         "updatedAt": "2023-09-01T12:00:00",
         "updatedByUrn": "999999"
-      }
-    ],
-    "documents": [
-      {
-        "category": "LICENCE_CONDITIONS",
-        "creationDate": "2020-09-01T12:01:00",
-        "originalDocumentFileName": "license1.pdf",
-        "originalDocumentKey": "8ad7b2e2-7160-4731-8b85-bacf49756a23",
-        "pdfDocumentKey": "c33e3a56-545f-41ee-bb44-632746480f22"
-      },
-      {
-        "category": "LICENCE_CONDITIONS",
-        "creationDate": "2022-09-01T12:01:00",
-        "originalDocumentFileName": "license2.pdf",
-        "originalDocumentKey": "3e5a4c5b-86d8-4617-bfbe-15aa3a91dfd3",
-        "pdfDocumentKey": "32deeb98-30f4-4baa-b187-1b0276736797"
-      },
-      {
-        "category": "LICENCE_CONDITIONS",
-        "creationDate": "2023-09-01T12:01:00",
-        "originalDocumentFileName": "license3.pdf",
-        "originalDocumentKey": "10ad790a-6981-4b9c-bace-604c0468ec5b",
-        "pdfDocumentKey": "ed25e653-607f-428b-9c0d-06cc67465fb7"
       }
     ]
   },

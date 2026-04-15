@@ -428,9 +428,11 @@ class ResettlementAssessmentService(
     .map { convertFromResettlementAssessmentEntityToResettlementAssessmentSarContent(it, resettlementAssessmentStrategies) }
 
   data class ResettlementAssessmentSarContent(
+    val statusChangedTo: String?,
     val assessmentType: String,
     val lastUpdated: LocalDateTime,
     val updatedBy: String,
+    val caseNoteText: String?,
     val questionsAndAnswers: List<LatestResettlementAssessmentResponseQuestionAndAnswerSarContent>,
   )
 
@@ -483,9 +485,11 @@ class ResettlementAssessmentService(
       resettlementAssessmentStrategies,
     )
     return ResettlementAssessmentSarContent(
+      statusChangedTo = resettlementAssessmentEntity.statusChangedTo?.toString(),
       assessmentType = resettlementAssessmentEntity.assessmentType.displayName,
       lastUpdated = resettlementAssessmentEntity.creationDate,
       updatedBy = convertFullNameToSurname(resettlementAssessmentEntity.createdBy),
+      caseNoteText = resettlementAssessmentEntity.caseNoteText,
       questionsAndAnswers = questionsAndAnswers.map {
         LatestResettlementAssessmentResponseQuestionAndAnswerSarContent(
           it.questionTitle,
@@ -620,7 +624,7 @@ class ResettlementAssessmentService(
     .associate { it.nomsId to LastReport(type = it.assessmentType, dateCompleted = if (it.submissionDate != null) it.submissionDate!!.toLocalDate() else it.createdDate.toLocalDate()) }
 
   fun getProfileTagsByPrisonerId(prisonerId: Long): List<ProfileTagsSarContent> = profileTagsRepository.findAllByPrisonerId(prisonerId).map {
-    var tags: List<String> = it.profileTags.tags.map { tag -> getProfileTagDesc(tag) }
+    val tags: List<String> = it.profileTags.tags.map { tag -> getProfileTagDesc(tag) }
     ProfileTagsSarContent(ProfileTagListSarContent(tags), it.updatedDate)
   }
 

@@ -2,8 +2,7 @@
   "prisoner": {
     "nomsId": "G1458GV",
     "creationDate": "2024-01-01T12:21:38.709",
-    "prisonId": null,
-    "supportNeedsLegacyProfile": null
+    "prisonId": null
   },
   "assessments": [
     {
@@ -25,35 +24,13 @@
   ],
   "bankApplications": [
     {
-      "prisoner": {
-        "nomsId": "G1458GV",
-        "creationDate": "2024-01-01T12:21:38.709",
-        "prisonId": null,
-        "supportNeedsLegacyProfile": null
-      },
-      "logs": [],
       "applicationSubmittedDate": "2023-08-16T12:21:38.709",
       "currentStatus": "Application submitted",
       "bankName": "Nationwide",
       "bankResponseDate": null,
       "isAddedToPersonalItems": false,
-      "addedToPersonalItemsDate": null
-    }
-  ],
-  "deliusContacts": [
-    {
-      "pathway": "Accommodation",
-      "creationDateTime": "2023-08-16T12:21:38.709",
-      "occurenceDateTime": "2023-08-16T12:21:38.709",
-      "createdBy": "name1",
-      "text": "Some notes here"
-    },
-    {
-      "pathway": "Health",
-      "creationDateTime": "2024-06-01T12:21:38.709",
-      "occurenceDateTime": "2024-06-01T12:21:38.709",
-      "createdBy": "name1",
-      "text": "health notes"
+      "addedToPersonalItemsDate": null,
+      "creationDate": "2023-08-16T12:21:38.709"
     }
   ],
   "idApplications": [
@@ -185,9 +162,11 @@
   ],
   "resettlementAssessments": [
     {
+      "statusChangedTo": "SUPPORT_DECLINED",
       "assessmentType": "Pre-release",
       "lastUpdated": "2024-05-22T16:06:48.238178",
       "updatedBy": "User",
+      "caseNoteText": "hello",
       "questionsAndAnswers": [
         {
           "questionTitle": "Is the person in prison registered with a GP surgery outside of prison?",
@@ -200,9 +179,11 @@
       ]
     },
     {
+      "statusChangedTo": "SUPPORT_DECLINED",
       "assessmentType": "Pre-release",
       "lastUpdated": "2024-05-22T16:06:32.454374",
       "updatedBy": "User",
+      "caseNoteText": "hello",
       "questionsAndAnswers": [
         {
           "questionTitle": "Does the person in prison have a bank account?",
@@ -231,9 +212,11 @@
       ]
     },
     {
+      "statusChangedTo": "SUPPORT_DECLINED",
       "assessmentType": "Pre-release",
       "lastUpdated": "2024-05-22T16:06:14.28783",
       "updatedBy": "User",
+      "caseNoteText": "hello",
       "questionsAndAnswers": [
         {
           "questionTitle": "Did the person in prison have a job before custody?",
@@ -258,9 +241,11 @@
       ]
     },
     {
+      "statusChangedTo": "SUPPORT_DECLINED",
       "assessmentType": "Pre-release",
       "lastUpdated": "2024-05-22T16:05:57.32981",
       "updatedBy": "User",
+      "caseNoteText": "hello",
       "questionsAndAnswers": [
         {
           "questionTitle": "Does the person in prison have any previous or current drug misuse issues?",
@@ -277,9 +262,11 @@
       ]
     },
     {
+      "statusChangedTo": "SUPPORT_DECLINED",
       "assessmentType": "Pre-release",
       "lastUpdated": "2024-05-22T16:05:40.499062",
       "updatedBy": "User",
+      "caseNoteText": "hello",
       "questionsAndAnswers": [
         {
           "questionTitle": "Does the person in prison have a partner or spouse?",
@@ -316,9 +303,11 @@
       ]
     },
     {
+      "statusChangedTo": "SUPPORT_NOT_REQUIRED",
       "assessmentType": "Pre-release",
       "lastUpdated": "2024-05-22T16:05:17.294788",
       "updatedBy": "User",
+      "caseNoteText": "hello",
       "questionsAndAnswers": [
         {
           "questionTitle": "Does the person in prison want support managing their emotions?",
@@ -331,9 +320,11 @@
       ]
     },
     {
+      "statusChangedTo": "SUPPORT_DECLINED",
       "assessmentType": "Pre-release",
       "lastUpdated": "2024-05-22T16:02:41.310279",
       "updatedBy": "User",
+      "caseNoteText": "hello",
       "questionsAndAnswers": [
         {
           "questionTitle": "Where did the person in prison live before custody?",
@@ -354,9 +345,11 @@
       ]
     },
     {
+      "statusChangedTo": null,
       "assessmentType": "Immediate needs",
       "lastUpdated": "2024-05-22T15:54:35.535989",
       "updatedBy": "User",
+      "caseNoteText": null,
       "questionsAndAnswers": [
         {
           "questionTitle": "Does the person in prison have any previous or current drug misuse issues?",
@@ -373,9 +366,11 @@
       ]
     },
     {
+      "statusChangedTo": "SUPPORT_DECLINED",
       "assessmentType": "Immediate needs",
       "lastUpdated": "2024-05-22T15:47:28.145149",
       "updatedBy": "User",
+      "caseNoteText": "dfdfd",
       "questionsAndAnswers": [
         {
           "questionTitle": "Is the person in prison registered with a GP surgery outside of prison?",
@@ -388,9 +383,11 @@
       ]
     },
     {
+      "statusChangedTo": "SUPPORT_DECLINED",
       "assessmentType": "Immediate needs",
       "lastUpdated": "2024-05-22T15:47:14.182755",
       "updatedBy": "User",
+      "caseNoteText": "sdsd",
       "questionsAndAnswers": [
         {
           "questionTitle": "Does the person in prison have a bank account?",
@@ -419,9 +416,11 @@
       ]
     },
     {
+      "statusChangedTo": "SUPPORT_DECLINED",
       "assessmentType": "Immediate needs",
       "lastUpdated": "2024-05-22T15:46:50.480459",
       "updatedBy": "User",
+      "caseNoteText": "sdsds",
       "questionsAndAnswers": [
         {
           "questionTitle": "Did the person in prison have a job before custody?",
@@ -446,9 +445,11 @@
       ]
     },
     {
+      "statusChangedTo": "SUPPORT_DECLINED",
       "assessmentType": "Immediate needs",
       "lastUpdated": "2024-05-22T15:46:31.837468",
       "updatedBy": "User",
+      "caseNoteText": "sdsd",
       "questionsAndAnswers": [
         {
           "questionTitle": "Does the person in prison have any previous or current drug misuse issues?",
@@ -461,9 +462,11 @@
       ]
     },
     {
+      "statusChangedTo": "SUPPORT_DECLINED",
       "assessmentType": "Immediate needs",
       "lastUpdated": "2024-05-22T15:46:17.002205",
       "updatedBy": "User",
+      "caseNoteText": " feffd",
       "questionsAndAnswers": [
         {
           "questionTitle": "Does the person in prison have a partner or spouse?",
@@ -500,9 +503,11 @@
       ]
     },
     {
+      "statusChangedTo": "SUPPORT_NOT_REQUIRED",
       "assessmentType": "Immediate needs",
       "lastUpdated": "2024-05-22T15:45:51.383575",
       "updatedBy": "User",
+      "caseNoteText": "asdsada",
       "questionsAndAnswers": [
         {
           "questionTitle": "Does the person in prison want support managing their emotions?",
@@ -521,9 +526,6 @@
         "pathway": "Accommodation",
         "section": "Test support need",
         "title": "Used for exact creation date",
-        "hidden": false,
-        "excludeFromCount": false,
-        "allowOtherDetail": false,
         "createdDate": "2020-01-01T00:00:00"
       },
       "otherDetail": null,
@@ -533,7 +535,6 @@
   ],
   "supportNeedUpdates": [
     {
-      "prisonerSupportNeedId": 3,
       "createdBy": "User",
       "createdDate": "2023-09-01T14:00:00",
       "updateText": "Support need met",
@@ -576,15 +577,6 @@
       "updatedByUrn": "999999",
       "creationDate": "2023-09-01T12:00:00",
       "updatedAt": "2023-09-01T12:00:00"
-    }
-  ],
-  "documents": [
-    {
-      "originalDocumentKey": "10ad790a-6981-4b9c-bace-604c0468ec5b",
-      "pdfDocumentKey": "ed25e653-607f-428b-9c0d-06cc67465fb7",
-      "creationDate": "2023-09-01T12:01:00",
-      "category": "LICENCE_CONDITIONS",
-      "originalDocumentFileName": "license3.pdf"
     }
   ]
 }

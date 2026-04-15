@@ -184,7 +184,7 @@ class BankApplicationServiceTest {
           isAddedToPersonalItems = null,
           addedToPersonalItemsDate = null,
           bankName = "Lloyds",
-          creationDate = LocalDateTime.parse("2023-08-17T12:00:01")
+          creationDate = LocalDateTime.parse("2023-08-17T12:00:01"),
         ),
       )
 

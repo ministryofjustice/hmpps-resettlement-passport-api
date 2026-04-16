@@ -24,11 +24,9 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Pris
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.BankApplicationRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.BankApplicationStatusLogRepository
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.BankApplicationService.BankApplicationLogSarContent
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.BankApplicationService.BankApplicationSarContent
 import java.time.LocalDateTime
 import java.util.*
-import kotlin.collections.emptyList
 
 @ExtendWith(MockitoExtension::class)
 class BankApplicationServiceTest {
@@ -173,28 +171,20 @@ class BankApplicationServiceTest {
     @Test
     fun `should transform db records into a list of BankApplicationResponse`() {
       val bankApplicationEntity = BankApplicationEntity(1, prisoner.id(), setOf(BankApplicationStatusLogEntity(null, null, "Pending", fakeNow)), fakeNow, fakeNow, status = "Pending", isDeleted = false, bankName = "Lloyds")
-      val logEntities = listOf(BankApplicationStatusLogEntity(1, bankApplicationEntity, "Pending", fakeNow))
 
       Mockito.`when`(bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(listOf(bankApplicationEntity))
-      Mockito.`when`(bankApplicationStatusLogRepository.findByBankApplication(any())).thenReturn(logEntities)
 
       val actual = bankApplicationService.getBankApplicationsByPrisonerAndCreationDate(prisoner, fakeNow, fakeNow)
 
       val expected = listOf(
         BankApplicationSarContent(
-          prisoner = BankApplicationService.PrisonerSarContent(prisoner.nomsId, prisoner.creationDate, prisoner.prisonId, prisoner.supportNeedsLegacyProfile),
-          logs = listOf(
-            BankApplicationLogSarContent(
-              status = "Pending",
-              changeDate = fakeNow,
-            ),
-          ),
           applicationSubmittedDate = fakeNow,
           currentStatus = "Pending",
           bankResponseDate = null,
           isAddedToPersonalItems = null,
           addedToPersonalItemsDate = null,
           bankName = "Lloyds",
+          creationDate = LocalDateTime.parse("2023-08-17T12:00:01"),
         ),
       )
 

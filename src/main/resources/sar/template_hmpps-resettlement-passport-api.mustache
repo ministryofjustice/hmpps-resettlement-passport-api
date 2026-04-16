@@ -118,60 +118,18 @@
                 <td>{{ optionalValue (formatDate addedToPersonalItemsDate) }}</td>
             </tr>
         </table>
-        <h4>Status Updates</h4>
         <table class="data-table">
             <tr>
-                <td class="data-column-50">Status</td>
-                <td class="data-column-50">Change date</td>
+                <td class="data-column-35">Creation date</td>
             </tr>
-        {{#logs}}
             <tr>
-                <td>{{ optionalValue status }}</td>
-                <td>{{ optionalValue (formatDate changeDate)}}</td>
+                <td>{{ optionalValue (formatDate creationDate) }}</td>
             </tr>
-        {{/logs}}
-        {{^logs}}
-            <tr>
-                <td>No Data Held</td>
-                <td>No Data Held</td>
-            </tr>
-        {{/logs}}
         </table>
     {{/bankApplications}}
     {{^bankApplications}}
         <p>No Data Held</p>
     {{/bankApplications}}
-
-    <br/>
-    <h2>Probation contacts</h2>
-    {{#deliusContacts}}
-        <h4>Case note</h4>
-        <table class="data-table">
-            <tr>
-                <td class="data-column-25">Pathway</td>
-                <td class="data-column-25">Creation date and time</td>
-                <td class="data-column-25">Occurrence date and time</td>
-                <td class="data-column-25">Created by</td>
-            </tr>
-            <tr>
-                <td>{{ optionalValue pathway }}</td>
-                <td>{{ optionalValue (formatDate creationDateTime) }}</td>
-                <td>{{ optionalValue (formatDate occurrenceDateTime) }}</td>
-                <td>{{ optionalValue createdBy }}</td>
-            </tr>
-        </table>
-        <table class="data-table">
-            <tr>
-                <td class="data-column-25">Text</td>
-            </tr>
-            <tr>
-                <td>{{ optionalValue text }}</td>
-            </tr>
-        </table>
-    {{/deliusContacts}}
-    {{^deliusContacts}}
-        <p>No Data Held</p>
-    {{/deliusContacts}}
 
     <br/>
     <h2>ID Applications</h2>
@@ -301,6 +259,16 @@
         </table>
         <table class="data-table">
             <tr>
+                <td class="data-column-30">Resettlement status set to</td>
+                <td class="data-column-30">Case note</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue statusChangedTo }}</td>
+                <td>{{ optionalValue caseNoteText }}</td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <tr>
                 <td class="data-column-50">Question title</td>
                 <td class="data-column-50">Answer</td>
             </tr>
@@ -342,16 +310,10 @@
         </table>
         <table class="data-table">
             <tr>
-                <td class="data-column-30">Title</td>
-                <td class="data-column-25">Is hidden</td>
-                <td class="data-column-20">Exclude from count</td>
-                <td class="data-column-25">Allow other detail</td>
+                <td class="data-column-50">Title</td>
             </tr>
             <tr>
                 <td>{{ optionalValue supportNeed.title }}</td>
-                <td>{{ convertBoolean supportNeed.hidden }}</td>
-                <td>{{ convertBoolean supportNeed.excludeFromCount }}</td>
-                <td>{{ convertBoolean supportNeed.allowOtherDetail }}</td>
             </tr>
         </table>
         <table class="summary-list">
@@ -368,12 +330,10 @@
         <h3>Support Need Update</h3>
         <table class="data-table">
             <tr>
-                <td class="data-column-30">Support Need ID</td>
-                <td class="data-column-30">Created by</td>
-                <td class="data-column-30">Created date</td>
+                <td class="data-column-50">Created by</td>
+                <td class="data-column-50">Created date</td>
             </tr>
             <tr>
-                <td>{{ optionalValue prisonerSupportNeedId }}</td>
                 <td>{{ optionalValue createdBy }}</td>
                 <td>{{ optionalValue (formatDate createdDate) }}</td>
             </tr>
@@ -462,27 +422,6 @@
     {{^todoItems}}
         <p>No Data Held</p>
     {{/todoItems}}
-
-    <br/>
-    <h2>Documents</h2>
-    {{#documents}}
-        <h3>Document</h3>
-        <table class="data-table">
-            <tr>
-                <td class="data-column-40">Original document filename</td>
-                <td class="data-column-30">Category</td>
-                <td class="data-column-30">Creation date</td>
-            </tr>
-            <tr>
-                <td>{{ optionalValue originalDocumentFileName }}</td>
-                <td>{{ optionalValue category }}</td>
-                <td>{{ optionalValue (formatDate creationDate) }}</td>
-            </tr>
-        </table>
-    {{/documents}}
-    {{^documents}}
-        <p>No Data Held</p>
-    {{/documents}}
 {{/.}}
 {{^.}}
     <p>No data held</p>

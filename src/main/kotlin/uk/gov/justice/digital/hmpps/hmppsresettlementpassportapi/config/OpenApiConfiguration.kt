@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config
 
+import io.swagger.v3.core.converter.ModelConverters
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Contact
@@ -18,6 +19,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettlementSarContent
+import uk.gov.justice.hmpps.kotlin.sar.HmppsSubjectAccessRequestContent
 
 @Configuration
 class OpenApiConfiguration(
@@ -55,7 +58,8 @@ class OpenApiConfiguration(
             .flows(getFlows())
             .type(SecurityScheme.Type.OAUTH2)
             .openIdConnectUrl("$oauthUrl/.well-known/openid-configuration"),
-        ),
+        )
+        .addSecuritySchemes("sar-role", SecurityScheme().addBearerJwtRequirement("ROLE_SAR_DATA_ACCESS")),
     )
     .addSecurityItem(SecurityRequirement().addList("bearer-jwt", listOf("read", "write")))
     .addSecurityItem(SecurityRequirement().addList("hmpps-auth"))
@@ -93,5 +97,34 @@ class OpenApiConfiguration(
         }
       }
     }
+    typedContentForSar(it)
   }
+
+  private fun typedContentForSar(openApi: OpenAPI) {
+    // register the SAR Content DTO
+    val resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(ResettlementSarContent::class.java).also {
+      openApi.components.addSchemas(it.schema.name, it.schema)
+      it.referencedSchemas.forEach { (key, schema) -> openApi.components.addSchemas(key, schema) }
+    }
+    // Touch up the SAR schema
+    openApi.components.schemas[HmppsSubjectAccessRequestContent::class.simpleName]?.let { sarSchema ->
+      sarSchema.properties["content"] = resolvedSchema.schema
+      sarSchema.properties["attachments"]?.let {
+        it.description = "(Not in use) ${it.description}"
+        it.example = null
+      }
+    }
+    // Add security requirements to SAR endpoints
+    listOf(
+      "/subject-access-request",
+      "/subject-access-request/template",
+    ).forEach { openApi.paths[it]!!.get!!.security = listOf(SecurityRequirement().addList("sar-role", listOf("read"))) }
+  }
+
+  private fun SecurityScheme.addBearerJwtRequirement(role: String): SecurityScheme = type(SecurityScheme.Type.HTTP)
+    .scheme("bearer")
+    .bearerFormat("JWT")
+    .`in`(SecurityScheme.In.HEADER)
+    .name("Authorization")
+    .description("A HMPPS Auth access token with the `$role` role.")
 }

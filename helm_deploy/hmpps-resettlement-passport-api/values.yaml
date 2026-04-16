@@ -1,5 +1,6 @@
 generic-service:
   nameOverride: hmpps-resettlement-passport-api
+  productId: "DPS042"
   resources:
     requests:
       memory: 1G

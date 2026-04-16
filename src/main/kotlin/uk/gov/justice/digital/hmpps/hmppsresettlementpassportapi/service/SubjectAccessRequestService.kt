@@ -10,8 +10,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.Assessm
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.AssessmentService.AssessmentSkipSarContent
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.BankApplicationService.BankApplicationSarContent
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.CaseAllocationService.CaseAllocationSarContent
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.DeliusContactService.PathwayCaseNoteSarContent
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.DocumentService.DocumentsSarContent
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.IdApplicationService.IdApplicationSarContent
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.PathwayAndStatusService.PathwayStatusSarContent
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.ResettlementAssessmentService.ProfileTagsSarContent
@@ -29,7 +27,6 @@ class SubjectAccessRequestService(
   private val prisonerRepository: PrisonerRepository,
   private val assessmentService: AssessmentService,
   private val bankApplicationService: BankApplicationService,
-  private val deliusContactService: DeliusContactService,
   private val idApplicationService: IdApplicationService,
   private val pathwayAndStatusService: PathwayAndStatusService,
   private val resettlementAssessmentService: ResettlementAssessmentService,
@@ -37,7 +34,6 @@ class SubjectAccessRequestService(
   private val supportNeedsService: SupportNeedsService,
   private val caseAllocationService: CaseAllocationService,
   private val todoService: TodoService,
-  private val documentService: DocumentService,
 ) : HmppsPrisonSubjectAccessRequestService {
 
   override fun getPrisonContentFor(
@@ -61,12 +57,10 @@ class SubjectAccessRequestService(
           nomsId = prisoner.nomsId,
           creationDate = prisoner.creationDate,
           prisonId = prisoner.prisonId,
-          supportNeedsLegacyProfile = prisoner.supportNeedsLegacyProfile,
         ),
         assessments = assessmentService.getAssessmentByPrisonerIdAndCreationDate(prisonerId, startDate, endDate),
         skippedAssessments = assessmentService.getSkippedAssessmentsForPrisoner(prisonerId, startDate, endDate),
         bankApplications = bankApplicationService.getBankApplicationsByPrisonerAndCreationDate(prisoner, startDate, endDate),
-        deliusContacts = deliusContactService.getAllCaseNotesByPrisonerIdAndCreationDate(prisonerId, startDate, endDate),
         idApplications = idApplicationService.getIdApplicationByPrisonerIdAndCreationDate(prisonerId, startDate, endDate),
         pathwayStatus = pathwayAndStatusService.findAllPathwayStatusSarContentForPrisoner(prisoner),
         statusSummary = getPathwayStatus(prisonerId, startDate, endDate),
@@ -76,7 +70,6 @@ class SubjectAccessRequestService(
         caseAllocations = caseAllocationService.getCaseAllocationHistoryByPrisonerId(prisonerId, startDate, endDate),
         profileTags = resettlementAssessmentService.getProfileTagsByPrisonerId(prisonerId),
         todoItems = todoService.getByPrisonerId(prisonerId, startDate, endDate),
-        documents = documentService.getDocuments(prisonerId, startDate, endDate),
       ),
     )
   }
@@ -108,9 +101,6 @@ class SubjectAccessRequestService(
         it.supportNeed.pathway.displayName,
         it.supportNeed.section,
         it.supportNeed.title,
-        it.supportNeed.hidden,
-        it.supportNeed.excludeFromCount,
-        it.supportNeed.allowOtherDetail,
         it.supportNeed.createdDate,
       ),
       it.otherDetail,
@@ -121,7 +111,6 @@ class SubjectAccessRequestService(
 
   private fun getSupportNeedUpdatesSarContent(supportNeedUpdates: List<PrisonerSupportNeedUpdateEntity>): List<PrisonerSupportNeedUpdateSarContent> = supportNeedUpdates.map {
     PrisonerSupportNeedUpdateSarContent(
-      it.prisonerSupportNeedId,
       convertFullNameToSurname(it.createdBy),
       it.createdDate,
       it.updateText,
@@ -137,7 +126,6 @@ data class ResettlementSarContent(
   val assessments: List<AssessmentSarContent>,
   val skippedAssessments: List<AssessmentSkipSarContent>,
   val bankApplications: List<BankApplicationSarContent>,
-  val deliusContacts: List<PathwayCaseNoteSarContent>,
   val idApplications: List<IdApplicationSarContent>,
   val pathwayStatus: List<PathwayStatusSarContent>,
   val statusSummary: List<ResettlementAssessmentPathwayStatus>,
@@ -147,14 +135,12 @@ data class ResettlementSarContent(
   val caseAllocations: List<CaseAllocationSarContent>,
   val profileTags: List<ProfileTagsSarContent>,
   val todoItems: List<TodoSarContent>,
-  val documents: List<DocumentsSarContent>,
 )
 
 data class PrisonerSarContent(
   val nomsId: String,
   val creationDate: LocalDateTime = LocalDateTime.now(),
   var prisonId: String?,
-  var supportNeedsLegacyProfile: Boolean? = null,
 )
 
 data class ResettlementAssessmentPathwayStatus(
@@ -178,14 +164,10 @@ data class SupportNeedSarContent(
   val pathway: String,
   val section: String?,
   val title: String,
-  val hidden: Boolean,
-  val excludeFromCount: Boolean,
-  val allowOtherDetail: Boolean,
   val createdDate: LocalDateTime,
 )
 
 data class PrisonerSupportNeedUpdateSarContent(
-  val prisonerSupportNeedId: Long,
   val createdBy: String,
   val createdDate: LocalDateTime,
   val updateText: String?,

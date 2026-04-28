@@ -57,29 +57,9 @@
   ],
   "pathwayStatus": [
     {
-      "pathway": "Accommodation",
-      "status": "Not started",
-      "updatedDate": "2023-08-16T12:21:44.234"
-    },
-    {
-      "pathway": "Attitudes, thinking and behaviour",
-      "status": "In progress",
-      "updatedDate": "2023-08-17T12:28:10.466"
-    },
-    {
-      "pathway": "Children, families and communities",
+      "pathway": "Health",
       "status": "Support not required",
-      "updatedDate": "2023-08-17T12:28:10.475"
-    },
-    {
-      "pathway": "Drugs and alcohol",
-      "status": "Support declined",
-      "updatedDate": "2023-08-17T12:28:10.479"
-    },
-    {
-      "pathway": "Education, skills and work",
-      "status": "Done",
-      "updatedDate": "2023-08-17T12:28:10.483"
+      "updatedDate": "2023-08-17T12:28:10.493"
     },
     {
       "pathway": "Finance and ID",
@@ -87,9 +67,29 @@
       "updatedDate": "2023-08-17T12:28:10.49"
     },
     {
-      "pathway": "Health",
+      "pathway": "Education, skills and work",
+      "status": "Done",
+      "updatedDate": "2023-08-17T12:28:10.483"
+    },
+    {
+      "pathway": "Drugs and alcohol",
+      "status": "Support declined",
+      "updatedDate": "2023-08-17T12:28:10.479"
+    },
+    {
+      "pathway": "Children, families and communities",
       "status": "Support not required",
-      "updatedDate": "2023-08-17T12:28:10.493"
+      "updatedDate": "2023-08-17T12:28:10.475"
+    },
+    {
+      "pathway": "Attitudes, thinking and behaviour",
+      "status": "In progress",
+      "updatedDate": "2023-08-17T12:28:10.466"
+    },
+    {
+      "pathway": "Accommodation",
+      "status": "Not started",
+      "updatedDate": "2023-08-16T12:21:44.234"
     }
   ],
   "statusSummary": [

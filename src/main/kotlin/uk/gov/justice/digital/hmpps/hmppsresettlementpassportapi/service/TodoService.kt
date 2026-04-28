@@ -37,7 +37,7 @@ class TodoService(
       ?: throw ResourceNotFoundException("No item found for $id")
   }
 
-  fun getByPrisonerId(prisonerId: Long, startDate: LocalDateTime, endDate: LocalDateTime): List<TodoSarContent> = todoRepository.findAllByPrisonerIdAndCreationDateBetween(prisonerId, startDate, endDate).map {
+  fun getByPrisonerIdForSAR(prisonerId: Long, startDate: LocalDateTime, endDate: LocalDateTime): List<TodoSarContent> = todoRepository.findAllByPrisonerIdAndCreationDateBetweenOrderByUpdatedAtDesc(prisonerId, startDate, endDate).map {
     TodoSarContent(
       it.title,
       it.notes,

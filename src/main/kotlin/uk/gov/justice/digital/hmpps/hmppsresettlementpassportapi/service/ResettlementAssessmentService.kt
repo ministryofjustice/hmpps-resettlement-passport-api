@@ -418,13 +418,13 @@ class ResettlementAssessmentService(
     }
   }
 
-  fun getAllResettlementAssessmentsByPrisonerIdAndCreationDate(
+  fun getAllResettlementAssessmentsByPrisonerIdForSAR(
     prisonerId: Long,
     fromDate: LocalDateTime,
     toDate: LocalDateTime,
     resettlementAssessmentStrategies: ResettlementAssessmentStrategy,
   ): List<ResettlementAssessmentSarContent> = resettlementAssessmentRepository
-    .findAllByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc(prisonerId, fromDate, toDate)
+    .findAllByPrisonerIdAndCreationDateBetweenOrderBySubmissionDateOrCreationDateDesc(prisonerId, fromDate, toDate)
     .map { convertFromResettlementAssessmentEntityToResettlementAssessmentSarContent(it, resettlementAssessmentStrategies) }
 
   data class ResettlementAssessmentSarContent(
@@ -623,7 +623,7 @@ class ResettlementAssessmentService(
   fun getLastReportToNomsIdByPrisonId(prisonId: String) = resettlementAssessmentRepository.findLastReportByPrison(prisonId)
     .associate { it.nomsId to LastReport(type = it.assessmentType, dateCompleted = if (it.submissionDate != null) it.submissionDate!!.toLocalDate() else it.createdDate.toLocalDate()) }
 
-  fun getProfileTagsByPrisonerId(prisonerId: Long): List<ProfileTagsSarContent> = profileTagsRepository.findAllByPrisonerId(prisonerId).map {
+  fun getProfileTagsByPrisonerIdForSAR(prisonerId: Long): List<ProfileTagsSarContent> = profileTagsRepository.findAllByPrisonerIdOrderByUpdatedDateDesc(prisonerId).map {
     val tags: List<String> = it.profileTags.tags.map { tag -> getProfileTagDesc(tag) }
     ProfileTagsSarContent(ProfileTagListSarContent(tags), it.updatedDate)
   }

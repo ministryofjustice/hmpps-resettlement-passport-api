@@ -13,7 +13,7 @@ import java.util.*
 interface TodoRepository : JpaRepository<TodoEntity, Long> {
   fun findAllByPrisonerId(prisonerId: Long, sort: Sort = Sort.unsorted()): List<TodoEntity>
 
-  fun findAllByPrisonerIdAndCreationDateBetween(prisonerId: Long, from: LocalDateTime, to: LocalDateTime): List<TodoEntity>
+  fun findAllByPrisonerIdAndCreationDateBetweenOrderByUpdatedAtDesc(prisonerId: Long, from: LocalDateTime, to: LocalDateTime): List<TodoEntity>
 
   @Modifying
   @Query(

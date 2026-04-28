@@ -41,7 +41,7 @@ class PathwayAndStatusService(
 
   fun findAllPathwayStatusForPrisoner(prisoner: PrisonerEntity): List<PathwayStatusEntity> = pathwayStatusRepository.findByPrisonerId(prisoner.id())
 
-  fun findAllPathwayStatusSarContentForPrisoner(prisoner: PrisonerEntity): List<PathwayStatusSarContent> = pathwayStatusRepository.findByPrisonerId(prisoner.id()).map {
+  fun findAllPathwayStatusByPrisonerIdForSAR(prisonerId: Long): List<PathwayStatusSarContent> = pathwayStatusRepository.findByPrisonerIdOrderByUpdatedDateDesc(prisonerId).map {
     PathwayStatusSarContent(it.pathway.displayName, it.status.displayText, it.updatedDate)
   }
 

@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 
 @Repository
 interface CaseAllocationRepository : JpaRepository<CaseAllocationEntity, Long> {
-  fun findByPrisonerIdAndCreationDateBetween(prisonerId: Long, from: LocalDateTime, to: LocalDateTime): List<CaseAllocationEntity>
+  fun findByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc(prisonerId: Long, from: LocalDateTime, to: LocalDateTime): List<CaseAllocationEntity>
 
   fun findByPrisonerIdAndIsDeleted(prisonerId: Long, isDeleted: Boolean = false): CaseAllocationEntity?
 

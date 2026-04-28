@@ -47,11 +47,11 @@ class AssessmentService(
   )
 
   @Transactional
-  fun getAssessmentByPrisonerIdAndCreationDate(
+  fun getAssessmentByPrisonerIdForSAR(
     prisonerId: Long,
     fromDate: LocalDateTime,
     toDate: LocalDateTime,
-  ): List<AssessmentSarContent> = assessmentRepository.findByPrisonerIdAndCreationDateBetween(prisonerId, fromDate, toDate)
+  ): List<AssessmentSarContent> = assessmentRepository.findByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc(prisonerId, fromDate, toDate)
     .map { assessmentEntity ->
       AssessmentSarContent(
         assessmentEntity.creationDate,
@@ -111,9 +111,8 @@ class AssessmentService(
     deleteAssessment(assessment)
   }
 
-  fun getSkippedAssessmentsForPrisoner(prisonerId: Long, fromDate: LocalDateTime, toDate: LocalDateTime): List<AssessmentSkipSarContent> = assessmentSkipRepository.findByPrisonerIdAndCreationDateBetween(prisonerId, fromDate, toDate).map {
-    AssessmentSkipSarContent(it.assessmentType.displayName, it.reason.displayText, it.moreInfo, it.createdBy, it.creationDate)
-  }
+  fun getSkippedAssessmentsByPrisonerIdForSAR(prisonerId: Long, fromDate: LocalDateTime, toDate: LocalDateTime): List<AssessmentSkipSarContent> = assessmentSkipRepository.findByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc(prisonerId, fromDate, toDate)
+    .map { AssessmentSkipSarContent(it.assessmentType.displayName, it.reason.displayText, it.moreInfo, it.createdBy, it.creationDate) }
 
   data class AssessmentSkipSarContent(
     val assessmentType: String,

@@ -1,12 +1,11 @@
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-  val kotlinVersion = "2.3.20"
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.1.2"
+  val kotlinVersion = "2.3.21"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.2.2"
   id("org.springdoc.openapi-gradle-plugin") version "1.9.0"
   id("jacoco")
   id("org.sonarqube") version "6.2.0.5505"
-  id("org.owasp.dependencycheck") version "12.1.3"
   kotlin("plugin.spring") version kotlinVersion
   kotlin("plugin.jpa") version kotlinVersion
   kotlin("plugin.serialization") version kotlinVersion
@@ -36,7 +35,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-redis")
   implementation("org.springframework.boot:spring-boot-starter-flyway")
 
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:7.3.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:7.3.1")
   implementation("software.amazon.awssdk:s3")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
@@ -49,7 +48,7 @@ dependencies {
   runtimeOnly("org.postgresql:postgresql:42.7.7")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
 
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
 
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
@@ -64,13 +63,13 @@ dependencies {
   implementation("org.json:json:20250517")
   implementation("io.github.oshai:kotlin-logging-jvm:7.0.7")
 
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.1.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.1.1")
 
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.1.0")
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-test-support:2.1.1")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.1.1")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-test-support:2.3.0")
   testImplementation("org.awaitility:awaitility-kotlin")
   testImplementation("org.mockito:mockito-inline:5.2.0")
-  testImplementation("io.swagger.parser.v3:swagger-parser:2.1.39")
+  testImplementation("io.swagger.parser.v3:swagger-parser:2.1.40")
   testImplementation("org.springframework.boot:spring-boot-webtestclient")
   testImplementation("org.springframework.security:spring-security-test")
   testImplementation("org.wiremock:wiremock-standalone:3.13.2")

@@ -148,5 +148,3 @@ clamav:
 app:
   feature-flags:
     readOnlyMode: ${READ_ONLY_MODE_VALUE}
-
-springdoc.swagger-ui.version: 5.32.1

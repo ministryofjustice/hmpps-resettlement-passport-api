@@ -38,7 +38,7 @@ class CvlApiServiceTest {
     val licenceId = 123L
     val expectedLicenceConditions = createExpectedLicenceConditions()
     val mockedLicence = createMockLicence()
-    every { webClient.get().uri(any<String>(), any<Map<String, Long>>()).retrieve().bodyToMono(any<ParameterizedTypeReference<*>>()) } returns Mono.just(mockedLicence)
+    every { webClient.get().uri(any<String>(), any<Map<String, Long>>()).retrieve().bodyToMono(any<ParameterizedTypeReference<Licence>>()) } returns Mono.just(mockedLicence)
 
     val result = cvlApiService.getLicenceConditionsByLicenceId(licenceId)
 

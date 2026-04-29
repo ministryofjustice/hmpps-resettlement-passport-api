@@ -57,7 +57,7 @@ class AssessmentRepositoryTest : RepositoryTestBase() {
     val prisoner = prisonerRepository.save(PrisonerEntity(null, "NOM1234", currentTime, "xyz1"))
     val assessments = listOf(
       currentTime to null,
-      currentTime.plusHours(1) to currentTime.plusHours(2)
+      currentTime.plusHours(1) to currentTime.plusHours(2),
     ).map { (creationTime, deletionTime) ->
       val idDocument = setOf(IdTypeEntity(1, "Birth certificate"))
       AssessmentEntity(null, prisoner.id(), creationTime, creationTime, isBankAccountRequired = true, isIdRequired = true, idDocument, true, deletionTime)

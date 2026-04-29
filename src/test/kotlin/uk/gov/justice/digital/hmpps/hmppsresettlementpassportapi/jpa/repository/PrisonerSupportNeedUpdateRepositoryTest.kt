@@ -114,7 +114,7 @@ class PrisonerSupportNeedUpdateRepositoryTest : RepositoryTestBase() {
     @Test
     @Sql("classpath:testdata/sql/seed-prisoner-support-needs-1.sql")
     fun `should return matching updates within date range`() {
-      val searchWithinRange = prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndCreatedDateBetween(
+      val searchWithinRange = prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndCreatedDateBetweenOrderByCreatedDateDesc(
         listOf(2, 99, 100),
         searchDate.minusHours(1),
         searchDate.plusHours(1),
@@ -125,7 +125,7 @@ class PrisonerSupportNeedUpdateRepositoryTest : RepositoryTestBase() {
     @Test
     @Sql("classpath:testdata/sql/seed-prisoner-support-needs-1.sql")
     fun `should not return updates outside of date range`() {
-      val searchOutOfRange = prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndCreatedDateBetween(
+      val searchOutOfRange = prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndCreatedDateBetweenOrderByCreatedDateDesc(
         listOf(2, 99, 100),
         searchDate.minusHours(2),
         searchDate.minusHours(1),
@@ -136,7 +136,7 @@ class PrisonerSupportNeedUpdateRepositoryTest : RepositoryTestBase() {
     @Test
     @Sql("classpath:testdata/sql/seed-prisoner-support-needs-1.sql")
     fun `should not return updates that don't match on support need id`() {
-      val searchNoMatchForSupportNeedId = prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndCreatedDateBetween(
+      val searchNoMatchForSupportNeedId = prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndCreatedDateBetweenOrderByCreatedDateDesc(
         listOf(99, 100),
         searchDate.minusHours(1),
         searchDate.plusHours(1),

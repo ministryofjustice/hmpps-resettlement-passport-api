@@ -84,46 +84,46 @@ class CaseAllocationRepositoryTest : RepositoryTestBase() {
   }
 
   @Test
-  fun `test findByPrisonerIdAndCreationDateBetween query`() {
+  fun `test findByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc query`() {
     // Seed database with prisoners and case allocations
     val prisoner1 = prisonerRepository.save(PrisonerEntity(null, "NOMS1", LocalDateTime.parse("2023-12-13T12:00:00"), "MDI"))
     val prisoner2 = prisonerRepository.save(PrisonerEntity(null, "NOMS2", LocalDateTime.parse("2023-12-13T12:00:00"), "MDI"))
 
     val searchDate = LocalDate.now().atTime(LocalTime.NOON)
 
+    val makeCaseAllocation: (staffId: Int, creationDate: LocalDateTime, deletionDate: LocalDateTime?) -> CaseAllocationEntity = { staffId, creationDate, deletionDate ->
+      CaseAllocationEntity(
+        prisonerId = prisoner2.id(),
+        staffId = staffId,
+        staffFirstname = "PSO",
+        staffLastname = "Staff $staffId",
+        isDeleted = deletionDate != null,
+        creationDate = creationDate,
+        deletionDate = deletionDate,
+      )
+    }
+
+    // save in chronicle order:
     val caseAllocations = listOf(
-      CaseAllocationEntity(
-        prisonerId = prisoner2.id(),
-        staffId = 1,
-        staffFirstname = "PSO",
-        staffLastname = "Staff 1",
-        isDeleted = true,
-        creationDate = searchDate.minusDays(5),
-      ),
-      CaseAllocationEntity(
-        prisonerId = prisoner2.id(),
-        staffId = 2,
-        staffFirstname = "PSO",
-        staffLastname = "Staff 2",
-        isDeleted = true,
-        creationDate = searchDate.minusDays(5),
-      ),
-      CaseAllocationEntity(
-        prisonerId = prisoner2.id(),
-        staffId = 2,
-        staffFirstname = "PSO",
-        staffLastname = "Staff 3",
-        isDeleted = false,
-        creationDate = searchDate.minusDays(1),
-      ),
+      makeCaseAllocation(1, searchDate.minusDays(5), searchDate), // created 5 days ago, deleted today
+      makeCaseAllocation(2, searchDate.minusDays(3), searchDate), // created 3 days ago, deleted today
+      makeCaseAllocation(3, searchDate.minusDays(1), null), // created 1 day ago, still active (not deleted)
     )
+
+    // search range: 4 days ago to today
+    val (searchFrom, searchTo) = searchDate.minusDays(4) to searchDate
+
+    val expectedCaseAllocations = caseAllocations.reversed().filter { it.creationDate > searchFrom }
 
     caseAllocationRepository.saveAll(caseAllocations)
 
     // Prisoner 1 has no case allocations
-    Assertions.assertThat(caseAllocationRepository.findByPrisonerIdAndCreationDateBetween(prisoner1.id(), searchDate.minusDays(7), searchDate)).isEmpty()
+    Assertions.assertThat(caseAllocationRepository.findByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc(prisoner1.id(), searchFrom, searchTo))
+      .isEmpty()
 
     // Prisoner 2 has three - one is out of search range
-    Assertions.assertThat(caseAllocationRepository.findByPrisonerIdAndCreationDateBetween(prisoner2.id(), searchDate.minusDays(7), searchDate)).isEqualTo(caseAllocations.filter { it.creationDate > searchDate.minusDays(7) })
+    Assertions.assertThat(caseAllocationRepository.findByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc(prisoner2.id(), searchFrom, searchTo))
+      .hasSize(2)
+      .isEqualTo(expectedCaseAllocations)
   }
 }

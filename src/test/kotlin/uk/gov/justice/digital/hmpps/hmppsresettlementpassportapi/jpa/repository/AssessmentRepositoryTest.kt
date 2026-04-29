@@ -49,19 +49,31 @@ class AssessmentRepositoryTest : RepositoryTestBase() {
   }
 
   @Test
-  fun `test findByPrisonerIdAndCreationDateBetween`() {
-    val prisoner = prisonerRepository.save(PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "xyz1"))
+  fun `test findByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc`() {
+    val currentTime = LocalDateTime.now()
+    // search range: yesterday to "tomorrow"
+    val (fromDateTime, toDateTime) = currentTime.run { minusDays(1) to plusDays(1) }
 
-    val idDocument = setOf(IdTypeEntity(1, "Birth certificate"))
+    val prisoner = prisonerRepository.save(PrisonerEntity(null, "NOM1234", currentTime, "xyz1"))
+    val assessments = listOf(
+      currentTime to null,
+      currentTime.plusHours(1) to currentTime.plusHours(2),
+    ).map { (creationTime, deletionTime) ->
+      val idDocument = setOf(IdTypeEntity(1, "Birth certificate"))
+      AssessmentEntity(null, prisoner.id(), creationTime, creationTime, isBankAccountRequired = true, isIdRequired = true, idDocument, true, deletionTime)
+    }
 
-    val assessment1 = AssessmentEntity(null, prisoner.id(), LocalDateTime.now(), LocalDateTime.now(), isBankAccountRequired = true, isIdRequired = true, idDocument, false, null)
-    val assessment2 = AssessmentEntity(null, prisoner.id(), LocalDateTime.now(), LocalDateTime.now(), isBankAccountRequired = true, isIdRequired = true, idDocument, true, LocalDateTime.now())
+    // expected: reverse chronicle order; assessment 2 first, then assessment 1
+    val expectedAssessments = assessments.reversed()
 
-    assessmentRepository.save(assessment1)
-    assessmentRepository.save(assessment2)
+    // save in chronicle order
+    assessments.forEach { assessmentRepository.save(it) }
 
-    val assessmentFromDatabase = assessmentRepository.findByPrisonerIdAndCreationDateBetween(prisoner.id(), LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(1))
+    val assessmentFromDatabase = assessmentRepository.findByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc(prisoner.id(), fromDateTime, toDateTime)
 
-    assertThat(assessmentFromDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(listOf(assessment1, assessment2))
+    assertThat(assessmentFromDatabase)
+      .usingRecursiveComparison()
+      .ignoringFieldsOfTypes(LocalDateTime::class.java)
+      .isEqualTo(expectedAssessments)
   }
 }

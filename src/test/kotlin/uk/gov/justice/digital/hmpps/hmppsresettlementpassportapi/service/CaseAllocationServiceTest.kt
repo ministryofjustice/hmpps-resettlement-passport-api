@@ -345,7 +345,7 @@ class CaseAllocationServiceTest {
   }
 
   @Test
-  fun `test getCaseAllocationHistoryByPrisonerId should return data from repository`() {
+  fun `test getCaseAllocationHistoryByPrisonerIdForSAR should return data from repository`() {
     val data = listOf(
       CaseAllocationEntity(
         prisonerId = 1,
@@ -364,10 +364,10 @@ class CaseAllocationServiceTest {
         creationDate = fakeNow,
       ),
     )
-    Mockito.`when`(caseAllocationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any()))
+    Mockito.`when`(caseAllocationRepository.findByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc(any(), any(), any()))
       .thenReturn(data)
 
-    val result = caseAllocationService.getCaseAllocationHistoryByPrisonerId(1, LocalDateTime.now(), LocalDateTime.now())
+    val result = caseAllocationService.getCaseAllocationHistoryByPrisonerIdForSAR(1, LocalDateTime.now(), LocalDateTime.now())
 
     Assertions.assertEquals(expected, result)
   }

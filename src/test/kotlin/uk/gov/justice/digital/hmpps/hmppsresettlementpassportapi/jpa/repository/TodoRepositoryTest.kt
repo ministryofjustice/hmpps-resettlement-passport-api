@@ -17,54 +17,44 @@ class TodoRepositoryTest : RepositoryTestBase() {
   lateinit var todoRepository: TodoRepository
 
   @Test
-  fun `test findAllByPrisonerIdAndCreationDateBetween query`() {
+  fun `test findAllByPrisonerIdAndCreationDateBetweenOrderByUpdatedAtDesc query`() {
     // Seed database with prisoners and to do items
     val prisoner1 = prisonerRepository.save(PrisonerEntity(null, "NOMS1", LocalDateTime.parse("2023-12-13T12:00:00"), "MDI"))
     val prisoner2 = prisonerRepository.save(PrisonerEntity(null, "NOMS2", LocalDateTime.parse("2023-12-13T12:00:00"), "MDI"))
 
     val searchDate = LocalDateTime.now()
 
+    // save in chronicle order: note 1 10 days ago, note 2 5 days ago, note 3 today
     val todoItems = listOf(
+      "note 1" to searchDate.minusDays(10),
+      "note 2" to searchDate.minusDays(5),
+      "note 3" to searchDate,
+    ).map { (title, creationDate) ->
       TodoEntity(
         id = UUID.randomUUID(),
         prisonerId = prisoner2.id(),
-        title = "note 1",
+        title = title,
         notes = null,
         dueDate = null,
         completed = false,
         createdByUrn = "urn",
         updatedByUrn = "urn",
-        creationDate = searchDate.minusDays(10),
-      ),
-      TodoEntity(
-        id = UUID.randomUUID(),
-        prisonerId = prisoner2.id(),
-        title = "note 2",
-        notes = null,
-        dueDate = null,
-        completed = false,
-        createdByUrn = "urn",
-        updatedByUrn = "urn",
-        creationDate = searchDate.minusDays(5),
-      ),
-      TodoEntity(
-        id = UUID.randomUUID(),
-        prisonerId = prisoner2.id(),
-        title = "note 3",
-        notes = null,
-        dueDate = null,
-        completed = false,
-        createdByUrn = "urn",
-        updatedByUrn = "urn",
-        creationDate = searchDate,
-      ),
-    )
+        creationDate = creationDate,
+        updatedAt = creationDate,
+      )
+    }.toList()
+
+    // search range: a week ago till tomorrow
+    val (fromDate, toDate) = searchDate.run { minusDays(7) to plusDays(1) }
+    // expected results in reverse chronicle order (order by updatedAt desc)
+    val expectedTodoItems = todoItems.reversed()
+      .filter { it.creationDate > fromDate }
 
     todoRepository.saveAll(todoItems)
 
     // Prisoner 1 has no to do items
     // Prisoner 2 has three - one is out of search range
-    Assertions.assertThat(todoRepository.findAllByPrisonerIdAndCreationDateBetween(prisoner1.id(), searchDate.minusDays(7), searchDate.plusDays(1))).isEmpty()
-    Assertions.assertThat(todoRepository.findAllByPrisonerIdAndCreationDateBetween(prisoner2.id(), searchDate.minusDays(7), searchDate.plusDays(1))).isEqualTo(todoItems.filter { it.creationDate > searchDate.minusDays(7) })
+    Assertions.assertThat(todoRepository.findAllByPrisonerIdAndCreationDateBetweenOrderByUpdatedAtDesc(prisoner1.id(), fromDate, toDate)).isEmpty()
+    Assertions.assertThat(todoRepository.findAllByPrisonerIdAndCreationDateBetweenOrderByUpdatedAtDesc(prisoner2.id(), fromDate, toDate)).isEqualTo(expectedTodoItems)
   }
 }

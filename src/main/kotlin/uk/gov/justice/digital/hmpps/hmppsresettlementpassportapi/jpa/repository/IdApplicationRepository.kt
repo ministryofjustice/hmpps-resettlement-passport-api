@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository
 
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.IdApplicationEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.IdTypeEntity
 import java.time.LocalDateTime
@@ -8,7 +9,14 @@ import java.time.LocalDateTime
 interface IdApplicationRepository : JpaRepository<IdApplicationEntity, Long> {
   fun findByPrisonerIdAndIsDeleted(prisonerId: Long, isDeleted: Boolean = false): List<IdApplicationEntity?>
 
-  fun findByPrisonerIdAndCreationDateBetween(
+  @Query(
+    """
+    SELECT ida FROM IdApplicationEntity ida
+    WHERE ida.prisonerId = :prisonerId AND ida.creationDate BETWEEN :fromDate AND :toDate
+    ORDER BY COALESCE(ida.statusUpdateDate, ida.creationDate) DESC
+    """,
+  )
+  fun findByPrisonerIdAndCreationDateBetweenOrderByStatusUpdateDateOrCreationDateDesc(
     prisonerId: Long,
     fromDate: LocalDateTime,
     toDate: LocalDateTime,

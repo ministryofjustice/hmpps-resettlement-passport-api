@@ -490,7 +490,7 @@ class SupportNeedsService(
     prisonerSupportNeedUpdateRepository.saveAll(profileResetUpdates)
   }
 
-  fun getAllSupportNeedsForPrisoner(prisonerId: Long, startDate: LocalDateTime, endDate: LocalDateTime): List<PrisonerSupportNeedEntity> = prisonerSupportNeedRepository.findAllByPrisonerIdAndCreatedDateBetween(prisonerId, startDate, endDate)
+  fun getAllSupportNeedsBytPrisonerIdForSAR(prisonerId: Long, startDate: LocalDateTime, endDate: LocalDateTime): List<PrisonerSupportNeedEntity> = prisonerSupportNeedRepository.findAllByPrisonerIdAndCreatedDateBetweenOrderByCreatedDateDesc(prisonerId, startDate, endDate)
 
-  fun getAllSupportNeedUpdatesForPrisoner(supportNeeds: List<PrisonerSupportNeedEntity>, startDate: LocalDateTime, endDate: LocalDateTime): List<PrisonerSupportNeedUpdateEntity> = prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndCreatedDateBetween(supportNeeds.mapNotNull { it.id }, startDate, endDate)
+  fun getAllSupportNeedUpdatesBySupportNeedsForSAR(supportNeeds: List<PrisonerSupportNeedEntity>, startDate: LocalDateTime, endDate: LocalDateTime): List<PrisonerSupportNeedUpdateEntity> = prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndCreatedDateBetweenOrderByCreatedDateDesc(supportNeeds.mapNotNull { it.id }, startDate, endDate)
 }

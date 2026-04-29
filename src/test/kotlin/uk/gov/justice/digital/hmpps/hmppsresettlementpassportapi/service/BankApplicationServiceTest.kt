@@ -161,9 +161,9 @@ class BankApplicationServiceTest {
 
     @Test
     fun `should return an empty list if there are no db records found`() {
-      Mockito.`when`(bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(emptyList())
+      Mockito.`when`(bankApplicationRepository.findByPrisonerIdAndCreationDateBetweenOrderByBankResponseDateOrCreationDateDesc(any(), any(), any())).thenReturn(emptyList())
 
-      val response = bankApplicationService.getBankApplicationsByPrisonerAndCreationDate(prisoner, fakeNow, fakeNow)
+      val response = bankApplicationService.getBankApplicationsByPrisonerIdForSAR(prisoner.id!!, fakeNow, fakeNow)
 
       Assertions.assertEquals(emptyList<BankApplicationSarContent>(), response)
     }
@@ -172,9 +172,9 @@ class BankApplicationServiceTest {
     fun `should transform db records into a list of BankApplicationResponse`() {
       val bankApplicationEntity = BankApplicationEntity(1, prisoner.id(), setOf(BankApplicationStatusLogEntity(null, null, "Pending", fakeNow)), fakeNow, fakeNow, status = "Pending", isDeleted = false, bankName = "Lloyds")
 
-      Mockito.`when`(bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(listOf(bankApplicationEntity))
+      Mockito.`when`(bankApplicationRepository.findByPrisonerIdAndCreationDateBetweenOrderByBankResponseDateOrCreationDateDesc(any(), any(), any())).thenReturn(listOf(bankApplicationEntity))
 
-      val actual = bankApplicationService.getBankApplicationsByPrisonerAndCreationDate(prisoner, fakeNow, fakeNow)
+      val actual = bankApplicationService.getBankApplicationsByPrisonerIdForSAR(prisoner.id!!, fakeNow, fakeNow)
 
       val expected = listOf(
         BankApplicationSarContent(

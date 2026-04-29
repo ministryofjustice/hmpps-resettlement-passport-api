@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 interface PrisonerSupportNeedRepository : JpaRepository<PrisonerSupportNeedEntity, Long> {
   fun findAllByPrisonerIdAndDeletedIsFalse(prisonerId: Long): List<PrisonerSupportNeedEntity>
 
-  fun findAllByPrisonerIdAndCreatedDateBetween(prisonerId: Long, from: LocalDateTime, to: LocalDateTime): List<PrisonerSupportNeedEntity>
+  fun findAllByPrisonerIdAndCreatedDateBetweenOrderByCreatedDateDesc(prisonerId: Long, from: LocalDateTime, to: LocalDateTime): List<PrisonerSupportNeedEntity>
 
   fun findAllByPrisonerIdAndSupportNeedPathwayAndDeletedIsFalse(prisonerId: Long, pathway: Pathway): List<PrisonerSupportNeedEntity>
 

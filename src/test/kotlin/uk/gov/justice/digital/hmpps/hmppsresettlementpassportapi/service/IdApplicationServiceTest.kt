@@ -218,7 +218,7 @@ class IdApplicationServiceTest {
   }
 
   @Test
-  fun `test getIdApplicationByPrisonerIdAndCreationDate should return from repository`() {
+  fun `test getIdApplicationByPrisonerIdForSAR should return from repository`() {
     val idApplication = IdApplicationEntity(
       prisonerId = 1,
       idType = IdTypeEntity(1, "Birth Certificate"),
@@ -238,9 +238,9 @@ class IdApplicationServiceTest {
       ),
     )
 
-    Mockito.`when`(idApplicationRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(listOf(idApplication))
+    Mockito.`when`(idApplicationRepository.findByPrisonerIdAndCreationDateBetweenOrderByStatusUpdateDateOrCreationDateDesc(any(), any(), any())).thenReturn(listOf(idApplication))
 
-    val response = idApplicationService.getIdApplicationByPrisonerIdAndCreationDate(1, LocalDateTime.now(), LocalDateTime.now())
+    val response = idApplicationService.getIdApplicationByPrisonerIdForSAR(1, LocalDateTime.now(), LocalDateTime.now())
     Assertions.assertEquals(expected, response)
   }
 }

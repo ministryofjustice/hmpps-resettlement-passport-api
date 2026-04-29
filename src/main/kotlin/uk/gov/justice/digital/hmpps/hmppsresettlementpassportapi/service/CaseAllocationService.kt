@@ -63,11 +63,11 @@ class CaseAllocationService(
   @Transactional
   fun getCaseAllocationByPrisonerId(prisonerId: Long): CaseAllocationEntity? = caseAllocationRepository.findByPrisonerIdAndIsDeleted(prisonerId, false)
 
-  fun getCaseAllocationHistoryByPrisonerId(
+  fun getCaseAllocationHistoryByPrisonerIdForSAR(
     prisonerId: Long,
     startDate: LocalDateTime,
     endDate: LocalDateTime,
-  ): List<CaseAllocationSarContent> = caseAllocationRepository.findByPrisonerIdAndCreationDateBetween(prisonerId, startDate, endDate).map {
+  ): List<CaseAllocationSarContent> = caseAllocationRepository.findByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc(prisonerId, startDate, endDate).map {
     CaseAllocationSarContent(it.creationDate, it.staffLastname)
   }
 

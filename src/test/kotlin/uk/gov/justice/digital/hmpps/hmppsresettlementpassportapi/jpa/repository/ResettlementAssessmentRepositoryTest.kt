@@ -216,39 +216,45 @@ class ResettlementAssessmentRepositoryTest : RepositoryTestBase() {
   }
 
   @Test
-  fun `test findAllByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc returns correct data`() {
+  fun `test findAllByPrisonerIdAndCreationDateBetweenOrderBySubmissionDateOrCreationDateDesc returns correct data`() {
     var currentTime = LocalDateTime.parse("2022-12-20T10:13:03")
+    // searching from "yesterday" to "tomorrow"
+    val (searchFrom, searchTo) = currentTime.run { minusDays(1) to plusDays(1) }
+
     val timeTicking: () -> Unit = { currentTime = currentTime.plusSeconds(1) }
-
     val prisoner = PrisonerEntity(null, "NOM1234", currentTime, "xyz1")
-    prisonerRepository.save(prisoner)
-    timeTicking()
+      .let { prisonerRepository.save(it) }
+      .also { timeTicking() }
 
-    val resettlementAssessmentAt: (Pathway, LocalDateTime?) -> ResettlementAssessmentEntity = { pathway, creationDateTime ->
+    val resettlementAssessmentAt: (pathway: Pathway, creationDateTime: LocalDateTime?) -> ResettlementAssessmentEntity = { pathway, creationDateTime ->
       generateResettlementAssessmentEntity(prisoner, pathway, ResettlementAssessmentStatus.SUBMITTED, creationDateTime ?: currentTime)
         .also { timeTicking() }
     }
-    val resettlementAssessment: (Pathway) -> ResettlementAssessmentEntity = { resettlementAssessmentAt(it, null) }
+    val resettlementAssessment: (pathway: Pathway) -> ResettlementAssessmentEntity = { resettlementAssessmentAt(it, null) }
 
+    // Created today: 1, 2 ; created before searching-range: 3 ; created after searching-range: 4
     val assessment1 = resettlementAssessment(Pathway.ACCOMMODATION)
     val assessment2 = resettlementAssessment(Pathway.DRUGS_AND_ALCOHOL)
     val assessment3 = resettlementAssessmentAt(Pathway.ATTITUDES_THINKING_AND_BEHAVIOUR, currentTime.minusDays(2))
     val assessment4 = resettlementAssessmentAt(Pathway.FINANCE_AND_ID, currentTime.plusDays(2))
 
-    resettlementAssessmentRepository.saveAll(listOf(assessment1, assessment2, assessment3, assessment4))
-    timeTicking()
+    // expected: reverse chronicle order, i.e. 2, 1
+    val expectedAssessments = listOf(assessment2, assessment1)
 
-    val result = resettlementAssessmentRepository.findAllByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc(prisoner.id(), currentTime.minusDays(1), currentTime.plusDays(1))
+    // save in chronicle order: 3, 1, 2, 4
+    resettlementAssessmentRepository.saveAll(listOf(assessment3, assessment1, assessment2, assessment4))
+
+    val result = resettlementAssessmentRepository.findAllByPrisonerIdAndCreationDateBetweenOrderBySubmissionDateOrCreationDateDesc(prisoner.id(), searchFrom, searchTo)
 
     assertThat(result)
       .usingRecursiveComparison()
       .ignoringFieldsOfTypes(LocalDateTime::class.java)
-      .isEqualTo(listOf(assessment2, assessment1))
+      .isEqualTo(expectedAssessments)
   }
 
   @Test
-  fun `test findAllByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc returns an empty list if no data found`() {
-    val result = resettlementAssessmentRepository.findAllByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc(1, LocalDateTime.now(), LocalDateTime.now())
+  fun `test findAllByPrisonerIdAndCreationDateBetweenOrderBySubmissionDateOrCreationDateDesc returns an empty list if no data found`() {
+    val result = resettlementAssessmentRepository.findAllByPrisonerIdAndCreationDateBetweenOrderBySubmissionDateOrCreationDateDesc(1, LocalDateTime.now(), LocalDateTime.now())
 
     org.assertj.core.api.Assertions.assertThat(result).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(emptyList<ResettlementAssessmentEntity>())
   }

@@ -49,7 +49,7 @@ class SubjectAccessRequestService(
       ?: throw NoContentException("Prisoner with id $prn not found in database")
     val prisonerId = prisoner.id!!
 
-    val supportNeeds = supportNeedsService.getAllSupportNeedsForPrisoner(prisonerId, startDate, endDate)
+    val supportNeeds = supportNeedsService.getAllSupportNeedsBytPrisonerIdForSAR(prisonerId, startDate, endDate)
 
     return HmppsSubjectAccessRequestContent(
       content = ResettlementSarContent(
@@ -58,18 +58,18 @@ class SubjectAccessRequestService(
           creationDate = prisoner.creationDate,
           prisonId = prisoner.prisonId,
         ),
-        assessments = assessmentService.getAssessmentByPrisonerIdAndCreationDate(prisonerId, startDate, endDate),
-        skippedAssessments = assessmentService.getSkippedAssessmentsForPrisoner(prisonerId, startDate, endDate),
-        bankApplications = bankApplicationService.getBankApplicationsByPrisonerAndCreationDate(prisoner, startDate, endDate),
-        idApplications = idApplicationService.getIdApplicationByPrisonerIdAndCreationDate(prisonerId, startDate, endDate),
-        pathwayStatus = pathwayAndStatusService.findAllPathwayStatusSarContentForPrisoner(prisoner),
+        assessments = assessmentService.getAssessmentByPrisonerIdForSAR(prisonerId, startDate, endDate),
+        skippedAssessments = assessmentService.getSkippedAssessmentsByPrisonerIdForSAR(prisonerId, startDate, endDate),
+        bankApplications = bankApplicationService.getBankApplicationsByPrisonerIdForSAR(prisonerId, startDate, endDate),
+        idApplications = idApplicationService.getIdApplicationByPrisonerIdForSAR(prisonerId, startDate, endDate),
+        pathwayStatus = pathwayAndStatusService.findAllPathwayStatusByPrisonerIdForSAR(prisonerId),
         statusSummary = getPathwayStatus(prisonerId, startDate, endDate),
-        resettlementAssessments = resettlementAssessmentService.getAllResettlementAssessmentsByPrisonerIdAndCreationDate(prisonerId, startDate, endDate, resettlementAssessmentStrategies),
-        supportNeeds = getSupportNeedsSarContent(supportNeeds),
-        supportNeedUpdates = getSupportNeedUpdatesSarContent(supportNeedsService.getAllSupportNeedUpdatesForPrisoner(supportNeeds, startDate, endDate)),
-        caseAllocations = caseAllocationService.getCaseAllocationHistoryByPrisonerId(prisonerId, startDate, endDate),
-        profileTags = resettlementAssessmentService.getProfileTagsByPrisonerId(prisonerId),
-        todoItems = todoService.getByPrisonerId(prisonerId, startDate, endDate),
+        resettlementAssessments = resettlementAssessmentService.getAllResettlementAssessmentsByPrisonerIdForSAR(prisonerId, startDate, endDate, resettlementAssessmentStrategies),
+        supportNeeds = supportNeeds.supportNeedsSarContent(),
+        supportNeedUpdates = supportNeedsService.getAllSupportNeedUpdatesBySupportNeedsForSAR(supportNeeds, startDate, endDate).supportNeedUpdatesSarContent(),
+        caseAllocations = caseAllocationService.getCaseAllocationHistoryByPrisonerIdForSAR(prisonerId, startDate, endDate),
+        profileTags = resettlementAssessmentService.getProfileTagsByPrisonerIdForSAR(prisonerId),
+        todoItems = todoService.getByPrisonerIdForSAR(prisonerId, startDate, endDate),
       ),
     )
   }
@@ -95,7 +95,7 @@ class SubjectAccessRequestService(
     )
   }
 
-  private fun getSupportNeedsSarContent(supportNeeds: List<PrisonerSupportNeedEntity>): List<PrisonerSupportNeedSarContent> = supportNeeds.map {
+  private fun List<PrisonerSupportNeedEntity>.supportNeedsSarContent() = map {
     PrisonerSupportNeedSarContent(
       SupportNeedSarContent(
         it.supportNeed.pathway.displayName,
@@ -109,7 +109,7 @@ class SubjectAccessRequestService(
     )
   }
 
-  private fun getSupportNeedUpdatesSarContent(supportNeedUpdates: List<PrisonerSupportNeedUpdateEntity>): List<PrisonerSupportNeedUpdateSarContent> = supportNeedUpdates.map {
+  private fun List<PrisonerSupportNeedUpdateEntity>.supportNeedUpdatesSarContent() = map {
     PrisonerSupportNeedUpdateSarContent(
       convertFullNameToSurname(it.createdBy),
       it.createdDate,

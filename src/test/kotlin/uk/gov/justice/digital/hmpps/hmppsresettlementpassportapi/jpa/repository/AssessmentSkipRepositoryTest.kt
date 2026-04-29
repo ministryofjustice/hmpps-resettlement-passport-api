@@ -50,7 +50,7 @@ class AssessmentSkipRepositoryTest : RepositoryTestBase() {
     @Test
     fun `should return results within time range`() {
       val createdDate = skippedAssessment?.creationDate!!
-      val result = assessmentSkipRepository.findByPrisonerIdAndCreationDateBetween(
+      val result = assessmentSkipRepository.findByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc(
         prisonerId,
         createdDate.minusDays(1),
         createdDate.plusDays(1),
@@ -61,7 +61,7 @@ class AssessmentSkipRepositoryTest : RepositoryTestBase() {
     @Test
     fun `should not return results outside of time range`() {
       val createdDate = skippedAssessment?.creationDate!!
-      val result = assessmentSkipRepository.findByPrisonerIdAndCreationDateBetween(
+      val result = assessmentSkipRepository.findByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc(
         prisonerId,
         createdDate.minusDays(2),
         createdDate.minusDays(1),
@@ -72,7 +72,7 @@ class AssessmentSkipRepositoryTest : RepositoryTestBase() {
     @Test
     fun `should not return results if we don't match the prisoner id`() {
       val createdDate = skippedAssessment?.creationDate!!
-      val result = assessmentSkipRepository.findByPrisonerIdAndCreationDateBetween(
+      val result = assessmentSkipRepository.findByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc(
         prisonerId + 1,
         createdDate.minusDays(1),
         createdDate.plusDays(1),

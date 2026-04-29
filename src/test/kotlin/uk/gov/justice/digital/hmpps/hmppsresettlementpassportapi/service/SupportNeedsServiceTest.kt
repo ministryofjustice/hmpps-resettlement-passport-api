@@ -1090,20 +1090,20 @@ class SupportNeedsServiceTest {
   }
 
   @Test
-  fun `test getAllSupportNeedsForPrisoner should return result from repository`() {
+  fun `test getAllSupportNeedsBytPrisonerIdForSAR should return result from repository`() {
     val supportNeeds = getPrisonerSupportNeeds()
-    Mockito.`when`(prisonerSupportNeedRepository.findAllByPrisonerIdAndCreatedDateBetween(any(), any(), any())).thenReturn(supportNeeds)
+    Mockito.`when`(prisonerSupportNeedRepository.findAllByPrisonerIdAndCreatedDateBetweenOrderByCreatedDateDesc(any(), any(), any())).thenReturn(supportNeeds)
 
-    val response = supportNeedsService.getAllSupportNeedsForPrisoner(1, LocalDateTime.now(), LocalDateTime.now())
+    val response = supportNeedsService.getAllSupportNeedsBytPrisonerIdForSAR(1, LocalDateTime.now(), LocalDateTime.now())
     Assertions.assertEquals(supportNeeds, response)
   }
 
   @Test
   fun `should return result from repository`() {
     val updates = listOf(getPrisonerSupportNeedUpdate(n = 1, status = SupportNeedStatus.MET, createdDateDay = "12", isPrisonResponsible = false, isProbationResponsible = false))
-    Mockito.`when`(prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndCreatedDateBetween(any(), any(), any())).thenReturn(updates)
+    Mockito.`when`(prisonerSupportNeedUpdateRepository.findAllByPrisonerSupportNeedIdInAndCreatedDateBetweenOrderByCreatedDateDesc(any(), any(), any())).thenReturn(updates)
 
-    val response = supportNeedsService.getAllSupportNeedUpdatesForPrisoner(getPrisonerSupportNeeds(), LocalDateTime.now(), LocalDateTime.now())
+    val response = supportNeedsService.getAllSupportNeedUpdatesBySupportNeedsForSAR(getPrisonerSupportNeeds(), LocalDateTime.now(), LocalDateTime.now())
     Assertions.assertEquals(updates, response)
   }
 

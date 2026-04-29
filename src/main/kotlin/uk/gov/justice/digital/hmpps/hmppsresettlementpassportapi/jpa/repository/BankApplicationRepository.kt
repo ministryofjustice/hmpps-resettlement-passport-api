@@ -10,7 +10,14 @@ import java.time.LocalDateTime
 interface BankApplicationRepository : JpaRepository<BankApplicationEntity, Long> {
   fun findByPrisonerIdAndIsDeleted(prisonerId: Long, isDeleted: Boolean = false): BankApplicationEntity?
 
-  fun findByPrisonerIdAndCreationDateBetween(
+  @Query(
+    """
+    SELECT ba FROM BankApplicationEntity ba
+    WHERE ba.prisonerId = :prisonerId AND ba.creationDate BETWEEN :fromDate AND :toDate
+    ORDER BY COALESCE(ba.bankResponseDate, ba.creationDate) DESC
+    """,
+  )
+  fun findByPrisonerIdAndCreationDateBetweenOrderByBankResponseDateOrCreationDateDesc(
     prisonerId: Long,
     fromDate: LocalDateTime,
     toDate: LocalDateTime,

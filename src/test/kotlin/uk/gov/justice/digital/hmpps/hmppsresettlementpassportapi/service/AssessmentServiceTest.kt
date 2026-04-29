@@ -113,8 +113,9 @@ class AssessmentServiceTest {
   }
 
   @Test
-  fun `test GetAssessmentByPrisonerIdAndCreationDate should return from repository`() {
+  fun `test getAssessmentByPrisonerIdForSAR should return from repository`() {
     val currentDate = LocalDateTime.now()
+    val (fromDate, toDate) = currentDate to currentDate
     val assessments = listOf(AssessmentEntity(null, 1, currentDate, currentDate, isBankAccountRequired = true, isIdRequired = true, setOf(IdTypeEntity(1, "Birth certificate")), false, null))
     val assessmentsSarContents = listOf(
       AssessmentService.AssessmentSarContent(
@@ -125,19 +126,20 @@ class AssessmentServiceTest {
         setOf(AssessmentService.IdTypeSarContent("Birth certificate")),
       ),
     )
-    Mockito.`when`(assessmentRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(assessments)
+    Mockito.`when`(assessmentRepository.findByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc(any(), any(), any())).thenReturn(assessments)
 
-    val response = assessmentService.getAssessmentByPrisonerIdAndCreationDate(1, LocalDateTime.now(), LocalDateTime.now())
+    val response = assessmentService.getAssessmentByPrisonerIdForSAR(1, fromDate, toDate)
     Assertions.assertEquals(assessmentsSarContents, response)
   }
 
   @Test
-  fun `test GetSkippedAssessmentsForPrisoner should return from repository`() {
+  fun `test getSkippedAssessmentsByPrisonerIdForSAR should return from repository`() {
+    val (fromDate, toDate) = LocalDateTime.now().let { currentDate -> currentDate to currentDate }
     val skipHistory = listOf(AssessmentSkipEntity(null, ResettlementAssessmentType.BCST2, 1, AssessmentSkipReason.TRANSFER, null, null, null))
     val skipAssessmentsSarContents = listOf(AssessmentService.AssessmentSkipSarContent(ResettlementAssessmentType.BCST2.displayName, AssessmentSkipReason.TRANSFER.displayText, null, null, null))
-    Mockito.`when`(assessmentSkipRepository.findByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(skipHistory)
+    Mockito.`when`(assessmentSkipRepository.findByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc(any(), any(), any())).thenReturn(skipHistory)
 
-    val response = assessmentService.getSkippedAssessmentsForPrisoner(1, LocalDateTime.now(), LocalDateTime.now())
+    val response = assessmentService.getSkippedAssessmentsByPrisonerIdForSAR(1, fromDate, toDate)
     Assertions.assertEquals(skipAssessmentsSarContents, response)
   }
 }

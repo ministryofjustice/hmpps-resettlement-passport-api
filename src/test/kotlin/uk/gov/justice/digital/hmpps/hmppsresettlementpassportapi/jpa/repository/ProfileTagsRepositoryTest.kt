@@ -17,31 +17,32 @@ class ProfileTagsRepositoryTest : RepositoryTestBase() {
   lateinit var profileTagsRepository: ProfileTagsRepository
 
   @Test
-  fun `test findAllByPrisonerId query`() {
+  fun `test findAllByPrisonerIdOrderByUpdatedDateDesc query`() {
     // Seed database with prisoners and profile tags
     val prisoner1 = prisonerRepository.save(PrisonerEntity(null, "NOMS1", LocalDateTime.parse("2023-12-13T12:00:00"), "MDI"))
     val prisoner2 = prisonerRepository.save(PrisonerEntity(null, "NOMS2", LocalDateTime.parse("2023-12-13T12:00:00"), "MDI"))
 
+    // save in chronicle order
+    val currentTime = LocalDateTime.now()
     val profileTags = listOf(
+      listOf("tag 1", "tag 2") to currentTime.minusHours(1),
+      listOf("tag 3", "tag 4") to currentTime,
+    ).map { (tags, updatedDate) ->
       ProfileTagsEntity(
         id = null,
         prisonerId = prisoner2.id(),
-        profileTags = ProfileTagList(listOf("tag 1", "tag 2")),
-        updatedDate = LocalDateTime.now(),
-      ),
-      ProfileTagsEntity(
-        id = null,
-        prisonerId = prisoner2.id(),
-        profileTags = ProfileTagList(listOf("tag 3", "tag 4")),
-        updatedDate = LocalDateTime.now(),
-      ),
-    )
+        profileTags = ProfileTagList(tags),
+        updatedDate = updatedDate,
+      )
+    }
+    // expected results in reverse chronicle order (order by updatedDate desc)
+    val expectedProfileTags = profileTags.reversed()
 
     profileTagsRepository.saveAll(profileTags)
 
     // Prisoner 1 has no profile tags
     // Prisoner 2 has profile tags
-    Assertions.assertThat(profileTagsRepository.findAllByPrisonerId(prisoner1.id())).isEmpty()
-    Assertions.assertThat(profileTagsRepository.findAllByPrisonerId(prisoner2.id())).isEqualTo(profileTags)
+    Assertions.assertThat(profileTagsRepository.findAllByPrisonerIdOrderByUpdatedDateDesc(prisoner1.id())).isEmpty()
+    Assertions.assertThat(profileTagsRepository.findAllByPrisonerIdOrderByUpdatedDateDesc(prisoner2.id())).isEqualTo(expectedProfileTags)
   }
 }

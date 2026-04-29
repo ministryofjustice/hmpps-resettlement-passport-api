@@ -12,6 +12,8 @@ interface PathwayStatusRepository : JpaRepository<PathwayStatusEntity, Long> {
 
   fun findByPrisonerId(prisonerId: Long): List<PathwayStatusEntity>
 
+  fun findByPrisonerIdOrderByUpdatedDateDesc(prisonerId: Long): List<PathwayStatusEntity>
+
   @Query(
     """
     select 

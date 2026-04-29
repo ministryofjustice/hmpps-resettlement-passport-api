@@ -194,7 +194,7 @@ class PrisonerSupportNeedRepositoryTest : RepositoryTestBase() {
         ),
       )
 
-      val results = prisonerSupportNeedRepository.findAllByPrisonerIdAndCreatedDateBetween(
+      val results = prisonerSupportNeedRepository.findAllByPrisonerIdAndCreatedDateBetweenOrderByCreatedDateDesc(
         1,
         searchDate.minusHours(1),
         searchDate.plusHours(1),
@@ -205,7 +205,7 @@ class PrisonerSupportNeedRepositoryTest : RepositoryTestBase() {
     @Test
     @Sql("classpath:testdata/sql/seed-prisoner-support-needs-1.sql")
     fun `should not return needs outside of date range`() {
-      val results = prisonerSupportNeedRepository.findAllByPrisonerIdAndCreatedDateBetween(
+      val results = prisonerSupportNeedRepository.findAllByPrisonerIdAndCreatedDateBetweenOrderByCreatedDateDesc(
         1,
         searchDate.minusHours(2),
         searchDate.minusHours(1),
@@ -216,7 +216,7 @@ class PrisonerSupportNeedRepositoryTest : RepositoryTestBase() {
     @Test
     @Sql("classpath:testdata/sql/seed-prisoner-support-needs-1.sql")
     fun `should not return needs for other prisoners`() {
-      val results = prisonerSupportNeedRepository.findAllByPrisonerIdAndCreatedDateBetween(
+      val results = prisonerSupportNeedRepository.findAllByPrisonerIdAndCreatedDateBetweenOrderByCreatedDateDesc(
         99,
         searchDate.minusHours(1),
         searchDate.plusHours(1),

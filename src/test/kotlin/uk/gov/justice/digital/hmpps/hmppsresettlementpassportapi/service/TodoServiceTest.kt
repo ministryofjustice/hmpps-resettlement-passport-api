@@ -31,8 +31,9 @@ class TodoServiceTest {
   }
 
   @Test
-  fun `test GetByPrisonerId should return data from repository`() {
+  fun `test getByPrisonerIdForSAR should return data from repository`() {
     val currentDate = LocalDateTime.now()
+    val (startDate, endDate) = currentDate to currentDate
     val data = listOf(
       TodoEntity(
         id = UUID.randomUUID(),
@@ -61,9 +62,9 @@ class TodoServiceTest {
       ),
     )
 
-    Mockito.`when`(todoRepository.findAllByPrisonerIdAndCreationDateBetween(any(), any(), any())).thenReturn(data)
+    Mockito.`when`(todoRepository.findAllByPrisonerIdAndCreationDateBetweenOrderByUpdatedAtDesc(any(), any(), any())).thenReturn(data)
 
-    val response = todoService.getByPrisonerId(1, LocalDateTime.now(), LocalDateTime.now())
+    val response = todoService.getByPrisonerIdForSAR(1, startDate, endDate)
     Assertions.assertEquals(expected, response)
   }
 }

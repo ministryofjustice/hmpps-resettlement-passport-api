@@ -59,26 +59,54 @@ class BankApplicationRepositoryTest : RepositoryTestBase() {
   }
 
   @Test
-  fun `test findByPrisonerIdAndCreationDateBetween with results`() {
-    val prisoner = prisonerRepository.save(PrisonerEntity(null, "NOM1234", LocalDateTime.now(), "xyz1"))
+  fun `test findByPrisonerIdAndCreationDateBetweenOrderByBankResponseDateOrCreationDateDesc with results`() {
+    val currentTime = LocalDateTime.now()
+    // search range: yesterday to "tomorrow"
+    val (fromDateTime, toDateTime) = currentTime.run { minusDays(1) to plusDays(1) }
 
-    val logs1 = setOf(BankApplicationStatusLogEntity(null, null, statusChangedTo = "Application Started", changedAtDate = LocalDateTime.now()))
+    val prisoner = prisonerRepository.save(PrisonerEntity(null, "NOM1234", currentTime, "xyz1"))
 
-    val application1 = BankApplicationEntity(null, prisoner.id(), logs1, LocalDateTime.now(), LocalDateTime.now(), status = "Application Started", bankName = "Lloyds")
+    val logs1 = setOf(BankApplicationStatusLogEntity(null, null, statusChangedTo = "Application Started", changedAtDate = currentTime))
 
-    val application2 = BankApplicationEntity(null, prisoner.id(), emptySet(), LocalDateTime.now(), LocalDateTime.now(), status = "Application Started", isDeleted = true, deletionDate = LocalDateTime.now(), bankName = "Lloyds")
+    val application1 = BankApplicationEntity(
+      null,
+      prisoner.id(),
+      logs1,
+      currentTime,
+      currentTime,
+      status = "Application Started",
+      bankName = "Lloyds",
+    )
+
+    val application2 = BankApplicationEntity(
+      null,
+      prisoner.id(),
+      emptySet(),
+      currentTime,
+      currentTime,
+      status = "Application Started",
+      bankResponseDate = currentTime.plusSeconds(1),
+      isDeleted = true,
+      deletionDate = currentTime.plusHours(1),
+      bankName = "Lloyds",
+    )
+
+    val expectedApplications = listOf(application2, application1)
 
     bankApplicationRepository.save(application1)
     bankApplicationRepository.save(application2)
 
-    val assessmentFromDatabase = bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(prisoner.id(), LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(1))
+    val assessmentFromDatabase = bankApplicationRepository.findByPrisonerIdAndCreationDateBetweenOrderByBankResponseDateOrCreationDateDesc(prisoner.id(), fromDateTime, toDateTime)
 
-    Assertions.assertThat(assessmentFromDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(listOf(application1, application2))
+    Assertions.assertThat(assessmentFromDatabase)
+      .usingRecursiveComparison()
+      .ignoringFieldsOfTypes(LocalDateTime::class.java)
+      .isEqualTo(expectedApplications)
   }
 
   @Test
-  fun `test findByPrisonerIdAndCreationDateBetween without results`() {
-    val assessmentFromDatabase = bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(1, LocalDateTime.now(), LocalDateTime.now())
+  fun `test findByPrisonerIdAndCreationDateBetweenOrderByBankResponseDateOrCreationDateDesc without results`() {
+    val assessmentFromDatabase = bankApplicationRepository.findByPrisonerIdAndCreationDateBetweenOrderByBankResponseDateOrCreationDateDesc(1, LocalDateTime.now(), LocalDateTime.now())
 
     Assertions.assertThat(assessmentFromDatabase).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime::class.java).isEqualTo(emptyList<BankApplicationEntity>())
   }

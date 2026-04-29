@@ -22,7 +22,7 @@ class IdApplicationService(
 ) {
 
   @Transactional
-  fun getIdApplicationByPrisonerIdAndCreationDate(prisonerId: Long, fromDate: LocalDateTime, toDate: LocalDateTime): List<IdApplicationSarContent> = idApplicationRepository.findByPrisonerIdAndCreationDateBetween(prisonerId, fromDate = fromDate, toDate = toDate).map {
+  fun getIdApplicationByPrisonerIdForSAR(prisonerId: Long, fromDate: LocalDateTime, toDate: LocalDateTime): List<IdApplicationSarContent> = idApplicationRepository.findByPrisonerIdAndCreationDateBetweenOrderByStatusUpdateDateOrCreationDateDesc(prisonerId, fromDate = fromDate, toDate = toDate).map {
     IdApplicationSarContent(
       it.idType.name,
       it.creationDate,

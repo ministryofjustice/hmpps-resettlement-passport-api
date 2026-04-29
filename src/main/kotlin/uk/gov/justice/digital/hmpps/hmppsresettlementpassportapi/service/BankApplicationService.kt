@@ -42,12 +42,12 @@ class BankApplicationService(
   }
 
   @Transactional
-  fun getBankApplicationsByPrisonerAndCreationDate(
-    prisoner: PrisonerEntity,
+  fun getBankApplicationsByPrisonerIdForSAR(
+    prisonerId: Long,
     fromDate: LocalDateTime,
     toDate: LocalDateTime,
-  ): List<BankApplicationSarContent> = bankApplicationRepository.findByPrisonerIdAndCreationDateBetween(
-    prisoner.id(),
+  ): List<BankApplicationSarContent> = bankApplicationRepository.findByPrisonerIdAndCreationDateBetweenOrderByBankResponseDateOrCreationDateDesc(
+    prisonerId,
     fromDate,
     toDate,
   ).map { getBankApplicationSarContent(it) }

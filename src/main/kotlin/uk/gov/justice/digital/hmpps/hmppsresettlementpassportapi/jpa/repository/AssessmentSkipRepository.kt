@@ -5,5 +5,5 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.Asse
 import java.time.LocalDateTime
 
 interface AssessmentSkipRepository : JpaRepository<AssessmentSkipEntity, Long> {
-  fun findByPrisonerIdAndCreationDateBetween(prisonerId: Long, from: LocalDateTime, to: LocalDateTime): List<AssessmentSkipEntity>
+  fun findByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc(prisonerId: Long, from: LocalDateTime, to: LocalDateTime): List<AssessmentSkipEntity>
 }

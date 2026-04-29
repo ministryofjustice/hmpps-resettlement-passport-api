@@ -104,7 +104,14 @@ interface ResettlementAssessmentRepository : JpaRepository<ResettlementAssessmen
 
   fun findAllByPrisonerIdAndDeletedIsFalse(prisonerId: Long): List<ResettlementAssessmentEntity>
 
-  fun findAllByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc(
+  @Query(
+    """
+    SELECT ra FROM ResettlementAssessmentEntity ra
+    WHERE ra.prisonerId = :prisonerId AND ra.creationDate BETWEEN :fromDate AND :toDate
+    ORDER BY COALESCE(ra.submissionDate, ra.creationDate) DESC
+    """,
+  )
+  fun findAllByPrisonerIdAndCreationDateBetweenOrderBySubmissionDateOrCreationDateDesc(
     prisonerId: Long,
     fromDate: LocalDateTime,
     toDate: LocalDateTime,

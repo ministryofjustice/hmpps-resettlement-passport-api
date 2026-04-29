@@ -1090,18 +1090,18 @@ class ResettlementAssessmentServiceTest {
     """.trimIndent()
 
   @Test
-  fun `test getProfileTagsByPrisonerId`() {
+  fun `test getProfileTagsByPrisonerIdForSAR`() {
     val data = listOf(ProfileTagsEntity(null, 1, ProfileTagList(listOf("tag_1", "tag_2")), null))
     val expected = listOf(ResettlementAssessmentService.ProfileTagsSarContent(ResettlementAssessmentService.ProfileTagListSarContent(listOf("Tag 1", "Tag 2")), null))
-    Mockito.`when`(profileTagsRepository.findAllByPrisonerId(any())).thenReturn(data)
+    Mockito.`when`(profileTagsRepository.findAllByPrisonerIdOrderByUpdatedDateDesc(any())).thenReturn(data)
 
-    val result = resettlementAssessmentService.getProfileTagsByPrisonerId(1)
+    val result = resettlementAssessmentService.getProfileTagsByPrisonerIdForSAR(1)
 
     Assertions.assertEquals(expected, result)
   }
 
   @Test
-  fun `test OrderByCreationDateDesc should return from repository and map the response`() {
+  fun `test getAllResettlementAssessmentsByPrisonerIdForSAR should return from repository and map the response`() {
     val entity = ResettlementAssessmentEntity(
       id = 12,
       prisonerId = 1,
@@ -1121,10 +1121,10 @@ class ResettlementAssessmentServiceTest {
       deletedDate = null,
     )
 
-    Mockito.`when`(resettlementAssessmentRepository.findAllByPrisonerIdAndCreationDateBetweenOrderByCreationDateDesc(any(), any(), any())).thenReturn(listOf(entity))
+    Mockito.`when`(resettlementAssessmentRepository.findAllByPrisonerIdAndCreationDateBetweenOrderBySubmissionDateOrCreationDateDesc(any(), any(), any())).thenReturn(listOf(entity))
 
     val expected = listOf(resettlementAssessmentService.convertFromResettlementAssessmentEntityToResettlementAssessmentSarContent(entity, resettlementAssessmentStrategy))
-    val actual = resettlementAssessmentService.getAllResettlementAssessmentsByPrisonerIdAndCreationDate(1, fakeNow, fakeNow, resettlementAssessmentStrategy)
+    val actual = resettlementAssessmentService.getAllResettlementAssessmentsByPrisonerIdForSAR(1, fakeNow, fakeNow, resettlementAssessmentStrategy)
 
     Assertions.assertEquals(expected, actual)
   }

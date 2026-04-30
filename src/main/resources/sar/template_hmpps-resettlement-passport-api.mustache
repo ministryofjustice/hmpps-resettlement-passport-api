@@ -213,6 +213,26 @@
     {{/idApplications}}
 
     <br/>
+    <h2>Pathway summary</h2>
+    {{#pathwayStatus}}
+        <table class="data-table">
+            <tr>
+                <td class="data-column-30">Pathway</td>
+                <td class="data-column-30">Status</td>
+                <td class="data-column-30">Updated date</td>
+            </tr>
+            <tr>
+                <td>{{ optionalValue pathway }}</td>
+                <td>{{ optionalValue status }}</td>
+                <td>{{ optionalValue (formatDate updatedDate) }}</td>
+            </tr>
+        </table>
+        {{/pathwayStatus}}
+    {{^pathwayStatus}}
+        <p>No Data Held</p>
+    {{/pathwayStatus}}
+
+    <br/>
     <h2>Status summary</h2>
     {{#statusSummary}}
         <table class="summary-list">

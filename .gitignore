@@ -67,7 +67,7 @@ ecr.repo
 dps-gradle-spring-boot-suppressions.xml
 .editorconfig
 sonar-project.properties
-.env
+.env*
 
 #Helm
 **/Chart.lock

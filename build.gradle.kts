@@ -2,7 +2,7 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
   val kotlinVersion = "2.3.21"
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.2.3"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.3.1"
   id("org.springdoc.openapi-gradle-plugin") version "1.9.0"
   id("jacoco")
   id("org.sonarqube") version "6.2.0.5505"
@@ -23,6 +23,8 @@ repositories {
   maven { url = uri("https://repo.spring.io/milestone") }
   mavenCentral()
 }
+
+ext["postgresql.version"] = "42.7.11"
 
 dependencies {
   annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
@@ -45,7 +47,7 @@ dependencies {
   implementation("org.flywaydb:flyway-core")
 
   runtimeOnly("org.springframework.boot:spring-boot-starter-jdbc")
-  runtimeOnly("org.postgresql:postgresql:42.7.7")
+  runtimeOnly("org.postgresql:postgresql")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
 
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")

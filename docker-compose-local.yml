@@ -35,7 +35,7 @@ services:
       - '6380:6379'
 
   localstack:
-    image: localstack/localstack:stable
+    image: localstack/localstack:community-archive
     networks:
       - hmpps
     container_name: localstack-resettlement-passport-api

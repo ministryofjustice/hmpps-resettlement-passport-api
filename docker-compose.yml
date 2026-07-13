@@ -2,8 +2,8 @@ include:
   - docker-compose-local.yml
 services:
   hmpps-resettlement-passport-api:
-    build:
-      context: .
+    image: ghcr.io/ministryofjustice/hmpps-resettlement-passport-api:latest
+    profiles: [ api ]
     networks:
       - hmpps
     container_name: hmpps-resettlement-passport-api
@@ -35,6 +35,10 @@ services:
       - API_BASE_URL_GOTENBERG-API=http://hmpps-resettlement-passport-api-gotenberg:3000
       - SPRING_DATA_REDIS_HOST=redis
       - SPRING_DATA_REDIS_PORT=6379
+      - API_BASE_URL_CURIOUS_SERVICE=http://wiremock:8080/curious-api
+      - API_BASE_URL_MANAGE_USERS_SERVICE=https://manage-users-api-dev.hmpps.service.justice.gov.uk
+      - READ_ONLY_MODE_VALUE=true
+    env_file: .env.docker
 
 networks:
   hmpps:

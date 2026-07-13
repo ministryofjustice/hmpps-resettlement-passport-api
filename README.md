@@ -11,19 +11,88 @@ This is a Backend-For-Frontend style API that support both the
 and [Plan your future](https://github.com/ministryofjustice/hmpps-resettlement-passport-person-on-probation-ui)
 frontends
 
-## Running locally
+## Running the application locally
+This backend application depends on several services to run.
 
-### Starting the API
-* Start the database, stubs and dependencies with 
-```shell
-docker compose -f docker-compose-local.yml up -d
-```
-* Make sure to set environment variables for `RESETTLEMENT_PASSPORT_API_CLIENT_ID` and `RESETTLEMENT_PASSPORT_API_CLIENT_SECRET`
-* Start with 
-```shell
-gradle bootrun --args='--spring.profiles.active=dev'
-```
-or use a run profile in IntelliJ (using the dev profile)
+| Dependency                   | Description                                              | Default | Override Env Var                                                                  |
+|------------------------------|----------------------------------------------------------|---------|-----------------------------------------------------------------------------------|
+| hmpps-auth                   | OAuth2 API server for authenticating requests            |         | `API_BASE_URL_OAUTH`                                                              |
+| Prisoner Search API          |                                                          |         | `API_BASE_URL_PRISONER_SEARCH`                                                    |
+| CVL API                      |                                                          |         | `API_BASE_URL_CVL`                                                                |
+| ARN API                      |                                                          |         | `API_BASE_URL_ARN`                                                                |
+| Prison API                   |                                                          |         | `API_BASE_URL_PRISON`                                                             |
+| RP delius                    |                                                          |         | `API_BASE_URL_RESETTLEMENT-PASSPORT-DELIUS`                                       |
+| Education Employment API     | "Get someone ready to work" backend                      |         | `API_BASE_URL_EDUCATION-EMPLOYMENT`                                               |
+| Interventions API            |                                                          |         | `API_BASE_URL_INTERVENTIONS`                                                      |
+| Person on Probation user API | parts of Plan your future                                |         | `API_BASE_URL_pop-user-service`                                                   |
+| Offender Case notes API      |                                                          |         | `API_BASE_URL_CASE-NOTES`                                                         |
+| Key worker API               |                                                          |         | `API_BASE_URL_KEY-WORKER`                                                         |
+| Allocation manager API       |                                                          |         | `API_BASE_URL_ALLOCATION`                                                         |
+| Manage Users API             |                                                          |         | `API_BASE_URL_MANAGE-USERS`                                                       |
+| Curious APIs                 |                                                          |         | `API_BASE_URL_CURIOUS_SERVICE`                                                    |
+| SQS queue of Domain events   | Receive Offender domain events                           |         | `OFFENDER_EVENT_QUEUE_NAME`, `OFFENDER_EVENT_DLQ_NAME`                            |
+| SQS queue of HMPPS Audit     | Send audit events to the queue                           |         | `HMPPS_SQS_QUEUES_AUDIT_QUEUE_NAME`                                               |
+| S3 bucket for document       |                                                          |         | `S3_DOCUMENT_BUCKET_NAME`                                                         |
+| Database                     | Database server (`postgres` on local, `RDS` on live env) |         | `DATABASE_NAME`, `DATABASE_ENDPOINT`, `DATABASE_USERNAME` and `DATABASE_PASSWORD` |
+
+### Preparation
+Obtain API client credentials
+- populate those value from kubernetes secrets `hmpps-resettlement-passport-api`.
+  ```shell
+  kubectl -n hmpps-resettlement-passport-dev get secret hmpps-resettlement-passport-api -o json | jq '.data | map_values(@base64d)' 
+  ```
+- fill in the API client credentials in these files: `*_CLIENT_ID`, `*_CLIENT_SECRET`
+    - `.env` for running outside docker
+    - `.env.docker` for running in docker
+    - client credentials
+      - `SYSTEM_CLIENT_ID` to `RESETTLEMENT_PASSPORT_API_CLIENT_ID`
+      - `SYSTEM_CLIENT_SECRET` to `RESETTLEMENT_PASSPORT_API_CLIENT_SECRET`
+
+---
+### Running with docker compose
+The easiest way to run the app is to use docker compose to create the service and all dependencies.
+1. Prepare `.env.docker` (from `.env.docker.sample`)
+    ```shell
+    cp .env.docker.sample .env.docker
+    ```
+    - fill in the API client credentials in `.env.docker`
+      see above to obtain these
+2. Then run
+   ```shell
+   docker compose --profile api up
+   ```
+   will run the application (from latest image) and PostgreSQL within a local docker instance.
+3. Check if application is up and running
+    * See `http://localhost:8080/health` to check the app is running.
+    * See `http://localhost:8080/swagger-ui/index.html` to explore the OpenAPI spec document.
+    * See `http://localhost:8080/info` to check the app info
+
+It connects HMPPS Auth and other upstream APIs in `dev` environment. Thus, a set of valid dev API clients are required to run the application.
+
+---
+### Running the application in IntelliJ
+1. Prepare `.env` (from `.env.local.sample`)
+    ```shell
+    cp .env.local.sample .env
+    ```
+    - fill in the API client credentials in `.env`:
+      see above to obtain these
+2. Run this
+    ```shell
+   docker compose up -d 
+    ```
+    * will start dependencies only without the API application
+    * `-d` for detached run
+3. Run `bootRun` with  `.env` file prepared above
+    * either IntelliJ
+        - run `bootRun` with `EnvFile` plugin
+        - add `.env`
+        - enable integrations
+    * or Gradle wrapper
+      ```shell
+      export $(grep -v '^#' .env | xargs)
+      ./gradlew bootRun
+      ```
 
 ## Yaml autocomplete/validation
 ### Setting up the schema association
@@ -64,18 +133,16 @@ BUILD_NUMBER=1_0_0 docker build --build-arg BUILD_NUMBER=$BUILD_NUMBER . -t "hmp
 ```
 
 ### Run a local docker image
-* In `.env.docker` (with `dev` profile)
-    ```dotenv
-    UK_PRN=...
-    ORG_PASSWORD=...
-    VENDOR_ID=...
-    PFX_FILE_PASSWORD=...
-    SPRING_PROFILES_ACTIVE=dev
-    # `host.docker.internal` (instead of `localhost`) for connecting the container to host 
-    HMPPS_SQS_LOCALSTACKURL=http://host.docker.internal:4566
+* Prepare `.env.docker.local` from sample
+  - copy
+    ```shell
+    cp .env.docker.local.sample .env.docker.local
     ```
+  - fill in the API client credentials in `.env.docker.local`
+    see above to obtain these
+  - `host.docker.internal` is used to connect back to docker host from container
 
 then run this
 ```shell
-docker run --name hmpps-resettlement-passport-api-app --env-file .env.docker -p 8080:8080 -d "hmpps-resettlement-passport-api:local"
+docker run --name hmpps-resettlement-passport-api-app --env-file .env.docker.local -p 8080:8080 -d "hmpps-resettlement-passport-api:local"
 ```

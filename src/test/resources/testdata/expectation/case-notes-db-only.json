@@ -13,7 +13,7 @@
       "pathway": "ACCOMMODATION",
       "creationDateTime": "2023-12-05T17:44:30.091",
       "occurenceDateTime": "2023-12-05T17:44:30.091",
-      "createdBy": "John Williams",
+      "createdBy": "Test User7",
       "text": "This is some case note text."
     },
     {
@@ -21,7 +21,7 @@
       "pathway": "ATTITUDES_THINKING_AND_BEHAVIOUR",
       "creationDateTime": "2023-11-05T15:02:23.081",
       "occurenceDateTime": "2023-11-05T15:02:23.081",
-      "createdBy": "Simon Johnson",
+      "createdBy": "Test User11",
       "text": "Some text related to case note."
     },
     {
@@ -29,7 +29,7 @@
       "pathway": "CHILDREN_FAMILIES_AND_COMMUNITY",
       "creationDateTime": "2023-10-01T09:53:01.001",
       "occurenceDateTime": "2023-10-01T09:53:01.001",
-      "createdBy": "Julie Davis",
+      "createdBy": "Test User12",
       "text": "Random string."
     },
     {
@@ -53,7 +53,7 @@
       "pathway": "HEALTH",
       "creationDateTime": "2020-01-09T02:09:23.476",
       "occurenceDateTime": "2020-01-09T02:09:23.476",
-      "createdBy": "Jim White",
+      "createdBy": "Test User13",
       "text": "string test string"
     },
     {
@@ -61,7 +61,7 @@
       "pathway": "HEALTH",
       "creationDateTime": "2020-01-09T02:09:23.476",
       "occurenceDateTime": "2020-01-09T02:09:23.476",
-      "createdBy": "Liz Murphy",
+      "createdBy": "Test User14",
       "text": "string test string - another health case note"
     }
   ],

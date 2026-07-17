@@ -26,13 +26,13 @@ VALUES(7, 1, 'HEALTH', 'SUPPORT_NOT_REQUIRED', '2023-08-17 12:28:10.493');
 
 INSERT INTO delius_contact
 (id, prisoner_id, category, contact_type, created_date, appointment_date, appointment_duration, notes, created_by)
-VALUES(1, 1, 'ACCOMMODATION', 'CASE_NOTE', '2023-12-05 17:44:30.091', NULL, NULL, 'This is some case note text.', 'John Williams');
+VALUES(1, 1, 'ACCOMMODATION', 'CASE_NOTE', '2023-12-05 17:44:30.091', NULL, NULL, 'This is some case note text.', 'Test User7');
 INSERT INTO delius_contact
 (id, prisoner_id, category, contact_type, created_date, appointment_date, appointment_duration, notes, created_by)
-VALUES(2, 1, 'ATTITUDES_THINKING_AND_BEHAVIOUR', 'CASE_NOTE', '2023-11-05 15:02:23.081', NULL, NULL, 'Some text related to case note.', 'Simon Johnson');
+VALUES(2, 1, 'ATTITUDES_THINKING_AND_BEHAVIOUR', 'CASE_NOTE', '2023-11-05 15:02:23.081', NULL, NULL, 'Some text related to case note.', 'Test User11');
 INSERT INTO delius_contact
 (id, prisoner_id, category, contact_type, created_date, appointment_date, appointment_duration, notes, created_by)
-VALUES(3, 1, 'CHILDREN_FAMILIES_AND_COMMUNITY', 'CASE_NOTE', '2023-10-01 09:53:01.001', NULL, NULL, 'Random string.', 'Julie Davis');
+VALUES(3, 1, 'CHILDREN_FAMILIES_AND_COMMUNITY', 'CASE_NOTE', '2023-10-01 09:53:01.001', NULL, NULL, 'Random string.', 'Test User12');
 INSERT INTO delius_contact
 (id, prisoner_id, category, contact_type, created_date, appointment_date, appointment_duration, notes, created_by)
 VALUES(4, 1, 'DRUGS_AND_ALCOHOL', 'CASE_NOTE', '2021-09-30 11:13:59.673', NULL, NULL, 'Some text. Some text. Some text.', 'System User');
@@ -44,10 +44,10 @@ INSERT INTO delius_contact
 VALUES(6, 1, 'FINANCE_AND_ID', 'CASE_NOTE', '2023-12-08 16:33:09.109', NULL, NULL, 'text text text', 'Probation User 2');
 INSERT INTO delius_contact
 (id, prisoner_id, category, contact_type, created_date, appointment_date, appointment_duration, notes, created_by)
-VALUES(7, 1, 'HEALTH', 'CASE_NOTE', '2020-01-09 02:09:23.476', NULL, NULL, 'string test string', 'Jim White');
+VALUES(7, 1, 'HEALTH', 'CASE_NOTE', '2020-01-09 02:09:23.476', NULL, NULL, 'string test string', 'Test User13');
 INSERT INTO delius_contact
 (id, prisoner_id, category, contact_type, created_date, appointment_date, appointment_duration, notes, created_by)
-VALUES(8, 1, 'HEALTH', 'CASE_NOTE', '2020-01-09 02:09:23.476', NULL, NULL, 'string test string - another health case note', 'Liz Murphy');
+VALUES(8, 1, 'HEALTH', 'CASE_NOTE', '2020-01-09 02:09:23.476', NULL, NULL, 'string test string - another health case note', 'Test User14');
 
 INSERT INTO resettlement_assessment (id, prisoner_id, pathway, assessment_status, assessment_type, assessment, status_changed_to, created_date, created_by, case_note_text, created_by_user_id, is_deleted, deleted_date) VALUES
 (1, 1, 'ACCOMMODATION', 'SUBMITTED', 'RESETTLEMENT_PLAN', '{"assessment": []}'::jsonb, 'SUPPORT_DECLINED', '2024-07-30 19:02:45.000', 'A User', 'Some accom case note', 'TEST_GEN', false, null),

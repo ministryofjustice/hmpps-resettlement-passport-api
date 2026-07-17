@@ -118,7 +118,7 @@
       "isPrisonResponsible": null,
       "isProbationResponsible": null,
       "text": "This is a 2nd test case note message from Resettlement Passport",
-      "createdBy": "Paul Smith",
+      "createdBy": "Test User10",
       "createdAt": "2023-09-05T14:03:18.14468552"
     },
     {
@@ -129,7 +129,7 @@
       "isPrisonResponsible": null,
       "isProbationResponsible": null,
       "text": "This is a test case note message from Resettlement Passport",
-      "createdBy": "Mike Small",
+      "createdBy": "Test User2",
       "createdAt": "2023-09-05T13:57:13.214269427"
     },
     {
@@ -140,7 +140,7 @@
       "isPrisonResponsible": null,
       "isProbationResponsible": null,
       "text": "Test case note",
-      "createdBy": "James Smith",
+      "createdBy": "Test User1",
       "createdAt": "2023-09-05T13:54:56.992827119"
     }
   ],

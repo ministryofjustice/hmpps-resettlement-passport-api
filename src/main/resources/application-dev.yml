@@ -120,4 +120,4 @@ psfr:
 
 app:
   feature-flags:
-    readOnlyMode: false
+    readOnlyMode: true

@@ -156,7 +156,7 @@ class ATBResettlementAssessmentIntegrationTest : IntegrationTestBase() {
         createdBy = "A User",
         assessmentStatus = ResettlementAssessmentStatus.COMPLETE,
         caseNoteText = "Some case notes",
-        createdByUserId = "JSMITH_GEN",
+        createdByUserId = "TUSER17_GEN",
         submissionDate = null,
         version = 1,
         userDeclaration = false,

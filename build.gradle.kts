@@ -123,11 +123,6 @@ tasks.named<BootRun>("bootRun") {
   systemProperty("spring.profiles.active", project.findProperty("profiles")?.toString() ?: "dev")
 }
 
-dependencyCheck {
-  suppressionFiles.add("owasp-suppressions.xml")
-  nvd.datafeedUrl = "file:///opt/vulnz/cache"
-}
-
 abstract class EchoTask : DefaultTask() {
   @TaskAction
   fun action() {

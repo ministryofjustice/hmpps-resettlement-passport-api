@@ -1,13 +1,13 @@
 {
     "crn": "U338862",
     "name": {
-        "forename": "Coneway",
-        "surname": "Boyd"
+        "forename": "Test",
+        "surname": "User23"
     },
     "dateOfBirth": "1982-10-24",
     "contactDetails": {
         "telephone": "01632960003",
         "mobile": "07700900003",
-        "email": "boyd.coneway@test.com"
+        "email": "test.user23@test.com"
     }
 }

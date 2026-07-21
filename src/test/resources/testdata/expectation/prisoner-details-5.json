@@ -2,9 +2,9 @@
   "personalDetails": {
     "prisonerNumber": "G4274GN",
     "prisonId": "MDI",
-    "firstName": "John",
-    "middleNames": "Michael",
-    "lastName": "Smith",
+    "firstName": "Test",
+    "middleNames": "Name",
+    "lastName": "User17",
     "releaseDate": "2023-08-20",
     "releaseType": "CRD",
     "dateOfBirth": "1982-10-24",

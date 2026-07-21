@@ -99,8 +99,8 @@ class ResettlementAssessmentControllerTest {
   }
 
   private fun makeAuth() = jwtAuthorisationHelper.createJwtAccessToken(
-    username = "john_doe",
+    username = "test_user22",
     authSource = AuthSource.NOMIS.source,
-    name = "John Doe",
+    name = "Test User22",
   ).let { "Bearer $it" }
 }

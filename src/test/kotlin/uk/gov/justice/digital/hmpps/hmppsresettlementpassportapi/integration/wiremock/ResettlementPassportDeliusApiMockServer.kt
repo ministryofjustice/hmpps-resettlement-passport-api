@@ -112,7 +112,7 @@ class ResettlementPassportDeliusApiMockServer : WireMockServerBase() {
         if (status == 200) {
           aResponse()
             .withHeader("Content-Type", "application/json")
-            .withBody("{ \"name\" : { \"forename\" : \"John\", \"surname\": \"Doe\" }, \"unallocated\":false }")
+            .withBody("{ \"name\" : { \"forename\" : \"Test\", \"surname\": \"User22\" }, \"unallocated\":false }")
             .withStatus(200)
         } else {
           aResponse()

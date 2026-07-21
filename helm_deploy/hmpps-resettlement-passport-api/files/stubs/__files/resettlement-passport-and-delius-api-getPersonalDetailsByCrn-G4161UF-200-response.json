@@ -1,13 +1,13 @@
 {
     "crn": "U416100",
     "name": {
-        "forename": "CHRISY",
-        "surname": "CLEMENCE"
+        "forename": "TEST",
+        "surname": "USER18"
     },
     "dateOfBirth": "1974-05-30",
     "contactDetails": {
         "telephone": "01632960002",
         "mobile": "07700900002",
-        "email": "chrisy.clemence@test.com"
+        "email": "test.user18@test.com"
     }
 }

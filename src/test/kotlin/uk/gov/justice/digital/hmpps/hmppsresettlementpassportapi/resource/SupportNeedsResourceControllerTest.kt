@@ -59,5 +59,5 @@ class SupportNeedsResourceControllerTest {
     verify(auditService).audit(AuditAction.UPDATE_SUPPORT_NEED, nomsId, auth)
   }
 
-  private fun makeAuth() = jwtAuthorisationHelper.createJwtAccessToken(username = "John Doe", authSource = AuthSource.NOMIS.source).let { "Bearer $it" }
+  private fun makeAuth() = jwtAuthorisationHelper.createJwtAccessToken(username = "Test User22", authSource = AuthSource.NOMIS.source).let { "Bearer $it" }
 }

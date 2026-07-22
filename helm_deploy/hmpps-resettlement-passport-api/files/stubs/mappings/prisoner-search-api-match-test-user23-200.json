@@ -4,7 +4,7 @@
     "urlPath": "/prisoner-search-api/prisoner-search/match-prisoners",
     "bodyPatterns": [
       {
-        "equalToJson": "{ \"firstName\": \"Boyd\", \"lastName\": \"Coneway\"}"
+        "equalToJson": "{ \"firstName\": \"Test\", \"lastName\": \"Name23\"}"
       }
     ]
   },
@@ -23,9 +23,9 @@
         "croNumber": "332383/00K",
         "bookingId": "1083266",
         "bookNumber": "W02135",
-        "firstName": "BOYD",
-        "middleNames": "KENDRIE",
-        "lastName": "CONEWAY",
+        "firstName": "TEST",
+        "middleNames": "NAME",
+        "lastName": "USER23",
         "dateOfBirth": "1988-11-07",
         "gender": "Male",
         "ethnicity": "Black/Black British: Any other Backgr'nd",

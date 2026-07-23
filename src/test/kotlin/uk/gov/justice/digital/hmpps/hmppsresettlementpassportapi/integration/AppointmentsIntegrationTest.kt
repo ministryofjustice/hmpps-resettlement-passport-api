@@ -171,7 +171,7 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
     val expectedNotes = """
       ###
       Appointment Title: AA
-      Contact: Hannah Smith
+      Contact: Test Person26
       Organisation: AA
       Location:
         Building Name: Cloth Hall
@@ -189,7 +189,7 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
     webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/appointments?page=0&size=50")
       .bodyValue(
-        CreateAppointment(appointmentType = Category.DRUGS_AND_ALCOHOL, appointmentTitle = "AA", organisation = "AA", contact = "Hannah Smith", location = CreateAppointmentAddress(buildingName = "Cloth Hall", buildingNumber = "N/A", streetName = "Cloth Hall Street", county = "West Yorkshire", district = "", town = "Huddersfield", postcode = "HD3 5BX"), dateAndTime = LocalDateTime.parse("2023-08-17T12:00:01"), appointmentDuration = 120, notes = "Remember to bring ID"),
+        CreateAppointment(appointmentType = Category.DRUGS_AND_ALCOHOL, appointmentTitle = "AA", organisation = "AA", contact = "Test Person26", location = CreateAppointmentAddress(buildingName = "Cloth Hall", buildingNumber = "N/A", streetName = "Cloth Hall Street", county = "West Yorkshire", district = "", town = "Huddersfield", postcode = "HD3 5BX"), dateAndTime = LocalDateTime.parse("2023-08-17T12:00:01"), appointmentDuration = 120, notes = "Remember to bring ID"),
       )
       .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT")))
       .exchange()
@@ -255,7 +255,7 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
     webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/appointments?page=0&size=50")
       .bodyValue(
-        CreateAppointment(appointmentType = Category.DRUGS_AND_ALCOHOL, appointmentTitle = "AA", organisation = "AA", contact = "Hannah Smith", location = CreateAppointmentAddress(buildingName = "Cloth Hall", buildingNumber = "N/A", streetName = "Cloth Hall Street", county = "West Yorkshire", district = "", town = "Huddersfield", postcode = "HD3 5BX"), dateAndTime = LocalDateTime.parse("2023-08-17T12:00:01"), appointmentDuration = 120, notes = "Remember to bring ID"),
+        CreateAppointment(appointmentType = Category.DRUGS_AND_ALCOHOL, appointmentTitle = "AA", organisation = "AA", contact = "Test Person26", location = CreateAppointmentAddress(buildingName = "Cloth Hall", buildingNumber = "N/A", streetName = "Cloth Hall Street", county = "West Yorkshire", district = "", town = "Huddersfield", postcode = "HD3 5BX"), dateAndTime = LocalDateTime.parse("2023-08-17T12:00:01"), appointmentDuration = 120, notes = "Remember to bring ID"),
       )
       .headers(setAuthorisation())
       .exchange()
@@ -273,7 +273,7 @@ class AppointmentsIntegrationTest : IntegrationTestBase() {
     webTestClient.post()
       .uri("/resettlement-passport/prisoner/$nomsId/appointments?page=0&size=50")
       .bodyValue(
-        CreateAppointment(appointmentType = Category.DRUGS_AND_ALCOHOL, appointmentTitle = "AA", organisation = "AA", contact = "Hannah Smith", location = CreateAppointmentAddress(buildingName = "Cloth Hall", buildingNumber = "N/A", streetName = "Cloth Hall Street", county = "West Yorkshire", district = "", town = "Huddersfield", postcode = "HD3 5BX"), dateAndTime = LocalDateTime.parse("2023-08-17T12:00:01"), appointmentDuration = 120, notes = "Remember to bring ID"),
+        CreateAppointment(appointmentType = Category.DRUGS_AND_ALCOHOL, appointmentTitle = "AA", organisation = "AA", contact = "Test Person26", location = CreateAppointmentAddress(buildingName = "Cloth Hall", buildingNumber = "N/A", streetName = "Cloth Hall Street", county = "West Yorkshire", district = "", town = "Huddersfield", postcode = "HD3 5BX"), dateAndTime = LocalDateTime.parse("2023-08-17T12:00:01"), appointmentDuration = 120, notes = "Remember to bring ID"),
       )
       .exchange()
       .expectStatus().isEqualTo(401)

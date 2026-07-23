@@ -29,7 +29,7 @@ class PrisonerSupportNeedUpdateRepositoryTest : RepositoryTestBase() {
         prisonerId = 1,
         supportNeed = supportNeedRepository.findById(1).get(),
         otherDetail = null,
-        createdBy = "John Smith",
+        createdBy = "Test User17",
         createdDate = LocalDateTime.parse("2024-04-04T13:00:01"),
       ),
     )
@@ -37,7 +37,7 @@ class PrisonerSupportNeedUpdateRepositoryTest : RepositoryTestBase() {
     val prisonerSupportNeedId = prisonerSupportNeed.id!!
     val update1 = PrisonerSupportNeedUpdateEntity(
       prisonerSupportNeedId = prisonerSupportNeedId,
-      createdBy = "John Smith",
+      createdBy = "Test User17",
       createdDate = LocalDateTime.parse("2024-04-04T13:00:01"),
       updateText = "This is some update text",
       status = SupportNeedStatus.DECLINED,
@@ -47,7 +47,7 @@ class PrisonerSupportNeedUpdateRepositoryTest : RepositoryTestBase() {
 
     val update2 = PrisonerSupportNeedUpdateEntity(
       prisonerSupportNeedId = prisonerSupportNeedId,
-      createdBy = "Jane Smith",
+      createdBy = "Test User5",
       createdDate = LocalDateTime.parse("2024-04-04T14:00:01"),
       updateText = "This is some more update text",
       status = SupportNeedStatus.NOT_STARTED,
@@ -57,7 +57,7 @@ class PrisonerSupportNeedUpdateRepositoryTest : RepositoryTestBase() {
 
     val update3 = PrisonerSupportNeedUpdateEntity(
       prisonerSupportNeedId = prisonerSupportNeedId,
-      createdBy = "Jane Smith",
+      createdBy = "Test User5",
       createdDate = LocalDateTime.parse("2024-04-04T15:00:01"),
       updateText = "This is a deleted update",
       status = SupportNeedStatus.MET,

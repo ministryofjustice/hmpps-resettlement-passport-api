@@ -29,7 +29,7 @@ class PrisonerSupportNeedRepositoryTest : RepositoryTestBase() {
       prisonerId = 1,
       supportNeed = supportNeedRepository.findById(1).get(),
       otherDetail = null,
-      createdBy = "John Smith",
+      createdBy = "Test User17",
       createdDate = LocalDateTime.parse("2024-04-04T13:00:01"),
     )
 
@@ -37,7 +37,7 @@ class PrisonerSupportNeedRepositoryTest : RepositoryTestBase() {
       prisonerId = 1,
       supportNeed = supportNeedRepository.findById(5).get(),
       otherDetail = "Other",
-      createdBy = "John Smith",
+      createdBy = "Test User17",
       createdDate = LocalDateTime.parse("2024-04-04T14:00:01"),
       deleted = true,
       deletedDate = LocalDateTime.parse("2023-04-04T15:00:02"),

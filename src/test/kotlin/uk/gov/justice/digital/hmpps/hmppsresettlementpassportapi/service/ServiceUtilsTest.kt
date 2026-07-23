@@ -149,7 +149,7 @@ class ServiceUtilsTest {
       """
         ###
         Appointment Title: My appointment title
-        Contact: John
+        Contact: Test
         Organisation: Resettlement agency
         Location: 
           Building Name: The office
@@ -164,14 +164,14 @@ class ServiceUtilsTest {
         free text etc
         ###
       """.trimIndent(),
-      listOf("Appointment Title: My appointment title", "Contact: John", "Organisation: Resettlement agency", "Location: ", "  Building Name: The office", "  Building Number: 123", "  Street Name: Main Street", "  District:", "  Town: Leeds", "  County: West Yorkshire", "  Postcode: LS1 1AA"),
+      listOf("Appointment Title: My appointment title", "Contact: Test", "Organisation: Resettlement agency", "Location: ", "  Building Name: The office", "  Building Number: 123", "  Street Name: Main Street", "  District:", "  Town: Leeds", "  County: West Yorkshire", "  Postcode: LS1 1AA"),
       false,
     ),
     Arguments.of(
       """
         ###
         Appointment Title: ### My appointment title ###
-        Contact: John
+        Contact: Test
         Organisation: Resettlement agency
         Location: 
           Building Name: ###
@@ -187,7 +187,7 @@ class ServiceUtilsTest {
         free ### text etc
         ###
       """.trimIndent(),
-      listOf("Appointment Title: ### My appointment title ###", "Contact: John", "Organisation: Resettlement agency", "Location: ", "  Building Name: ###", "  Building Number: 123", "  Street Name: Main ### Street", "  District: !\"£$%^&*()-_=+{}[]@'#~?/><,.`¬±|\\", "  Town: Leeds", "  County:", "  Postcode: LS1 #"),
+      listOf("Appointment Title: ### My appointment title ###", "Contact: Test", "Organisation: Resettlement agency", "Location: ", "  Building Name: ###", "  Building Number: 123", "  Street Name: Main ### Street", "  District: !\"£$%^&*()-_=+{}[]@'#~?/><,.`¬±|\\", "  Town: Leeds", "  County:", "  Postcode: LS1 #"),
       false,
     ),
   )
@@ -207,7 +207,7 @@ class ServiceUtilsTest {
     Arguments.of(listOf("section: "), "section", "", false),
     Arguments.of(listOf("section: Test string", "another section: 1234", "section 1: 1234"), "section", "Test string", false),
     Arguments.of(getTestCustomFields(), "Appointment Title", "### My appointment title ###", false),
-    Arguments.of(getTestCustomFields(), "Contact", "John", false),
+    Arguments.of(getTestCustomFields(), "Contact", "Test", false),
     Arguments.of(getTestCustomFields(), "Organisation", "Resettlement agency", false),
     Arguments.of(getTestCustomFields(), "  Building Name", "###", false),
     Arguments.of(getTestCustomFields(), "  Building Number", "123", false),
@@ -233,7 +233,7 @@ class ServiceUtilsTest {
     Arguments.of(listOf("section: "), "section", null, false),
     Arguments.of(listOf("section: Test string", "another section: 1234", "section 1: 1234"), "section", "Test string", false),
     Arguments.of(getTestCustomFields(), "Appointment Title", "### My appointment title ###", false),
-    Arguments.of(getTestCustomFields(), "Contact", "John", false),
+    Arguments.of(getTestCustomFields(), "Contact", "Test", false),
     Arguments.of(getTestCustomFields(), "Organisation", "Resettlement agency", false),
     Arguments.of(getTestCustomFields(), "  Building Name", "###", false),
     Arguments.of(getTestCustomFields(), "  Building Number", "123", false),
@@ -246,7 +246,7 @@ class ServiceUtilsTest {
 
   private fun getTestCustomFields() = listOf(
     "Appointment Title: ### My appointment title ###",
-    "Contact: John",
+    "Contact: Test",
     "Organisation: Resettlement agency",
     "Location: ",
     "  Building Name: ###",
@@ -335,10 +335,10 @@ class ServiceUtilsTest {
 
   private fun `test convertFromNameToDeliusAuthor data`() = Stream.of(
     Arguments.of("", DeliusAuthor("MDI", "", "")),
-    Arguments.of("John Smith", DeliusAuthor("MDI", "John", "Smith")),
-    Arguments.of("Mary Williams-Smith", DeliusAuthor("MDI", "Mary", "Williams-Smith")),
-    Arguments.of("Mary Jane Miller", DeliusAuthor("MDI", "Mary Jane", "Miller")),
-    Arguments.of("Chris", DeliusAuthor("MDI", "Chris", "")),
+    Arguments.of("Test User17", DeliusAuthor("MDI", "Test", "User17")),
+    Arguments.of("Test Per-Son50", DeliusAuthor("MDI", "Test", "Per-Son50")),
+    Arguments.of("Test Name Person51", DeliusAuthor("MDI", "Test Name", "Person51")),
+    Arguments.of("Test", DeliusAuthor("MDI", "Test", "")),
   )
 
   private fun getPrisonersSearch(prisonerNumber: String, firstName: String, lastName: String) = PrisonersSearch(

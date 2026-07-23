@@ -48,7 +48,7 @@ class PrisonerSearchApiMockServer : WireMockServerBase() {
     stubFor(
       post("/prisoner-search/match-prisoners").withRequestBody(
         equalToJson(
-          """{ "firstName": "John", "lastName": "Smith" }""",
+          """{ "firstName": "Test", "lastName": "User17" }""",
         ),
       ).willReturn(jsonSuccess(readFile("testdata/prisoner-search-api/match-response-1-match.json"))),
     )
@@ -58,7 +58,7 @@ class PrisonerSearchApiMockServer : WireMockServerBase() {
     stubFor(
       post("/prisoner-search/match-prisoners").withRequestBody(
         equalToJson(
-          """{ "firstName": "John", "lastName": "Smith" }""",
+          """{ "firstName": "Test", "lastName": "User17" }""",
         ),
       ).willReturn(jsonSuccess("[]")),
     )
@@ -68,7 +68,7 @@ class PrisonerSearchApiMockServer : WireMockServerBase() {
     stubFor(
       post("/prisoner-search/match-prisoners").withRequestBody(
         equalToJson(
-          """{ "firstName": "John", "lastName": "Smith" }""",
+          """{ "firstName": "Test", "lastName": "User17" }""",
         ),
       ).willReturn(jsonSuccess(readFile("testdata/prisoner-search-api/match-response-duplicate-match.json"))),
     )

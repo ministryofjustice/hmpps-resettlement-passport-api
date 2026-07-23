@@ -146,7 +146,7 @@ class OffenderEventsServiceTest {
       personReference = PersonReference(listOf(PersonIdentifier(type = "NOMS", value = "abc2"))),
     )
 
-    val caseAllocationEntity = CaseAllocationEntity(1, 1, 123, "Joe", "Bloggs")
+    val caseAllocationEntity = CaseAllocationEntity(1, 1, 123, "Test", "User4")
 
     whenever(prisonerRepository.findByNomsId("abc2")).thenReturn(PrisonerEntity(id = 1, nomsId = "abc2", prisonId = "ABC", creationDate = LocalDateTime.parse("2023-10-30T22:09:08")))
     whenever(caseAllocationService.getCaseAllocationByPrisonerId(1)).thenReturn(caseAllocationEntity)

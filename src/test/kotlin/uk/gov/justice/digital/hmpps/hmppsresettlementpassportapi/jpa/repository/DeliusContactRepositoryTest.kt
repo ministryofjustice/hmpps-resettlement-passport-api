@@ -38,7 +38,7 @@ class DeliusContactRepositoryTest : RepositoryTestBase() {
       contactType = ContactType.CASE_NOTE,
       createdDate = LocalDateTime.parse("2023-01-01T12:00:00"),
       notes = "some notes here",
-      createdBy = "John Williams",
+      createdBy = "Test User7",
     )
     deliusContactRepository.save(deliusContact)
 
@@ -61,7 +61,7 @@ class DeliusContactRepositoryTest : RepositoryTestBase() {
       appointmentDate = LocalDateTime.parse("2023-02-10T14:05:00"),
       appointmentDuration = 60,
       notes = "some notes here",
-      createdBy = "William, John",
+      createdBy = "User7, Test",
     )
     deliusContactRepository.save(deliusContact)
 
@@ -84,7 +84,7 @@ class DeliusContactRepositoryTest : RepositoryTestBase() {
       appointmentDate = LocalDateTime.parse("2023-02-10T14:05:00"),
       appointmentDuration = 60,
       notes = "some notes here",
-      createdBy = "William, John",
+      createdBy = "User7, Test",
     )
     deliusContactRepository.save(deliusContact)
 

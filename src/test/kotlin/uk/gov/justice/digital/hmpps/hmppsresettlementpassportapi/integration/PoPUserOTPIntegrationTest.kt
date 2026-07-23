@@ -273,10 +273,11 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
     val nomsId = "G4161UF"
     val urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8"
     val dob = "1982-10-24"
-    val email = "john@smith.com"
+    val email = "test@user17.com"
 
     popUserApiMockServer.stubPostPoPUserVerification(200)
     prisonerSearchApiMockServer.stubMatchPrisonerOneMatch()
+    deliusApiMockServer.stubGetCrnFromNomsId(nomsId, "abc")
 
     webTestClient.post()
       .uri("/resettlement-passport/popUser/onelogin/verify-answers")
@@ -286,8 +287,8 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
           "dateOfBirth" to dob,
           "email" to email,
           "nomsId" to nomsId,
-          "firstName" to "John",
-          "lastName" to "Smith",
+          "firstName" to "Test",
+          "lastName" to "User17",
         ),
 
       )
@@ -316,7 +317,7 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
     val nomsId = "G4161UF"
     val urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8"
     val dob = "2010-01-01"
-    val email = "john@smith.com"
+    val email = "test@user17.com"
 
     popUserApiMockServer.stubPostPoPUserVerification(200)
     prisonerSearchApiMockServer.stubMatchPrisonerOneMatch()
@@ -329,8 +330,8 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
           "dateOfBirth" to dob,
           "email" to email,
           "nomsId" to nomsId,
-          "firstName" to "John",
-          "lastName" to "Smith",
+          "firstName" to "Test",
+          "lastName" to "User17",
         ),
 
       )
@@ -344,7 +345,7 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
   fun `reject verification of probation user by knowledge questions when nomis id is wrong`() {
     val urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8"
     val dob = "2010-01-01"
-    val email = "john@smith.com"
+    val email = "test@user17.com"
 
     popUserApiMockServer.stubPostPoPUserVerification(200)
     prisonerSearchApiMockServer.stubMatchPrisonerOneMatch()
@@ -357,8 +358,8 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
           "dateOfBirth" to dob,
           "email" to email,
           "nomsId" to "WRONG",
-          "firstName" to "John",
-          "lastName" to "Smith",
+          "firstName" to "Test",
+          "lastName" to "User17",
         ),
 
       )
@@ -373,7 +374,7 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
     val nomsId = "G4161UF"
     val urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8"
     val dob = "1982-10-24"
-    val email = "john@smith.com"
+    val email = "test@user17.com"
 
     popUserApiMockServer.stubPostPoPUserVerification(200)
     prisonerSearchApiMockServer.stubMatchPrisonerNoMatch()
@@ -386,8 +387,8 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
           "dateOfBirth" to dob,
           "email" to email,
           "nomsId" to nomsId,
-          "firstName" to "John",
-          "lastName" to "Smith",
+          "firstName" to "Test",
+          "lastName" to "User17",
         ),
 
       )
@@ -402,7 +403,7 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
     val nomsId = "G4161UF"
     val urn = "fdc:gov.uk:2022:T5fYp6sYl3DdYNF0tDfZtF-c4ZKewWRLw8YGcy6oEj8"
     val dob = "1982-10-24"
-    val email = "john@smith.com"
+    val email = "test@user17.com"
 
     popUserApiMockServer.stubPostPoPUserVerification(200)
     prisonerSearchApiMockServer.stubMatchPrisonerDuplicatedMatch()
@@ -415,8 +416,8 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
           "dateOfBirth" to dob,
           "email" to email,
           "nomsId" to nomsId,
-          "firstName" to "John",
-          "lastName" to "Smith",
+          "firstName" to "Test",
+          "lastName" to "User17",
         ),
 
       )
@@ -435,8 +436,8 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
           "dateOfBirth" to "2021-01-01",
           "email" to "email@email.com",
           "nomsId" to "123",
-          "firstName" to "John",
-          "lastName" to "Smith",
+          "firstName" to "Test",
+          "lastName" to "User17",
         ),
       ).exchange()
       .expectStatus().isUnauthorized
@@ -453,8 +454,8 @@ class PoPUserOTPIntegrationTest : IntegrationTestBase() {
           "dateOfBirth" to "2021-01-01",
           "email" to "email@email.com",
           "nomsId" to "123",
-          "firstName" to "John",
-          "lastName" to "Smith",
+          "firstName" to "Test",
+          "lastName" to "User17",
         ),
       ).exchange()
       .expectStatus().isForbidden

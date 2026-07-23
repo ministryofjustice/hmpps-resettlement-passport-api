@@ -773,8 +773,8 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val crn = "123"
     val assessmentType = "BCST2"
     val prisonId = "MDI"
-    val forename = "Jane"
-    val surname = "Smith"
+    val forename = "Test"
+    val surname = "User5"
     val dpsCaseNoteText = "Immediate needs report completed.\\n\\nGo to prepare someone for release (PSfR) service to see the report information."
     val deliusCaseNoteText = "Immediate needs report completed.\\n\\nView accommodation report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/accommodation/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView attitudes, thinking and behaviour report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/attitudes-thinking-and-behaviour/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView children, families and communities report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/children-families-and-communities/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView drugs and alcohol report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/drugs-and-alcohol/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView education, skills and work report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/education-skills-and-work/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView finance and ID report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/finance-and-id/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView health report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/health-status/?prisonerNumber=ABC1234&fromDelius=true#assessment-information"
     val fakeNowOffset = OffsetDateTime.parse("2024-06-04T09:16:04+01:00")
@@ -789,7 +789,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
     webTestClient.post()
       .uri("resettlement-passport/prisoner/$nomsId/resettlement-assessment/submit?assessmentType=$assessmentType&useNewDeliusCaseNoteFormat=true&useNewDpsCaseNoteFormat=true")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), authSource = "nomis", user = "Jane Smith"))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), authSource = "nomis", user = "Test User5"))
       .exchange()
       .expectStatus().isOk
 
@@ -831,8 +831,8 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val crn = "123"
     val assessmentType = "BCST2"
     val prisonId = "MDI"
-    val forename = "Jane"
-    val surname = "Smith"
+    val forename = "Test"
+    val surname = "User5"
     val dpsCaseNoteText = "Immediate needs report completed.\\n\\nGo to prepare someone for release (PSfR) service to see the report information."
     val deliusCaseNoteText = "Immediate needs report completed.\\n\\nView accommodation report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/accommodation/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView attitudes, thinking and behaviour report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/attitudes-thinking-and-behaviour/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView children, families and communities report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/children-families-and-communities/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView drugs and alcohol report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/drugs-and-alcohol/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView education, skills and work report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/education-skills-and-work/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView finance and ID report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/finance-and-id/?prisonerNumber=ABC1234&fromDelius=true#assessment-information\\nView health report information in PSfR: https://resettlement-passport-ui-dev.hmpps.service.justice.gov.uk/health-status/?prisonerNumber=ABC1234&fromDelius=true#assessment-information"
     val fakeNowOffset = OffsetDateTime.parse("2024-06-04T09:16:04+01:00")
@@ -847,7 +847,7 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
 
     webTestClient.post()
       .uri("resettlement-passport/prisoner/$nomsId/resettlement-assessment/submit?assessmentType=$assessmentType&useNewDeliusCaseNoteFormat=true&useNewDpsCaseNoteFormat=true")
-      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), authSource = "nomis", user = "Jane Smith"))
+      .headers(setAuthorisation(roles = listOf("ROLE_RESETTLEMENT_PASSPORT_EDIT"), authSource = "nomis", user = "Test User5"))
       .exchange()
       .expectStatus().isOk
 
@@ -889,10 +889,10 @@ class ResettlementAssessmentIntegrationTest : IntegrationTestBase() {
     val crn = "123"
     val assessmentType = "BCST2"
     val prisonId = "MDI"
-    val forename1 = "John"
-    val forename2 = "Joe"
-    val surname1 = "Smith"
-    val surname2 = "Blogs"
+    val forename1 = "Test"
+    val forename2 = "Test"
+    val surname1 = "User17"
+    val surname2 = "User4"
     val caseNoteText1 = "Part 1 of 2\\n\\nAccommodation\\n\\nCase note related to accommodation\\n\\n\\nAttitudes, thinking and behaviour\\n\\nCase note related to Attitudes, thinking and behaviour"
     val caseNoteText2 = "Part 2 of 2\\n\\nChildren, families and communities\\n\\nCase note related to Children, family and communities\\n\\n\\nDrugs and alcohol\\n\\nCase note related to Drugs and alcohol\\n\\n\\nEducation, skills and work\\n\\nCase note related to education, skills and work\\n\\n\\nFinance and ID\\n\\nCase note related to Finance and ID\\n\\n\\nHealth\\n\\nCase note related to Health"
 

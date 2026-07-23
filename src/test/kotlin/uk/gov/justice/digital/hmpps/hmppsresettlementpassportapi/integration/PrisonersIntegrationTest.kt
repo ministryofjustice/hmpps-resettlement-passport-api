@@ -51,7 +51,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
   fun `Get All Prisoners - check caching, with and without a search term gets different results`() {
     val prisonId = "MDI"
 
-    // Stub get prisoners to include Finn Chandlevieve
+    // Stub get prisoners to include Test Name Person40
     prisonerSearchApiMockServer.stubGetPrisonersList(prisonId, 500, 0, "", 200)
 
     // Call GET prisoners with no search term and assert json
@@ -63,7 +63,7 @@ class PrisonersIntegrationTest : IntegrationTestBase() {
       .expectHeader().contentType("application/json")
       .expectBody().json(readFile("testdata/expectation/prisoners.json"), JsonCompareMode.STRICT)
 
-    // Update test stub to filter on Finn Chandlevieve
+    // Update test stub to filter on Test Name Person40
     prisonerSearchApiMockServer.stubGetPrisonersList("testdata/prisoner-search-api/prisoner-search-filtered-1.json", prisonId, 500, 0, "Finn", 200)
 
     // Call GET prisoners with search term and assert json (should not use cache because the search term is different,

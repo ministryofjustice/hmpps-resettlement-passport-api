@@ -335,10 +335,10 @@ class ServiceUtilsTest {
 
   private fun `test convertFromNameToDeliusAuthor data`() = Stream.of(
     Arguments.of("", DeliusAuthor("MDI", "", "")),
-    Arguments.of("Test User027", DeliusAuthor("MDI", "Test", "User027")),
-    Arguments.of("Mary Williams-User027", DeliusAuthor("MDI", "Mary", "Williams-User027")),
-    Arguments.of("Mary Jane Miller", DeliusAuthor("MDI", "Mary Jane", "Miller")),
-    Arguments.of("Chris", DeliusAuthor("MDI", "Chris", "")),
+    Arguments.of("Test User17", DeliusAuthor("MDI", "Test", "User17")),
+    Arguments.of("Test Per-Son50", DeliusAuthor("MDI", "Test", "Per-Son50")),
+    Arguments.of("Test Name Person51", DeliusAuthor("MDI", "Test Name", "Person51")),
+    Arguments.of("Test", DeliusAuthor("MDI", "Test", "")),
   )
 
   private fun getPrisonersSearch(prisonerNumber: String, firstName: String, lastName: String) = PrisonersSearch(

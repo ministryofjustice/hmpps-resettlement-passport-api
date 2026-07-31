@@ -30,6 +30,7 @@ ext["jackson-bom.version"] = "3.1.5"
 ext["log4j2.version"] = "2.25.5"
 ext["tomcat.version"] = "11.0.24"
 ext["httpcore5.version"] = "5.4.3"
+ext["netty.version"] = "4.2.16.Final"
 
 dependencies {
   annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
@@ -55,7 +56,9 @@ dependencies {
   runtimeOnly("org.postgresql:postgresql")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
 
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3") {
+    implementation("org.webjars:swagger-ui:5.32.11")
+  }
 
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")

@@ -20,7 +20,6 @@ generic-service:
     API_BASE_URL_RESETTLEMENT-PASSPORT-DELIUS: https://resettlement-passport-and-delius-preprod.hmpps.service.justice.gov.uk
     API_BASE_URL_EDUCATION-EMPLOYMENT:  https://education-employment-api-preprod.hmpps.service.justice.gov.uk
     API_BASE_URL_INTERVENTIONS-SERVICE: https://hmpps-interventions-service-preprod.apps.live-1.cloud-platform.service.justice.gov.uk
-    API_BASE_URL_POP-USER-SERVICE: https://person-on-probation-user-api-preprod.hmpps.service.justice.gov.uk
     SCHEDULE_EXPRESSION_DELETE-EXPIRED-OTP: 0 0 3 * * *
     interventions-api-integration_crsAppointmentsEnabled: true
     API_BASE_URL_gotenberg-api: http://hmpps-resettlement-passport-api-gotenberg

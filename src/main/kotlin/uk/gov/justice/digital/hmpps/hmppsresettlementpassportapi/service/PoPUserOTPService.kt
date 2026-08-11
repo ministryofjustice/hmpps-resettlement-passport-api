@@ -6,29 +6,19 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.config.ResourceNotFoundException
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserOTP
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.PoPUserResponse
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.KnowledgeBasedVerification
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.popuserapi.OneLoginData
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.data.prisonersapi.PrisonersSearch
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PoPUserOTPEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.entity.PrisonerEntity
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PoPUserOTPRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.jpa.repository.PrisonerRepository
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PoPUserApiService
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerMatchRequest
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.PrisonerSearchApiService
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.service.external.ResettlementPassportDeliusApiService
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-import kotlin.jvm.optionals.getOrNull
 
 @Service
 class PoPUserOTPService(
   private val popUserOTPRepository: PoPUserOTPRepository,
-  private val prisonerRepository: PrisonerRepository,
-  private val popUserApiService: PoPUserApiService,
   private val prisonerSearchApiService: PrisonerSearchApiService,
-  private val resettlementPassportDeliusApiService: ResettlementPassportDeliusApiService,
 ) {
 
   companion object {
@@ -50,12 +40,6 @@ class PoPUserOTPService(
       )
 
     return popUserOTP
-  }
-
-  @Transactional
-  fun getAllOTPs(): List<PoPUserOTPEntity>? {
-    val popUsersOTPs = popUserOTPRepository.findAll()
-    return popUsersOTPs
   }
 
   @Transactional
@@ -94,59 +78,6 @@ class PoPUserOTPService(
 
       )
     return popUserOTP
-  }
-
-  @Transactional
-  fun getPoPUserVerified(oneLoginData: OneLoginData): PoPUserResponse {
-    val popUserOTPEntityExists = popUserOTPRepository.findByOtpAndDobAndExpiryDateIsGreaterThan(
-      oneLoginData.otp,
-      oneLoginData.dob,
-      LocalDateTime.now(),
-    ) ?: throw ResourceNotFoundException(
-      "Person On Probation User otp  ${oneLoginData.otp}  not found in database or expired.",
-    )
-
-    val prisonerEntity: PrisonerEntity = prisonerRepository.findById(popUserOTPEntityExists.prisonerId).getOrNull()
-      ?: throw ResourceNotFoundException("Prisoner with id ${popUserOTPEntityExists.prisonerId}  not found in database")
-    // Check we can look up details
-    prisonerSearchApiService.findPrisonerPersonalDetails(prisonerEntity.nomsId)
-    val crn = resettlementPassportDeliusApiService.getCrn(prisonerEntity.nomsId)
-
-    val response = popUserApiService.postPoPUserVerification(
-      oneLoginData.urn,
-      prisonerEntity.nomsId,
-      crn,
-    )
-
-    popUserOTPRepository.delete(popUserOTPEntityExists)
-    return response
-  }
-
-  @Transactional
-  fun verifyFromKnowledgeQuestions(formData: KnowledgeBasedVerification): PoPUserResponse {
-    val matches =
-      prisonerSearchApiService.match(PrisonerMatchRequest(firstName = formData.firstName, lastName = formData.lastName))
-        .filter(exactlyMatching(formData))
-    if (matches.size != 1) {
-      throw ResourceNotFoundException("No exact match found")
-    }
-
-    val match = matches.first()
-    val prisoner = prisonerRepository.findByNomsId(match.prisonerNumber)
-      ?: throw ResourceNotFoundException("Prisoner with nomsId ${match.prisonerNumber}  not found in database")
-    val crn = resettlementPassportDeliusApiService.getCrn(prisoner.nomsId)
-
-    val response = popUserApiService.postPoPUserVerification(
-      formData.urn,
-      prisoner.nomsId,
-      crn,
-    )
-    // Cleanup any unused OTP
-    val otp = popUserOTPRepository.findByPrisonerId(prisoner.id())
-    if (otp != null) {
-      popUserOTPRepository.delete(otp)
-    }
-    return response
   }
 
   @Transactional

@@ -24,7 +24,6 @@ services:
       - API_BASE_URL_RESETTLEMENT-PASSPORT-DELIUS=http://wiremock:8080/resettlement-passport-and-delius-api
       - API_BASE_URL_EDUCATION-EMPLOYMENT=http://wiremock:8080/education-employment-api
       - API_BASE_URL_INTERVENTIONS-SERVICE=http://wiremock:8080/interventions-service-api
-      - API_BASE_URL_pop-user-service=http://wiremock:8080/pop-user-api
       - API_BASE_URL_CASE-NOTES=https://dev.offender-case-notes.service.justice.gov.uk
       - API_BASE_URL_KEY-WORKER=http://wiremock:8080/key-worker-api
       - API_BASE_URL_ALLOCATION-MANAGER=http://wiremock:8080/allocation-manager-api

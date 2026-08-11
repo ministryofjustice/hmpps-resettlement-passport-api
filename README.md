@@ -1,17 +1,14 @@
-# hmpps-resettlement-passport-api
+# Resettlement Passport API
+
 [![Ministry of Justice Repository Compliance Badge](https://github-community.service.justice.gov.uk/repository-standards/api/hmpps-resettlement-passport-api/badge)](https://github-community.service.justice.gov.uk/repository-standards/hmpps-resettlement-passport-api)
 [![Docker Repository on ghcr](https://img.shields.io/badge/ghcr.io-repository-2496ED.svg?logo=docker)](https://ghcr.io/ministryofjustice/hmpps-resettlement-passport-api)
 [![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://resettlement-passport-api-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html)
 [![Pipeline [test -> build -> deploy]](https://github.com/ministryofjustice/hmpps-resettlement-passport-api/actions/workflows/pipeline.yml/badge.svg?branch=main)](https://github.com/ministryofjustice/hmpps-resettlement-passport-api/actions/workflows/pipeline.yml)
 
-# Resettlement Passport API
-
-This is a Backend-For-Frontend style API that support both the
-[Prepare someone for release](https://github.com/ministryofjustice/hmpps-resettlement-passport-ui)
-and [Plan your future](https://github.com/ministryofjustice/hmpps-resettlement-passport-person-on-probation-ui)
-frontends
+This is a Backend-For-Frontend style API that supports the [Prepare someone for release](https://github.com/ministryofjustice/hmpps-resettlement-passport-ui) frontend.
 
 ## Running the application locally
+
 This backend application depends on several services to run.
 
 | Dependency                   | Description                                              | Default | Override Env Var                                                                  |
@@ -24,7 +21,6 @@ This backend application depends on several services to run.
 | RP delius                    |                                                          |         | `API_BASE_URL_RESETTLEMENT-PASSPORT-DELIUS`                                       |
 | Education Employment API     | "Get someone ready to work" backend                      |         | `API_BASE_URL_EDUCATION-EMPLOYMENT`                                               |
 | Interventions API            |                                                          |         | `API_BASE_URL_INTERVENTIONS`                                                      |
-| Person on Probation user API | parts of Plan your future                                |         | `API_BASE_URL_pop-user-service`                                                   |
 | Offender Case notes API      |                                                          |         | `API_BASE_URL_CASE-NOTES`                                                         |
 | Key worker API               |                                                          |         | `API_BASE_URL_KEY-WORKER`                                                         |
 | Allocation manager API       |                                                          |         | `API_BASE_URL_ALLOCATION`                                                         |

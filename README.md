@@ -21,7 +21,6 @@ This backend application depends on several services to run.
 | RP delius                    |                                                          |         | `API_BASE_URL_RESETTLEMENT-PASSPORT-DELIUS`                                       |
 | Education Employment API     | "Get someone ready to work" backend                      |         | `API_BASE_URL_EDUCATION-EMPLOYMENT`                                               |
 | Interventions API            |                                                          |         | `API_BASE_URL_INTERVENTIONS`                                                      |
-| Person on Probation user API |                                                          |         | `API_BASE_URL_pop-user-service`                                                   |
 | Offender Case notes API      |                                                          |         | `API_BASE_URL_CASE-NOTES`                                                         |
 | Key worker API               |                                                          |         | `API_BASE_URL_KEY-WORKER`                                                         |
 | Allocation manager API       |                                                          |         | `API_BASE_URL_ALLOCATION`                                                         |

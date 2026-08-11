@@ -177,7 +177,6 @@ abstract class IntegrationTestBase : TestBase() {
       registry.add("api.base.url.resettlement-passport-delius") { "http://localhost:${deliusApiMockServer.port()}" }
       registry.add("api.base.url.education-employment") { "http://localhost:${educationEmploymentApiMockServer.port()}" }
       registry.add("api.base.url.interventions-service") { "http://localhost:${interventionsServiceApiMockServer.port()}" }
-      registry.add("api.base.url.pop-user-service") { "http://localhost:${popUserApiMockServer.port()}" }
       registry.add("api.base.url.curious-service") { "http://localhost:${curiousApiMockServer.port()}" }
       registry.add("api.base.url.manage-users-service") { "http://localhost:${manageUsersApiMockServer.port()}" }
     }

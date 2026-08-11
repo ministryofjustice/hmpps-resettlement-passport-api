@@ -5,7 +5,7 @@
 [![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://resettlement-passport-api-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html)
 [![Pipeline [test -> build -> deploy]](https://github.com/ministryofjustice/hmpps-resettlement-passport-api/actions/workflows/pipeline.yml/badge.svg?branch=main)](https://github.com/ministryofjustice/hmpps-resettlement-passport-api/actions/workflows/pipeline.yml)
 
-This is a Backend-For-Frontend style API that support both the [Prepare someone for release](https://github.com/ministryofjustice/hmpps-resettlement-passport-ui) frontend.
+This is a Backend-For-Frontend style API that supports the [Prepare someone for release](https://github.com/ministryofjustice/hmpps-resettlement-passport-ui) frontend.
 
 ## Running the application locally
 

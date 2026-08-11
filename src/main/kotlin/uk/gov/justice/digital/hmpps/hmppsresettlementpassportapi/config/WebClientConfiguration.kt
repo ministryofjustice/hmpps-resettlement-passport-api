@@ -33,7 +33,6 @@ class WebClientConfiguration(
   @Value("\${api.base.url.resettlement-passport-delius}") private val rpDeliusRootUri: String,
   @Value("\${api.base.url.education-employment}") private val educationEmploymentRootUri: String,
   @Value("\${api.base.url.interventions-service}") private val interventionsRootUri: String,
-  @Value("\${api.base.url.pop-user-service}") private val popUserRootUri: String,
   @Value("\${api.base.url.gotenberg-api}") private val gotenbergRootUri: String,
   @Value("\${api.base.url.curious-service}") private val curiousRootUri: String,
   @Value("\${api.base.url.manage-users-service}") private val manageUsersRootUri: String,
@@ -126,9 +125,6 @@ class WebClientConfiguration(
       .observationRegistry(observationRegistry)
       .build()
   }
-
-  @Bean
-  fun popUserWebClientCredentials(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient = getWebClientCredentials(authorizedClientManager, popUserRootUri)
 
   @Bean
   fun gotenbergWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): WebClient = getWebClient(gotenbergRootUri)

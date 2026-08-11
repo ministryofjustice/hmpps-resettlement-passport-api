@@ -32,7 +32,6 @@ import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wir
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.InterventionsServiceApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.KeyWorkerApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ManageUsersApiMockServer
-import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PoPUserApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.PrisonerSearchApiMockServer
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration.wiremock.ResettlementPassportDeliusApiMockServer
@@ -116,9 +115,6 @@ abstract class IntegrationTestBase : TestBase() {
     val interventionsServiceApiMockServer = InterventionsServiceApiMockServer()
 
     @JvmField
-    val popUserApiMockServer = PoPUserApiMockServer()
-
-    @JvmField
     val curiousApiMockServer = CuriousApiMockServer()
 
     @JvmField
@@ -139,7 +135,6 @@ abstract class IntegrationTestBase : TestBase() {
       deliusApiMockServer.start()
       educationEmploymentApiMockServer.start()
       interventionsServiceApiMockServer.start()
-      popUserApiMockServer.start()
       curiousApiMockServer.start()
       manageUsersApiMockServer.start()
     }

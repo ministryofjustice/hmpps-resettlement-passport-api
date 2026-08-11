@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.integration
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.assertThat
 import org.assertj.core.api.Assertions.within
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.jdbc.Sql
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
@@ -12,9 +11,6 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 class PoPUserOTPIntegrationTest : IntegrationTestBase() {
-  @BeforeEach
-  fun resetMappings() = popUserApiMockServer.resetMappings()
-
   @Test
   @Sql("classpath:testdata/sql/seed-pop-user-otp.sql")
   fun `Create, update and delete person on probation user otp - happy path`() {

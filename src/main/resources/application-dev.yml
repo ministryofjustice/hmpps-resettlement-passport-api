@@ -103,7 +103,7 @@ hmpps.s3:
       bucketName: document-management
 
 hmpps.sar:
-  additionalAccessRole: RESETTLEMENT_PASSPORT_EDIT
+  additionalAccessRole: 'EDUCATION_WORK_PLAN_VIEW'
 
 clamav:
   virus:

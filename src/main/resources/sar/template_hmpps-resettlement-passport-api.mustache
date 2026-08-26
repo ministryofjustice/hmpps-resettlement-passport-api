@@ -5,16 +5,12 @@
         <br/>
         <table class="data-table">
             <tr>
-                <td class="data-column-25">Case Reference Number</td>
                 <td class="data-column-25">Prison name</td>
                 <td class="data-column-25">Creation date</td>
-                <td class="data-column-25">Release date</td>
             </tr>
             <tr>
-                <td>{{ optionalValue crn }}</td>
                 <td>{{ getPrisonName prisonId }}</td>
                 <td>{{ optionalValue (formatDate creationDate) }}</td>
-                <td>{{ optionalValue (formatDate releaseDate) }}</td>
             </tr>
         </table>
     {{/prisoner}}

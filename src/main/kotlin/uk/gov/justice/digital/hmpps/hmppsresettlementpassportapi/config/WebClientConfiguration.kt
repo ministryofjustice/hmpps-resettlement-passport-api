@@ -18,6 +18,7 @@ import org.springframework.web.reactive.function.client.ExchangeFilterFunctions
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
 import uk.gov.justice.digital.hmpps.hmppsresettlementpassportapi.SYSTEM_USERNAME
+import uk.gov.justice.hmpps.kotlin.auth.ServletRequestResponseNonNullFilterFunction
 import java.time.Duration
 
 @Configuration
@@ -97,6 +98,7 @@ class WebClientConfiguration(
     return WebClient.builder()
       .baseUrl(baseUrl)
       .clientConnector(ReactorClientHttpConnector(httpClient))
+      .filter(ServletRequestResponseNonNullFilterFunction())
       .filter(oauth2Client)
       .codecs { codecs ->
         codecs.defaultCodecs().maxInMemorySize(5 * 1024 * 1024)
@@ -117,7 +119,7 @@ class WebClientConfiguration(
 
   @Bean
   fun tokenWebClient(): WebClient {
-    val clientRegistration = clientRegistrationRepo.findByRegistrationId("RESETTLEMENT_PASSPORT_API")
+    val clientRegistration = requireNotNull(clientRegistrationRepo.findByRegistrationId("RESETTLEMENT_PASSPORT_API"))
 
     return WebClient.builder()
       .baseUrl(clientRegistration.providerDetails.tokenUri)

@@ -54,7 +54,7 @@ dependencies {
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("io.micrometer:micrometer-registry-prometheus")
   implementation("xyz.capybara:clamav-client:2.1.2")
-  implementation("dev.forkhandles:result4k:2.25.6.0")
+  implementation("dev.forkhandles:result4k:3.0.0.0")
 
   implementation("org.apache.commons:commons-lang3")
   implementation("org.apache.commons:commons-text:1.15.0")

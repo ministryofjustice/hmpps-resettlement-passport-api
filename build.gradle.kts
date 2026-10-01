@@ -82,7 +82,7 @@ dependencies {
   testImplementation("com.squareup.okhttp3:okhttp:4.12.0")
   testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
   testImplementation("io.mockk:mockk:1.14.11")
-  testImplementation("com.github.victools:jsonschema-generator:4.38.0")
+  testImplementation("com.github.victools:jsonschema-generator:5.0.0")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
   testImplementation("net.javacrumbs.json-unit:json-unit-assertj:4.1.1")
 

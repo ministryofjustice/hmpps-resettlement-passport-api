@@ -5,7 +5,7 @@ plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.10"
   id("org.springdoc.openapi-gradle-plugin") version "1.9.0"
   id("jacoco")
-  id("org.sonarqube") version "6.2.0.5505"
+  id("org.sonarqube") version "6.3.1.5724"
   kotlin("plugin.spring") version kotlinVersion
   kotlin("plugin.jpa") version kotlinVersion
   kotlin("plugin.serialization") version kotlinVersion
@@ -54,22 +54,22 @@ dependencies {
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("io.micrometer:micrometer-registry-prometheus")
   implementation("xyz.capybara:clamav-client:2.1.2")
-  implementation("dev.forkhandles:result4k:2.22.3.0")
+  implementation("dev.forkhandles:result4k:2.25.6.0")
 
   implementation("org.apache.commons:commons-lang3")
-  implementation("org.apache.commons:commons-text:1.13.1")
+  implementation("org.apache.commons:commons-text:1.15.0")
   implementation("commons-codec:commons-codec")
   implementation("com.google.code.gson:gson")
   implementation("org.json:json:20250517")
-  implementation("io.github.oshai:kotlin-logging-jvm:7.0.7")
+  implementation("io.github.oshai:kotlin-logging-jvm:7.0.14")
 
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.0.1")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.0.3")
 
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.0.1")
-  testImplementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-test-support:2.8.1")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:3.0.3")
+  testImplementation("uk.gov.justice.service.hmpps:hmpps-subject-access-request-test-support:2.8.3")
   testImplementation("org.awaitility:awaitility-kotlin")
   testImplementation("org.mockito:mockito-inline:5.2.0")
-  testImplementation("io.swagger.parser.v3:swagger-parser:2.1.41")
+  testImplementation("io.swagger.parser.v3:swagger-parser:2.1.48")
   testImplementation("org.springframework.boot:spring-boot-webtestclient")
   testImplementation("org.springframework.security:spring-security-test")
   testImplementation("org.wiremock:wiremock-standalone:3.13.2")
@@ -78,10 +78,10 @@ dependencies {
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
   testImplementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
-  testImplementation("io.opentelemetry:opentelemetry-sdk-testing:1.51.0")
+  testImplementation("io.opentelemetry:opentelemetry-sdk-testing:1.66.0")
   testImplementation("com.squareup.okhttp3:okhttp:4.12.0")
   testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
-  testImplementation("io.mockk:mockk:1.14.4")
+  testImplementation("io.mockk:mockk:1.14.11")
   testImplementation("com.github.victools:jsonschema-generator:4.38.0")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
   testImplementation("net.javacrumbs.json-unit:json-unit-assertj:4.1.1")

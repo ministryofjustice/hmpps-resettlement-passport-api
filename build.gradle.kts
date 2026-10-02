@@ -61,7 +61,7 @@ dependencies {
   implementation("commons-codec:commons-codec")
   implementation("com.google.code.gson:gson")
   implementation("org.json:json:20250517")
-  implementation("io.github.oshai:kotlin-logging-jvm:7.0.14")
+  implementation("io.github.oshai:kotlin-logging-jvm:8.0.4")
 
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:3.0.3")
 

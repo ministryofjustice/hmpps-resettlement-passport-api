@@ -80,7 +80,7 @@ dependencies {
   testImplementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
   testImplementation("io.opentelemetry:opentelemetry-sdk-testing:1.66.0")
   testImplementation("com.squareup.okhttp3:okhttp:4.12.0")
-  testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+  testImplementation("com.squareup.okhttp3:mockwebserver:5.5.0")
   testImplementation("io.mockk:mockk:1.14.11")
   testImplementation("com.github.victools:jsonschema-generator:4.38.0")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
